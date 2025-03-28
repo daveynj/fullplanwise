@@ -31,9 +31,12 @@ export class QwenService {
       const prompt = this.constructLessonPrompt(params);
       console.log('Sending request to Qwen API...');
       
+      // Try different model names in sequence
+      const modelOptions = ["qwen-max", "qwen-turbo", "qwen-plus", "qwen-72b-api", "qwen-max-0423", "qwen-turbo-0423", "qwen"];
+      
       // Request payload following OpenAI-compatible format for international endpoint
       const requestBody = {
-        model: "qwen-turbo-international",
+        model: modelOptions[0], // Start with the first model
         messages: [
           { 
             role: "system", 
@@ -50,44 +53,55 @@ export class QwenService {
         response_format: { type: "json_object" }
       };
       
-      console.log('Request payload:', JSON.stringify(requestBody, null, 2));
+      // Try each model sequentially until one works
+      let response = null;
+      let lastError = null;
       
-      const response = await axios({
-        method: 'post',
-        url: QWEN_API_URL,
-        headers: {
-          'Authorization': `Bearer ${this.apiKey}`,
-          'Content-Type': 'application/json'
-        },
-        data: requestBody
-      });
+      for (const modelName of modelOptions) {
+        try {
+          // Update the model name in the request body
+          requestBody.model = modelName;
+          console.log(`Trying model: ${modelName}`);
+          console.log('Request payload:', JSON.stringify(requestBody, null, 2));
+          
+          response = await axios({
+            method: 'post',
+            url: QWEN_API_URL,
+            headers: {
+              'Authorization': `Bearer ${this.apiKey}`,
+              'Content-Type': 'application/json'
+            },
+            data: requestBody
+          });
+          
+          // If we got here, the request was successful
+          console.log(`Request with model ${modelName} was successful!`);
+          break;
+        } catch (error: any) {
+          console.warn(`Request with model ${modelName} failed:`, error.message);
+          lastError = error;
+          
+          // If it's not a 404 (model not found) error, don't try other models
+          if (error.response && error.response.status !== 404) {
+            throw error;
+          }
+          
+          // Otherwise continue to the next model
+          console.log(`Trying next model...`);
+        }
+      }
+      
+      // If we've tried all models and none worked, throw the last error
+      if (!response) {
+        console.error('All model attempts failed');
+        throw lastError || new Error('All model attempts failed');
+      }
       
       console.log('Received response from Qwen API');
       
       // Parse the response based on OpenAI-compatible API format
       console.log('Qwen API Response Status:', response.status);
       console.log('Qwen API Response Data:', JSON.stringify(response.data, null, 2));
-      
-      // OpenAI-compatible response format:
-      // {
-      //   "id": "...",
-      //   "object": "chat.completion",
-      //   "created": 1677858242,
-      //   "model": "qwen",
-      //   "choices": [{
-      //     "message": {
-      //       "role": "assistant",
-      //       "content": "..." // JSON content
-      //     },
-      //     "finish_reason": "stop",
-      //     "index": 0
-      //   }],
-      //   "usage": {
-      //     "prompt_tokens": 13,
-      //     "completion_tokens": 7,
-      //     "total_tokens": 20
-      //   }
-      // }
       
       if (response.data && response.data.choices && response.data.choices.length > 0) {
         const content = response.data.choices[0].message?.content;
@@ -137,9 +151,22 @@ export class QwenService {
         console.error('Request URL:', error.config.url);
         console.error('Request headers:', error.config.headers);
       }
-      throw new Error(
-        `Failed to generate lesson: ${error.message}`
-      );
+      // Provide more specific error messages to help with troubleshooting
+      let errorMsg = `Failed to generate lesson: ${error.message}`;
+      
+      if (error.response) {
+        if (error.response.status === 401) {
+          errorMsg = 'Authentication failed. Please check your API key.';
+        } else if (error.response.status === 404) {
+          errorMsg = 'Model not found. Please check if the model name is correct.';
+        } else if (error.response.status === 429) {
+          errorMsg = 'Rate limit exceeded. Please try again later.';
+        } else {
+          errorMsg = `Server error (${error.response.status}): ${error.response.data?.error?.message || error.message}`;
+        }
+      }
+      
+      throw new Error(errorMsg);
     }
   }
   
@@ -151,48 +178,24 @@ export class QwenService {
     
     // Convert CEFR level to more descriptive text
     const levelDescriptions: Record<string, string> = {
-      'A1': 'Beginner - Can understand and use familiar everyday expressions and very basic phrases.',
-      'A2': 'Elementary - Can communicate in simple and routine tasks requiring a simple and direct exchange of information.',
-      'B1': 'Intermediate - Can deal with most situations likely to arise while traveling in an area where the language is spoken.',
-      'B2': 'Upper Intermediate - Can interact with a degree of fluency and spontaneity that makes regular interaction with native speakers possible.',
-      'C1': 'Advanced - Can use language flexibly and effectively for social, academic and professional purposes.',
-      'C2': 'Proficient - Can understand with ease virtually everything heard or read.'
+      'A1': 'Beginner',
+      'A2': 'Elementary',
+      'B1': 'Intermediate',
+      'B2': 'Upper Intermediate',
+      'C1': 'Advanced',
+      'C2': 'Proficient'
     };
     
     const levelDescription = levelDescriptions[cefrLevel] || `${cefrLevel} level`;
     
     return `
-You are an expert ESL teacher with years of experience creating engaging and effective lesson materials. 
-Create a complete ESL lesson plan following the guidelines below.
+Create an ESL lesson for a ${levelDescription} student on the topic of "${topic}". Focus on "${focus}". The lesson should be ${lessonLength} minutes long.
 
-STUDENT INFORMATION:
-- CEFR Level: ${cefrLevel} (${levelDescription})
-- Focus Area: ${focus}
-- Topic: ${topic}
-- Preferred Lesson Length: ${lessonLength} minutes
-- Additional Notes: ${additionalNotes || 'None provided'}
+Additional notes: ${additionalNotes || 'None'}
 
-LESSON STRUCTURE:
-Create a well-structured ESL lesson with the following components:
-
-1. Warm-up activity (5-10 minutes)
-2. Vocabulary section (8-10 key words/phrases relevant to the topic and CEFR level)
-3. Main reading or dialogue text (appropriate length for CEFR level)
-4. Comprehension questions about the text
-5. Grammar focus relevant to the level and topic
-6. Practice exercises for the target grammar/vocabulary
-7. Speaking activity or discussion questions
-8. Quick final assessment or quiz
-
-Please follow these guidelines:
-- Ensure all content is appropriate for the specified CEFR level
-- Make the lesson engaging and interactive
-- Include clear instructions for each activity
-- Provide answer keys where applicable
-- Format the response as a JSON object with the following structure:
-
+Return a JSON object with this structure:
 {
-  "title": "Descriptive lesson title",
+  "title": "Lesson Title",
   "level": "${cefrLevel}",
   "focus": "${focus}",
   "estimatedTime": ${lessonLength},
@@ -200,68 +203,55 @@ Please follow these guidelines:
     {
       "type": "warmup",
       "title": "Warm-up Activity",
-      "content": "Detailed activity description",
+      "content": "Activity description",
       "timeAllocation": "5-10 minutes"
     },
     {
       "type": "vocabulary",
       "title": "Key Vocabulary",
       "words": [
-        { "term": "word1", "definition": "definition1", "example": "example sentence" },
-        ...
+        { "term": "word1", "definition": "definition1", "example": "example" },
+        { "term": "word2", "definition": "definition2", "example": "example" }
       ],
-      "timeAllocation": "10-15 minutes"
+      "timeAllocation": "10 minutes"
     },
     {
       "type": "reading",
       "title": "Reading Text",
-      "content": "Full reading text appropriate for level",
-      "timeAllocation": "10-15 minutes"
+      "content": "Short text appropriate for level",
+      "timeAllocation": "10 minutes"
     },
     {
       "type": "comprehension",
       "title": "Reading Comprehension",
       "questions": [
-        { "question": "Question 1?", "answer": "Answer 1" },
-        ...
+        { "question": "Question 1?", "answer": "Answer 1" }
       ],
       "timeAllocation": "10 minutes"
     },
     {
       "type": "grammar",
       "title": "Grammar Focus",
-      "explanation": "Explanation of grammar point",
-      "examples": ["Example 1", "Example 2", ...],
-      "timeAllocation": "15 minutes"
-    },
-    {
-      "type": "practice",
-      "title": "Practice Activities",
-      "activities": [
-        { "instruction": "Activity 1 instruction", "items": ["item1", "item2", ...], "answers": ["answer1", "answer2", ...] },
-        ...
-      ],
-      "timeAllocation": "15-20 minutes"
+      "explanation": "Brief grammar explanation",
+      "examples": ["Example 1", "Example 2"],
+      "timeAllocation": "10 minutes"
     },
     {
       "type": "speaking",
       "title": "Discussion Activity",
-      "questions": ["Question 1", "Question 2", ...],
-      "timeAllocation": "10-15 minutes"
+      "questions": ["Question 1", "Question 2"],
+      "timeAllocation": "10 minutes"
     },
     {
       "type": "assessment",
       "title": "Quick Assessment",
       "questions": [
-        { "question": "Question 1?", "options": ["A", "B", "C", "D"], "correctAnswer": "A" },
-        ...
+        { "question": "Question 1?", "options": ["A", "B", "C", "D"], "correctAnswer": "A" }
       ],
-      "timeAllocation": "5-10 minutes"
+      "timeAllocation": "5 minutes"
     }
   ]
 }
-
-Ensure the content is original, engaging, and appropriate for the specified level. Focus on practical language use in real-world contexts.
 `;
   }
   

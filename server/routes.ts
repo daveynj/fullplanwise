@@ -21,52 +21,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Set up authentication routes
   setupAuth(app);
 
-  // Check authentication middleware
+  // Authentication middleware
   const ensureAuthenticated = (req: any, res: any, next: any) => {
     if (req.isAuthenticated()) {
       return next();
     }
     res.status(401).json({ message: "Unauthorized" });
-  };
-
-  // Mocked AI service for lesson generation as fallback
-  const generateMockLesson = async (params: any) => {
-    // This is a mock function used as a fallback when AI service fails
-    console.log("Using mock lesson generator");
-
-    const mockSections = [
-      "warm-up",
-      "vocabulary",
-      "reading",
-      "comprehension",
-      "sentences",
-      "discussion",
-      "quiz"
-    ];
-
-    // Filter sections based on requested components
-    const sections = mockSections.filter(section => 
-      params.components.includes(section)
-    );
-
-    // Generate simple content structure
-    const content = JSON.stringify({
-      title: `Lesson on ${params.topic}`,
-      cefrLevel: params.cefrLevel,
-      sections: sections.map(section => ({
-        type: section,
-        content: `Generated ${section} content for ${params.topic} at ${params.cefrLevel} level`
-      })),
-      teacherNotes: `Notes for teaching ${params.topic} to a ${params.cefrLevel} student`
-    });
-
-    return {
-      title: `Lesson on ${params.topic}`,
-      topic: params.topic,
-      cefrLevel: params.cefrLevel,
-      content: content,
-      isMockContent: true  // Flag to indicate this is mock content
-    };
   };
 
   // Student Routes
@@ -236,25 +196,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         res.json(lessonResponse);
       } catch (aiError: any) {
+        // If AI generation fails, return error without deducting credits
         console.error("AI generation error:", aiError);
         
-        // If AI generation fails, fall back to mock content but still charge a credit
-        console.log("Falling back to mock content generation");
-        
-        // Use the mock function as fallback
-        const mockContent = await generateMockLesson(validatedData);
-        
-        // Deduct credit
-        await storage.updateUserCredits(req.user!.id, user.credits - 1);
-        
-        // Add error information to the response
-        const responseWithError = {
-          ...mockContent,
-          error: "AI generation failed, using fallback content",
-          errorDetail: aiError.message
-        };
-        
-        res.json(responseWithError);
+        // Return error to client with status 503 (Service Unavailable)
+        return res.status(503).json({ 
+          message: "AI service unavailable", 
+          error: aiError.message
+        });
       }
     } catch (error: any) {
       if (error instanceof z.ZodError) {
@@ -350,8 +299,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Note: Development routes for test user creation are now in auth.ts
-  
   // Create HTTP server
   const httpServer = createServer(app);
   return httpServer;
