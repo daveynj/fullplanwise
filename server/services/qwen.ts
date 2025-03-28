@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { LessonGenerateParams } from '@shared/schema';
 
-// Default Qwen API endpoint
-const QWEN_API_URL = 'https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation';
+// Default Qwen API endpoint - Updated according to documentation
+const QWEN_API_URL = 'https://dashscope.aliyuncs.com/api/v1/models/qwen-max/invoke';
 
 /**
  * Service for interacting with the Qwen AI API
@@ -12,7 +12,7 @@ export class QwenService {
   
   constructor(apiKey: string) {
     if (!apiKey) {
-      throw new Error('Qwen API key is required');
+      console.warn('Qwen API key is not provided or is empty');
     }
     this.apiKey = apiKey;
   }
@@ -24,47 +24,80 @@ export class QwenService {
    */
   async generateLesson(params: LessonGenerateParams): Promise<any> {
     try {
+      if (!this.apiKey) {
+        throw new Error('Qwen API key is not configured');
+      }
+
       const prompt = this.constructLessonPrompt(params);
+      console.log('Sending request to Qwen API...');
       
+      // Updated request format according to Qwen documentation
       const response = await axios.post(
         QWEN_API_URL,
         {
-          model: 'qwen-max',
           input: {
-            prompt,
+            messages: [
+              {
+                role: "system",
+                content: "You are an expert ESL teacher who creates engaging, level-appropriate lessons."
+              },
+              {
+                role: "user", 
+                content: prompt
+              }
+            ]
           },
           parameters: {
-            result_format: 'json',
+            result_format: "message",
+            response_format: { type: "json_object" },
             temperature: 0.7,
             top_p: 0.8,
             max_tokens: 3000,
-          },
+          }
         },
         {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${this.apiKey}`,
+            'Authorization': this.apiKey, // DashScope API doesn't use Bearer prefix
           },
         }
       );
       
-      if (response.data.output && response.data.output.text) {
+      console.log('Received response from Qwen API');
+      
+      // Parse the response based on Qwen API format
+      if (response.data.output && response.data.output.choices && 
+          response.data.output.choices.length > 0 && 
+          response.data.output.choices[0].message && 
+          response.data.output.choices[0].message.content) {
+          
+        const content = response.data.output.choices[0].message.content;
+        console.log('Successfully extracted content from response');
+        
         try {
-          // Extract valid JSON from the response
-          const jsonMatch = response.data.output.text.match(/\{[\s\S]*\}/);
-          if (jsonMatch) {
-            const jsonContent = JSON.parse(jsonMatch[0]);
-            return this.formatLessonContent(jsonContent);
-          }
+          // Try to parse the content as JSON
+          const jsonContent = JSON.parse(content);
+          return this.formatLessonContent(jsonContent);
         } catch (parseError) {
           console.error('Error parsing Qwen response as JSON:', parseError);
+          
+          // Try to extract JSON from text content
+          try {
+            const jsonMatch = content.match(/\{[\s\S]*\}/);
+            if (jsonMatch) {
+              const jsonContent = JSON.parse(jsonMatch[0]);
+              return this.formatLessonContent(jsonContent);
+            }
+          } catch (extractError) {
+            console.error('Error extracting JSON from response:', extractError);
+          }
         }
       }
       
       // If JSON parsing fails, return raw text response
       return {
         title: params.topic || 'ESL Lesson',
-        content: response.data.output?.text || 'Unable to generate lesson content',
+        content: response.data.output?.choices?.[0]?.message?.content || 'Unable to generate lesson content',
         rawResponse: response.data
       };
     } catch (error: any) {
@@ -72,6 +105,8 @@ export class QwenService {
       if (error.response) {
         console.error('Response data:', error.response.data);
         console.error('Response status:', error.response.status);
+        console.error('Request URL:', error.config.url);
+        console.error('Request headers:', error.config.headers);
       }
       throw new Error(
         `Failed to generate lesson: ${error.message}`
