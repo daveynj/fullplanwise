@@ -33,7 +33,7 @@ export class QwenService {
       
       // Request payload following OpenAI-compatible format for international endpoint
       const requestBody = {
-        model: "qwen",
+        model: "qwen-72b-chat",
         messages: [
           { 
             role: "system", 
