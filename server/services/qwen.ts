@@ -63,7 +63,21 @@ export class QwenService {
       
       // Parse the response based on DashScope API format
       console.log('DashScope API Response Status:', response.status);
-      console.log('DashScope API Response Headers:', JSON.stringify(response.headers, null, 2));
+      console.log('DashScope API Response Data:', JSON.stringify(response.data, null, 2));
+      
+      // DashScope API response format according to documentation:
+      // {
+      //   "output": {
+      //     "text": "...",
+      //     "finish_reason": "stop"
+      //   },
+      //   "usage": {
+      //     "total_tokens": 1000,
+      //     "input_tokens": 500,
+      //     "output_tokens": 500
+      //   },
+      //   "request_id": "..."
+      // }
       
       if (response.data && response.data.output && response.data.output.text) {
         const text = response.data.output.text;
@@ -86,12 +100,19 @@ export class QwenService {
           } catch (extractError) {
             console.error('Error extracting JSON from response:', extractError);
           }
+          
+          // If JSON parsing fails but we still have text, return the text as content
+          return {
+            title: `Lesson on ${params.topic}`,
+            content: text,
+            isMockContent: false
+          };
         }
       }
       
-      // If JSON parsing fails, return raw text response
+      // If no valid output, return a basic structure
       return {
-        title: params.topic || 'ESL Lesson',
+        title: params.topic ? `Lesson on ${params.topic}` : 'ESL Lesson',
         content: response.data?.output?.text || 'Unable to generate lesson content',
         rawResponse: response.data
       };
