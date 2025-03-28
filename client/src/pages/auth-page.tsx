@@ -8,9 +8,10 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2 } from "lucide-react";
+import { Loader2, User } from "lucide-react";
+import { createTestUser } from "@/lib/queryClient";
 
 const loginSchema = z.object({
   username: z.string().min(3, "Username must be at least 3 characters"),
@@ -32,6 +33,7 @@ export default function AuthPage() {
   const [activeTab, setActiveTab] = useState<string>("login");
   const [location, navigate] = useLocation();
   const { user, loginMutation, registerMutation, isLoading } = useAuth();
+  const [testUserLoading, setTestUserLoading] = useState(false);
 
   // Redirect if already logged in
   useEffect(() => {
@@ -67,6 +69,21 @@ export default function AuthPage() {
   const onRegisterSubmit = (data: RegisterFormValues) => {
     const { confirmPassword, ...registerData } = data;
     registerMutation.mutate(registerData);
+  };
+  
+  const handleTestUserLogin = async () => {
+    try {
+      setTestUserLoading(true);
+      const testUser = await createTestUser();
+      loginMutation.mutate({
+        username: testUser.username,
+        password: "password"
+      });
+    } catch (error) {
+      console.error("Failed to create test user:", error);
+    } finally {
+      setTestUserLoading(false);
+    }
   };
 
   return (
@@ -136,6 +153,34 @@ export default function AuthPage() {
                     </form>
                   </Form>
                 </CardContent>
+                <CardFooter className="flex flex-col">
+                  <div className="relative w-full flex items-center justify-center my-2">
+                    <div className="absolute inset-0 flex items-center">
+                      <span className="w-full border-t" />
+                    </div>
+                    <span className="relative px-2 text-sm text-muted-foreground bg-white">
+                      OR
+                    </span>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    className="w-full mt-2"
+                    onClick={handleTestUserLogin}
+                    disabled={testUserLoading || loginMutation.isPending}
+                  >
+                    {testUserLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Creating test user...
+                      </>
+                    ) : (
+                      <>
+                        <User className="mr-2 h-4 w-4" />
+                        Test User Login
+                      </>
+                    )}
+                  </Button>
+                </CardFooter>
               </Card>
             </TabsContent>
             

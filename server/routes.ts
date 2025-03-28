@@ -307,6 +307,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Development Routes
+  app.post("/api/dev/create-test-user", async (req, res) => {
+    try {
+      // Check if test user already exists
+      let testUser = await storage.getUserByUsername("testuser");
+      
+      if (!testUser) {
+        // Create a new test user with predefined credentials
+        testUser = await storage.createUser({
+          username: "testuser",
+          email: "test@example.com",
+          password: "password", // This will be hashed by the auth system
+          credits: 50 // Give plenty of credits for testing
+        });
+      }
+      
+      // Return user without password
+      const { password, ...userWithoutPassword } = testUser;
+      res.status(201).json(userWithoutPassword);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+  
   // Create HTTP server
   const httpServer = createServer(app);
   return httpServer;

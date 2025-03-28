@@ -23,6 +23,12 @@ export async function apiRequest(
   return res;
 }
 
+// Function to create or reset a test user (development only)
+export async function createTestUser() {
+  const res = await apiRequest("POST", "/api/dev/create-test-user");
+  return res.json();
+}
+
 type UnauthorizedBehavior = "returnNull" | "throw";
 export const getQueryFn: <T>(options: {
   on401: UnauthorizedBehavior;

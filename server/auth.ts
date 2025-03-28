@@ -119,4 +119,61 @@ export function setupAuth(app: Express) {
     const { password, ...userWithoutPassword } = req.user as SelectUser;
     res.json(userWithoutPassword);
   });
+
+  // Development only endpoint to create/reset a test user
+  if (process.env.NODE_ENV !== 'production') {
+    app.post("/api/dev/create-test-user", async (req, res, next) => {
+      try {
+        // Check if test user already exists
+        const testUsername = "testuser";
+        let testUser = await storage.getUserByUsername(testUsername);
+        
+        if (testUser) {
+          // If exists, update credits to ensure they have enough for testing
+          testUser = await storage.updateUserCredits(testUser.id, 10);
+          
+          // Login the user
+          req.login(testUser, (err) => {
+            if (err) return next(err);
+            // Remove password from the response
+            const { password, ...userWithoutPassword } = testUser as SelectUser;
+            return res.status(200).json({ 
+              message: "Test user refreshed and logged in",
+              user: userWithoutPassword 
+            });
+          });
+        } else {
+          // Create a new test user
+          const newTestUser = await storage.createUser({
+            username: testUsername,
+            password: await hashPassword("testpassword"),
+            email: "test@example.com",
+            fullName: "Test User"
+          });
+          
+          // Create a sample student
+          await storage.createStudent({
+            teacherId: newTestUser.id,
+            name: "Sample Student",
+            cefrLevel: "B1",
+            email: "student@example.com",
+            notes: "Sample student for testing"
+          });
+          
+          // Login the user
+          req.login(newTestUser, (err) => {
+            if (err) return next(err);
+            // Remove password from the response
+            const { password, ...userWithoutPassword } = newTestUser as SelectUser;
+            return res.status(201).json({ 
+              message: "Test user created and logged in",
+              user: userWithoutPassword 
+            });
+          });
+        }
+      } catch (err) {
+        next(err);
+      }
+    });
+  }
 }
