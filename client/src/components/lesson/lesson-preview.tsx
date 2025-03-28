@@ -156,11 +156,11 @@ export function LessonPreview({ lesson, onSave, savePending }: LessonPreviewProp
               <div key={index} className="border border-gray-200 rounded-lg overflow-hidden cursor-pointer hover:shadow-md transition">
                 <div className="aspect-[16/9] bg-gray-100 flex items-center justify-center">
                   <div className="text-xl font-nunito font-semibold p-4 text-center">
-                    {section.type.charAt(0).toUpperCase() + section.type.slice(1)}
+                    {section.type ? section.type.charAt(0).toUpperCase() + section.type.slice(1) : "Section"}
                   </div>
                 </div>
                 <div className="p-2 text-center text-sm font-semibold truncate">
-                  {section.type.charAt(0).toUpperCase() + section.type.slice(1)}
+                  {section.type ? section.type.charAt(0).toUpperCase() + section.type.slice(1) : "Section"}
                 </div>
               </div>
             ))}
