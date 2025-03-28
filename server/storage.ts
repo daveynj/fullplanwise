@@ -2,6 +2,10 @@ import { users, students, lessons, type User, type InsertUser, type Student, typ
 import createMemoryStore from "memorystore";
 import session from "express-session";
 import { Store } from "express-session";
+import { db } from "./db";
+import { eq, and } from "drizzle-orm";
+import connectPg from "connect-pg-simple";
+import { pool } from "./db";
 
 // modify the interface with any CRUD methods
 // you might need
@@ -31,155 +35,242 @@ export interface IStorage {
   sessionStore: Store;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<number, User>;
-  private students: Map<number, Student>;
-  private lessons: Map<number, Lesson>;
+export class DatabaseStorage implements IStorage {
   sessionStore: Store;
-  currentUserId: number;
-  currentStudentId: number;
-  currentLessonId: number;
 
   constructor() {
-    this.users = new Map();
-    this.students = new Map();
-    this.lessons = new Map();
-    this.currentUserId = 1;
-    this.currentStudentId = 1;
-    this.currentLessonId = 1;
-    
-    // Session store
-    const MemoryStore = createMemoryStore(session);
-    this.sessionStore = new MemoryStore({
-      checkPeriod: 86400000, // prune expired entries every 24h
+    const PostgresSessionStore = connectPg(session);
+    this.sessionStore = new PostgresSessionStore({ 
+      pool, 
+      tableName: 'session',
+      createTableIfMissing: true 
     });
+    console.log("Database storage initialized with PostgreSQL session store");
   }
 
   // User methods
   async getUser(id: number): Promise<User | undefined> {
-    return this.users.get(id);
+    try {
+      const [user] = await db.select().from(users).where(eq(users.id, id));
+      return user;
+    } catch (error) {
+      console.error('Error fetching user by ID:', error);
+      throw error;
+    }
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
+    try {
+      const [user] = await db.select().from(users).where(eq(users.username, username));
+      return user;
+    } catch (error) {
+      console.error('Error fetching user by username:', error);
+      throw error;
+    }
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.currentUserId++;
-    const user: User = { 
-      ...insertUser, 
-      id, 
-      credits: 5, 
-      isAdmin: false,
-      fullName: insertUser.fullName || insertUser.username, // Set username as fallback if no fullName
-      stripeCustomerId: null, 
-      stripeSubscriptionId: null,
-      subscriptionTier: "free"
-    };
-    this.users.set(id, user);
-    return user;
+    try {
+      // Ensure default values are set
+      const userToInsert = {
+        ...insertUser,
+        fullName: insertUser.fullName || insertUser.username,
+        credits: 5,
+        isAdmin: false,
+        subscriptionTier: "free"
+      };
+      
+      const [user] = await db.insert(users).values(userToInsert).returning();
+      console.log(`User created in database with ID: ${user.id}`);
+      return user;
+    } catch (error) {
+      console.error('Error creating user:', error);
+      throw error;
+    }
   }
 
   async updateUserCredits(userId: number, credits: number): Promise<User> {
-    const user = await this.getUser(userId);
-    if (!user) throw new Error("User not found");
-    
-    const updatedUser = { ...user, credits };
-    this.users.set(userId, updatedUser);
-    return updatedUser;
+    try {
+      const [updatedUser] = await db
+        .update(users)
+        .set({ credits })
+        .where(eq(users.id, userId))
+        .returning();
+      
+      if (!updatedUser) {
+        throw new Error("User not found");
+      }
+      
+      return updatedUser;
+    } catch (error) {
+      console.error('Error updating user credits:', error);
+      throw error;
+    }
   }
 
   async updateUserStripeInfo(
     userId: number, 
     stripeInfo: { stripeCustomerId: string, stripeSubscriptionId: string | null }
   ): Promise<User> {
-    const user = await this.getUser(userId);
-    if (!user) throw new Error("User not found");
-    
-    const updatedUser = { 
-      ...user, 
-      stripeCustomerId: stripeInfo.stripeCustomerId,
-      stripeSubscriptionId: stripeInfo.stripeSubscriptionId || user.stripeSubscriptionId,
-      subscriptionTier: stripeInfo.stripeSubscriptionId ? "premium" : user.subscriptionTier
-    };
-    this.users.set(userId, updatedUser);
-    return updatedUser;
+    try {
+      const [updatedUser] = await db
+        .update(users)
+        .set({ 
+          stripeCustomerId: stripeInfo.stripeCustomerId,
+          stripeSubscriptionId: stripeInfo.stripeSubscriptionId,
+          subscriptionTier: stripeInfo.stripeSubscriptionId ? "premium" : "free"
+        })
+        .where(eq(users.id, userId))
+        .returning();
+      
+      if (!updatedUser) {
+        throw new Error("User not found");
+      }
+      
+      return updatedUser;
+    } catch (error) {
+      console.error('Error updating user Stripe info:', error);
+      throw error;
+    }
   }
 
   // Student methods
   async getStudents(teacherId: number): Promise<Student[]> {
-    return Array.from(this.students.values()).filter(
-      (student) => student.teacherId === teacherId
-    );
+    try {
+      return await db
+        .select()
+        .from(students)
+        .where(eq(students.teacherId, teacherId));
+    } catch (error) {
+      console.error('Error fetching students:', error);
+      throw error;
+    }
   }
 
   async getStudent(id: number): Promise<Student | undefined> {
-    return this.students.get(id);
+    try {
+      const [student] = await db
+        .select()
+        .from(students)
+        .where(eq(students.id, id));
+      return student;
+    } catch (error) {
+      console.error('Error fetching student:', error);
+      throw error;
+    }
   }
 
   async createStudent(insertStudent: InsertStudent): Promise<Student> {
-    const id = this.currentStudentId++;
-    const now = new Date();
-    const student: Student = { 
-      ...insertStudent, 
-      id, 
-      createdAt: now,
-      email: insertStudent.email || null,
-      notes: insertStudent.notes || null
-    };
-    this.students.set(id, student);
-    return student;
+    try {
+      const [student] = await db
+        .insert(students)
+        .values(insertStudent)
+        .returning();
+      return student;
+    } catch (error) {
+      console.error('Error creating student:', error);
+      throw error;
+    }
   }
 
   async updateStudent(id: number, studentUpdate: Partial<Student>): Promise<Student> {
-    const student = await this.getStudent(id);
-    if (!student) throw new Error("Student not found");
-    
-    const updatedStudent = { ...student, ...studentUpdate };
-    this.students.set(id, updatedStudent);
-    return updatedStudent;
+    try {
+      const [updatedStudent] = await db
+        .update(students)
+        .set(studentUpdate)
+        .where(eq(students.id, id))
+        .returning();
+      
+      if (!updatedStudent) {
+        throw new Error("Student not found");
+      }
+      
+      return updatedStudent;
+    } catch (error) {
+      console.error('Error updating student:', error);
+      throw error;
+    }
   }
 
   async deleteStudent(id: number): Promise<boolean> {
-    return this.students.delete(id);
+    try {
+      const result = await db
+        .delete(students)
+        .where(eq(students.id, id))
+        .returning({ id: students.id });
+      
+      return result.length > 0;
+    } catch (error) {
+      console.error('Error deleting student:', error);
+      throw error;
+    }
   }
 
   // Lesson methods
   async getLessons(teacherId: number): Promise<Lesson[]> {
-    return Array.from(this.lessons.values()).filter(
-      (lesson) => lesson.teacherId === teacherId
-    );
+    try {
+      return await db
+        .select()
+        .from(lessons)
+        .where(eq(lessons.teacherId, teacherId));
+    } catch (error) {
+      console.error('Error fetching lessons:', error);
+      throw error;
+    }
   }
 
   async getLessonsByStudent(studentId: number): Promise<Lesson[]> {
-    return Array.from(this.lessons.values()).filter(
-      (lesson) => lesson.studentId === studentId
-    );
+    try {
+      return await db
+        .select()
+        .from(lessons)
+        .where(eq(lessons.studentId, studentId));
+    } catch (error) {
+      console.error('Error fetching lessons by student:', error);
+      throw error;
+    }
   }
 
   async getLesson(id: number): Promise<Lesson | undefined> {
-    return this.lessons.get(id);
+    try {
+      const [lesson] = await db
+        .select()
+        .from(lessons)
+        .where(eq(lessons.id, id));
+      return lesson;
+    } catch (error) {
+      console.error('Error fetching lesson:', error);
+      throw error;
+    }
   }
 
   async createLesson(insertLesson: InsertLesson): Promise<Lesson> {
-    const id = this.currentLessonId++;
-    const now = new Date();
-    const lesson: Lesson = { 
-      ...insertLesson, 
-      id, 
-      createdAt: now,
-      studentId: insertLesson.studentId || null,
-      notes: insertLesson.notes || null
-    };
-    this.lessons.set(id, lesson);
-    return lesson;
+    try {
+      const [lesson] = await db
+        .insert(lessons)
+        .values(insertLesson)
+        .returning();
+      return lesson;
+    } catch (error) {
+      console.error('Error creating lesson:', error);
+      throw error;
+    }
   }
 
   async deleteLesson(id: number): Promise<boolean> {
-    return this.lessons.delete(id);
+    try {
+      const result = await db
+        .delete(lessons)
+        .where(eq(lessons.id, id))
+        .returning({ id: lessons.id });
+      
+      return result.length > 0;
+    } catch (error) {
+      console.error('Error deleting lesson:', error);
+      throw error;
+    }
   }
 }
 
-export const storage = new MemStorage();
+// Switch to using DatabaseStorage instead of MemStorage
+export const storage = new DatabaseStorage();
