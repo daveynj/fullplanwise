@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { LessonGenerateParams } from '@shared/schema';
 
-// Default Qwen API endpoint - Updated according to documentation
-const QWEN_API_URL = 'https://dashscope.aliyuncs.com/api/v1/models/qwen-max/invoke';
+// Default Qwen API endpoint - Exact URL from Alibaba Cloud documentation
+const QWEN_API_URL = 'https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation';
 
 /**
  * Service for interacting with the Qwen AI API
@@ -31,59 +31,54 @@ export class QwenService {
       const prompt = this.constructLessonPrompt(params);
       console.log('Sending request to Qwen API...');
       
-      // Updated request format according to Qwen documentation
-      const response = await axios.post(
-        QWEN_API_URL,
-        {
-          input: {
-            messages: [
-              {
-                role: "system",
-                content: "You are an expert ESL teacher who creates engaging, level-appropriate lessons."
-              },
-              {
-                role: "user", 
-                content: prompt
-              }
-            ]
-          },
-          parameters: {
-            result_format: "message",
-            response_format: { type: "json_object" },
-            temperature: 0.7,
-            top_p: 0.8,
-            max_tokens: 3000,
-          }
+      // Request payload exactly following DashScope documentation
+      const requestBody = {
+        model: "qwen-max",
+        input: {
+          prompt: prompt
         },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': this.apiKey, // DashScope API doesn't use Bearer prefix
-          },
+        parameters: {
+          result_format: "json",
+          temperature: 0.7,
+          top_p: 0.8,
+          top_k: 50,
+          max_tokens: 3000
         }
-      );
+      };
+      
+      console.log('Request payload:', JSON.stringify(requestBody, null, 2));
+      
+      const response = await axios({
+        method: 'post',
+        url: QWEN_API_URL,
+        headers: {
+          'Authorization': this.apiKey,
+          'Content-Type': 'application/json',
+          'X-DashScope-SSE': 'disable'
+        },
+        data: requestBody
+      });
       
       console.log('Received response from Qwen API');
       
-      // Parse the response based on Qwen API format
-      if (response.data.output && response.data.output.choices && 
-          response.data.output.choices.length > 0 && 
-          response.data.output.choices[0].message && 
-          response.data.output.choices[0].message.content) {
-          
-        const content = response.data.output.choices[0].message.content;
-        console.log('Successfully extracted content from response');
+      // Parse the response based on DashScope API format
+      console.log('DashScope API Response Status:', response.status);
+      console.log('DashScope API Response Headers:', JSON.stringify(response.headers, null, 2));
+      
+      if (response.data && response.data.output && response.data.output.text) {
+        const text = response.data.output.text;
+        console.log('Successfully extracted text from response');
         
         try {
-          // Try to parse the content as JSON
-          const jsonContent = JSON.parse(content);
+          // Try to parse the text as JSON
+          const jsonContent = JSON.parse(text);
           return this.formatLessonContent(jsonContent);
         } catch (parseError) {
-          console.error('Error parsing Qwen response as JSON:', parseError);
+          console.error('Error parsing DashScope response as JSON:', parseError);
           
           // Try to extract JSON from text content
           try {
-            const jsonMatch = content.match(/\{[\s\S]*\}/);
+            const jsonMatch = text.match(/\{[\s\S]*\}/);
             if (jsonMatch) {
               const jsonContent = JSON.parse(jsonMatch[0]);
               return this.formatLessonContent(jsonContent);
@@ -97,7 +92,7 @@ export class QwenService {
       // If JSON parsing fails, return raw text response
       return {
         title: params.topic || 'ESL Lesson',
-        content: response.data.output?.choices?.[0]?.message?.content || 'Unable to generate lesson content',
+        content: response.data?.output?.text || 'Unable to generate lesson content',
         rawResponse: response.data
       };
     } catch (error: any) {
