@@ -208,7 +208,19 @@ export default function AuthPage() {
                           </FormItem>
                         )}
                       />
-                      {/* Full Name field removed as requested */}
+                      <FormField
+                        control={registerForm.control}
+                        name="fullName"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Full Name</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Your Name" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
                       <FormField
                         control={registerForm.control}
                         name="email"

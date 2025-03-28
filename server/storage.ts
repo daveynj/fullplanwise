@@ -1,6 +1,7 @@
 import { users, students, lessons, type User, type InsertUser, type Student, type InsertStudent, type Lesson, type InsertLesson } from "@shared/schema";
 import createMemoryStore from "memorystore";
 import session from "express-session";
+import { Store } from "express-session";
 
 // modify the interface with any CRUD methods
 // you might need
@@ -10,7 +11,7 @@ export interface IStorage {
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   updateUserCredits(userId: number, credits: number): Promise<User>;
-  updateUserStripeInfo(userId: number, stripeInfo: { stripeCustomerId: string, stripeSubscriptionId?: string }): Promise<User>;
+  updateUserStripeInfo(userId: number, stripeInfo: { stripeCustomerId: string, stripeSubscriptionId: string | null }): Promise<User>;
   
   // Student methods
   getStudents(teacherId: number): Promise<Student[]>;
@@ -27,14 +28,14 @@ export interface IStorage {
   deleteLesson(id: number): Promise<boolean>;
   
   // Session store
-  sessionStore: session.SessionStore;
+  sessionStore: Store;
 }
 
 export class MemStorage implements IStorage {
   private users: Map<number, User>;
   private students: Map<number, Student>;
   private lessons: Map<number, Lesson>;
-  sessionStore: session.SessionStore;
+  sessionStore: Store;
   currentUserId: number;
   currentStudentId: number;
   currentLessonId: number;
@@ -73,8 +74,8 @@ export class MemStorage implements IStorage {
       credits: 5, 
       isAdmin: false,
       fullName: insertUser.fullName || insertUser.username, // Set username as fallback if no fullName
-      stripeCustomerId: undefined, 
-      stripeSubscriptionId: undefined,
+      stripeCustomerId: null, 
+      stripeSubscriptionId: null,
       subscriptionTier: "free"
     };
     this.users.set(id, user);
@@ -92,7 +93,7 @@ export class MemStorage implements IStorage {
 
   async updateUserStripeInfo(
     userId: number, 
-    stripeInfo: { stripeCustomerId: string, stripeSubscriptionId?: string }
+    stripeInfo: { stripeCustomerId: string, stripeSubscriptionId: string | null }
   ): Promise<User> {
     const user = await this.getUser(userId);
     if (!user) throw new Error("User not found");
@@ -121,7 +122,13 @@ export class MemStorage implements IStorage {
   async createStudent(insertStudent: InsertStudent): Promise<Student> {
     const id = this.currentStudentId++;
     const now = new Date();
-    const student: Student = { ...insertStudent, id, createdAt: now };
+    const student: Student = { 
+      ...insertStudent, 
+      id, 
+      createdAt: now,
+      email: insertStudent.email || null,
+      notes: insertStudent.notes || null
+    };
     this.students.set(id, student);
     return student;
   }
@@ -159,7 +166,13 @@ export class MemStorage implements IStorage {
   async createLesson(insertLesson: InsertLesson): Promise<Lesson> {
     const id = this.currentLessonId++;
     const now = new Date();
-    const lesson: Lesson = { ...insertLesson, id, createdAt: now };
+    const lesson: Lesson = { 
+      ...insertLesson, 
+      id, 
+      createdAt: now,
+      studentId: insertLesson.studentId || null,
+      notes: insertLesson.notes || null
+    };
     this.lessons.set(id, lesson);
     return lesson;
   }
