@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { LessonGenerateParams } from '@shared/schema';
 
-// Updated Qwen API endpoint for international usage
+// Qwen API endpoint for international usage
 const QWEN_API_URL = 'https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions';
 
 /**
@@ -28,15 +28,26 @@ export class QwenService {
         throw new Error('Qwen API key is not configured');
       }
 
+      console.log('Starting Qwen API lesson generation...');
+      
+      // Validate the API key format (basic validation)
+      if (!this.apiKey.trim()) {
+        throw new Error('Empty API key provided');
+      }
+      
+      // Log the key pattern (without revealing the actual key)
+      const keyPattern = this.apiKey.substring(0, 4) + '...' + this.apiKey.substring(this.apiKey.length - 4);
+      console.log(`Using API key pattern: ${keyPattern}`);
+
       const prompt = this.constructLessonPrompt(params);
-      console.log('Sending request to Qwen API...');
+      console.log('Constructed prompt successfully');
       
-      // Try different model names in sequence
-      const modelOptions = ["qwen-max", "qwen-turbo", "qwen-plus", "qwen-72b-api", "qwen-max-0423", "qwen-turbo-0423", "qwen"];
+      // Use qwen-max model specifically as requested
+      const modelName = "qwen-max";
       
-      // Request payload following OpenAI-compatible format for international endpoint
+      // Request payload following OpenAI-compatible format for the international endpoint
       const requestBody = {
-        model: modelOptions[0], // Start with the first model
+        model: modelName,
         messages: [
           { 
             role: "system", 
@@ -53,120 +64,111 @@ export class QwenService {
         response_format: { type: "json_object" }
       };
       
-      // Try each model sequentially until one works
-      let response = null;
-      let lastError = null;
+      console.log(`Using model: ${modelName}`);
+      console.log('Request endpoint:', QWEN_API_URL);
+      console.log('Request headers:', {
+        'Authorization': 'Bearer [FIRST_4_CHARS]...[LAST_4_CHARS]',
+        'Content-Type': 'application/json'
+      });
       
-      for (const modelName of modelOptions) {
-        try {
-          // Update the model name in the request body
-          requestBody.model = modelName;
-          console.log(`Trying model: ${modelName}`);
-          console.log('Request payload:', JSON.stringify(requestBody, null, 2));
-          
-          response = await axios({
-            method: 'post',
-            url: QWEN_API_URL,
-            headers: {
-              'Authorization': `Bearer ${this.apiKey}`,
-              'Content-Type': 'application/json'
-            },
-            data: requestBody
-          });
-          
-          // If we got here, the request was successful
-          console.log(`Request with model ${modelName} was successful!`);
-          break;
-        } catch (error: any) {
-          console.warn(`Request with model ${modelName} failed:`, error.message);
-          lastError = error;
-          
-          // If it's not a 404 (model not found) error, don't try other models
-          if (error.response && error.response.status !== 404) {
-            throw error;
-          }
-          
-          // Otherwise continue to the next model
-          console.log(`Trying next model...`);
-        }
-      }
-      
-      // If we've tried all models and none worked, throw the last error
-      if (!response) {
-        console.error('All model attempts failed');
-        throw lastError || new Error('All model attempts failed');
-      }
-      
-      console.log('Received response from Qwen API');
-      
-      // Parse the response based on OpenAI-compatible API format
-      console.log('Qwen API Response Status:', response.status);
-      console.log('Qwen API Response Data:', JSON.stringify(response.data, null, 2));
-      
-      if (response.data && response.data.choices && response.data.choices.length > 0) {
-        const content = response.data.choices[0].message?.content;
+      // Make the API request
+      try {
+        console.log('Sending request to Qwen API...');
         
-        if (content) {
-          console.log('Successfully extracted content from response');
+        const response = await axios({
+          method: 'post',
+          url: QWEN_API_URL,
+          headers: {
+            'Authorization': `Bearer ${this.apiKey}`,
+            'Content-Type': 'application/json'
+          },
+          data: requestBody,
+          timeout: 60000 // 1 minute timeout
+        });
+        
+        console.log('Received response from Qwen API');
+        
+        // Parse the response based on OpenAI-compatible API format
+        console.log('Qwen API Response Status:', response.status);
+        
+        if (response.data && response.data.choices && response.data.choices.length > 0) {
+          const content = response.data.choices[0].message?.content;
           
-          try {
-            // Try to parse the content as JSON
-            const jsonContent = JSON.parse(content);
-            return this.formatLessonContent(jsonContent);
-          } catch (parseError) {
-            console.error('Error parsing Qwen response as JSON:', parseError);
+          if (content) {
+            console.log('Successfully extracted content from response');
             
-            // Try to extract JSON from content
             try {
-              const jsonMatch = content.match(/\{[\s\S]*\}/);
-              if (jsonMatch) {
-                const jsonContent = JSON.parse(jsonMatch[0]);
-                return this.formatLessonContent(jsonContent);
+              // Try to parse the content as JSON
+              const jsonContent = JSON.parse(content);
+              return this.formatLessonContent(jsonContent);
+            } catch (parseError) {
+              console.error('Error parsing Qwen response as JSON:', parseError);
+              
+              // Try to extract JSON from content
+              try {
+                const jsonMatch = content.match(/\{[\s\S]*\}/);
+                if (jsonMatch) {
+                  const jsonContent = JSON.parse(jsonMatch[0]);
+                  return this.formatLessonContent(jsonContent);
+                }
+              } catch (extractError) {
+                console.error('Error extracting JSON from response:', extractError);
               }
-            } catch (extractError) {
-              console.error('Error extracting JSON from response:', extractError);
+              
+              // If JSON parsing fails but we still have content, return the content as-is
+              return {
+                title: `Lesson on ${params.topic}`,
+                content: content,
+                isMockContent: false
+              };
             }
-            
-            // If JSON parsing fails but we still have content, return the content as-is
-            return {
-              title: `Lesson on ${params.topic}`,
-              content: content,
-              isMockContent: false
-            };
           }
         }
-      }
-      
-      // If no valid output, return a basic structure
-      return {
-        title: params.topic ? `Lesson on ${params.topic}` : 'ESL Lesson',
-        content: 'Unable to generate lesson content',
-        rawResponse: response.data
-      };
-    } catch (error: any) {
-      console.error('Error calling Qwen API:', error.message);
-      if (error.response) {
-        console.error('Response data:', error.response.data);
-        console.error('Response status:', error.response.status);
-        console.error('Request URL:', error.config.url);
-        console.error('Request headers:', error.config.headers);
-      }
-      // Provide more specific error messages to help with troubleshooting
-      let errorMsg = `Failed to generate lesson: ${error.message}`;
-      
-      if (error.response) {
-        if (error.response.status === 401) {
-          errorMsg = 'Authentication failed. Please check your API key.';
-        } else if (error.response.status === 404) {
-          errorMsg = 'Model not found. Please check if the model name is correct.';
-        } else if (error.response.status === 429) {
-          errorMsg = 'Rate limit exceeded. Please try again later.';
+        
+        // If no valid output, return a basic structure
+        return {
+          title: params.topic ? `Lesson on ${params.topic}` : 'ESL Lesson',
+          content: 'Unable to generate lesson content',
+          rawResponse: response.data
+        };
+      } catch (requestError: any) {
+        console.error('Error during API request:', requestError.message);
+        
+        if (requestError.code === 'ECONNABORTED') {
+          console.error('Request timed out after 60 seconds');
+          throw new Error('Request to Qwen API timed out. The service may be experiencing high demand or connectivity issues.');
+        }
+        
+        if (requestError.response) {
+          console.error('Response status:', requestError.response.status);
+          console.error('Response headers:', JSON.stringify(requestError.response.headers || {}, null, 2));
+          console.error('Response data:', JSON.stringify(requestError.response.data || {}, null, 2));
+          
+          // Handle specific error status codes
+          switch (requestError.response.status) {
+            case 401:
+              throw new Error('Authentication failed. Please check your Qwen API key.');
+            case 403:
+              throw new Error('Access forbidden. Your API key may not have permission to use this service.');
+            case 404:
+              throw new Error('Model not found. The "qwen-max" model may not be available or may have a different name.');
+            case 429:
+              throw new Error('Rate limit exceeded. Please try again later.');
+            case 500:
+              throw new Error('Qwen API server error. The service might be experiencing issues.');
+            default:
+              throw new Error(`Qwen API error (${requestError.response.status}): ${requestError.response.data?.error?.message || requestError.message}`);
+          }
+        } else if (requestError.request) {
+          console.error('No response received from API');
+          throw new Error('No response received from Qwen API. Please check your internet connection or API endpoint URL.');
         } else {
-          errorMsg = `Server error (${error.response.status}): ${error.response.data?.error?.message || error.message}`;
+          throw new Error(`Error setting up request: ${requestError.message}`);
         }
       }
-      
-      throw new Error(errorMsg);
+    } catch (error: any) {
+      console.error('Error in QwenService.generateLesson:', error.message);
+      throw error; // Re-throw to be handled by the caller
     }
   }
   
