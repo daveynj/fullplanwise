@@ -82,8 +82,11 @@ export type Lesson = typeof lessons.$inferSelect;
 export const lessonGenerateSchema = z.object({
   cefrLevel: z.string(),
   topic: z.string(),
+  focus: z.string().default("general"), // Area of focus (speaking, grammar, vocabulary, etc.)
+  lessonLength: z.number().int().min(15).max(120).default(60), // Lesson duration in minutes
   studentId: z.number().optional(),
   textInput: z.string().optional(),
+  additionalNotes: z.string().optional(), // Additional instructions for the AI
   components: z.array(z.string()),
   generateImages: z.boolean().default(true),
   useStudentHistory: z.boolean().default(true),

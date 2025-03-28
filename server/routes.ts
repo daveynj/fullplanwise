@@ -10,10 +10,11 @@ import {
   creditPurchaseSchema
 } from "@shared/schema";
 import Stripe from "stripe";
+import { qwenService } from "./services/qwen";
 
 // Initialize Stripe if API key is available
 const stripe = process.env.STRIPE_SECRET_KEY 
-  ? new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: "2023-10-16" })
+  ? new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: "2023-10-16" as any })
   : undefined;
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -28,10 +29,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.status(401).json({ message: "Unauthorized" });
   };
 
-  // Mocked AI service for lesson generation
-  const generateLesson = async (params: any) => {
-    // This is a mock function that would be replaced with actual AI integration
-    // In a real implementation, this would call the Qwen AI API and Stability AI API
+  // Mocked AI service for lesson generation as fallback
+  const generateMockLesson = async (params: any) => {
+    // This is a mock function used as a fallback when AI service fails
+    console.log("Using mock lesson generator");
 
     const mockSections = [
       "warm-up",
@@ -48,7 +49,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       params.components.includes(section)
     );
 
-    // Generate simple content structure - in production this would use actual AI
+    // Generate simple content structure
     const content = JSON.stringify({
       title: `Lesson on ${params.topic}`,
       cefrLevel: params.cefrLevel,
@@ -63,7 +64,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       title: `Lesson on ${params.topic}`,
       topic: params.topic,
       cefrLevel: params.cefrLevel,
-      content: content
+      content: content,
+      isMockContent: true  // Flag to indicate this is mock content
     };
   };
 
@@ -206,13 +208,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(402).json({ message: "Insufficient credits" });
       }
       
-      // Generate lesson content using AI
-      const generatedContent = await generateLesson(validatedData);
+      // Start a timer to track generation time
+      const startTime = Date.now();
+      console.log(`Starting lesson generation for user ${user.id}, topic: ${validatedData.topic}, CEFR level: ${validatedData.cefrLevel}`);
       
-      // Deduct credit
-      await storage.updateUserCredits(req.user!.id, user.credits - 1);
-      
-      res.json(generatedContent);
+      try {
+        // Generate lesson content using Qwen AI
+        const generatedContent = await qwenService.generateLesson(validatedData);
+        
+        // Calculate time taken
+        const endTime = Date.now();
+        const timeTaken = (endTime - startTime) / 1000;
+        console.log(`Lesson generation completed in ${timeTaken.toFixed(1)} seconds`);
+        
+        // Deduct credit
+        await storage.updateUserCredits(req.user!.id, user.credits - 1);
+        
+        // Prepare response
+        const lessonResponse = {
+          title: generatedContent.title,
+          topic: validatedData.topic,
+          cefrLevel: validatedData.cefrLevel,
+          content: JSON.stringify(generatedContent),
+          generatedAt: new Date().toISOString(),
+          generationTimeSeconds: timeTaken
+        };
+        
+        res.json(lessonResponse);
+      } catch (aiError: any) {
+        console.error("AI generation error:", aiError);
+        
+        // If AI generation fails, fall back to mock content but still charge a credit
+        console.log("Falling back to mock content generation");
+        
+        // Use the mock function as fallback
+        const mockContent = await generateMockLesson(validatedData);
+        
+        // Deduct credit
+        await storage.updateUserCredits(req.user!.id, user.credits - 1);
+        
+        // Add error information to the response
+        const responseWithError = {
+          ...mockContent,
+          error: "AI generation failed, using fallback content",
+          errorDetail: aiError.message
+        };
+        
+        res.json(responseWithError);
+      }
     } catch (error: any) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ message: "Invalid lesson parameters", errors: error.errors });
@@ -307,29 +350,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Development Routes
-  app.post("/api/dev/create-test-user", async (req, res) => {
-    try {
-      // Check if test user already exists
-      let testUser = await storage.getUserByUsername("testuser");
-      
-      if (!testUser) {
-        // Create a new test user with predefined credentials
-        testUser = await storage.createUser({
-          username: "testuser",
-          email: "test@example.com",
-          password: "password", // This will be hashed by the auth system
-          credits: 50 // Give plenty of credits for testing
-        });
-      }
-      
-      // Return user without password
-      const { password, ...userWithoutPassword } = testUser;
-      res.status(201).json(userWithoutPassword);
-    } catch (error: any) {
-      res.status(500).json({ message: error.message });
-    }
-  });
+  // Note: Development routes for test user creation are now in auth.ts
   
   // Create HTTP server
   const httpServer = createServer(app);
