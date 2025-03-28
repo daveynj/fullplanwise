@@ -190,14 +190,34 @@ export class QwenService {
     
     const levelDescription = levelDescriptions[cefrLevel] || `${cefrLevel} level`;
     
+    // Determine appropriate question count based on level
+    const questionCount = cefrLevel === 'A1' || cefrLevel === 'A2' ? 3 
+                        : cefrLevel === 'B1' || cefrLevel === 'B2' ? 4 
+                        : 5;
+    
+    // Determine difficulty based on CEFR level
+    const difficulty = cefrLevel === 'A1' || cefrLevel === 'A2' ? 'basic'
+                     : cefrLevel === 'B1' || cefrLevel === 'B2' ? 'intermediate'
+                     : 'advanced';
+
     return `
-Create an ESL lesson for a ${levelDescription} student on the topic of "${topic}". Focus on "${focus}". The lesson should be ${lessonLength} minutes long.
+You are an expert ESL (English as a Second Language) teacher specializing in creating engaging, pedagogically sound lessons for ${levelDescription} students. 
 
-Additional notes: ${additionalNotes || 'None'}
+LESSON SPECIFICATIONS:
+- Topic: "${topic}"  
+- Focus: "${focus}"
+- CEFR Level: ${cefrLevel} (${levelDescription})
+- Lesson Length: ${lessonLength} minutes
+- Additional notes: ${additionalNotes || 'None'}
 
-Return a JSON object with this structure:
+CLASSROOM CONTEXT AND PURPOSE:
+This lesson will be used by a teacher conducting a 1-on-1 online class via screen sharing. The content must be visually clear, logically structured, and optimized for interactive discussion.
+
+REQUIRED LESSON STRUCTURE:
+Return your response as a JSON object with the following structure:
+
 {
-  "title": "Lesson Title",
+  "title": "Engaging and descriptive lesson title",
   "level": "${cefrLevel}",
   "focus": "${focus}",
   "estimatedTime": ${lessonLength},
@@ -205,55 +225,120 @@ Return a JSON object with this structure:
     {
       "type": "warmup",
       "title": "Warm-up Activity",
-      "content": "Activity description",
-      "timeAllocation": "5-10 minutes"
+      "content": "Detailed description of a level-appropriate warm-up activity",
+      "timeAllocation": "5-10 minutes",
+      "teacherNotes": "Tips for the teacher on how to conduct this activity effectively"
     },
     {
       "type": "vocabulary",
       "title": "Key Vocabulary",
       "words": [
-        { "term": "word1", "definition": "definition1", "example": "example" },
-        { "term": "word2", "definition": "definition2", "example": "example" }
+        { 
+          "term": "contextually relevant word", 
+          "definition": "clear, concise definition", 
+          "example": "example sentence showing usage in context",
+          "notes": "pronunciation tips or additional usage guidance" 
+        }
       ],
-      "timeAllocation": "10 minutes"
+      "timeAllocation": "10-15 minutes",
+      "teacherNotes": "Suggestions for teaching these vocabulary items"
     },
     {
       "type": "reading",
       "title": "Reading Text",
-      "content": "Short text appropriate for level",
-      "timeAllocation": "10 minutes"
+      "content": "Original, level-appropriate reading passage on the topic",
+      "timeAllocation": "10-15 minutes",
+      "teacherNotes": "Reading strategies to suggest to the student"
     },
     {
       "type": "comprehension",
       "title": "Reading Comprehension",
       "questions": [
-        { "question": "Question 1?", "answer": "Answer 1" }
+        {
+          "type": "multiple-choice",
+          "question": "Level-appropriate question text",
+          "options": ["Option A", "Option B", "Option C", "Option D"],
+          "correctAnswer": "The correct option",
+          "explanation": "Why this answer is correct"
+        }
       ],
-      "timeAllocation": "10 minutes"
+      "timeAllocation": "10 minutes",
+      "teacherNotes": "How to discuss these questions to deepen understanding"
     },
     {
       "type": "grammar",
       "title": "Grammar Focus",
-      "explanation": "Brief grammar explanation",
-      "examples": ["Example 1", "Example 2"],
-      "timeAllocation": "10 minutes"
+      "explanation": "Clear explanation of the target grammar point",
+      "examples": ["Example sentence 1", "Example sentence 2"],
+      "practice": [
+        {
+          "type": "multiple-choice",
+          "question": "Grammar practice question",
+          "options": ["Option A", "Option B", "Option C"],
+          "correctAnswer": "The correct option"
+        }
+      ],
+      "timeAllocation": "15 minutes",
+      "teacherNotes": "Tips on presenting and practicing this grammar point"
     },
     {
       "type": "speaking",
       "title": "Discussion Activity",
-      "questions": ["Question 1", "Question 2"],
-      "timeAllocation": "10 minutes"
+      "introduction": "Brief introduction to the speaking activity",
+      "questions": ["Discussion question 1", "Discussion question 2", "Discussion question 3"],
+      "timeAllocation": "15 minutes",
+      "teacherNotes": "How to scaffold and support the discussion"
     },
     {
       "type": "assessment",
-      "title": "Quick Assessment",
+      "title": "Quiz",
+      "introduction": "Brief instructions for the quiz",
       "questions": [
-        { "question": "Question 1?", "options": ["A", "B", "C", "D"], "correctAnswer": "A" }
+        {
+          "id": "q1",
+          "type": "multiple-choice",
+          "title": "Knowledge Check",
+          "instructions": "Choose the best answer based on the lesson content.",
+          "content": {
+            "question": "Level-appropriate assessment question",
+            "options": ["Option A", "Option B", "Option C", "Option D"],
+            "correctAnswer": "The correct option",
+            "explanation": "Explanation of why this is correct",
+            "cognitiveLevel": "understand",
+            "questionType": "literal",
+            "teachingNotes": "How to use this question to check understanding",
+            "followUpQuestions": ["Follow-up 1", "Follow-up 2", "Follow-up 3"],
+            "languageFocus": "Relevant language structure or skill"
+          }
+        }
       ],
-      "timeAllocation": "5 minutes"
+      "timeAllocation": "10 minutes",
+      "teacherNotes": "How to administer and discuss the quiz"
     }
   ]
 }
+
+CRITICAL ASSESSMENT REQUIREMENTS:
+1. The assessment section MUST include EXACTLY ${questionCount} questions
+2. ALL questions MUST be either "multiple-choice" or "true-false" format
+3. NEVER create questions requiring written responses
+4. For "multiple-choice" questions:
+   - Include 3-4 options
+   - Make distractors plausible but clearly incorrect
+5. For "true-false" questions:
+   - Options must be exactly ["True", "False"]
+6. Ensure questions have varying cognitive levels appropriate for ${cefrLevel}:
+   - Include both literal comprehension and higher-order thinking
+   - Match cognitive levels to the student's language ability
+
+QUALITY REQUIREMENTS:
+1. Make all content original and tailored to the specified CEFR level (${cefrLevel})
+2. Include visual clarity cues where appropriate (e.g., "Display this in a table")
+3. Create content that promotes interactive discussion between teacher and student
+4. Ensure all examples and texts are culturally appropriate and globally relevant
+5. Include teacher notes with each section to guide effective instruction
+
+Create a complete, ready-to-use ESL lesson that follows all these requirements.
 `;
   }
   
