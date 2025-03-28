@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { LessonGenerateParams } from '@shared/schema';
 
-// Default Qwen API endpoint - Exact URL from Alibaba Cloud documentation
-const QWEN_API_URL = 'https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation';
+// Updated Qwen API endpoint for international usage
+const QWEN_API_URL = 'https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions';
 
 /**
  * Service for interacting with the Qwen AI API
@@ -31,19 +31,23 @@ export class QwenService {
       const prompt = this.constructLessonPrompt(params);
       console.log('Sending request to Qwen API...');
       
-      // Request payload exactly following DashScope documentation
+      // Request payload following OpenAI-compatible format for international endpoint
       const requestBody = {
-        model: "qwen-max",
-        input: {
-          prompt: prompt
-        },
-        parameters: {
-          result_format: "json",
-          temperature: 0.7,
-          top_p: 0.8,
-          top_k: 50,
-          max_tokens: 3000
-        }
+        model: "qwen",
+        messages: [
+          { 
+            role: "system", 
+            content: "You are an expert ESL teacher with years of experience creating engaging and effective lesson materials." 
+          },
+          { 
+            role: "user", 
+            content: prompt 
+          }
+        ],
+        temperature: 0.7,
+        top_p: 0.8,
+        max_tokens: 3000,
+        response_format: { type: "json_object" }
       };
       
       console.log('Request payload:', JSON.stringify(requestBody, null, 2));
@@ -52,68 +56,77 @@ export class QwenService {
         method: 'post',
         url: QWEN_API_URL,
         headers: {
-          'Authorization': this.apiKey,
-          'Content-Type': 'application/json',
-          'X-DashScope-SSE': 'disable'
+          'Authorization': `Bearer ${this.apiKey}`,
+          'Content-Type': 'application/json'
         },
         data: requestBody
       });
       
       console.log('Received response from Qwen API');
       
-      // Parse the response based on DashScope API format
-      console.log('DashScope API Response Status:', response.status);
-      console.log('DashScope API Response Data:', JSON.stringify(response.data, null, 2));
+      // Parse the response based on OpenAI-compatible API format
+      console.log('Qwen API Response Status:', response.status);
+      console.log('Qwen API Response Data:', JSON.stringify(response.data, null, 2));
       
-      // DashScope API response format according to documentation:
+      // OpenAI-compatible response format:
       // {
-      //   "output": {
-      //     "text": "...",
-      //     "finish_reason": "stop"
-      //   },
+      //   "id": "...",
+      //   "object": "chat.completion",
+      //   "created": 1677858242,
+      //   "model": "qwen",
+      //   "choices": [{
+      //     "message": {
+      //       "role": "assistant",
+      //       "content": "..." // JSON content
+      //     },
+      //     "finish_reason": "stop",
+      //     "index": 0
+      //   }],
       //   "usage": {
-      //     "total_tokens": 1000,
-      //     "input_tokens": 500,
-      //     "output_tokens": 500
-      //   },
-      //   "request_id": "..."
+      //     "prompt_tokens": 13,
+      //     "completion_tokens": 7,
+      //     "total_tokens": 20
+      //   }
       // }
       
-      if (response.data && response.data.output && response.data.output.text) {
-        const text = response.data.output.text;
-        console.log('Successfully extracted text from response');
+      if (response.data && response.data.choices && response.data.choices.length > 0) {
+        const content = response.data.choices[0].message?.content;
         
-        try {
-          // Try to parse the text as JSON
-          const jsonContent = JSON.parse(text);
-          return this.formatLessonContent(jsonContent);
-        } catch (parseError) {
-          console.error('Error parsing DashScope response as JSON:', parseError);
+        if (content) {
+          console.log('Successfully extracted content from response');
           
-          // Try to extract JSON from text content
           try {
-            const jsonMatch = text.match(/\{[\s\S]*\}/);
-            if (jsonMatch) {
-              const jsonContent = JSON.parse(jsonMatch[0]);
-              return this.formatLessonContent(jsonContent);
+            // Try to parse the content as JSON
+            const jsonContent = JSON.parse(content);
+            return this.formatLessonContent(jsonContent);
+          } catch (parseError) {
+            console.error('Error parsing Qwen response as JSON:', parseError);
+            
+            // Try to extract JSON from content
+            try {
+              const jsonMatch = content.match(/\{[\s\S]*\}/);
+              if (jsonMatch) {
+                const jsonContent = JSON.parse(jsonMatch[0]);
+                return this.formatLessonContent(jsonContent);
+              }
+            } catch (extractError) {
+              console.error('Error extracting JSON from response:', extractError);
             }
-          } catch (extractError) {
-            console.error('Error extracting JSON from response:', extractError);
+            
+            // If JSON parsing fails but we still have content, return the content as-is
+            return {
+              title: `Lesson on ${params.topic}`,
+              content: content,
+              isMockContent: false
+            };
           }
-          
-          // If JSON parsing fails but we still have text, return the text as content
-          return {
-            title: `Lesson on ${params.topic}`,
-            content: text,
-            isMockContent: false
-          };
         }
       }
       
       // If no valid output, return a basic structure
       return {
         title: params.topic ? `Lesson on ${params.topic}` : 'ESL Lesson',
-        content: response.data?.output?.text || 'Unable to generate lesson content',
+        content: 'Unable to generate lesson content',
         rawResponse: response.data
       };
     } catch (error: any) {
