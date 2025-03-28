@@ -8,7 +8,7 @@ export const users = pgTable("users", {
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
   email: text("email").notNull(),
-  fullName: text("full_name").notNull(),
+  fullName: text("full_name"),
   credits: integer("credits").notNull().default(5),
   isAdmin: boolean("is_admin").notNull().default(false),
   stripeCustomerId: text("stripe_customer_id"),
@@ -46,6 +46,8 @@ export const insertUserSchema = createInsertSchema(users).pick({
   password: true,
   email: true,
   fullName: true,
+}).extend({
+  fullName: z.string().optional(),
 });
 
 export const insertStudentSchema = createInsertSchema(students).pick({

@@ -55,7 +55,6 @@ export default function AuthPage() {
     defaultValues: {
       username: "",
       email: "",
-      fullName: "",
       password: "",
       confirmPassword: "",
     },
@@ -164,19 +163,7 @@ export default function AuthPage() {
                           </FormItem>
                         )}
                       />
-                      <FormField
-                        control={registerForm.control}
-                        name="fullName"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Full Name</FormLabel>
-                            <FormControl>
-                              <Input placeholder="John Doe" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                      {/* Full Name field removed as requested */}
                       <FormField
                         control={registerForm.control}
                         name="email"

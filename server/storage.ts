@@ -72,6 +72,7 @@ export class MemStorage implements IStorage {
       id, 
       credits: 5, 
       isAdmin: false,
+      fullName: insertUser.fullName || insertUser.username, // Set username as fallback if no fullName
       stripeCustomerId: undefined, 
       stripeSubscriptionId: undefined,
       subscriptionTier: "free"
