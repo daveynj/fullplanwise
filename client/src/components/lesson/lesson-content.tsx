@@ -312,7 +312,7 @@ export function LessonContent({ content }: LessonContentProps) {
                         <p>{section.explanation}</p>
                       </div>
                     )}
-                    {section.examples && section.examples.length > 0 && (
+                    {section.examples && Array.isArray(section.examples) && section.examples.length > 0 && (
                       <div>
                         <h4 className="font-medium mb-2">Examples</h4>
                         <ul className="list-disc list-inside space-y-1">
@@ -322,17 +322,29 @@ export function LessonContent({ content }: LessonContentProps) {
                         </ul>
                       </div>
                     )}
-                    {section.practice && section.practice.length > 0 && (
+                    {section.examples && !Array.isArray(section.examples) && (
+                      <div>
+                        <h4 className="font-medium mb-2">Examples</h4>
+                        <p>{String(section.examples)}</p>
+                      </div>
+                    )}
+                    {section.practice && Array.isArray(section.practice) && section.practice.length > 0 && (
                       <div className="mt-4">
                         <h4 className="font-medium mb-2">Practice</h4>
                         {renderQuestions(section.practice)}
+                      </div>
+                    )}
+                    {section.practice && !Array.isArray(section.practice) && (
+                      <div className="mt-4">
+                        <h4 className="font-medium mb-2">Practice</h4>
+                        <p>{String(section.practice)}</p>
                       </div>
                     )}
                   </div>
                 ) : section.type === "speaking" || section.type === "discussion" ? (
                   <div>
                     {section.introduction && <p className="mb-3">{section.introduction}</p>}
-                    {section.questions && section.questions.length > 0 && (
+                    {section.questions && Array.isArray(section.questions) && section.questions.length > 0 && (
                       <div className="space-y-2">
                         {section.questions.map((question: string, i: number) => (
                           <div key={i} className="flex items-start">
@@ -340,6 +352,11 @@ export function LessonContent({ content }: LessonContentProps) {
                             <p>{question}</p>
                           </div>
                         ))}
+                      </div>
+                    )}
+                    {section.questions && !Array.isArray(section.questions) && (
+                      <div className="space-y-2">
+                        <p>{String(section.questions)}</p>
                       </div>
                     )}
                   </div>
