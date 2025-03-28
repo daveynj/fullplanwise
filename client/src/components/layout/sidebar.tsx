@@ -6,7 +6,7 @@ import { CreditBadge } from "@/components/shared/credit-badge";
 import { LogOut, Home, Wand2, Users, Book, Settings, CreditCard } from "lucide-react";
 
 export function Sidebar() {
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
   const { user, logoutMutation } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -20,6 +20,20 @@ export function Sidebar() {
     { path: "/students", label: "Students", icon: <Users className="mr-3 text-xl" /> },
     { path: "/history", label: "Lesson History", icon: <Book className="mr-3 text-xl" /> },
   ];
+  
+  // Function to render nav items without nested <a> tags
+  const renderNavItem = (item: { path: string, label: string, icon: React.ReactNode }) => (
+    <li key={item.path} className="mb-2">
+      <Link href={item.path}>
+        <div className={`flex items-center p-3 rounded-lg hover:bg-primary-light transition cursor-pointer ${
+          location === item.path ? "bg-primary-light text-white" : "text-white"
+        }`}>
+          {item.icon}
+          <span>{item.label}</span>
+        </div>
+      </Link>
+    </li>
+  );
 
   const accountItems = [
     { path: "/settings", label: "Settings", icon: <Settings className="mr-3 text-xl" /> },
@@ -44,34 +58,12 @@ export function Sidebar() {
       <nav className="p-4">
         <div className="mb-3 text-sm font-semibold uppercase text-blue-200 pl-3">Main</div>
         <ul>
-          {navItems.map((item) => (
-            <li key={item.path} className="mb-2">
-              <Link href={item.path}>
-                <a className={`flex items-center p-3 rounded-lg hover:bg-primary-light transition ${
-                  location === item.path ? "bg-primary-light text-white" : "text-white"
-                }`}>
-                  {item.icon}
-                  <span>{item.label}</span>
-                </a>
-              </Link>
-            </li>
-          ))}
+          {navItems.map(renderNavItem)}
         </ul>
         
         <div className="mb-3 mt-6 text-sm font-semibold uppercase text-blue-200 pl-3">Account</div>
         <ul>
-          {accountItems.map((item) => (
-            <li key={item.path} className="mb-2">
-              <Link href={item.path}>
-                <a className={`flex items-center p-3 rounded-lg hover:bg-primary-light transition ${
-                  location === item.path ? "bg-primary-light text-white" : "text-white"
-                }`}>
-                  {item.icon}
-                  <span>{item.label}</span>
-                </a>
-              </Link>
-            </li>
-          ))}
+          {accountItems.map(renderNavItem)}
           <li className="mb-2">
             <Button 
               variant="link" 
@@ -92,11 +84,12 @@ export function Sidebar() {
             <p className="text-sm text-blue-200">Available Credits</p>
             <p className="text-2xl font-nunito font-bold text-white">{user?.credits || 0}</p>
           </div>
-          <Link href="/buy-credits">
-            <Button className="bg-accent text-text font-semibold px-3 py-2 rounded-lg text-sm hover:bg-amber-300 transition">
-              Buy More
-            </Button>
-          </Link>
+          <Button 
+            className="bg-accent text-text font-semibold px-3 py-2 rounded-lg text-sm hover:bg-amber-300 transition"
+            onClick={() => setLocation('/buy-credits')}
+          >
+            Buy More
+          </Button>
         </div>
       </div>
     </>

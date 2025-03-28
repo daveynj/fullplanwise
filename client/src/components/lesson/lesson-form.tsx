@@ -67,6 +67,7 @@ export function LessonForm({ students, onSubmit, credits }: LessonFormProps) {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      studentId: "none",
       cefrLevel: "B1",
       topic: "",
       textInput: "",
@@ -77,10 +78,12 @@ export function LessonForm({ students, onSubmit, credits }: LessonFormProps) {
   });
 
   const handleSubmit = (values: FormValues) => {
-    // Convert studentId to number if it exists
+    // Convert studentId to number if it exists and isn't 'none'
     const parsedValues = {
       ...values,
-      studentId: values.studentId ? parseInt(values.studentId) : undefined,
+      studentId: values.studentId && values.studentId !== 'none' 
+        ? parseInt(values.studentId) 
+        : undefined,
     };
     
     onSubmit(parsedValues);
@@ -107,7 +110,7 @@ export function LessonForm({ students, onSubmit, credits }: LessonFormProps) {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="">No specific student</SelectItem>
+                      <SelectItem value="none">No specific student</SelectItem>
                       {students.map((student) => (
                         <SelectItem key={student.id} value={student.id.toString()}>
                           {student.name} ({student.cefrLevel})
