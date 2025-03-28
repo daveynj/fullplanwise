@@ -7,13 +7,44 @@ import {
   MessageCircle, 
   CheckSquare 
 } from "lucide-react";
+import { useState, useEffect } from "react";
 
 interface LessonContentProps {
   content: any;
 }
 
 export function LessonContent({ content }: LessonContentProps) {
-  if (!content.sections || !Array.isArray(content.sections)) {
+  const [parsedContent, setParsedContent] = useState<any>(null);
+  
+  // Parse the content if it's a string (from database)
+  useEffect(() => {
+    if (content) {
+      try {
+        // If it's a string (from database), parse it
+        if (typeof content === 'string') {
+          setParsedContent(JSON.parse(content));
+        } else {
+          // If it's already an object (from direct API response)
+          setParsedContent(content);
+        }
+      } catch (err) {
+        console.error("Error parsing lesson content:", err);
+        setParsedContent(null);
+      }
+    }
+  }, [content]);
+  
+  // Show loading state while parsing
+  if (!parsedContent) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-gray-500">Loading lesson content...</p>
+      </div>
+    );
+  }
+  
+  // Handle missing or invalid sections
+  if (!parsedContent.sections || !Array.isArray(parsedContent.sections)) {
     return (
       <div className="text-center py-8">
         <p className="text-gray-500">No lesson content available</p>
@@ -73,9 +104,23 @@ export function LessonContent({ content }: LessonContentProps) {
     return headings[type] || type.charAt(0).toUpperCase() + type.slice(1);
   };
 
+  // Helper function to safely render content with splitting
+  const renderContentWithSplit = (content: any, splitPattern: string) => {
+    if (!content) return null;
+    
+    if (typeof content === 'string') {
+      return content.split(splitPattern).map((item: string, i: number) => (
+        <p key={i}>{item.trim()}</p>
+      ));
+    }
+    
+    // If not a string, just render as is
+    return <p>{String(content)}</p>;
+  };
+
   return (
     <div className="lesson-content space-y-8">
-      {content.sections.map((section: any, index: number) => {
+      {parsedContent.sections.map((section: any, index: number) => {
         const style = sectionStyles[section.type] || { 
           icon: <BookOpen className="text-primary text-xl" />, 
           bgColor: "bg-gray-100" 
@@ -96,27 +141,31 @@ export function LessonContent({ content }: LessonContentProps) {
                 {/* Render different content based on section type */}
                 {section.type === "vocabulary" ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* Assuming vocabulary is in content as a string for now */}
-                    {section.content}
+                    {/* Safely render vocabulary content */}
+                    {typeof section.content === 'string' ? section.content : String(section.content)}
                   </div>
                 ) : section.type === "comprehension" || section.type === "discussion" ? (
                   <ol className="list-decimal list-inside space-y-3">
                     {/* Render as a list if it's questions */}
-                    {section.content.split('\n').map((line: string, i: number) => (
+                    {typeof section.content === 'string' && section.content.split('\n').map((line: string, i: number) => (
                       <li key={i}>{line.trim()}</li>
                     ))}
+                    {typeof section.content !== 'string' && <li>{String(section.content)}</li>}
                   </ol>
                 ) : section.type === "quiz" ? (
                   <div>
-                    {/* Render quiz content */}
-                    {section.content}
+                    {/* Render quiz content safely */}
+                    {typeof section.content === 'string' ? section.content : String(section.content)}
                   </div>
                 ) : (
                   // Default rendering for other section types
                   <div className="space-y-3">
-                    {section.content.split('\n\n').map((paragraph: string, i: number) => (
-                      <p key={i}>{paragraph}</p>
-                    ))}
+                    {typeof section.content === 'string' ? 
+                      section.content.split('\n\n').map((paragraph: string, i: number) => (
+                        <p key={i}>{paragraph}</p>
+                      )) : 
+                      <p>{String(section.content)}</p>
+                    }
                   </div>
                 )}
               </div>
