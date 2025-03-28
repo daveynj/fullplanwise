@@ -1,0 +1,238 @@
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { Sidebar } from "@/components/layout/sidebar";
+import { Header } from "@/components/layout/header";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Link } from "wouter";
+import { 
+  BookOpen, 
+  Search, 
+  Download, 
+  Plus, 
+  Filter, 
+  Calendar, 
+  Loader2 
+} from "lucide-react";
+
+export default function LessonHistoryPage() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [cefrFilter, setCefrFilter] = useState<string>("");
+  const [dateFilter, setDateFilter] = useState<string>("");
+  
+  // Fetch all lessons
+  const { data: lessons = [], isLoading } = useQuery({
+    queryKey: ["/api/lessons"],
+    retry: false,
+  });
+  
+  // Filter lessons based on search and filters
+  const filteredLessons = lessons.filter((lesson: any) => {
+    const matchesSearch = 
+      searchQuery === "" || 
+      lesson.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      lesson.topic.toLowerCase().includes(searchQuery.toLowerCase());
+      
+    const matchesCefr = cefrFilter === "" || lesson.cefrLevel === cefrFilter;
+    
+    let matchesDate = true;
+    if (dateFilter) {
+      const lessonDate = new Date(lesson.createdAt);
+      const today = new Date();
+      const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+      const monthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+      
+      if (dateFilter === "today") {
+        matchesDate = lessonDate.toDateString() === today.toDateString();
+      } else if (dateFilter === "week") {
+        matchesDate = lessonDate >= weekAgo;
+      } else if (dateFilter === "month") {
+        matchesDate = lessonDate >= monthAgo;
+      }
+    }
+    
+    return matchesSearch && matchesCefr && matchesDate;
+  });
+  
+  // Format date
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col md:flex-row bg-gray-light">
+      <Sidebar />
+      
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <Header />
+        
+        <main className="flex-1 overflow-y-auto p-4 md:p-6">
+          <div className="max-w-7xl mx-auto">
+            {/* Page header */}
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+              <div>
+                <h1 className="text-2xl md:text-3xl font-nunito font-bold">Lesson History</h1>
+                <p className="text-gray-600">All your created lessons in one place</p>
+              </div>
+              <div className="mt-4 md:mt-0">
+                <Link href="/generate">
+                  <Button className="bg-primary hover:bg-primary/90">
+                    <Plus className="mr-2 h-4 w-4" /> New Lesson
+                  </Button>
+                </Link>
+              </div>
+            </div>
+            
+            {/* Search and filters */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+              <div className="md:col-span-2 relative">
+                <Input 
+                  type="text" 
+                  placeholder="Search by title or topic..." 
+                  className="pl-10 pr-4 py-2 w-full"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                <Search className="absolute left-3 top-2.5 text-gray-400 h-5 w-5" />
+              </div>
+              
+              <div className="relative">
+                <Select value={cefrFilter} onValueChange={setCefrFilter}>
+                  <SelectTrigger className="w-full">
+                    <div className="flex items-center">
+                      <Filter className="mr-2 h-4 w-4 text-gray-400" />
+                      <span>{cefrFilter || "CEFR Level"}</span>
+                    </div>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">All Levels</SelectItem>
+                    <SelectItem value="A1">A1</SelectItem>
+                    <SelectItem value="A2">A2</SelectItem>
+                    <SelectItem value="B1">B1</SelectItem>
+                    <SelectItem value="B2">B2</SelectItem>
+                    <SelectItem value="C1">C1</SelectItem>
+                    <SelectItem value="C2">C2</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="relative">
+                <Select value={dateFilter} onValueChange={setDateFilter}>
+                  <SelectTrigger className="w-full">
+                    <div className="flex items-center">
+                      <Calendar className="mr-2 h-4 w-4 text-gray-400" />
+                      <span>{dateFilter ? 
+                        dateFilter === "today" ? "Today" :
+                        dateFilter === "week" ? "Past Week" :
+                        "Past Month" : "Time Period"}
+                      </span>
+                    </div>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">All Time</SelectItem>
+                    <SelectItem value="today">Today</SelectItem>
+                    <SelectItem value="week">Past Week</SelectItem>
+                    <SelectItem value="month">Past Month</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            
+            {/* Lessons list */}
+            {isLoading ? (
+              <div className="flex justify-center py-12">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              </div>
+            ) : filteredLessons.length > 0 ? (
+              <div className="space-y-4">
+                {filteredLessons.map((lesson: any) => (
+                  <Card key={lesson.id} className="hover:shadow-md transition-shadow">
+                    <CardContent className="p-6">
+                      <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+                        <div className="flex items-start">
+                          <div className="bg-primary/10 p-2 rounded-lg mr-4 flex-shrink-0">
+                            <BookOpen className="h-6 w-6 text-primary" />
+                          </div>
+                          <div>
+                            <h3 className="font-nunito font-semibold text-lg">{lesson.title}</h3>
+                            <div className="flex flex-wrap items-center gap-2 mt-1">
+                              <Badge variant="outline" className="bg-blue-100 text-blue-800">
+                                CEFR {lesson.cefrLevel}
+                              </Badge>
+                              <span className="text-sm text-gray-500">
+                                {formatDate(lesson.createdAt)}
+                              </span>
+                              {lesson.studentId && (
+                                <Badge variant="outline" className="bg-gray-100">
+                                  Student #{lesson.studentId}
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="mt-4 md:mt-0 flex space-x-2">
+                          <Button variant="outline" size="sm">
+                            <Download className="mr-2 h-4 w-4" /> Export
+                          </Button>
+                          <Link href={`/history/${lesson.id}`}>
+                            <Button size="sm" className="bg-primary hover:bg-primary/90">
+                              View Lesson
+                            </Button>
+                          </Link>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <Card>
+                <CardContent className="flex flex-col items-center justify-center py-12">
+                  <BookOpen className="h-16 w-16 text-gray-300 mb-4" />
+                  {searchQuery || cefrFilter || dateFilter ? (
+                    <>
+                      <h3 className="text-xl font-nunito font-semibold mb-2">No lessons found</h3>
+                      <p className="text-gray-500 text-center mb-4">
+                        No lessons match your current filters.
+                      </p>
+                      <Button 
+                        variant="outline" 
+                        onClick={() => {
+                          setSearchQuery("");
+                          setCefrFilter("");
+                          setDateFilter("");
+                        }}
+                      >
+                        Clear Filters
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <h3 className="text-xl font-nunito font-semibold mb-2">No lessons yet</h3>
+                      <p className="text-gray-500 text-center mb-4">
+                        You haven't created any lessons yet. Generate your first lesson to get started.
+                      </p>
+                      <Link href="/generate">
+                        <Button className="bg-primary hover:bg-primary/90">
+                          <Plus className="mr-2 h-4 w-4" /> Create Your First Lesson
+                        </Button>
+                      </Link>
+                    </>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+}
