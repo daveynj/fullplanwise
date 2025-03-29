@@ -256,100 +256,123 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
     {
       "type": "warmup",
       "title": "Warm-up Activity",
-      "content": "Brief, engaging activity introducing the main topic and 5 key vocabulary items that will appear in the reading",
+      "content": "Brief, engaging activity introducing the main topic and our 5 key vocabulary items: recycling, pollution, ecosystem, landfill, and sustainability.",
       "questions": [
-        "1-2 warm-up questions to start a discussion on the topic",
-        "Have you ever heard of [vocabulary item 1]?",
-        "What do you think [vocabulary item 2] means?"
+        "What do you know about environmental protection?",
+        "Have you ever practiced recycling at home?",
+        "What kinds of pollution have you seen in your area?",
+        "Why do you think ecosystems are important?",
+        "What can we do to make our world more sustainable?"
       ],
-      "imageDescription": "Description of an appropriate image to display with this activity",
-      "targetVocabulary": ["term1", "term2", "term3", "term4", "term5"],
+      "imageDescription": "A clean park with recycling bins, trees, and people enjoying nature",
+      "targetVocabulary": ["recycling", "pollution", "ecosystem", "landfill", "sustainability"],
       "timeAllocation": "5 minutes",
-      "teacherNotes": "Tips for conducting this warm-up effectively and introducing the target vocabulary words"
+      "teacherNotes": "Start by showing images of each vocabulary item. Ask students to share any experiences with recycling or pollution in their neighborhoods."
     },
     {
       "type": "reading",
       "title": "Reading Text",
-      "introduction": "Brief introduction to the reading passage",
+      "introduction": "Let's read about why environmental protection is important and what we can do to help.",
       "paragraphs": [
-        "Paragraph 1 text that includes 1-2 target vocabulary terms with context clues",
-        "Paragraph 2 text with 1-2 more target vocabulary terms and supporting details",
-        "Paragraph 3 continuing the narrative with more target vocabulary",
-        "Paragraph 4 developing the topic with additional details and examples",
-        "Paragraph 5 concluding the passage and reinforcing key vocabulary"
+        "Environmental protection is becoming more important every day. People around the world are realizing that we need to take care of our planet. One simple way we can help is by recycling items like paper, plastic, and glass instead of throwing them away.",
+        "Pollution is a serious problem that affects our air, water, and land. When factories release harmful chemicals or when we use too many cars, the air becomes dirty and difficult to breathe. Similarly, when trash is dumped into rivers and oceans, it harms the fish and other creatures living there.",
+        "Every living thing is part of an ecosystem, which is like a community where plants, animals, and their environment all depend on each other. When one part of an ecosystem is damaged by pollution or development, it can affect everything else. For example, if bees disappear, many plants cannot produce fruits because bees help with pollination.",
+        "Most of our garbage ends up in landfills, which are large areas where waste is buried underground. Landfills take up valuable space and can leak harmful substances into the soil and water. By reducing waste and recycling more, we can send less trash to landfills and protect our environment.",
+        "For a better future, we need to focus on sustainability, which means meeting our needs today without making it harder for future generations. Using renewable energy like solar and wind power, conserving water, and protecting forests are all ways to live more sustainably. Everyone can contribute to environmental protection through small daily actions."
       ],
-      "imageDescription": "Description of an image that captures the essence of the reading text",
+      "imageDescription": "A split image showing a polluted landscape on one side and a clean, green landscape on the other side, representing the impact of environmental protection efforts",
       "timeAllocation": "15 minutes",
-      "teacherNotes": "Reading strategies to suggest to the student"
+      "teacherNotes": "Have students read the passage once for general understanding, then a second time to identify the vocabulary words in context. Ask them to underline unknown words."
     },
     {
       "type": "vocabulary",
       "title": "Key Vocabulary",
-      "introduction": "Let's learn 5 important words from the reading passage.",
+      "introduction": "Let's learn 5 important words from the reading passage about environmental protection.",
       "words": [
         {
-          "term": "vocabulary word 1 from the reading",
-          "partOfSpeech": "noun/verb/adj/etc",
-          "definition": "Clear, CEFR-level appropriate definition that a student of this level can understand",
-          "example": "Example sentence using the word in context from the reading",
-          "imageDescription": "Description of an image representing this word",
-          "pronunciation": "Pronunciation tip if relevant"
+          "term": "recycling",
+          "partOfSpeech": "noun",
+          "definition": "The process of collecting used materials and making them into new products instead of throwing them away.",
+          "example": "One simple way we can help is by recycling items like paper, plastic, and glass instead of throwing them away.",
+          "imageDescription": "Different colored recycling bins with symbols for paper, plastic, and glass",
+          "pronunciation": "ri-'saɪ-klɪŋ"
         },
         {
-          "term": "vocabulary word 2 from the reading",
-          "partOfSpeech": "noun/verb/adj/etc",
-          "definition": "Clear, CEFR-level appropriate definition",
-          "example": "Example sentence using the word in context from the reading",
-          "imageDescription": "Description of an image representing this word"
+          "term": "pollution",
+          "partOfSpeech": "noun",
+          "definition": "The presence of harmful substances in the environment, such as dirty chemicals in the air, water, or soil.",
+          "example": "Pollution is a serious problem that affects our air, water, and land.",
+          "imageDescription": "A factory with smoke coming from chimneys polluting the air"
         },
         {
-          "term": "vocabulary word 3 from the reading",
-          "partOfSpeech": "noun/verb/adj/etc",
-          "definition": "Clear, CEFR-level appropriate definition",
-          "example": "Example sentence using the word in context from the reading",
-          "imageDescription": "Description of an image representing this word"
+          "term": "ecosystem",
+          "partOfSpeech": "noun",
+          "definition": "A community of living things and their environment, all working together as a system.",
+          "example": "Every living thing is part of an ecosystem, which is like a community where plants, animals, and their environment all depend on each other.",
+          "imageDescription": "A forest showing trees, plants, animals, insects, and a small stream all living together"
         },
         {
-          "term": "vocabulary word 4 from the reading",
-          "partOfSpeech": "noun/verb/adj/etc",
-          "definition": "Clear, CEFR-level appropriate definition",
-          "example": "Example sentence using the word in context from the reading",
-          "imageDescription": "Description of an image representing this word"
+          "term": "landfill",
+          "partOfSpeech": "noun",
+          "definition": "A place where waste is buried under the ground after being collected from homes and businesses.",
+          "example": "Most of our garbage ends up in landfills, which are large areas where waste is buried underground.",
+          "imageDescription": "A large area with piles of garbage being covered with soil by bulldozers"
         },
         {
-          "term": "vocabulary word 5 from the reading",
-          "partOfSpeech": "noun/verb/adj/etc",
-          "definition": "Clear, CEFR-level appropriate definition",
-          "example": "Example sentence using the word in context from the reading",
-          "imageDescription": "Description of an image representing this word"
+          "term": "sustainability",
+          "partOfSpeech": "noun",
+          "definition": "The idea of using resources carefully so they will last for future generations.",
+          "example": "For a better future, we need to focus on sustainability, which means meeting our needs today without making it harder for future generations.",
+          "imageDescription": "Solar panels, wind turbines, and people planting trees, representing sustainable practices"
         }
       ],
-      "practice": "Activity to practice using the vocabulary in new contexts",
+      "practice": "Match each vocabulary word with its correct definition, then create your own sentences using each word to describe what you can do to protect the environment.",
       "timeAllocation": "10 minutes",
-      "teacherNotes": "How to teach these vocabulary items effectively for this CEFR level"
+      "teacherNotes": "Use pictures to illustrate each vocabulary item. Have students practice pronouncing each word before discussing its meaning."
     },
     {
       "type": "comprehension",
       "title": "Reading Comprehension",
-      "introduction": "Brief introduction to check understanding",
+      "introduction": "Let's check how well you understood the reading passage.",
       "questions": [
         {
           "type": "multiple-choice",
-          "question": "Specific question about content from the reading",
-          "options": ["Option A", "Option B", "Option C", "Option D"],
-          "correctAnswer": "The correct option",
-          "explanation": "Why this answer is correct"
+          "question": "What is one way we can help protect the environment according to the passage?",
+          "options": ["Using more plastic bags", "Recycling paper, plastic, and glass", "Creating more landfills", "Increasing pollution"],
+          "correctAnswer": "Recycling paper, plastic, and glass",
+          "explanation": "The reading states that 'One simple way we can help is by recycling items like paper, plastic, and glass instead of throwing them away.'"
+        },
+        {
+          "type": "multiple-choice",
+          "question": "What does the text say pollution affects?",
+          "options": ["Only water", "Only land", "Air, water, and land", "Only forests"],
+          "correctAnswer": "Air, water, and land",
+          "explanation": "The passage mentions that 'Pollution is a serious problem that affects our air, water, and land.'"
         },
         {
           "type": "true-false",
-          "question": "Statement based on the reading",
+          "question": "According to the reading, an ecosystem is where plants and animals live independently from each other.",
           "options": ["True", "False"],
-          "correctAnswer": "True or False",
-          "explanation": "Explanation referencing specific content from the reading"
+          "correctAnswer": "False",
+          "explanation": "The reading describes an ecosystem as 'a community where plants, animals, and their environment all depend on each other.'"
+        },
+        {
+          "type": "multiple-choice",
+          "question": "What problem do landfills create according to the text?",
+          "options": ["They take up too much space", "They can leak harmful substances", "They are too expensive to maintain", "Both A and B"],
+          "correctAnswer": "Both A and B",
+          "explanation": "The reading states that 'Landfills take up valuable space and can leak harmful substances into the soil and water.'"
+        },
+        {
+          "type": "multiple-choice",
+          "question": "What does 'sustainability' mean according to the passage?",
+          "options": ["Using more resources quickly", "Protecting only endangered animals", "Meeting our needs today without harming future generations", "Building more landfills"],
+          "correctAnswer": "Meeting our needs today without harming future generations",
+          "explanation": "The text explains sustainability as 'meeting our needs today without making it harder for future generations.'"
         }
       ],
       "timeAllocation": "10 minutes",
-      "teacherNotes": "Tips for discussing these comprehension questions"
+      "teacherNotes": "Have students answer questions individually first, then discuss as a group. Focus on having them locate the evidence for each answer in the text."
     },
     {
       "type": "sentenceFrames",
