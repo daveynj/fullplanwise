@@ -675,11 +675,33 @@ Create a complete, interactive, visually engaging ESL lesson that strictly follo
       // Create a copy of the section to modify
       const fixedSection = { ...section };
       
-      // Fix questions property if it's a string or object
+      // Fix questions property if it's a string, object, or number (count)
       if (fixedSection.questions && !Array.isArray(fixedSection.questions)) {
         if (typeof fixedSection.questions === 'string') {
           // Convert string to array with one item
           fixedSection.questions = [fixedSection.questions];
+        } else if (typeof fixedSection.questions === 'number') {
+          // If questions is a number, it's likely the count of questions intended
+          // Generate placeholder questions based on the section type
+          const count = Math.min(Math.max(1, fixedSection.questions), 10); // Limit between 1-10
+          const placeholders: string[] = [];
+          
+          if (fixedSection.type === 'warmup' || fixedSection.type === 'warm-up') {
+            placeholders.push("What do you already know about the history of Britain?");
+            if (count >= 2) placeholders.push("Have you ever visited any historical sites in Britain?");
+            if (count >= 3) placeholders.push("What historical periods are you most interested in?");
+          } else if (fixedSection.type === 'discussion') {
+            placeholders.push("What did you find most interesting about the reading passage?");
+            if (count >= 2) placeholders.push("How is the history of Britain similar to or different from your country's history?");
+            if (count >= 3) placeholders.push("Why do you think it's important to learn about history?");
+          } else {
+            // Generic questions for other section types
+            for (let i = 0; i < count; i++) {
+              placeholders.push(`Question ${i + 1} about the topic`);
+            }
+          }
+          
+          fixedSection.questions = placeholders.slice(0, count);
         } else if (typeof fixedSection.questions === 'object') {
           // Extract both keys and values from the object
           const questionArray: string[] = [];
