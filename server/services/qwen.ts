@@ -83,7 +83,7 @@ export class QwenService {
             'Content-Type': 'application/json'
           },
           data: requestBody,
-          timeout: 60000 // 1 minute timeout
+          timeout: 180000 // 3 minute timeout
         });
         
         console.log('Received response from Qwen API');
@@ -141,7 +141,7 @@ export class QwenService {
         console.error('Error during API request:', requestError.message);
         
         if (requestError.code === 'ECONNABORTED') {
-          console.error('Request timed out after 60 seconds');
+          console.error('Request timed out after 3 minutes');
           throw new Error('Request to Qwen API timed out. The service may be experiencing high demand or connectivity issues.');
         }
         
