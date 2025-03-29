@@ -125,6 +125,8 @@ export function LessonContent({ content }: LessonContentProps) {
       "homework": "Homework",
     };
     
+    // Make sure type is defined before accessing charAt
+    if (!type) return 'Section';
     return headings[type] || type.charAt(0).toUpperCase() + type.slice(1);
   };
 
@@ -367,11 +369,11 @@ export function LessonContent({ content }: LessonContentProps) {
                 ) : (
                   // Default rendering for other section types
                   <div className="space-y-3">
-                    {typeof section.content === 'string' ? 
+                    {(typeof section.content === 'string' && section.content) ? 
                       section.content.split('\n\n').map((paragraph: string, i: number) => (
                         <p key={i}>{paragraph}</p>
                       )) : 
-                      <p>{String(section.content || '')}</p>
+                      <p>{section.content ? String(section.content) : 'No content available'}</p>
                     }
                   </div>
                 )}
