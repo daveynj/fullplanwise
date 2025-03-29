@@ -395,26 +395,27 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
   ]
 }
 
-CRITICAL QUALITY REQUIREMENTS:
+CRITICAL OUTPUT FORMAT REQUIREMENTS:
+1. ALL array properties MUST contain actual content items, NEVER counts. For example:
+   - CORRECT: "paragraphs": ["First paragraph text", "Second paragraph text", ...]
+   - INCORRECT: "paragraphs": 5
+   - CORRECT: "questions": [{"question": "What is...?", "options": [...], ...}, {...}]
+   - INCORRECT: "questions": 3
+   - CORRECT: "targetVocabulary": ["monarchy", "landmark", "parliament", "invasion", "civilization"]
+   - INCORRECT: "targetVocabulary": 5
+
+2. NEVER replace any array with a number indicating count. Always provide the complete content as shown in the template.
+
+CRITICAL CONTENT REQUIREMENTS:
 1. The lesson MUST include EXACTLY 5 key vocabulary words that are appropriate for ${cefrLevel} level students
 2. The reading section MUST have 5 paragraphs and incorporate ALL 5 target vocabulary words in meaningful contexts
 3. The warm-up activity MUST introduce all 5 vocabulary words that will appear in the reading
 4. Vocabulary definitions MUST be clear, concise, and appropriate for ${cefrLevel} level students
-5. The reading passage MUST be substantial enough (5 paragraphs) to provide adequate context for the vocabulary
-6. Questions in each section MUST build on previous sections
-7. Include ${questionCount} questions in the quiz section
-8. Make all content original, culturally appropriate, and relevant to the topic
-9. Ensure all examples and exercises are practically usable in a live teaching environment
-10. ESSENTIAL JSON FORMATTING: All arrays MUST use proper square brackets [], all objects MUST use proper curly braces {}, and all property values MUST be in the correct format (strings in quotes, numbers as numeric values).
-11. DO NOT use property names as values (e.g., do not make objects like {"question": "question1"} where "question1" is meant to be an actual value).
-12. CRITICAL: NEVER replace arrays with simple numbers. For example, NEVER output "paragraphs": 5 or "questions": 3 - this is INCORRECT. 
-    ALWAYS provide full arrays with actual content: "paragraphs": ["actual paragraph 1", "actual paragraph 2", ...] and 
-    "questions": [{"question": "actual question 1", ...}, {"question": "actual question 2", ...}]
+5. Include ${questionCount} questions in the quiz section
+6. Make all content original, culturally appropriate, and relevant to the topic
+7. Ensure all examples and exercises are practically usable in a live teaching environment
 
-⚠️ IMPORTANT WARNING: The most common error is replacing arrays with numeric counts. For example, using "paragraphs": 5 instead of an array of 5 actual paragraphs. 
-This will cause the lesson generation to fail. ALWAYS provide the complete array content for paragraphs, questions, vocabulary words, etc.
-
-Create a complete, interactive, visually engaging ESL lesson that strictly follows these requirements.
+Create a complete, interactive, visually engaging ESL lesson that strictly follows these format requirements.
 `;
   }
   
@@ -744,10 +745,17 @@ Create a complete, interactive, visually engaging ESL lesson that strictly follo
           if (fixedSection.content && typeof fixedSection.content === 'string') {
             // Try to extract vocabulary words from content
             const contentWords = fixedSection.content.match(/\b[A-Za-z]{4,}\b/g) || [];
-            const uniqueWords = [...new Set(contentWords)].slice(0, count);
-            if (uniqueWords.length > 0) {
-              uniqueWords.forEach(word => placeholders.push(word));
+            // Filter to unique words without using Set
+            const uniqueWords: string[] = [];
+            for (const word of contentWords) {
+              if (!uniqueWords.includes(word)) {
+                uniqueWords.push(word);
+                if (uniqueWords.length >= count) break;
+              }
             }
+            
+            // Add the unique words to our placeholders
+            uniqueWords.forEach(word => placeholders.push(word));
           }
           
           // If we couldn't extract enough words from content, add generic placeholders
@@ -843,8 +851,41 @@ Create a complete, interactive, visually engaging ESL lesson that strictly follo
       
       // Ensure we have vocabulary words
       if (section.type === 'vocabulary') {
+        // Handle if words is a number (count) rather than an array
+        if (typeof fixedSection.words === 'number') {
+          const count = Math.min(Math.max(1, fixedSection.words), 10); // Limit between 1-10
+          
+          // Try to extract vocabulary words from the warm-up section
+          const tempWords = [];
+          
+          // Look for a warmup section with targetVocabulary
+          const warmupSection = processed.sections.find(s => 
+            (s.type === 'warmup' || s.type === 'warm-up') && 
+            s.targetVocabulary && 
+            Array.isArray(s.targetVocabulary)
+          );
+          
+          if (warmupSection && warmupSection.targetVocabulary.length > 0) {
+            // Use vocabulary from warmup section
+            tempWords.push(...warmupSection.targetVocabulary);
+          } else {
+            // Generate placeholder vocabulary words
+            for (let i = 0; i < count; i++) {
+              const term = `vocabulary term ${i + 1}`;
+              tempWords.push(term);
+            }
+          }
+          
+          // Convert to proper word objects
+          fixedSection.words = tempWords.slice(0, count).map(term => ({
+            term,
+            partOfSpeech: "noun",
+            definition: `Definition for "${term}" appropriate for the lesson level.`,
+            example: `Example using "${term}" in a sentence relevant to the lesson topic.`
+          }));
+        }
         // Create empty words array if none exists
-        if (!fixedSection.words || !Array.isArray(fixedSection.words) || fixedSection.words.length === 0) {
+        else if (!fixedSection.words || !Array.isArray(fixedSection.words) || fixedSection.words.length === 0) {
           fixedSection.words = [{
             term: "vocabulary",
             partOfSpeech: "noun",
@@ -852,9 +893,8 @@ Create a complete, interactive, visually engaging ESL lesson that strictly follo
             example: "The lesson focuses on building vocabulary for everyday situations.",
           }];
         }
-        
         // Convert string words to proper objects if needed
-        if (Array.isArray(fixedSection.words)) {
+        else if (Array.isArray(fixedSection.words)) {
           fixedSection.words = fixedSection.words.map((word: any) => {
             if (typeof word === 'string') {
               return {
