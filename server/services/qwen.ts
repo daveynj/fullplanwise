@@ -51,16 +51,16 @@ export class QwenService {
         messages: [
           { 
             role: "system", 
-            content: "You are an expert ESL teacher with years of experience creating engaging and effective lesson materials." 
+            content: "You are an expert ESL teacher with years of experience creating engaging and effective lesson materials. Your task is to create well-structured, error-free JSON content that strictly follows the structure defined in the user prompt. Ensure all arrays are proper JSON arrays with square brackets, all objects have proper key-value pairs, and there are no formatting errors. Do not use keys as values or put strings outside of quotation marks in JSON content." 
           },
           { 
             role: "user", 
             content: prompt 
           }
         ],
-        temperature: 0.7,
-        top_p: 0.8,
-        max_tokens: 3000,
+        temperature: 0.5, // Lower temperature for more consistent, structured output
+        top_p: 0.95,
+        max_tokens: 3500,
         response_format: { type: "json_object" }
       };
       
@@ -227,7 +227,7 @@ CRITICAL PEDAGOGICAL APPROACH:
 5. Including appropriate images and visual elements is ESSENTIAL (descriptions will be converted to images)
 
 REQUIRED LESSON STRUCTURE:
-Return your response as a JSON object with the following structure:
+Return your response as a valid, properly-formatted JSON object that strictly adheres to the following structure. Make sure all arrays use proper square brackets [] and all objects use proper curly braces {}. Do not use property names as values, and ensure all string values are properly quoted:
 
 {
   "title": "Engaging and descriptive lesson title",
@@ -362,102 +362,236 @@ CRITICAL QUALITY REQUIREMENTS:
 6. Make all content original, culturally appropriate, and relevant to the topic
 7. Ensure all examples and exercises are practically usable in a live teaching environment
 8. Image descriptions should be detailed enough to create or find appropriate images
+9. ESSENTIAL JSON FORMATTING: All arrays MUST use proper square brackets [], all objects MUST use proper curly braces {}, and all property values MUST be in the correct format (strings in quotes, numbers as numeric values).
+10. DO NOT use property names as values (e.g., do not make objects like {"question": "question1"} where "question1" is meant to be an actual value).
 
 Create a complete, interactive, visually engaging ESL lesson that strictly follows these requirements.
 `;
   }
   
   /**
-   * Format and clean up the lesson content from the AI response
+   * Format and clean up the lesson content from the AI response.
+   * Transforms the structure to comply with our expected schema.
    */
   private formatLessonContent(content: any): any {
     console.log("Raw Qwen content before formatting:", JSON.stringify(content).substring(0, 500) + "...");
     
-    // Ensure we have a valid structure
-    if (!content.title) {
-      content.title = 'ESL Lesson';
-    }
-    
-    if (!content.sections) {
-      content.sections = [];
-    }
-    
-    // Fix common issues with section structures
-    if (Array.isArray(content.sections)) {
-      content.sections = content.sections.map((section: any) => {
-        if (!section || typeof section !== 'object') return section;
-        
-        // Fix warmup section
-        if (section.type === 'warmup' || section.type === 'warm-up') {
-          // Fix questions format
-          if (section.questions && !Array.isArray(section.questions)) {
-            // If questions is a string, convert to array
-            if (typeof section.questions === 'string') {
-              section.questions = [section.questions];
-            } else {
-              // If it's an object, try to extract questions from keys
-              try {
-                const extractedQuestions = [];
-                for (const key in section.questions) {
-                  extractedQuestions.push(key);
-                }
-                if (extractedQuestions.length > 0) {
-                  section.questions = extractedQuestions;
-                } else {
-                  section.questions = [];
-                }
-              } catch (err) {
-                console.warn("Could not extract questions from object", err);
-                section.questions = [];
-              }
-            }
-          }
-          
-          // Fix targetVocabulary format
-          if (section.targetVocabulary && !Array.isArray(section.targetVocabulary)) {
-            // If it's a string, convert to array
-            if (typeof section.targetVocabulary === 'string') {
-              section.targetVocabulary = [section.targetVocabulary];
-            } else {
-              // If it's an object, try to extract values
-              try {
-                const extractedVocab = [];
-                for (const key in section.targetVocabulary) {
-                  if (typeof key === 'string' && key.trim()) {
-                    extractedVocab.push(key);
-                  }
-                  if (typeof section.targetVocabulary[key] === 'string' && section.targetVocabulary[key].trim()) {
-                    extractedVocab.push(section.targetVocabulary[key]);
-                  }
-                }
-                if (extractedVocab.length > 0) {
-                  section.targetVocabulary = extractedVocab;
-                } else {
-                  section.targetVocabulary = [];
-                }
-              } catch (err) {
-                console.warn("Could not extract vocabulary from object", err);
-                section.targetVocabulary = [];
-              }
-            }
-          }
-        }
-        
-        // Fix other section types with similar patterns as needed
-        
-        return section;
-      });
-    }
-    
-    // Add timestamps for the created lesson
+    // Start with a properly structured base
     const formattedContent = {
-      ...content,
-      createdAt: new Date().toISOString(),
+      title: content.title || 'ESL Lesson',
+      level: content.level || 'B1',
+      focus: content.focus || 'general',
+      estimatedTime: content.estimatedTime || 60,
+      sections: [],
+      createdAt: new Date().toISOString()
     };
     
+    // If no sections array is provided, return the base structure
+    if (!content.sections || !Array.isArray(content.sections)) {
+      console.warn("No valid sections found in the content");
+      return formattedContent;
+    }
+    
+    // Process each section
+    formattedContent.sections = content.sections
+      // Filter out non-object sections
+      .filter((section: any) => section && typeof section === 'object')
+      // Transform each section
+      .map((section: any) => {
+        // Create a clean section object
+        const cleanSection: any = {
+          type: section.type || 'unknown',
+          title: section.title || this.getDefaultTitle(section.type),
+          content: section.content || '',
+          teacherNotes: section.teacherNotes || null,
+          timeAllocation: section.timeAllocation || null
+        };
+        
+        // Handle section-specific properties
+        switch (cleanSection.type) {
+          case 'warmup':
+          case 'warm-up':
+            // Process questions
+            cleanSection.questions = this.processArray(section.questions, 'string');
+            // Process targetVocabulary
+            cleanSection.targetVocabulary = this.processArray(section.targetVocabulary, 'string');
+            break;
+            
+          case 'reading':
+            // Process paragraphs
+            cleanSection.introduction = section.introduction || '';
+            cleanSection.paragraphs = this.processArray(section.paragraphs, 'string');
+            break;
+            
+          case 'vocabulary':
+            // Process vocabulary words
+            cleanSection.introduction = section.introduction || '';
+            cleanSection.words = this.processArray(section.words, 'object')
+              .map((word: any) => ({
+                term: word.term || '',
+                partOfSpeech: word.partOfSpeech || 'noun',
+                definition: word.definition || '',
+                example: word.example || '',
+                pronunciation: word.pronunciation || null
+              }));
+            cleanSection.practice = section.practice || '';
+            break;
+            
+          case 'comprehension':
+            // Process comprehension questions
+            cleanSection.introduction = section.introduction || '';
+            cleanSection.questions = this.processArray(section.questions, 'object')
+              .map((q: any) => ({
+                type: q.type || 'multiple-choice',
+                question: q.question || '',
+                options: this.processArray(q.options, 'string'),
+                correctAnswer: q.correctAnswer || '',
+                explanation: q.explanation || ''
+              }));
+            break;
+            
+          case 'sentenceFrames':
+          case 'grammar':
+            // Process grammar or sentence frames
+            cleanSection.introduction = section.introduction || section.explanation || '';
+            cleanSection.frames = this.processArray(section.frames, 'object')
+              .map((frame: any) => ({
+                level: frame.level || 'intermediate',
+                pattern: frame.pattern || '',
+                examples: this.processArray(frame.examples, 'string'),
+                usage: frame.usage || '',
+                grammarFocus: frame.grammarFocus || ''
+              }));
+            break;
+            
+          case 'discussion':
+          case 'speaking':
+            // Process discussion questions
+            cleanSection.introduction = section.introduction || '';
+            cleanSection.questions = this.processArray(section.questions, 'object')
+              .map((q: any) => ({
+                level: q.level || 'basic',
+                question: q.question || '',
+                focusVocabulary: this.processArray(q.focusVocabulary, 'string'),
+                followUp: this.processArray(q.followUp, 'string')
+              }));
+            break;
+            
+          case 'quiz':
+          case 'assessment':
+            // Process quiz questions
+            cleanSection.introduction = section.introduction || '';
+            cleanSection.questions = this.processArray(section.questions, 'object')
+              .map((q: any, index: number) => ({
+                id: q.id || `q${index + 1}`,
+                type: q.type || 'multiple-choice',
+                question: q.question || q.content?.question || '',
+                options: this.processArray(q.options || q.content?.options, 'string'),
+                correctAnswer: q.correctAnswer || '',
+                explanation: q.explanation || ''
+              }));
+            break;
+            
+          default:
+            // For any other type, just keep the properties we have
+            Object.keys(section).forEach((key: string) => {
+              if (!cleanSection[key] && key !== 'type' && key !== 'title' && key !== 'content') {
+                cleanSection[key] = section[key];
+              }
+            });
+        }
+        
+        return cleanSection;
+      });
+    
+    // Log the formatted content for debugging
     console.log("Formatted content:", JSON.stringify(formattedContent).substring(0, 500) + "...");
     
     return formattedContent;
+  }
+  
+  /**
+   * Process a potential array value to ensure it's a properly formatted array.
+   * @param value The value to process
+   * @param expectedType The expected type of array elements
+   * @returns A properly formatted array
+   */
+  private processArray(value: any, expectedType: 'string' | 'object'): any[] {
+    // Handle null or undefined
+    if (value === null || value === undefined) {
+      return [];
+    }
+    
+    // If already an array, filter and verify
+    if (Array.isArray(value)) {
+      return value.filter((item: any) => {
+        if (expectedType === 'string') {
+          return typeof item === 'string' || item?.toString;
+        } else {
+          return item && typeof item === 'object';
+        }
+      }).map((item: any) => {
+        if (expectedType === 'string' && typeof item !== 'string') {
+          return item.toString();
+        }
+        return item;
+      });
+    }
+    
+    // If it's a string and we expect strings, wrap it in an array
+    if (typeof value === 'string' && expectedType === 'string') {
+      return [value];
+    }
+    
+    // If it's an object but we expected strings, try to extract values
+    if (typeof value === 'object' && expectedType === 'string') {
+      const result: string[] = [];
+      // Extract keys
+      for (const key in value) {
+        if (typeof key === 'string' && key.trim()) {
+          // If the key looks like a number prefixed with a dot (like "1."), skip it
+          if (!/^\d+\./.test(key)) {
+            result.push(key);
+          }
+        }
+      }
+      // Also extract string values
+      for (const key in value) {
+        if (typeof value[key] === 'string' && value[key].trim()) {
+          result.push(value[key]);
+        }
+      }
+      return result;
+    }
+    
+    // If it's an object and we expected objects, wrap it in an array
+    if (typeof value === 'object' && expectedType === 'object') {
+      return [value];
+    }
+    
+    // Default fallback
+    return [];
+  }
+  
+  /**
+   * Get a default title based on section type
+   */
+  private getDefaultTitle(type: string): string {
+    const titles: Record<string, string> = {
+      'warmup': 'Warm-up Activity',
+      'warm-up': 'Warm-up Activity',
+      'reading': 'Reading Passage',
+      'vocabulary': 'Key Vocabulary',
+      'comprehension': 'Reading Comprehension',
+      'sentenceFrames': 'Sentence Frames',
+      'grammar': 'Grammar Practice',
+      'discussion': 'Discussion Questions',
+      'speaking': 'Speaking Practice',
+      'quiz': 'Knowledge Check',
+      'assessment': 'Assessment'
+    };
+    
+    return titles[type] || 'Section';
   }
 }
 
