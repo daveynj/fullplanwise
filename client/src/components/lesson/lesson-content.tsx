@@ -242,7 +242,7 @@ export function LessonContent({ content }: LessonContentProps) {
               )}
               
               {/* Display target vocabulary if available */}
-              {section.targetVocabulary && section.targetVocabulary.length > 0 && (
+              {section.targetVocabulary && Array.isArray(section.targetVocabulary) && section.targetVocabulary.length > 0 && (
                 <div className="mt-6">
                   <p className="font-medium text-gray-700 mb-2">Key vocabulary to introduce:</p>
                   <div className="flex flex-wrap gap-2">
