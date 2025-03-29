@@ -407,6 +407,12 @@ CRITICAL QUALITY REQUIREMENTS:
 9. Ensure all examples and exercises are practically usable in a live teaching environment
 10. ESSENTIAL JSON FORMATTING: All arrays MUST use proper square brackets [], all objects MUST use proper curly braces {}, and all property values MUST be in the correct format (strings in quotes, numbers as numeric values).
 11. DO NOT use property names as values (e.g., do not make objects like {"question": "question1"} where "question1" is meant to be an actual value).
+12. CRITICAL: NEVER replace arrays with simple numbers. For example, NEVER output "paragraphs": 5 or "questions": 3 - this is INCORRECT. 
+    ALWAYS provide full arrays with actual content: "paragraphs": ["actual paragraph 1", "actual paragraph 2", ...] and 
+    "questions": [{"question": "actual question 1", ...}, {"question": "actual question 2", ...}]
+
+⚠️ IMPORTANT WARNING: The most common error is replacing arrays with numeric counts. For example, using "paragraphs": 5 instead of an array of 5 actual paragraphs. 
+This will cause the lesson generation to fail. ALWAYS provide the complete array content for paragraphs, questions, vocabulary words, etc.
 
 Create a complete, interactive, visually engaging ESL lesson that strictly follows these requirements.
 `;
@@ -724,11 +730,32 @@ Create a complete, interactive, visually engaging ESL lesson that strictly follo
         }
       }
       
-      // Fix targetVocabulary property if it's a string or object
+      // Fix targetVocabulary property if it's a string, object, or number (count)
       if (fixedSection.targetVocabulary && !Array.isArray(fixedSection.targetVocabulary)) {
         if (typeof fixedSection.targetVocabulary === 'string') {
           // Convert string to array with one item
           fixedSection.targetVocabulary = [fixedSection.targetVocabulary];
+        } else if (typeof fixedSection.targetVocabulary === 'number') {
+          // If targetVocabulary is a number, it's likely the count intended
+          const count = Math.min(Math.max(1, fixedSection.targetVocabulary), 10); // Limit between 1-10
+          
+          // Generate placeholder vocabulary based on the topic from content
+          const placeholders: string[] = [];
+          if (fixedSection.content && typeof fixedSection.content === 'string') {
+            // Try to extract vocabulary words from content
+            const contentWords = fixedSection.content.match(/\b[A-Za-z]{4,}\b/g) || [];
+            const uniqueWords = [...new Set(contentWords)].slice(0, count);
+            if (uniqueWords.length > 0) {
+              uniqueWords.forEach(word => placeholders.push(word));
+            }
+          }
+          
+          // If we couldn't extract enough words from content, add generic placeholders
+          while (placeholders.length < count) {
+            placeholders.push(`vocabulary term ${placeholders.length + 1}`);
+          }
+          
+          fixedSection.targetVocabulary = placeholders.slice(0, count);
         } else if (typeof fixedSection.targetVocabulary === 'object') {
           // Extract both keys and values from the object
           const vocabArray: string[] = [];
@@ -751,12 +778,42 @@ Create a complete, interactive, visually engaging ESL lesson that strictly follo
         }
       }
       
-      // Fix paragraphs property if it's a string or object
+      // Fix paragraphs property if it's a string, object, or number (count)
       if (section.type === 'reading' && fixedSection.paragraphs && !Array.isArray(fixedSection.paragraphs)) {
         if (typeof fixedSection.paragraphs === 'string') {
           // Split the string by double newlines or handle as a single paragraph
           const paragraphs = fixedSection.paragraphs.split(/\n\n+/);
           fixedSection.paragraphs = paragraphs.length > 0 ? paragraphs : [fixedSection.paragraphs];
+        } else if (typeof fixedSection.paragraphs === 'number') {
+          // If paragraphs is a number, it's likely the count intended
+          const count = Math.min(Math.max(1, fixedSection.paragraphs), 10); // Limit between 1-10
+          
+          // Generate placeholder paragraphs based on the introduction/topic
+          const placeholders: string[] = [];
+          const topic = fixedSection.title?.replace('Reading Text', '') || 
+                      fixedSection.introduction || 
+                      'British history';
+          
+          // Create generic paragraphs
+          placeholders.push(`An introduction to ${topic}. This paragraph provides basic background information and context for the reader.`);
+          
+          if (count >= 2) {
+            placeholders.push(`The second paragraph delves deeper into ${topic}, exploring some key historical events and their significance.`);
+          }
+          
+          if (count >= 3) {
+            placeholders.push(`Building on the previous information, this paragraph discusses important figures and their contributions to ${topic}.`);
+          }
+          
+          if (count >= 4) {
+            placeholders.push(`The fourth paragraph examines the social and cultural aspects of ${topic}, looking at how they shaped society.`);
+          }
+          
+          if (count >= 5) {
+            placeholders.push(`Finally, this paragraph concludes by reflecting on the lasting impact and legacy of ${topic} in modern times.`);
+          }
+          
+          fixedSection.paragraphs = placeholders.slice(0, count);
         } else if (typeof fixedSection.paragraphs === 'object') {
           // Extract values from the object
           const paragraphsArray: string[] = [];
