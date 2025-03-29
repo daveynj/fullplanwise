@@ -55,6 +55,11 @@ export function LessonContent({ content }: LessonContentProps) {
   // Parse the content if it's a string (from database)
   useEffect(() => {
     if (content) {
+      console.log("Raw content type:", typeof content);
+      console.log("Raw content preview:", typeof content === 'string' 
+        ? content.substring(0, 500) + '...' 
+        : JSON.stringify(content).substring(0, 500) + '...');
+      
       try {
         // If it's a string (from database), parse it
         if (typeof content === 'string') {
@@ -65,6 +70,7 @@ export function LessonContent({ content }: LessonContentProps) {
         }
       } catch (err) {
         console.error("Error parsing lesson content:", err);
+        console.error("Content that failed to parse:", typeof content === 'string' ? content : "Not a string");
         setParsedContent(null);
       }
     }
@@ -73,7 +79,10 @@ export function LessonContent({ content }: LessonContentProps) {
   // Set the active tab to the first available section when content is loaded
   useEffect(() => {
     if (parsedContent?.sections?.length > 0) {
-      setActiveTab(parsedContent.sections[0].type);
+      console.log("Available sections:", parsedContent.sections.map((s: any) => s.type));
+      const firstType = parsedContent.sections[0].type;
+      console.log("Setting active tab to:", firstType);
+      setActiveTab(firstType);
     }
   }, [parsedContent]);
   
@@ -870,9 +879,11 @@ export function LessonContent({ content }: LessonContentProps) {
   };
 
   // Get all available sections for tabs
+  console.log("Original sections:", parsedContent.sections);
   const availableSections = parsedContent.sections
     .map((s: any) => s.type)
     .filter((type: string) => !!type);
+  console.log("Available sections for tabs:", availableSections);
   
   return (
     <div className="lesson-content max-w-5xl mx-auto">
