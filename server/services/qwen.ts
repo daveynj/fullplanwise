@@ -100,18 +100,15 @@ export class QwenService {
             try {
               // Try to parse the content as JSON
               const jsonContent = JSON.parse(content);
-              // Log the content to a file for inspection
-              const fs = require('fs');
-              fs.writeFileSync('logs/qwen_response.log', JSON.stringify(jsonContent, null, 2));
-              console.log('Response logged to logs/qwen_response.log');
+              // Log the content for inspection
+              console.log('Successfully parsed JSON response');
+              console.log('JSON response sample:', JSON.stringify(jsonContent).substring(0, 200) + '...');
               return this.formatLessonContent(jsonContent);
             } catch (parseError) {
               console.error('Error parsing Qwen response as JSON:', parseError);
               
-              // Log the raw content
-              const fs = require('fs');
-              fs.writeFileSync('logs/qwen_response_raw.log', content);
-              console.log('Raw response logged to logs/qwen_response_raw.log');
+              // Log some of the raw content for debugging
+              console.log('Raw response sample:', content.substring(0, 200) + '...');
               
               // Try to extract JSON from content
               try {
