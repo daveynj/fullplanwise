@@ -189,7 +189,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           title: generatedContent.title,
           topic: validatedData.topic,
           cefrLevel: validatedData.cefrLevel,
-          content: JSON.stringify(generatedContent),
+          content: generatedContent, // Send the content directly without JSON.stringify
           generatedAt: new Date().toISOString(),
           generationTimeSeconds: timeTaken
         };

@@ -55,16 +55,39 @@ export function LessonPreview({ lesson, onSave, savePending }: LessonPreviewProp
     );
   }
   
-  // Parse the content if it's a string (assuming it's JSON)
+  // Parse the content if it's a string (from database)
   let parsedContent;
   try {
-    parsedContent = typeof lesson.content === 'string' ? JSON.parse(lesson.content) : lesson.content;
+    if (typeof lesson.content === 'string') {
+      try {
+        // Try to parse it as JSON
+        parsedContent = JSON.parse(lesson.content);
+        console.log("Successfully parsed string content");
+      } catch (jsonError) {
+        console.error("Error parsing JSON string:", jsonError);
+        // If JSON parsing fails, set an error object
+        parsedContent = { 
+          title: lesson.title,
+          sections: [{ 
+            type: 'error', 
+            content: 'Error parsing lesson content' 
+          }] 
+        };
+      }
+    } else {
+      // It's already an object (from direct API response)
+      console.log("Content is already an object, no parsing needed");
+      parsedContent = lesson.content;
+    }
+    
+    console.log("Parsed content:", parsedContent);
   } catch (e) {
+    console.error("Unexpected error handling content:", e);
     parsedContent = { 
       title: lesson.title,
       sections: [{ 
         type: 'error', 
-        content: 'Error parsing lesson content' 
+        content: 'Error processing lesson content' 
       }] 
     };
   }

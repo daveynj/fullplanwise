@@ -52,27 +52,12 @@ export function LessonContent({ content }: LessonContentProps) {
   const [parsedContent, setParsedContent] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<string>(""); 
   
-  // Parse the content if it's a string (from database)
+  // Handle content object (already parsed by lesson-preview)
   useEffect(() => {
     if (content) {
-      console.log("Raw content type:", typeof content);
-      console.log("Raw content preview:", typeof content === 'string' 
-        ? content.substring(0, 500) + '...' 
-        : JSON.stringify(content).substring(0, 500) + '...');
-      
-      try {
-        // If it's a string (from database), parse it
-        if (typeof content === 'string') {
-          setParsedContent(JSON.parse(content));
-        } else {
-          // If it's already an object (from direct API response)
-          setParsedContent(content);
-        }
-      } catch (err) {
-        console.error("Error parsing lesson content:", err);
-        console.error("Content that failed to parse:", typeof content === 'string' ? content : "Not a string");
-        setParsedContent(null);
-      }
+      console.log("Content received in LessonContent component:", content);
+      // Content is already parsed by lesson-preview, just use it directly
+      setParsedContent(content);
     }
   }, [content]);
   

@@ -92,16 +92,22 @@ export default function LessonGeneratorPage() {
   const handleSaveLesson = () => {
     if (!generatedLesson) return;
     
+    // Convert content to string if it's an object (from direct API response)
+    const contentToSave = typeof generatedLesson.content === 'string' 
+      ? generatedLesson.content 
+      : JSON.stringify(generatedLesson.content);
+    
     const lessonData = {
       teacherId: user!.id,
       studentId: generatedLesson.studentId || null,
       title: generatedLesson.title,
       topic: generatedLesson.topic,
       cefrLevel: generatedLesson.cefrLevel,
-      content: generatedLesson.content,
+      content: contentToSave, // Must be string for database storage
       notes: "Auto-generated lesson"
     };
     
+    console.log("Saving lesson with content type:", typeof contentToSave);
     saveLessonMutation.mutate(lessonData);
   };
 
