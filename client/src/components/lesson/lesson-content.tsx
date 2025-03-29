@@ -78,11 +78,25 @@ export function LessonContent({ content }: LessonContentProps) {
   
   // Set the active tab to the first available section when content is loaded
   useEffect(() => {
-    if (parsedContent?.sections?.length > 0) {
-      console.log("Available sections:", parsedContent.sections.map((s: any) => s.type));
-      const firstType = parsedContent.sections[0].type;
-      console.log("Setting active tab to:", firstType);
-      setActiveTab(firstType);
+    if (parsedContent?.sections && Array.isArray(parsedContent.sections) && parsedContent.sections.length > 0) {
+      try {
+        // Find first section with a valid type
+        const validSections = parsedContent.sections.filter(
+          (s: any) => s && typeof s === 'object' && s.type && typeof s.type === 'string'
+        );
+        
+        console.log("Valid sections:", validSections.map((s: any) => s.type));
+        
+        if (validSections.length > 0) {
+          const firstType = validSections[0].type;
+          console.log("Setting active tab to:", firstType);
+          setActiveTab(firstType);
+        } else {
+          console.warn("No valid section types found in the content");
+        }
+      } catch (err) {
+        console.error("Error setting active tab:", err);
+      }
     }
   }, [parsedContent]);
   
@@ -185,9 +199,17 @@ export function LessonContent({ content }: LessonContentProps) {
     }
   };
 
-  // Function to find a section by type
+  // Function to find a section by type with error handling
   const findSection = (type: string) => {
-    return parsedContent.sections.find((section: any) => section.type === type);
+    try {
+      if (Array.isArray(parsedContent.sections)) {
+        return parsedContent.sections.find((section: any) => section && typeof section === 'object' && section.type === type);
+      }
+      return undefined;
+    } catch (error) {
+      console.error("Error finding section", type, error);
+      return undefined;
+    }
   };
 
   // Components for each section type
@@ -313,7 +335,19 @@ export function LessonContent({ content }: LessonContentProps) {
     if (!section) return <p>No vocabulary content available</p>;
     
     const [activeCard, setActiveCard] = useState(0);
-    const words = section.words || [];
+    
+    // Add additional error handling for words array
+    let words: any[] = [];
+    try {
+      // Check if words is a valid array
+      if (section.words && Array.isArray(section.words) && section.words.length > 0) {
+        words = section.words;
+      } else {
+        console.warn("No valid words array found in vocabulary section");
+      }
+    } catch (error) {
+      console.error("Error accessing vocabulary words:", error);
+    }
 
     return (
       <div className="space-y-6">
@@ -350,31 +384,37 @@ export function LessonContent({ content }: LessonContentProps) {
                     </button>
                   </div>
 
-                  {/* Vocabulary card */}
+                  {/* Vocabulary card with error handling */}
                   <div className="p-4 border rounded-lg">
-                    <div className="mb-3 text-center">
-                      <h3 className="font-bold text-xl">{words[activeCard].term}</h3>
-                      <p className="text-gray-500 text-sm">({words[activeCard].partOfSpeech || "noun"})</p>
-                    </div>
-                    
-                    <div className="space-y-4 mt-4">
-                      <div className="bg-green-50 p-3 rounded-md">
-                        <p className="font-medium text-sm text-green-700">Definition:</p>
-                        <p>{words[activeCard].definition}</p>
-                      </div>
-                      
-                      <div className="bg-blue-50 p-3 rounded-md">
-                        <p className="font-medium text-sm text-blue-700">Example:</p>
-                        <p className="italic">"{words[activeCard].example}"</p>
-                      </div>
-                      
-                      {words[activeCard].pronunciation && (
-                        <div className="bg-purple-50 p-3 rounded-md">
-                          <p className="font-medium text-sm text-purple-700">Pronunciation:</p>
-                          <p>{words[activeCard].pronunciation}</p>
+                    {words[activeCard] && typeof words[activeCard] === 'object' ? (
+                      <>
+                        <div className="mb-3 text-center">
+                          <h3 className="font-bold text-xl">{words[activeCard].term || "Vocabulary Term"}</h3>
+                          <p className="text-gray-500 text-sm">({words[activeCard].partOfSpeech || "noun"})</p>
                         </div>
-                      )}
-                    </div>
+                        
+                        <div className="space-y-4 mt-4">
+                          <div className="bg-green-50 p-3 rounded-md">
+                            <p className="font-medium text-sm text-green-700">Definition:</p>
+                            <p>{words[activeCard].definition || "No definition available"}</p>
+                          </div>
+                          
+                          <div className="bg-blue-50 p-3 rounded-md">
+                            <p className="font-medium text-sm text-blue-700">Example:</p>
+                            <p className="italic">"{words[activeCard].example || "No example available"}"</p>
+                          </div>
+                          
+                          {words[activeCard].pronunciation && (
+                            <div className="bg-purple-50 p-3 rounded-md">
+                              <p className="font-medium text-sm text-purple-700">Pronunciation:</p>
+                              <p>{words[activeCard].pronunciation}</p>
+                            </div>
+                          )}
+                        </div>
+                      </>
+                    ) : (
+                      <p className="text-center text-gray-500">Invalid vocabulary card data</p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -419,7 +459,19 @@ export function LessonContent({ content }: LessonContentProps) {
     if (!section) return <p>No comprehension content available</p>;
     
     const [activeQuestion, setActiveQuestion] = useState(0);
-    const questions = section.questions || [];
+    
+    // Add additional error handling for questions array
+    let questions: any[] = [];
+    try {
+      // Check if questions is a valid array
+      if (section.questions && Array.isArray(section.questions) && section.questions.length > 0) {
+        questions = section.questions;
+      } else {
+        console.warn("No valid questions array found in comprehension section");
+      }
+    } catch (error) {
+      console.error("Error accessing comprehension questions:", error);
+    }
 
     return (
       <div className="space-y-6">
@@ -455,33 +507,41 @@ export function LessonContent({ content }: LessonContentProps) {
                 </div>
 
                 <div className="p-5 border rounded-lg">
-                  <div className="mb-4">
-                    <h3 className="font-medium text-lg mb-2">Question {activeQuestion + 1}</h3>
-                    <p className="text-gray-800">{questions[activeQuestion].question}</p>
-                    
-                    {/* Instructions based on question type */}
-                    {questions[activeQuestion].type === "true-false" && (
-                      <p className="text-sm text-gray-500 italic mt-1">
-                        Decide if the statement is true or false based on the text.
-                      </p>
-                    )}
-                    
-                    {questions[activeQuestion].type === "multiple-choice" && (
-                      <p className="text-sm text-gray-500 italic mt-1">
-                        Choose the best answer based on the text.
-                      </p>
-                    )}
-                  </div>
-                  
-                  {/* Options based on question type */}
-                  <div className="space-y-2 mt-4">
-                    {questions[activeQuestion].options && questions[activeQuestion].options.map((option: string, idx: number) => (
-                      <div key={`option-${idx}`} className="flex items-center p-3 border border-gray-200 rounded hover:bg-gray-50">
-                        <Radio className="h-4 w-4 mr-3 text-gray-400" />
-                        <span>{option}</span>
+                  {questions[activeQuestion] && typeof questions[activeQuestion] === 'object' ? (
+                    <>
+                      <div className="mb-4">
+                        <h3 className="font-medium text-lg mb-2">Question {activeQuestion + 1}</h3>
+                        <p className="text-gray-800">{questions[activeQuestion].question || "No question text available"}</p>
+                        
+                        {/* Instructions based on question type */}
+                        {questions[activeQuestion].type === "true-false" && (
+                          <p className="text-sm text-gray-500 italic mt-1">
+                            Decide if the statement is true or false based on the text.
+                          </p>
+                        )}
+                        
+                        {questions[activeQuestion].type === "multiple-choice" && (
+                          <p className="text-sm text-gray-500 italic mt-1">
+                            Choose the best answer based on the text.
+                          </p>
+                        )}
                       </div>
-                    ))}
-                  </div>
+                      
+                      {/* Options based on question type */}
+                      <div className="space-y-2 mt-4">
+                        {questions[activeQuestion].options && Array.isArray(questions[activeQuestion].options) && 
+                          questions[activeQuestion].options.map((option: string, idx: number) => (
+                            <div key={`option-${idx}`} className="flex items-center p-3 border border-gray-200 rounded hover:bg-gray-50">
+                              <Radio className="h-4 w-4 mr-3 text-gray-400" />
+                              <span>{option}</span>
+                            </div>
+                          ))
+                        }
+                      </div>
+                    </>
+                  ) : (
+                    <p className="text-center text-gray-500">Invalid question data</p>
+                  )}
                 </div>
               </div>
             ) : (
@@ -880,9 +940,14 @@ export function LessonContent({ content }: LessonContentProps) {
 
   // Get all available sections for tabs
   console.log("Original sections:", parsedContent.sections);
-  const availableSections = parsedContent.sections
-    .map((s: any) => s.type)
-    .filter((type: string) => !!type);
+  
+  // Make sure sections exist and have valid types before mapping
+  const availableSections = parsedContent.sections && Array.isArray(parsedContent.sections)
+    ? parsedContent.sections
+        .filter((s: any) => s && typeof s === 'object' && s.type && typeof s.type === 'string')
+        .map((s: any) => s.type)
+    : [];
+    
   console.log("Available sections for tabs:", availableSections);
   
   return (
