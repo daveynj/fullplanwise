@@ -10,7 +10,7 @@ import { Save } from "lucide-react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { LessonGenerateParams } from "@shared/schema";
+import { LessonGenerateParams, Student } from "@shared/schema";
 
 export default function LessonGeneratorPage() {
   const { user } = useAuth();
@@ -19,7 +19,7 @@ export default function LessonGeneratorPage() {
   const [generatedLesson, setGeneratedLesson] = useState<any>(null);
   
   // Fetch students for dropdown
-  const { data: students = [] } = useQuery({
+  const { data: students = [] } = useQuery<Student[]>({
     queryKey: ["/api/students"],
     retry: false,
   });

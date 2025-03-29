@@ -371,6 +371,8 @@ Create a complete, interactive, visually engaging ESL lesson that strictly follo
    * Format and clean up the lesson content from the AI response
    */
   private formatLessonContent(content: any): any {
+    console.log("Raw Qwen content before formatting:", JSON.stringify(content).substring(0, 500) + "...");
+    
     // Ensure we have a valid structure
     if (!content.title) {
       content.title = 'ESL Lesson';
@@ -380,11 +382,82 @@ Create a complete, interactive, visually engaging ESL lesson that strictly follo
       content.sections = [];
     }
     
+    // Fix common issues with section structures
+    if (Array.isArray(content.sections)) {
+      content.sections = content.sections.map((section: any) => {
+        if (!section || typeof section !== 'object') return section;
+        
+        // Fix warmup section
+        if (section.type === 'warmup' || section.type === 'warm-up') {
+          // Fix questions format
+          if (section.questions && !Array.isArray(section.questions)) {
+            // If questions is a string, convert to array
+            if (typeof section.questions === 'string') {
+              section.questions = [section.questions];
+            } else {
+              // If it's an object, try to extract questions from keys
+              try {
+                const extractedQuestions = [];
+                for (const key in section.questions) {
+                  extractedQuestions.push(key);
+                }
+                if (extractedQuestions.length > 0) {
+                  section.questions = extractedQuestions;
+                } else {
+                  section.questions = [];
+                }
+              } catch (err) {
+                console.warn("Could not extract questions from object", err);
+                section.questions = [];
+              }
+            }
+          }
+          
+          // Fix targetVocabulary format
+          if (section.targetVocabulary && !Array.isArray(section.targetVocabulary)) {
+            // If it's a string, convert to array
+            if (typeof section.targetVocabulary === 'string') {
+              section.targetVocabulary = [section.targetVocabulary];
+            } else {
+              // If it's an object, try to extract values
+              try {
+                const extractedVocab = [];
+                for (const key in section.targetVocabulary) {
+                  if (typeof key === 'string' && key.trim()) {
+                    extractedVocab.push(key);
+                  }
+                  if (typeof section.targetVocabulary[key] === 'string' && section.targetVocabulary[key].trim()) {
+                    extractedVocab.push(section.targetVocabulary[key]);
+                  }
+                }
+                if (extractedVocab.length > 0) {
+                  section.targetVocabulary = extractedVocab;
+                } else {
+                  section.targetVocabulary = [];
+                }
+              } catch (err) {
+                console.warn("Could not extract vocabulary from object", err);
+                section.targetVocabulary = [];
+              }
+            }
+          }
+        }
+        
+        // Fix other section types with similar patterns as needed
+        
+        return section;
+      });
+    }
+    
     // Add timestamps for the created lesson
-    return {
+    const formattedContent = {
       ...content,
       createdAt: new Date().toISOString(),
     };
+    
+    console.log("Formatted content:", JSON.stringify(formattedContent).substring(0, 500) + "...");
+    
+    return formattedContent;
   }
 }
 
