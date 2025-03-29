@@ -238,21 +238,27 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
     {
       "type": "warmup",
       "title": "Warm-up Activity",
-      "content": "Brief, engaging activity introducing the main topic and key vocabulary",
-      "questions": ["1-2 warm-up questions to start discussion"],
+      "content": "Brief, engaging activity introducing the main topic and 5 key vocabulary items that will appear in the reading",
+      "questions": [
+        "1-2 warm-up questions to start a discussion on the topic",
+        "Have you ever heard of [vocabulary item 1]?",
+        "What do you think [vocabulary item 2] means?"
+      ],
       "imageDescription": "Description of an appropriate image to display with this activity",
-      "targetVocabulary": ["term1", "term2", "term3"],
+      "targetVocabulary": ["term1", "term2", "term3", "term4", "term5"],
       "timeAllocation": "5 minutes",
-      "teacherNotes": "Tips for conducting this warm-up effectively"
+      "teacherNotes": "Tips for conducting this warm-up effectively and introducing the target vocabulary words"
     },
     {
       "type": "reading",
       "title": "Reading Text",
       "introduction": "Brief introduction to the reading passage",
       "paragraphs": [
-        "Paragraph 1 text that includes target vocabulary",
-        "Paragraph 2 text with more target vocabulary",
-        "Paragraph 3 text completing the passage"
+        "Paragraph 1 text that includes 1-2 target vocabulary terms with context clues",
+        "Paragraph 2 text with 1-2 more target vocabulary terms and supporting details",
+        "Paragraph 3 continuing the narrative with more target vocabulary",
+        "Paragraph 4 developing the topic with additional details and examples",
+        "Paragraph 5 concluding the passage and reinforcing key vocabulary"
       ],
       "imageDescription": "Description of an image that captures the essence of the reading text",
       "timeAllocation": "15 minutes",
@@ -261,19 +267,48 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
     {
       "type": "vocabulary",
       "title": "Key Vocabulary",
+      "introduction": "Let's learn 5 important words from the reading passage.",
       "words": [
         {
-          "term": "vocabulary word from the reading",
+          "term": "vocabulary word 1 from the reading",
           "partOfSpeech": "noun/verb/adj/etc",
-          "definition": "Clear, CEFR-level appropriate definition",
+          "definition": "Clear, CEFR-level appropriate definition that a student of this level can understand",
           "example": "Example sentence using the word in context from the reading",
           "imageDescription": "Description of an image representing this word",
           "pronunciation": "Pronunciation tip if relevant"
+        },
+        {
+          "term": "vocabulary word 2 from the reading",
+          "partOfSpeech": "noun/verb/adj/etc",
+          "definition": "Clear, CEFR-level appropriate definition",
+          "example": "Example sentence using the word in context from the reading",
+          "imageDescription": "Description of an image representing this word"
+        },
+        {
+          "term": "vocabulary word 3 from the reading",
+          "partOfSpeech": "noun/verb/adj/etc",
+          "definition": "Clear, CEFR-level appropriate definition",
+          "example": "Example sentence using the word in context from the reading",
+          "imageDescription": "Description of an image representing this word"
+        },
+        {
+          "term": "vocabulary word 4 from the reading",
+          "partOfSpeech": "noun/verb/adj/etc",
+          "definition": "Clear, CEFR-level appropriate definition",
+          "example": "Example sentence using the word in context from the reading",
+          "imageDescription": "Description of an image representing this word"
+        },
+        {
+          "term": "vocabulary word 5 from the reading",
+          "partOfSpeech": "noun/verb/adj/etc",
+          "definition": "Clear, CEFR-level appropriate definition",
+          "example": "Example sentence using the word in context from the reading",
+          "imageDescription": "Description of an image representing this word"
         }
       ],
-      "practice": "Brief activity to practice using the vocabulary",
+      "practice": "Activity to practice using the vocabulary in new contexts",
       "timeAllocation": "10 minutes",
-      "teacherNotes": "How to teach these vocabulary items effectively"
+      "teacherNotes": "How to teach these vocabulary items effectively for this CEFR level"
     },
     {
       "type": "comprehension",
@@ -354,16 +389,17 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
 }
 
 CRITICAL QUALITY REQUIREMENTS:
-1. Make sure ALL target vocabulary appears in the reading text
-2. The warm-up activity MUST introduce vocabulary that will be needed to understand the reading
-3. ALL vocabulary definitions MUST be appropriate for ${cefrLevel} level students
-4. Questions in each section MUST build on previous sections
-5. Include ${questionCount} questions in the quiz section
-6. Make all content original, culturally appropriate, and relevant to the topic
-7. Ensure all examples and exercises are practically usable in a live teaching environment
-8. Image descriptions should be detailed enough to create or find appropriate images
-9. ESSENTIAL JSON FORMATTING: All arrays MUST use proper square brackets [], all objects MUST use proper curly braces {}, and all property values MUST be in the correct format (strings in quotes, numbers as numeric values).
-10. DO NOT use property names as values (e.g., do not make objects like {"question": "question1"} where "question1" is meant to be an actual value).
+1. The lesson MUST include EXACTLY 5 key vocabulary words that are appropriate for ${cefrLevel} level students
+2. The reading section MUST have 5 paragraphs and incorporate ALL 5 target vocabulary words in meaningful contexts
+3. The warm-up activity MUST introduce all 5 vocabulary words that will appear in the reading
+4. Vocabulary definitions MUST be clear, concise, and appropriate for ${cefrLevel} level students
+5. The reading passage MUST be substantial enough (5 paragraphs) to provide adequate context for the vocabulary
+6. Questions in each section MUST build on previous sections
+7. Include ${questionCount} questions in the quiz section
+8. Make all content original, culturally appropriate, and relevant to the topic
+9. Ensure all examples and exercises are practically usable in a live teaching environment
+10. ESSENTIAL JSON FORMATTING: All arrays MUST use proper square brackets [], all objects MUST use proper curly braces {}, and all property values MUST be in the correct format (strings in quotes, numbers as numeric values).
+11. DO NOT use property names as values (e.g., do not make objects like {"question": "question1"} where "question1" is meant to be an actual value).
 
 Create a complete, interactive, visually engaging ESL lesson that strictly follows these requirements.
 `;
