@@ -103,7 +103,14 @@ export class QwenService {
               // Log the content for inspection
               console.log('Successfully parsed JSON response');
               console.log('JSON response sample:', JSON.stringify(jsonContent).substring(0, 200) + '...');
-              return this.formatLessonContent(jsonContent);
+              
+              // Log the entire response for deeper inspection
+              console.log('FULL JSON RESPONSE:', JSON.stringify(jsonContent));
+              
+              // Pre-process the JSON structure to fix common issues before formatting
+              const preprocessedContent = this.preprocessContent(jsonContent);
+              
+              return this.formatLessonContent(preprocessedContent);
             } catch (parseError) {
               console.error('Error parsing Qwen response as JSON:', parseError);
               
@@ -422,6 +429,20 @@ Create a complete, interactive, visually engaging ESL lesson that strictly follo
       createdAt: new Date().toISOString()
     };
     
+    // Additional debugging to understand the structure
+    console.log('Examining raw sections structure:');
+    if (content.sections && Array.isArray(content.sections)) {
+      content.sections.forEach((section: any, index: number) => {
+        console.log(`Section ${index} type:`, section.type);
+        console.log(`Section ${index} questions type:`, typeof section.questions);
+        console.log(`Section ${index} questions value:`, JSON.stringify(section.questions));
+        if (section.type === 'warmup' || section.type === 'warm-up') {
+          console.log(`Warmup targetVocabulary type:`, typeof section.targetVocabulary);
+          console.log(`Warmup targetVocabulary value:`, JSON.stringify(section.targetVocabulary));
+        }
+      });
+    }
+    
     // If no sections array is provided, return the base structure
     if (!content.sections || !Array.isArray(content.sections)) {
       console.warn("No valid sections found in the content");
@@ -628,6 +649,172 @@ Create a complete, interactive, visually engaging ESL lesson that strictly follo
     };
     
     return titles[type] || 'Section';
+  }
+  
+  /**
+   * Pre-processes the API response content to fix common structural issues
+   * before passing it to the formatter
+   */
+  private preprocessContent(content: any): any {
+    console.log('Preprocessing content structure...');
+    
+    // Create a deep copy of the content to avoid modifying the original
+    const processed = JSON.parse(JSON.stringify(content));
+    
+    // If there are no sections, we can't do much preprocessing
+    if (!processed.sections || !Array.isArray(processed.sections)) {
+      return processed;
+    }
+    
+    // Process each section to fix common issues
+    processed.sections = processed.sections.map((section: any) => {
+      if (!section || typeof section !== 'object') {
+        return section;
+      }
+      
+      // Create a copy of the section to modify
+      const fixedSection = { ...section };
+      
+      // Fix questions property if it's a string or object
+      if (fixedSection.questions && !Array.isArray(fixedSection.questions)) {
+        if (typeof fixedSection.questions === 'string') {
+          // Convert string to array with one item
+          fixedSection.questions = [fixedSection.questions];
+        } else if (typeof fixedSection.questions === 'object') {
+          // Extract both keys and values from the object
+          const questionArray: string[] = [];
+          
+          // Add keys that look like questions (not numeric indices)
+          Object.keys(fixedSection.questions).forEach(key => {
+            if (!/^\d+$/.test(key) && typeof key === 'string' && key.trim() && key.length > 5) {
+              questionArray.push(key);
+            }
+          });
+          
+          // Add string values
+          Object.values(fixedSection.questions).forEach(val => {
+            if (typeof val === 'string' && val.trim() && val.length > 5) {
+              questionArray.push(val);
+            }
+          });
+          
+          fixedSection.questions = questionArray;
+        }
+      }
+      
+      // Fix targetVocabulary property if it's a string or object
+      if (fixedSection.targetVocabulary && !Array.isArray(fixedSection.targetVocabulary)) {
+        if (typeof fixedSection.targetVocabulary === 'string') {
+          // Convert string to array with one item
+          fixedSection.targetVocabulary = [fixedSection.targetVocabulary];
+        } else if (typeof fixedSection.targetVocabulary === 'object') {
+          // Extract both keys and values from the object
+          const vocabArray: string[] = [];
+          
+          // Add keys that aren't numeric indices
+          Object.keys(fixedSection.targetVocabulary).forEach(key => {
+            if (!/^\d+$/.test(key) && typeof key === 'string' && key.trim()) {
+              vocabArray.push(key);
+            }
+          });
+          
+          // Add string values
+          Object.values(fixedSection.targetVocabulary).forEach(val => {
+            if (typeof val === 'string' && val.trim()) {
+              vocabArray.push(val);
+            }
+          });
+          
+          fixedSection.targetVocabulary = vocabArray;
+        }
+      }
+      
+      // Fix paragraphs property if it's a string or object
+      if (section.type === 'reading' && fixedSection.paragraphs && !Array.isArray(fixedSection.paragraphs)) {
+        if (typeof fixedSection.paragraphs === 'string') {
+          // Split the string by double newlines or handle as a single paragraph
+          const paragraphs = fixedSection.paragraphs.split(/\n\n+/);
+          fixedSection.paragraphs = paragraphs.length > 0 ? paragraphs : [fixedSection.paragraphs];
+        } else if (typeof fixedSection.paragraphs === 'object') {
+          // Extract values from the object
+          const paragraphsArray: string[] = [];
+          
+          // Add string values
+          Object.values(fixedSection.paragraphs).forEach(val => {
+            if (typeof val === 'string' && val.trim()) {
+              paragraphsArray.push(val);
+            }
+          });
+          
+          fixedSection.paragraphs = paragraphsArray;
+        }
+      }
+      
+      // Ensure we have complete "reading" section
+      if (section.type === 'reading') {
+        // Create empty paragraphs array if none exists
+        if (!fixedSection.paragraphs || !Array.isArray(fixedSection.paragraphs) || fixedSection.paragraphs.length === 0) {
+          fixedSection.paragraphs = ["No reading text was provided."];
+        }
+        // Ensure we have the introduction
+        if (!fixedSection.introduction) {
+          fixedSection.introduction = "Let's read the following text:";
+        }
+      }
+      
+      // Ensure we have vocabulary words
+      if (section.type === 'vocabulary') {
+        // Create empty words array if none exists
+        if (!fixedSection.words || !Array.isArray(fixedSection.words) || fixedSection.words.length === 0) {
+          fixedSection.words = [{
+            term: "vocabulary",
+            partOfSpeech: "noun",
+            definition: "The words used in a particular language.",
+            example: "The lesson focuses on building vocabulary for everyday situations.",
+          }];
+        }
+        
+        // Convert string words to proper objects if needed
+        if (Array.isArray(fixedSection.words)) {
+          fixedSection.words = fixedSection.words.map((word: any) => {
+            if (typeof word === 'string') {
+              return {
+                term: word,
+                partOfSpeech: "noun",
+                definition: "No definition provided.",
+                example: `Example using "${word}".`
+              };
+            }
+            return word;
+          });
+        }
+      }
+      
+      return fixedSection;
+    });
+    
+    // Filter out any problematic sections
+    processed.sections = processed.sections.filter((section: any) => 
+      section && typeof section === 'object' && section.type
+    );
+    
+    // Ensure we have all required sections
+    const requiredSectionTypes = ['warmup', 'reading', 'vocabulary', 'comprehension'];
+    const availableSectionTypes = processed.sections.map((s: any) => s.type);
+    
+    requiredSectionTypes.forEach(type => {
+      if (!availableSectionTypes.includes(type)) {
+        // Add a placeholder section of this type
+        processed.sections.push({
+          type,
+          title: this.getDefaultTitle(type),
+          content: `This ${type} section was not provided by the AI.`
+        });
+      }
+    });
+    
+    console.log('Preprocessing complete.');
+    return processed;
   }
 }
 
