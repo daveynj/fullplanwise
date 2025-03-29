@@ -226,12 +226,23 @@ LESSON SPECIFICATIONS:
 CLASSROOM CONTEXT AND PURPOSE:
 This lesson will be used by a teacher conducting a 1-on-1 online class via screen sharing. The content should be visually engaging, highly interactive, and optimized for student participation.
 
-CRITICAL PEDAGOGICAL APPROACH:
-1. The warm-up activity MUST introduce key vocabulary that will appear in the reading text
-2. The vocabulary section MUST include words from the reading text with CEFR-appropriate definitions
-3. The reading text MUST incorporate ALL vocabulary terms in a coherent, level-appropriate passage
-4. All activities should build on each other in a logical progression
-5. Including appropriate images and visual elements is ESSENTIAL (descriptions will be converted to images)
+CRITICAL LESSON DEVELOPMENT PROCESS:
+1. FIRST, select EXACTLY 5 vocabulary words that are:
+   - Appropriate for the ${cefrLevel} level
+   - Highly relevant to the "${topic}" subject
+   - Useful for students to know and discuss the topic
+
+2. SECOND, write a reading passage that:
+   - Contains 5 well-structured paragraphs
+   - Incorporates ALL 5 vocabulary words naturally within the text
+   - Is appropriate for ${cefrLevel} level in terms of language complexity
+   - Covers the "${topic}" subject thoroughly but simply
+   
+3. THIRD, build the rest of the lesson around these vocabulary words and reading passage:
+   - The warm-up should explicitly introduce the 5 vocabulary words
+   - The vocabulary section should define the same 5 words from the reading
+   - Comprehension questions should test understanding of the reading
+   - All subsequent activities should build on the vocabulary and reading
 
 REQUIRED LESSON STRUCTURE:
 Return your response as a valid, properly-formatted JSON object that strictly adheres to the following structure. Make sure all arrays use proper square brackets [] and all objects use proper curly braces {}. Do not use property names as values, and ensure all string values are properly quoted:
