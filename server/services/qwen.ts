@@ -207,7 +207,7 @@ export class QwenService {
                      : 'advanced';
 
     return `
-You are an expert ESL (English as a Second Language) teacher specializing in creating engaging, pedagogically sound lessons for ${levelDescription} students. 
+You are an expert ESL (English as a Second Language) teacher specializing in creating engaging, interactive lessons for ${levelDescription} (${cefrLevel}) level students.
 
 LESSON SPECIFICATIONS:
 - Topic: "${topic}"  
@@ -217,7 +217,14 @@ LESSON SPECIFICATIONS:
 - Additional notes: ${additionalNotes || 'None'}
 
 CLASSROOM CONTEXT AND PURPOSE:
-This lesson will be used by a teacher conducting a 1-on-1 online class via screen sharing. The content must be visually clear, logically structured, and optimized for interactive discussion.
+This lesson will be used by a teacher conducting a 1-on-1 online class via screen sharing. The content should be visually engaging, highly interactive, and optimized for student participation.
+
+CRITICAL PEDAGOGICAL APPROACH:
+1. The warm-up activity MUST introduce key vocabulary that will appear in the reading text
+2. The vocabulary section MUST include words from the reading text with CEFR-appropriate definitions
+3. The reading text MUST incorporate ALL vocabulary terms in a coherent, level-appropriate passage
+4. All activities should build on each other in a logical progression
+5. Including appropriate images and visual elements is ESSENTIAL (descriptions will be converted to images)
 
 REQUIRED LESSON STRUCTURE:
 Return your response as a JSON object with the following structure:
@@ -231,120 +238,132 @@ Return your response as a JSON object with the following structure:
     {
       "type": "warmup",
       "title": "Warm-up Activity",
-      "content": "Detailed description of a level-appropriate warm-up activity",
-      "timeAllocation": "5-10 minutes",
-      "teacherNotes": "Tips for the teacher on how to conduct this activity effectively"
+      "content": "Brief, engaging activity introducing the main topic and key vocabulary",
+      "questions": ["1-2 warm-up questions to start discussion"],
+      "imageDescription": "Description of an appropriate image to display with this activity",
+      "targetVocabulary": ["term1", "term2", "term3"],
+      "timeAllocation": "5 minutes",
+      "teacherNotes": "Tips for conducting this warm-up effectively"
+    },
+    {
+      "type": "reading",
+      "title": "Reading Text",
+      "introduction": "Brief introduction to the reading passage",
+      "paragraphs": [
+        "Paragraph 1 text that includes target vocabulary",
+        "Paragraph 2 text with more target vocabulary",
+        "Paragraph 3 text completing the passage"
+      ],
+      "imageDescription": "Description of an image that captures the essence of the reading text",
+      "timeAllocation": "15 minutes",
+      "teacherNotes": "Reading strategies to suggest to the student"
     },
     {
       "type": "vocabulary",
       "title": "Key Vocabulary",
       "words": [
-        { 
-          "term": "contextually relevant word", 
-          "definition": "clear, concise definition", 
-          "example": "example sentence showing usage in context",
-          "notes": "pronunciation tips or additional usage guidance" 
+        {
+          "term": "vocabulary word from the reading",
+          "partOfSpeech": "noun/verb/adj/etc",
+          "definition": "Clear, CEFR-level appropriate definition",
+          "example": "Example sentence using the word in context from the reading",
+          "imageDescription": "Description of an image representing this word",
+          "pronunciation": "Pronunciation tip if relevant"
         }
       ],
-      "timeAllocation": "10-15 minutes",
-      "teacherNotes": "Suggestions for teaching these vocabulary items"
-    },
-    {
-      "type": "reading",
-      "title": "Reading Text",
-      "content": "Original, level-appropriate reading passage on the topic",
-      "timeAllocation": "10-15 minutes",
-      "teacherNotes": "Reading strategies to suggest to the student"
+      "practice": "Brief activity to practice using the vocabulary",
+      "timeAllocation": "10 minutes",
+      "teacherNotes": "How to teach these vocabulary items effectively"
     },
     {
       "type": "comprehension",
       "title": "Reading Comprehension",
+      "introduction": "Brief introduction to check understanding",
       "questions": [
         {
           "type": "multiple-choice",
-          "question": "Level-appropriate question text",
+          "question": "Specific question about content from the reading",
           "options": ["Option A", "Option B", "Option C", "Option D"],
           "correctAnswer": "The correct option",
           "explanation": "Why this answer is correct"
+        },
+        {
+          "type": "true-false",
+          "question": "Statement based on the reading",
+          "options": ["True", "False"],
+          "correctAnswer": "True or False",
+          "explanation": "Explanation referencing specific content from the reading"
         }
       ],
       "timeAllocation": "10 minutes",
-      "teacherNotes": "How to discuss these questions to deepen understanding"
+      "teacherNotes": "Tips for discussing these comprehension questions"
     },
     {
-      "type": "grammar",
-      "title": "Grammar Focus",
-      "explanation": "Clear explanation of the target grammar point",
-      "examples": ["Example sentence 1", "Example sentence 2"],
-      "practice": [
+      "type": "sentenceFrames",
+      "title": "Sentence Frames",
+      "introduction": "Introduction to the grammar pattern",
+      "frames": [
         {
-          "type": "multiple-choice",
-          "question": "Grammar practice question",
-          "options": ["Option A", "Option B", "Option C"],
-          "correctAnswer": "The correct option"
+          "level": "basic/intermediate/advanced",
+          "pattern": "Template sentence with _____ for missing words",
+          "examples": [
+            "Completed example sentence 1 using the pattern",
+            "Completed example sentence 2 using the pattern"
+          ],
+          "usage": "When and how to use this pattern",
+          "grammarFocus": "Specific grammar point being practiced"
         }
       ],
-      "timeAllocation": "15 minutes",
-      "teacherNotes": "Tips on presenting and practicing this grammar point"
+      "timeAllocation": "10 minutes",
+      "teacherNotes": "Tips for teaching and practicing these patterns"
     },
     {
-      "type": "speaking",
-      "title": "Discussion Activity",
-      "introduction": "Brief introduction to the speaking activity",
-      "questions": ["Discussion question 1", "Discussion question 2", "Discussion question 3"],
-      "timeAllocation": "15 minutes",
-      "teacherNotes": "How to scaffold and support the discussion"
+      "type": "discussion",
+      "title": "Post-reading Discussion",
+      "introduction": "Brief introduction to the discussion activity",
+      "questions": [
+        {
+          "level": "basic/critical",
+          "question": "Discussion question text",
+          "focusVocabulary": ["vocabulary term 1", "vocabulary term 2"],
+          "imageDescription": "Description of an image to accompany this question",
+          "followUp": ["Follow-up question 1", "Follow-up question 2"]
+        }
+      ],
+      "timeAllocation": "10 minutes",
+      "teacherNotes": "Tips for facilitating this discussion"
     },
     {
-      "type": "assessment",
-      "title": "Quiz",
-      "introduction": "Brief instructions for the quiz",
+      "type": "quiz",
+      "title": "Knowledge Check Quiz",
+      "introduction": "Brief introduction to the final assessment",
       "questions": [
         {
           "id": "q1",
           "type": "multiple-choice",
-          "title": "Knowledge Check",
-          "instructions": "Choose the best answer based on the lesson content.",
-          "content": {
-            "question": "Level-appropriate assessment question",
-            "options": ["Option A", "Option B", "Option C", "Option D"],
-            "correctAnswer": "The correct option",
-            "explanation": "Explanation of why this is correct",
-            "cognitiveLevel": "understand",
-            "questionType": "literal",
-            "teachingNotes": "How to use this question to check understanding",
-            "followUpQuestions": ["Follow-up 1", "Follow-up 2", "Follow-up 3"],
-            "languageFocus": "Relevant language structure or skill"
-          }
+          "question": "Question text testing comprehension of key concepts",
+          "options": ["Option A", "Option B", "Option C", "Option D"],
+          "correctAnswer": "The correct option",
+          "explanation": "Explanation referencing specific content"
         }
       ],
       "timeAllocation": "10 minutes",
-      "teacherNotes": "How to administer and discuss the quiz"
+      "teacherNotes": "How to administer and review this assessment"
     }
   ]
 }
 
-CRITICAL ASSESSMENT REQUIREMENTS:
-1. The assessment section MUST include EXACTLY ${questionCount} questions
-2. ALL questions MUST be either "multiple-choice" or "true-false" format
-3. NEVER create questions requiring written responses
-4. For "multiple-choice" questions:
-   - Include 3-4 options
-   - Make distractors plausible but clearly incorrect
-5. For "true-false" questions:
-   - Options must be exactly ["True", "False"]
-6. Ensure questions have varying cognitive levels appropriate for ${cefrLevel}:
-   - Include both literal comprehension and higher-order thinking
-   - Match cognitive levels to the student's language ability
+CRITICAL QUALITY REQUIREMENTS:
+1. Make sure ALL target vocabulary appears in the reading text
+2. The warm-up activity MUST introduce vocabulary that will be needed to understand the reading
+3. ALL vocabulary definitions MUST be appropriate for ${cefrLevel} level students
+4. Questions in each section MUST build on previous sections
+5. Include ${questionCount} questions in the quiz section
+6. Make all content original, culturally appropriate, and relevant to the topic
+7. Ensure all examples and exercises are practically usable in a live teaching environment
+8. Image descriptions should be detailed enough to create or find appropriate images
 
-QUALITY REQUIREMENTS:
-1. Make all content original and tailored to the specified CEFR level (${cefrLevel})
-2. Include visual clarity cues where appropriate (e.g., "Display this in a table")
-3. Create content that promotes interactive discussion between teacher and student
-4. Ensure all examples and texts are culturally appropriate and globally relevant
-5. Include teacher notes with each section to guide effective instruction
-
-Create a complete, ready-to-use ESL lesson that follows all these requirements.
+Create a complete, interactive, visually engaging ESL lesson that strictly follows these requirements.
 `;
   }
   
