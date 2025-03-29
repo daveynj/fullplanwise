@@ -573,9 +573,27 @@ export function LessonContent({ content }: LessonContentProps) {
     const section = findSection('sentenceFrames') || findSection('grammar');
     if (!section) return <p>No sentence frames content available</p>;
     
-    // Get frames from different possible structures
-    const frames = section.frames || 
-                  (section.examples ? [{ pattern: section.examples, level: "intermediate" }] : []);
+    // Add additional error handling for frames array
+    let frames: any[] = [];
+    try {
+      // Check different possible structures and ensure we have a valid array
+      if (section.frames && Array.isArray(section.frames) && section.frames.length > 0) {
+        frames = section.frames;
+      } else if (section.examples) {
+        // Try to handle examples in different formats
+        if (Array.isArray(section.examples)) {
+          frames = [{ pattern: section.examples.join("\n"), level: "intermediate" }];
+        } else if (typeof section.examples === 'string') {
+          frames = [{ pattern: section.examples, level: "intermediate" }];
+        } else {
+          console.warn("Examples found but in unexpected format");
+        }
+      } else {
+        console.warn("No valid frames or examples found in sentence frames section");
+      }
+    } catch (error) {
+      console.error("Error processing sentence frames:", error);
+    }
 
     return (
       <div className="space-y-6">
@@ -585,7 +603,7 @@ export function LessonContent({ content }: LessonContentProps) {
               <AlignJustify className="h-5 w-5" />
               {section.title || "Sentence Frames"}
             </CardTitle>
-            {section.introduction && (
+            {(section.introduction || section.explanation) && (
               <CardDescription>{section.introduction || section.explanation}</CardDescription>
             )}
           </CardHeader>
@@ -690,29 +708,40 @@ export function LessonContent({ content }: LessonContentProps) {
     const section = findSection('discussion') || findSection('speaking');
     if (!section) return <p>No discussion content available</p>;
     
-    // Extract questions from different possible formats
-    let questions = [];
-    if (section.questions) {
-      if (Array.isArray(section.questions)) {
-        if (typeof section.questions[0] === 'string') {
-          // Simple string array
-          questions = section.questions.map((q: string) => ({ 
-            question: q, 
+    // Add additional error handling for questions array
+    let questions: any[] = [];
+    try {
+      // Extract questions from different possible formats
+      if (section.questions) {
+        if (Array.isArray(section.questions)) {
+          if (section.questions.length > 0) {
+            if (typeof section.questions[0] === 'string') {
+              // Simple string array
+              questions = section.questions.map((q: string) => ({ 
+                question: q, 
+                level: "basic", 
+                focusVocabulary: [] 
+              }));
+            } else {
+              // Already in proper format
+              questions = section.questions;
+            }
+          }
+        } else if (typeof section.questions === 'string') {
+          // Single string
+          questions = [{ 
+            question: section.questions, 
             level: "basic", 
             focusVocabulary: [] 
-          }));
+          }];
         } else {
-          // Already in proper format
-          questions = section.questions;
+          console.warn("Questions found but in unexpected format");
         }
-      } else if (typeof section.questions === 'string') {
-        // Single string
-        questions = [{ 
-          question: section.questions, 
-          level: "basic", 
-          focusVocabulary: [] 
-        }];
+      } else {
+        console.warn("No valid questions found in discussion section");
       }
+    } catch (error) {
+      console.error("Error processing discussion questions:", error);
     }
 
     return (
@@ -827,7 +856,19 @@ export function LessonContent({ content }: LessonContentProps) {
     if (!section) return <p>No quiz content available</p>;
     
     const [activeQuestion, setActiveQuestion] = useState(0);
-    const questions = section.questions || [];
+    
+    // Add additional error handling for questions array
+    let questions: any[] = [];
+    try {
+      // Check if questions is a valid array
+      if (section.questions && Array.isArray(section.questions) && section.questions.length > 0) {
+        questions = section.questions;
+      } else {
+        console.warn("No valid questions array found in quiz section");
+      }
+    } catch (error) {
+      console.error("Error accessing quiz questions:", error);
+    }
 
     return (
       <div className="space-y-6">
@@ -881,9 +922,13 @@ export function LessonContent({ content }: LessonContentProps) {
                   
                   {/* Options */}
                   <div className="space-y-3">
-                    {(questions[activeQuestion].options || 
-                      questions[activeQuestion].content?.options || 
-                      ["Option A", "Option B", "Option C", "Option D"]).map((option: string, idx: number) => (
+                    {questions[activeQuestion] && (
+                      Array.isArray(questions[activeQuestion].options) 
+                        ? questions[activeQuestion].options
+                        : Array.isArray(questions[activeQuestion].content?.options)
+                          ? questions[activeQuestion].content?.options
+                          : ["Option A", "Option B", "Option C", "Option D"]
+                    ).map((option: string, idx: number) => (
                       <div key={`quiz-option-${idx}`} className="flex items-center p-3 border border-gray-200 rounded-md hover:bg-gray-50">
                         <div className="w-5 h-5 flex items-center justify-center border border-gray-300 rounded-full mr-3">
                           {['A', 'B', 'C', 'D'][idx]}
