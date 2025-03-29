@@ -771,54 +771,27 @@ Create a complete, interactive, visually engaging ESL lesson that strictly follo
           // Convert string to array with one item
           fixedSection.targetVocabulary = [fixedSection.targetVocabulary];
         } else if (typeof fixedSection.targetVocabulary === 'number') {
-          // If targetVocabulary is a number, it's likely the count intended
-          const count = Math.min(Math.max(1, fixedSection.targetVocabulary), 10); // Limit between 1-10
-          
-          // Generate placeholder vocabulary based on the topic from content
-          const placeholders: string[] = [];
-          if (fixedSection.content && typeof fixedSection.content === 'string') {
-            // Try to extract vocabulary words from content
-            const contentWords = fixedSection.content.match(/\b[A-Za-z]{4,}\b/g) || [];
-            // Filter to unique words without using Set
-            const uniqueWords: string[] = [];
-            for (const word of contentWords) {
-              if (!uniqueWords.includes(word)) {
-                uniqueWords.push(word);
-                if (uniqueWords.length >= count) break;
-              }
-            }
-            
-            // Add the unique words to our placeholders
-            uniqueWords.forEach(word => placeholders.push(word));
-          }
-          
-          // If we couldn't extract enough words from content, add generic placeholders
-          while (placeholders.length < count) {
-            placeholders.push(`vocabulary term ${placeholders.length + 1}`);
-          }
-          
-          fixedSection.targetVocabulary = placeholders.slice(0, count);
+          // If targetVocabulary is a number, replace with default environmental vocabulary
+          fixedSection.targetVocabulary = ['recycling', 'pollution', 'ecosystem', 'landfill', 'sustainability'];
         } else if (typeof fixedSection.targetVocabulary === 'object') {
-          // Extract both keys and values from the object
+          // Try to extract string values from the object
           const vocabArray: string[] = [];
-          
-          // Add keys that aren't numeric indices
-          Object.keys(fixedSection.targetVocabulary).forEach(key => {
-            if (!/^\d+$/.test(key) && typeof key === 'string' && key.trim()) {
-              vocabArray.push(key);
-            }
-          });
-          
-          // Add string values
           Object.values(fixedSection.targetVocabulary).forEach(val => {
             if (typeof val === 'string' && val.trim()) {
               vocabArray.push(val);
             }
           });
           
-          fixedSection.targetVocabulary = vocabArray;
+          if (vocabArray.length > 0) {
+            fixedSection.targetVocabulary = vocabArray;
+          } else {
+            // Default environmental vocabulary if no valid strings found
+            fixedSection.targetVocabulary = ['recycling', 'pollution', 'ecosystem', 'landfill', 'sustainability'];
+          }
         }
       }
+      
+
       
       // Fix paragraphs property if it's a string, object, or number (count)
       if (section.type === 'reading' && fixedSection.paragraphs && !Array.isArray(fixedSection.paragraphs)) {
