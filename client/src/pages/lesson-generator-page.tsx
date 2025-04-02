@@ -100,7 +100,6 @@ export default function LessonGeneratorPage() {
                   students={students} 
                   onSubmit={handleGenerateLesson} 
                   credits={user?.credits || 0}
-                  isAdmin={user?.isAdmin || false}
                 />
               </div>
               

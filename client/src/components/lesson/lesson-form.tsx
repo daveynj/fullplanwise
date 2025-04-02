@@ -59,10 +59,9 @@ interface LessonFormProps {
   students: Student[];
   onSubmit: (data: any) => void;
   credits: number;
-  isAdmin?: boolean;
 }
 
-export function LessonForm({ students, onSubmit, credits, isAdmin = false }: LessonFormProps) {
+export function LessonForm({ students, onSubmit, credits }: LessonFormProps) {
   const [selectedCefrLevel, setSelectedCefrLevel] = useState<string>("B1");
   
   const form = useForm<FormValues>({
@@ -287,20 +286,15 @@ export function LessonForm({ students, onSubmit, credits, isAdmin = false }: Les
               <Button 
                 type="submit" 
                 className="bg-primary hover:bg-primary-light text-white font-semibold px-6 py-3 rounded-lg flex items-center transition w-full justify-center"
-                disabled={(credits < 1 && !isAdmin) || form.formState.isSubmitting}
+                disabled={credits < 1 || form.formState.isSubmitting}
               >
                 <Wand2 className="mr-2 text-xl" /> Generate Lesson
-                {!isAdmin && (
-                  <span className="bg-white/20 ml-2 px-2 py-0.5 rounded-md text-sm">1 Credit</span>
-                )}
-                {isAdmin && (
-                  <span className="bg-white/20 ml-2 px-2 py-0.5 rounded-md text-sm">Admin</span>
-                )}
+                <span className="bg-white/20 ml-2 px-2 py-0.5 rounded-md text-sm">1 Credit</span>
               </Button>
             </div>
             
             {/* Show warning if no credits */}
-            {credits < 1 && !isAdmin && (
+            {credits < 1 && (
               <p className="text-destructive text-sm text-center mt-2">
                 You need at least 1 credit to generate a lesson.
               </p>

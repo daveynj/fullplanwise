@@ -1,4 +1,4 @@
-// This script sets a high number of credits for the admin user
+// This script sets a high number of credits for a specific admin user
 
 import { db } from './server/db';
 import { users } from './shared/schema';
@@ -6,12 +6,11 @@ import { eq } from 'drizzle-orm';
 
 async function setAdminCredits() {
   try {
-    console.log('Setting high credits for admin user...');
-    
-    // Update user by username - we know you're using daveynj as your username
+    // We're targeting the specific daveynj account
     const targetUsername = 'daveynj';
+    console.log(`Setting high credits for user "${targetUsername}"...`);
     
-    // First, update this username to have admin status
+    // First, make sure this user has admin status
     await db
       .update(users)
       .set({ isAdmin: true })
@@ -19,7 +18,7 @@ async function setAdminCredits() {
     
     console.log(`Updated user ${targetUsername} to have admin status`);
     
-    // Then update the credits
+    // Then update the credits to a very high number
     const updatedUser = await db
       .update(users)
       .set({ credits: 999999 })
@@ -32,18 +31,6 @@ async function setAdminCredits() {
     }
     
     console.log(`Updated user ${targetUsername} (ID: ${updatedUser[0].id}) to 999999 credits`);
-    
-    // Also update all admin users to have high credits
-    for (const user of adminUsers) {
-      const updatedUser = await db
-        .update(users)
-        .set({ credits: 999999 })
-        .where(eq(users.id, user.id))
-        .returning();
-      
-      console.log(`Updated user ${user.username} (ID: ${user.id}) to 999999 credits`);
-    }
-    
     console.log('Admin credits update completed successfully');
   } catch (error) {
     console.error('Error setting admin credits:', error);
