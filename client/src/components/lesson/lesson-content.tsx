@@ -707,6 +707,19 @@ export function LessonContent({ content }: LessonContentProps) {
                 level: "basic", 
                 focusVocabulary: [] 
               }));
+            } else if (typeof section.questions[0] === 'object') {
+              // Check if we have the new format with topic paragraphs
+              if (section.questions[0].topic || section.questions[0].question) {
+                questions = section.questions.map((q: any) => ({
+                  topic: q.topic || null,
+                  question: q.question || q.text || "No question text",
+                  level: q.level || "basic",
+                  focusVocabulary: q.focusVocabulary || []
+                }));
+              } else {
+                // Already in proper format
+                questions = section.questions;
+              }
             } else {
               // Already in proper format
               questions = section.questions;
@@ -769,6 +782,10 @@ export function LessonContent({ content }: LessonContentProps) {
                       {/* Question content */}
                       <div className="mt-4 flex flex-col md:flex-row gap-4 items-start">
                         <div className="md:w-7/12">
+                          {/* Topic introduction paragraph if available */}
+                          {q.topic && (
+                            <p className="text-gray-700 mb-4">{q.topic}</p>
+                          )}
                           <h3 className="text-xl font-medium mb-4">{q.question}</h3>
                           
                           {/* Focus vocabulary */}

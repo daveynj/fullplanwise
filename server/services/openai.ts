@@ -363,11 +363,26 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
       "title": "Post-reading Discussion",
       "introduction": "Let's discuss your thoughts and opinions about this topic.",
       "questions": [
-        "What did you find most interesting about this topic in the reading?",
-        "How does this topic affect your daily life or experiences?",
-        "Do you agree with the main ideas presented in the reading? Why or why not?",
-        "How might this topic change or develop in the future?",
-        "What else would you like to learn about this topic that wasn't covered in the reading?"
+        {
+          "topic": "Brief paragraph introducing the first discussion point related to the reading.",
+          "question": "What did you find most interesting about this topic in the reading?"
+        },
+        {
+          "topic": "Brief paragraph about how this topic relates to everyday experiences.",
+          "question": "How does this topic affect your daily life or experiences?"
+        },
+        {
+          "topic": "Brief paragraph highlighting some key ideas from the reading worth discussing.",
+          "question": "Do you agree with the main ideas presented in the reading? Why or why not?"
+        },
+        {
+          "topic": "Brief paragraph about potential future developments in this area.",
+          "question": "How might this topic change or develop in the future?"
+        },
+        {
+          "topic": "Brief paragraph acknowledging the limitations of the reading's scope.",
+          "question": "What else would you like to learn about this topic that wasn't covered in the reading?"
+        }
       ],
       "timeAllocation": "10 minutes",
       "teacherNotes": "Encourage students to use the target vocabulary during the discussion and refer back to specific parts of the reading to support their points."
@@ -375,41 +390,42 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
     {
       "type": "quiz",
       "title": "Knowledge Check Quiz",
-      "introduction": "Let's test your understanding of today's lesson with a short quiz.",
+      "introduction": "Let's test your understanding of today's lesson with a short quiz that applies the concepts to new situations.",
+      "instructions": "IMPORTANT: Create quiz questions that are different from the comprehension questions. Focus on application of concepts, critical thinking, and vocabulary usage in new contexts rather than simple recall of facts from the reading.",
       "questions": [
         {
           "id": 1,
-          "question": "Quiz question about the topic",
+          "question": "Application question that requires using the concepts in a new context",
           "options": ["Option A", "Option B", "Option C", "Option D"],
           "correctAnswer": "Option A"
         },
         {
           "id": 2,
-          "question": "Quiz question about vocabulary",
+          "question": "Question about using vocabulary in a different situation than shown in the reading",
           "options": ["Option A", "Option B", "Option C", "Option D"],
           "correctAnswer": "Option B"
         },
         {
           "id": 3,
-          "question": "Quiz question applying concepts",
+          "question": "Hypothetical scenario question applying the lesson concepts",
           "options": ["Option A", "Option B", "Option C", "Option D"],
           "correctAnswer": "Option C"
         },
         {
           "id": 4,
-          "question": "Quiz question testing comprehension",
+          "question": "Critical thinking question that goes beyond the text",
           "options": ["Option A", "Option B", "Option C", "Option D"],
           "correctAnswer": "Option D"
         },
         {
           "id": 5,
-          "question": "Final quiz question",
+          "question": "Question that connects the lesson topic to broader themes or real-world applications",
           "options": ["Option A", "Option B", "Option C", "Option D"],
           "correctAnswer": "Option A"
         }
       ],
       "timeAllocation": "10 minutes",
-      "teacherNotes": "Review answers with the student, explaining any mistakes and reinforcing vocabulary and concepts from the lesson."
+      "teacherNotes": "Review answers with the student, explaining any mistakes and reinforcing vocabulary and concepts from the lesson. Focus on helping them apply the knowledge to new situations."
     }
   ]
 }`;
