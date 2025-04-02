@@ -10,7 +10,7 @@ import {
   creditPurchaseSchema
 } from "@shared/schema";
 import Stripe from "stripe";
-import { openAIService } from "./services/openai";
+import { qwenService } from "./services/qwen";
 
 // Initialize Stripe if API key is available
 const stripe = process.env.STRIPE_SECRET_KEY 
@@ -182,8 +182,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log(`Starting lesson generation for user ${user.id}, topic: ${validatedData.topic}, CEFR level: ${validatedData.cefrLevel}`);
       
       try {
-        // Generate lesson content using OpenAI
-        const generatedContent = await openAIService.generateLesson(validatedData);
+        // Generate lesson content using Qwen AI
+        const generatedContent = await qwenService.generateLesson(validatedData);
         
         // Calculate time taken
         const endTime = Date.now();

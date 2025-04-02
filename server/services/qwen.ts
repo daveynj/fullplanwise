@@ -42,7 +42,7 @@ export class QwenService {
       const prompt = this.constructLessonPrompt(params);
       console.log('Constructed prompt successfully');
       
-      // Use qwen-max model specifically as requested
+      // Use qwen-max model with longer outputs
       const modelName = "qwen-max";
       
       // Request payload following OpenAI-compatible format for the international endpoint
@@ -60,7 +60,7 @@ export class QwenService {
         ],
         temperature: 0.5, // Lower temperature for more consistent, structured output
         top_p: 0.95,
-        max_tokens: 3500,
+        max_tokens: 5000,
         response_format: { type: "json_object" }
       };
       
@@ -233,10 +233,13 @@ CRITICAL LESSON DEVELOPMENT PROCESS:
    - Useful for students to know and discuss the topic
 
 2. SECOND, write a reading passage that:
-   - Contains 5 well-structured paragraphs
+   - ESSENTIAL: Contains EXACTLY 5 substantial, well-structured paragraphs
+   - CRITICAL: Each paragraph MUST contain at least 3-4 complete sentences (minimum 15-20 sentences total)
+   - IMPORTANT: The total reading text MUST be at least 20-30 sentences in total length
    - Incorporates ALL 5 vocabulary words naturally within the text
    - Is appropriate for ${cefrLevel} level in terms of language complexity
    - Covers the "${topic}" subject thoroughly but simply
+   - Contains enough detail to support comprehension questions
    
 3. THIRD, build the rest of the lesson around these vocabulary words and reading passage:
    - The warm-up should explicitly introduce the 5 vocabulary words
@@ -945,4 +948,5 @@ Create a complete, interactive, visually engaging ESL lesson that strictly follo
 }
 
 // Create a singleton instance with the API key
-export const qwenService = new QwenService(process.env.QWEN_API_KEY || '');
+// Initialize QwenService with the provided API key
+export const qwenService = new QwenService('sk-ccc4b592df034b2a86677feb5f1e27ff');
