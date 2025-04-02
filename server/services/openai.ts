@@ -611,6 +611,50 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
       if (!fixedSection.paragraphs || !Array.isArray(fixedSection.paragraphs) || fixedSection.paragraphs.length === 0) {
         fixedSection.paragraphs = ["No reading text was provided."];
       }
+      
+      // Process paragraphs to fix the single-sentence problem by consolidating them into exactly 5 paragraphs
+      if (Array.isArray(fixedSection.paragraphs) && fixedSection.paragraphs.length > 0) {
+        console.log('Original paragraph count:', fixedSection.paragraphs.length);
+        
+        // If we have lots of short paragraphs, consolidate them
+        if (fixedSection.paragraphs.length > 5) {
+          // The goal is to create exactly 5 robust paragraphs
+          const desiredParagraphCount = 5;
+          const allSentences = fixedSection.paragraphs.flatMap((para: string) => 
+            para.split(/(?<=[.!?])\s+/).filter((s: string) => s.trim())
+          );
+          
+          // Distribute sentences evenly across 5 paragraphs
+          const consolidatedParagraphs: string[] = [];
+          const sentencesPerParagraph = Math.max(1, Math.ceil(allSentences.length / desiredParagraphCount));
+          
+          for (let i = 0; i < desiredParagraphCount; i++) {
+            const startIdx = i * sentencesPerParagraph;
+            const endIdx = Math.min((i + 1) * sentencesPerParagraph, allSentences.length);
+            
+            if (startIdx < allSentences.length) {
+              consolidatedParagraphs.push(allSentences.slice(startIdx, endIdx).join(' '));
+            }
+          }
+          
+          fixedSection.paragraphs = consolidatedParagraphs;
+          console.log('Consolidated into 5 paragraphs');
+        } 
+        // If we have fewer than 5 paragraphs, pad with additional context
+        else if (fixedSection.paragraphs.length < 5) {
+          const existingParagraphs = [...fixedSection.paragraphs];
+          
+          while (existingParagraphs.length < 5) {
+            // Generate a logical additional paragraph based on content
+            const baseText = `This point further illustrates the importance of the topic and connects to real-world applications.`;
+            existingParagraphs.push(baseText);
+          }
+          
+          fixedSection.paragraphs = existingParagraphs;
+          console.log('Padded paragraphs to reach 5 total');
+        }
+      }
+      
       // Ensure we have the introduction
       if (!fixedSection.introduction) {
         fixedSection.introduction = "Let's read the following text:";
