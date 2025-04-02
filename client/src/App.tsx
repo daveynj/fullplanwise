@@ -25,6 +25,7 @@ function Router() {
       <ProtectedRoute path="/students" component={StudentsPage} />
       <ProtectedRoute path="/students/:id" component={StudentDetailPage} />
       <ProtectedRoute path="/history" component={LessonHistoryPage} />
+      <ProtectedRoute path="/history/:id" component={FullScreenLessonPage} />
       <ProtectedRoute path="/fullscreen/:id" component={FullScreenLessonPage} />
       <ProtectedRoute path="/buy-credits" component={BuyCreditsPage} />
       <ProtectedRoute path="/settings" component={SettingsPage} />
