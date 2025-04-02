@@ -541,14 +541,60 @@ Create a complete, interactive, visually engaging ESL lesson that strictly follo
           case 'comprehension':
             // Process comprehension questions
             cleanSection.introduction = section.introduction || '';
-            cleanSection.questions = this.processArray(section.questions, 'object')
-              .map((q: any) => ({
-                type: q.type || 'multiple-choice',
-                question: q.question || '',
-                options: this.processArray(q.options, 'string'),
-                correctAnswer: q.correctAnswer || '',
-                explanation: q.explanation || ''
+            
+            // If questions is an array of strings, convert them to proper question objects
+            if (Array.isArray(section.questions) && section.questions.length > 0 && typeof section.questions[0] === 'string') {
+              cleanSection.questions = section.questions.map((question: string) => ({
+                type: 'short-answer',
+                question: question,
+                options: [],
+                correctAnswer: '',
+                explanation: ''
               }));
+            } else {
+              // Otherwise process as objects
+              cleanSection.questions = this.processArray(section.questions, 'object')
+                .map((q: any) => ({
+                  type: q.type || 'multiple-choice',
+                  question: q.question || '',
+                  options: this.processArray(q.options, 'string'),
+                  correctAnswer: q.correctAnswer || '',
+                  explanation: q.explanation || ''
+                }));
+            }
+            
+            // If still no questions, create default ones from content
+            if (cleanSection.questions.length === 0) {
+              // See if we can find a reading section to base questions on
+              const readingSection = Array.isArray(content.sections) && 
+                content.sections.find((s: any) => s.type === 'reading');
+                
+              if (readingSection && Array.isArray(readingSection.paragraphs) && readingSection.paragraphs.length > 0) {
+                cleanSection.questions = [
+                  {
+                    type: 'short-answer',
+                    question: 'What is the main idea of the reading passage?',
+                    options: [],
+                    correctAnswer: '',
+                    explanation: ''
+                  },
+                  {
+                    type: 'short-answer',
+                    question: 'What are some key details from the text?',
+                    options: [],
+                    correctAnswer: '',
+                    explanation: ''
+                  },
+                  {
+                    type: 'short-answer',
+                    question: 'How does this topic relate to your own experiences?',
+                    options: [],
+                    correctAnswer: '',
+                    explanation: ''
+                  }
+                ];
+              }
+            }
             break;
             
           case 'sentenceFrames':
@@ -719,6 +765,50 @@ Create a complete, interactive, visually engaging ESL lesson that strictly follo
       // Create a copy of the section to modify
       const fixedSection = { ...section };
       
+      // Handle reading content as a combined string to be split into paragraphs
+      if (section.type === 'reading' && typeof fixedSection.content === 'string' && fixedSection.content.length > 100) {
+        // If content field contains substantial text but no paragraphs field exists or is empty
+        if (!fixedSection.paragraphs || (Array.isArray(fixedSection.paragraphs) && fixedSection.paragraphs.length === 0)) {
+          console.log('Found reading content in content field, splitting into paragraphs');
+          // Split by double line breaks or by periods followed by spaces to create paragraphs
+          const textBlocks = fixedSection.content.split(/\n\n+/);
+          if (textBlocks.length >= 3) {
+            fixedSection.paragraphs = textBlocks;
+          } else {
+            // If not enough paragraph breaks, try to split by sentences
+            const sentences = fixedSection.content.split(/\.\s+/);
+            const paragraphs = [];
+            let currentParagraph = '';
+            
+            // Group sentences into paragraphs (3-4 sentences per paragraph)
+            for (let i = 0; i < sentences.length; i++) {
+              if (sentences[i].trim()) {
+                currentParagraph += sentences[i].trim() + '. ';
+                
+                // Create a new paragraph after 3-4 sentences or at the end
+                if ((i + 1) % 3 === 0 || i === sentences.length - 1) {
+                  paragraphs.push(currentParagraph.trim());
+                  currentParagraph = '';
+                }
+              }
+            }
+            
+            if (paragraphs.length >= 3) {
+              fixedSection.paragraphs = paragraphs;
+            } else {
+              // If still not enough paragraphs, create at least 5 paragraphs
+              fixedSection.paragraphs = [
+                fixedSection.content.substring(0, Math.floor(fixedSection.content.length / 5)),
+                fixedSection.content.substring(Math.floor(fixedSection.content.length / 5), Math.floor(fixedSection.content.length * 2 / 5)),
+                fixedSection.content.substring(Math.floor(fixedSection.content.length * 2 / 5), Math.floor(fixedSection.content.length * 3 / 5)),
+                fixedSection.content.substring(Math.floor(fixedSection.content.length * 3 / 5), Math.floor(fixedSection.content.length * 4 / 5)),
+                fixedSection.content.substring(Math.floor(fixedSection.content.length * 4 / 5))
+              ];
+            }
+          }
+        }
+      }
+      
       // Fix questions property if it's a string, object, or number (count)
       if (fixedSection.questions && !Array.isArray(fixedSection.questions)) {
         if (typeof fixedSection.questions === 'string') {
@@ -869,7 +959,7 @@ Create a complete, interactive, visually engaging ESL lesson that strictly follo
           const tempWords = [];
           
           // Look for a warmup section with targetVocabulary
-          const warmupSection = processed.sections.find(s => 
+          const warmupSection = processed.sections.find((s: any) => 
             (s.type === 'warmup' || s.type === 'warm-up') && 
             s.targetVocabulary && 
             Array.isArray(s.targetVocabulary)
