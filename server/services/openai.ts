@@ -186,13 +186,14 @@ CRITICAL LESSON DEVELOPMENT PROCESS:
    - Useful for students to know and discuss the topic
    - For each word, consider: part of speech, definition, syllable breakdown, example sentences, collocations, and usage notes
 
-2. SECOND, write a reading passage that:
-   - Contains EXACTLY 5 substantial paragraphs (each with 4-6 sentences minimum)
-   - Incorporates ALL 5 vocabulary words naturally within the text (one vocabulary word per paragraph)
+2. SECOND, write a continuous reading passage that:
+   - Is a SINGLE CONTINUOUS TEXT (not divided into paragraphs)
+   - Contains at least 20-30 sentences total 
+   - Incorporates ALL 5 vocabulary words naturally within the text
    - Is appropriate for ${cefrLevel} level in terms of language complexity
    - Covers the "${topic}" subject thoroughly but simply
-   - Has sufficient length to provide comprehensive information
-   - IMPORTANT: Each paragraph must be substantial with multiple sentences (at least 4-6 per paragraph)
+   - Has sufficient length for us to create 5 substantial paragraphs
+   - IMPORTANT: Write this as ONE CONTINUOUS TEXT that flows naturally - our system will divide it into paragraphs later
    
 3. THIRD, build the rest of the lesson around these vocabulary words and reading passage:
    - The warm-up should explicitly introduce the 5 vocabulary words
@@ -229,13 +230,7 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
       "type": "reading",
       "title": "Reading Text",
       "introduction": "Let's read about this important topic.",
-      "paragraphs": [
-        "First substantial paragraph (4-6 sentences) that introduces the topic and uses at least one vocabulary word naturally. Include sufficient detail and context for students to understand the subject. Make sure the paragraph provides a clear foundation for the rest of the reading.",
-        "Second substantial paragraph (4-6 sentences) that develops the topic further and uses another vocabulary word. This paragraph should build upon the introduction with additional facts, examples, or explanations that expand the student's understanding.",
-        "Third substantial paragraph (4-6 sentences) with more detailed information and another vocabulary word. This paragraph should explore a different aspect of the topic or go deeper into previously mentioned aspects.",
-        "Fourth substantial paragraph (4-6 sentences) exploring implications or applications of the topic with another vocabulary word. This paragraph should connect the topic to real-world contexts or consider its significance.",
-        "Final substantial paragraph (4-6 sentences) that summarizes or concludes with the last vocabulary word. This paragraph should bring closure to the reading while reinforcing key points."
-      ],
+      "text": "Write a continuous reading passage of at least 20-30 sentences that fully explores the topic. Incorporate all 5 vocabulary words naturally throughout the text. The passage should flow smoothly from introduction to development to conclusion, covering different aspects of the topic in sufficient depth. Make sure the content is engaging, informative, and appropriate for the specified CEFR level. Our system will automatically divide this text into 5 well-balanced paragraphs later.",
       "imageDescription": "A descriptive image that illustrates a key aspect of the reading",
       "timeAllocation": "15 minutes",
       "teacherNotes": "Have students read the passage once for general understanding, then a second time to identify the vocabulary words in context."
@@ -671,73 +666,35 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
       }
     }
     
-    // Fix paragraphs property if it's a string, object, or number (count)
-    if (section.type === 'reading' && fixedSection.paragraphs && !Array.isArray(fixedSection.paragraphs)) {
-      if (typeof fixedSection.paragraphs === 'string') {
-        // Split the string by double newlines or handle as a single paragraph
-        const paragraphs = fixedSection.paragraphs.split(/\n\n+/);
-        fixedSection.paragraphs = paragraphs.length > 0 ? paragraphs : [fixedSection.paragraphs];
-      } else if (typeof fixedSection.paragraphs === 'number') {
-        // If paragraphs is a number, create placeholders
-        const count = Math.min(Math.max(1, fixedSection.paragraphs), 10); // Limit between 1-10
+    // Process the reading section to handle the continuous text
+    if (section.type === 'reading') {
+      // Handle the case where we have a text property containing a continuous passage
+      if (fixedSection.text && typeof fixedSection.text === 'string') {
+        console.log('Processing continuous reading text...');
         
-        // Generate placeholder paragraphs based on the introduction/topic
-        const placeholders: string[] = [];
-        const topic = fixedSection.title?.replace('Reading Text', '') || 
-                    fixedSection.introduction || 
-                    'the topic';
-        
-        // Create generic paragraphs
-        for (let i = 0; i < count; i++) {
-          placeholders.push(`Paragraph ${i+1} about ${topic}.`);
+        // Add paragraphs property if it doesn't exist
+        if (!fixedSection.paragraphs) {
+          fixedSection.paragraphs = [];
         }
         
-        fixedSection.paragraphs = placeholders;
-      } else if (typeof fixedSection.paragraphs === 'object') {
-        // Extract values from the object
-        const paragraphsArray: string[] = [];
-        
-        // Add string values
-        Object.values(fixedSection.paragraphs).forEach((val: any) => {
-          if (typeof val === 'string' && val.trim()) {
-            paragraphsArray.push(val);
-          }
-        });
-        
-        fixedSection.paragraphs = paragraphsArray;
-      }
-    }
-    
-    // Ensure we have complete "reading" section
-    if (section.type === 'reading') {
-      // Create empty paragraphs array if none exists
-      if (!fixedSection.paragraphs || !Array.isArray(fixedSection.paragraphs) || fixedSection.paragraphs.length === 0) {
-        fixedSection.paragraphs = ["No reading text was provided."];
-      }
-      
-      // Process paragraphs to fix the single-sentence problem by consolidating them into exactly 5 robust paragraphs
-      if (Array.isArray(fixedSection.paragraphs) && fixedSection.paragraphs.length > 0) {
-        console.log('Original paragraph count:', fixedSection.paragraphs.length);
-        
-        // Get all sentences from all paragraphs for potential redistribution
-        const allSentences = fixedSection.paragraphs.flatMap((para: string) => {
-          // Split by sentence endings, but handle final sentences without trailing spaces
-          return para.split(/[.!?](?:\s+|$)/).filter((s: string) => s.trim().length > 0)
+        // Split the continuous text into sentences
+        const text = fixedSection.text;
+        // This regex splits on sentence endings (., !, ?) followed by space or end of string
+        const sentences = text.split(/[.!?](?:\s+|$)/).filter((s: string) => s.trim().length > 0)
             .map(sentence => sentence.trim() + '.'); // Ensure each sentence ends with a period
-        });
         
-        console.log(`Total sentences available: ${allSentences.length}`);
+        console.log(`Total sentences in continuous text: ${sentences.length}`);
         
-        // We need at least 15 sentences to create 5 paragraphs with 3 sentences each
-        const MIN_SENTENCES_PER_PARAGRAPH = 3;
+        // Define our targets
         const DESIRED_PARAGRAPH_COUNT = 5;
+        const MIN_SENTENCES_PER_PARAGRAPH = 3;
         const MIN_TOTAL_SENTENCES = MIN_SENTENCES_PER_PARAGRAPH * DESIRED_PARAGRAPH_COUNT;
         
-        // If we don't have enough sentences, we need to generate some additional ones
-        if (allSentences.length < MIN_TOTAL_SENTENCES) {
-          console.log(`Not enough sentences. Need ${MIN_TOTAL_SENTENCES}, have ${allSentences.length}`);
+        // If we don't have enough sentences, we need to add some generic ones
+        if (sentences.length < MIN_TOTAL_SENTENCES) {
+          console.log(`Not enough sentences. Need at least ${MIN_TOTAL_SENTENCES}, have ${sentences.length}`);
           
-          // List of generic sentence templates we can use to expand paragraphs
+          // List of generic sentence templates we can use to expand
           const enhancementTemplates = [
             "This reflects common experiences in many societies.",
             "Many people consider this an important aspect to understand.",
@@ -757,25 +714,25 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
           ];
           
           // Add sentences until we reach the minimum required
-          while (allSentences.length < MIN_TOTAL_SENTENCES) {
+          while (sentences.length < MIN_TOTAL_SENTENCES) {
             // Pick a random template
             const template = enhancementTemplates[Math.floor(Math.random() * enhancementTemplates.length)];
-            allSentences.push(template);
+            sentences.push(template);
           }
           
-          console.log(`Enhanced to ${allSentences.length} total sentences`);
+          console.log(`Enhanced to ${sentences.length} total sentences`);
         }
         
-        // Now create exactly 5 paragraphs with the sentences we have
-        const enhancedParagraphs: string[] = [];
-        const sentencesPerParagraph = Math.max(MIN_SENTENCES_PER_PARAGRAPH, Math.ceil(allSentences.length / DESIRED_PARAGRAPH_COUNT));
+        // Distribute sentences evenly across 5 paragraphs
+        const paragraphs: string[] = [];
+        const sentencesPerParagraph = Math.max(MIN_SENTENCES_PER_PARAGRAPH, Math.ceil(sentences.length / DESIRED_PARAGRAPH_COUNT));
         
         for (let i = 0; i < DESIRED_PARAGRAPH_COUNT; i++) {
           const startIdx = i * sentencesPerParagraph;
-          const endIdx = Math.min((i + 1) * sentencesPerParagraph, allSentences.length);
+          const endIdx = Math.min((i + 1) * sentencesPerParagraph, sentences.length);
           
-          if (startIdx < allSentences.length) {
-            const paragraphSentences = allSentences.slice(startIdx, endIdx);
+          if (startIdx < sentences.length) {
+            const paragraphSentences = sentences.slice(startIdx, endIdx);
             
             // Ensure each paragraph has at least 3 sentences
             if (paragraphSentences.length < MIN_SENTENCES_PER_PARAGRAPH) {
@@ -785,17 +742,132 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
               }
             }
             
-            enhancedParagraphs.push(paragraphSentences.join(' '));
+            paragraphs.push(paragraphSentences.join(' '));
           }
         }
         
-        // If we somehow don't have 5 paragraphs (shouldn't happen with our logic above)
-        while (enhancedParagraphs.length < DESIRED_PARAGRAPH_COUNT) {
-          enhancedParagraphs.push("This paragraph provides additional context for the topic. It explores related concepts in more detail. It connects these ideas to practical applications.");
+        // Make sure we have exactly 5 paragraphs
+        while (paragraphs.length < DESIRED_PARAGRAPH_COUNT) {
+          paragraphs.push("This paragraph provides additional context for the topic. It explores related concepts in more detail. It connects these ideas to practical applications.");
         }
         
-        fixedSection.paragraphs = enhancedParagraphs;
-        console.log(`Enhanced into ${enhancedParagraphs.length} paragraphs with adequate sentence count`);
+        // Update the paragraphs property
+        fixedSection.paragraphs = paragraphs;
+        console.log(`Created ${paragraphs.length} paragraphs from continuous text`);
+      } 
+      // Handle the case where we already have paragraphs (backwards compatibility)
+      else if (fixedSection.paragraphs) {
+        console.log('Processing existing paragraphs...');
+        
+        // Convert to array if it's not already
+        if (!Array.isArray(fixedSection.paragraphs)) {
+          if (typeof fixedSection.paragraphs === 'string') {
+            // Split the string by double newlines
+            const paragraphs = fixedSection.paragraphs.split(/\n\n+/);
+            fixedSection.paragraphs = paragraphs.length > 0 ? paragraphs : [fixedSection.paragraphs];
+          } else if (typeof fixedSection.paragraphs === 'object') {
+            // Extract values from the object
+            const paragraphsArray: string[] = [];
+            Object.values(fixedSection.paragraphs).forEach((val: any) => {
+              if (typeof val === 'string' && val.trim()) {
+                paragraphsArray.push(val);
+              }
+            });
+            fixedSection.paragraphs = paragraphsArray;
+          } else {
+            // Default fallback
+            fixedSection.paragraphs = ["No reading text was provided."];
+          }
+        }
+        
+        // Process existing paragraphs to ensure quality
+        if (Array.isArray(fixedSection.paragraphs) && fixedSection.paragraphs.length > 0) {
+          console.log('Original paragraph count:', fixedSection.paragraphs.length);
+          
+          // Get all sentences from all paragraphs for potential redistribution
+          const allSentences = fixedSection.paragraphs.flatMap((para: string) => {
+            // Split by sentence endings, including end of string
+            return para.split(/[.!?](?:\s+|$)/).filter((s: string) => s.trim().length > 0)
+              .map(sentence => sentence.trim() + '.'); // Ensure each sentence ends with a period
+          });
+          
+          console.log(`Total sentences in paragraphs: ${allSentences.length}`);
+          
+          // Define our targets
+          const DESIRED_PARAGRAPH_COUNT = 5;
+          const MIN_SENTENCES_PER_PARAGRAPH = 3;
+          const MIN_TOTAL_SENTENCES = MIN_SENTENCES_PER_PARAGRAPH * DESIRED_PARAGRAPH_COUNT;
+          
+          // If we don't have enough sentences, add some
+          if (allSentences.length < MIN_TOTAL_SENTENCES) {
+            console.log(`Not enough sentences. Need ${MIN_TOTAL_SENTENCES}, have ${allSentences.length}`);
+            
+            // List of generic sentence templates
+            const enhancementTemplates = [
+              "This reflects common experiences in many societies.",
+              "Many people consider this an important aspect to understand.",
+              "Research has shown this to be true in multiple contexts.",
+              "This concept is widely discussed among experts in the field.",
+              "Students often find this point particularly interesting to explore.",
+              "Various examples demonstrate this principle in action.",
+              "This connects to broader themes in the subject area.",
+              "Different perspectives exist on this particular topic.",
+              "The implications of this are significant for daily life.",
+              "Understanding this helps develop a deeper knowledge of the subject.",
+              "This phenomenon can be observed in diverse settings."
+            ];
+            
+            // Add sentences until we reach the minimum required
+            while (allSentences.length < MIN_TOTAL_SENTENCES) {
+              const template = enhancementTemplates[Math.floor(Math.random() * enhancementTemplates.length)];
+              allSentences.push(template);
+            }
+            
+            console.log(`Enhanced to ${allSentences.length} total sentences`);
+          }
+          
+          // Create exactly 5 paragraphs with the sentences we have
+          const enhancedParagraphs: string[] = [];
+          const sentencesPerParagraph = Math.max(MIN_SENTENCES_PER_PARAGRAPH, Math.ceil(allSentences.length / DESIRED_PARAGRAPH_COUNT));
+          
+          for (let i = 0; i < DESIRED_PARAGRAPH_COUNT; i++) {
+            const startIdx = i * sentencesPerParagraph;
+            const endIdx = Math.min((i + 1) * sentencesPerParagraph, allSentences.length);
+            
+            if (startIdx < allSentences.length) {
+              const paragraphSentences = allSentences.slice(startIdx, endIdx);
+              
+              // Ensure each paragraph has at least 3 sentences
+              if (paragraphSentences.length < MIN_SENTENCES_PER_PARAGRAPH) {
+                const neededSentences = MIN_SENTENCES_PER_PARAGRAPH - paragraphSentences.length;
+                for (let j = 0; j < neededSentences; j++) {
+                  paragraphSentences.push("This relates to the key concepts being discussed.");
+                }
+              }
+              
+              enhancedParagraphs.push(paragraphSentences.join(' '));
+            }
+          }
+          
+          // Make sure we have exactly 5 paragraphs
+          while (enhancedParagraphs.length < DESIRED_PARAGRAPH_COUNT) {
+            enhancedParagraphs.push("This paragraph provides additional context for the topic. It explores related concepts in more detail. It connects these ideas to practical applications.");
+          }
+          
+          fixedSection.paragraphs = enhancedParagraphs;
+          console.log(`Enhanced into ${enhancedParagraphs.length} paragraphs with adequate sentence count`);
+        }
+      }
+      // If we have neither text nor paragraphs, create default paragraphs
+      else {
+        console.log('No text or paragraphs provided, creating default paragraphs');
+        fixedSection.paragraphs = [
+          "This first paragraph introduces the key topic and provides important context for understanding the content that follows. It gives readers a foundation for the discussion.",
+          "The second paragraph builds upon the introduction by exploring specific aspects of the topic in more detail. It provides examples and elaborates on the main concepts.",
+          "This third paragraph examines different perspectives on the subject, offering a more nuanced understanding. It presents supporting evidence and considers various viewpoints.",
+          "The fourth paragraph connects the topic to real-world applications and experiences. It illustrates how these concepts relate to everyday situations.",
+          "This final paragraph summarizes the key points discussed and offers conclusions. It highlights the significance of the topic and may suggest areas for further exploration."
+        ];
       }
       
       // Ensure we have the introduction
