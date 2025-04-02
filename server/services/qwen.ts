@@ -59,14 +59,18 @@ CRITICAL: Your output must be properly formatted JSON with NO ERRORS!
    CORRECT: "questions": ["Question 1", "Question 2", "Question 3", "Question 4", "Question 5"]
    WRONG: "questions": ["Question 1"], "Question 2": "Question 3"
 
-2. REQUIRED CONTENT IN EACH LESSON:
-   - Exactly 5 paragraphs in reading section, 3-4 sentences each
-   - Exactly 5 vocabulary words with complete definitions
-   - Exactly 5 warm-up questions (in array format)
-   - Exactly 5 comprehension questions (in array format)
-   - Exactly 5 target vocabulary words in warm-up section (in array format)
+2. CRITICAL: ALL CONTENT MUST BE ABOUT THE SPECIFIC TOPIC PROVIDED BY THE USER. The reading text, vocabulary, and all exercises must directly relate to the topic. Default/generic content is not acceptable.
+
+3. REQUIRED CONTENT IN EACH LESSON:
+   - Reading: EXACTLY 5 paragraphs, EACH paragraph MUST have 3-4 complete sentences (min. 15 total)
+   - Vocabulary: EXACTLY 5 vocabulary words with complete definitions
+   - Warm-up: EXACTLY 5 questions AND 5 target vocabulary words (both in array format)
+   - Comprehension: EXACTLY 5 questions (in array format)
+   - Sentence Frames: EXACTLY 5 sentence frames (in array format)
+   - Discussion: EXACTLY 5 discussion questions (in array format)
+   - Quiz: EXACTLY 5 quiz questions with options and answers (in array format)
    
-3. EXAMPLE OF PROPER FORMAT:
+3. EXAMPLE OF COMPLETE FORMAT - INCLUDE ALL THESE SECTIONS:
 
 {
   "title": "Environmental Protection",
@@ -87,17 +91,117 @@ CRITICAL: Your output must be properly formatted JSON with NO ERRORS!
       "type": "reading",
       "title": "Reading Text",
       "paragraphs": [
-        "First paragraph with 3-4 sentences.",
-        "Second paragraph with 3-4 sentences.",
-        "Third paragraph with 3-4 sentences.",
-        "Fourth paragraph with 3-4 sentences.",
-        "Fifth paragraph with 3-4 sentences."
+        "Environmental protection is becoming more important every day. People around the world are realizing that we need to take care of our planet. One simple way we can help is by recycling items like paper, plastic, and glass instead of throwing them away.",
+        "Pollution is a serious problem that affects our air, water, and land. When factories release harmful chemicals or when we use too many cars, the air becomes dirty and difficult to breathe. Similarly, when trash is dumped into rivers and oceans, it harms the fish and other creatures living there.",
+        "Every living thing is part of an ecosystem, which is like a community where plants, animals, and their environment all depend on each other. When one part of an ecosystem is damaged by pollution or development, it can affect everything else. For example, if bees disappear, many plants cannot produce fruits because bees help with pollination.",
+        "Most of our garbage ends up in landfills, which are large areas where waste is buried underground. Landfills take up valuable space and can leak harmful substances into the soil and water. By reducing waste and recycling more, we can send less trash to landfills and protect our environment.",
+        "For a better future, we need to focus on sustainability, which means meeting our needs today without making it harder for future generations. Using renewable energy like solar and wind power, conserving water, and protecting forests are all ways to live more sustainably. Everyone can contribute to environmental protection through small daily actions."
+      ]
+    },
+    {
+      "type": "vocabulary",
+      "title": "Key Vocabulary",
+      "words": [
+        {
+          "term": "recycling",
+          "partOfSpeech": "noun",
+          "definition": "The process of collecting used materials and making them into new products instead of throwing them away.",
+          "example": "One simple way we can help is by recycling items like paper, plastic, and glass instead of throwing them away."
+        },
+        {
+          "term": "pollution",
+          "partOfSpeech": "noun",
+          "definition": "The presence of harmful substances in the environment, such as dirty chemicals in the air, water, or soil.",
+          "example": "Pollution is a serious problem that affects our air, water, and land."
+        },
+        {
+          "term": "ecosystem",
+          "partOfSpeech": "noun",
+          "definition": "A community of living things and their environment, all interacting as a system.",
+          "example": "Every living thing is part of an ecosystem, which is like a community where plants, animals, and their environment all depend on each other."
+        },
+        {
+          "term": "landfill",
+          "partOfSpeech": "noun",
+          "definition": "A place where waste is buried under the ground.",
+          "example": "Most of our garbage ends up in landfills, which are large areas where waste is buried underground."
+        },
+        {
+          "term": "sustainability",
+          "partOfSpeech": "noun",
+          "definition": "The ability to maintain or support a process continuously over time, meeting present needs without compromising future generations.",
+          "example": "For a better future, we need to focus on sustainability, which means meeting our needs today without making it harder for future generations."
+        }
+      ]
+    },
+    {
+      "type": "comprehension",
+      "title": "Reading Comprehension",
+      "questions": [
+        "What is one simple way we can help protect the environment?",
+        "How does pollution affect our environment?",
+        "What happens when one part of an ecosystem is damaged?",
+        "Why are landfills a problem for the environment?",
+        "What does sustainability mean according to the reading?"
+      ]
+    },
+    {
+      "type": "sentenceFrames",
+      "title": "Sentence Practice",
+      "frames": [
+        "I think recycling is important because _______.",
+        "Pollution affects _______ by _______.",
+        "In an ecosystem, _______ depends on _______.",
+        "Landfills can be problematic because _______.",
+        "We can be more sustainable by _______."
+      ]
+    },
+    {
+      "type": "discussion",
+      "title": "Discussion Questions",
+      "questions": [
+        "What do you think is the biggest environmental problem in your country?",
+        "How does your family practice recycling at home?",
+        "Do you think companies should be responsible for reducing pollution? Why or why not?",
+        "What ecosystems are important in your local area?",
+        "What sustainable practices would you like to adopt in your daily life?"
+      ]
+    },
+    {
+      "type": "quiz",
+      "title": "Knowledge Check",
+      "questions": [
+        {
+          "question": "What is recycling?",
+          "options": ["Throwing away used materials", "Making new products from used materials", "Burning waste", "Burying trash underground"],
+          "answer": "Making new products from used materials"
+        },
+        {
+          "question": "Which of these is NOT a type of pollution mentioned in the reading?",
+          "options": ["Air pollution", "Water pollution", "Land pollution", "Noise pollution"],
+          "answer": "Noise pollution"
+        },
+        {
+          "question": "Why are bees important to an ecosystem?",
+          "options": ["They make honey", "They help with pollination", "They eat other insects", "They clean the environment"],
+          "answer": "They help with pollination"
+        },
+        {
+          "question": "What problem do landfills cause?",
+          "options": ["They take up too little space", "They can leak harmful substances", "They create clean energy", "They reduce pollution"],
+          "answer": "They can leak harmful substances"
+        },
+        {
+          "question": "What is sustainability about?",
+          "options": ["Meeting our needs today regardless of the future", "Focusing only on the future", "Meeting our needs today without compromising future generations", "Using only non-renewable resources"],
+          "answer": "Meeting our needs today without compromising future generations"
+        }
       ]
     }
   ]
 }
 
-DO NOT deviate from this structure. Don't add fields outside of arrays when they should be inside arrays.` 
+DO NOT deviate from this structure. Don't add fields outside of arrays when they should be inside arrays. INCLUDE ALL SECTIONS shown in the example.` 
           },
           { 
             role: "user", 
@@ -153,7 +257,74 @@ DO NOT deviate from this structure. Don't add fields outside of arrays when they
               const jsonContent = JSON.parse(content);
               // Log the content for inspection
               console.log('Successfully parsed JSON response');
-              console.log('JSON response sample:', JSON.stringify(jsonContent).substring(0, 200) + '...');
+              
+              // DETAILED RESPONSE ANALYSIS
+              console.log('====== QWEN RESPONSE ANALYSIS BEGIN ======');
+              
+              // Check title
+              console.log('Title:', jsonContent.title || 'NO TITLE FOUND');
+              
+              // Check if sections array exists
+              if (!jsonContent.sections || !Array.isArray(jsonContent.sections)) {
+                console.log('ERROR: No valid sections array found');
+              } else {
+                console.log(`Found ${jsonContent.sections.length} sections`);
+                
+                // Check each section for required structure
+                jsonContent.sections.forEach((section: any, index: number) => {
+                  console.log(`\nSECTION ${index + 1} (type: ${section.type || 'unknown'})`);
+                  
+                  // Check common fields
+                  console.log('  Title:', section.title || 'NO TITLE');
+                  
+                  // Check section-specific fields
+                  switch(section.type) {
+                    case 'warmup':
+                      this.logArrayField(section, 'questions');
+                      this.logArrayField(section, 'targetVocabulary');
+                      break;
+                    case 'reading':
+                      this.logArrayField(section, 'paragraphs');
+                      if (section.paragraphs && Array.isArray(section.paragraphs)) {
+                        console.log('  Reading length:', section.paragraphs.reduce((total: number, p: string) => total + p.length, 0), 'characters');
+                      }
+                      break;
+                    case 'vocabulary':
+                      if (!section.words || !Array.isArray(section.words)) {
+                        console.log('  ERROR: No valid words array');
+                      } else {
+                        console.log(`  Words: ${section.words.length} definitions found`);
+                        section.words.forEach((word: any, i: number) => {
+                          console.log(`    Word ${i + 1}: ${word.term || 'MISSING'} (${word.definition ? word.definition.substring(0, 30) + '...' : 'NO DEFINITION'})`);
+                        });
+                      }
+                      break;
+                    case 'comprehension':
+                      this.logArrayField(section, 'questions');
+                      break;
+                    case 'sentenceFrames':
+                      this.logArrayField(section, 'frames');
+                      break;
+                    case 'discussion':
+                      this.logArrayField(section, 'questions');
+                      break;
+                    case 'quiz':
+                      if (!section.questions || !Array.isArray(section.questions)) {
+                        console.log('  ERROR: No valid quiz questions array');
+                      } else {
+                        console.log(`  Quiz: ${section.questions.length} questions found`);
+                        section.questions.forEach((q: any, i: number) => {
+                          console.log(`    Q${i + 1}: ${q.question ? 'OK' : 'MISSING'} | Options: ${q.options && Array.isArray(q.options) ? q.options.length : 'MISSING'} | Answer: ${q.answer ? 'OK' : 'MISSING'}`);
+                        });
+                      }
+                      break;
+                    default:
+                      console.log('  UNKNOWN SECTION TYPE');
+                  }
+                });
+              }
+              
+              console.log('====== QWEN RESPONSE ANALYSIS END ======');
               
               // Log the entire response for deeper inspection
               console.log('FULL JSON RESPONSE:', JSON.stringify(jsonContent));
@@ -803,21 +974,193 @@ Create a complete, interactive, visually engaging ESL lesson that strictly follo
   }
   
   /**
+   * Deeply analyze the structure of the raw API response
+   * to identify issues with the response format
+   */
+  private analyzeRawStructure(content: any): any {
+    try {
+      const analysis: any = {
+        title: content.title || 'MISSING TITLE',
+        hasValidSectionsArray: content.sections && Array.isArray(content.sections),
+        sectionCount: content.sections && Array.isArray(content.sections) ? content.sections.length : 0,
+        sections: [],
+        missingRequiredSections: [],
+        malformedSections: []
+      };
+      
+      // Define the required sections and their expected structure
+      const requiredSections = [
+        'warmup', 'reading', 'vocabulary', 'comprehension', 'sentenceFrames', 'discussion', 'quiz'
+      ];
+      
+      // Check for missing required sections
+      if (content.sections && Array.isArray(content.sections)) {
+        const existingSectionTypes = content.sections.map((s: any) => s.type);
+        analysis.missingRequiredSections = requiredSections.filter(type => !existingSectionTypes.includes(type));
+        
+        // Analyze each section
+        content.sections.forEach((section: any, index: number) => {
+          const sectionAnalysis: any = {
+            index,
+            type: section.type || 'UNKNOWN',
+            hasTitle: !!section.title,
+            issues: []
+          };
+          
+          // Check section-specific fields
+          switch(section.type) {
+            case 'warmup':
+              this.analyzeSectionArray(section, 'questions', 5, sectionAnalysis);
+              this.analyzeSectionArray(section, 'targetVocabulary', 5, sectionAnalysis);
+              break;
+            case 'reading':
+              this.analyzeSectionArray(section, 'paragraphs', 5, sectionAnalysis);
+              if (section.paragraphs && Array.isArray(section.paragraphs)) {
+                sectionAnalysis.totalReadingLength = section.paragraphs.reduce((total: number, p: string) => total + p.length, 0);
+                if (sectionAnalysis.totalReadingLength < 500) {
+                  sectionAnalysis.issues.push('Reading text is too short (less than 500 characters)');
+                }
+              }
+              break;
+            case 'vocabulary':
+              if (!section.words || !Array.isArray(section.words)) {
+                sectionAnalysis.issues.push('Missing words array or not an array');
+              } else {
+                sectionAnalysis.wordsCount = section.words.length;
+                if (section.words.length < 5) {
+                  sectionAnalysis.issues.push(`Only ${section.words.length} words (5 required)`);
+                }
+                
+                // Check if each word has required properties
+                section.words.forEach((word: any, i: number) => {
+                  if (!word.term) sectionAnalysis.issues.push(`Word ${i+1} missing 'term'`);
+                  if (!word.definition) sectionAnalysis.issues.push(`Word ${i+1} missing 'definition'`);
+                });
+              }
+              break;
+            case 'comprehension':
+              this.analyzeSectionArray(section, 'questions', 5, sectionAnalysis);
+              break;
+            case 'sentenceFrames':
+              this.analyzeSectionArray(section, 'frames', 5, sectionAnalysis);
+              break;
+            case 'discussion':
+              this.analyzeSectionArray(section, 'questions', 5, sectionAnalysis);
+              break;
+            case 'quiz':
+              if (!section.questions || !Array.isArray(section.questions)) {
+                sectionAnalysis.issues.push('Missing quiz questions array or not an array');
+              } else {
+                sectionAnalysis.questionsCount = section.questions.length;
+                if (section.questions.length < 5) {
+                  sectionAnalysis.issues.push(`Only ${section.questions.length} quiz questions (5 required)`);
+                }
+                
+                // Check if each question has required properties
+                section.questions.forEach((q: any, i: number) => {
+                  if (typeof q === 'string') {
+                    sectionAnalysis.issues.push(`Quiz question ${i+1} is string, not object with options/answer`);
+                  } else if (!q.question) {
+                    sectionAnalysis.issues.push(`Quiz question ${i+1} missing 'question' field`);
+                  } else if (!q.options || !Array.isArray(q.options)) {
+                    sectionAnalysis.issues.push(`Quiz question ${i+1} missing 'options' array`);
+                  } else if (!q.answer) {
+                    sectionAnalysis.issues.push(`Quiz question ${i+1} missing 'answer' field`);
+                  }
+                });
+              }
+              break;
+            default:
+              sectionAnalysis.issues.push('Unknown section type');
+          }
+          
+          // If section has issues, add to malformed sections list
+          if (sectionAnalysis.issues.length > 0) {
+            analysis.malformedSections.push(section.type);
+          }
+          
+          analysis.sections.push(sectionAnalysis);
+        });
+      }
+      
+      return analysis;
+    } catch (error) {
+      console.error('Error analyzing raw structure:', error);
+      return { error: 'Failed to analyze structure' };
+    }
+  }
+  
+  /**
+   * Helper method to analyze arrays within sections
+   */
+  private analyzeSectionArray(section: any, fieldName: string, expectedCount: number, analysis: any): void {
+    if (!section[fieldName]) {
+      analysis.issues.push(`Missing '${fieldName}' field`);
+    } else if (!Array.isArray(section[fieldName])) {
+      analysis.issues.push(`'${fieldName}' is not an array (type: ${typeof section[fieldName]})`);
+    } else {
+      analysis[`${fieldName}Count`] = section[fieldName].length;
+      if (section[fieldName].length < expectedCount) {
+        analysis.issues.push(`Only ${section[fieldName].length} ${fieldName} (${expectedCount} required)`);
+      }
+    }
+  }
+  
+  /**
+   * Helper method to log array fields for response analysis
+   */
+  private logArrayField(section: any, fieldName: string): void {
+    if (!section[fieldName]) {
+      console.log(`  ERROR: No ${fieldName} field found`);
+      return;
+    }
+    
+    if (!Array.isArray(section[fieldName])) {
+      console.log(`  ERROR: ${fieldName} is not a valid array (type: ${typeof section[fieldName]})`);
+      console.log(`  ${fieldName} value:`, section[fieldName]);
+      return;
+    }
+    
+    console.log(`  ${fieldName}: ${section[fieldName].length} items found`);
+    
+    if (section[fieldName].length === 0) {
+      console.log(`  WARNING: ${fieldName} array is empty`);
+    } else if (section[fieldName].length < 5) {
+      console.log(`  WARNING: ${fieldName} has less than 5 items (${section[fieldName].length})`);
+    }
+    
+    // Log the first few items as examples
+    const samplesToShow = Math.min(3, section[fieldName].length);
+    for (let i = 0; i < samplesToShow; i++) {
+      let item = section[fieldName][i];
+      let displayItem = typeof item === 'string' 
+        ? (item.length > 50 ? item.substring(0, 50) + '...' : item)
+        : JSON.stringify(item).substring(0, 50) + (JSON.stringify(item).length > 50 ? '...' : '');
+      console.log(`    Item ${i + 1}: ${displayItem}`);
+    }
+  }
+
+  /**
    * Pre-processes the API response content to fix common structural issues
    * before passing it to the formatter
    */
   private preprocessContent(content: any): any {
     console.log('Preprocessing content structure...');
+    console.log('Raw Qwen content before formatting:', JSON.stringify(content).substring(0, 200) + '...');
     
     // Create a deep copy of the content to avoid modifying the original
     const processed = JSON.parse(JSON.stringify(content));
     
+    // Analyze the raw structure for issues
+    const rawStructureAnalysis = this.analyzeRawStructure(content);
+    console.log('RAW STRUCTURE ANALYSIS:');
+    console.log(JSON.stringify(rawStructureAnalysis, null, 2));
+    
     // If there are no sections, we can't do much preprocessing
     if (!processed.sections || !Array.isArray(processed.sections)) {
+      console.error('ERROR: No valid sections array found');
       return processed;
     }
-    
-    console.log('Raw content before formatting:', JSON.stringify(processed).substring(0, 200) + '...');
     
     // Process each section to fix common issues
     for (let i = 0; i < processed.sections.length; i++) {
