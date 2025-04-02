@@ -133,6 +133,8 @@ export class OpenAIService {
       
       return formattedContent;
     } catch (error: any) {
+      }
+    } catch (error: any) {
       console.error('Error in OpenAIService.generateLesson:', error.message);
       throw error; // Re-throw to be handled by the caller
     }
@@ -582,11 +584,6 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
    * @returns True if content meets quality standards, false otherwise
    */
   private checkContentQuality(content: any): boolean {
-    if (!content || !content.sections) {
-      console.log('Quality check failed: Invalid content structure');
-      return false;
-    }
-    
     // Set our quality standards
     const MIN_SENTENCES_PER_PARAGRAPH = 3;
     const MIN_PARAGRAPHS = 5;
@@ -608,14 +605,8 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
       
       // Check each paragraph for sentence count
       const paragraphQuality = readingSection.paragraphs.map((paragraph: string, index: number) => {
-        if (typeof paragraph !== 'string') {
-          console.log(`Paragraph ${index + 1} is not a string`);
-          return { index, sentenceCount: 0, isGoodQuality: false };
-        }
-        
         // Split into sentences - looking for period, exclamation, or question mark followed by a space
-        // Also handle the case where the final sentence doesn't have a trailing space
-        const sentences = paragraph.split(/[.!?](?:\s+|$)/).filter((s: string) => s.trim().length > 0);
+        const sentences = paragraph.split(/[.!?]\s+/).filter((s: string) => s.trim().length > 0);
         
         console.log(`Paragraph ${index + 1} has ${sentences.length} sentences`);
         
@@ -627,18 +618,17 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
       });
       
       // Check if any paragraphs don't meet quality standards
-      const lowQualityParagraphs = paragraphQuality.filter((p: { isGoodQuality: boolean }) => !p.isGoodQuality);
+      const lowQualityParagraphs = paragraphQuality.filter(p => !p.isGoodQuality);
       
       if (lowQualityParagraphs.length > 0) {
         console.log(`Quality check failed: ${lowQualityParagraphs.length} paragraphs have fewer than ${MIN_SENTENCES_PER_PARAGRAPH} sentences`);
-        lowQualityParagraphs.forEach((p: { index: number, sentenceCount: number }) => {
+        lowQualityParagraphs.forEach(p => {
           console.log(`Paragraph ${p.index + 1} has only ${p.sentenceCount} sentences`);
         });
         return false;
       }
       
       // All quality checks passed
-      console.log('Quality check PASSED: All paragraphs have at least 3 sentences');
       return true;
     } catch (error) {
       console.error('Error in quality check:', error);
