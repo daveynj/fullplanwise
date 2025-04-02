@@ -51,15 +51,61 @@ export class QwenService {
         messages: [
           { 
             role: "system", 
-            content: "You are an expert ESL teacher with years of experience creating engaging and effective lesson materials. Your task is to create well-structured, error-free JSON content that strictly follows the structure defined in the user prompt. Ensure all arrays are proper JSON arrays with square brackets, all objects have proper key-value pairs, and there are no formatting errors. Do not use keys as values or put strings outside of quotation marks in JSON content." 
+            content: `You are an expert ESL teacher. Follow these EXACT requirements:
+
+CRITICAL: Your output must be properly formatted JSON with NO ERRORS!
+
+1. ARRAYS MUST USE PROPER ARRAY FORMAT
+   CORRECT: "questions": ["Question 1", "Question 2", "Question 3", "Question 4", "Question 5"]
+   WRONG: "questions": ["Question 1"], "Question 2": "Question 3"
+
+2. REQUIRED CONTENT IN EACH LESSON:
+   - Exactly 5 paragraphs in reading section, 3-4 sentences each
+   - Exactly 5 vocabulary words with complete definitions
+   - Exactly 5 warm-up questions (in array format)
+   - Exactly 5 comprehension questions (in array format)
+   - Exactly 5 target vocabulary words in warm-up section (in array format)
+   
+3. EXAMPLE OF PROPER FORMAT:
+
+{
+  "title": "Environmental Protection",
+  "sections": [
+    {
+      "type": "warmup",
+      "title": "Warm-up Activity",
+      "questions": [
+        "What do you know about recycling?", 
+        "How do you reduce waste?", 
+        "What pollution have you seen?",
+        "Why are ecosystems important?",
+        "What sustainable actions do you take?"
+      ],
+      "targetVocabulary": ["recycling", "pollution", "ecosystem", "landfill", "sustainability"]
+    },
+    {
+      "type": "reading",
+      "title": "Reading Text",
+      "paragraphs": [
+        "First paragraph with 3-4 sentences.",
+        "Second paragraph with 3-4 sentences.",
+        "Third paragraph with 3-4 sentences.",
+        "Fourth paragraph with 3-4 sentences.",
+        "Fifth paragraph with 3-4 sentences."
+      ]
+    }
+  ]
+}
+
+DO NOT deviate from this structure. Don't add fields outside of arrays when they should be inside arrays.` 
           },
           { 
             role: "user", 
             content: prompt 
           }
         ],
-        temperature: 0.5, // Lower temperature for more consistent, structured output
-        top_p: 0.95,
+        temperature: 0.3, // Lower temperature for more consistent, structured output
+        top_p: 0.9,
         max_tokens: 5000,
         response_format: { type: "json_object" }
       };
@@ -771,10 +817,54 @@ Create a complete, interactive, visually engaging ESL lesson that strictly follo
       return processed;
     }
     
+    console.log('Raw content before formatting:', JSON.stringify(processed).substring(0, 200) + '...');
+    
     // Process each section to fix common issues
-    processed.sections = processed.sections.map((section: any) => {
+    for (let i = 0; i < processed.sections.length; i++) {
+      const section = processed.sections[i];
       if (!section || typeof section !== 'object') {
-        return section;
+        continue;
+      }
+      
+      // Log section structure for debugging
+      console.log(`Examining raw sections structure:`);
+      console.log(`Section ${i} type: ${section.type}`);
+      
+      // Extract questions from plain object properties
+      if (section.questions) {
+        console.log(`Section ${i} questions type: ${typeof section.questions}`);
+        console.log(`Section ${i} questions value: ${JSON.stringify(section.questions)}`);
+      }
+      
+      // Extract target vocabulary from plain object properties if in warmup section
+      if (section.type === 'warmup' || section.type === 'warm-up') {
+        if (section.targetVocabulary) {
+          console.log(`Warmup targetVocabulary type: ${typeof section.targetVocabulary}`);
+          console.log(`Warmup targetVocabulary value: ${JSON.stringify(section.targetVocabulary)}`);
+        }
+        
+        // Check for vocabulary words in object keys
+        const possibleVocabulary = Object.keys(section).filter(key => 
+          !['type', 'title', 'content', 'questions', 'targetVocabulary', 'timeAllocation', 'teacherNotes', 'imageDescription', 'introduction'].includes(key) && 
+          typeof key === 'string' && 
+          key.length < 20 && 
+          /^[a-zA-Z\s]+$/.test(key)
+        );
+        
+        if (possibleVocabulary.length > 0 && (!section.targetVocabulary || section.targetVocabulary.length < 5)) {
+          if (!section.targetVocabulary) {
+            section.targetVocabulary = [];
+          } else if (!Array.isArray(section.targetVocabulary)) {
+            section.targetVocabulary = [section.targetVocabulary];
+          }
+          
+          // Add vocabulary words found in object keys
+          possibleVocabulary.forEach(word => {
+            if (!section.targetVocabulary.includes(word)) {
+              section.targetVocabulary.push(word);
+            }
+          });
+        }
       }
       
       // Create a copy of the section to modify
@@ -1081,8 +1171,9 @@ Create a complete, interactive, visually engaging ESL lesson that strictly follo
         }
       }
       
-      return fixedSection;
-    });
+      // Update the section in the processed.sections array
+      processed.sections[i] = fixedSection;
+    }
     
     // Filter out any problematic sections
     processed.sections = processed.sections.filter((section: any) => 
