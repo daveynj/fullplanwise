@@ -2,8 +2,9 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Edit, Download, Share } from "lucide-react";
+import { Edit, Download, Share, Maximize2 } from "lucide-react";
 import { LessonContent } from "./lesson-content";
+import { Link } from "wouter";
 
 interface LessonPreviewProps {
   lesson: any;
@@ -204,10 +205,17 @@ export function LessonPreview({ lesson, onSave, savePending }: LessonPreviewProp
               <Download className="mr-1 h-4 w-4" /> Save
             </Button>
           </div>
-          <div>
+          <div className="flex space-x-2">
             <Button className="bg-[#28A745] hover:bg-green-600 text-white font-semibold px-4 py-2 rounded-lg transition">
               <Share className="mr-1 h-4 w-4" /> Share
             </Button>
+            {lesson.id ? (
+              <Link href={`/fullscreen/${lesson.id}`}>
+                <Button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg transition">
+                  <Maximize2 className="mr-1 h-4 w-4" /> Fullscreen
+                </Button>
+              </Link>
+            ) : null}
           </div>
         </div>
       </Tabs>

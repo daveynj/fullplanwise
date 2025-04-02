@@ -16,6 +16,7 @@ export interface IStorage {
   createUser(user: InsertUser): Promise<User>;
   updateUserCredits(userId: number, credits: number): Promise<User>;
   updateUserStripeInfo(userId: number, stripeInfo: { stripeCustomerId: string, stripeSubscriptionId: string | null }): Promise<User>;
+  updateUserAdminStatus(userId: number, isAdmin: boolean): Promise<User>;
   
   // Student methods
   getStudents(teacherId: number): Promise<Student[]>;
@@ -130,6 +131,26 @@ export class DatabaseStorage implements IStorage {
       return updatedUser;
     } catch (error) {
       console.error('Error updating user Stripe info:', error);
+      throw error;
+    }
+  }
+
+  async updateUserAdminStatus(userId: number, isAdmin: boolean): Promise<User> {
+    try {
+      const [updatedUser] = await db
+        .update(users)
+        .set({ isAdmin })
+        .where(eq(users.id, userId))
+        .returning();
+      
+      if (!updatedUser) {
+        throw new Error("User not found");
+      }
+      
+      console.log(`User ${userId} admin status updated to: ${isAdmin}`);
+      return updatedUser;
+    } catch (error) {
+      console.error('Error updating user admin status:', error);
       throw error;
     }
   }

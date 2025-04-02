@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { Lesson } from "@shared/schema";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
 import { Button } from "@/components/ui/button";
@@ -24,13 +25,13 @@ export default function LessonHistoryPage() {
   const [dateFilter, setDateFilter] = useState<string>("");
   
   // Fetch all lessons
-  const { data: lessons = [], isLoading } = useQuery({
+  const { data: lessons = [], isLoading } = useQuery<Lesson[]>({
     queryKey: ["/api/lessons"],
     retry: false,
   });
   
   // Filter lessons based on search and filters
-  const filteredLessons = lessons.filter((lesson: any) => {
+  const filteredLessons = lessons.filter((lesson: Lesson) => {
     const matchesSearch = 
       searchQuery === "" || 
       lesson.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -39,7 +40,7 @@ export default function LessonHistoryPage() {
     const matchesCefr = cefrFilter === "" || lesson.cefrLevel === cefrFilter;
     
     let matchesDate = true;
-    if (dateFilter) {
+    if (dateFilter && lesson.createdAt) {
       const lessonDate = new Date(lesson.createdAt);
       const today = new Date();
       const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
@@ -58,7 +59,7 @@ export default function LessonHistoryPage() {
   });
   
   // Format date
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString: string | Date) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
@@ -152,7 +153,7 @@ export default function LessonHistoryPage() {
               </div>
             ) : filteredLessons.length > 0 ? (
               <div className="space-y-4">
-                {filteredLessons.map((lesson: any) => (
+                {filteredLessons.map((lesson: Lesson) => (
                   <Card key={lesson.id} className="hover:shadow-md transition-shadow">
                     <CardContent className="p-6">
                       <div className="flex flex-col md:flex-row md:items-center md:justify-between">
@@ -167,7 +168,7 @@ export default function LessonHistoryPage() {
                                 CEFR {lesson.cefrLevel}
                               </Badge>
                               <span className="text-sm text-gray-500">
-                                {formatDate(lesson.createdAt)}
+                                {lesson.createdAt ? formatDate(lesson.createdAt) : 'No date'}
                               </span>
                               {lesson.studentId && (
                                 <Badge variant="outline" className="bg-gray-100">
@@ -185,6 +186,11 @@ export default function LessonHistoryPage() {
                           <Link href={`/history/${lesson.id}`}>
                             <Button size="sm" className="bg-primary hover:bg-primary/90">
                               View Lesson
+                            </Button>
+                          </Link>
+                          <Link href={`/fullscreen/${lesson.id}`}>
+                            <Button size="sm" variant="outline" className="bg-green-50 text-green-600 border-green-200 hover:bg-green-100 hover:text-green-700">
+                              Fullscreen View
                             </Button>
                           </Link>
                         </div>

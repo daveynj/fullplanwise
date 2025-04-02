@@ -1,0 +1,244 @@
+import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useLocation, Link } from "wouter";
+import { LessonContent } from "@/components/lesson/lesson-content";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft, X, ExpandIcon, MinimizeIcon, Download, Printer } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Lesson } from "@shared/schema";
+
+export default function FullScreenLessonPage() {
+  const [location] = useLocation();
+  const { toast } = useToast();
+  const [isFullScreen, setIsFullScreen] = useState(false);
+  const [activeTab, setActiveTab] = useState("lesson");
+  
+  // Extract lesson ID from URL
+  const lessonId = location.split("/")[2];
+  
+  // Fetch lesson data
+  const { data: lesson, isLoading, error } = useQuery<Lesson>({
+    queryKey: [`/api/lessons/${lessonId}`],
+    retry: false,
+  });
+  
+  // Parse the content if it's a string (from database)
+  const [parsedContent, setParsedContent] = useState<any>(null);
+  
+  useEffect(() => {
+    if (lesson && lesson.content) {
+      try {
+        if (typeof lesson.content === 'string') {
+          try {
+            // Try to parse it as JSON
+            const parsed = JSON.parse(lesson.content);
+            setParsedContent(parsed);
+          } catch (jsonError) {
+            console.error("Error parsing JSON string:", jsonError);
+            setParsedContent({ 
+              title: lesson.title,
+              sections: [{ 
+                type: 'error', 
+                content: 'Error parsing lesson content' 
+              }] 
+            });
+          }
+        } else {
+          // It's already an object (from direct API response)
+          setParsedContent(lesson.content);
+        }
+      } catch (e) {
+        console.error("Unexpected error handling content:", e);
+        setParsedContent({ 
+          title: lesson.title,
+          sections: [{ 
+            type: 'error', 
+            content: 'Error processing lesson content' 
+          }] 
+        });
+      }
+    }
+  }, [lesson]);
+  
+  // Toggle fullscreen
+  const toggleFullScreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().then(() => {
+        setIsFullScreen(true);
+      }).catch(err => {
+        toast({
+          title: "Fullscreen error",
+          description: `Error attempting to enable fullscreen: ${err.message}`,
+          variant: "destructive",
+        });
+      });
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen().then(() => {
+          setIsFullScreen(false);
+        });
+      }
+    }
+  };
+
+  // Print lesson
+  const printLesson = () => {
+    window.print();
+  };
+  
+  // Track fullscreen changes
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullScreen(!!document.fullscreenElement);
+    };
+    
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
+  }, []);
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-light">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-t-primary border-primary/30 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-lg font-medium text-gray-600">Loading lesson...</p>
+        </div>
+      </div>
+    );
+  }
+  
+  // Error state
+  if (error || !lesson) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-light">
+        <div className="text-center max-w-md mx-auto p-6 bg-white rounded-xl shadow-sm">
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <X className="h-8 w-8 text-red-500" />
+          </div>
+          <h3 className="text-xl font-nunito font-bold mb-2">Error Loading Lesson</h3>
+          <p className="text-gray-500 mb-4">
+            {error instanceof Error ? error.message : "The requested lesson could not be found."}
+          </p>
+          <Link href="/lessons">
+            <a className="inline-flex items-center justify-center px-4 py-2 bg-primary text-white rounded-lg font-medium">
+              <ArrowLeft className="mr-2 h-4 w-4" /> Back to Lessons
+            </a>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen flex flex-col bg-white print:bg-white">
+      {/* Header - hidden when printing */}
+      <header className="bg-white border-b border-gray-200 print:hidden">
+        <div className="flex justify-between items-center px-4 py-2">
+          <div className="flex items-center">
+            <Link href="/lessons">
+              <a className="flex items-center text-gray-600 hover:text-primary mr-6">
+                <ArrowLeft className="h-5 w-5 mr-1" />
+                <span className="font-medium">Exit</span>
+              </a>
+            </Link>
+            <h1 className="text-lg font-bold text-gray-800 truncate max-w-md">
+              {lesson.title}
+            </h1>
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={printLesson}
+              className="text-gray-600"
+            >
+              <Printer className="h-4 w-4 mr-1" />
+              <span className="hidden sm:inline">Print</span>
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={toggleFullScreen}
+              className="text-gray-600"
+            >
+              {isFullScreen ? (
+                <>
+                  <MinimizeIcon className="h-4 w-4 mr-1" />
+                  <span className="hidden sm:inline">Exit Fullscreen</span>
+                </>
+              ) : (
+                <>
+                  <ExpandIcon className="h-4 w-4 mr-1" />
+                  <span className="hidden sm:inline">Fullscreen</span>
+                </>
+              )}
+            </Button>
+            <div className="flex items-center bg-primary/10 text-primary px-2 py-1 rounded-md text-sm font-semibold">
+              <span>CEFR {lesson.cefrLevel}</span>
+            </div>
+          </div>
+        </div>
+      </header>
+      
+      {/* Main content */}
+      <main className="flex-1 overflow-y-auto bg-white">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col h-full">
+          <TabsList className="w-full justify-start px-2 bg-gray-50 border-b border-gray-200 rounded-none print:hidden">
+            <TabsTrigger
+              value="lesson"
+              className="px-4 py-2 data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none"
+            >
+              Lesson
+            </TabsTrigger>
+            <TabsTrigger
+              value="notes"
+              className="px-4 py-2 data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none"
+            >
+              Teacher Notes
+            </TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="lesson" className="flex-1 overflow-y-auto p-6 m-0">
+            {parsedContent && <LessonContent content={parsedContent} />}
+          </TabsContent>
+          
+          <TabsContent value="notes" className="flex-1 overflow-y-auto p-6 m-0">
+            <div className="max-w-4xl mx-auto">
+              <h2 className="text-xl font-nunito font-semibold mb-4">Teacher Notes</h2>
+              
+              <div className="bg-gray-50 rounded-lg p-4 mb-4">
+                <h3 className="font-semibold mb-2">Lesson Objectives</h3>
+                <ul className="list-disc list-inside space-y-1">
+                  <li>Develop vocabulary related to {lesson.topic}</li>
+                  <li>Practice reading comprehension with {lesson.cefrLevel}-level text</li>
+                  <li>Encourage critical thinking about {lesson.topic}</li>
+                  <li>Practice expressing opinions using provided sentence frames</li>
+                </ul>
+              </div>
+              
+              <div className="bg-gray-50 rounded-lg p-4 mb-4">
+                <h3 className="font-semibold mb-2">Student Background</h3>
+                <p>
+                  {parsedContent?.teacherNotes || 
+                   `This lesson is designed for ${lesson.cefrLevel} level students. Focus on helping them use the new vocabulary actively in discussion.`}
+                </p>
+              </div>
+              
+              <div className="bg-gray-50 rounded-lg p-4">
+                <h3 className="font-semibold mb-2">Additional Resources</h3>
+                <ul className="list-disc list-inside space-y-1">
+                  <li>Short video clips (2-3 minutes) if time permits</li>
+                  <li>Infographic on {lesson.topic}</li>
+                  <li>Follow-up homework suggestion: Write a short paragraph about {lesson.topic}</li>
+                </ul>
+              </div>
+            </div>
+          </TabsContent>
+        </Tabs>
+      </main>
+    </div>
+  );
+}
