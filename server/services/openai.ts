@@ -31,8 +31,8 @@ export class OpenAIService {
       const prompt = this.constructLessonPrompt(params);
       console.log('Constructed prompt successfully');
       
-      // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
-      const modelName = "gpt-4o";
+      // Using the more cost-effective gpt-3.5-turbo model as requested by the user
+      const modelName = "gpt-3.5-turbo";
       
       console.log(`Using model: ${modelName}`);
 
@@ -53,7 +53,7 @@ export class OpenAIService {
           ],
           temperature: 0.5, // Lower temperature for more consistent, structured output
           response_format: { type: "json_object" },
-          max_tokens: 4000
+          max_tokens: 8000 // Increased token limit for gpt-3.5-turbo to handle complex response
         });
         
         console.log('Received response from OpenAI API');
