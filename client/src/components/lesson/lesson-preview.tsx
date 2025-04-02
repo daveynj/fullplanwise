@@ -206,17 +206,17 @@ export function LessonPreview({ lesson }: LessonPreviewProps) {
             <Button className="bg-[#28A745] hover:bg-green-600 text-white font-semibold px-4 py-2 rounded-lg transition">
               <Share className="mr-1 h-4 w-4" /> Share
             </Button>
-            {lesson.id ? (
-              <Link href={`/fullscreen/${lesson.id}`}>
-                <Button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg transition">
-                  <Maximize2 className="mr-1 h-4 w-4" /> Fullscreen
-                </Button>
-              </Link>
-            ) : (
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg transition">
-                <Maximize2 className="mr-1 h-4 w-4" /> Fullscreen
-              </Button>
-            )}
+            <Button 
+              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg transition"
+              onClick={() => {
+                if (lesson.id) {
+                  window.location.href = `/fullscreen/${lesson.id}`;
+                }
+              }}
+              disabled={!lesson.id}
+            >
+              <Maximize2 className="mr-1 h-4 w-4" /> Fullscreen
+            </Button>
           </div>
         </div>
       </Tabs>

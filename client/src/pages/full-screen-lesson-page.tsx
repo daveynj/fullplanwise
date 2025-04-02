@@ -121,11 +121,13 @@ export default function FullScreenLessonPage() {
           <p className="text-gray-500 mb-4">
             {error instanceof Error ? error.message : "The requested lesson could not be found."}
           </p>
-          <Link href="/lessons">
-            <a className="inline-flex items-center justify-center px-4 py-2 bg-primary text-white rounded-lg font-medium">
-              <ArrowLeft className="mr-2 h-4 w-4" /> Back to Lessons
-            </a>
-          </Link>
+          <Button 
+            variant="default" 
+            className="bg-primary text-white font-medium"
+            onClick={() => window.location.href = "/history"}
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Lessons
+          </Button>
         </div>
       </div>
     );
@@ -137,12 +139,14 @@ export default function FullScreenLessonPage() {
       <header className="bg-white border-b border-gray-200 print:hidden">
         <div className="flex justify-between items-center px-4 py-2">
           <div className="flex items-center">
-            <Link href="/lessons">
-              <a className="flex items-center text-gray-600 hover:text-primary mr-6">
-                <ArrowLeft className="h-5 w-5 mr-1" />
-                <span className="font-medium">Exit</span>
-              </a>
-            </Link>
+            <Button
+              variant="ghost"
+              className="flex items-center text-gray-600 hover:text-primary mr-3 p-2"
+              onClick={() => window.location.href = "/history"}
+            >
+              <ArrowLeft className="h-5 w-5 mr-1" />
+              <span className="font-medium">Exit</span>
+            </Button>
             <h1 className="text-lg font-bold text-gray-800 truncate max-w-md">
               {lesson.title}
             </h1>
