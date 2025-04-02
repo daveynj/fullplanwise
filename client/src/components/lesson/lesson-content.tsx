@@ -264,7 +264,23 @@ export function LessonContent({ content }: LessonContentProps) {
   const ReadingSection = () => {
     const section = findSection('reading');
     if (!section) return <p>No reading content available</p>;
-
+    
+    // State for pagination in reading section
+    const [activeParagraph, setActiveParagraph] = useState(0);
+    
+    // Handle paragraphs - either from array or split from content
+    let paragraphs: string[] = [];
+    if (section.paragraphs && Array.isArray(section.paragraphs)) {
+      paragraphs = section.paragraphs;
+    } else if (typeof section.content === 'string') {
+      paragraphs = section.content.split('\n\n').filter(p => p.trim());
+    } else {
+      paragraphs = ['No reading content available'];
+    }
+    
+    // Calculate completion percentage
+    const completionPercentage = Math.round(((activeParagraph + 1) / paragraphs.length) * 100);
+    
     return (
       <div className="space-y-6">
         <Card>
@@ -275,24 +291,94 @@ export function LessonContent({ content }: LessonContentProps) {
             </CardTitle>
             {section.introduction && <CardDescription>{section.introduction}</CardDescription>}
           </CardHeader>
-          <CardContent className="pt-6">
-            <div className="bg-white p-6 rounded-lg border border-blue-100 space-y-4">
-              {/* If paragraphs array is available, use it */}
-              {section.paragraphs && Array.isArray(section.paragraphs) ? (
-                section.paragraphs.map((paragraph: string, idx: number) => (
-                  <p key={`paragraph-${idx}`} className="text-gray-800 leading-relaxed">{paragraph}</p>
-                ))
-              ) : (
-                // Otherwise use content
-                <div className="prose max-w-none">
-                  {typeof section.content === 'string' ? 
-                    section.content.split('\n\n').map((paragraph: string, i: number) => (
-                      <p key={i} className="mb-4">{paragraph}</p>
-                    )) : 
-                    <p>{section.content || 'No reading content available'}</p>
-                  }
+          
+          <CardContent className="pt-0">
+            <div className="py-4 px-2">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm text-blue-600 font-medium flex items-center">
+                  <BookOpen className="h-4 w-4 mr-1" />
+                  Reading
+                </span>
+                <span className="text-sm text-gray-500">
+                  Estimated time: 15-20 minutes
+                </span>
+              </div>
+            </div>
+            
+            <div className="border-t border-b py-4">
+              <div className="flex items-center mb-2">
+                <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                  <BookOpen className="h-5 w-5 text-blue-600" />
                 </div>
-              )}
+                <div>
+                  <h3 className="font-semibold text-lg">{section.title || "Reading Passage"}</h3>
+                  <div className="flex items-center text-sm text-gray-500 mt-1">
+                    <span className="mr-4">
+                      <span className="inline-block w-4 h-4 bg-gray-200 rounded-full mr-1"></span>
+                      15-20 minutes
+                    </span>
+                    <span>
+                      <span className="inline-block w-4 h-4 bg-blue-200 rounded-full mr-1"></span>
+                      Adapted for clarity
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="py-4">
+              <div className="flex items-center mb-2">
+                <span className="text-blue-600 font-medium flex items-center text-sm">
+                  <span className="inline-block w-4 h-4 text-blue-600 mr-1">⚡</span>
+                  Paragraph {activeParagraph + 1} of {paragraphs.length}
+                </span>
+                <div className="ml-auto flex items-center">
+                  <div className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden mr-2">
+                    <div 
+                      className="h-full bg-blue-500 rounded-full" 
+                      style={{ width: `${completionPercentage}%` }}
+                    ></div>
+                  </div>
+                  <span className="text-sm text-gray-500">{completionPercentage}% Complete</span>
+                </div>
+              </div>
+              
+              <div className="bg-white p-6 rounded-lg border border-blue-100 mt-4 min-h-[180px]">
+                {paragraphs[activeParagraph] && (
+                  <p className="text-gray-800 leading-relaxed">{paragraphs[activeParagraph]}</p>
+                )}
+              </div>
+              
+              <div className="flex justify-between mt-4">
+                <button
+                  onClick={() => setActiveParagraph(prev => Math.max(0, prev - 1))}
+                  disabled={activeParagraph === 0}
+                  className="px-4 py-2 border rounded-md text-sm flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <span className="mr-1">‹</span> Previous
+                </button>
+                
+                <div className="flex items-center">
+                  {paragraphs.map((_, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setActiveParagraph(idx)}
+                      className={`mx-1 w-2 h-2 rounded-full ${
+                        idx === activeParagraph ? 'bg-blue-500' : 'bg-gray-300'
+                      }`}
+                      aria-label={`Go to paragraph ${idx + 1}`}
+                    ></button>
+                  ))}
+                </div>
+                
+                <button
+                  onClick={() => setActiveParagraph(prev => Math.min(paragraphs.length - 1, prev + 1))}
+                  disabled={activeParagraph === paragraphs.length - 1}
+                  className="px-4 py-2 border rounded-md text-sm flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Next <span className="ml-1">›</span>
+                </button>
+              </div>
             </div>
           </CardContent>
         </Card>
