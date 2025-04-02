@@ -681,7 +681,7 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
         const text = fixedSection.text;
         // This regex splits on sentence endings (., !, ?) followed by space or end of string
         const sentences = text.split(/[.!?](?:\s+|$)/).filter((s: string) => s.trim().length > 0)
-            .map(sentence => sentence.trim() + '.'); // Ensure each sentence ends with a period
+            .map((sentence: string) => sentence.trim() + '.'); // Ensure each sentence ends with a period
         
         console.log(`Total sentences in continuous text: ${sentences.length}`);
         
@@ -690,37 +690,10 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
         const MIN_SENTENCES_PER_PARAGRAPH = 3;
         const MIN_TOTAL_SENTENCES = MIN_SENTENCES_PER_PARAGRAPH * DESIRED_PARAGRAPH_COUNT;
         
-        // If we don't have enough sentences, we need to add some generic ones
+        // If we don't have enough sentences, log a warning but don't add generic content
         if (sentences.length < MIN_TOTAL_SENTENCES) {
-          console.log(`Not enough sentences. Need at least ${MIN_TOTAL_SENTENCES}, have ${sentences.length}`);
-          
-          // List of generic sentence templates we can use to expand
-          const enhancementTemplates = [
-            "This reflects common experiences in many societies.",
-            "Many people consider this an important aspect to understand.",
-            "Research has shown this to be true in multiple contexts.",
-            "This concept is widely discussed among experts in the field.",
-            "Students often find this point particularly interesting to explore.",
-            "Various examples demonstrate this principle in action.",
-            "This connects to broader themes in the subject area.",
-            "Different perspectives exist on this particular topic.",
-            "The implications of this are significant for daily life.",
-            "Understanding this helps develop a deeper knowledge of the subject.",
-            "This phenomenon can be observed in diverse settings.",
-            "Historical evidence supports this understanding.",
-            "The practical applications of this are numerous.",
-            "Many cultures share similar viewpoints on this matter.",
-            "Considering this from multiple angles enriches our understanding."
-          ];
-          
-          // Add sentences until we reach the minimum required
-          while (sentences.length < MIN_TOTAL_SENTENCES) {
-            // Pick a random template
-            const template = enhancementTemplates[Math.floor(Math.random() * enhancementTemplates.length)];
-            sentences.push(template);
-          }
-          
-          console.log(`Enhanced to ${sentences.length} total sentences`);
+          console.log(`Warning: Not enough sentences. Need at least ${MIN_TOTAL_SENTENCES}, have ${sentences.length}`);
+          console.log('Proceeding with the original sentences without adding generic content');
         }
         
         // Distribute sentences evenly across 5 paragraphs
@@ -734,21 +707,18 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
           if (startIdx < sentences.length) {
             const paragraphSentences = sentences.slice(startIdx, endIdx);
             
-            // Ensure each paragraph has at least 3 sentences
+            // Log a warning if a paragraph has fewer than 3 sentences, but don't add generic content
             if (paragraphSentences.length < MIN_SENTENCES_PER_PARAGRAPH) {
-              const neededSentences = MIN_SENTENCES_PER_PARAGRAPH - paragraphSentences.length;
-              for (let j = 0; j < neededSentences; j++) {
-                paragraphSentences.push("This relates to the key concepts being discussed.");
-              }
+              console.log(`Warning: Paragraph ${i+1} has only ${paragraphSentences.length} sentences, which is less than the minimum ${MIN_SENTENCES_PER_PARAGRAPH}`);
             }
             
             paragraphs.push(paragraphSentences.join(' '));
           }
         }
         
-        // Make sure we have exactly 5 paragraphs
-        while (paragraphs.length < DESIRED_PARAGRAPH_COUNT) {
-          paragraphs.push("This paragraph provides additional context for the topic. It explores related concepts in more detail. It connects these ideas to practical applications.");
+        // Log a warning if we don't have enough paragraphs
+        if (paragraphs.length < DESIRED_PARAGRAPH_COUNT) {
+          console.log(`Warning: Only created ${paragraphs.length} paragraphs instead of the desired ${DESIRED_PARAGRAPH_COUNT}`);
         }
         
         // Update the paragraphs property
@@ -788,7 +758,7 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
           const allSentences = fixedSection.paragraphs.flatMap((para: string) => {
             // Split by sentence endings, including end of string
             return para.split(/[.!?](?:\s+|$)/).filter((s: string) => s.trim().length > 0)
-              .map(sentence => sentence.trim() + '.'); // Ensure each sentence ends with a period
+              .map((sentence: string) => sentence.trim() + '.'); // Ensure each sentence ends with a period
           });
           
           console.log(`Total sentences in paragraphs: ${allSentences.length}`);
@@ -798,32 +768,10 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
           const MIN_SENTENCES_PER_PARAGRAPH = 3;
           const MIN_TOTAL_SENTENCES = MIN_SENTENCES_PER_PARAGRAPH * DESIRED_PARAGRAPH_COUNT;
           
-          // If we don't have enough sentences, add some
+          // If we don't have enough sentences, log a warning but don't add generic content
           if (allSentences.length < MIN_TOTAL_SENTENCES) {
-            console.log(`Not enough sentences. Need ${MIN_TOTAL_SENTENCES}, have ${allSentences.length}`);
-            
-            // List of generic sentence templates
-            const enhancementTemplates = [
-              "This reflects common experiences in many societies.",
-              "Many people consider this an important aspect to understand.",
-              "Research has shown this to be true in multiple contexts.",
-              "This concept is widely discussed among experts in the field.",
-              "Students often find this point particularly interesting to explore.",
-              "Various examples demonstrate this principle in action.",
-              "This connects to broader themes in the subject area.",
-              "Different perspectives exist on this particular topic.",
-              "The implications of this are significant for daily life.",
-              "Understanding this helps develop a deeper knowledge of the subject.",
-              "This phenomenon can be observed in diverse settings."
-            ];
-            
-            // Add sentences until we reach the minimum required
-            while (allSentences.length < MIN_TOTAL_SENTENCES) {
-              const template = enhancementTemplates[Math.floor(Math.random() * enhancementTemplates.length)];
-              allSentences.push(template);
-            }
-            
-            console.log(`Enhanced to ${allSentences.length} total sentences`);
+            console.log(`Warning: Not enough sentences in existing paragraphs. Need at least ${MIN_TOTAL_SENTENCES}, have ${allSentences.length}`);
+            console.log('Proceeding with the original sentences without adding generic content');
           }
           
           // Create exactly 5 paragraphs with the sentences we have
@@ -837,36 +785,30 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
             if (startIdx < allSentences.length) {
               const paragraphSentences = allSentences.slice(startIdx, endIdx);
               
-              // Ensure each paragraph has at least 3 sentences
+              // Log a warning if a paragraph has fewer than 3 sentences, but don't add generic content
               if (paragraphSentences.length < MIN_SENTENCES_PER_PARAGRAPH) {
-                const neededSentences = MIN_SENTENCES_PER_PARAGRAPH - paragraphSentences.length;
-                for (let j = 0; j < neededSentences; j++) {
-                  paragraphSentences.push("This relates to the key concepts being discussed.");
-                }
+                console.log(`Warning: Paragraph ${i+1} (legacy path) has only ${paragraphSentences.length} sentences, which is less than the minimum ${MIN_SENTENCES_PER_PARAGRAPH}`);
               }
               
               enhancedParagraphs.push(paragraphSentences.join(' '));
             }
           }
           
-          // Make sure we have exactly 5 paragraphs
-          while (enhancedParagraphs.length < DESIRED_PARAGRAPH_COUNT) {
-            enhancedParagraphs.push("This paragraph provides additional context for the topic. It explores related concepts in more detail. It connects these ideas to practical applications.");
+          // Log a warning if we don't have enough paragraphs
+          if (enhancedParagraphs.length < DESIRED_PARAGRAPH_COUNT) {
+            console.log(`Warning: Only created ${enhancedParagraphs.length} paragraphs instead of the desired ${DESIRED_PARAGRAPH_COUNT} (legacy path)`);
           }
           
           fixedSection.paragraphs = enhancedParagraphs;
           console.log(`Enhanced into ${enhancedParagraphs.length} paragraphs with adequate sentence count`);
         }
       }
-      // If we have neither text nor paragraphs, create default paragraphs
+      // If we have neither text nor paragraphs, log an error
       else {
-        console.log('No text or paragraphs provided, creating default paragraphs');
+        console.log('Error: No text or paragraphs provided for reading section');
+        // Create a single informative paragraph that doesn't contain generic content
         fixedSection.paragraphs = [
-          "This first paragraph introduces the key topic and provides important context for understanding the content that follows. It gives readers a foundation for the discussion.",
-          "The second paragraph builds upon the introduction by exploring specific aspects of the topic in more detail. It provides examples and elaborates on the main concepts.",
-          "This third paragraph examines different perspectives on the subject, offering a more nuanced understanding. It presents supporting evidence and considers various viewpoints.",
-          "The fourth paragraph connects the topic to real-world applications and experiences. It illustrates how these concepts relate to everyday situations.",
-          "This final paragraph summarizes the key points discussed and offers conclusions. It highlights the significance of the topic and may suggest areas for further exploration."
+          "The AI failed to generate reading content for this lesson. Please try generating a new lesson."
         ];
       }
       
@@ -880,39 +822,36 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
     if (section.type === 'vocabulary') {
       // Handle if words is a number (count) rather than an array
       if (typeof fixedSection.words === 'number') {
-        const count = Math.min(Math.max(1, fixedSection.words), 10); // Limit between 1-10
+        console.log('Error: Vocabulary words provided as count instead of actual words');
         
-        // Create placeholder vocabulary words
-        const words = [];
-        for (let i = 0; i < count; i++) {
-          words.push({
-            term: `vocabulary term ${i + 1}`,
-            partOfSpeech: "noun",
-            definition: `Definition for vocabulary term ${i + 1}`,
-            example: `Example sentence using vocabulary term ${i + 1}`
-          });
-        }
-        
-        fixedSection.words = words;
-      }
-      // Create empty words array if none exists
-      else if (!fixedSection.words || !Array.isArray(fixedSection.words) || fixedSection.words.length === 0) {
+        // Create error message instead of placeholder words
         fixedSection.words = [{
-          term: "vocabulary",
-          partOfSpeech: "noun",
-          definition: "The words used in a particular language.",
-          example: "The lesson focuses on building vocabulary for everyday situations.",
+          term: "Error: Missing Vocabulary",
+          partOfSpeech: "error",
+          definition: "The AI provided a count instead of actual vocabulary words.",
+          example: "Please try generating a new lesson.",
         }];
       }
-      // Convert string words to proper objects if needed
+      // Create error message if no vocabulary words exist
+      else if (!fixedSection.words || !Array.isArray(fixedSection.words) || fixedSection.words.length === 0) {
+        console.log('Error: No vocabulary words provided');
+        fixedSection.words = [{
+          term: "Error: Missing Vocabulary",
+          partOfSpeech: "error",
+          definition: "No vocabulary words were provided by the AI.",
+          example: "Please try generating a new lesson.",
+        }];
+      }
+      // Convert string words to proper objects if needed, with missing fields warning
       else if (Array.isArray(fixedSection.words)) {
         fixedSection.words = fixedSection.words.map((word: any) => {
           if (typeof word === 'string') {
+            console.log(`Warning: Vocabulary word "${word}" provided as string without proper details`);
             return {
               term: word,
-              partOfSpeech: "noun",
-              definition: "No definition provided.",
-              example: `Example using "${word}".`
+              partOfSpeech: "unknown",
+              definition: "Missing definition - the AI only provided the word.",
+              example: "Please try generating a new lesson with complete vocabulary details."
             };
           }
           return word;
@@ -931,11 +870,12 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
       if (section.type === 'quiz' || section.type === 'comprehension') {
         fixedSection.questions = questions.map((q: any, index: number) => {
           if (typeof q === 'string') {
+            console.log(`Warning: Question "${q}" provided as string without options for ${section.type} section`);
             return {
               id: index + 1,
               question: q,
-              options: ["Option A", "Option B", "Option C", "Option D"],
-              correctAnswer: "Option A"
+              options: ["Missing options", "Please regenerate", "The AI didn't provide complete question format", "Try again"],
+              correctAnswer: "Please regenerate"
             };
           }
           return q;
@@ -944,25 +884,32 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
         // For discussion, just ensure we have string questions
         fixedSection.questions = questions.map((q: any) => {
           if (typeof q === 'object') {
-            return q.question || q.text || `Question ${Object.values(q)[0]}`;
+            console.log('Warning: Discussion question provided as object instead of string');
+            const extractedQuestion = q.question || q.text || Object.values(q)[0];
+            if (typeof extractedQuestion === 'string') {
+              return extractedQuestion;
+            } else {
+              return "Error: Invalid discussion question format. Please try generating a new lesson.";
+            }
           }
           return q;
         });
       }
       
-      // If we still have no questions, add a default
+      // If we still have no questions, log an error
       if (fixedSection.questions.length === 0) {
+        console.log(`Error: No questions provided for ${section.type} section`);
         if (section.type === 'quiz' || section.type === 'comprehension') {
           fixedSection.questions = [
             {
               id: 1,
-              question: `Question about ${section.title || 'the topic'}`,
-              options: ["Option A", "Option B", "Option C", "Option D"],
-              correctAnswer: "Option A"
+              question: "Error: No questions were provided by the AI.",
+              options: ["Try again", "Generate a new lesson", "Contact support", "Check your prompt"],
+              correctAnswer: "Generate a new lesson"
             }
           ];
         } else {
-          fixedSection.questions = [`What do you think about ${section.title || 'this topic'}?`];
+          fixedSection.questions = ["Error: No discussion questions were provided by the AI. Please try generating a new lesson."];
         }
       }
     }
@@ -972,9 +919,9 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
       fixedSection.frames = this.processArray(fixedSection.frames || [], 'string');
       
       if (fixedSection.frames.length === 0) {
+        console.log('Error: No sentence frames provided');
         fixedSection.frames = [
-          "I think _____ is _____.",
-          "The most important thing about _____ is _____."
+          "Error: No sentence frames were provided by the AI. Please try generating a new lesson.",
         ];
       }
     }
@@ -1046,11 +993,12 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
     
     requiredSectionTypes.forEach(type => {
       if (!availableSectionTypes.includes(type)) {
-        // Add a placeholder section of this type
+        console.log(`Error: Missing required ${type} section`);
+        // Add an error section indicating the missing content
         processed.sections.push({
           type,
           title: this.getDefaultTitle(type),
-          content: `This ${type} section was not provided by the AI.`
+          content: `Error: The ${type} section was not provided by the AI. Please try generating a new lesson.`
         });
       }
     });
