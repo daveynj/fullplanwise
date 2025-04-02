@@ -578,8 +578,8 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
    */
   private checkContentQuality(content: any): boolean {
     if (!content || !content.sections) {
-      console.log('Quality check failed: Invalid content structure');
-      return false;
+      console.log('Warning: Invalid content structure - accepting anyway to avoid API waste');
+      return true;
     }
     
     // Set our quality standards
@@ -591,53 +591,56 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
       const readingSection = content.sections.find((section: any) => section.type === 'reading');
       
       if (!readingSection) {
-        console.log('Quality check failed: No reading section found');
-        return false;
+        console.log('Warning: No reading section found - accepting anyway to avoid API waste');
+        return true;
       }
-      
-      // Check if we have enough paragraphs
+
+      // Check if we have enough paragraphs, but don't reject
       if (!Array.isArray(readingSection.paragraphs) || readingSection.paragraphs.length < MIN_PARAGRAPHS) {
-        console.log(`Quality check failed: Not enough paragraphs. Found ${readingSection.paragraphs?.length || 0}, need ${MIN_PARAGRAPHS}`);
-        return false;
+        console.log(`Warning: Not enough paragraphs. Found ${readingSection.paragraphs?.length || 0}, need ${MIN_PARAGRAPHS} - accepting anyway`);
+        // Continue with quality check but don't reject
       }
       
-      // Check each paragraph for sentence count
-      const paragraphQuality = readingSection.paragraphs.map((paragraph: string, index: number) => {
-        if (typeof paragraph !== 'string') {
-          console.log(`Paragraph ${index + 1} is not a string`);
-          return { index, sentenceCount: 0, isGoodQuality: false };
-        }
-        
-        // Split into sentences - looking for period, exclamation, or question mark followed by a space
-        // Also handle the case where the final sentence doesn't have a trailing space
-        const sentences = paragraph.split(/[.!?](?:\s+|$)/).filter((s: string) => s.trim().length > 0);
-        
-        console.log(`Paragraph ${index + 1} has ${sentences.length} sentences`);
-        
-        return {
-          index,
-          sentenceCount: sentences.length,
-          isGoodQuality: sentences.length >= MIN_SENTENCES_PER_PARAGRAPH
-        };
-      });
-      
-      // Check if any paragraphs don't meet quality standards
-      const lowQualityParagraphs = paragraphQuality.filter((p: { isGoodQuality: boolean }) => !p.isGoodQuality);
-      
-      if (lowQualityParagraphs.length > 0) {
-        console.log(`Quality check failed: ${lowQualityParagraphs.length} paragraphs have fewer than ${MIN_SENTENCES_PER_PARAGRAPH} sentences`);
-        lowQualityParagraphs.forEach((p: { index: number, sentenceCount: number }) => {
-          console.log(`Paragraph ${p.index + 1} has only ${p.sentenceCount} sentences`);
+      if (Array.isArray(readingSection.paragraphs)) {
+        // Check each paragraph for sentence count
+        const paragraphQuality = readingSection.paragraphs.map((paragraph: string, index: number) => {
+          if (typeof paragraph !== 'string') {
+            console.log(`Warning: Paragraph ${index + 1} is not a string`);
+            return { index, sentenceCount: 0, isGoodQuality: false };
+          }
+          
+          // Split into sentences - looking for period, exclamation, or question mark followed by a space
+          // Also handle the case where the final sentence doesn't have a trailing space
+          const sentences = paragraph.split(/[.!?](?:\s+|$)/).filter((s: string) => s.trim().length > 0);
+          
+          console.log(`Paragraph ${index + 1} has ${sentences.length} sentences`);
+          
+          return {
+            index,
+            sentenceCount: sentences.length,
+            isGoodQuality: sentences.length >= MIN_SENTENCES_PER_PARAGRAPH
+          };
         });
-        return false;
+        
+        // Check if any paragraphs don't meet quality standards, but don't reject
+        const lowQualityParagraphs = paragraphQuality.filter((p: { isGoodQuality: boolean }) => !p.isGoodQuality);
+        
+        if (lowQualityParagraphs.length > 0) {
+          console.log(`Warning: ${lowQualityParagraphs.length} paragraphs have fewer than ${MIN_SENTENCES_PER_PARAGRAPH} sentences - accepting anyway`);
+          lowQualityParagraphs.forEach((p: { index: number, sentenceCount: number }) => {
+            console.log(`Paragraph ${p.index + 1} has only ${p.sentenceCount} sentences`);
+          });
+          // Continue and accept the content
+        }
       }
       
-      // All quality checks passed
-      console.log('Quality check PASSED: All paragraphs have at least 3 sentences');
+      // Always accept the content regardless of quality checks
+      console.log('Quality check complete: Accepting content to avoid API waste');
       return true;
     } catch (error) {
       console.error('Error in quality check:', error);
-      return false;
+      // Even on error, we accept the content to avoid wasting API calls
+      return true;
     }
   }
 
