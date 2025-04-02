@@ -951,6 +951,29 @@ Create a complete, interactive, visually engaging ESL lesson that strictly follo
       
       // Ensure we have vocabulary words
       if (section.type === 'vocabulary') {
+        // Look for content with vocabulary terms in it, if present but no words array
+        if (typeof fixedSection.content === 'string' && fixedSection.content.length > 0 && 
+            (!fixedSection.words || !Array.isArray(fixedSection.words) || fixedSection.words.length === 0)) {
+          console.log('Found vocabulary content but no words array, extracting vocabulary terms...');
+          
+          // Try to extract vocabulary terms from content
+          // Look for patterns like "1. term - definition" or bullet points
+          const termRegex = /[•\-\*\d+\.]\s*([A-Za-z]+)\s*[:-]\s*([^•\-\*\d\.]+)/g;
+          const matches = [...fixedSection.content.matchAll(termRegex)];
+          
+          if (matches.length > 0) {
+            // Convert matches to word objects
+            fixedSection.words = matches.map(match => ({
+              term: match[1].trim(),
+              partOfSpeech: "noun",
+              definition: match[2].trim(),
+              example: `Example using "${match[1].trim()}" in context.`
+            }));
+            
+            console.log(`Extracted ${fixedSection.words.length} vocabulary terms from content`);
+          }
+        }
+        
         // Handle if words is a number (count) rather than an array
         if (typeof fixedSection.words === 'number') {
           const count = Math.min(Math.max(1, fixedSection.words), 10); // Limit between 1-10
@@ -965,14 +988,35 @@ Create a complete, interactive, visually engaging ESL lesson that strictly follo
             Array.isArray(s.targetVocabulary)
           );
           
-          if (warmupSection && warmupSection.targetVocabulary.length > 0) {
+          if (warmupSection && warmupSection.targetVocabulary && warmupSection.targetVocabulary.length > 0) {
             // Use vocabulary from warmup section
             tempWords.push(...warmupSection.targetVocabulary);
           } else {
-            // Generate placeholder vocabulary words
-            for (let i = 0; i < count; i++) {
-              const term = `vocabulary term ${i + 1}`;
-              tempWords.push(term);
+            // Try to find vocabulary terms in any section's content
+            const vocabMentions: string[] = [];
+            processed.sections.forEach((s: any) => {
+              if (s && typeof s.content === 'string') {
+                // Look for words in quotes, capitalized terms, or specific patterns
+                const possibleTerms = s.content.match(/["']([^"']+)["']|\b([A-Z][a-z]{2,})\b/g);
+                if (possibleTerms && possibleTerms.length > 0) {
+                  vocabMentions.push(...possibleTerms.map((term: string) => 
+                    term.replace(/["']/g, '').trim()
+                  ));
+                }
+              }
+            });
+            
+            // Use extracted vocab terms or fallback to defaults
+            if (vocabMentions.length > 0) {
+              // Get unique terms
+              const uniqueTerms = Array.from(new Set<string>(vocabMentions));
+              tempWords.push(...uniqueTerms.slice(0, 5));
+            } else {
+              // Generate placeholder vocabulary words
+              for (let i = 0; i < count; i++) {
+                const term = `vocabulary term ${i + 1}`;
+                tempWords.push(term);
+              }
             }
           }
           
@@ -986,12 +1030,25 @@ Create a complete, interactive, visually engaging ESL lesson that strictly follo
         }
         // Create empty words array if none exists
         else if (!fixedSection.words || !Array.isArray(fixedSection.words) || fixedSection.words.length === 0) {
-          fixedSection.words = [{
-            term: "vocabulary",
-            partOfSpeech: "noun",
-            definition: "The words used in a particular language.",
-            example: "The lesson focuses on building vocabulary for everyday situations.",
-          }];
+          // Try to extract terms from the topic of the lesson
+          const topic = processed.title || 'vocabulary';
+          const topicWords = topic.split(/\s+/).filter((word: string) => word.length > 3);
+          
+          if (topicWords.length > 0) {
+            fixedSection.words = topicWords.slice(0, 5).map((term: string) => ({
+              term: term.toLowerCase(),
+              partOfSpeech: "noun",
+              definition: `${term} is an important concept related to the lesson topic.`,
+              example: `This lesson helps students understand the concept of ${term}.`,
+            }));
+          } else {
+            fixedSection.words = [{
+              term: "vocabulary",
+              partOfSpeech: "noun",
+              definition: "The words used in a particular language.",
+              example: "The lesson focuses on building vocabulary for everyday situations.",
+            }];
+          }
         }
         // Convert string words to proper objects if needed
         else if (Array.isArray(fixedSection.words)) {
@@ -1016,6 +1073,128 @@ Create a complete, interactive, visually engaging ESL lesson that strictly follo
     processed.sections = processed.sections.filter((section: any) => 
       section && typeof section === 'object' && section.type
     );
+    
+    // Process comprehension section to ensure questions are properly structured
+    const comprehensionSection = processed.sections.find((s: any) => s.type === 'comprehension');
+    if (comprehensionSection) {
+      // If questions doesn't exist or isn't an array, try to extract from content
+      if (!comprehensionSection.questions || !Array.isArray(comprehensionSection.questions) || comprehensionSection.questions.length === 0) {
+        console.log('No proper questions array in comprehension section, trying to extract from content...');
+        
+        // Make sure we have content to parse
+        if (typeof comprehensionSection.content === 'string' && comprehensionSection.content.length > 0) {
+          const questionMatches: string[] = [];
+          
+          // Look for numbered questions or questions with question marks
+          const lines = comprehensionSection.content.split('\n');
+          let currentQuestion = '';
+          
+          lines.forEach((line: string) => {
+            // Check if line is a question (starts with number or contains question mark)
+            const isQuestionLine = /^\s*\d+[\.\)]\s+/.test(line) || /\?\s*$/.test(line);
+            
+            if (isQuestionLine) {
+              // If we already have a question in progress, save it before starting new one
+              if (currentQuestion.length > 0) {
+                questionMatches.push(currentQuestion.trim());
+                currentQuestion = '';
+              }
+              
+              // Start new question with this line
+              currentQuestion = line;
+            } else if (currentQuestion.length > 0) {
+              // Continue current question
+              currentQuestion += ' ' + line.trim();
+            }
+          });
+          
+          // Add the last question if there is one
+          if (currentQuestion.length > 0) {
+            questionMatches.push(currentQuestion.trim());
+          }
+          
+          // If we found questions, convert them to the proper format
+          if (questionMatches.length > 0) {
+            comprehensionSection.questions = questionMatches.map((q: string, index: number) => {
+              // Clean up the question text
+              const cleanedQuestion = q.replace(/^\s*\d+[\.\)]\s+/, '').trim();
+              
+              return {
+                id: index + 1,
+                text: cleanedQuestion,
+                options: [],
+                correctAnswer: '',
+                explanation: 'Answer this question based on the reading passage.'
+              };
+            });
+            
+            console.log(`Extracted ${comprehensionSection.questions.length} questions from comprehension content`);
+          }
+        }
+      }
+      
+      // If we still don't have questions, create placeholder questions based on the reading section
+      if (!comprehensionSection.questions || !Array.isArray(comprehensionSection.questions) || comprehensionSection.questions.length === 0) {
+        console.log('Creating default comprehension questions based on reading section...');
+        
+        // Find the reading section
+        const readingSection = processed.sections.find((s: any) => s.type === 'reading');
+        let readingContent = '';
+        
+        if (readingSection && typeof readingSection.content === 'string') {
+          readingContent = readingSection.content;
+        }
+        
+        // Create 5 default comprehension questions
+        comprehensionSection.questions = [];
+        
+        for (let i = 0; i < 5; i++) {
+          comprehensionSection.questions.push({
+            id: i + 1,
+            text: `Question ${i + 1} about the reading passage.`,
+            options: [],
+            correctAnswer: '',
+            explanation: 'This question tests understanding of the main text.'
+          });
+        }
+        
+        // If we have reading content, make the questions more relevant
+        if (readingContent.length > 0) {
+          // Extract potential question topics from reading content
+          const sentences = readingContent.split(/[.!?]+/).filter((s: string) => s.trim().length > 10);
+          
+          if (sentences.length > 0) {
+            // Use sentences to create better question templates
+            const questionsToUpdate = Math.min(sentences.length, comprehensionSection.questions.length);
+            
+            for (let i = 0; i < questionsToUpdate; i++) {
+              const sentence = sentences[i].trim();
+              
+              // Create a question based on the sentence
+              comprehensionSection.questions[i].text = `What does the passage say about ${sentence.split(' ').slice(0, 3).join(' ')}...?`;
+              comprehensionSection.questions[i].explanation = `This question refers to the part of the text that mentions these details.`;
+            }
+          }
+        }
+      }
+      
+      // Ensure all questions have the required properties
+      if (Array.isArray(comprehensionSection.questions)) {
+        comprehensionSection.questions = comprehensionSection.questions.map((q: any, index: number) => {
+          const question = typeof q === 'string' 
+            ? { text: q } 
+            : (q || {});
+            
+          return {
+            id: question.id || index + 1,
+            text: question.text || `Question ${index + 1}`,
+            options: Array.isArray(question.options) ? question.options : [],
+            correctAnswer: question.correctAnswer || '',
+            explanation: question.explanation || 'Answer based on the reading passage.'
+          };
+        });
+      }
+    }
     
     // Ensure we have all required sections
     const requiredSectionTypes = ['warmup', 'reading', 'vocabulary', 'comprehension'];
