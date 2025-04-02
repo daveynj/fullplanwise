@@ -107,6 +107,23 @@ export class QwenService {
               // Log the entire response for deeper inspection
               console.log('FULL JSON RESPONSE:', JSON.stringify(jsonContent));
               
+              // Save the full response to a file for easier inspection
+              try {
+                const fs = require('fs');
+                const path = require('path');
+                const debugDir = path.join(process.cwd(), 'logs', 'debug');
+                if (!fs.existsSync(debugDir)) {
+                  fs.mkdirSync(debugDir, { recursive: true });
+                }
+                fs.writeFileSync(
+                  path.join(debugDir, 'latest_qwen_response.json'), 
+                  JSON.stringify(jsonContent, null, 2)
+                );
+                console.log('Full Qwen response saved to logs/debug/latest_qwen_response.json');
+              } catch (fsError) {
+                console.error('Error saving response to file:', fsError);
+              }
+              
               // Pre-process the JSON structure to fix common issues before formatting
               const preprocessedContent = this.preprocessContent(jsonContent);
               
