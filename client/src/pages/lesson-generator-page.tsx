@@ -54,7 +54,16 @@ export default function LessonGeneratorPage() {
   });
 
   const handleGenerateLesson = (params: LessonGenerateParams) => {
-    if (!user || (user.credits < 1 && !user.isAdmin)) {
+    if (!user) {
+      toast({
+        title: "Authentication required",
+        description: "Please log in to generate lessons.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (user.credits < 1 && !user.isAdmin) {
       toast({
         title: "Insufficient credits",
         description: "Please purchase more credits to generate lessons.",
@@ -91,6 +100,7 @@ export default function LessonGeneratorPage() {
                   students={students} 
                   onSubmit={handleGenerateLesson} 
                   credits={user?.credits || 0}
+                  isAdmin={user?.isAdmin || false}
                 />
               </div>
               
