@@ -188,12 +188,14 @@ CRITICAL LESSON DEVELOPMENT PROCESS:
 
 2. SECOND, write a continuous reading passage that:
    - Is a SINGLE CONTINUOUS TEXT (not divided into paragraphs)
-   - Contains at least 20-30 sentences total 
+   - EXTREMELY CRITICAL: MUST contain AT LEAST 20-30 sentences total - shorter texts will be rejected
+   - CRITICALLY IMPORTANT: This text MUST be long enough to be divided into 5 substantial paragraphs with at least 3 sentences per paragraph
    - Incorporates ALL 5 vocabulary words naturally within the text
    - Is appropriate for ${cefrLevel} level in terms of language complexity
    - Covers the "${topic}" subject thoroughly but simply
-   - Has sufficient length for us to create 5 substantial paragraphs
-   - IMPORTANT: Write this as ONE CONTINUOUS TEXT that flows naturally - our system will divide it into paragraphs later
+   - Has sufficient detail and depth to engage readers
+   - IMPORTANT: Write this as ONE LONG CONTINUOUS TEXT that flows naturally - our system will divide it into paragraphs later
+   - THE LESSON WILL BE REJECTED if the text is too short - this is the most important part of the lesson
    
 3. THIRD, build the rest of the lesson around these vocabulary words and reading passage:
    - The warm-up should explicitly introduce the 5 vocabulary words
@@ -230,7 +232,7 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
       "type": "reading",
       "title": "Reading Text",
       "introduction": "Let's read about this important topic.",
-      "text": "Write a continuous reading passage of at least 20-30 sentences that fully explores the topic. Incorporate all 5 vocabulary words naturally throughout the text. The passage should flow smoothly from introduction to development to conclusion, covering different aspects of the topic in sufficient depth. Make sure the content is engaging, informative, and appropriate for the specified CEFR level. Our system will automatically divide this text into 5 well-balanced paragraphs later.",
+      "text": "CRITICALLY IMPORTANT: Write a substantial continuous reading passage of AT LEAST 20-30 sentences that fully explores the topic in depth. This is extremely important - we need a lengthy, detailed text that covers multiple aspects of the topic. Incorporate all 5 vocabulary words naturally throughout the text. The passage should flow smoothly from introduction to development to conclusion. Make sure the content is engaging, informative, and appropriate for the specified CEFR level. Our system will automatically divide this text into 5 well-balanced paragraphs later, but we NEED a minimum of 15-20 sentences for this to work properly.",
       "imageDescription": "A descriptive image that illustrates a key aspect of the reading",
       "timeAllocation": "15 minutes",
       "teacherNotes": "Have students read the passage once for general understanding, then a second time to identify the vocabulary words in context."
@@ -595,12 +597,42 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
         return true;
       }
 
-      // Check if we have enough paragraphs, but don't reject
-      if (!Array.isArray(readingSection.paragraphs) || readingSection.paragraphs.length < MIN_PARAGRAPHS) {
-        console.log(`Warning: Not enough paragraphs. Found ${readingSection.paragraphs?.length || 0}, need ${MIN_PARAGRAPHS} - accepting anyway`);
-        // Continue with quality check but don't reject
+      // If we have text but no paragraphs, try to split the text into paragraphs
+      if (readingSection.text && (!readingSection.paragraphs || !Array.isArray(readingSection.paragraphs) || readingSection.paragraphs.length < MIN_PARAGRAPHS)) {
+        console.log('Reading section has text but insufficient paragraphs. Attempting to split text into paragraphs.');
+        
+        // Split into sentences 
+        const sentences = readingSection.text
+          .split(/(?<=[.!?])\s+/)
+          .filter((s: string) => s.trim().length > 0);
+        
+        console.log(`Found ${sentences.length} sentences in text content`);
+        
+        // Only attempt splitting if we have enough sentences
+        if (sentences.length >= MIN_PARAGRAPHS * MIN_SENTENCES_PER_PARAGRAPH) {
+          // Calculate how many sentences per paragraph for even distribution
+          const sentencesPerParagraph = Math.floor(sentences.length / MIN_PARAGRAPHS);
+          const paragraphs = [];
+          
+          for (let i = 0; i < MIN_PARAGRAPHS; i++) {
+            const startIdx = i * sentencesPerParagraph;
+            const endIdx = (i === MIN_PARAGRAPHS - 1) 
+              ? sentences.length 
+              : (i + 1) * sentencesPerParagraph;
+              
+            const paragraph = sentences.slice(startIdx, endIdx).join(' ');
+            paragraphs.push(paragraph);
+          }
+          
+          // Update the reading section with the new paragraphs
+          readingSection.paragraphs = paragraphs;
+          console.log(`Successfully split text into ${paragraphs.length} paragraphs with approximately ${sentencesPerParagraph} sentences each`);
+        } else {
+          console.log(`Warning: Text has only ${sentences.length} sentences, which is insufficient for ${MIN_PARAGRAPHS} good paragraphs`);
+        }
       }
       
+      // Process existing paragraphs
       if (Array.isArray(readingSection.paragraphs)) {
         // Check each paragraph for sentence count
         const paragraphQuality = readingSection.paragraphs.map((paragraph: string, index: number) => {
