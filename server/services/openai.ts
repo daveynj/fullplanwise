@@ -152,17 +152,21 @@ CRITICAL LESSON DEVELOPMENT PROCESS:
    - Appropriate for the ${cefrLevel} level
    - Highly relevant to the "${topic}" subject
    - Useful for students to know and discuss the topic
+   - For each word, consider: part of speech, definition, syllable breakdown, example sentences, collocations, and usage notes
 
 2. SECOND, write a reading passage that:
-   - Contains 5 well-structured paragraphs
+   - Contains EXACTLY 5 well-structured paragraphs
    - Incorporates ALL 5 vocabulary words naturally within the text
    - Is appropriate for ${cefrLevel} level in terms of language complexity
    - Covers the "${topic}" subject thoroughly but simply
+   - Has sufficient length to provide comprehensive information (minimum 3-5 paragraphs)
    
 3. THIRD, build the rest of the lesson around these vocabulary words and reading passage:
    - The warm-up should explicitly introduce the 5 vocabulary words
-   - The vocabulary section should define the same 5 words from the reading
+   - The vocabulary section should define and elaborate on the same 5 words from the reading
    - Comprehension questions should test understanding of the reading
+   - Sentence frames should provide scaffolded practice with topic-related structures
+   - Discussion questions should always include EXACTLY 5 questions regardless of CEFR level
    - All subsequent activities should build on the vocabulary and reading
 
 REQUIRED LESSON STRUCTURE:
@@ -213,6 +217,10 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
           "partOfSpeech": "noun",
           "definition": "Definition appropriate for the CEFR level",
           "example": "Example sentence using the word naturally",
+          "pronunciation": "vo-cab-u-lar-y (syllable breakdown with stress indicated)",
+          "collocations": ["Common phrase 1", "Common phrase 2"],
+          "usageNotes": "Brief notes on how and when to use this word appropriately",
+          "teachingTips": "Suggestions for effectively teaching this vocabulary item",
           "imageDescription": "Description of an image that would illustrate this word"
         },
         {
@@ -220,6 +228,10 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
           "partOfSpeech": "verb",
           "definition": "Definition appropriate for the CEFR level",
           "example": "Example sentence using the word naturally",
+          "pronunciation": "vo-cab-u-lar-y (syllable breakdown with stress indicated)",
+          "collocations": ["Common phrase 1", "Common phrase 2"],
+          "usageNotes": "Brief notes on how and when to use this word appropriately",
+          "teachingTips": "Suggestions for effectively teaching this vocabulary item",
           "imageDescription": "Description of an image that would illustrate this word"
         },
         {
@@ -227,6 +239,10 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
           "partOfSpeech": "adjective",
           "definition": "Definition appropriate for the CEFR level",
           "example": "Example sentence using the word naturally",
+          "pronunciation": "vo-cab-u-lar-y (syllable breakdown with stress indicated)",
+          "collocations": ["Common phrase 1", "Common phrase 2"],
+          "usageNotes": "Brief notes on how and when to use this word appropriately",
+          "teachingTips": "Suggestions for effectively teaching this vocabulary item",
           "imageDescription": "Description of an image that would illustrate this word"
         },
         {
@@ -234,6 +250,10 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
           "partOfSpeech": "noun",
           "definition": "Definition appropriate for the CEFR level",
           "example": "Example sentence using the word naturally",
+          "pronunciation": "vo-cab-u-lar-y (syllable breakdown with stress indicated)",
+          "collocations": ["Common phrase 1", "Common phrase 2"],
+          "usageNotes": "Brief notes on how and when to use this word appropriately",
+          "teachingTips": "Suggestions for effectively teaching this vocabulary item",
           "imageDescription": "Description of an image that would illustrate this word"
         },
         {
@@ -241,6 +261,10 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
           "partOfSpeech": "verb",
           "definition": "Definition appropriate for the CEFR level",
           "example": "Example sentence using the word naturally",
+          "pronunciation": "vo-cab-u-lar-y (syllable breakdown with stress indicated)",
+          "collocations": ["Common phrase 1", "Common phrase 2"],
+          "usageNotes": "Brief notes on how and when to use this word appropriately",
+          "teachingTips": "Suggestions for effectively teaching this vocabulary item",
           "imageDescription": "Description of an image that would illustrate this word"
         }
       ],
@@ -282,28 +306,71 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
       "title": "Sentence Frames",
       "introduction": "Practice using sentence frames to talk about the topic.",
       "frames": [
-        "I think _____ is important because _____.",
-        "One way to _____ is to _____.",
-        "When I _____, I always _____.",
-        "The best thing about _____ is _____.",
-        "In the future, _____ will _____."
+        {
+          "pattern": "I think _____ is important because _____.",
+          "examples": [
+            "I think learning English is important because it helps with international communication.",
+            "I think healthy eating is important because it prevents many diseases."
+          ],
+          "level": "intermediate",
+          "grammarFocus": "Expressing opinions with reasons",
+          "communicativeFunction": "Justifying opinions",
+          "usageNotes": "This pattern helps students express and support their views",
+          "teachingTips": "Start with familiar topics before moving to more abstract concepts"
+        },
+        {
+          "pattern": "One way to _____ is to _____.",
+          "examples": [
+            "One way to improve vocabulary is to read regularly.",
+            "One way to stay healthy is to exercise daily."
+          ],
+          "level": "intermediate",
+          "grammarFocus": "Suggesting solutions or methods",
+          "communicativeFunction": "Giving advice",
+          "usageNotes": "Useful for discussing processes and solutions",
+          "teachingTips": "Have students brainstorm multiple solutions for the same problem"
+        },
+        {
+          "pattern": "When I _____, I always _____.",
+          "examples": [
+            "When I travel, I always take photos.",
+            "When I cook, I always follow a recipe."
+          ],
+          "level": "basic",
+          "grammarFocus": "Simple present for habits",
+          "communicativeFunction": "Describing routines",
+          "usageNotes": "Helps students discuss personal habits and routines",
+          "teachingTips": "Use this to encourage personal sharing in a structured way"
+        },
+        {
+          "pattern": "In the future, _____ will _____.",
+          "examples": [
+            "In the future, technology will change how we learn.",
+            "In the future, cities will become more environmentally friendly."
+          ],
+          "level": "intermediate",
+          "grammarFocus": "Future tense predictions",
+          "communicativeFunction": "Making predictions",
+          "usageNotes": "Good for expressing opinions about future developments",
+          "teachingTips": "Can be adapted for different time frames (tomorrow, next year, etc.)"
+        }
       ],
       "timeAllocation": "10 minutes",
-      "teacherNotes": "Model each sentence frame first, then have students create their own sentences."
+      "teacherNotes": "Model each sentence frame first, then have students create their own sentences using the vocabulary from the lesson."
     },
     {
       "type": "discussion",
       "title": "Post-reading Discussion",
       "introduction": "Let's discuss your thoughts and opinions about this topic.",
       "questions": [
-        "What did you find most interesting about this topic?",
-        "How does this topic affect your daily life?",
-        "Do you agree with the main ideas in the reading? Why or why not?",
-        "How might this topic change in the future?",
-        "What else would you like to learn about this topic?"
+        "What did you find most interesting about this topic in the reading?",
+        "How does this topic affect your daily life or experiences?",
+        "Do you agree with the main ideas presented in the reading? Why or why not?",
+        "How might this topic change or develop in the future?",
+        "What else would you like to learn about this topic that wasn't covered in the reading?"
       ],
       "timeAllocation": "10 minutes",
-      "teacherNotes": "Encourage students to use the target vocabulary during the discussion."
+      "teacherNotes": "Encourage students to use the target vocabulary during the discussion and refer back to specific parts of the reading to support their points."
     },
     {
       "type": "quiz",
@@ -342,7 +409,7 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
         }
       ],
       "timeAllocation": "10 minutes",
-      "teacherNotes": "Review answers with the student, explaining any mistakes."
+      "teacherNotes": "Review answers with the student, explaining any mistakes and reinforcing vocabulary and concepts from the lesson."
     }
   ]
 }`;
