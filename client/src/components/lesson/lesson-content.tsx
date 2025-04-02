@@ -273,7 +273,7 @@ export function LessonContent({ content }: LessonContentProps) {
     if (section.paragraphs && Array.isArray(section.paragraphs)) {
       paragraphs = section.paragraphs;
     } else if (typeof section.content === 'string') {
-      paragraphs = section.content.split('\n\n').filter(p => p.trim());
+      paragraphs = section.content.split('\n\n').filter((p: string) => p.trim());
     } else {
       paragraphs = ['No reading content available'];
     }

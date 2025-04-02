@@ -53,7 +53,7 @@ export class OpenAIService {
           ],
           temperature: 0.5, // Lower temperature for more consistent, structured output
           response_format: { type: "json_object" },
-          max_tokens: 4000 // Maximum allowed for gpt-3.5-turbo
+          max_tokens: 4096 // Maximum allowed for gpt-3.5-turbo
         });
         
         console.log('Received response from OpenAI API');
@@ -155,11 +155,12 @@ CRITICAL LESSON DEVELOPMENT PROCESS:
    - For each word, consider: part of speech, definition, syllable breakdown, example sentences, collocations, and usage notes
 
 2. SECOND, write a reading passage that:
-   - Contains EXACTLY 5 well-structured paragraphs
-   - Incorporates ALL 5 vocabulary words naturally within the text
+   - Contains EXACTLY 5 substantial paragraphs (each with 4-6 sentences minimum)
+   - Incorporates ALL 5 vocabulary words naturally within the text (one vocabulary word per paragraph)
    - Is appropriate for ${cefrLevel} level in terms of language complexity
    - Covers the "${topic}" subject thoroughly but simply
-   - Has sufficient length to provide comprehensive information (minimum 3-5 paragraphs)
+   - Has sufficient length to provide comprehensive information
+   - IMPORTANT: Each paragraph must be substantial with multiple sentences (at least 4-6 per paragraph)
    
 3. THIRD, build the rest of the lesson around these vocabulary words and reading passage:
    - The warm-up should explicitly introduce the 5 vocabulary words
@@ -197,11 +198,11 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
       "title": "Reading Text",
       "introduction": "Let's read about this important topic.",
       "paragraphs": [
-        "First paragraph that introduces the topic and uses at least one vocabulary word naturally.",
-        "Second paragraph that develops the topic further and uses another vocabulary word.",
-        "Third paragraph with more detailed information and another vocabulary word.",
-        "Fourth paragraph exploring implications or applications of the topic with another vocabulary word.",
-        "Final paragraph that summarizes or concludes with the last vocabulary word."
+        "First substantial paragraph (4-6 sentences) that introduces the topic and uses at least one vocabulary word naturally. Include sufficient detail and context for students to understand the subject. Make sure the paragraph provides a clear foundation for the rest of the reading.",
+        "Second substantial paragraph (4-6 sentences) that develops the topic further and uses another vocabulary word. This paragraph should build upon the introduction with additional facts, examples, or explanations that expand the student's understanding.",
+        "Third substantial paragraph (4-6 sentences) with more detailed information and another vocabulary word. This paragraph should explore a different aspect of the topic or go deeper into previously mentioned aspects.",
+        "Fourth substantial paragraph (4-6 sentences) exploring implications or applications of the topic with another vocabulary word. This paragraph should connect the topic to real-world contexts or consider its significance.",
+        "Final substantial paragraph (4-6 sentences) that summarizes or concludes with the last vocabulary word. This paragraph should bring closure to the reading while reinforcing key points."
       ],
       "imageDescription": "A descriptive image that illustrates a key aspect of the reading",
       "timeAllocation": "15 minutes",
