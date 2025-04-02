@@ -53,7 +53,7 @@ export class OpenAIService {
           ],
           temperature: 0.5, // Lower temperature for more consistent, structured output
           response_format: { type: "json_object" },
-          max_tokens: 8000 // Increased token limit for gpt-3.5-turbo to handle complex response
+          max_tokens: 4000 // Maximum allowed for gpt-3.5-turbo
         });
         
         console.log('Received response from OpenAI API');
