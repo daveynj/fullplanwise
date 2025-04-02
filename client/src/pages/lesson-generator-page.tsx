@@ -5,8 +5,6 @@ import { LessonForm } from "@/components/lesson/lesson-form";
 import { LessonPreview } from "@/components/lesson/lesson-preview";
 import { LoadingOverlay } from "@/components/shared/loading-overlay";
 import { useAuth } from "@/hooks/use-auth";
-import { Button } from "@/components/ui/button";
-import { Save } from "lucide-react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -35,11 +33,12 @@ export default function LessonGeneratorPage() {
     },
     onSuccess: (data) => {
       setGeneratedLesson(data);
-      // Invalidate user to get updated credits
+      // Invalidate queries to refresh data
       queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/lessons"] });
       toast({
         title: "Lesson generated successfully!",
-        description: "Your lesson content is ready.",
+        description: "Your lesson has been created and saved automatically.",
       });
     },
     onError: (error: Error) => {
@@ -54,30 +53,8 @@ export default function LessonGeneratorPage() {
     }
   });
 
-  // Save lesson mutation
-  const saveLessonMutation = useMutation({
-    mutationFn: async (lessonData: any) => {
-      const res = await apiRequest("POST", "/api/lessons", lessonData);
-      return await res.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/lessons"] });
-      toast({
-        title: "Lesson saved successfully!",
-        description: "Your lesson has been saved to your history.",
-      });
-    },
-    onError: (error: Error) => {
-      toast({
-        title: "Failed to save lesson",
-        description: error.message,
-        variant: "destructive",
-      });
-    }
-  });
-
   const handleGenerateLesson = (params: LessonGenerateParams) => {
-    if (!user || user.credits < 1) {
+    if (!user || (user.credits < 1 && !user.isAdmin)) {
       toast({
         title: "Insufficient credits",
         description: "Please purchase more credits to generate lessons.",
@@ -87,28 +64,6 @@ export default function LessonGeneratorPage() {
     }
     
     generateLessonMutation.mutate(params);
-  };
-
-  const handleSaveLesson = () => {
-    if (!generatedLesson) return;
-    
-    // Convert content to string if it's an object (from direct API response)
-    const contentToSave = typeof generatedLesson.content === 'string' 
-      ? generatedLesson.content 
-      : JSON.stringify(generatedLesson.content);
-    
-    const lessonData = {
-      teacherId: user!.id,
-      studentId: generatedLesson.studentId || null,
-      title: generatedLesson.title,
-      topic: generatedLesson.topic,
-      cefrLevel: generatedLesson.cefrLevel,
-      content: contentToSave, // Must be string for database storage
-      notes: "Auto-generated lesson"
-    };
-    
-    console.log("Saving lesson with content type:", typeof contentToSave);
-    saveLessonMutation.mutate(lessonData);
   };
 
   return (
@@ -125,17 +80,6 @@ export default function LessonGeneratorPage() {
               <div>
                 <h1 className="text-2xl md:text-3xl font-nunito font-bold">Generate New Lesson</h1>
                 <p className="text-gray-600">Create an AI-powered lesson based on your requirements</p>
-              </div>
-              <div className="mt-4 md:mt-0">
-                {generatedLesson && (
-                  <Button 
-                    className="bg-[#FFB400] hover:bg-amber-500 text-text font-semibold px-4 py-2 rounded-lg flex items-center transition"
-                    onClick={handleSaveLesson}
-                    disabled={saveLessonMutation.isPending}
-                  >
-                    <Save className="mr-2" /> Save Lesson
-                  </Button>
-                )}
               </div>
             </div>
             
@@ -154,8 +98,8 @@ export default function LessonGeneratorPage() {
               <div className="lg:col-span-3">
                 <LessonPreview 
                   lesson={generatedLesson} 
-                  onSave={handleSaveLesson}
-                  savePending={saveLessonMutation.isPending}
+                  onSave={() => {}} // Empty function as saving is automatic
+                  savePending={false}
                 />
               </div>
             </div>

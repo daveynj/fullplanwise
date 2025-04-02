@@ -8,11 +8,11 @@ import { Link } from "wouter";
 
 interface LessonPreviewProps {
   lesson: any;
-  onSave: () => void;
-  savePending: boolean;
+  onSave: () => void; // Kept for backward compatibility
+  savePending: boolean; // Kept for backward compatibility
 }
 
-export function LessonPreview({ lesson, onSave, savePending }: LessonPreviewProps) {
+export function LessonPreview({ lesson }: LessonPreviewProps) {
   const [activeTab, setActiveTab] = useState("lesson");
   
   // If no lesson has been generated yet
@@ -193,17 +193,14 @@ export function LessonPreview({ lesson, onSave, savePending }: LessonPreviewProp
         
         <div className="border-t border-gray-200 p-4 flex justify-between items-center mt-auto">
           <div>
-            <Button variant="outline" className="bg-white border border-gray-300 text-text font-semibold px-4 py-2 rounded-lg hover:bg-gray-50 transition mr-2">
-              <Edit className="mr-1 h-4 w-4" /> Edit
-            </Button>
-            <Button 
-              variant="outline" 
-              className="bg-white border border-gray-300 text-text font-semibold px-4 py-2 rounded-lg hover:bg-gray-50 transition"
-              onClick={onSave}
-              disabled={savePending}
-            >
-              <Download className="mr-1 h-4 w-4" /> Save
-            </Button>
+            {lesson.id && 
+              <span className="text-green-600 text-sm font-medium flex items-center">
+                <svg className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                Lesson saved automatically
+              </span>
+            }
           </div>
           <div className="flex space-x-2">
             <Button className="bg-[#28A745] hover:bg-green-600 text-white font-semibold px-4 py-2 rounded-lg transition">
@@ -215,7 +212,11 @@ export function LessonPreview({ lesson, onSave, savePending }: LessonPreviewProp
                   <Maximize2 className="mr-1 h-4 w-4" /> Fullscreen
                 </Button>
               </Link>
-            ) : null}
+            ) : (
+              <Button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg transition">
+                <Maximize2 className="mr-1 h-4 w-4" /> Fullscreen
+              </Button>
+            )}
           </div>
         </div>
       </Tabs>

@@ -196,14 +196,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
         
         // Prepare response
-        const lessonResponse = {
+        const lessonResponse: any = {
           title: generatedContent.title,
           topic: validatedData.topic,
           cefrLevel: validatedData.cefrLevel,
           content: generatedContent, // Send the content directly without JSON.stringify
           generatedAt: new Date().toISOString(),
-          generationTimeSeconds: timeTaken
+          generationTimeSeconds: timeTaken,
+          studentId: validatedData.studentId || null
         };
+        
+        // Auto-save the lesson
+        try {
+          const lessonToSave = {
+            teacherId: req.user!.id,
+            studentId: validatedData.studentId || null,
+            title: generatedContent.title,
+            topic: validatedData.topic,
+            cefrLevel: validatedData.cefrLevel,
+            content: JSON.stringify(generatedContent), // Store as string in database
+            notes: "Auto-saved lesson"
+          };
+          
+          // Save to database
+          const savedLesson = await storage.createLesson(lessonToSave);
+          console.log(`Lesson auto-saved with ID: ${savedLesson.id}`);
+          
+          // Add the saved lesson ID to the response
+          lessonResponse.id = savedLesson.id;
+        } catch (saveError) {
+          console.error("Error auto-saving lesson:", saveError);
+          // Continue even if saving fails - we'll still return the generated content
+        }
         
         res.json(lessonResponse);
       } catch (aiError: any) {
