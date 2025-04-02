@@ -21,8 +21,8 @@ import {
 
 export default function LessonHistoryPage() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [cefrFilter, setCefrFilter] = useState<string>("");
-  const [dateFilter, setDateFilter] = useState<string>("");
+  const [cefrFilter, setCefrFilter] = useState<string>("all");
+  const [dateFilter, setDateFilter] = useState<string>("all");
   
   // Fetch all lessons
   const { data: lessons = [], isLoading } = useQuery<Lesson[]>({
@@ -37,10 +37,10 @@ export default function LessonHistoryPage() {
       lesson.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       lesson.topic.toLowerCase().includes(searchQuery.toLowerCase());
       
-    const matchesCefr = cefrFilter === "" || lesson.cefrLevel === cefrFilter;
+    const matchesCefr = cefrFilter === "" || cefrFilter === "all" || lesson.cefrLevel === cefrFilter;
     
     let matchesDate = true;
-    if (dateFilter && lesson.createdAt) {
+    if (dateFilter && dateFilter !== "all" && lesson.createdAt) {
       const lessonDate = new Date(lesson.createdAt);
       const today = new Date();
       const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
@@ -65,6 +65,17 @@ export default function LessonHistoryPage() {
       month: 'short',
       day: 'numeric'
     });
+  };
+
+  // Get label for date filter
+  const getDateFilterLabel = (filter: string) => {
+    switch (filter) {
+      case "today": return "Today";
+      case "week": return "Past Week";
+      case "month": return "Past Month";
+      case "all": return "All Time";
+      default: return "Time Period";
+    }
   };
 
   return (
@@ -109,11 +120,13 @@ export default function LessonHistoryPage() {
                   <SelectTrigger className="w-full">
                     <div className="flex items-center">
                       <Filter className="mr-2 h-4 w-4 text-gray-400" />
-                      <span>{cefrFilter || "CEFR Level"}</span>
+                      <span>
+                        {cefrFilter === "all" ? "All Levels" : cefrFilter || "CEFR Level"}
+                      </span>
                     </div>
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Levels</SelectItem>
+                    <SelectItem value="all">All Levels</SelectItem>
                     <SelectItem value="A1">A1</SelectItem>
                     <SelectItem value="A2">A2</SelectItem>
                     <SelectItem value="B1">B1</SelectItem>
@@ -129,15 +142,13 @@ export default function LessonHistoryPage() {
                   <SelectTrigger className="w-full">
                     <div className="flex items-center">
                       <Calendar className="mr-2 h-4 w-4 text-gray-400" />
-                      <span>{dateFilter ? 
-                        dateFilter === "today" ? "Today" :
-                        dateFilter === "week" ? "Past Week" :
-                        "Past Month" : "Time Period"}
+                      <span>
+                        {getDateFilterLabel(dateFilter)}
                       </span>
                     </div>
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Time</SelectItem>
+                    <SelectItem value="all">All Time</SelectItem>
                     <SelectItem value="today">Today</SelectItem>
                     <SelectItem value="week">Past Week</SelectItem>
                     <SelectItem value="month">Past Month</SelectItem>
@@ -203,7 +214,7 @@ export default function LessonHistoryPage() {
               <Card>
                 <CardContent className="flex flex-col items-center justify-center py-12">
                   <BookOpen className="h-16 w-16 text-gray-300 mb-4" />
-                  {searchQuery || cefrFilter || dateFilter ? (
+                  {searchQuery || (cefrFilter && cefrFilter !== "all") || (dateFilter && dateFilter !== "all") ? (
                     <>
                       <h3 className="text-xl font-nunito font-semibold mb-2">No lessons found</h3>
                       <p className="text-gray-500 text-center mb-4">
@@ -213,8 +224,8 @@ export default function LessonHistoryPage() {
                         variant="outline" 
                         onClick={() => {
                           setSearchQuery("");
-                          setCefrFilter("");
-                          setDateFilter("");
+                          setCefrFilter("all");
+                          setDateFilter("all");
                         }}
                       >
                         Clear Filters
