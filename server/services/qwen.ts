@@ -88,6 +88,11 @@ export class QwenService {
         
         console.log('Received response from Qwen API');
         
+        // Log the raw response before any processing
+        console.log('====== RAW QWEN API RESPONSE BEGIN ======');
+        console.log(JSON.stringify(response.data, null, 2));
+        console.log('====== RAW QWEN API RESPONSE END ======');
+        
         // Parse the response based on OpenAI-compatible API format
         console.log('Qwen API Response Status:', response.status);
         
