@@ -407,12 +407,44 @@ export function LessonContent({ content }: LessonContentProps) {
     
     const [activeCard, setActiveCard] = useState(0);
     
+    // For debugging - log the actual section structure
+    console.log("Vocabulary section structure:", section);
+    
     // Add additional error handling for words array
     let words: any[] = [];
     try {
       // Check if words is a valid array
       if (section.words && Array.isArray(section.words) && section.words.length > 0) {
         words = section.words;
+        console.log("Found vocabulary words array:", words);
+      } 
+      // If we have content but no words array, try to extract from content
+      else if (section.content && typeof section.content === 'string' && section.content.trim().length > 0) {
+        console.log("Attempting to extract vocabulary from content");
+        
+        // Try to extract words from content formatted as a list
+        const lines = section.content.split('\n');
+        const extractedWords = [];
+        
+        for (const line of lines) {
+          // Look for patterns like "1. term - definition" or bullet points
+          const match = line.match(/[•\-\*\d+\.]\s*([A-Za-z]+)\s*[:-]\s*([^•\-\*\d\.]+)/);
+          if (match) {
+            extractedWords.push({
+              term: match[1].trim(),
+              partOfSpeech: "noun",
+              definition: match[2].trim(),
+              example: `Example using "${match[1].trim()}" in context.`
+            });
+          }
+        }
+        
+        if (extractedWords.length > 0) {
+          words = extractedWords;
+          console.log("Extracted vocabulary words from content:", words);
+        } else {
+          console.warn("No valid words array found and couldn't extract from content");
+        }
       } else {
         console.warn("No valid words array found in vocabulary section");
       }
