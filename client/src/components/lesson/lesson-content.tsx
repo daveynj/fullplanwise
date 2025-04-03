@@ -15,7 +15,13 @@ import {
   Copy,
   Image,
   ExternalLink,
-  LucideIcon
+  LucideIcon,
+  ChevronLeft,
+  ChevronRight,
+  Bookmark as BookmarkIcon,
+  Clock as ClockIcon,
+  Info as InfoIcon,
+  Sparkles as SparklesIcon
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -502,105 +508,104 @@ export function LessonContent({ content }: LessonContentProps) {
     
     return (
       <div className="space-y-6">
-        <Card>
-          <CardHeader className="bg-blue-50">
-            <CardTitle className="flex items-center gap-2 text-blue-700">
-              <BookOpen className="h-5 w-5" />
-              {section.title || "Reading Passage"}
-            </CardTitle>
-            {section.introduction && <CardDescription>{section.introduction}</CardDescription>}
-          </CardHeader>
+        {/* Section header with icon */}
+        <div className="bg-blue-50 rounded-lg p-4 flex items-center gap-3">
+          <BookOpen className="h-6 w-6 text-blue-600" />
+          <div>
+            <h2 className="text-blue-600 font-medium text-lg">Reading</h2>
+            <p className="text-gray-600 text-sm">Read and analyze the text with guided support</p>
+          </div>
+        </div>
+        
+        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+          {/* Reading header */}
+          <div className="bg-blue-50 p-4 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <BookOpen className="h-5 w-5 text-blue-600" />
+              <span className="font-medium text-blue-600">Reading</span>
+            </div>
+            <span className="text-sm text-gray-500">Estimated time: 15-20 minutes</span>
+          </div>
           
-          <CardContent className="pt-0">
-            <div className="py-4 px-2">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-blue-600 font-medium flex items-center">
-                  <BookOpen className="h-4 w-4 mr-1" />
-                  Reading
-                </span>
-                <span className="text-sm text-gray-500">
-                  Estimated time: 15-20 minutes
-                </span>
-              </div>
+          {/* Reading title */}
+          <div className="p-4 border-b flex items-center gap-3">
+            <div className="w-9 h-9 bg-blue-100 rounded-full flex items-center justify-center">
+              <BookmarkIcon className="h-4 w-4 text-blue-600" />
             </div>
-            
-            <div className="border-t border-b py-4">
-              <div className="flex items-center mb-2">
-                <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
-                  <BookOpen className="h-5 w-5 text-blue-600" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-lg">{section.title || "Reading Passage"}</h3>
-                  <div className="flex items-center text-sm text-gray-500 mt-1">
-                    <span className="mr-4">
-                      <span className="inline-block w-4 h-4 bg-gray-200 rounded-full mr-1"></span>
-                      15-20 minutes
-                    </span>
-                    <span>
-                      <span className="inline-block w-4 h-4 bg-blue-200 rounded-full mr-1"></span>
-                      Adapted for clarity
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="py-4">
-              <div className="flex items-center mb-2">
-                <span className="text-blue-600 font-medium flex items-center text-sm">
-                  <span className="inline-block w-4 h-4 text-blue-600 mr-1">⚡</span>
-                  Paragraph {activeParagraph + 1} of {paragraphs.length}
-                </span>
-                <div className="ml-auto flex items-center">
-                  <div className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden mr-2">
-                    <div 
-                      className="h-full bg-blue-500 rounded-full" 
-                      style={{ width: `${completionPercentage}%` }}
-                    ></div>
-                  </div>
-                  <span className="text-sm text-gray-500">{completionPercentage}% Complete</span>
-                </div>
-              </div>
-              
-              <div className="bg-white p-6 rounded-lg border border-blue-100 mt-4 min-h-[180px]">
-                {paragraphs[activeParagraph] && (
-                  <p className="text-gray-800 leading-relaxed">{paragraphs[activeParagraph]}</p>
-                )}
-              </div>
-              
-              <div className="flex justify-between mt-4">
-                <button
-                  onClick={() => setActiveParagraph(prev => Math.max(0, prev - 1))}
-                  disabled={activeParagraph === 0}
-                  className="px-4 py-2 border rounded-md text-sm flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <span className="mr-1">‹</span> Previous
-                </button>
-                
+            <div>
+              <h3 className="font-medium text-lg">{section.title || "Reading Passage"}</h3>
+              <div className="flex items-center gap-3 text-sm text-gray-500 mt-1">
                 <div className="flex items-center">
-                  {paragraphs.map((_, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => setActiveParagraph(idx)}
-                      className={`mx-1 w-2 h-2 rounded-full ${
-                        idx === activeParagraph ? 'bg-blue-500' : 'bg-gray-300'
-                      }`}
-                      aria-label={`Go to paragraph ${idx + 1}`}
-                    ></button>
-                  ))}
+                  <ClockIcon className="h-4 w-4 mr-1" />
+                  <span>15-20 minutes</span>
                 </div>
-                
-                <button
-                  onClick={() => setActiveParagraph(prev => Math.min(paragraphs.length - 1, prev + 1))}
-                  disabled={activeParagraph === paragraphs.length - 1}
-                  className="px-4 py-2 border rounded-md text-sm flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Next <span className="ml-1">›</span>
-                </button>
+                <div className="flex items-center">
+                  <InfoIcon className="h-4 w-4 mr-1" />
+                  <span>Adapted for clarity</span>
+                </div>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+          
+          {/* Progress indicator */}
+          <div className="px-4 py-3 flex items-center justify-between">
+            <div className="flex items-center text-blue-600">
+              <SparklesIcon className="h-4 w-4 mr-1" />
+              <span className="text-sm font-medium">Paragraph {activeParagraph + 1} of {paragraphs.length}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-600">{completionPercentage}% Complete</span>
+              <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-blue-500 rounded-full" 
+                  style={{ width: `${completionPercentage}%` }}
+                ></div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Reading content */}
+          <div className="p-6 border-t">
+            <div className="leading-relaxed text-gray-800">
+              {paragraphs[activeParagraph]}
+            </div>
+          </div>
+          
+          {/* Navigation */}
+          <div className="p-4 flex justify-between border-t">
+            <button
+              onClick={() => setActiveParagraph(prev => Math.max(0, prev - 1))}
+              disabled={activeParagraph === 0}
+              className="px-4 py-2 border border-blue-200 rounded-md text-sm flex items-center disabled:opacity-50 disabled:cursor-not-allowed text-blue-600"
+            >
+              <ChevronLeft className="h-4 w-4 mr-1" />
+              Previous
+            </button>
+            
+            {/* Pagination dots */}
+            <div className="flex items-center gap-1">
+              {paragraphs.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setActiveParagraph(idx)}
+                  className={`w-2 h-2 rounded-full ${
+                    idx === activeParagraph ? 'bg-blue-500' : 'bg-gray-300'
+                  }`}
+                  aria-label={`Go to paragraph ${idx + 1}`}
+                ></button>
+              ))}
+            </div>
+            
+            <button
+              onClick={() => setActiveParagraph(prev => Math.min(paragraphs.length - 1, prev + 1))}
+              disabled={activeParagraph === paragraphs.length - 1}
+              className="px-4 py-2 border border-blue-200 rounded-md text-sm flex items-center disabled:opacity-50 disabled:cursor-not-allowed text-blue-600"
+            >
+              Next
+              <ChevronRight className="h-4 w-4 ml-1" />
+            </button>
+          </div>
+        </div>
         
         {/* Teacher notes */}
         {section.teacherNotes && (
@@ -1670,10 +1675,10 @@ export function LessonContent({ content }: LessonContentProps) {
         </div>
       </div>
       
-      {/* Tabbed interface */}
+      {/* Tabbed interface - styled based on template images */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <div className="overflow-x-auto">
-          <TabsList className="mb-6 h-14 bg-white border-b w-full justify-start">
+        <div className="overflow-x-auto pb-4">
+          <TabsList className="mb-2 h-12 bg-gray-50 border-0 rounded-full p-1 w-full justify-start flex-wrap gap-1">
             {availableSections.map((sectionType: string) => {
               // Find the matching section definition
               const details = sectionDetails[sectionType as SectionType] || {
@@ -1690,7 +1695,11 @@ export function LessonContent({ content }: LessonContentProps) {
                 <TabsTrigger 
                   key={sectionType} 
                   value={sectionType}
-                  className={`flex items-center gap-2 px-4 py-2 h-full data-[state=active]:${details.color} data-[state=active]:${details.textColor}`}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all
+                    text-gray-500 hover:text-gray-800
+                    data-[state=active]:${details.color} 
+                    data-[state=active]:${details.textColor}
+                    data-[state=active]:shadow-sm`}
                 >
                   <Icon className="h-5 w-5" />
                   <span>{details.label}</span>
