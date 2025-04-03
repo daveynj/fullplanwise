@@ -1597,6 +1597,9 @@ export function LessonContent({ content }: LessonContentProps) {
     return parsedContent.sections.some((s: any) => s && s.type === type);
   };
   
+  // Log the entire lesson content structure to understand where the discussion questions are
+  console.log("ENTIRE LESSON CONTENT:", JSON.stringify(parsedContent, null, 2));
+  
   // Always add warmup section as the first tab (regardless of whether the type exists)
   // This ensures the warm-up tab is always present and appears first
   availableSections.push("warmup");
