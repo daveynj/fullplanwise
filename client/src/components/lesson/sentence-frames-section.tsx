@@ -35,6 +35,9 @@ export function SentenceFramesSection({ section }: SentenceFrameSectionProps) {
   // Log the full section to analyze the structure
   console.log("Complete SentenceFrames section:", JSON.stringify(section, null, 2));
   
+  // Extract any teacher notes or additional content from the section
+  const teacherInstructions = section.procedure || section.teacherInstructions || "";
+  
   // State to track which frames are expanded
   const [expandedFrames, setExpandedFrames] = useState<Record<number, boolean>>({});
   
