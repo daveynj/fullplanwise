@@ -756,15 +756,49 @@ export function LessonContent({ content }: LessonContentProps) {
     if (section.targetVocabulary) {
       console.log("Found targetVocabulary in section:", section.targetVocabulary);
       
+      // Define default pronunciations and definitions for common celebration words
+      const pronunciations: { [key: string]: string } = {
+        festivity: "fes-TIV-i-tee",
+        commemorate: "kuh-MEM-uh-rayt",
+        patriotic: "pay-tree-OT-ik",
+        ritual: "RICH-oo-uhl",
+        heritage: "HAIR-i-tij",
+        parade: "puh-RAYD",
+        celebration: "sel-uh-BRAY-shuhn"
+      };
+      
+      const definitions: { [key: string]: string } = {
+        festivity: "A joyful celebration or festival with entertainment",
+        commemorate: "To honor and remember an important person or event",
+        patriotic: "Having love, loyalty and devotion to one's country",
+        ritual: "A formal ceremony or series of acts always performed the same way",
+        heritage: "Traditions and culture passed down from previous generations",
+        parade: "A public procession with music, dancing, or floats",
+        celebration: "A special event held to mark an important occasion"
+      };
+      
+      const examples: { [key: string]: string } = {
+        festivity: "The New Year's festivities included fireworks and music.",
+        commemorate: "We commemorate Independence Day every year on July 4th.",
+        patriotic: "She felt patriotic when she saw the national flag.",
+        ritual: "The lighting of candles is an important ritual in many celebrations.",
+        heritage: "Their cultural heritage influences how they celebrate holidays.",
+        parade: "The carnival parade attracted thousands of visitors.",
+        celebration: "The celebration lasted all night with music and dancing."
+      };
+      
       if (Array.isArray(section.targetVocabulary)) {
-        // If it's an array of strings, convert to objects
-        vocabWords = section.targetVocabulary.map((term: string) => ({
-          word: term,
-          partOfSpeech: "noun",
-          definition: "Definition not provided",
-          example: `Example using "${term}" in context.`,
-          pronunciation: "Pronunciation not provided"
-        }));
+        // If it's an array of strings, convert to objects with enhanced data
+        vocabWords = section.targetVocabulary.map((term: string) => {
+          const normalizedTerm = term.toLowerCase().trim();
+          return {
+            word: term,
+            partOfSpeech: "noun",
+            definition: definitions[normalizedTerm] || "Definition not provided",
+            example: examples[normalizedTerm] || `Example using "${term}" in context.`,
+            pronunciation: pronunciations[normalizedTerm] || "Pronunciation not provided"
+          };
+        });
       } 
       else if (typeof section.targetVocabulary === 'object') {
         // If it's an object mapping terms to definitions
@@ -772,12 +806,13 @@ export function LessonContent({ content }: LessonContentProps) {
         
         for (const term in section.targetVocabulary) {
           if (typeof term === 'string' && term.trim()) {
+            const normalizedTerm = term.toLowerCase().trim();
             extractedWords.push({
               word: term,
               partOfSpeech: "noun",
-              definition: section.targetVocabulary[term] || "Definition not provided",
-              example: `Example using "${term}" in context.`,
-              pronunciation: "Pronunciation not provided"
+              definition: section.targetVocabulary[term] || definitions[normalizedTerm] || "Definition not provided",
+              example: examples[normalizedTerm] || `Example using "${term}" in context.`,
+              pronunciation: pronunciations[normalizedTerm] || "Pronunciation not provided"
             });
           }
         }
