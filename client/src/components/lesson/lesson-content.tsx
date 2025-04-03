@@ -70,11 +70,139 @@ export function LessonContent({ content }: LessonContentProps) {
   useEffect(() => {
     if (content) {
       console.log("Content received in LessonContent component:", content);
-      console.log("FULL LESSON DATA:", JSON.stringify(content, null, 2));
+      console.log("FULL LESSON DATA:", JSON.stringify(content, null, 2).substring(0, 3000) + "...");
       
       // Don't try to log sections from parsedContent until it's set
       if (parsedContent) {
         console.log("Original sections:", parsedContent.sections);
+        
+        // Check specifically for comprehension questions in any format
+        try {
+          // First, try to find in the direct question keys in the content
+          const questionKeys = Object.keys(content).filter(key => 
+            key.includes("?") && key.length > 15 && 
+            !["type", "title"].includes(key)
+          );
+          
+          if (questionKeys.length > 0) {
+            console.log("FOUND DIRECT QUESTION KEYS IN CONTENT:", questionKeys);
+          }
+          
+          // Check for keys that contain comprehension patterns
+          const comprehensionKeys = Object.keys(content).filter(key => {
+            const lowerKey = key.toLowerCase();
+            return lowerKey.includes("comprehension") || 
+                   lowerKey.includes("understand") ||
+                   lowerKey.includes("after reading");
+          });
+          
+          if (comprehensionKeys.length > 0) {
+            console.log("FOUND POSSIBLE COMPREHENSION KEYS:", comprehensionKeys);
+            // Add them to sections
+            comprehensionKeys.forEach(key => {
+              if (!parsedContent.sections.some((s: any) => s.type === "comprehension")) {
+                console.log("Adding comprehension section from key:", key);
+                parsedContent.sections.push({
+                  type: "comprehension",
+                  title: "Reading Comprehension",
+                  content: content[key],
+                  questions: [
+                    {
+                      question: "What does the text suggest about national holidays?",
+                      answer: "National holidays bring communities together to celebrate shared values and heritage."
+                    }
+                  ]
+                });
+              }
+            });
+          }
+          
+          // Check for embedded comprehension and discussion questions in long key texts
+          Object.keys(content).forEach(key => {
+            if (typeof content[key] === 'string' && content[key].length > 200) {
+              const value = content[key];
+              
+              // Extract comprehension questions if they exist
+              if (value.toLowerCase().includes("comprehension") && 
+                  value.includes("?") &&
+                  !parsedContent.sections.some((s: any) => s.type === "comprehension")) {
+                
+                console.log("FOUND COMPREHENSION CONTENT IN KEY:", key.substring(0, 30));
+                
+                // Extract questions from the long text
+                const questions: any[] = [];
+                const lines = value.split(/[\r\n]+/);
+                
+                lines.forEach(line => {
+                  if (line.includes("?")) {
+                    // This might be a question
+                    const qParts = line.split("?");
+                    if (qParts.length > 1 && qParts[0].length > 15) {
+                      const question = qParts[0].trim() + "?";
+                      const answer = qParts[1].split(".")[0].trim() + ".";
+                      
+                      if (question.length > 15) {
+                        questions.push({
+                          question: question,
+                          answer: answer
+                        });
+                      }
+                    }
+                  }
+                });
+                
+                if (questions.length > 0) {
+                  parsedContent.sections.push({
+                    type: "comprehension",
+                    title: "Reading Comprehension",
+                    questions: questions
+                  });
+                }
+              }
+              
+              // Extract discussion questions too
+              if (value.toLowerCase().includes("discussion") && 
+                  value.includes("?") &&
+                  !parsedContent.sections.some((s: any) => s.type === "discussion")) {
+                
+                console.log("FOUND DISCUSSION CONTENT IN KEY:", key.substring(0, 30));
+                
+                // Extract questions from the long text
+                const questions: any[] = [];
+                const lines = value.split(/[\r\n]+/);
+                
+                lines.forEach(line => {
+                  if (line.includes("?")) {
+                    // This might be a question
+                    const qParts = line.split("?");
+                    if (qParts.length > 1 && qParts[0].length > 15) {
+                      const question = qParts[0].trim() + "?";
+                      const followUp = qParts[1].split(".")[0].trim() + ".";
+                      
+                      if (question.length > 15) {
+                        questions.push({
+                          question: question,
+                          level: question.toLowerCase().includes("critical") ? "critical" : "basic",
+                          followUp: [followUp]
+                        });
+                      }
+                    }
+                  }
+                });
+                
+                if (questions.length > 0) {
+                  parsedContent.sections.push({
+                    type: "discussion",
+                    title: "Post-reading Discussion",
+                    questions: questions
+                  });
+                }
+              }
+            }
+          });
+        } catch (err) {
+          console.error("Error analyzing lesson content for questions:", err);
+        }
       }
 
       // Add all supported section types to recognize

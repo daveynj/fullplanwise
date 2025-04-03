@@ -32,7 +32,23 @@ export default function FullScreenLessonPage() {
         if (typeof lesson.content === 'string') {
           try {
             // Try to parse it as JSON
+            console.log("LESSON CONTENT (STRING):", lesson.content.substring(0, 500) + "...");
             const parsed = JSON.parse(lesson.content);
+            console.log("PARSED LESSON CONTENT (FIRST 100 KEYS):", 
+              Object.keys(parsed).slice(0, 100));
+            
+            if (parsed.sections && Array.isArray(parsed.sections)) {
+              console.log("SECTIONS TYPES:", parsed.sections.map((s: any) => s.type));
+              // Log the comprehension and discussion sections
+              const comprehensionSection = parsed.sections.find((s: any) => s.type === 'comprehension');
+              const discussionSection = parsed.sections.find((s: any) => s.type === 'discussion');
+              
+              console.log("COMPREHENSION SECTION:", comprehensionSection ? 
+                 JSON.stringify(comprehensionSection).substring(0, 500) : "Not found");
+              console.log("DISCUSSION SECTION:", discussionSection ? 
+                 JSON.stringify(discussionSection).substring(0, 500) : "Not found");
+            }
+            
             setParsedContent(parsed);
           } catch (jsonError) {
             console.error("Error parsing JSON string:", jsonError);
@@ -46,6 +62,22 @@ export default function FullScreenLessonPage() {
           }
         } else {
           // It's already an object (from direct API response)
+          console.log("LESSON CONTENT (OBJECT):", 
+            JSON.stringify(lesson.content).substring(0, 500) + "...");
+          console.log("CONTENT KEYS:", Object.keys(lesson.content).slice(0, 100));
+          
+          // Check for sections
+          if (lesson.content.sections && Array.isArray(lesson.content.sections)) {
+            console.log("SECTIONS TYPES:", lesson.content.sections.map((s: any) => s.type));
+            const comprehensionSection = lesson.content.sections.find((s: any) => s.type === 'comprehension');
+            const discussionSection = lesson.content.sections.find((s: any) => s.type === 'discussion');
+            
+            console.log("COMPREHENSION SECTION:", comprehensionSection ? 
+              JSON.stringify(comprehensionSection).substring(0, 500) : "Not found");
+            console.log("DISCUSSION SECTION:", discussionSection ? 
+              JSON.stringify(discussionSection).substring(0, 500) : "Not found");
+          }
+          
           setParsedContent(lesson.content);
         }
       } catch (e) {

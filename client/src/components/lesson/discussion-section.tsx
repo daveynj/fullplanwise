@@ -20,6 +20,7 @@ interface DiscussionQuestion {
   focusVocabulary?: string[];
   followUp?: string[];
   paragraphContext?: string;
+  answer?: string; // Add support for answer field
 }
 
 interface DiscussionSectionProps {
