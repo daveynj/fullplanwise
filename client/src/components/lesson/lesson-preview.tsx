@@ -66,31 +66,95 @@ export function LessonPreview({ lesson }: LessonPreviewProps) {
         console.log("Successfully parsed string content");
       } catch (jsonError) {
         console.error("Error parsing JSON string:", jsonError);
-        // If JSON parsing fails, set an error object
-        parsedContent = { 
-          title: lesson.title,
-          sections: [{ 
-            type: 'error', 
-            content: 'Error parsing lesson content' 
-          }] 
-        };
+        
+        // Try to clean up the JSON string and parse again
+        try {
+          const cleanedContent = lesson.content
+            .replace(/```json\s*/g, '')
+            .replace(/```\s*$/g, '')
+            .trim();
+          
+          console.log("Attempting to parse cleaned JSON");
+          parsedContent = JSON.parse(cleanedContent);
+          console.log("Successfully parsed cleaned JSON content");
+        } catch (secondJsonError) {
+          console.error("Error parsing cleaned JSON:", secondJsonError);
+          
+          // Try to fix malformed JSON with colons instead of commas
+          try {
+            console.log("Attempting to fix malformed JSON structure with colons");
+            let fixedContent = lesson.content
+              .replace(/"([^"]+)":\s*{([^}]+)}:\s*/g, '"$1": {$2},') // Fix objects with trailing colons
+              .replace(/},\s*"([^"]+)":\s*{/g, '}, "$1": {') // Fix comma placement between objects
+              .replace(/},\s*"([^"]+)":\s*"/g, '}, "$1": "') // Fix comma placement for string values
+              .replace(/"\s*,\s*"([^"]+)":/g, '", "$1":') // Fix array-like structures
+              .replace(/},\s*}/g, '}}') // Fix nested object closures
+              .replace(/],\s*}/g, ']}') // Fix array closures in objects
+              .replace(/"\s*:\s*"([^"]+)"\s*:/g, '": "$1",') // Fix object properties misusing colons
+              .replace(/},(?!\s*["}])/g, '},'); // Add missing commas after objects
+            
+            parsedContent = JSON.parse(fixedContent);
+            console.log("Successfully parsed fixed JSON structure");
+          } catch (fixError) {
+            console.error("Failed to fix JSON structure:", fixError);
+            
+            // If all parsing fails, set a structured error object that will display well in the UI
+            parsedContent = { 
+              title: lesson.title || "Lesson Preview",
+              sections: [
+                { 
+                  type: 'reading', 
+                  title: "Reading",
+                  content: "The lesson content couldn't be parsed properly. Please try regenerating the lesson."
+                },
+                { 
+                  type: 'error', 
+                  title: "Error Details",
+                  content: 'The system encountered an error parsing the lesson JSON. This is likely due to a formatting issue in the API response.' 
+                }
+              ] 
+            };
+          }
+        }
       }
-    } else {
+    } else if (lesson.content && typeof lesson.content === 'object') {
       // It's already an object (from direct API response)
       console.log("Content is already an object, no parsing needed");
       parsedContent = lesson.content;
+    } else {
+      // Handle the case where content is null, undefined, or an unexpected type
+      console.warn("Lesson content is missing or has an unexpected type:", typeof lesson.content);
+      parsedContent = { 
+        title: lesson.title || "Lesson Preview",
+        sections: [{ 
+          type: 'error', 
+          title: "Error",
+          content: 'Lesson content is missing or has an unexpected format.' 
+        }] 
+      };
     }
     
     console.log("Parsed content:", parsedContent);
   } catch (e) {
     console.error("Unexpected error handling content:", e);
     parsedContent = { 
-      title: lesson.title,
+      title: lesson.title || "Lesson Preview",
       sections: [{ 
         type: 'error', 
-        content: 'Error processing lesson content' 
+        title: "Processing Error",
+        content: 'An unexpected error occurred while processing the lesson content.' 
       }] 
     };
+  }
+  
+  // Final validation - ensure we have sections
+  if (!parsedContent.sections || !Array.isArray(parsedContent.sections) || parsedContent.sections.length === 0) {
+    console.warn("Parsed content has no valid sections, adding fallback error section");
+    parsedContent.sections = [{ 
+      type: 'error', 
+      title: "Content Error",
+      content: 'The lesson structure is incomplete or invalid. Please try regenerating the lesson.' 
+    }];
   }
 
   return (

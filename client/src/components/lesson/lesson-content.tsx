@@ -57,7 +57,10 @@ export function LessonContent({ content }: LessonContentProps) {
     if (content) {
       console.log("Content received in LessonContent component:", content);
       
-      console.log("Original sections:", parsedContent.sections);
+      // Don't try to log sections from parsedContent until it's set
+      if (parsedContent) {
+        console.log("Original sections:", parsedContent.sections);
+      }
 
       // Add all supported section types to recognize
       const supportedSectionTypes = [
