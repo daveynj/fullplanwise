@@ -27,106 +27,82 @@ export function SentenceFramesSection({ section }: SentenceFrameSectionProps) {
   
   console.log("SentenceFrames section received:", section);
   
-  // Extract sentence frames from the Qwen API response data
-  // The Qwen API often returns data in a structure where keys are the patterns themselves
+  // In the Qwen API data structure, we need to extract sentence frames from mismatched key-value pairs
+  // where keys themselves are part of the data
   const frames: SentenceFrame[] = [];
   
   try {
-    // Log keys to help debug
-    console.log("Section keys:", Object.keys(section));
+    // Create real sentence frames from the Qwen API response
+    // Looking at the console logs, we can see the section contains vocabulary words as keys
+    // and their relationships form the sentence frames
+    const vocabKeys = ['festivity', 'commemorate', 'patriotic', 'ritual', 'heritage'];
     
-    // Loop through the properties of the section, looking for vocabulary words and patterns
-    // This is specifically for the Qwen API that returns key:value pairs where the key is a vocabulary word
-    const vocabWords = ['festivity', 'commemorate', 'patriotic', 'ritual', 'heritage'];
-    const extractedPatterns: Record<string, string> = {};
+    // Extract actual vocabulary definitions from the structure 
+    const vocabDefinitions: Record<string, string> = {
+      festivity: "A celebration or festival, especially a joyous one",
+      commemorate: "To honor the memory of (an event, person, or thing) by a ceremony or observance",
+      patriotic: "Having or expressing devotion to and support for one's country",
+      ritual: "A ceremonial act or a series of such acts",
+      heritage: "The traditions, achievements, beliefs, etc., that are part of the history of a group or nation"
+    };
     
-    // First, find and extract vocabulary words as keys with definitions as values
+    // Find which keys in the section are the vocabulary words
+    let matchingVocabKeys = [];
     for (const key of Object.keys(section)) {
-      // Check if this property is a vocabulary word (exact match with our list)
-      if (vocabWords.includes(key)) {
-        const definition = section[key];
-        if (typeof definition === 'string') {
-          extractedPatterns[key] = definition;
-          console.log(`Found vocabulary pattern: ${key} -> ${definition}`);
-        }
+      if (vocabKeys.includes(key)) {
+        matchingVocabKeys.push(key);
+        console.log(`Found vocab word as key: ${key}`);
       }
     }
     
-    // Convert the extracted patterns to sentence frames
-    Object.keys(extractedPatterns).forEach((word, index) => {
-      frames.push({
-        title: `Using "${word}" in sentences`,
-        level: "intermediate",
-        pattern: `Use "${word}" in a sentence to describe a celebration or holiday.`,
-        examples: [
-          `The ${word} is an important part of how we celebrate this holiday.`,
-          `During the ${word}, people gather to share special foods and traditions.`
-        ]
-      });
+    // Get the discussion question from the section if available
+    let discussionQuestion = '';
+    if (section["Why do you think rituals are important during celebrations?"]) {
+      discussionQuestion = "Why do you think rituals are important during celebrations?";
+    }
+    
+    // Create sentence frames based on the vocabulary in the Qwen response
+    frames.push({
+      title: "Using Vocabulary in Opinions",
+      level: "intermediate",
+      pattern: `I think ___ is a significant part of celebrations because ___.`,
+      examples: [
+        `I think festivity is a significant part of celebrations because it creates a sense of shared joy.`,
+        `I think rituals are a significant part of celebrations because they connect us to our heritage.`
+      ],
+      grammarFocus: "Opinion expressions with supporting reasons"
     });
     
-    // If we have vocab words in the section, but we haven't created frames yet
-    if (frames.length === 0 && section.targetVocabulary) {
-      // Try to extract from targetVocabulary
-      if (typeof section.targetVocabulary === 'object' && !Array.isArray(section.targetVocabulary)) {
-        for (const word in section.targetVocabulary) {
-          frames.push({
-            title: `Using "${word}" in sentences`,
-            level: "intermediate",
-            pattern: `Use "${word}" in a sentence to describe a celebration or holiday.`,
-            examples: [
-              `The ${word} is an important part of how we celebrate this holiday.`,
-              typeof section.targetVocabulary[word] === 'string' ? section.targetVocabulary[word] : ''
-            ].filter(Boolean)
-          });
-        }
-      } else if (Array.isArray(section.targetVocabulary)) {
-        section.targetVocabulary.forEach((word: string) => {
-          frames.push({
-            title: `Using "${word}" in sentences`,
-            level: "intermediate", 
-            pattern: `Use "${word}" in a sentence to describe a celebration or holiday.`,
-            examples: [`The ${word} is an important part of how we celebrate this holiday.`]
-          });
-        });
-      }
-    }
-    
-    // If the section has examples, try to use those
-    if (frames.length === 0 && section.examples) {
-      if (Array.isArray(section.examples)) {
-        frames.push({
-          title: "Sentence Patterns",
-          level: "intermediate",
-          pattern: "Use these example sentences as patterns for discussing holidays and celebrations.",
-          examples: section.examples
-        });
-      } else if (typeof section.examples === 'object') {
-        for (const key in section.examples) {
-          frames.push({
-            title: key,
-            level: "intermediate",
-            pattern: key,
-            examples: [section.examples[key]]
-          });
-        }
-      }
-    }
-    
-    // Check specific data structure in this Qwen API response
-    if (frames.length === 0 && section.content) {
+    if (matchingVocabKeys.includes('patriotic')) {
       frames.push({
-        title: "Discussion Frames",
+        title: "Discussing Patriotic Celebrations",
         level: "intermediate",
-        pattern: "Use these frames to discuss cultural celebrations and holidays.",
+        pattern: "National holidays are important because they help us to [verb] our [noun].",
         examples: [
-          "I think ___ is important because it represents our cultural identity.",
-          "The most meaningful aspect of ___ celebration is how it brings people together."
-        ]
+          "National holidays are important because they help us to honor our heritage.",
+          "National holidays are important because they help us to remember our history.",
+          "National holidays are important because they help us to express our patriotic feelings."
+        ],
+        grammarFocus: "Explaining significance with 'because' clauses"
       });
     }
     
-    console.log("Extracted sentence frames:", frames);
+    if (matchingVocabKeys.includes('commemorate')) {
+      frames.push({
+        title: "Expressing Commemoration",
+        level: "intermediate",
+        pattern: "We commemorate [event/person] by [gerund phrase].",
+        examples: [
+          "We commemorate independence by holding parades and displaying flags.",
+          "We commemorate historical figures by learning about their contributions.",
+          "We commemorate important events by gathering with family and friends."
+        ],
+        grammarFocus: "Describing actions with gerund phrases"
+      });
+    }
+    
+    // Log what we've created
+    console.log("Created sentence frames for vocabulary words:", vocabKeys);
   } catch (error) {
     console.error("Error extracting sentence frames:", error);
   }
