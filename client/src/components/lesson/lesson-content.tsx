@@ -23,6 +23,7 @@ import {
   Info as InfoIcon,
   Sparkles as SparklesIcon
 } from "lucide-react";
+import { ReadingSection } from "./reading-section";
 import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
@@ -487,258 +488,12 @@ export function LessonContent({ content }: LessonContentProps) {
     );
   };
 
-  const ReadingSection = () => {
+  const ReadingTabSection = () => {
     const section = findSection('reading');
     if (!section) return <p>No reading content available</p>;
     
-    // State for pagination in reading section
-    const [activeParagraph, setActiveParagraph] = useState(0);
-    
-    // DIRECT ACCESS APPROACH - inspect the full data structure to find reading content
-    console.log("FULL SECTION OBJECT:", section);
-    console.log("INSPECT PARENT SECTION:", parsedContent.sections[0]);
-    
-    let paragraphs: string[] = [];
-    
-    try {
-      // Log all properties in the main sections object to find reading content
-      const parentSection = parsedContent.sections[0];
-      console.log("ALL KEYS IN MAIN SECTION:", Object.keys(parentSection));
-      
-      // Check for properties that might contain the reading text
-      for (const key of Object.keys(parentSection)) {
-        if (typeof parentSection[key] === 'string' && parentSection[key].length > 100) {
-          console.log(`Key "${key}" has length ${parentSection[key].length}`);
-          console.log("CONTENT START:", parentSection[key].substring(0, 100));
-          
-          if (parentSection[key].includes("National holidays are more than just days off work")) {
-            console.log("FOUND READING TEXT IN KEY:", key);
-            const readingText = parentSection[key];
-            
-            // Split into sentences
-            const sentences = readingText.match(/[^.!?]+[.!?]+/g) || [];
-            console.log("Total sentences:", sentences.length);
-            
-            if (sentences.length > 0) {
-              // Create paragraphs - aiming for 5 paragraphs as per requirements
-              const paragraphCount = Math.min(5, sentences.length);
-              const sentencesPerParagraph = Math.max(1, Math.ceil(sentences.length / paragraphCount));
-              
-              for (let i = 0; i < sentences.length; i += sentencesPerParagraph) {
-                const paragraph = sentences.slice(i, Math.min(i + sentencesPerParagraph, sentences.length)).join(' ').trim();
-                if (paragraph) paragraphs.push(paragraph);
-              }
-              
-              console.log("Created paragraphs from sentences:", paragraphs);
-              break;
-            }
-          }
-        }
-      }
-      
-      // Specifically look for 'Reading Text' key which shows up in logs
-      if (paragraphs.length === 0 && parentSection['Reading Text']) {
-        console.log("FOUND 'Reading Text' KEY DIRECTLY:", parentSection['Reading Text']);
-        const readingText = parentSection['Reading Text'];
-        
-        // Process text to paragraphs
-        if (readingText && readingText.length > 100) {
-          const sentences = readingText.match(/[^.!?]+[.!?]+/g) || [];
-          console.log("Sentences from Reading Text:", sentences);
-          
-          if (sentences.length > 0) {
-            // Create paragraphs - aiming for 5 paragraphs as per requirements
-            const paragraphCount = Math.min(5, sentences.length);
-            const sentencesPerParagraph = Math.max(1, Math.ceil(sentences.length / paragraphCount));
-            
-            for (let i = 0; i < sentences.length; i += sentencesPerParagraph) {
-              const paragraph = sentences.slice(i, Math.min(i + sentencesPerParagraph, sentences.length)).join(' ').trim();
-              if (paragraph) paragraphs.push(paragraph);
-            }
-          }
-        }
-      }
-      
-      // Try one more method from raw content string - using stringify to capture full unclipped text
-      if (paragraphs.length === 0) {
-        console.log("Trying raw string approach");
-        
-        // The console logs show "Reading Text","National holidays are more than just days off work"
-        // This suggests the text is part of the JSON in a key-value pair. Let's extract the full text.
-        const rawContent = JSON.stringify(content);
-        
-        // Create a regex with lookahead/lookbehind to match the text without including the quotes
-        const readingTextRegex = /"Reading Text":"(National holidays[^"]+)"/;
-        const match = rawContent.match(readingTextRegex);
-        
-        if (match && match[1]) {
-          console.log("FOUND TEXT VIA REGEX:", match[1]);
-          const readingText = match[1].replace(/\\n/g, ' ').replace(/\\"/g, '"');
-          
-          // Process into paragraphs
-          const sentences = readingText.match(/[^.!?]+[.!?]+/g) || [];
-          
-          if (sentences.length > 0) {
-            // Group into paragraphs
-            const paragraphCount = Math.min(5, sentences.length);
-            const sentencesPerParagraph = Math.max(1, Math.ceil(sentences.length / paragraphCount));
-            
-            for (let i = 0; i < sentences.length; i += sentencesPerParagraph) {
-              const paragraph = sentences.slice(i, Math.min(i + sentencesPerParagraph, sentences.length)).join(' ').trim();
-              if (paragraph) paragraphs.push(paragraph);
-            }
-            
-            console.log("Generated paragraphs from regex match:", paragraphs);
-          }
-        }
-      }
-      
-      // Display the original text content from the console logs if nothing else works
-      if (paragraphs.length === 0) {
-        console.log("Using exact text from console logs");
-        paragraphs = [
-          "National holidays are more than just days off work; they are moments when communities come together to celebrate shared values and history. Each holiday has its own unique traditions, symbols, and meanings that reflect cultural identity.",
-          "Independence Day marks the birth of a nation and reinforces unity and patriotism. People gather for parades, barbecues, and fireworks displays that illuminate the night sky in vibrant colors, symbolizing freedom and national pride.",
-          "Religious holidays like Christmas or Diwali bring families together for festive meals, gift exchanges, and special rituals. These celebrations often combine spiritual significance with cultural traditions that have evolved over generations.",
-          "New Year's Eve features countdowns, fireworks, and resolutions, representing the universal human desire for fresh starts and new beginnings. The rituals of lighting candles or fireworks symbolize letting go of the old and embracing new possibilities.",
-          "Through these celebrations, communities maintain connections to their heritage while creating new memories. National holidays serve as cultural touchstones that bind people together through shared experiences despite differences in background or beliefs."
-        ];
-        console.log("Using full text from logs");
-      }
-      
-    } catch (error) {
-      console.error("Error processing reading content:", error);
-      
-      // Last resort fallback to ensire something displays
-      paragraphs = [
-        "National holidays are more than just days off work; they are moments when communities come together to celebrate shared values and history.",
-        "Independence Day marks the birth of a nation and reinforces unity and patriotism through parades, barbecues, and fireworks displays.",
-        "Religious holidays bring families together for festive meals, gift exchanges, and special rituals that combine spirituality with tradition.",
-        "New Year's Eve features countdowns and celebrations, representing the universal human desire for fresh starts and new beginnings.",
-        "Through these celebrations, communities maintain connections to their heritage while creating new memories despite differences."
-      ];
-    }
-    
-    // Calculate completion percentage
-    const completionPercentage = Math.round(((activeParagraph + 1) / paragraphs.length) * 100);
-    
-    return (
-      <div className="space-y-6">
-        {/* Section header with icon */}
-        <div className="bg-blue-50 rounded-lg p-4 flex items-center gap-3">
-          <BookOpen className="h-6 w-6 text-blue-600" />
-          <div>
-            <h2 className="text-blue-600 font-medium text-lg">Reading</h2>
-            <p className="text-gray-600 text-sm">Read and analyze the text with guided support</p>
-          </div>
-        </div>
-        
-        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-          {/* Reading header */}
-          <div className="bg-blue-50 p-4 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <BookOpen className="h-5 w-5 text-blue-600" />
-              <span className="font-medium text-blue-600">Reading</span>
-            </div>
-            <span className="text-sm text-gray-500">Estimated time: 15-20 minutes</span>
-          </div>
-          
-          {/* Reading title */}
-          <div className="p-4 border-b flex items-center gap-3">
-            <div className="w-9 h-9 bg-blue-100 rounded-full flex items-center justify-center">
-              <BookmarkIcon className="h-4 w-4 text-blue-600" />
-            </div>
-            <div>
-              <h3 className="font-medium text-lg">{section.title || "Reading Passage"}</h3>
-              <div className="flex items-center gap-3 text-sm text-gray-500 mt-1">
-                <div className="flex items-center">
-                  <ClockIcon className="h-4 w-4 mr-1" />
-                  <span>15-20 minutes</span>
-                </div>
-                <div className="flex items-center">
-                  <InfoIcon className="h-4 w-4 mr-1" />
-                  <span>Adapted for clarity</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          {/* Progress indicator */}
-          <div className="px-4 py-3 flex items-center justify-between">
-            <div className="flex items-center text-blue-600">
-              <SparklesIcon className="h-4 w-4 mr-1" />
-              <span className="text-sm font-medium">Paragraph {activeParagraph + 1} of {paragraphs.length}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-600">{completionPercentage}% Complete</span>
-              <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-blue-500 rounded-full" 
-                  style={{ width: `${completionPercentage}%` }}
-                ></div>
-              </div>
-            </div>
-          </div>
-          
-          {/* Reading content */}
-          <div className="p-6 border-t">
-            <div className="leading-relaxed text-gray-800">
-              {paragraphs[activeParagraph]}
-            </div>
-          </div>
-          
-          {/* Navigation */}
-          <div className="p-4 flex justify-between border-t">
-            <button
-              onClick={() => setActiveParagraph(prev => Math.max(0, prev - 1))}
-              disabled={activeParagraph === 0}
-              className="px-4 py-2 border border-blue-200 rounded-md text-sm flex items-center disabled:opacity-50 disabled:cursor-not-allowed text-blue-600"
-            >
-              <ChevronLeft className="h-4 w-4 mr-1" />
-              Previous
-            </button>
-            
-            {/* Pagination dots */}
-            <div className="flex items-center gap-1">
-              {paragraphs.map((_, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setActiveParagraph(idx)}
-                  className={`w-2 h-2 rounded-full ${
-                    idx === activeParagraph ? 'bg-blue-500' : 'bg-gray-300'
-                  }`}
-                  aria-label={`Go to paragraph ${idx + 1}`}
-                ></button>
-              ))}
-            </div>
-            
-            <button
-              onClick={() => setActiveParagraph(prev => Math.min(paragraphs.length - 1, prev + 1))}
-              disabled={activeParagraph === paragraphs.length - 1}
-              className="px-4 py-2 border border-blue-200 rounded-md text-sm flex items-center disabled:opacity-50 disabled:cursor-not-allowed text-blue-600"
-            >
-              Next
-              <ChevronRight className="h-4 w-4 ml-1" />
-            </button>
-          </div>
-        </div>
-        
-        {/* Teacher notes */}
-        {section.teacherNotes && (
-          <Card className="border-blue-100">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm flex items-center gap-2 text-blue-600">
-                <GraduationCap className="h-4 w-4" />
-                Teacher Notes
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0 text-sm text-gray-700">
-              <p>{section.teacherNotes}</p>
-            </CardContent>
-          </Card>
-        )}
-      </div>
-    );
+    // Use the imported ReadingSection component
+    return <ReadingSection section={section} />;
   };
 
   const VocabularySection = () => {
@@ -1867,7 +1622,7 @@ export function LessonContent({ content }: LessonContentProps) {
           </TabsContent>
           
           <TabsContent value="reading" className="m-0">
-            <ReadingSection />
+            <ReadingTabSection />
           </TabsContent>
           
           <TabsContent value="vocabulary" className="m-0">
