@@ -236,12 +236,15 @@ export function SentenceFramesSection({ section }: SentenceFrameSectionProps) {
                 </button>
               </div>
               
-              {/* Communicative Function displayed at the top */}
-              {frame.communicativeFunction && (
-                <div className="text-amber-800 text-sm">
-                  <span className="italic">{frame.communicativeFunction}</span>
-                </div>
-              )}
+              {/* Description section at the top with both function and usage */}
+              <div className="text-amber-800 text-sm">
+                {frame.communicativeFunction && (
+                  <div className="italic mb-1">{frame.communicativeFunction}</div>
+                )}
+                {frame.usage && (
+                  <div>{frame.usage}</div>
+                )}
+              </div>
             </div>
             
             {/* Pattern - Monospace font like in the images */}
@@ -272,18 +275,7 @@ export function SentenceFramesSection({ section }: SentenceFrameSectionProps) {
                   </div>
                 </div>
                 
-                {/* Usage */}
-                {frame.usage && (
-                  <div>
-                    <div className="mb-2 flex items-center gap-1 text-amber-800">
-                      <AlignLeft className="h-4 w-4" />
-                      <span className="text-sm font-medium">Usage</span>
-                    </div>
-                    <div className="bg-white p-3 rounded-md border border-amber-100 text-gray-700">
-                      {frame.usage}
-                    </div>
-                  </div>
-                )}
+                {/* Removed duplicate Usage since it's now at the top */}
                 
                 {/* Grammar Focus */}
                 {frame.grammarFocus && (
