@@ -6,12 +6,53 @@ interface DiscussionExtractorProps {
 
 export const DiscussionExtractor = ({ content, sectionType = "discussion" }: DiscussionExtractorProps & { sectionType?: string }) => {
   console.log("DISCUSSION EXTRACTOR RECEIVED CONTENT TYPE:", typeof content);
+  console.log("DISCUSSION EXTRACTOR CONTENT:", JSON.stringify(content, null, 2).substring(0, 500));
   let questionsFound = false;
   
-  // Approach 1: Try to directly extract discussion questions from the flat structure
+  // Approach 1: Look for long paragraph-like questions directly in content object 
   if (typeof content === "object" && content !== null) {
     try {
-      // Look for keys that might be questions (containing a question mark)
+      // Look for keys that contain paragraphs - likely to be actual questions
+      const paragraphKeys = Object.keys(content).filter(key => 
+        typeof key === 'string' && 
+        key.length > 100 && 
+        key.includes('?') &&
+        key !== 'type' && 
+        key !== 'title' && 
+        key !== 'introduction'
+      );
+      
+      if (paragraphKeys.length > 0) {
+        console.log("FOUND LONG PARAGRAPH QUESTIONS:", paragraphKeys.length);
+        
+        // Create questions array from these paragraph keys
+        const questions = paragraphKeys.map(q => {
+          // Extract focus vocabulary from paragraph (words between quotation marks)
+          const vocabularyMatches = q.match(/'([^']+)'|"([^"]+)"/g) || [];
+          const focusVocabulary = vocabularyMatches.map(m => m.replace(/['"]/g, ''));
+          
+          return {
+            question: q,
+            level: q.toLowerCase().includes('critical') ? 'critical' : 'basic',
+            focusVocabulary: focusVocabulary,
+            followUp: typeof content[q] === 'string' ? [content[q]] : []
+          };
+        });
+        
+        // Create a discussion section
+        const section = {
+          type: sectionType,
+          title: `${sectionType.charAt(0).toUpperCase() + sectionType.slice(1)} Questions`,
+          introduction: "Discuss the following questions:",
+          questions
+        };
+        
+        console.log("EXTRACTED PARAGRAPH QUESTIONS:", questions.length);
+        questionsFound = true;
+        return <DiscussionSection section={section} />;
+      }
+      
+      // Otherwise try normal question extraction
       const questionKeys = Object.keys(content).filter(key => 
         typeof key === 'string' && 
         key.includes('?') && 

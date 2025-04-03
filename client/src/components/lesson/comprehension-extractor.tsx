@@ -8,6 +8,7 @@ interface ComprehensionExtractorProps {
 
 export const ComprehensionExtractor = ({ content }: ComprehensionExtractorProps) => {
   console.log("COMPREHENSION EXTRACTOR RECEIVED CONTENT TYPE:", typeof content);
+  console.log("COMPREHENSION EXTRACTOR CONTENT:", JSON.stringify(content, null, 2).substring(0, 500));
   const [activeQuestion, setActiveQuestion] = useState(0);
   let questionsFound = false;
   let extractedQuestions: any[] = [];
@@ -131,7 +132,157 @@ export const ComprehensionExtractor = ({ content }: ComprehensionExtractorProps)
     }
   }
   
-  // Approach 3: Search for question patterns in all content keys
+  // Approach 3: Look for comprehension questions in embedded strings inside object keys
+  if (!questionsFound && typeof content === "object" && content !== null) {
+    try {
+      // Find long keys that might contain embedded comprehension questions
+      // This is specific to how Qwen sometimes embeds the questions in the key names
+      const allKeys = Object.keys(content);
+      const longComprehensionKeys = allKeys.filter(key => {
+        return typeof key === 'string' && 
+               key.length > 50 && 
+               key.toLowerCase().includes('comprehension') &&
+               key.includes('?');
+      });
+      
+      if (longComprehensionKeys.length > 0) {
+        console.log("FOUND LONG COMPREHENSION KEYS:", longComprehensionKeys.length);
+        
+        // Extract questions from these long keys
+        // We'll split on question marks and then clean up
+        let extractedQuestionsFromLongKeys: any[] = [];
+        
+        longComprehensionKeys.forEach(longKey => {
+          // Try to extract questions by splitting on question marks
+          const parts = longKey.split('?');
+          
+          // Each part except the last one can be a question if we add the question mark back
+          for (let i = 0; i < parts.length - 1; i++) {
+            const questionText = parts[i].trim() + '?';
+            
+            // Skip if less than 15 chars (likely not a real question)
+            if (questionText.length < 15) continue;
+            
+            // Skip if it starts with a lowercase letter (likely part of a sentence not a question)
+            if (/^[a-z]/.test(questionText)) continue;
+            
+            // Find the answer in the following part or in the value
+            let answer = '';
+            if (i < parts.length - 1 && parts[i+1].includes('.')) {
+              // Extract the first sentence after the question as the answer
+              const answerPart = parts[i+1].split('.')[0].trim() + '.';
+              if (answerPart.length > 10) {
+                answer = answerPart;
+              }
+            }
+            
+            // If no answer found in text, check if the value is a string
+            if (!answer && typeof content[longKey] === 'string') {
+              answer = content[longKey];
+            }
+            
+            // Add to our questions
+            extractedQuestionsFromLongKeys.push({
+              question: questionText,
+              answer: answer
+            });
+          }
+        });
+        
+        if (extractedQuestionsFromLongKeys.length > 0) {
+          console.log("EXTRACTED QUESTIONS FROM LONG KEYS:", extractedQuestionsFromLongKeys.length);
+          extractedQuestions = extractedQuestionsFromLongKeys;
+          questionsFound = true;
+        }
+      }
+    } catch (err) {
+      console.error("Error processing long comprehension keys:", err);
+    }
+  }
+  
+  // Approach 4: Extract comprehension questions from the reading section
+  if (!questionsFound && typeof content === "object" && content !== null) {
+    try {
+      // Check if there's a reading section
+      let readingSection = null;
+      
+      // Try to find reading section in the sections array first
+      if (Array.isArray(content.sections)) {
+        readingSection = content.sections.find((section: any) => 
+          section && typeof section === 'object' && section.type === 'reading'
+        );
+      }
+      
+      // Or try to find it at the root level
+      if (!readingSection && content.reading && typeof content.reading === 'object') {
+        readingSection = content.reading;
+      }
+      
+      if (readingSection) {
+        console.log("FOUND READING SECTION TO SEARCH FOR COMPREHENSION QUESTIONS");
+        
+        // Look for comprehension-related keys in the reading section
+        const readingKeys = Object.keys(readingSection);
+        const comprehensionKeys = readingKeys.filter(key => 
+          typeof key === 'string' && 
+          (key.toLowerCase().includes('comprehension') || key.toLowerCase().includes('understand')) &&
+          key !== 'type' && 
+          key !== 'title'
+        );
+        
+        if (comprehensionKeys.length > 0) {
+          console.log("FOUND COMPREHENSION KEYS IN READING SECTION:", comprehensionKeys);
+          
+          // Create array from these keys
+          let questions: any[] = [];
+          
+          comprehensionKeys.forEach(key => {
+            if (typeof readingSection[key] === 'string') {
+              const value = readingSection[key];
+              
+              // Check if the value contains questions
+              if (value.includes('?')) {
+                // Split by question marks to extract individual questions
+                const parts = value.split('?');
+                
+                for (let i = 0; i < parts.length - 1; i++) {
+                  // Get the question text
+                  const questionText = parts[i].trim() + '?';
+                  
+                  // Skip if it's too short or doesn't start with a capital letter
+                  if (questionText.length < 10 || !/^[A-Z]/.test(questionText)) continue;
+                  
+                  // Try to extract answer from next part if it exists
+                  let answer = '';
+                  if (i < parts.length - 1 && parts[i+1].includes('.')) {
+                    answer = parts[i+1].split('.')[0].trim() + '.';
+                  }
+                  
+                  // Add to questions
+                  if (questionText && questionText.length > 10) {
+                    questions.push({
+                      question: questionText,
+                      answer: answer
+                    });
+                  }
+                }
+              }
+            }
+          });
+          
+          if (questions.length > 0) {
+            console.log("EXTRACTED COMPREHENSION QUESTIONS FROM READING SECTION:", questions.length);
+            extractedQuestions = questions;
+            questionsFound = true;
+          }
+        }
+      }
+    } catch (err) {
+      console.error("Error extracting comprehension from reading section:", err);
+    }
+  }
+  
+  // Approach 5: Search for question patterns in all content keys
   if (!questionsFound && typeof content === "object" && content !== null) {
     try {
       // Find all keys containing "what", "why", "how", "when", "where", "who", or "?" 
