@@ -66,7 +66,6 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
           
           questions = validQuestions;
           console.log("Extracted questions from Qwen format:", questions.length);
-          return;
         }
       }
       
@@ -90,7 +89,6 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
         if (validQuestions.length > 0 && validQuestions[0].question !== 'question') {
           questions = validQuestions;
           console.log("Using questions array with", questions.length, "valid questions");
-          return;
         }
       }
     }
