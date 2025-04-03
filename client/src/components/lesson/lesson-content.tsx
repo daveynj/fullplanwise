@@ -30,6 +30,7 @@ import { ReadingSection } from "./reading-section";
 import { SentenceFramesSection } from "./sentence-frames-section";
 import { DiscussionSection } from "./discussion-section";
 import { DiscussionExtractor } from "./discussion-extractor";
+import { ComprehensionExtractor } from "./comprehension-extractor";
 import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
@@ -1781,7 +1782,8 @@ export function LessonContent({ content }: LessonContentProps) {
           </TabsContent>
           
           <TabsContent value="comprehension" className="m-0">
-            <ComprehensionSection />
+            {/* Use our specialized ComprehensionExtractor component */}
+            <ComprehensionExtractor content={content} />
           </TabsContent>
           
           <TabsContent value="sentenceFrames" className="m-0">
