@@ -163,7 +163,65 @@ EXTREMELY IMPORTANT: ALWAYS return FULL OBJECT STRUCTURES with ALL content, NEVE
                 console.log('Successfully parsed JSON after cleaning content');
                 return this.formatLessonContent(jsonContent);
               } catch (secondParseError) {
-                console.error('Failed to parse JSON even after cleaning:', secondParseError);
+                console.error('Failed to parse JSON even after cleaning, trying to fix malformed colons structure:', secondParseError);
+                
+                // Check if this is the malformed structure with colons separating fields
+                // Create a more robust way to parse the malformed JSON with colons
+                try {
+                  console.log('Attempting to fix malformed JSON with custom parser...');
+                  
+                  // If we see the typical pattern of JSON with misplaced colons instead of commas,
+                  // attempt to fix the structure
+                  if (cleanedContent.includes('":"') || cleanedContent.includes('"questions"') || 
+                      cleanedContent.includes('"type"') || cleanedContent.includes('"targetVocabulary"')) {
+                    
+                    // This is a hacky fix, but it's better than nothing
+                    // 1. Replace misplaced colons between array elements with commas
+                    let fixedContent = cleanedContent
+                      .replace(/"([^"]+)":\s*{([^}]+)}:\s*/g, '"$1": {$2},') // Fix objects with trailing colons
+                      .replace(/},\s*"([^"]+)":\s*{/g, '}, "$1": {') // Fix comma placement between objects
+                      .replace(/},\s*"([^"]+)":\s*"/g, '}, "$1": "') // Fix comma placement for string values
+                      .replace(/"\s*,\s*"([^"]+)":/g, '", "$1":') // Fix array-like structures
+                      .replace(/},\s*}/g, '}}') // Fix nested object closures
+                      .replace(/],\s*}/g, ']}') // Fix array closures in objects
+                      .replace(/"\s*:\s*"([^"]+)"\s*:/g, '": "$1",') // Fix object properties misusing colons
+                      .replace(/},(?!\s*["}])/g, '},'); // Add missing commas after objects
+                    
+                    console.log('Attempted to fix malformed JSON structure');
+                    
+                    // Try to parse the result
+                    try {
+                      const parsedContent = JSON.parse(fixedContent);
+                      console.log('Successfully parsed JSON after fixing malformed structure');
+                      return this.formatLessonContent(parsedContent);
+                    } catch (fixedParseError) {
+                      console.error('Still failed to parse after structure fixes, trying more aggressive cleanup:', fixedParseError);
+                      
+                      // Even more aggressive approach - try to extract key sections we know should be there
+                      // and construct a valid JSON structure
+                      const sectionMatches = cleanedContent.match(/"sections"\s*:\s*\[([\s\S]+)\]/);
+                      if (sectionMatches && sectionMatches[1]) {
+                        try {
+                          // Try to rebuild a minimal valid JSON with just the sections
+                          const rebuiltJson = `{"sections": [${sectionMatches[1]}]}`;
+                          const minimallyCorrected = rebuiltJson
+                            .replace(/},\s*}/g, '}}')
+                            .replace(/},(?!\s*["}])/g, '},')
+                            .replace(/"\s*:\s*"([^"]+)"\s*:/g, '": "$1",');
+                          
+                          const parsedRebuilt = JSON.parse(minimallyCorrected);
+                          console.log('Successfully rebuilt and parsed minimal JSON structure');
+                          return this.formatLessonContent(parsedRebuilt);
+                        } catch (minimalError) {
+                          console.error('Failed even with minimal JSON rebuilding:', minimalError);
+                        }
+                      }
+                    }
+                  }
+                } catch (fixingError) {
+                  console.error('Failed to fix malformed JSON structure:', fixingError);
+                }
+                
                 // If all parsing attempts fail, return the error response
                 return {
                   title: `Lesson on ${params.topic}`,
