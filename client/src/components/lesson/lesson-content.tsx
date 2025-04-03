@@ -123,6 +123,97 @@ export function LessonContent({ content }: LessonContentProps) {
   useEffect(() => {
     if (parsedContent?.sections && Array.isArray(parsedContent.sections) && parsedContent.sections.length > 0) {
       try {
+        // Check if we need to extract sections from malformed structure
+        if (parsedContent.sections.length === 1 && parsedContent.sections[0].type === 'sentenceFrames') {
+          // Check for additional section types directly in the section object
+          const sectionObject = parsedContent.sections[0];
+          const potentialSectionTypes = ['reading', 'vocabulary', 'comprehension', 'discussion', 'quiz'];
+          
+          // Log the section keys to debug
+          console.log("Checking for embedded sections in keys:", Object.keys(sectionObject));
+          
+          let extractedSections = [];
+          // If the section has a 'reading' key, extract it as a separate reading section
+          potentialSectionTypes.forEach(sectionType => {
+            if (sectionObject[sectionType] !== undefined) {
+              console.log(`Found embedded ${sectionType} section in keys`);
+              
+              // Create a new section with the extracted data
+              const newSection = {
+                type: sectionType,
+                title: sectionType.charAt(0).toUpperCase() + sectionType.slice(1)
+              };
+              
+              // Different handling based on section type
+              if (sectionType === 'reading') {
+                // For reading, extract the text
+                if (typeof sectionObject[sectionType] === 'string') {
+                  newSection.content = sectionObject[sectionType];
+                } else if (sectionObject['Reading Text'] && typeof sectionObject['Reading Text'] === 'string') {
+                  newSection.content = sectionObject['Reading Text'];
+                }
+                
+                // Try to extract paragraphs if content is available
+                if (newSection.content) {
+                  newSection.paragraphs = newSection.content
+                    .split('\n\n')
+                    .filter((p: string) => p.trim().length > 0);
+                }
+              } else if (sectionType === 'vocabulary') {
+                // For vocabulary, look for targetVocabulary or extract from the main section
+                if (sectionObject.targetVocabulary) {
+                  if (typeof sectionObject.targetVocabulary === 'object' && !Array.isArray(sectionObject.targetVocabulary)) {
+                    const words = [];
+                    for (const word in sectionObject.targetVocabulary) {
+                      if (typeof word === 'string' && word.trim()) {
+                        words.push({
+                          word: word,
+                          definition: sectionObject.targetVocabulary[word] || "No definition provided"
+                        });
+                      }
+                    }
+                    newSection.words = words;
+                  } else if (Array.isArray(sectionObject.targetVocabulary)) {
+                    newSection.words = sectionObject.targetVocabulary.map((word: string) => ({
+                      word: word,
+                      definition: "No definition provided"
+                    }));
+                  }
+                }
+              } else if (sectionType === 'comprehension' || sectionType === 'discussion') {
+                // For question-based sections, extract questions
+                if (sectionObject.questions) {
+                  if (typeof sectionObject.questions === 'object' && !Array.isArray(sectionObject.questions)) {
+                    // Questions are in an object format
+                    const questionArray = [];
+                    for (const questionText in sectionObject.questions) {
+                      if (typeof questionText === 'string' && questionText.trim()) {
+                        questionArray.push({
+                          question: questionText,
+                          answer: sectionObject.questions[questionText] || ""
+                        });
+                      }
+                    }
+                    newSection.questions = questionArray;
+                  } else if (typeof sectionObject.questions === 'string') {
+                    // Questions are in a string - try to parse
+                    newSection.questions = [{ question: sectionObject.questions, answer: "" }];
+                  }
+                }
+              }
+              
+              // Add the extracted section
+              extractedSections.push(newSection);
+            }
+          });
+          
+          // If we found embedded sections, add them to the parsed content
+          if (extractedSections.length > 0) {
+            console.log("Adding extracted sections:", extractedSections);
+            parsedContent.sections = [...parsedContent.sections, ...extractedSections];
+          }
+        }
+        
         // Find first section with a valid type
         const validSections = parsedContent.sections.filter(
           (s: any) => s && typeof s === 'object' && s.type && typeof s.type === 'string'
