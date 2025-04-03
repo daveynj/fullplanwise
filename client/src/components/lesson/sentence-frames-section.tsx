@@ -218,21 +218,30 @@ export function SentenceFramesSection({ section }: SentenceFrameSectionProps) {
             className="bg-amber-50 rounded-lg overflow-hidden border border-amber-100"
           >
             {/* Frame header */}
-            <div className="bg-amber-100 px-4 py-2 flex items-center justify-between">
-              <div className="bg-amber-200 rounded px-2 py-0.5">
-                <span className="text-amber-800 font-medium text-sm">{frame.level}</span>
+            <div className="bg-amber-100 px-4 py-2 flex flex-col gap-2">
+              <div className="flex items-center justify-between">
+                <div className="bg-amber-200 rounded px-2 py-0.5">
+                  <span className="text-amber-800 font-medium text-sm">{frame.level}</span>
+                </div>
+                <h4 className="text-amber-800 font-medium">{frame.title}</h4>
+                <button 
+                  className="text-amber-700 p-1 rounded hover:bg-amber-200"
+                  onClick={() => toggleFrame(idx)}
+                >
+                  {expandedFrames[idx] ? (
+                    <ChevronUp className="h-4 w-4" />
+                  ) : (
+                    <ChevronDown className="h-4 w-4" />
+                  )}
+                </button>
               </div>
-              <h4 className="text-amber-800 font-medium">{frame.title}</h4>
-              <button 
-                className="text-amber-700 p-1 rounded hover:bg-amber-200"
-                onClick={() => toggleFrame(idx)}
-              >
-                {expandedFrames[idx] ? (
-                  <ChevronUp className="h-4 w-4" />
-                ) : (
-                  <ChevronDown className="h-4 w-4" />
-                )}
-              </button>
+              
+              {/* Communicative Function displayed at the top */}
+              {frame.communicativeFunction && (
+                <div className="text-amber-800 text-sm">
+                  <span className="italic">{frame.communicativeFunction}</span>
+                </div>
+              )}
             </div>
             
             {/* Pattern - Monospace font like in the images */}
@@ -289,18 +298,7 @@ export function SentenceFramesSection({ section }: SentenceFrameSectionProps) {
                   </div>
                 )}
                 
-                {/* Communicative Function - Direct from Qwen response */}
-                {frame.communicativeFunction && (
-                  <div>
-                    <div className="mb-2 flex items-center gap-1 text-amber-800">
-                      <MessageSquare className="h-4 w-4" />
-                      <span className="text-sm font-medium">Communicative Function</span>
-                    </div>
-                    <div className="bg-white p-3 rounded-md border border-amber-100 text-gray-700">
-                      {frame.communicativeFunction}
-                    </div>
-                  </div>
-                )}
+                {/* Removed duplicate Communicative Function since it's now at the top */}
                 
                 {/* Teaching Tips - Direct from Qwen response */}
                 {frame.teachingTips && (
