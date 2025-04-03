@@ -267,6 +267,15 @@ export function LessonContent({ content }: LessonContentProps) {
   useEffect(() => {
     if (parsedContent?.sections && Array.isArray(parsedContent.sections) && parsedContent.sections.length > 0) {
       try {
+        // Add comprehension section if it doesn't exist
+        if (!parsedContent.sections.some((s: any) => s.type === 'comprehension')) {
+          console.log("Adding comprehension section as it doesn't exist");
+          parsedContent.sections.push({
+            type: 'comprehension',
+            title: 'Reading Comprehension'
+          });
+        }
+        
         // Check if we need to extract sections from malformed structure
         if (parsedContent.sections.length === 1 && parsedContent.sections[0].type === 'sentenceFrames') {
           // Check for additional section types directly in the section object
@@ -1676,12 +1685,12 @@ export function LessonContent({ content }: LessonContentProps) {
     availableSections.push("reading");
   }
   
+  // Add comprehension section right after reading and before vocabulary
+  // Always include comprehension section after reading whether it exists or not
+  availableSections.push("comprehension");
+  
   if (hasSectionType("vocabulary")) {
     availableSections.push("vocabulary");
-  }
-  
-  if (hasSectionType("comprehension")) {
-    availableSections.push("comprehension");
   }
   
   if (hasSectionType("sentenceFrames") || hasSectionType("grammar")) {
