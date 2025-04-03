@@ -33,25 +33,48 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
   let questions: DiscussionQuestion[] = [];
 
   try {
-    // Add more detailed debugging to understand the structure
     console.log("Discussion section structure:", JSON.stringify(section, null, 2));
     
-    // Check the structure of the entire content object (the parent of this section)
-    console.log("Discussion section keys:", Object.keys(section));
-    if (section.questions) {
-      console.log("Discussion questions type:", typeof section.questions);
-      
-      if (typeof section.questions === "object" && !Array.isArray(section.questions)) {
-        console.log("Questions object keys:", Object.keys(section.questions));
-      }
-    }
-    
-    // Check for direct question-like keys in the section
-    const questionLikeKeys = Object.keys(section).filter(key => 
-      key.includes("?") || ["What", "Why", "How", "Which", "Where", "When"].some(w => key.includes(w))
+    // Looking for proper discussion questions directly in the data rather than as an array
+    const questionKeys = Object.keys(section).filter(key => 
+      key.includes("?") || 
+      ["What", "Why", "How", "Which", "Where", "When", "Do you think", "Can you"].some(w => 
+        key.toLowerCase().includes(w.toLowerCase())
+      )
     );
-    if (questionLikeKeys.length > 0) {
-      console.log("Found question-like keys in section:", questionLikeKeys);
+    
+    if (questionKeys.length > 0) {
+      console.log("Found direct question keys in section:", questionKeys);
+      
+      // If we have actual questions as keys, use them directly
+      const extractedDirectQuestions: DiscussionQuestion[] = [];
+      
+      for (const key of questionKeys) {
+        const value = section[key];
+        const focusWords: string[] = [];
+        
+        // Extract vocabulary focus words from question (quoted or emphasized words)
+        const emphasisPattern = /'([^']+)'|"([^"]+)"/g;
+        let match;
+        while ((match = emphasisPattern.exec(key)) !== null) {
+          const word = match[1] || match[2];
+          if (word && !focusWords.includes(word)) {
+            focusWords.push(word);
+          }
+        }
+        
+        extractedDirectQuestions.push({
+          question: key,
+          level: key.toLowerCase().includes("critical") ? "critical" : "basic",
+          focusVocabulary: focusWords,
+          followUp: typeof value === "string" ? [value] : []
+        });
+      }
+      
+      if (extractedDirectQuestions.length > 0) {
+        questions = extractedDirectQuestions;
+        return; // Skip other processing methods
+      }
     }
     
     // Attempt to extract questions from various possible formats
