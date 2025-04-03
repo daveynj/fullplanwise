@@ -1038,11 +1038,11 @@ export function LessonContent({ content }: LessonContentProps) {
               
               {/* Right Column: Vocabulary Card */}
               <VocabularyCard word={{
-                word: currentWord.word,
-                partOfSpeech: currentWord.partOfSpeech,
-                definition: currentWord.definition,
-                example: currentWord.example,
-                pronunciation: currentWord.pronunciation
+                word: currentWord.word || currentWord.term || "",
+                partOfSpeech: currentWord.partOfSpeech || "noun",
+                definition: currentWord.definition || "",
+                example: currentWord.example || "",
+                pronunciation: currentWord.pronunciation || ""
               }} />
             </div>
           </CardContent>
