@@ -33,11 +33,33 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
   let questions: DiscussionQuestion[] = [];
 
   try {
+    console.log("Discussion section structure:", JSON.stringify(section, null, 2));
+    
     // Attempt to extract questions from various possible formats
     if (section.questions && Array.isArray(section.questions)) {
       questions = section.questions;
     } else if (section.discussionQuestions && Array.isArray(section.discussionQuestions)) {
       questions = section.discussionQuestions;
+    } else if (section.questions && typeof section.questions === 'object' && !Array.isArray(section.questions)) {
+      // Handle questions as object where keys are questions and values might be answers or descriptions
+      // This is the Qwen format from the example
+      console.log("Processing Qwen question object format");
+      const extractedQuestions: DiscussionQuestion[] = [];
+      
+      for (const questionText in section.questions) {
+        if (typeof questionText === 'string' && questionText.trim()) {
+          extractedQuestions.push({
+            question: questionText,
+            level: questionText.includes('critical') ? 'critical' : 'basic',
+            focusVocabulary: [],
+            followUp: []
+          });
+        }
+      }
+      
+      if (extractedQuestions.length > 0) {
+        questions = extractedQuestions;
+      }
     } else {
       // Try to parse questions from other possible formats
       const extractedQuestions: DiscussionQuestion[] = [];
@@ -72,6 +94,47 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
         }
       }
       
+      // Handle the case where questions are direct key-value pairs in the section (Qwen format)
+      // Example: "How might commercialization affect holidays?": "Some answer or more context"
+      const questionPatterns = [
+        /how/i, /why/i, /what/i, /which/i, /where/i, /when/i, /who/i, 
+        /can/i, /do you think/i, /should/i, /could/i, /would/i
+      ];
+      
+      for (const key of keys) {
+        if (
+          // Avoid keys that are likely not questions
+          !["type", "title", "introduction", "content", "questions"].includes(key) &&
+          // Check if key looks like a question
+          (key.includes("?") || questionPatterns.some(pattern => pattern.test(key)))
+        ) {
+          console.log("Found potential question as direct key:", key);
+          
+          // Get vocabulary words that might be mentioned in the question
+          const vocabWords: string[] = [];
+          const questionWords = key.toLowerCase().split(/\s+/);
+          
+          // Look for emphasized words that might be vocab focus
+          const emphasisPatterns = [/'([^']+)'/g, /"([^"]+)"/g];
+          let match;
+          
+          for (const pattern of emphasisPatterns) {
+            while ((match = pattern.exec(key)) !== null) {
+              if (match[1] && !vocabWords.includes(match[1])) {
+                vocabWords.push(match[1]);
+              }
+            }
+          }
+          
+          extractedQuestions.push({
+            question: key,
+            level: key.toLowerCase().includes("critical") ? "critical" : "basic",
+            focusVocabulary: vocabWords,
+            followUp: typeof section[key] === "string" ? [section[key]] : []
+          });
+        }
+      }
+      
       if (extractedQuestions.length > 0) {
         questions = extractedQuestions;
       }
@@ -95,10 +158,10 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
         <CardHeader className="bg-indigo-50">
           <CardTitle className="flex items-center gap-2 text-indigo-700">
             <MessageCircle className="h-5 w-5" />
-            Post-reading Discussion ({questions.length} questions)
+            {section.title || "Post-reading Discussion"} ({questions.length} questions)
           </CardTitle>
           <CardDescription>
-            Discuss these questions to deepen understanding of the reading
+            {section.introduction || "Discuss these questions to deepen understanding of the reading"}
           </CardDescription>
         </CardHeader>
         <CardContent className="pt-6">

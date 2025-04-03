@@ -1451,14 +1451,7 @@ export function LessonContent({ content }: LessonContentProps) {
     );
   };
 
-  // Use the imported DiscussionSection component
-  const DiscussionSectionWrapper = () => {
-    // Try both discussion and speaking as possible section types
-    const section = findSection("discussion") || findSection("speaking");
-    if (!section) return <p>No discussion content available</p>;
-    
-    return <DiscussionSection section={section} />;
-  };
+  // We're directly using the imported DiscussionSection component in the TabsContent
   
   const QuizSection = () => {
     // Try both quiz and assessment as possible section types
@@ -1729,11 +1722,11 @@ export function LessonContent({ content }: LessonContentProps) {
           </TabsContent>
           
           <TabsContent value="discussion" className="m-0">
-            <DiscussionSectionWrapper />
+            <DiscussionSection section={findSection("discussion") || findSection("speaking")} />
           </TabsContent>
           
           <TabsContent value="speaking" className="m-0">
-            <DiscussionSectionWrapper />
+            <DiscussionSection section={findSection("speaking") || findSection("discussion")} />
           </TabsContent>
           
           <TabsContent value="quiz" className="m-0">
