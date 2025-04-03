@@ -186,34 +186,34 @@ export function extractDiscussionQuestions(content: any): any[] {
         content.title.includes('Celebrations and Holidays')) {
       return [
         {
-          question: "How have national holidays evolved in your country over the past few decades?",
+          question: "Which festival in the text sounds most interesting to you?",
           level: "basic",
-          focusVocabulary: ["heritage", "ritual"],
-          followUp: ["Have any new holidays been added or older ones changed significantly? Why do you think these changes occurred?"]
+          focusVocabulary: ["celebration", "parade"],
+          followUp: ["Why did you choose that festival?", "Would you recommend it to others?"]
         },
         {
-          question: "To what extent do you think the commercialization of holidays affects their cultural significance?",
+          question: "How does your culture use symbols during celebrations?",
           level: "critical",
-          focusVocabulary: ["festivity", "commemorate"],
-          followUp: ["Do you think the commercial aspects enhance or detract from the holiday experience? Why?"]
+          focusVocabulary: ["symbolize", "camaraderie"],
+          followUp: ["Can you give an example?", "What do these symbols mean?"]
         },
         {
-          question: "What rituals or traditions do you think are most important to preserve in national celebrations?",
+          question: "What is the significance of traditional clothing in celebrations?",
           level: "basic",
-          focusVocabulary: ["ritual", "heritage"],
-          followUp: ["Why do these particular traditions matter? What would be lost if they disappeared?"]
+          focusVocabulary: ["heritage", "identity"],
+          followUp: ["Do you wear traditional clothing for special occasions?", "How do you feel when wearing it?"]
         },
         {
-          question: "How do patriotic celebrations differ across different countries you're familiar with?",
+          question: "How have technological advancements changed the way we celebrate?",
           level: "critical",
-          focusVocabulary: ["patriotic", "commemorate"],
-          followUp: ["What factors might explain these differences in how nations celebrate their history?"]
+          focusVocabulary: ["innovation", "tradition"],
+          followUp: ["Is this change positive or negative?", "What traditional elements remain unchanged?"]
         },
         {
-          question: "In what ways might national holidays serve different purposes for different generations?",
-          level: "critical",
-          focusVocabulary: ["heritage", "ritual", "festivity"],
-          followUp: ["How might younger people experience these celebrations differently from older generations?"]
+          question: "What role does food play in celebrations from your culture?",
+          level: "basic",
+          focusVocabulary: ["cuisine", "festivity"],
+          followUp: ["Are there specific foods associated with certain celebrations?", "How are these foods prepared?"]
         }
       ];
     }
