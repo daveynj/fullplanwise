@@ -31,6 +31,7 @@ import { SentenceFramesSection } from "./sentence-frames-section";
 import { DiscussionSection } from "./discussion-section";
 import { DiscussionExtractor } from "./discussion-extractor";
 import { ComprehensionExtractor } from "./comprehension-extractor";
+import { QuizExtractor } from "./quiz-extractor";
 import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
@@ -1648,140 +1649,7 @@ export function LessonContent({ content }: LessonContentProps) {
     );
   };
 
-  // We're directly using the imported DiscussionSection component in the TabsContent
-  
-  const QuizSection = () => {
-    // Try both quiz and assessment as possible section types
-    const section = findSection('quiz') || findSection('assessment');
-    if (!section) return <p>No quiz content available</p>;
-    
-    const [activeQuestion, setActiveQuestion] = useState(0);
-    
-    // Add additional error handling for questions array
-    let questions: any[] = [];
-    try {
-      // Check if questions is a valid array
-      if (section.questions && Array.isArray(section.questions) && section.questions.length > 0) {
-        questions = section.questions;
-      } else {
-        console.warn("No valid questions array found in quiz section");
-      }
-    } catch (error) {
-      console.error("Error accessing quiz questions:", error);
-    }
-
-    return (
-      <div className="space-y-6">
-        <Card>
-          <CardHeader className="bg-cyan-50">
-            <CardTitle className="flex items-center gap-2 text-cyan-700">
-              <CheckSquare className="h-5 w-5" />
-              {section.title || "Knowledge Check Quiz"}
-            </CardTitle>
-            <CardDescription>
-              {section.introduction || "Test knowledge and understanding of the lesson"}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="pt-6">
-            {questions.length > 0 ? (
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-sm font-medium">Multiple Choice</span>
-                  <div className="flex gap-2">
-                    <button className="w-6 h-6">
-                      <ExternalLink className="w-5 h-5 text-gray-400" />
-                    </button>
-                    <button className="w-6 h-6">
-                      <Lightbulb className="w-5 h-5 text-gray-400" />
-                    </button>
-                  </div>
-                </div>
-                
-                {/* Progress indicator */}
-                <div className="bg-cyan-50 p-3 rounded-md mb-4">
-                  <div className="text-sm text-cyan-700">
-                    Question {activeQuestion + 1} of {questions.length}
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-1.5 mt-1">
-                    <div 
-                      className="bg-cyan-600 h-1.5 rounded-full" 
-                      style={{ width: `${((activeQuestion + 1) / questions.length) * 100}%` }}
-                    ></div>
-                  </div>
-                </div>
-                
-                {/* Question */}
-                <div className="border rounded-lg p-5">
-                  <div className="mb-6">
-                    <h3 className="text-lg font-medium mb-2">Question {activeQuestion + 1}</h3>
-                    <p>{questions[activeQuestion].question || 
-                         questions[activeQuestion].content?.question || 
-                         "Question text"}</p>
-                    <p className="text-sm text-gray-500 mt-1">Choose the best answer.</p>
-                  </div>
-                  
-                  {/* Options */}
-                  <div className="space-y-3">
-                    {questions[activeQuestion] && (
-                      Array.isArray(questions[activeQuestion].options) 
-                        ? questions[activeQuestion].options
-                        : Array.isArray(questions[activeQuestion].content?.options)
-                          ? questions[activeQuestion].content?.options
-                          : ["Option A", "Option B", "Option C", "Option D"]
-                    ).map((option: string, idx: number) => (
-                      <div key={`quiz-option-${idx}`} className="flex items-center p-3 border border-gray-200 rounded-md hover:bg-gray-50">
-                        <div className="w-5 h-5 flex items-center justify-center border border-gray-300 rounded-full mr-3">
-                          {['A', 'B', 'C', 'D'][idx]}
-                        </div>
-                        <span>{option}</span>
-                      </div>
-                    ))}
-                  </div>
-                  
-                  {/* Navigation */}
-                  <div className="flex justify-between mt-6">
-                    <button 
-                      onClick={() => setActiveQuestion(prev => (prev > 0 ? prev - 1 : prev))}
-                      disabled={activeQuestion === 0}
-                      className="px-4 py-2 border rounded-md disabled:opacity-50 flex items-center gap-1"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><path d="m15 18-6-6 6-6"/></svg>
-                      Previous
-                    </button>
-                    <button 
-                      onClick={() => setActiveQuestion(prev => (prev < questions.length - 1 ? prev + 1 : prev))}
-                      disabled={activeQuestion === questions.length - 1}
-                      className="px-4 py-2 bg-cyan-600 text-white rounded-md disabled:opacity-50 flex items-center gap-1"
-                    >
-                      Next
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><path d="m9 18 6-6-6-6"/></svg>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <p className="text-gray-500">No quiz questions available</p>
-            )}
-          </CardContent>
-        </Card>
-        
-        {/* Teacher notes */}
-        {section.teacherNotes && (
-          <Card className="border-blue-100">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm flex items-center gap-2 text-blue-600">
-                <GraduationCap className="h-4 w-4" />
-                Teacher Notes
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0 text-sm text-gray-700">
-              <p>{section.teacherNotes}</p>
-            </CardContent>
-          </Card>
-        )}
-      </div>
-    );
-  };
+  // We're now using our specialized QuizExtractor component for the quiz/assessment sections
 
   // Get all available sections for tabs
   console.log("Original sections:", parsedContent.sections);
@@ -1933,11 +1801,11 @@ export function LessonContent({ content }: LessonContentProps) {
           </TabsContent>
           
           <TabsContent value="quiz" className="m-0">
-            <QuizSection />
+            <QuizExtractor content={parsedContent} />
           </TabsContent>
           
           <TabsContent value="assessment" className="m-0">
-            <QuizSection />
+            <QuizExtractor content={parsedContent} sectionType="assessment" />
           </TabsContent>
         </div>
       </Tabs>
