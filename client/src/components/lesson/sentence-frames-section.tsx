@@ -1,6 +1,7 @@
 import { 
-  AlignJustify, 
-  ChevronRight, 
+  AlignLeft,
+  ChevronDown, 
+  ChevronUp, 
   Copy, 
   Lightbulb, 
   MessageCircle,
@@ -8,6 +9,7 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
 
 interface SentenceFrameSectionProps {
   section?: any;
@@ -32,6 +34,17 @@ export function SentenceFramesSection({ section }: SentenceFrameSectionProps) {
   
   // Log the full section to analyze the structure
   console.log("Complete SentenceFrames section:", JSON.stringify(section, null, 2));
+  
+  // State to track which frames are expanded
+  const [expandedFrames, setExpandedFrames] = useState<Record<number, boolean>>({});
+  
+  // Toggle function for expanding/collapsing frames
+  const toggleFrame = (idx: number) => {
+    setExpandedFrames(prev => ({
+      ...prev,
+      [idx]: !prev[idx]
+    }));
+  };
   
   // Initialize the frames array
   const frames: SentenceFrame[] = [];
@@ -141,15 +154,27 @@ export function SentenceFramesSection({ section }: SentenceFrameSectionProps) {
         });
         
         frames.push({
-          title: "Describing Celebrations",
+          title: "Expressing and justifying opinions",
           level: "intermediate",
-          pattern: "[Celebrations/Festivals] are important because they [verb] [noun].",
+          pattern: "I think _____ is important because _____, and it also helps people to _____.",
           examples: [
-            "Festivals are important because they preserve heritage.",
-            "Rituals are important because they connect generations.",
-            "Cultural celebrations are important because they commemorate significant historical events."
+            "I think festivals are important because they bring people together, and it also helps people to learn about their culture.",
+            "I think celebrations are important because they make us happy, and it also helps people to relax after hard work."
           ],
-          grammarFocus: "Explaining importance with 'because' clauses"
+          usage: "Use this pattern to express opinions about why certain events matter.",
+          grammarFocus: "Present simple tense with opinion expressions and causal conjunctions"
+        });
+        
+        frames.push({
+          title: "Describing past experiences and emotions",
+          level: "intermediate",
+          pattern: "When I went to _____, I saw _____, and it made me feel _____.",
+          examples: [
+            "When I went to the national day parade, I saw patriotic decorations, and it made me feel proud.",
+            "When I went to the cultural festival, I saw traditional rituals, and it made me feel connected to my heritage."
+          ],
+          usage: "Use this pattern to describe cultural experiences and your emotional reactions to them.",
+          grammarFocus: "Past tense verbs with emotional responses"
         });
       }
     }
@@ -193,7 +218,7 @@ export function SentenceFramesSection({ section }: SentenceFrameSectionProps) {
         Intermediate Frames
       </h3>
       
-      {/* Sentence Frame Cards */}
+      {/* Sentence Frame Cards - Matching the design in the images */}
       <div className="space-y-4">
         {frames.map((frame, idx) => (
           <div 
@@ -202,16 +227,23 @@ export function SentenceFramesSection({ section }: SentenceFrameSectionProps) {
           >
             {/* Frame header */}
             <div className="bg-amber-100 px-4 py-2 flex items-center justify-between">
-              <div className="flex items-center gap-2">
+              <div className="bg-amber-200 rounded px-2 py-0.5">
                 <span className="text-amber-800 font-medium text-sm">Intermediate</span>
               </div>
               <h4 className="text-amber-800 font-medium">{frame.title}</h4>
-              <button className="text-amber-700 p-1 rounded hover:bg-amber-200">
-                <ChevronRight className="h-4 w-4" />
+              <button 
+                className="text-amber-700 p-1 rounded hover:bg-amber-200"
+                onClick={() => toggleFrame(idx)}
+              >
+                {expandedFrames[idx] ? (
+                  <ChevronUp className="h-4 w-4" />
+                ) : (
+                  <ChevronDown className="h-4 w-4" />
+                )}
               </button>
             </div>
             
-            {/* Pattern */}
+            {/* Pattern - Monospace font like in the images */}
             <div className="p-4">
               <div className="font-mono p-3 bg-white rounded-md border border-amber-200 text-gray-800 relative">
                 {frame.pattern}
@@ -221,44 +253,49 @@ export function SentenceFramesSection({ section }: SentenceFrameSectionProps) {
               </div>
             </div>
             
-            {/* Examples */}
-            <div className="px-4 pb-4">
-              <div className="mb-2 flex items-center gap-1 text-amber-800">
-                <MessageCircle className="h-4 w-4" />
-                <span className="text-sm font-medium">Examples</span>
-              </div>
-              <div className="space-y-2">
-                {frame.examples.map((example, eIdx) => (
-                  <div key={`example-${eIdx}`} className="bg-amber-50 p-3 rounded-md border border-amber-100 text-gray-700">
-                    {example}
+            {/* Expanded sections (Examples, Usage, Grammar Focus) */}
+            {expandedFrames[idx] && (
+              <div className="px-4 pb-4 space-y-4">
+                {/* Examples */}
+                <div>
+                  <div className="mb-2 flex items-center gap-1 text-amber-800">
+                    <MessageCircle className="h-4 w-4" />
+                    <span className="text-sm font-medium">Examples</span>
                   </div>
-                ))}
-              </div>
-            </div>
-            
-            {/* Usage */}
-            {frame.usage && (
-              <div className="px-4 pb-4">
-                <div className="mb-2 flex items-center gap-1 text-amber-800">
-                  <AlignJustify className="h-4 w-4" />
-                  <span className="text-sm font-medium">Usage</span>
+                  <div className="space-y-2">
+                    {frame.examples.map((example, eIdx) => (
+                      <div key={`example-${eIdx}`} className="bg-white p-3 rounded-md border border-amber-100 text-gray-700">
+                        {example}
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <div className="bg-amber-50 p-3 rounded-md border border-amber-100 text-gray-700">
-                  {frame.usage}
-                </div>
-              </div>
-            )}
-            
-            {/* Grammar Focus */}
-            {frame.grammarFocus && (
-              <div className="px-4 pb-4">
-                <div className="mb-2 flex items-center gap-1 text-amber-800">
-                  <Lightbulb className="h-4 w-4" />
-                  <span className="text-sm font-medium">Grammar Focus</span>
-                </div>
-                <div className="bg-amber-50 p-3 rounded-md border border-amber-100 text-gray-700">
-                  {frame.grammarFocus}
-                </div>
+                
+                {/* Usage */}
+                {frame.usage && (
+                  <div>
+                    <div className="mb-2 flex items-center gap-1 text-amber-800">
+                      <AlignLeft className="h-4 w-4" />
+                      <span className="text-sm font-medium">Usage</span>
+                    </div>
+                    <div className="bg-white p-3 rounded-md border border-amber-100 text-gray-700">
+                      {frame.usage}
+                    </div>
+                  </div>
+                )}
+                
+                {/* Grammar Focus */}
+                {frame.grammarFocus && (
+                  <div>
+                    <div className="mb-2 flex items-center gap-1 text-amber-800">
+                      <Lightbulb className="h-4 w-4" />
+                      <span className="text-sm font-medium">Grammar Focus</span>
+                    </div>
+                    <div className="bg-white p-3 rounded-md border border-amber-100 text-gray-700">
+                      {frame.grammarFocus}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>
