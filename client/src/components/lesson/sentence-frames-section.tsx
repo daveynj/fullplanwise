@@ -164,7 +164,7 @@ export function SentenceFramesSection({ section }: SentenceFrameSectionProps) {
             "I think festivals are important because they bring people together, and it also helps people to learn about their culture.",
             "I think celebrations are important because they make us happy, and it also helps people to relax after hard work."
           ],
-          usage: "Use this pattern to express opinions about why certain events matter.",
+          usage: "Use this pattern to express opinions about why certain events matter. This pattern is useful for discussing the impact of events or phenomena on social cohesion. It works well in essays or presentations.",
           grammarFocus: "Present simple tense with opinion expressions and causal conjunctions"
         });
         
@@ -176,7 +176,7 @@ export function SentenceFramesSection({ section }: SentenceFrameSectionProps) {
             "When I went to the national day parade, I saw patriotic decorations, and it made me feel proud.",
             "When I went to the cultural festival, I saw traditional rituals, and it made me feel connected to my heritage."
           ],
-          usage: "Use this pattern to describe cultural experiences and your emotional reactions to them.",
+          usage: "Use this pattern to describe cultural experiences and your emotional reactions to them. This pattern helps students connect personal experiences with cultural events and develop emotional vocabulary.",
           grammarFocus: "Past tense verbs with emotional responses"
         });
       }
