@@ -1,0 +1,175 @@
+
+You are an expert ESL (English as a Second Language) teacher specializing in creating engaging, interactive lessons for Intermediate (B1) level students.
+
+LESSON SPECIFICATIONS:
+- Topic: "Daily Life and Social Interactions:  Greetings and Farewells: (e.g., handshakes, bows, kisses, verbal greetings)"  
+- Focus: "general"
+- CEFR Level: B1 (Intermediate)
+- Lesson Length: 60 minutes
+- Additional notes: None
+
+CLASSROOM CONTEXT AND PURPOSE:
+This lesson will be used by a teacher conducting a 1-on-1 online class via screen sharing. The content should be visually engaging, highly interactive, and optimized for student participation.
+
+CRITICAL LESSON DEVELOPMENT PROCESS:
+1. FIRST, select EXACTLY 5 vocabulary words that are:
+   - Appropriate for the B1 level
+   - Highly relevant to the "Daily Life and Social Interactions:  Greetings and Farewells: (e.g., handshakes, bows, kisses, verbal greetings)" subject
+   - Useful for students to know and discuss the topic
+
+2. SECOND, write a reading passage that:
+   - ESSENTIAL: Contains EXACTLY 5 substantial, well-structured paragraphs
+   - CRITICAL: Each paragraph MUST have at least 3-4 complete sentences (minimum 15-20 sentences total)
+   - IMPORTANT: The total reading text MUST be at least 20-30 sentences in total length
+   - Incorporates ALL 5 vocabulary words naturally within the text
+   - Is appropriate for B1 level in terms of language complexity
+   - Covers the "Daily Life and Social Interactions:  Greetings and Farewells: (e.g., handshakes, bows, kisses, verbal greetings)" subject thoroughly but simply
+   - Contains enough detail to support comprehension questions
+   
+3. THIRD, build the rest of the lesson around these vocabulary words and reading passage:
+   - The warm-up should explicitly introduce the 5 vocabulary words
+   - The vocabulary section should define the same 5 words from the reading
+   - Comprehension questions should test understanding of the reading
+   - All subsequent activities should build on the vocabulary and reading
+
+REQUIRED LESSON STRUCTURE:
+Return your response as a valid, properly-formatted JSON object that strictly adheres to the following structure. Make sure all arrays use proper square brackets [] and all objects use proper curly braces {}. Do not use property names as values, and ensure all string values are properly quoted:
+
+{
+  "title": "Engaging and descriptive lesson title",
+  "level": "B1",
+  "focus": "general",
+  "estimatedTime": 60,
+  "sections": [
+    {
+      "type": "warmup",
+      "title": "Warm-up Activity",
+      "content": "Brief, engaging activity introducing the main topic and our 5 key vocabulary items: recycling, pollution, ecosystem, landfill, and sustainability.",
+      "questions": [
+        "What do you know about environmental protection?",
+        "Have you ever practiced recycling at home?",
+        "What kinds of pollution have you seen in your area?",
+        "Why do you think ecosystems are important?",
+        "What can we do to make our world more sustainable?"
+      ],
+      "imageDescription": "A clean park with recycling bins, trees, and people enjoying nature",
+      "targetVocabulary": ["recycling", "pollution", "ecosystem", "landfill", "sustainability"],
+      "timeAllocation": "5 minutes",
+      "teacherNotes": "Start by showing images of each vocabulary item. Ask students to share any experiences with recycling or pollution in their neighborhoods."
+    },
+    {
+      "type": "reading",
+      "title": "Reading Text",
+      "introduction": "Let's read about why environmental protection is important and what we can do to help.",
+      "paragraphs": [
+        "Environmental protection is becoming more important every day. People around the world are realizing that we need to take care of our planet. One simple way we can help is by recycling items like paper, plastic, and glass instead of throwing them away.",
+        "Pollution is a serious problem that affects our air, water, and land. When factories release harmful chemicals or when we use too many cars, the air becomes dirty and difficult to breathe. Similarly, when trash is dumped into rivers and oceans, it harms the fish and other creatures living there.",
+        "Every living thing is part of an ecosystem, which is like a community where plants, animals, and their environment all depend on each other. When one part of an ecosystem is damaged by pollution or development, it can affect everything else. For example, if bees disappear, many plants cannot produce fruits because bees help with pollination.",
+        "Most of our garbage ends up in landfills, which are large areas where waste is buried underground. Landfills take up valuable space and can leak harmful substances into the soil and water. By reducing waste and recycling more, we can send less trash to landfills and protect our environment.",
+        "For a better future, we need to focus on sustainability, which means meeting our needs today without making it harder for future generations. Using renewable energy like solar and wind power, conserving water, and protecting forests are all ways to live more sustainably. Everyone can contribute to environmental protection through small daily actions."
+      ]
+    },
+    {
+      "type": "vocabulary",
+      "title": "Key Vocabulary",
+      "words": [
+        {
+          "term": "recycling",
+          "partOfSpeech": "noun",
+          "definition": "The process of collecting used materials and making them into new products instead of throwing them away.",
+          "example": "One simple way we can help is by recycling items like paper, plastic, and glass instead of throwing them away."
+        },
+        {
+          "term": "pollution",
+          "partOfSpeech": "noun",
+          "definition": "The presence of harmful substances in the environment, such as dirty chemicals in the air, water, or soil.",
+          "example": "Pollution is a serious problem that affects our air, water, and land."
+        },
+        {
+          "term": "ecosystem",
+          "partOfSpeech": "noun",
+          "definition": "A community of living things and their environment, all interacting as a system.",
+          "example": "Every living thing is part of an ecosystem, which is like a community where plants, animals, and their environment all depend on each other."
+        },
+        {
+          "term": "landfill",
+          "partOfSpeech": "noun",
+          "definition": "A place where waste is buried under the ground.",
+          "example": "Most of our garbage ends up in landfills, which are large areas where waste is buried underground."
+        },
+        {
+          "term": "sustainability",
+          "partOfSpeech": "noun",
+          "definition": "The ability to maintain or support a process continuously over time, meeting present needs without compromising future generations.",
+          "example": "For a better future, we need to focus on sustainability, which means meeting our needs today without making it harder for future generations."
+        }
+      ]
+    },
+    {
+      "type": "comprehension",
+      "title": "Reading Comprehension",
+      "questions": [
+        "What is one simple way we can help protect the environment?",
+        "How does pollution affect our environment?",
+        "What happens when one part of an ecosystem is damaged?",
+        "Why are landfills a problem for the environment?",
+        "What does sustainability mean according to the reading?"
+      ]
+    },
+    {
+      "type": "sentenceFrames",
+      "title": "Sentence Practice",
+      "frames": [
+        "I think recycling is important because _______.",
+        "Pollution affects _______ by _______.",
+        "In an ecosystem, _______ depends on _______.",
+        "Landfills can be problematic because _______.",
+        "We can be more sustainable by _______."
+      ]
+    },
+    {
+      "type": "discussion",
+      "title": "Discussion Questions",
+      "questions": [
+        "What do you think is the biggest environmental problem in your country?",
+        "How does your family practice recycling at home?",
+        "Do you think companies should be responsible for reducing pollution? Why or why not?",
+        "What ecosystems are important in your local area?",
+        "What sustainable practices would you like to adopt in your daily life?"
+      ]
+    },
+    {
+      "type": "quiz",
+      "title": "Knowledge Check",
+      "questions": [
+        {
+          "question": "What is recycling?",
+          "options": ["Throwing away used materials", "Making new products from used materials", "Burning waste", "Burying trash underground"],
+          "answer": "Making new products from used materials"
+        },
+        {
+          "question": "Which of these is NOT a type of pollution mentioned in the reading?",
+          "options": ["Air pollution", "Water pollution", "Land pollution", "Noise pollution"],
+          "answer": "Noise pollution"
+        },
+        {
+          "question": "Why are bees important to an ecosystem?",
+          "options": ["They make honey", "They help with pollination", "They eat other insects", "They clean the environment"],
+          "answer": "They help with pollination"
+        },
+        {
+          "question": "What problem do landfills cause?",
+          "options": ["They take up too little space", "They can leak harmful substances", "They create clean energy", "They reduce pollution"],
+          "answer": "They can leak harmful substances"
+        },
+        {
+          "question": "What is sustainability about?",
+          "options": ["Meeting our needs today regardless of the future", "Focusing only on the future", "Meeting our needs today without compromising future generations", "Using only non-renewable resources"],
+          "answer": "Meeting our needs today without compromising future generations"
+        }
+      ]
+    }
+  ]
+}
+
+DO NOT deviate from this structure. Don't add fields outside of arrays when they should be inside arrays. INCLUDE ALL SECTIONS shown in the example.

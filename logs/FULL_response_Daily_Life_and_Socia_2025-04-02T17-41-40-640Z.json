@@ -1,0 +1,26 @@
+{
+  "choices": [
+    {
+      "message": {
+        "role": "assistant",
+        "content": "{\n  \"title\": \"Daily Life and Social Interactions: Greetings and Farewells\",\n  \"level\": \"B1\",\n  \"focus\": \"general\",\n  \"estimatedTime\": 60,\n  \"sections\": [\n    {\n      \"type\": \"warmup\",\n      \"title\": \"Warm-up Activity\",\n      \"content\": \"Let's start by thinking about how people greet and say goodbye to each other in different cultures. We'll focus on five key vocabulary words: handshake, bow, kiss, verbal, and gesture.\",\n      \"questions\": 5,\n      \"imageDescription\": \"A diverse group of people exchanging greetings—handshakes, bows, and waves—in a lively setting.\",\n      \"targetVocabulary\": 5,\n      \"timeAllocation\": \"5 minutes\",\n      \"teacherNotes\": \"Begin by showing images or mimicking gestures for each vocabulary word. Encourage students to share examples of greetings they’ve experienced.\"\n    },\n    {\n      \"type\": \"reading\",\n      \"title\": \"Reading Text\",\n      \"introduction\": \"Let’s explore how greetings and farewells vary across cultures and why they are important in daily life.\",\n      \"paragraphs\": 5\n    },\n    {\n      \"type\": \"vocabulary\",\n      \"title\": \"Key Vocabulary\",\n      \"words\": 5\n    },\n    {\n      \"type\": \"comprehension\",\n      \"title\": \"Reading Comprehension\",\n      \"questions\": 5\n    },\n    {\n      \"type\": \"sentenceFrames\",\n      \"title\": \"Sentence Practice\",\n      \"frames\": 5\n    },\n    {\n      \"type\": \"discussion\",\n      \"title\": \"Discussion Questions\",\n      \"questions\": 5\n    },\n    {\n      \"type\": \"quiz\",\n      \"title\": \"Knowledge Check\",\n      \"questions\": 5\n    }\n  ]\n}"
+      },
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null
+    }
+  ],
+  "object": "chat.completion",
+  "usage": {
+    "prompt_tokens": 2411,
+    "completion_tokens": 390,
+    "total_tokens": 2801,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    }
+  },
+  "created": 1743615713,
+  "system_fingerprint": null,
+  "model": "qwen-max",
+  "id": "chatcmpl-839fecd1-eb6f-91bd-947e-d7ae3225b9ea"
+}

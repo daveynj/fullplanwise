@@ -1,0 +1,49 @@
+{
+  "title": "Daily Life and Social Interactions: Greetings and Farewells",
+  "level": "B1",
+  "focus": "general",
+  "estimatedTime": 60,
+  "sections": [
+    {
+      "type": "warmup",
+      "title": "Warm-up Activity",
+      "content": "Let's start by thinking about how people greet and say goodbye to each other in different cultures. We'll focus on five key vocabulary words: handshake, bow, kiss, verbal, and gesture.",
+      "questions": 5,
+      "imageDescription": "A diverse group of people exchanging greetings—handshakes, bows, and waves—in a lively setting.",
+      "targetVocabulary": 5,
+      "timeAllocation": "5 minutes",
+      "teacherNotes": "Begin by showing images or mimicking gestures for each vocabulary word. Encourage students to share examples of greetings they’ve experienced."
+    },
+    {
+      "type": "reading",
+      "title": "Reading Text",
+      "introduction": "Let’s explore how greetings and farewells vary across cultures and why they are important in daily life.",
+      "paragraphs": 5
+    },
+    {
+      "type": "vocabulary",
+      "title": "Key Vocabulary",
+      "words": 5
+    },
+    {
+      "type": "comprehension",
+      "title": "Reading Comprehension",
+      "questions": 5
+    },
+    {
+      "type": "sentenceFrames",
+      "title": "Sentence Practice",
+      "frames": 5
+    },
+    {
+      "type": "discussion",
+      "title": "Discussion Questions",
+      "questions": 5
+    },
+    {
+      "type": "quiz",
+      "title": "Knowledge Check",
+      "questions": 5
+    }
+  ]
+}

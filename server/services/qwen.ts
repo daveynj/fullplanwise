@@ -136,10 +136,36 @@ CRITICAL: Your output must be properly formatted JSON with NO ERRORS!
         if (response.data?.choices?.[0]?.message?.content) {
           try {
             const content = response.data.choices[0].message.content;
-            const jsonContent = JSON.parse(content);
-            return this.formatLessonContent(jsonContent);
+            try {
+              // First attempt to parse the JSON content
+              const jsonContent = JSON.parse(content);
+              return this.formatLessonContent(jsonContent);
+            } catch (jsonParseError) {
+              console.error('Error parsing response as JSON, attempting to clean content:', jsonParseError);
+              
+              // If direct parsing fails, try to clean up the content
+              let cleanedContent = content;
+              
+              // Remove any markdown code block markers if present
+              cleanedContent = cleanedContent.replace(/```json\s*/g, '').replace(/```\s*$/g, '').trim();
+              
+              try {
+                // Try parsing the cleaned content
+                const jsonContent = JSON.parse(cleanedContent);
+                console.log('Successfully parsed JSON after cleaning content');
+                return this.formatLessonContent(jsonContent);
+              } catch (secondParseError) {
+                console.error('Failed to parse JSON even after cleaning:', secondParseError);
+                // If all parsing attempts fail, return the error response
+                return {
+                  title: `Lesson on ${params.topic}`,
+                  content: response.data.choices[0].message.content,
+                  error: 'JSON parsing failed'
+                };
+              }
+            }
           } catch (parseError) {
-            console.error('Error parsing Qwen response as JSON:', parseError);
+            console.error('Error processing Qwen response:', parseError);
             return {
               title: `Lesson on ${params.topic}`,
               content: response.data.choices[0].message.content,
@@ -170,57 +196,131 @@ CRITICAL: Your output must be properly formatted JSON with NO ERRORS!
   private constructLessonPrompt(params: LessonGenerateParams): string {
     const { cefrLevel, topic, focus, lessonLength, additionalNotes } = params;
     
-    // Convert CEFR level to more descriptive text
-    const levelDescriptions: Record<string, string> = {
-      'A1': 'Beginner',
-      'A2': 'Elementary',
-      'B1': 'Intermediate',
-      'B2': 'Upper Intermediate',
-      'C1': 'Advanced',
-      'C2': 'Proficient'
-    };
-    
-    const levelDescription = levelDescriptions[cefrLevel] || `${cefrLevel} level`;
+    // We'll set some variables to match what the system prompt expects
+    const targetLevel = cefrLevel;
+    const text = topic;
+    const minVocabCount = 5;
+    const maxVocabCount = 5;
     
     return `
-You are an expert ESL (English as a Second Language) teacher specializing in creating engaging, interactive lessons for ${levelDescription} (${cefrLevel}) level students.
+You are an expert ESL (English as a Second Language) teacher and curriculum designer with over 20 years of experience.
 
-LESSON SPECIFICATIONS:
-- Topic: "${topic}"  
-- Focus: "${focus}"
-- CEFR Level: ${cefrLevel} (${levelDescription})
-- Lesson Length: ${lessonLength} minutes
-- Additional notes: ${additionalNotes || 'None'}
+TASK OVERVIEW:
+You will create a complete ESL lesson for ${targetLevel} level students on a given topic.
 
-CLASSROOM CONTEXT AND PURPOSE:
-This lesson will be used by a teacher conducting a 1-on-1 online class via screen sharing. The content should be visually engaging, highly interactive, and optimized for student participation.
+STEP 1: WRITE A READING TEXT
+- First, write an original reading text about the topic "${text}"
+- Use a warm, accessible, and conversational tone
+- Include interesting facts and observations woven naturally into the narrative
+- Use vivid, descriptive language that brings topics to life
+- Make complex information approachable through clear explanations and engaging examples
+- Use a mix of sentence lengths for good flow
+- Occasionally address the reader directly with rhetorical questions or observations
 
-CRITICAL LESSON DEVELOPMENT PROCESS:
-1. FIRST, select EXACTLY 5 vocabulary words that are:
-   - Appropriate for the ${cefrLevel} level
-   - Highly relevant to the "${topic}" subject
-   - Useful for students to know and discuss the topic
+- CRITICAL REQUIREMENT: For ${targetLevel} level, your text MUST be AT LEAST ${targetLevel === "B1" ? "200" : targetLevel === "C2" ? "500" : targetLevel === "C3" ? "600" : targetLevel === "A1" || targetLevel === "A2" ? "an appropriate length" : "300"} words
+- Your text will be REJECTED if it's shorter than ${targetLevel === "B1" ? "200" : targetLevel === "C2" ? "500" : targetLevel === "C3" ? "600" : targetLevel === "A1" || targetLevel === "A2" ? "the appropriate length" : "300"} words
+- The system counts words by splitting on whitespace - make sure you have enough actual words
+- Divide your text into 3-5 paragraphs with clear paragraph breaks (use double line breaks between paragraphs)
+- Focus on creating a substantial, informative text before moving on to other components
+- Make sure the vocabulary and sentence structures remain appropriate for ${targetLevel} level students
+- For lower levels (A1, A2), simplify the language while maintaining a friendly, engaging tone
+- For higher levels (B2, C1, C2), use richer vocabulary and more complex sentences
 
-2. SECOND, write a reading passage that:
-   - ESSENTIAL: Contains EXACTLY 5 substantial, well-structured paragraphs
-   - CRITICAL: Each paragraph MUST have at least 3-4 complete sentences (minimum 15-20 sentences total)
-   - IMPORTANT: The total reading text MUST be at least 20-30 sentences in total length
-   - Incorporates ALL 5 vocabulary words naturally within the text
-   - Is appropriate for ${cefrLevel} level in terms of language complexity
-   - Covers the "${topic}" subject thoroughly but simply
-   - Contains enough detail to support comprehension questions
-   
-3. THIRD, build the rest of the lesson around these vocabulary words and reading passage:
-   - The warm-up should explicitly introduce the 5 vocabulary words
-   - The vocabulary section should define the same 5 words from the reading
-   - Comprehension questions should test understanding of the reading
-   - All subsequent activities should build on the vocabulary and reading
+STEP 2: CREATE LESSON COMPONENTS
+After writing the reading text, create:
+- CRITICAL REQUIREMENT: You MUST include EXACTLY ${minVocabCount}-${maxVocabCount} vocabulary items from your text. The system requires a minimum of ${minVocabCount} vocabulary items and will REJECT the lesson if fewer are provided.
+- ABSOLUTELY CRITICAL: Each semantic group MUST contain at least 2-3 vocabulary words. DO NOT create groups with only one word.
+- DO NOT include basic words like "hi", "hello", "goodbye", or other extremely common words as vocabulary items.
+- Only choose words that are appropriate for the CEFR level ${targetLevel} and would be genuinely useful for students to learn.
+- EXTREMELY IMPORTANT: Choose ONLY English words for vocabulary. DO NOT include foreign words (like "la bise," "sayonara," "wai," etc.) even if they appear in your text when discussing other cultures. ONLY ENGLISH VOCABULARY should be selected.
+- EXACTLY 3-5 reading comprehension activities - YOU MUST INCLUDE AT LEAST 3
+- 1-2 pre-reading discussion questions
+- EXACTLY 5-7 post-reading discussion questions - YOU MUST INCLUDE AT LEAST 5, and each question MUST directly reference specific content from your reading text
+- A brief warm-up activity that MUST incorporate all vocabulary items from your vocabulary list, not just one word
+- NEW REQUIREMENT: 2-4 sentence frames and templates appropriate for the ${targetLevel} level to help students with sentence structure and grammar
 
-REQUIRED LESSON STRUCTURE:
-Return your response as a valid, properly-formatted JSON object that strictly adheres to the following structure. Make sure all arrays use proper square brackets [] and all objects use proper curly braces {}. Do not use property names as values, and ensure all string values are properly quoted:
+SENTENCE FRAMES REQUIREMENTS:
+For each sentence frame, include:
+1. The pattern (e.g., "I think that _____ because _____.")
+2. 2-3 example sentences using the pattern and vocabulary from the lesson
+3. Usage notes explaining when and how to use this pattern
+4. Teaching tips for introducing and practicing the pattern
+5. Difficulty level (basic, intermediate, or advanced) relative to the overall CEFR level
+6. Grammar focus (what grammar point this pattern helps practice)
+7. Communicative function (e.g., expressing opinions, making comparisons, etc.)
+
+Tailor the complexity and number of sentence frames based on CEFR level:
+- A1: 3-4 very simple frames with basic structures (subject + verb + object). Focus on present tense, personal information, and everyday needs. Example: "I like ____." or "This is ____."
+- A2: 3-4 simple frames that may include one conjunction or preposition. Introduce basic past tense, simple questions, and descriptions. Example: "I went to ____ yesterday and I saw ____."
+- B1: 2-3 frames with moderate complexity. Include various tenses, modal verbs, and expressions of opinion. Example: "I think ____ is important because it helps people to ____ and also ____."
+- B2: 2-3 more complex frames with multiple clauses, conditionals, or comparisons. Example: "Although many people believe ____, I would argue that ____ because ____."
+- C1/C2: 1-2 sophisticated frames with complex structures, academic language, or nuanced expressions. Example: "Despite the widespread assumption that ____, recent evidence suggests that ____, which implies that ____."
+
+VOCABULARY REQUIREMENTS:
+For each vocabulary item, you MUST include:
+1. The word itself (ENGLISH ONLY - NO FOREIGN WORDS)
+2. A clear definition using language appropriate for ${targetLevel} level students
+3. The part of speech (noun, verb, adjective, etc.)
+4. An example sentence using language appropriate for ${targetLevel} level
+5. Common collocations (phrases that often include this word)
+6. Usage notes written with ${targetLevel} level appropriate language
+7. Teaching tips
+8. Pronunciation information with:
+   - syllables: The word broken down into syllables as an array of strings
+   - stressIndex: Which syllable receives primary stress (zero-based index)
+   - phoneticGuide: A simplified pronunciation guide using regular characters
+9. An image prompt - A detailed description (2-3 sentences) of what an image for this word should look like.
+
+CEFR LEVEL-APPROPRIATE VOCABULARY SELECTION GUIDELINES:
+- A1: Choose words beyond the 500 most common words. Avoid very basic words like "hi", "hello", "yes", "no".
+- A2: Choose words beyond the 1000 most common words.
+- B1: Choose intermediate-level vocabulary (beyond the 2000 most common words).
+- B2: Choose upper-intermediate vocabulary (beyond the 3000 most common words).
+- C1: Choose advanced vocabulary (beyond the 4000 most common words).
+- C2: Choose sophisticated vocabulary that would challenge even advanced learners.
+
+WARM-UP ACTIVITY REQUIREMENTS:
+- CRITICALLY IMPORTANT: Your warm-up activity MUST incorporate ALL vocabulary items from your vocabulary list. Check this carefully!
+- Each vocabulary word MUST be explicitly mentioned and used in the warm-up activity
+- Ensure students are introduced to all vocabulary before the reading
+- Design an engaging activity that gets students familiar with these words
+- In your procedure section, make sure EVERY vocabulary word is used at least once
+- The system will check that each vocabulary word appears in the warm-up - if any are missing, the lesson will be rejected
+
+DISCUSSION QUESTION REQUIREMENTS:
+- IMPORTANT NEW FORMAT: Each post-reading discussion will now consist of:
+  1. A CEFR-level appropriate paragraph about an interesting and relevant aspect of the topic
+  2. 5 discussion/debate topics related to the paragraph and the reading content
+- The paragraph should:
+  - Be written at the appropriate CEFR level (${targetLevel})
+  - Focus on something interesting and thought-provoking about the subject
+  - Be 3-5 sentences long
+  - Create a foundation for meaningful discussion
+  - Relate directly to the vocabulary being learned
+  - Avoid simply summarizing the main reading
+  - CRITICAL: The language complexity MUST match exactly the ${targetLevel} level
+
+⚠️ CRITICAL REQUIREMENT: You MUST provide EXACTLY 5 discussion/debate topics after the paragraph. Not providing exactly 5 topics will cause your response to be rejected and considered a failure.
+
+!!! EXTREMELY IMPORTANT - READING COMPREHENSION FORMAT !!!
+You MUST ONLY create reading comprehension questions in these two formats:
+1. Multiple-choice questions with 3-4 options and one correct answer
+2. True-false questions with exactly ["True", "False"] options
+
+DO NOT create any short-answer questions or questions that ask students to "explain" or "write."
+ALL questions must have selectable options. This includes ALL questions in the reading comprehension section.
+
+!!! READING COMPREHENSION COGNITIVE LEVELS REQUIREMENT !!!
+Your reading comprehension questions MUST cover a balanced range of cognitive abilities:
+1. REMEMBER/UNDERSTAND (1-2 questions): Test basic comprehension and recall of explicit information from the text.
+2. APPLY/ANALYZE (1-2 questions): Test ability to use information or break it into parts to explore relationships.
+3. EVALUATE/CREATE (1-2 questions): Test ability to make judgments or create new patterns based on learned information.
+
+FORMAT YOUR RESPONSE AS JSON:
+Return your response as a valid, properly-formatted JSON object that strictly adheres to the following structure. Make sure all arrays use proper square brackets [] and all objects use proper curly braces {}:
 
 {
-  "title": "Engaging and descriptive lesson title",
+  "title": "Descriptive lesson title",
   "level": "${cefrLevel}",
   "focus": "${focus}",
   "estimatedTime": ${lessonLength},
@@ -228,64 +328,106 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
     {
       "type": "warmup",
       "title": "Warm-up Activity",
-      "content": "Brief, engaging activity introducing the main topic and our 5 key vocabulary items: recycling, pollution, ecosystem, landfill, and sustainability.",
+      "content": "Detailed description of the warm-up activity that incorporates ALL vocabulary words",
       "questions": [
-        "What do you know about environmental protection?",
-        "Have you ever practiced recycling at home?",
-        "What kinds of pollution have you seen in your area?",
-        "Why do you think ecosystems are important?",
-        "What can we do to make our world more sustainable?"
+        "Pre-reading discussion question 1",
+        "Pre-reading discussion question 2"
       ],
-      "imageDescription": "A clean park with recycling bins, trees, and people enjoying nature",
-      "targetVocabulary": ["recycling", "pollution", "ecosystem", "landfill", "sustainability"],
-      "timeAllocation": "5 minutes",
-      "teacherNotes": "Start by showing images of each vocabulary item. Ask students to share any experiences with recycling or pollution in their neighborhoods."
+      "targetVocabulary": ["word1", "word2", "word3", "word4", "word5"],
+      "procedure": "Step-by-step instructions for conducting the warm-up",
+      "teacherNotes": "Notes for the teacher on how to implement the warm-up effectively"
     },
     {
       "type": "reading",
       "title": "Reading Text",
-      "introduction": "Let's read about why environmental protection is important and what we can do to help.",
+      "introduction": "Brief introduction to the reading",
       "paragraphs": [
-        "Environmental protection is becoming more important every day. People around the world are realizing that we need to take care of our planet. One simple way we can help is by recycling items like paper, plastic, and glass instead of throwing them away.",
-        "Pollution is a serious problem that affects our air, water, and land. When factories release harmful chemicals or when we use too many cars, the air becomes dirty and difficult to breathe. Similarly, when trash is dumped into rivers and oceans, it harms the fish and other creatures living there.",
-        "Every living thing is part of an ecosystem, which is like a community where plants, animals, and their environment all depend on each other. When one part of an ecosystem is damaged by pollution or development, it can affect everything else. For example, if bees disappear, many plants cannot produce fruits because bees help with pollination.",
-        "Most of our garbage ends up in landfills, which are large areas where waste is buried underground. Landfills take up valuable space and can leak harmful substances into the soil and water. By reducing waste and recycling more, we can send less trash to landfills and protect our environment.",
-        "For a better future, we need to focus on sustainability, which means meeting our needs today without making it harder for future generations. Using renewable energy like solar and wind power, conserving water, and protecting forests are all ways to live more sustainably. Everyone can contribute to environmental protection through small daily actions."
-      ]
+        "Paragraph 1 with at least 3-4 sentences",
+        "Paragraph 2 with at least 3-4 sentences",
+        "Paragraph 3 with at least 3-4 sentences",
+        "Paragraph 4 with at least 3-4 sentences",
+        "Paragraph 5 with at least 3-4 sentences"
+      ],
+      "teacherNotes": "Notes for the teacher on how to use the reading effectively"
     },
     {
       "type": "vocabulary",
       "title": "Key Vocabulary",
       "words": [
         {
-          "term": "recycling",
-          "partOfSpeech": "noun",
-          "definition": "The process of collecting used materials and making them into new products instead of throwing them away.",
-          "example": "One simple way we can help is by recycling items like paper, plastic, and glass instead of throwing them away."
+          "term": "vocabulary word 1",
+          "partOfSpeech": "part of speech",
+          "definition": "Clear definition appropriate for the CEFR level",
+          "example": "Example sentence using the word in context",
+          "collocations": ["common phrase 1", "common phrase 2"],
+          "notes": "Usage notes appropriate for the level",
+          "teachingTips": "Tips for teaching this vocabulary item",
+          "pronunciation": {
+            "syllables": ["syl", "la", "bles"],
+            "stressIndex": 0,
+            "phoneticGuide": "simplified pronunciation guide"
+          },
+          "imagePrompt": "Detailed description of what an image for this word should look like"
         },
         {
-          "term": "pollution",
-          "partOfSpeech": "noun",
-          "definition": "The presence of harmful substances in the environment, such as dirty chemicals in the air, water, or soil.",
-          "example": "Pollution is a serious problem that affects our air, water, and land."
+          "term": "vocabulary word 2",
+          "partOfSpeech": "part of speech",
+          "definition": "Clear definition appropriate for the CEFR level",
+          "example": "Example sentence using the word in context",
+          "collocations": ["common phrase 1", "common phrase 2"],
+          "notes": "Usage notes appropriate for the level",
+          "teachingTips": "Tips for teaching this vocabulary item",
+          "pronunciation": {
+            "syllables": ["syl", "la", "bles"],
+            "stressIndex": 0,
+            "phoneticGuide": "simplified pronunciation guide"
+          },
+          "imagePrompt": "Detailed description of what an image for this word should look like"
         },
         {
-          "term": "ecosystem",
-          "partOfSpeech": "noun",
-          "definition": "A community of living things and their environment, all interacting as a system.",
-          "example": "Every living thing is part of an ecosystem, which is like a community where plants, animals, and their environment all depend on each other."
+          "term": "vocabulary word 3",
+          "partOfSpeech": "part of speech",
+          "definition": "Clear definition appropriate for the CEFR level",
+          "example": "Example sentence using the word in context",
+          "collocations": ["common phrase 1", "common phrase 2"],
+          "notes": "Usage notes appropriate for the level",
+          "teachingTips": "Tips for teaching this vocabulary item",
+          "pronunciation": {
+            "syllables": ["syl", "la", "bles"],
+            "stressIndex": 0,
+            "phoneticGuide": "simplified pronunciation guide"
+          },
+          "imagePrompt": "Detailed description of what an image for this word should look like"
         },
         {
-          "term": "landfill",
-          "partOfSpeech": "noun",
-          "definition": "A place where waste is buried under the ground.",
-          "example": "Most of our garbage ends up in landfills, which are large areas where waste is buried underground."
+          "term": "vocabulary word 4",
+          "partOfSpeech": "part of speech",
+          "definition": "Clear definition appropriate for the CEFR level",
+          "example": "Example sentence using the word in context",
+          "collocations": ["common phrase 1", "common phrase 2"],
+          "notes": "Usage notes appropriate for the level",
+          "teachingTips": "Tips for teaching this vocabulary item",
+          "pronunciation": {
+            "syllables": ["syl", "la", "bles"],
+            "stressIndex": 0,
+            "phoneticGuide": "simplified pronunciation guide"
+          },
+          "imagePrompt": "Detailed description of what an image for this word should look like"
         },
         {
-          "term": "sustainability",
-          "partOfSpeech": "noun",
-          "definition": "The ability to maintain or support a process continuously over time, meeting present needs without compromising future generations.",
-          "example": "For a better future, we need to focus on sustainability, which means meeting our needs today without making it harder for future generations."
+          "term": "vocabulary word 5",
+          "partOfSpeech": "part of speech",
+          "definition": "Clear definition appropriate for the CEFR level",
+          "example": "Example sentence using the word in context",
+          "collocations": ["common phrase 1", "common phrase 2"],
+          "notes": "Usage notes appropriate for the level",
+          "teachingTips": "Tips for teaching this vocabulary item",
+          "pronunciation": {
+            "syllables": ["syl", "la", "bles"],
+            "stressIndex": 0,
+            "phoneticGuide": "simplified pronunciation guide"
+          },
+          "imagePrompt": "Detailed description of what an image for this word should look like"
         }
       ]
     },
@@ -293,33 +435,80 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
       "type": "comprehension",
       "title": "Reading Comprehension",
       "questions": [
-        "What is one simple way we can help protect the environment?",
-        "How does pollution affect our environment?",
-        "What happens when one part of an ecosystem is damaged?",
-        "Why are landfills a problem for the environment?",
-        "What does sustainability mean according to the reading?"
+        {
+          "question": "Remember/Understand level question about a specific fact from the text",
+          "options": ["Option 1", "Option 2", "Option 3", "Option 4"],
+          "answer": "Correct option",
+          "explanation": "Why this is the correct answer"
+        },
+        {
+          "question": "Apply/Analyze level question that requires deeper understanding",
+          "options": ["Option 1", "Option 2", "Option 3", "Option 4"],
+          "answer": "Correct option",
+          "explanation": "Why this is the correct answer"
+        },
+        {
+          "question": "Evaluate/Create level question that requires making judgments",
+          "options": ["Option 1", "Option 2", "Option 3", "Option 4"],
+          "answer": "Correct option",
+          "explanation": "Why this is the correct answer"
+        },
+        {
+          "question": "True/False question about the text",
+          "options": ["True", "False"],
+          "answer": "Correct option",
+          "explanation": "Why this is the correct answer"
+        },
+        {
+          "question": "Another multiple-choice question about the text",
+          "options": ["Option 1", "Option 2", "Option 3", "Option 4"],
+          "answer": "Correct option",
+          "explanation": "Why this is the correct answer"
+        }
       ]
     },
     {
       "type": "sentenceFrames",
       "title": "Sentence Practice",
       "frames": [
-        "I think recycling is important because _______.",
-        "Pollution affects _______ by _______.",
-        "In an ecosystem, _______ depends on _______.",
-        "Landfills can be problematic because _______.",
-        "We can be more sustainable by _______."
+        {
+          "pattern": "Pattern with blanks (e.g., 'I think _____ is important because _____.')",
+          "examples": [
+            "Example sentence 1 using the pattern and vocabulary from the lesson",
+            "Example sentence 2 using the pattern and vocabulary from the lesson",
+            "Example sentence 3 using the pattern and vocabulary from the lesson"
+          ],
+          "usageNotes": "When and how to use this pattern",
+          "teachingTips": "How to introduce and practice this pattern",
+          "difficultyLevel": "basic/intermediate/advanced relative to CEFR level",
+          "grammarFocus": "What grammar point this pattern practices",
+          "communicativeFunction": "What communication skill this pattern develops"
+        },
+        {
+          "pattern": "Another pattern with blanks",
+          "examples": [
+            "Example sentence 1 using the pattern and vocabulary from the lesson",
+            "Example sentence 2 using the pattern and vocabulary from the lesson",
+            "Example sentence 3 using the pattern and vocabulary from the lesson"
+          ],
+          "usageNotes": "When and how to use this pattern",
+          "teachingTips": "How to introduce and practice this pattern",
+          "difficultyLevel": "basic/intermediate/advanced relative to CEFR level",
+          "grammarFocus": "What grammar point this pattern practices",
+          "communicativeFunction": "What communication skill this pattern develops"
+        }
       ]
     },
     {
       "type": "discussion",
       "title": "Discussion Questions",
+      "introduction": "A CEFR-level appropriate paragraph (3-5 sentences) about an interesting aspect of the topic that provides context for the discussion",
       "questions": [
-        "What do you think is the biggest environmental problem in your country?",
-        "How does your family practice recycling at home?",
-        "Do you think companies should be responsible for reducing pollution? Why or why not?",
-        "What ecosystems are important in your local area?",
-        "What sustainable practices would you like to adopt in your daily life?"
+        "Discussion question 1 directly referencing specific content from the reading",
+        "Discussion question 2 directly referencing specific content from the reading",
+        "Discussion question 3 directly referencing specific content from the reading",
+        "Discussion question 4 directly referencing specific content from the reading",
+        "Discussion question 5 directly referencing specific content from the reading"
       ]
     },
     {
@@ -327,45 +516,124 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
       "title": "Knowledge Check",
       "questions": [
         {
-          "question": "What is recycling?",
-          "options": ["Throwing away used materials", "Making new products from used materials", "Burning waste", "Burying trash underground"],
-          "answer": "Making new products from used materials"
+          "question": "Quiz question 1",
+          "options": ["Option 1", "Option 2", "Option 3", "Option 4"],
+          "answer": "Correct option",
+          "explanation": "Why this is the correct answer"
         },
         {
-          "question": "Which of these is NOT a type of pollution mentioned in the reading?",
-          "options": ["Air pollution", "Water pollution", "Land pollution", "Noise pollution"],
-          "answer": "Noise pollution"
+          "question": "Quiz question 2",
+          "options": ["Option 1", "Option 2", "Option 3", "Option 4"],
+          "answer": "Correct option",
+          "explanation": "Why this is the correct answer"
         },
         {
-          "question": "Why are bees important to an ecosystem?",
-          "options": ["They make honey", "They help with pollination", "They eat other insects", "They clean the environment"],
-          "answer": "They help with pollination"
+          "question": "Quiz question 3",
+          "options": ["Option 1", "Option 2", "Option 3", "Option 4"],
+          "answer": "Correct option",
+          "explanation": "Why this is the correct answer"
         },
         {
-          "question": "What problem do landfills cause?",
-          "options": ["They take up too little space", "They can leak harmful substances", "They create clean energy", "They reduce pollution"],
-          "answer": "They can leak harmful substances"
+          "question": "Quiz question 4",
+          "options": ["Option 1", "Option 2", "Option 3", "Option 4"],
+          "answer": "Correct option",
+          "explanation": "Why this is the correct answer"
         },
         {
-          "question": "What is sustainability about?",
-          "options": ["Meeting our needs today regardless of the future", "Focusing only on the future", "Meeting our needs today without compromising future generations", "Using only non-renewable resources"],
-          "answer": "Meeting our needs today without compromising future generations"
+          "question": "Quiz question 5",
+          "options": ["Option 1", "Option 2", "Option 3", "Option 4"],
+          "answer": "Correct option",
+          "explanation": "Why this is the correct answer"
         }
       ]
     }
   ]
 }
 
-DO NOT deviate from this structure. Don't add fields outside of arrays when they should be inside arrays. INCLUDE ALL SECTIONS shown in the example.`;
+CRITICAL: Make sure your JSON is valid with no syntax errors. Use proper formatting with arrays using square brackets and objects using curly braces. Don't use property names as values, and ensure ALL string values are properly quoted.`;
   }
 
   /**
    * Format and process the lesson content
    */
   private formatLessonContent(content: any): any {
-    // Basic processing - just return the content as is for now
-    // This would normally do more processing to handle content issues
-    return content;
+    try {
+      // If content is already an object (previously parsed JSON), work with it directly
+      if (typeof content === 'object' && content !== null) {
+        const lessonContent = content;
+        
+        // Check for discussion questions - sometimes they come in a format where each question is a key
+        // instead of an array element
+        if (lessonContent.sections) {
+          for (const section of lessonContent.sections) {
+            // Handle discussion section formatting
+            if (section.type === 'discussion' && section.questions) {
+              // If questions is an object but not an array, convert to array
+              if (typeof section.questions === 'object' && !Array.isArray(section.questions)) {
+                console.log('Converting discussion questions from object to array format');
+                const questionArray = [];
+                for (const key in section.questions) {
+                  if (key.startsWith('Question') || key.match(/^\d+$/) || key.match(/^[A-Za-z]$/)) {
+                    questionArray.push(section.questions[key]);
+                  }
+                }
+                
+                if (questionArray.length > 0) {
+                  section.questions = questionArray;
+                  console.log(`Converted ${questionArray.length} discussion questions to array format`);
+                }
+              }
+            }
+            
+            // Handle comprehension section formatting  
+            if (section.type === 'comprehension' && section.questions) {
+              // If questions is an object but not an array, convert to array
+              if (typeof section.questions === 'object' && !Array.isArray(section.questions)) {
+                console.log('Converting comprehension questions from object to array format');
+                const questionArray = [];
+                for (const key in section.questions) {
+                  if (section.questions[key] && typeof section.questions[key] === 'object') {
+                    questionArray.push(section.questions[key]);
+                  }
+                }
+                
+                if (questionArray.length > 0) {
+                  section.questions = questionArray;
+                  console.log(`Converted ${questionArray.length} comprehension questions to array format`);
+                }
+              }
+            }
+            
+            // Handle quiz section formatting
+            if (section.type === 'quiz' && section.questions) {
+              // If questions is an object but not an array, convert to array
+              if (typeof section.questions === 'object' && !Array.isArray(section.questions)) {
+                console.log('Converting quiz questions from object to array format');
+                const questionArray = [];
+                for (const key in section.questions) {
+                  if (section.questions[key] && typeof section.questions[key] === 'object') {
+                    questionArray.push(section.questions[key]);
+                  }
+                }
+                
+                if (questionArray.length > 0) {
+                  section.questions = questionArray;
+                  console.log(`Converted ${questionArray.length} quiz questions to array format`);
+                }
+              }
+            }
+          }
+        }
+        
+        return lessonContent;
+      }
+      
+      // Otherwise return the content as is
+      return content;
+    } catch (error: any) {
+      console.error('Error formatting lesson content:', error);
+      return content;
+    }
   }
 }
 
