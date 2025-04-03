@@ -61,7 +61,8 @@ export function SentenceFramesSection({ section }: SentenceFrameSectionProps) {
     // Check if there are any keys that directly contain the text "SentenceFrames"
     const sentenceFramesKeys = Object.keys(section).filter(key => 
       key.toLowerCase().includes("sentenceframes") || 
-      key.toLowerCase().includes("sentence frames")
+      key.toLowerCase().includes("sentence frames") ||
+      key.toLowerCase() === "frames"
     );
     
     console.log("Looking for SentenceFrames keys in section:", sentenceFramesKeys);
@@ -85,10 +86,13 @@ export function SentenceFramesSection({ section }: SentenceFrameSectionProps) {
               if (propValue.pattern && propValue.examples) {
                 frames.push({
                   title: propValue.title || propKey,
-                  level: (propValue.level as "basic" | "intermediate" | "advanced") || "intermediate",
+                  level: (propValue.level || propValue.difficultyLevel || "intermediate") as "basic" | "intermediate" | "advanced",
                   pattern: propValue.pattern,
                   examples: Array.isArray(propValue.examples) ? propValue.examples : [propValue.examples],
-                  grammarFocus: propValue.grammarFocus || propValue.focus
+                  usage: propValue.usage || propValue.usageNotes,
+                  grammarFocus: propValue.grammarFocus || propValue.focus,
+                  communicativeFunction: propValue.communicativeFunction,
+                  teachingTips: propValue.teachingTips
                 });
               }
             }
@@ -139,7 +143,7 @@ export function SentenceFramesSection({ section }: SentenceFrameSectionProps) {
         // Create sentence frames directly from the Qwen API response
         // First sentence frame from response
         frames.push({
-          title: "Describing Social Impact",
+          title: section.frames?.[0]?.title || "Describing Effects and Outcomes", // Use exact title from Qwen API
           level: "intermediate",
           pattern: "One of the most striking aspects of ___ is how it brings people together to ___.",
           examples: [
@@ -155,7 +159,7 @@ export function SentenceFramesSection({ section }: SentenceFrameSectionProps) {
         
         // Second sentence frame from response
         frames.push({
-          title: "Expressing Contrasting Viewpoints",
+          title: section.frames?.[1]?.title || "Expressing Contrasting Viewpoints", // Use exact title from Qwen API
           level: "advanced",
           pattern: "Although many people view ___ as simply a time for ___, it actually serves a deeper purpose: ___.",
           examples: [
