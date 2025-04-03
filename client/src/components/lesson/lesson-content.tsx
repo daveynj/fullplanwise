@@ -1725,25 +1725,107 @@ export function LessonContent({ content }: LessonContentProps) {
           </TabsContent>
           
           <TabsContent value="discussion" className="m-0">
-            {/* Pass entire content structure as parent to help find discussion questions */}
+            {/* Extract and pass discussion questions directly */}
             {(() => {
+              // Get the discussion section
               const discussionSection = findSection("discussion") || findSection("speaking");
-              if (discussionSection) {
-                // Add the full parsed content as __parent for reference
-                discussionSection.__parent = parsedContent;
+              
+              // Extract any question-like keys from parsedContent
+              const extractedQuestions: Array<{question: string, level?: string, followUp?: string[]}> = [];
+              
+              try {
+                if (parsedContent) {
+                  const questionPatterns = [/how/i, /why/i, /what/i, /which/i, /where/i, /when/i, /who/i, 
+                                          /can/i, /do you think/i, /should/i, /could/i, /would/i, /discuss/i];
+                  
+                  Object.keys(parsedContent).forEach(key => {
+                    if ((key.includes("?") || questionPatterns.some(pattern => pattern.test(key))) && 
+                        !["type", "title", "sections"].includes(key)) {
+                      
+                      const value = parsedContent[key];
+                      extractedQuestions.push({
+                        question: key,
+                        level: key.toLowerCase().includes("critical") ? "critical" : "basic",
+                        followUp: typeof value === "string" ? [value] : []
+                      });
+                    }
+                  });
+                  
+                  if (extractedQuestions.length > 0 && discussionSection) {
+                    // Clone the discussion section and add our extracted questions
+                    const enrichedSection = {...discussionSection};
+                    
+                    // Use either existing questions array or our extracted questions
+                    if (!enrichedSection.questions || 
+                        !Array.isArray(enrichedSection.questions) || 
+                        enrichedSection.questions.length === 0 ||
+                        (enrichedSection.questions.length === 1 && 
+                         enrichedSection.questions[0].question === "question")) {
+                      
+                      enrichedSection.questions = extractedQuestions;
+                      console.log("Added extracted questions to discussion section:", extractedQuestions.length);
+                    }
+                    
+                    return <DiscussionSection section={enrichedSection} />;
+                  }
+                }
+              } catch (err) {
+                console.error("Error extracting discussion questions:", err);
               }
+              
               return <DiscussionSection section={discussionSection} />;
             })()}
           </TabsContent>
           
           <TabsContent value="speaking" className="m-0">
-            {/* Pass entire content structure as parent to help find discussion questions */}
+            {/* Extract and pass discussion questions directly */}
             {(() => {
+              // Get the speaking section
               const speakingSection = findSection("speaking") || findSection("discussion");
-              if (speakingSection) {
-                // Add the full parsed content as __parent for reference
-                speakingSection.__parent = parsedContent;
+              
+              // Extract any question-like keys from parsedContent
+              const extractedQuestions: Array<{question: string, level?: string, followUp?: string[]}> = [];
+              
+              try {
+                if (parsedContent) {
+                  const questionPatterns = [/how/i, /why/i, /what/i, /which/i, /where/i, /when/i, /who/i, 
+                                          /can/i, /do you think/i, /should/i, /could/i, /would/i, /discuss/i];
+                  
+                  Object.keys(parsedContent).forEach(key => {
+                    if ((key.includes("?") || questionPatterns.some(pattern => pattern.test(key))) && 
+                        !["type", "title", "sections"].includes(key)) {
+                      
+                      const value = parsedContent[key];
+                      extractedQuestions.push({
+                        question: key,
+                        level: key.toLowerCase().includes("critical") ? "critical" : "basic",
+                        followUp: typeof value === "string" ? [value] : []
+                      });
+                    }
+                  });
+                  
+                  if (extractedQuestions.length > 0 && speakingSection) {
+                    // Clone the speaking section and add our extracted questions
+                    const enrichedSection = {...speakingSection};
+                    
+                    // Use either existing questions array or our extracted questions
+                    if (!enrichedSection.questions || 
+                        !Array.isArray(enrichedSection.questions) || 
+                        enrichedSection.questions.length === 0 ||
+                        (enrichedSection.questions.length === 1 && 
+                         enrichedSection.questions[0].question === "question")) {
+                      
+                      enrichedSection.questions = extractedQuestions;
+                      console.log("Added extracted questions to speaking section:", extractedQuestions.length);
+                    }
+                    
+                    return <DiscussionSection section={enrichedSection} />;
+                  }
+                }
+              } catch (err) {
+                console.error("Error extracting speaking questions:", err);
               }
+              
               return <DiscussionSection section={speakingSection} />;
             })()}
           </TabsContent>
