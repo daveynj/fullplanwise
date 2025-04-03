@@ -39,27 +39,58 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
       questions: section.questions
     }, null, 2));
     
-    // First, check if we have questions directly in the section.questions array
-    if (section.questions && Array.isArray(section.questions) && section.questions.length > 0) {
-      console.log("Found questions array in section:", section.questions.length, "questions");
+    // First, check if the section is the Qwen special format with questions as key-value pairs
+    if (section.questions) {
+      // Handle the Qwen format where questions is an object with question-answer pairs
+      if (typeof section.questions === 'object' && !Array.isArray(section.questions)) {
+        console.log("Found Qwen question-answer object format");
+        
+        const questionKeys = Object.keys(section.questions).filter(key => 
+          typeof key === 'string' && 
+          key.trim().length > 0 &&
+          key !== 'question' && // Skip placeholder keys
+          key !== 'answer'
+        );
+        
+        if (questionKeys.length > 0) {
+          const validQuestions: DiscussionQuestion[] = questionKeys.map(questionText => {
+            const answer = section.questions[questionText];
+            const level = questionText.toLowerCase().includes('critical') ? 'critical' : 'basic';
+            return {
+              question: questionText,
+              level: level as "basic" | "critical",
+              followUp: typeof answer === 'string' && answer.trim() ? [answer] : []
+            };
+          });
+          
+          questions = validQuestions;
+          console.log("Extracted questions from Qwen format:", questions.length);
+          return;
+        }
+      }
       
-      // Clean up any malformed questions
-      const validQuestions = section.questions.filter(q => 
-        q && typeof q === 'object' && (q.question || q.text)
-      ).map(q => ({
-        question: q.question || q.text || "Discussion question",
-        level: q.level || "basic",
-        focusVocabulary: q.focusVocabulary || q.vocabulary || [],
-        followUp: q.followUp || [],
-        paragraphContext: q.paragraphContext || q.context || "",
-        topic: q.topic || ""
-      }));
-      
-      // If we have valid questions use them
-      if (validQuestions.length > 0) {
-        questions = validQuestions;
-        console.log("Using questions array with", questions.length, "valid questions");
-        return;
+      // Otherwise check if we have questions directly in the section.questions array
+      if (Array.isArray(section.questions) && section.questions.length > 0) {
+        console.log("Found questions array in section:", section.questions.length, "questions");
+        
+        // Clean up any malformed questions
+        const validQuestions = section.questions.filter((q: any) => 
+          q && typeof q === 'object' && (q.question || q.text)
+        ).map((q: any) => ({
+          question: q.question || q.text || "Discussion question",
+          level: q.level || "basic",
+          focusVocabulary: q.focusVocabulary || q.vocabulary || [],
+          followUp: q.followUp || [],
+          paragraphContext: q.paragraphContext || q.context || "",
+          topic: q.topic || ""
+        }));
+        
+        // If we have valid questions use them
+        if (validQuestions.length > 0 && validQuestions[0].question !== 'question') {
+          questions = validQuestions;
+          console.log("Using questions array with", questions.length, "valid questions");
+          return;
+        }
       }
     }
     
@@ -125,9 +156,10 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
       
       for (const questionText in section.questions) {
         if (typeof questionText === 'string' && questionText.trim()) {
+          const qLevel = questionText.includes('critical') ? 'critical' : 'basic';
           extractedQuestions.push({
             question: questionText,
-            level: questionText.includes('critical') ? 'critical' : 'basic',
+            level: qLevel as "basic" | "critical",
             focusVocabulary: [],
             followUp: []
           });
@@ -149,10 +181,11 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
           typeof section[key] === "object"
         ) {
           // This might be a question object
-          const question = section[key];
+          const question: any = section[key];
+          const qLevel = question.level || (key.includes("critical") ? "critical" : "basic");
           extractedQuestions.push({
             question: question.question || question.text || key,
-            level: question.level || (key.includes("critical") ? "critical" : "basic"),
+            level: qLevel as "basic" | "critical",
             topic: question.topic || question.context,
             focusVocabulary: question.focusVocabulary || question.vocabulary || [],
             followUp: question.followUp || question.followUpQuestions || [],
@@ -203,9 +236,10 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
             }
           }
           
+          const qLevel = key.toLowerCase().includes("critical") ? "critical" : "basic";
           extractedQuestions.push({
             question: key,
-            level: key.toLowerCase().includes("critical") ? "critical" : "basic",
+            level: qLevel as "basic" | "critical",
             focusVocabulary: vocabWords,
             followUp: typeof section[key] === "string" ? [section[key]] : []
           });
