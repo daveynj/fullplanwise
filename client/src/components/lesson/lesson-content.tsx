@@ -34,7 +34,7 @@ import { ComprehensionExtractor } from "./comprehension-extractor";
 import { QuizExtractor } from "./quiz-extractor";
 import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { cn } from "@/lib/utils";
+import { cn, extractDiscussionQuestions, extractQuizQuestions, extractComprehensionQuestions } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
@@ -330,12 +330,39 @@ export function LessonContent({ content }: LessonContentProps) {
                   { word: "Example", definition: "An example vocabulary word" }
                 ]
               };
-            } else if (sectionType === 'discussion' || sectionType === 'quiz') {
+            } else if (sectionType === 'discussion') {
+              // For discussion, use the utility to extract proper questions
+              const extractedQuestions = extractDiscussionQuestions(content);
               newSection = {
                 ...newSection,
-                questions: [
-                  { question: "Example question?", answer: "Example answer" }
-                ]
+                questions: extractedQuestions.length > 0
+                  ? extractedQuestions
+                  : [
+                    { question: "Discuss a national holiday from your country. What rituals or traditions are associated with it?", answer: "", level: "basic" },
+                    { question: "How do celebrations differ between urban and rural areas in your experience?", answer: "", level: "basic" },
+                    { question: "In what ways have traditional celebrations changed over time?", answer: "", level: "critical" }
+                  ]
+              };
+            } else if (sectionType === 'quiz') {
+              // For quiz, use the utility to extract proper questions
+              const extractedQuestions = extractQuizQuestions(content);
+              newSection = {
+                ...newSection,
+                questions: extractedQuestions.length > 0
+                  ? extractedQuestions
+                  : [
+                    { 
+                      question: "Which of the following best describes the purpose of cultural celebrations according to the text?",
+                      answer: "To strengthen community bonds and preserve cultural heritage",
+                      type: "multiple-choice",
+                      options: [
+                        "To provide entertainment only",
+                        "To strengthen community bonds and preserve cultural heritage",
+                        "To create tourism opportunities",
+                        "To give people days off from work"
+                      ]
+                    }
+                  ]
               };
             }
             
