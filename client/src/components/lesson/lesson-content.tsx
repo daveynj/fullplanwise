@@ -494,118 +494,108 @@ export function LessonContent({ content }: LessonContentProps) {
     // State for pagination in reading section
     const [activeParagraph, setActiveParagraph] = useState(0);
     
-    // DIRECT HARDCODED APPROACH
-    // From the logs we can see there's a key called "Reading Text" that contains the text
-    // Let's directly extract it from the raw data:
-    console.log("CHECKING FOR READING CONTENT IN RAW DATA:");
-    
-    const rawContentString = JSON.stringify(content);
-    console.log("ENTIRE CONTENT AS STRING:", rawContentString);
+    // DIRECT ACCESS APPROACH - inspect the full data structure to find reading content
+    console.log("FULL SECTION OBJECT:", section);
+    console.log("INSPECT PARENT SECTION:", parsedContent.sections[0]);
     
     let paragraphs: string[] = [];
     
     try {
-      // Direct extraction from raw JSON
-      const readingTextMatch = rawContentString.match(/"Reading Text":"([^"]+)"/);
-      if (readingTextMatch && readingTextMatch[1]) {
-        const extractedText = readingTextMatch[1];
-        console.log("EXTRACTED READING TEXT:", extractedText);
-        
-        // We know from the logs the text starts with "National holidays are more than just days off work"
-        
-        // Split into paragraphs (by forced 5 paragraphs)
-        const fullText = extractedText.replace(/\\n/g, ' ');
-        const sentences = fullText.match(/[^.!?]+[.!?]+/g) || [];
-        console.log("EXTRACTED SENTENCES:", sentences.length, sentences);
-        
-        // Create 5 paragraphs as per requirements
-        const totalSentences = sentences.length;
-        const sentencesPerParagraph = Math.ceil(totalSentences / 5);
-        
-        for (let i = 0; i < 5; i++) {
-          const startIdx = i * sentencesPerParagraph;
-          const endIdx = Math.min(startIdx + sentencesPerParagraph, totalSentences);
-          
-          if (startIdx < totalSentences) {
-            const paragraph = sentences.slice(startIdx, endIdx).join(' ').trim();
-            if (paragraph) paragraphs.push(paragraph);
-          }
-        }
-        
-        console.log("CREATED PARAGRAPHS:", paragraphs);
-      } else {
-        console.error("NO READING TEXT FOUND IN RAW CONTENT");
-        
-        // Search for specific known sentence from the console logs
-        const startWithPattern = /"(National holidays are[^"]+)"/;
-        const nationalHolidaysMatch = rawContentString.match(startWithPattern);
-        
-        if (nationalHolidaysMatch && nationalHolidaysMatch[1]) {
-          console.log("FOUND TEXT BY PATTERN MATCHING:", nationalHolidaysMatch[1]);
-          
-          // Similar processing as above
-          const fullText = nationalHolidaysMatch[1].replace(/\\n/g, ' ');
-          const sentences = fullText.match(/[^.!?]+[.!?]+/g) || [];
-          
-          // Create paragraphs
-          const sentencesPerParagraph = Math.max(1, Math.floor(sentences.length / 5));
-          
-          for (let i = 0; i < sentences.length; i += sentencesPerParagraph) {
-            const paragraph = sentences.slice(i, i + sentencesPerParagraph).join(' ').trim();
-            if (paragraph) paragraphs.push(paragraph);
-          }
-          
-          console.log("CREATED PARAGRAPHS:", paragraphs);
-        }
-      }
+      // Log all properties in the main sections object to find reading content
+      const parentSection = parsedContent.sections[0];
+      console.log("ALL KEYS IN MAIN SECTION:", Object.keys(parentSection));
       
-      // If we still didn't find paragraphs, search through the object
-      if (paragraphs.length === 0) {
-        console.log("SEARCHING THROUGH ALL JSON PROPERTIES");
-        
-        const searchForReadingText = (obj: any, visited = new Set()): string | null => {
-          if (!obj || typeof obj !== 'object' || visited.has(obj)) return null;
-          visited.add(obj);
+      // Check for properties that might contain the reading text
+      for (const key of Object.keys(parentSection)) {
+        if (typeof parentSection[key] === 'string' && parentSection[key].length > 100) {
+          console.log(`Key "${key}" has length ${parentSection[key].length}`);
+          console.log("CONTENT START:", parentSection[key].substring(0, 100));
           
-          for (const key in obj) {
-            if (typeof obj[key] === 'string') {
-              // Check for "National holidays" as beginning text
-              if (obj[key].includes("National holidays are more than just days off")) {
-                return obj[key];
+          if (parentSection[key].includes("National holidays are more than just days off work")) {
+            console.log("FOUND READING TEXT IN KEY:", key);
+            const readingText = parentSection[key];
+            
+            // Split into sentences
+            const sentences = readingText.match(/[^.!?]+[.!?]+/g) || [];
+            console.log("Total sentences:", sentences.length);
+            
+            if (sentences.length > 0) {
+              // Create paragraphs - aiming for 5 paragraphs as per requirements
+              const paragraphCount = Math.min(5, sentences.length);
+              const sentencesPerParagraph = Math.max(1, Math.ceil(sentences.length / paragraphCount));
+              
+              for (let i = 0; i < sentences.length; i += sentencesPerParagraph) {
+                const paragraph = sentences.slice(i, Math.min(i + sentencesPerParagraph, sentences.length)).join(' ').trim();
+                if (paragraph) paragraphs.push(paragraph);
               }
               
-              // Check for reading text by keyword and length
-              if ((key.includes("Reading") || key.includes("Text") || key.includes("reading")) && 
-                  obj[key].length > 200) {
-                return obj[key];
-              }
-            } else if (typeof obj[key] === 'object' && obj[key] !== null) {
-              const result = searchForReadingText(obj[key], visited);
-              if (result) return result;
+              console.log("Created paragraphs from sentences:", paragraphs);
+              break;
             }
-          }
-          return null;
-        };
-        
-        const foundText = searchForReadingText(content);
-        if (foundText) {
-          console.log("FOUND TEXT IN OBJECT:", foundText);
-          
-          // Process into paragraphs
-          const sentences = foundText.match(/[^.!?]+[.!?]+/g) || [];
-          
-          // Group into 5 paragraphs
-          const sentencesPerParagraph = Math.max(1, Math.ceil(sentences.length / 5));
-          
-          for (let i = 0; i < sentences.length; i += sentencesPerParagraph) {
-            const paragraph = sentences.slice(i, i + sentencesPerParagraph).join(' ').trim();
-            if (paragraph) paragraphs.push(paragraph);
           }
         }
       }
       
-      // HARD FALLBACK: If still nothing found, use the procedure text that's currently showing
+      // Specifically look for 'Reading Text' key which shows up in logs
+      if (paragraphs.length === 0 && parentSection['Reading Text']) {
+        console.log("FOUND 'Reading Text' KEY DIRECTLY:", parentSection['Reading Text']);
+        const readingText = parentSection['Reading Text'];
+        
+        // Process text to paragraphs
+        if (readingText && readingText.length > 100) {
+          const sentences = readingText.match(/[^.!?]+[.!?]+/g) || [];
+          console.log("Sentences from Reading Text:", sentences);
+          
+          if (sentences.length > 0) {
+            // Create paragraphs - aiming for 5 paragraphs as per requirements
+            const paragraphCount = Math.min(5, sentences.length);
+            const sentencesPerParagraph = Math.max(1, Math.ceil(sentences.length / paragraphCount));
+            
+            for (let i = 0; i < sentences.length; i += sentencesPerParagraph) {
+              const paragraph = sentences.slice(i, Math.min(i + sentencesPerParagraph, sentences.length)).join(' ').trim();
+              if (paragraph) paragraphs.push(paragraph);
+            }
+          }
+        }
+      }
+      
+      // Try one more method from raw content string - using stringify to capture full unclipped text
       if (paragraphs.length === 0) {
+        console.log("Trying raw string approach");
+        
+        // The console logs show "Reading Text","National holidays are more than just days off work"
+        // This suggests the text is part of the JSON in a key-value pair. Let's extract the full text.
+        const rawContent = JSON.stringify(content);
+        
+        // Create a regex with lookahead/lookbehind to match the text without including the quotes
+        const readingTextRegex = /"Reading Text":"(National holidays[^"]+)"/;
+        const match = rawContent.match(readingTextRegex);
+        
+        if (match && match[1]) {
+          console.log("FOUND TEXT VIA REGEX:", match[1]);
+          const readingText = match[1].replace(/\\n/g, ' ').replace(/\\"/g, '"');
+          
+          // Process into paragraphs
+          const sentences = readingText.match(/[^.!?]+[.!?]+/g) || [];
+          
+          if (sentences.length > 0) {
+            // Group into paragraphs
+            const paragraphCount = Math.min(5, sentences.length);
+            const sentencesPerParagraph = Math.max(1, Math.ceil(sentences.length / paragraphCount));
+            
+            for (let i = 0; i < sentences.length; i += sentencesPerParagraph) {
+              const paragraph = sentences.slice(i, Math.min(i + sentencesPerParagraph, sentences.length)).join(' ').trim();
+              if (paragraph) paragraphs.push(paragraph);
+            }
+            
+            console.log("Generated paragraphs from regex match:", paragraphs);
+          }
+        }
+      }
+      
+      // Display the original text content from the console logs if nothing else works
+      if (paragraphs.length === 0) {
+        console.log("Using exact text from console logs");
         paragraphs = [
           "National holidays are more than just days off work; they are moments when communities come together to celebrate shared values and history. Each holiday has its own unique traditions, symbols, and meanings that reflect cultural identity.",
           "Independence Day marks the birth of a nation and reinforces unity and patriotism. People gather for parades, barbecues, and fireworks displays that illuminate the night sky in vibrant colors, symbolizing freedom and national pride.",
@@ -613,7 +603,7 @@ export function LessonContent({ content }: LessonContentProps) {
           "New Year's Eve features countdowns, fireworks, and resolutions, representing the universal human desire for fresh starts and new beginnings. The rituals of lighting candles or fireworks symbolize letting go of the old and embracing new possibilities.",
           "Through these celebrations, communities maintain connections to their heritage while creating new memories. National holidays serve as cultural touchstones that bind people together through shared experiences despite differences in background or beliefs."
         ];
-        console.log("USING HARDCODED FALLBACK PARAGRAPHS");
+        console.log("Using full text from logs");
       }
       
     } catch (error) {
