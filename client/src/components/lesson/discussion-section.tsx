@@ -33,7 +33,26 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
   let questions: DiscussionQuestion[] = [];
 
   try {
+    // Add more detailed debugging to understand the structure
     console.log("Discussion section structure:", JSON.stringify(section, null, 2));
+    
+    // Check the structure of the entire content object (the parent of this section)
+    console.log("Discussion section keys:", Object.keys(section));
+    if (section.questions) {
+      console.log("Discussion questions type:", typeof section.questions);
+      
+      if (typeof section.questions === "object" && !Array.isArray(section.questions)) {
+        console.log("Questions object keys:", Object.keys(section.questions));
+      }
+    }
+    
+    // Check for direct question-like keys in the section
+    const questionLikeKeys = Object.keys(section).filter(key => 
+      key.includes("?") || ["What", "Why", "How", "Which", "Where", "When"].some(w => key.includes(w))
+    );
+    if (questionLikeKeys.length > 0) {
+      console.log("Found question-like keys in section:", questionLikeKeys);
+    }
     
     // Attempt to extract questions from various possible formats
     if (section.questions && Array.isArray(section.questions)) {
