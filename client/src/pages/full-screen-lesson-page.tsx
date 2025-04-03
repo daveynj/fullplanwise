@@ -29,192 +29,60 @@ export default function FullScreenLessonPage() {
   useEffect(() => {
     if (lesson && lesson.content) {
       try {
-        // Special case for lesson ID 18
-        if (lesson.id === 18) {
-          console.log("DETECTED LESSON ID 18 - USING SPECIAL HANDLING");
-          
-          // Define the known comprehension and discussion sections for this specific lesson
-          const celebrationsHolidaysComprehension = {
-            type: "comprehension",
-            title: "Reading Comprehension",
-            questions: [
-              {
-                question: "What does the text suggest is the primary purpose of Independence Day celebrations?",
-                answer: "The text explicitly states that Independence Day marks the birth of a nation and reinforces unity and patriotism."
-              },
-              {
-                question: "According to the text, what is the symbolic meaning behind New Year's Eve rituals?",
-                answer: "The text explains that rituals during New Year's Eve, such as countdowns and lighting candles, represent letting go of the old and embracing new beginnings."
-              },
-              {
-                question: "Based on the text, which statement would the author likely agree with regarding religious festivals?",
-                answer: "The author would likely agree that religious festivals serve both spiritual and cultural functions by reinforcing shared values within communities."
-              },
-              {
-                question: "How does the text characterize the evolution of national holidays over time?",
-                answer: "The text suggests that national holidays have evolved from purely ceremonial commemorations to events that blend tradition with modern elements of entertainment and commerce."
-              },
-              {
-                question: "Which of the following best expresses the author's view on the commercialization of holidays?",
-                answer: "The author expresses concern that commercialization can diminish the deeper significance of holidays while acknowledging it's now an integral part of modern celebrations."
-              }
-            ]
-          };
-          
-          const celebrationsHolidaysDiscussion = {
-            type: "discussion",
-            title: "Post-reading Discussion",
-            introduction: "Discuss these questions to deepen understanding of the reading, using the vocabulary from this lesson when appropriate.",
-            questions: [
-              {
-                question: "How have national holidays evolved in your country over the past few decades?",
-                level: "basic",
-                focusVocabulary: ["heritage", "ritual"],
-                followUp: ["Have any new holidays been added or older ones changed significantly? Why do you think these changes occurred?"]
-              },
-              {
-                question: "To what extent do you think the commercialization of holidays affects their cultural significance?",
-                level: "critical",
-                focusVocabulary: ["festivity", "commemorate"],
-                followUp: ["Do you think the commercial aspects enhance or detract from the holiday experience? Why?"]
-              },
-              {
-                question: "What rituals or traditions do you think are most important to preserve in national celebrations?",
-                level: "basic",
-                focusVocabulary: ["ritual", "heritage"],
-                followUp: ["Why do these particular traditions matter? What would be lost if they disappeared?"]
-              },
-              {
-                question: "How do patriotic celebrations differ across different countries you're familiar with?",
-                level: "critical",
-                focusVocabulary: ["patriotic", "commemorate"],
-                followUp: ["What factors might explain these differences in how nations celebrate their history?"]
-              },
-              {
-                question: "In what ways might national holidays serve different purposes for different generations?",
-                level: "critical",
-                focusVocabulary: ["heritage", "ritual", "festivity"],
-                followUp: ["How might younger people experience these celebrations differently from older generations?"]
-              }
-            ]
-          };
-          
-          // Process content based on type
-          if (typeof lesson.content === 'string') {
-            try {
-              // Parse the string content
-              const parsed = JSON.parse(lesson.content);
-              
-              // Add or replace the comprehension and discussion sections
-              if (parsed.sections && Array.isArray(parsed.sections)) {
-                // Remove any existing comprehension or discussion sections
-                parsed.sections = parsed.sections.filter((s: any) => 
-                  s.type !== 'comprehension' && s.type !== 'discussion');
-                
-                // Add our known sections
-                parsed.sections.push(celebrationsHolidaysComprehension);
-                parsed.sections.push(celebrationsHolidaysDiscussion);
-              } else {
-                // If no sections array, create one
-                parsed.sections = [
-                  celebrationsHolidaysComprehension,
-                  celebrationsHolidaysDiscussion
-                ];
-              }
-              
-              // Set the enhanced content
-              console.log("ENHANCED LESSON 18 CONTENT:", parsed);
-              setParsedContent(parsed);
-            } catch (jsonError) {
-              console.error("Error parsing Lesson 18 JSON string:", jsonError);
-              const fallbackContent = {
-                title: lesson.title,
-                sections: [
-                  celebrationsHolidaysComprehension,
-                  celebrationsHolidaysDiscussion
-                ]
-              };
-              setParsedContent(fallbackContent);
-            }
-          } else {
-            // It's already an object
-            const contentObj = {...lesson.content};
+        // Handle both string and object formats consistently
+        if (typeof lesson.content === 'string') {
+          try {
+            // Try to parse it as JSON
+            console.log("LESSON CONTENT (STRING):", lesson.content.substring(0, 500) + "...");
+            const parsed = JSON.parse(lesson.content);
+            console.log("PARSED LESSON CONTENT (FIRST 100 KEYS):", 
+              Object.keys(parsed).slice(0, 100));
             
-            // Add or replace the comprehension and discussion sections
-            if (contentObj.sections && Array.isArray(contentObj.sections)) {
-              // Remove any existing comprehension or discussion sections
-              contentObj.sections = contentObj.sections.filter((s: any) => 
-                s.type !== 'comprehension' && s.type !== 'discussion');
-              
-              // Add our known sections
-              contentObj.sections.push(celebrationsHolidaysComprehension);
-              contentObj.sections.push(celebrationsHolidaysDiscussion);
-            } else {
-              // If no sections array, create one
-              contentObj.sections = [
-                celebrationsHolidaysComprehension,
-                celebrationsHolidaysDiscussion
-              ];
-            }
-            
-            // Set the enhanced content
-            console.log("ENHANCED LESSON 18 CONTENT:", contentObj);
-            setParsedContent(contentObj);
-          }
-        } else {
-          // Normal case for all other lessons
-          if (typeof lesson.content === 'string') {
-            try {
-              // Try to parse it as JSON
-              console.log("LESSON CONTENT (STRING):", lesson.content.substring(0, 500) + "...");
-              const parsed = JSON.parse(lesson.content);
-              console.log("PARSED LESSON CONTENT (FIRST 100 KEYS):", 
-                Object.keys(parsed).slice(0, 100));
-              
-              if (parsed.sections && Array.isArray(parsed.sections)) {
-                console.log("SECTIONS TYPES:", parsed.sections.map((s: any) => s.type));
-                // Log the comprehension and discussion sections
-                const comprehensionSection = parsed.sections.find((s: any) => s.type === 'comprehension');
-                const discussionSection = parsed.sections.find((s: any) => s.type === 'discussion');
-                
-                console.log("COMPREHENSION SECTION:", comprehensionSection ? 
-                   JSON.stringify(comprehensionSection).substring(0, 500) : "Not found");
-                console.log("DISCUSSION SECTION:", discussionSection ? 
-                   JSON.stringify(discussionSection).substring(0, 500) : "Not found");
-              }
-              
-              setParsedContent(parsed);
-            } catch (jsonError) {
-              console.error("Error parsing JSON string:", jsonError);
-              setParsedContent({ 
-                title: lesson.title,
-                sections: [{ 
-                  type: 'error', 
-                  content: 'Error parsing lesson content' 
-                }] 
-              });
-            }
-          } else {
-            // It's already an object (from direct API response)
-            console.log("LESSON CONTENT (OBJECT):", 
-              JSON.stringify(lesson.content).substring(0, 500) + "...");
-            console.log("CONTENT KEYS:", Object.keys(lesson.content).slice(0, 100));
-            
-            // Check for sections
-            if (lesson.content.sections && Array.isArray(lesson.content.sections)) {
-              console.log("SECTIONS TYPES:", lesson.content.sections.map((s: any) => s.type));
-              const comprehensionSection = lesson.content.sections.find((s: any) => s.type === 'comprehension');
-              const discussionSection = lesson.content.sections.find((s: any) => s.type === 'discussion');
+            if (parsed.sections && Array.isArray(parsed.sections)) {
+              console.log("SECTIONS TYPES:", parsed.sections.map((s: any) => s.type));
+              // Log the comprehension and discussion sections
+              const comprehensionSection = parsed.sections.find((s: any) => s.type === 'comprehension');
+              const discussionSection = parsed.sections.find((s: any) => s.type === 'discussion');
               
               console.log("COMPREHENSION SECTION:", comprehensionSection ? 
-                JSON.stringify(comprehensionSection).substring(0, 500) : "Not found");
+                 JSON.stringify(comprehensionSection).substring(0, 500) : "Not found");
               console.log("DISCUSSION SECTION:", discussionSection ? 
-                JSON.stringify(discussionSection).substring(0, 500) : "Not found");
+                 JSON.stringify(discussionSection).substring(0, 500) : "Not found");
             }
             
-            setParsedContent(lesson.content);
+            setParsedContent(parsed);
+          } catch (jsonError) {
+            console.error("Error parsing JSON string:", jsonError);
+            setParsedContent({ 
+              title: lesson.title,
+              sections: [{ 
+                type: 'error', 
+                content: 'Error parsing lesson content' 
+              }] 
+            });
           }
+        } else {
+          // It's already an object (from direct API response)
+          console.log("LESSON CONTENT (OBJECT):", 
+            JSON.stringify(lesson.content).substring(0, 500) + "...");
+          console.log("CONTENT KEYS:", Object.keys(lesson.content).slice(0, 100));
+          
+          // Check for sections
+          const lessonContent = lesson.content as any;
+          if (lessonContent.sections && Array.isArray(lessonContent.sections)) {
+            console.log("SECTIONS TYPES:", lessonContent.sections.map((s: any) => s.type));
+            const comprehensionSection = lessonContent.sections.find((s: any) => s.type === 'comprehension');
+            const discussionSection = lessonContent.sections.find((s: any) => s.type === 'discussion');
+            
+            console.log("COMPREHENSION SECTION:", comprehensionSection ? 
+              JSON.stringify(comprehensionSection).substring(0, 500) : "Not found");
+            console.log("DISCUSSION SECTION:", discussionSection ? 
+              JSON.stringify(discussionSection).substring(0, 500) : "Not found");
+          }
+          
+          setParsedContent(lessonContent);
         }
+        
       } catch (e) {
         console.error("Unexpected error handling content:", e);
         setParsedContent({ 
@@ -393,7 +261,7 @@ export default function FullScreenLessonPage() {
               <div className="bg-gray-50 rounded-lg p-4 mb-4">
                 <h3 className="font-semibold mb-2">Student Background</h3>
                 <p>
-                  {parsedContent?.teacherNotes || 
+                  {(parsedContent as any)?.teacherNotes || 
                    `This lesson is designed for ${lesson.cefrLevel} level students. Focus on helping them use the new vocabulary actively in discussion.`}
                 </p>
               </div>
