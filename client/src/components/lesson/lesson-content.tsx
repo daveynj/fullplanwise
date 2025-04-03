@@ -1760,10 +1760,12 @@ export function LessonContent({ content }: LessonContentProps) {
     return parsedContent.sections.some((s: any) => s && s.type === type);
   };
   
-  // Check for specific section types
-  if (hasSectionType("warmup") || hasSectionType("warm-up")) {
-    availableSections.push("warmup");
-  }
+  // Always add warmup section as the first tab (regardless of whether the type exists)
+  // This ensures the warm-up tab is always present and appears first
+  availableSections.push("warmup");
+  
+  // Also identify if there's a warmup/warm-up section for reference
+  const hasWarmupSection = hasSectionType("warmup") || hasSectionType("warm-up") || hasSectionType("sentenceFrames");
   
   if (hasSectionType("reading")) {
     availableSections.push("reading");
