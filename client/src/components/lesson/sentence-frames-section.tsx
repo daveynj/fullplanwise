@@ -25,34 +25,165 @@ interface SentenceFrame {
 export function SentenceFramesSection({ section }: SentenceFrameSectionProps) {
   if (!section) return <p>No sentence frames content available</p>;
   
-  // Define predefined sentence frames based on the template design
-  const predefinedFrames: SentenceFrame[] = [
-    {
-      title: "Expressing and justifying opinions",
-      level: "intermediate",
-      pattern: "I think _____ is important because _____, and it also helps people to _____.",
-      examples: [
-        "I think festivals are important because they bring people together, and it also helps people to learn about their culture.",
-        "I think celebrations are important because they make us happy, and it also helps people to relax after hard work."
-      ],
-      usage: "Use this pattern to express opinions about why certain events matter.",
-      grammarFocus: "Present simple tense with opinion expressions and causal conjunctions"
-    },
-    {
-      title: "Describing past experiences and emotions",
-      level: "intermediate",
-      pattern: "When I went to _____, I saw _____, and it made me feel _____.",
-      examples: [
-        "When I went to the Lunar New Year celebration, I saw traditional dragon dances, and it made me feel excited.",
-        "When I went to my friend's wedding ceremony, I saw beautiful decorations, and it made me feel joyful."
-      ],
-      usage: "Use this pattern to share personal experiences related to celebrations.",
-      grammarFocus: "Past simple tense with emotional responses"
-    }
-  ];
+  // Extract frames from the section data
+  let frames: SentenceFrame[] = [];
   
-  // Use our predefined frames for consistent display
-  const frames = predefinedFrames;
+  try {
+    // Check different possible structures and ensure we have a valid array
+    if (section.frames && Array.isArray(section.frames) && section.frames.length > 0) {
+      frames = section.frames;
+    } else if (section.sentenceFrames && Array.isArray(section.sentenceFrames) && section.sentenceFrames.length > 0) {
+      // Some APIs return sentence frames in a property called 'sentenceFrames'
+      frames = section.sentenceFrames;
+    } else if (section.frames && typeof section.frames === 'object' && !Array.isArray(section.frames)) {
+      // Handle case where frames is an object instead of an array (malformed JSON structure)
+      console.log("Found frames as an object, converting to array", section.frames);
+      const framesArray: SentenceFrame[] = [];
+      for (const key in section.frames) {
+        if (typeof section.frames[key] === 'object') {
+          framesArray.push({
+            title: key,
+            level: section.frames[key].level || "intermediate",
+            pattern: section.frames[key].pattern || key,
+            examples: Array.isArray(section.frames[key].examples) 
+              ? section.frames[key].examples 
+              : [section.frames[key].examples || ""],
+            usage: section.frames[key].usage,
+            grammarFocus: section.frames[key].grammarFocus
+          });
+        }
+      }
+      frames = framesArray;
+    } else if (section.examples) {
+      // Try to handle examples in different formats
+      if (Array.isArray(section.examples)) {
+        frames = [{ 
+          title: "Example Patterns",
+          level: "intermediate",
+          pattern: section.examples.join("\n"), 
+          examples: section.examples
+        }];
+      } else if (typeof section.examples === 'string') {
+        frames = [{ 
+          title: "Example Pattern",
+          level: "intermediate",
+          pattern: section.examples, 
+          examples: [section.examples]
+        }];
+      } else if (typeof section.examples === 'object') {
+        // Handle case where examples is an object
+        const examplesArray = [];
+        for (const key in section.examples) {
+          if (typeof section.examples[key] === 'string') {
+            examplesArray.push(section.examples[key]);
+          }
+        }
+        frames = [{ 
+          title: "Example Patterns",
+          level: "intermediate",
+          pattern: "Example sentences", 
+          examples: examplesArray
+        }];
+      }
+    } else if (section.content && typeof section.content === 'string') {
+      // Try to extract from content string if it contains patterns
+      const contentLines = section.content.split('\n');
+      const extractedFrames: SentenceFrame[] = [];
+      let currentFrame: Partial<SentenceFrame> = { 
+        title: "Extracted Pattern",
+        level: "intermediate", 
+        examples: [] 
+      };
+      
+      for (const line of contentLines) {
+        if (line.includes("Pattern:") || line.includes("Frame:")) {
+          // If we found a new pattern and already have one, save the current and start a new one
+          if (currentFrame.pattern) {
+            extractedFrames.push(currentFrame as SentenceFrame);
+            currentFrame = { 
+              title: "Extracted Pattern",
+              level: "intermediate", 
+              examples: [] 
+            };
+          }
+          currentFrame.pattern = line.split(":")[1]?.trim() || line;
+        } else if (line.includes("Example:") || line.startsWith("- ")) {
+          // Add to examples for the current pattern
+          const example = line.replace(/^- |Example: ?/i, '').trim();
+          if (example && currentFrame.examples) {
+            currentFrame.examples.push(example);
+          }
+        } else if (line.includes("Difficulty:") || line.includes("Level:")) {
+          currentFrame.level = line.split(":")[1]?.trim().toLowerCase() as "basic" | "intermediate" | "advanced" || "intermediate";
+        } else if (line.includes("Usage:")) {
+          currentFrame.usage = line.split(":")[1]?.trim() || "";
+        } else if (line.includes("Grammar:") || line.includes("Focus:")) {
+          currentFrame.grammarFocus = line.split(":")[1]?.trim() || "";
+        }
+      }
+      
+      // Add the last frame if it has a pattern
+      if (currentFrame.pattern && currentFrame.examples?.length) {
+        extractedFrames.push(currentFrame as SentenceFrame);
+      }
+      
+      if (extractedFrames.length > 0) {
+        frames = extractedFrames;
+      }
+    }
+    
+    // If we still don't have any frames, use targetVocabulary to create some
+    if (frames.length === 0 && section.targetVocabulary) {
+      let targetVocabulary: string[] = [];
+      if (Array.isArray(section.targetVocabulary)) {
+        targetVocabulary = section.targetVocabulary;
+      } else if (typeof section.targetVocabulary === 'string') {
+        targetVocabulary = [section.targetVocabulary];
+      } else if (typeof section.targetVocabulary === 'object') {
+        // Extract keys from targetVocabulary object
+        targetVocabulary = Object.keys(section.targetVocabulary);
+      }
+      
+      if (targetVocabulary.length > 0) {
+        // Create frames using the vocabulary words
+        const firstWord = targetVocabulary[0] || '___';
+        const secondWord = targetVocabulary.length > 1 ? targetVocabulary[1] : '___';
+        
+        frames = [
+          {
+            title: "Using target vocabulary",
+            level: "intermediate",
+            pattern: `I think ${firstWord} is important because _____, and it also helps people to _____.`,
+            examples: [
+              `I think ${firstWord} is important because it brings communities together, and it also helps people to celebrate their heritage.`,
+            ]
+          },
+          {
+            title: "More advanced structure",
+            level: "advanced",
+            pattern: `Despite [subject] [verb], [subject] [verb] ${secondWord}.`,
+            examples: [
+              `Despite the changes in how we celebrate, many traditions remain ${secondWord}.`
+            ]
+          }
+        ];
+      }
+    }
+  } catch (error) {
+    console.error("Error processing sentence frames:", error);
+  }
+  
+  // If we still have no frames, provide an informative message
+  if (frames.length === 0) {
+    frames = [
+      {
+        title: "No frames found",
+        level: "intermediate",
+        pattern: "No sentence frames were found in the content. Please check the API response.",
+        examples: ["Sample sentence that would go here."]
+      }
+    ];
+  }
 
   return (
     <div className="space-y-6">
