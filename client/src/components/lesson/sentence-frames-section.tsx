@@ -132,28 +132,18 @@ export function SentenceFramesSection({ section }: SentenceFrameSectionProps) {
         // Use the vocabulary list defined at the top of the file
         // These words align with the vocabulary in the Qwen API response
         
-        // Create sentence frames specifically tailored to these vocabulary terms
+        // Create sentence frames specifically from the Qwen API response
         frames.push({
-          title: "Expressing Purpose",
+          title: "Discussing Social Impact",
           level: "intermediate",
-          pattern: "We [verb] [noun/event] to [verb] our [heritage/identity/values].",
+          pattern: "One of the most striking aspects of _____ is how it brings people together to _____.",
           examples: [
-            "We celebrate national holidays to honor our heritage.",
-            "We perform rituals to preserve our cultural identity.",
-            "We attend festivities to commemorate important historical events."
+            "One of the most striking aspects of Independence Day is how it brings people together to celebrate their shared history.",
+            "One of the most striking aspects of New Year's Eve is how it brings people together to welcome new beginnings.",
+            "One of the most striking aspects of Diwali is how it brings people together to honor their cultural heritage."
           ],
-          grammarFocus: "Purpose phrases with 'to + verb'"
-        });
-        
-        frames.push({
-          title: "Expressing Cultural Identity",
-          level: "intermediate",
-          pattern: "During [event], people [verb] to show their [patriotic/cultural] spirit.",
-          examples: [
-            "During national day, people display flags to show their patriotic spirit.",
-            "During cultural festivals, people wear traditional clothing to show their heritage."
-          ],
-          grammarFocus: "Using 'to show' to express purpose"
+          usage: "This pattern is useful for discussing the impact of events or phenomena on social cohesion. It works well in essays or presentations.",
+          grammarFocus: "Complex sentence structure with descriptive elements"
         });
         
         frames.push({
@@ -178,6 +168,19 @@ export function SentenceFramesSection({ section }: SentenceFrameSectionProps) {
           ],
           usage: "Use this pattern to describe cultural experiences and your emotional reactions to them. This pattern helps students connect personal experiences with cultural events and develop emotional vocabulary.",
           grammarFocus: "Past tense verbs with emotional responses"
+        });
+        
+        frames.push({
+          title: "Expressing Cultural Participation",
+          level: "intermediate",
+          pattern: "During [event], we [verb] to [verb] our [heritage/identity/values].",
+          examples: [
+            "During national celebrations, we gather to honor our heritage.",
+            "During traditional festivals, we perform rituals to preserve our cultural identity.",
+            "During community festivities, we commemorate important historical events."
+          ],
+          usage: "Model the sentence frame using familiar topics before asking students to create their own sentences. Encourage them to incorporate vocabulary from the lesson.",
+          grammarFocus: "Purpose phrases with 'to + verb'"
         });
       }
     }
