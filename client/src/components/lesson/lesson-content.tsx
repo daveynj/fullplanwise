@@ -1783,7 +1783,7 @@ export function LessonContent({ content }: LessonContentProps) {
           
           <TabsContent value="comprehension" className="m-0">
             {/* Use our specialized ComprehensionExtractor component */}
-            <ComprehensionExtractor content={content} />
+            <ComprehensionExtractor content={parsedContent} />
           </TabsContent>
           
           <TabsContent value="sentenceFrames" className="m-0">
@@ -1796,12 +1796,12 @@ export function LessonContent({ content }: LessonContentProps) {
           
           <TabsContent value="discussion" className="m-0">
             {/* Use our specialized DiscussionExtractor component */}
-            <DiscussionExtractor content={content} />
+            <DiscussionExtractor content={parsedContent} />
           </TabsContent>
           
           <TabsContent value="speaking" className="m-0">
             {/* Use our specialized DiscussionExtractor component with sectionType="speaking" */}
-            <DiscussionExtractor content={content} sectionType="speaking" />
+            <DiscussionExtractor content={parsedContent} sectionType="speaking" />
           </TabsContent>
           
           <TabsContent value="quiz" className="m-0">
