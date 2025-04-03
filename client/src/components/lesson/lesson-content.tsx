@@ -21,7 +21,9 @@ import {
   Bookmark as BookmarkIcon,
   Clock as ClockIcon,
   Info as InfoIcon,
-  Sparkles as SparklesIcon
+  Sparkles as SparklesIcon,
+  BookOpen as BookOpenIcon,
+  Book as BookIcon
 } from "lucide-react";
 import { ReadingSection } from "./reading-section";
 import { useState, useEffect } from "react";
@@ -430,42 +432,281 @@ export function LessonContent({ content }: LessonContentProps) {
     const section = findSection(sectionType);
     if (!section) return <p>No warm-up content available</p>;
 
+    // Extract or generate vocabulary words
+    let vocabWords: Array<{
+      word: string;
+      partOfSpeech?: string;
+      definition?: string;
+      example?: string;
+      pronunciation?: string;
+    }> = [];
+
+    // Get vocabulary words from targetVocabulary if available
+    if (section.targetVocabulary) {
+      console.log("Found targetVocabulary in section:", section.targetVocabulary);
+      
+      if (Array.isArray(section.targetVocabulary)) {
+        // If it's an array of strings, convert to objects
+        vocabWords = section.targetVocabulary.map((term: string) => ({
+          word: term,
+          partOfSpeech: "noun",
+          definition: "Definition not provided",
+          example: `Example using "${term}" in context.`,
+          pronunciation: "Pronunciation not provided"
+        }));
+      } 
+      else if (typeof section.targetVocabulary === 'object') {
+        // If it's an object mapping terms to definitions
+        const extractedWords = [];
+        
+        for (const term in section.targetVocabulary) {
+          if (typeof term === 'string' && term.trim()) {
+            extractedWords.push({
+              word: term,
+              partOfSpeech: "noun",
+              definition: section.targetVocabulary[term] || "Definition not provided",
+              example: `Example using "${term}" in context.`,
+              pronunciation: "Pronunciation not provided"
+            });
+          }
+        }
+        
+        if (extractedWords.length > 0) {
+          vocabWords = extractedWords;
+        }
+      }
+    }
+
+    // If we didn't find vocabulary words, try to extract from the content
+    if (vocabWords.length === 0 && section.content) {
+      const vocabPattern = /['"]([a-zA-Z]+)['"]|vocabulary\s+words.*?['"]([a-zA-Z]+)['"]/gi;
+      const matches = [...section.content.matchAll(vocabPattern)];
+      
+      if (matches.length > 0) {
+        vocabWords = matches.map(match => ({
+          word: (match[1] || match[2]),
+          partOfSpeech: "noun",
+          definition: "Definition extracted from content",
+          example: `Example using "${match[1] || match[2]}" in context.`,
+          pronunciation: "Pronunciation not provided"
+        }));
+      }
+    }
+
+    // Ensure we have at least some vocabulary words for the UI
+    if (vocabWords.length === 0) {
+      // Fallback to at least one word from the section title or content
+      const word = section.title?.split(' ').pop() || 'vocabulary';
+      vocabWords = [{
+        word,
+        partOfSpeech: "noun",
+        definition: "A collection of words used in a language.",
+        example: `Students will learn new ${word} in this lesson.`,
+        pronunciation: "voh-KAB-yuh-lair-ee"
+      }];
+    }
+
+    // Get or create discussion questions
+    let discussionQuestions: string[] = [];
+    if (section.questions) {
+      if (Array.isArray(section.questions)) {
+        discussionQuestions = section.questions;
+      } else if (typeof section.questions === 'object') {
+        // Extract questions from object format
+        discussionQuestions = Object.keys(section.questions)
+          .filter(q => typeof q === 'string' && q.trim().length > 0);
+      }
+    }
+    
+    // Ensure we have at least one discussion question
+    if (discussionQuestions.length === 0) {
+      discussionQuestions = [
+        "What kinds of celebrations do you know about?",
+        "What makes those celebrations special?"
+      ];
+    }
+
+    // Current vocabulary word index for pagination
+    const [currentWordIndex, setCurrentWordIndex] = useState(0);
+    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+    
+    // Navigation handlers
+    const goToPrevWord = () => {
+      setCurrentWordIndex(prev => (prev > 0 ? prev - 1 : vocabWords.length - 1));
+    };
+    
+    const goToNextWord = () => {
+      setCurrentWordIndex(prev => (prev < vocabWords.length - 1 ? prev + 1 : 0));
+    };
+
+    const currentWord = vocabWords[currentWordIndex] || vocabWords[0];
+    const totalWords = vocabWords.length;
+
     return (
       <div className="space-y-6">
-        <Card>
-          <CardHeader className="bg-amber-50">
+        {/* Warm-up Header Card */}
+        <Card className="border-amber-200 bg-amber-50">
+          <CardHeader>
             <CardTitle className="flex items-center gap-2 text-amber-700">
               <Flame className="h-5 w-5" />
-              {section.title || "Warm-up Activity"}
+              Warm-up
             </CardTitle>
-            <CardDescription>{section.content}</CardDescription>
+            <CardDescription>
+              Prepare students for the lesson with engaging activities
+            </CardDescription>
+          </CardHeader>
+        </Card>
+        
+        {/* Warm-up Content Card */}
+        <Card>
+          <CardHeader className="bg-amber-50 border-b border-amber-100">
+            <div className="flex justify-between items-center">
+              <CardTitle className="flex items-center gap-2 text-amber-700">
+                <Flame className="h-5 w-5" />
+                {section.title || "Exploring Celebrations Vocabulary"}
+              </CardTitle>
+              <div className="flex items-center text-sm text-amber-700">
+                <ClockIcon className="mr-1 h-4 w-4" />
+                5-10 minutes
+              </div>
+            </div>
           </CardHeader>
           <CardContent className="pt-6">
-            <div className="space-y-4">
-              {/* Display warm-up questions if available */}
-              {section.questions && Array.isArray(section.questions) && section.questions.length > 0 && (
-                <div className="space-y-2">
-                  {section.questions.map((question: string, idx: number) => (
-                    <div key={`question-${idx}`} className="p-4 border border-amber-200 bg-amber-50 rounded-md">
-                      <p>{question}</p>
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Left Column: Vocabulary Preview & Discussion */}
+              <div className="space-y-6">
+                {/* Key Vocabulary Preview */}
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-amber-800 font-medium flex items-center">
+                      <BookOpen className="mr-2 h-4 w-4" />
+                      Key Vocabulary Preview
+                    </h3>
+                    <span className="text-xs text-amber-600">
+                      All vocabulary words for this lesson
+                    </span>
+                  </div>
+                  
+                  {/* Image related to vocabulary */}
+                  <div className="relative aspect-video mb-4 rounded-md overflow-hidden border border-amber-200">
+                    {/* Placeholder image - in a real implementation, you would use an actual image */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center">
+                      <Image className="h-full w-full object-cover" />
                     </div>
-                  ))}
-                </div>
-              )}
-              
-              {/* Display target vocabulary if available */}
-              {section.targetVocabulary && Array.isArray(section.targetVocabulary) && section.targetVocabulary.length > 0 && (
-                <div className="mt-6">
-                  <p className="font-medium text-gray-700 mb-2">Key vocabulary to introduce:</p>
-                  <div className="flex flex-wrap gap-2">
-                    {section.targetVocabulary.map((word: string, idx: number) => (
-                      <Badge key={idx} variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">
-                        {word}
-                      </Badge>
-                    ))}
+                  </div>
+                  
+                  {/* Pagination Controls */}
+                  <div className="flex items-center justify-between bg-amber-50 rounded-md p-2 border border-amber-200">
+                    <button 
+                      onClick={goToPrevWord}
+                      className="p-2 text-amber-700 hover:bg-amber-100 rounded-md"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </button>
+                    <span className="text-sm font-medium">
+                      {currentWordIndex + 1} of {totalWords}
+                    </span>
+                    <button 
+                      onClick={goToNextWord}
+                      className="p-2 text-amber-700 hover:bg-amber-100 rounded-md"
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </button>
                   </div>
                 </div>
-              )}
+                
+                {/* Discussion Questions */}
+                <div>
+                  <h3 className="text-amber-800 font-medium flex items-center mb-4">
+                    <MessageCircle className="mr-2 h-4 w-4" />
+                    Discussion Questions
+                  </h3>
+                  
+                  {discussionQuestions.length > 0 && (
+                    <div className="space-y-3">
+                      {discussionQuestions.map((question, idx) => (
+                        <div 
+                          key={`question-${idx}`} 
+                          className="p-4 bg-amber-50 border border-amber-200 rounded-md"
+                        >
+                          <div className="flex gap-3">
+                            <div className="flex-shrink-0 w-6 h-6 rounded-full bg-amber-500 text-white flex items-center justify-center text-sm font-medium">
+                              {idx + 1}
+                            </div>
+                            <p className="text-amber-900">{question}</p>
+                          </div>
+                          
+                          {idx === 0 && (
+                            <div className="mt-3 ml-9">
+                              <p className="text-sm text-amber-700 flex items-center">
+                                <ChevronRight className="h-3 w-3 mr-1" />
+                                What makes those celebrations special?
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              {/* Right Column: Vocabulary Card */}
+              <div className="bg-blue-50 rounded-md p-5 border border-blue-100">
+                <div className="mb-4">
+                  <h2 className="text-xl font-medium text-blue-900">{currentWord.word}</h2>
+                  <p className="text-blue-600 text-sm italic">{currentWord.partOfSpeech || 'noun'}</p>
+                </div>
+                
+                {/* Definition */}
+                <div className="mb-4">
+                  <h3 className="text-blue-800 font-medium flex items-center mb-2">
+                    <Book className="mr-2 h-4 w-4" />
+                    Definition
+                  </h3>
+                  <p className="p-3 bg-white rounded border border-blue-100">
+                    {currentWord.definition || `A definition for ${currentWord.word}`}
+                  </p>
+                </div>
+                
+                {/* Example */}
+                <div className="mb-4">
+                  <h3 className="text-blue-800 font-medium flex items-center mb-2">
+                    <BookOpen className="mr-2 h-4 w-4" />
+                    Example
+                  </h3>
+                  <p className="p-3 bg-white rounded border border-blue-100 italic">
+                    "{currentWord.example || `This is an example sentence using the word ${currentWord.word}.`}"
+                  </p>
+                </div>
+                
+                {/* Pronunciation */}
+                <div>
+                  <h3 className="text-blue-800 font-medium flex items-center mb-2">
+                    <Radio className="mr-2 h-4 w-4" />
+                    Pronunciation
+                  </h3>
+                  <p className="p-3 bg-white rounded border border-blue-100">
+                    {currentWord.pronunciation || `Pronunciation for ${currentWord.word}`}
+                  </p>
+                  
+                  {/* Syllable breakdown */}
+                  {currentWord.word && (
+                    <div className="flex justify-center mt-3">
+                      {currentWord.word.split('').map((letter, idx) => (
+                        <span 
+                          key={idx} 
+                          className={`px-2 py-1 text-sm ${
+                            idx % 3 === 1 ? 'bg-blue-200 text-blue-800' : 'bg-gray-100 text-gray-700'
+                          }`}
+                        >
+                          {letter}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>
