@@ -28,6 +28,7 @@ import {
 } from "lucide-react";
 import { ReadingSection } from "./reading-section";
 import { SentenceFramesSection } from "./sentence-frames-section";
+import { DiscussionSection } from "./discussion-section";
 import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
@@ -1450,189 +1451,15 @@ export function LessonContent({ content }: LessonContentProps) {
     );
   };
 
-  const DiscussionSection = () => {
+  // Use the imported DiscussionSection component
+  const DiscussionSectionWrapper = () => {
     // Try both discussion and speaking as possible section types
-    const section = findSection('discussion') || findSection('speaking');
+    const section = findSection("discussion") || findSection("speaking");
     if (!section) return <p>No discussion content available</p>;
     
-    // Add additional error handling for questions array
-    let questions: any[] = [];
-    try {
-      // Extract questions from different possible formats
-      if (section.questions) {
-        if (Array.isArray(section.questions)) {
-          if (section.questions.length > 0) {
-            if (typeof section.questions[0] === 'string') {
-              // Simple string array
-              questions = section.questions.map((q: string) => ({ 
-                question: q, 
-                level: "basic", 
-                focusVocabulary: [] 
-              }));
-            } else if (typeof section.questions[0] === 'object') {
-              // Check if we have the new format with topic paragraphs
-              if (section.questions[0].topic || section.questions[0].question) {
-                questions = section.questions.map((q: any) => ({
-                  topic: q.topic || null,
-                  question: q.question || q.text || "No question text",
-                  level: q.level || "basic",
-                  focusVocabulary: q.focusVocabulary || []
-                }));
-              } else {
-                // Already in proper format
-                questions = section.questions;
-              }
-            }
-          }
-        } else if (typeof section.questions === 'string') {
-          // Handle case where questions is a string
-          const questionsText = section.questions;
-          const lines = questionsText.split('\n');
-          const extractedQuestions = [];
-          
-          for (const line of lines) {
-            if (line.match(/^\d+\.\s/) || line.match(/^[Qq]uestion\s+\d+/) || line.startsWith("- ")) {
-              const questionText = line.replace(/^\d+\.\s+|^[Qq]uestion\s+\d+:?\s+|- /, '').trim();
-              if (questionText) {
-                extractedQuestions.push({ 
-                  question: questionText, 
-                  level: "basic", 
-                  focusVocabulary: [] 
-                });
-              }
-            }
-          }
-          
-          if (extractedQuestions.length > 0) {
-            questions = extractedQuestions;
-          }
-        }
-      } else {
-        console.warn("No valid questions found in discussion section");
-      }
-    } catch (error) {
-      console.error("Error processing discussion questions:", error);
-    }
-
-    return (
-      <div className="space-y-6">
-        {/* Main section header */}
-        <div className="bg-indigo-50 rounded-lg p-4 flex items-center gap-3">
-          <MessageCircle className="h-6 w-6 text-indigo-600" />
-          <div>
-            <h2 className="text-indigo-600 font-medium text-lg">Discussion</h2>
-            <p className="text-gray-600 text-sm">Reflect on the reading through guided discussion</p>
-          </div>
-        </div>
-        
-        <Card>
-          <CardHeader className="bg-indigo-50">
-            <CardTitle className="flex items-center gap-2 text-indigo-700">
-              <MessageCircle className="h-5 w-5" />
-              Post-reading Discussion ({questions.length} questions)
-            </CardTitle>
-            <CardDescription>
-              Discuss these questions to deepen understanding of the reading
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="pt-6">
-            <div className="space-y-6">
-              {questions.length > 0 ? (
-                questions.map((q: any, idx: number) => (
-                  <div key={`discussion-${idx}`} className="border border-indigo-200 rounded-lg overflow-hidden">
-                    <div className={`p-3 ${q.level === 'critical' ? 'bg-indigo-100' : 'bg-blue-50'}`}>
-                      <span className="text-sm font-medium">
-                        {q.level === 'critical' ? 'Critical Analysis' : 'Basic Understanding'}
-                      </span>
-                    </div>
-                    
-                    <div className="p-4">
-                      {/* Question introduction */}
-                      <div className="flex items-start gap-2 mb-2">
-                        <span className="w-8 h-8 flex items-center justify-center bg-indigo-100 text-indigo-800 rounded-full font-medium">
-                          {idx + 1}
-                        </span>
-                        {Array.isArray(q.focusVocabulary) && q.focusVocabulary.length > 0 && (
-                          <p className="text-gray-600">
-                            This discussion incorporates key vocabulary including {q.focusVocabulary.join(', ')}. 
-                            Using these terms in your discussion will help reinforce their meaning and usage in context.
-                          </p>
-                        )}
-                      </div>
-                      
-                      {/* Question content */}
-                      <div className="mt-4 flex flex-col md:flex-row gap-4 items-start">
-                        <div className="md:w-7/12">
-                          {/* Topic introduction paragraph if available */}
-                          {q.topic && (
-                            <p className="text-gray-700 mb-4">{q.topic}</p>
-                          )}
-                          <h3 className="text-xl font-medium mb-4">{q.question}</h3>
-                          
-                          {/* Focus vocabulary */}
-                          {Array.isArray(q.focusVocabulary) && q.focusVocabulary.length > 0 && (
-                            <div className="bg-green-50 p-3 rounded-md mb-4">
-                              <h4 className="text-sm font-medium flex items-center gap-1 mb-2">
-                                <Book className="h-4 w-4" /> Focus Vocabulary
-                              </h4>
-                              <div className="flex flex-wrap gap-2">
-                                {q.focusVocabulary.map((word: string, wIdx: number) => (
-                                  <Badge key={wIdx} variant="outline" className="bg-green-50 border-green-200">
-                                    {word}
-                                  </Badge>
-                                ))}
-                              </div>
-                            </div>
-                          )}
-                          
-                          {/* Follow-up questions */}
-                          {q.followUp && q.followUp.length > 0 && (
-                            <div className="mt-4">
-                              <h4 className="text-sm font-medium mb-2">Follow-up Questions:</h4>
-                              <ul className="list-disc list-inside space-y-1 text-gray-700">
-                                {q.followUp.map((follow: string, fIdx: number) => (
-                                  <li key={`followup-${fIdx}`}>{follow}</li>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
-                        </div>
-                        
-                        {/* Image placeholder */}
-                        <div className="md:w-5/12 border rounded-md p-2 bg-gray-50">
-                          <div className="aspect-video bg-gray-200 rounded-md flex items-center justify-center">
-                            <Image className="h-8 w-8 text-gray-400" />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <p className="text-gray-500">No discussion questions available</p>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-        
-        {/* Teacher notes */}
-        {section.teacherNotes && (
-          <Card className="border-blue-100">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm flex items-center gap-2 text-blue-600">
-                <GraduationCap className="h-4 w-4" />
-                Teacher Notes
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0 text-sm text-gray-700">
-              <p>{section.teacherNotes}</p>
-            </CardContent>
-          </Card>
-        )}
-      </div>
-    );
+    return <DiscussionSection section={section} />;
   };
-
+  
   const QuizSection = () => {
     // Try both quiz and assessment as possible section types
     const section = findSection('quiz') || findSection('assessment');
@@ -1902,11 +1729,11 @@ export function LessonContent({ content }: LessonContentProps) {
           </TabsContent>
           
           <TabsContent value="discussion" className="m-0">
-            <DiscussionSection />
+            <DiscussionSectionWrapper />
           </TabsContent>
           
           <TabsContent value="speaking" className="m-0">
-            <DiscussionSection />
+            <DiscussionSectionWrapper />
           </TabsContent>
           
           <TabsContent value="quiz" className="m-0">
