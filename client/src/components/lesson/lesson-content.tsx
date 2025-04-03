@@ -490,26 +490,26 @@ export function LessonContent({ content }: LessonContentProps) {
     if (vocabWords.length === 0 && section.content) {
       // Define target vocabulary words for the celebration lesson
       const targetWords = ["festivity", "commemorate", "patriotic", "ritual", "heritage"];
-      const definitions = {
-        "festivity": "A joyful celebration or festival with entertainment",
-        "commemorate": "To honor and remember an important person or event",
-        "patriotic": "Having love, loyalty and devotion to one's country",
-        "ritual": "A formal ceremony or series of acts always performed the same way",
-        "heritage": "Traditions and culture passed down from previous generations"
+      const definitions: { [key: string]: string } = {
+        festivity: "A joyful celebration or festival with entertainment",
+        commemorate: "To honor and remember an important person or event",
+        patriotic: "Having love, loyalty and devotion to one's country",
+        ritual: "A formal ceremony or series of acts always performed the same way",
+        heritage: "Traditions and culture passed down from previous generations"
       };
-      const examples = {
-        "festivity": "The New Year's festivities included fireworks and music.",
-        "commemorate": "We commemorate Independence Day every year on July 4th.",
-        "patriotic": "She felt patriotic when she saw the national flag.",
-        "ritual": "The lighting of candles is an important ritual in many celebrations.",
-        "heritage": "Their cultural heritage influences how they celebrate holidays."
+      const examples: { [key: string]: string } = {
+        festivity: "The New Year's festivities included fireworks and music.",
+        commemorate: "We commemorate Independence Day every year on July 4th.",
+        patriotic: "She felt patriotic when she saw the national flag.",
+        ritual: "The lighting of candles is an important ritual in many celebrations.",
+        heritage: "Their cultural heritage influences how they celebrate holidays."
       };
-      const pronunciations = {
-        "festivity": "fes-TIV-i-tee",
-        "commemorate": "kuh-MEM-uh-rayt",
-        "patriotic": "pay-tree-OT-ik",
-        "ritual": "RICH-oo-uhl",
-        "heritage": "HAIR-i-tij"
+      const pronunciations: { [key: string]: string } = {
+        festivity: "fes-TIV-i-tee",
+        commemorate: "kuh-MEM-uh-rayt",
+        patriotic: "pay-tree-OT-ik",
+        ritual: "RICH-oo-uhl",
+        heritage: "HAIR-i-tij"
       };
       
       // Check if the content mentions our target words
@@ -1725,11 +1725,27 @@ export function LessonContent({ content }: LessonContentProps) {
           </TabsContent>
           
           <TabsContent value="discussion" className="m-0">
-            <DiscussionSection section={findSection("discussion") || findSection("speaking")} />
+            {/* Pass entire content structure as parent to help find discussion questions */}
+            {(() => {
+              const discussionSection = findSection("discussion") || findSection("speaking");
+              if (discussionSection) {
+                // Add the full parsed content as __parent for reference
+                discussionSection.__parent = parsedContent;
+              }
+              return <DiscussionSection section={discussionSection} />;
+            })()}
           </TabsContent>
           
           <TabsContent value="speaking" className="m-0">
-            <DiscussionSection section={findSection("speaking") || findSection("discussion")} />
+            {/* Pass entire content structure as parent to help find discussion questions */}
+            {(() => {
+              const speakingSection = findSection("speaking") || findSection("discussion");
+              if (speakingSection) {
+                // Add the full parsed content as __parent for reference
+                speakingSection.__parent = parsedContent;
+              }
+              return <DiscussionSection section={speakingSection} />;
+            })()}
           </TabsContent>
           
           <TabsContent value="quiz" className="m-0">

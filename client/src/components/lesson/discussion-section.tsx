@@ -34,23 +34,58 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
 
   try {
     console.log("Discussion section structure:", JSON.stringify(section, null, 2));
+    console.log("Parent object:", JSON.stringify(section.__parent || {}, null, 2));
     
-    // Looking for proper discussion questions directly in the data rather than as an array
-    const questionKeys = Object.keys(section).filter(key => 
-      key.includes("?") || 
-      ["What", "Why", "How", "Which", "Where", "When", "Do you think", "Can you"].some(w => 
-        key.toLowerCase().includes(w.toLowerCase())
-      )
+    // First, check if we need to check directly in the section's direct keys
+    const questionPatterns = [
+      /how/i, /why/i, /what/i, /which/i, /where/i, /when/i, /who/i, 
+      /can/i, /do you think/i, /should/i, /could/i, /would/i, /discuss/i
+    ];
+    
+    // Look for keys that look like discussion questions but aren't standard section properties
+    let discussionQuestionsKeys = Object.keys(section).filter(key => 
+      // Check for question patterns
+      (key.includes("?") || questionPatterns.some(pattern => pattern.test(key))) && 
+      // Avoid standard section keys
+      !["type", "title", "introduction", "content", "questions", "__parent"].includes(key) &&
+      // Make sure the value is a string or object (not a function or other JS construct)
+      (typeof section[key] === "string" || typeof section[key] === "object")
     );
     
-    if (questionKeys.length > 0) {
-      console.log("Found direct question keys in section:", questionKeys);
+    // If not enough question keys found directly in the section, check the parent object
+    if (discussionQuestionsKeys.length < 1 && section.__parent) {
+      console.log("Looking for discussion questions in parent object...");
       
-      // If we have actual questions as keys, use them directly
+      // Get parent keys that look like discussion questions
+      const parentQuestionKeys = Object.keys(section.__parent).filter(key => 
+        // Must be a question or start with question word pattern
+        (key.includes("?") || questionPatterns.some(pattern => pattern.test(key))) &&
+        // Avoid sections array and other standard keys
+        !["title", "level", "focus", "estimatedTime", "sections"].includes(key) &&
+        // Make sure it has a value that's a string or object
+        (typeof section.__parent[key] === "string" || typeof section.__parent[key] === "object")
+      );
+      
+      if (parentQuestionKeys.length > 0) {
+        console.log("Found question keys in parent object:", parentQuestionKeys);
+        
+        // If we found question keys in the parent, also search in those values
+        for (const key of parentQuestionKeys) {
+          discussionQuestionsKeys.push(key);
+        }
+      }
+    }
+    
+    // If still not finding discussion questions, check if the questions need to be extracted from a different part of the structure
+    
+    if (discussionQuestionsKeys.length > 0) {
+      console.log("Found direct discussion question keys:", discussionQuestionsKeys);
+      
       const extractedDirectQuestions: DiscussionQuestion[] = [];
       
-      for (const key of questionKeys) {
-        const value = section[key];
+      for (const key of discussionQuestionsKeys) {
+        // Value could be in either parent or section
+        const value = section[key] || (section.__parent && section.__parent[key]) || "";
         const focusWords: string[] = [];
         
         // Extract vocabulary focus words from question (quoted or emphasized words)
@@ -73,7 +108,6 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
       
       if (extractedDirectQuestions.length > 0) {
         questions = extractedDirectQuestions;
-        return; // Skip other processing methods
       }
     }
     
