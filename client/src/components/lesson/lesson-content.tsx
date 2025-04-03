@@ -1002,7 +1002,13 @@ export function LessonContent({ content }: LessonContentProps) {
               </div>
               
               {/* Right Column: Vocabulary Card */}
-              <VocabularyCard word={currentWord} />
+              <VocabularyCard word={{
+                word: currentWord.word,
+                partOfSpeech: currentWord.partOfSpeech,
+                definition: currentWord.definition,
+                example: currentWord.example,
+                pronunciation: currentWord.pronunciation
+              }} />
             </div>
           </CardContent>
         </Card>
