@@ -501,42 +501,148 @@ export function extractDiscussionQuestions(content: any): any[] {
       }
     }
     
-    // Case 3: Look for specific discussion questions for Celebrations and Holidays lesson
-    if (content.title && 
-        typeof content.title === 'string' && 
-        content.title.includes('Celebrations and Holidays')) {
-      return [
-        {
-          question: "Which ritual or practice from a national holiday discussed in the text do you find most meaningful?",
-          level: "basic",
-          focusVocabulary: ["ritual", "heritage"],
-          followUp: ["Why do you think this particular ritual resonates with you?", "How does it connect to the values being celebrated?"]
-        },
-        {
-          question: "How do national holidays in your country help to commemorate important historical events?",
-          level: "basic",
-          focusVocabulary: ["commemorate", "patriotic"],
-          followUp: ["What specific activities or ceremonies are part of these commemorations?", "Do you think they effectively preserve historical memory?"]
-        },
-        {
-          question: "In what ways have festivities associated with national holidays changed over time in your experience?",
-          level: "critical",
-          focusVocabulary: ["festivity", "heritage"],
-          followUp: ["What traditional elements have remained consistent?", "How has technology affected these celebrations?"]
-        },
-        {
-          question: "Do you think patriotic celebrations strengthen national identity, and if so, how?",
-          level: "critical",
-          focusVocabulary: ["patriotic", "heritage"],
-          followUp: ["Are there any potential drawbacks to strongly patriotic celebrations?", "How can celebrations balance patriotism with respect for diversity?"]
-        },
-        {
-          question: "How might national holidays serve different purposes for different generations within a society?",
-          level: "critical",
-          focusVocabulary: ["commemorate", "ritual"],
-          followUp: ["Why might younger and older generations experience the same holiday differently?", "How can holidays evolve while maintaining their core purpose?"]
-        }
-      ];
+    // Case 3: Look for specific discussion questions for specific lessons
+    if (content.title && typeof content.title === 'string') {
+      // For Celebrations and Holidays lesson
+      if (content.title.includes('Celebrations and Holidays')) {
+        return [
+          {
+            question: "Which ritual or practice from a national holiday discussed in the text do you find most meaningful?",
+            level: "basic",
+            focusVocabulary: ["ritual", "heritage"],
+            followUp: ["Why do you think this particular ritual resonates with you?", "How does it connect to the values being celebrated?"]
+          },
+          {
+            question: "How do national holidays in your country help to commemorate important historical events?",
+            level: "basic",
+            focusVocabulary: ["commemorate", "patriotic"],
+            followUp: ["What specific activities or ceremonies are part of these commemorations?", "Do you think they effectively preserve historical memory?"]
+          },
+          {
+            question: "In what ways have festivities associated with national holidays changed over time in your experience?",
+            level: "critical",
+            focusVocabulary: ["festivity", "heritage"],
+            followUp: ["What traditional elements have remained consistent?", "How has technology affected these celebrations?"]
+          },
+          {
+            question: "Do you think patriotic celebrations strengthen national identity, and if so, how?",
+            level: "critical",
+            focusVocabulary: ["patriotic", "heritage"],
+            followUp: ["Are there any potential drawbacks to strongly patriotic celebrations?", "How can celebrations balance patriotism with respect for diversity?"]
+          },
+          {
+            question: "How might national holidays serve different purposes for different generations within a society?",
+            level: "critical",
+            focusVocabulary: ["commemorate", "ritual"],
+            followUp: ["Why might younger and older generations experience the same holiday differently?", "How can holidays evolve while maintaining their core purpose?"]
+          }
+        ];
+      }
+      // For Family Structures and Cultural Beliefs lesson
+      else if (content.title.includes('Family Structures') || content.title.includes('Cultural Beliefs')) {
+        return [
+          {
+            question: "How do family structures in your culture compare to those described in the reading?",
+            level: "basic",
+            focusVocabulary: ["extended", "nuclear", "roles"],
+            followUp: ["What similarities and differences do you notice?", "How have family structures changed over time in your culture?"]
+          },
+          {
+            question: "Which family values mentioned in the text are most important in your culture?",
+            level: "basic",
+            focusVocabulary: ["respect", "tradition", "values"],
+            followUp: ["How are these values taught to children?", "Do you see these values changing in younger generations?"]
+          },
+          {
+            question: "How do cultural beliefs influence the way family members interact with each other?",
+            level: "critical",
+            focusVocabulary: ["tradition", "respect", "responsibility"],
+            followUp: ["Can you provide specific examples from your experience?", "How might these interactions differ in other cultures?"]
+          },
+          {
+            question: "In what ways have gender roles within families evolved in recent decades?",
+            level: "critical",
+            focusVocabulary: ["gender roles", "tradition", "modern"],
+            followUp: ["What factors have contributed to these changes?", "Do you think these changes are positive, negative, or neutral?"]
+          },
+          {
+            question: "How do cultural celebrations reinforce family bonds and traditions?",
+            level: "basic",
+            focusVocabulary: ["tradition", "celebration", "heritage"],
+            followUp: ["What is your favorite family celebration and why?", "How do these celebrations help pass cultural knowledge to the next generation?"]
+          }
+        ];
+      }
+      // For National Holidays lesson
+      else if (content.title.includes('National Holiday') || content.title.includes('Independence Day') || content.title.includes('Patriotic')) {
+        return [
+          {
+            question: "What is the most important national holiday in your country and why?",
+            level: "basic",
+            focusVocabulary: ["commemorate", "celebration", "patriotic"],
+            followUp: ["How do people typically celebrate this holiday?", "What does this holiday represent to your country's identity?"]
+          },
+          {
+            question: "How do national holidays serve to strengthen people's sense of national identity?",
+            level: "critical",
+            focusVocabulary: ["patriotic", "identity", "heritage"],
+            followUp: ["Can you think of specific symbols or rituals that reinforce this identity?", "Do you think these celebrations successfully build unity?"]
+          },
+          {
+            question: "How might immigrants or people from different cultural backgrounds experience national holidays?",
+            level: "critical",
+            focusVocabulary: ["heritage", "tradition", "identity"],
+            followUp: ["What challenges might they face during these celebrations?", "How can national holidays become more inclusive?"]
+          },
+          {
+            question: "Do you think the way national holidays are celebrated has changed over time? If so, how?",
+            level: "basic",
+            focusVocabulary: ["tradition", "commemorate", "festivity"],
+            followUp: ["What factors have contributed to these changes?", "Do you think these changes reflect broader social changes?"]
+          },
+          {
+            question: "What role does food play in national holiday celebrations in your culture?",
+            level: "basic",
+            focusVocabulary: ["tradition", "celebration", "ritual"],
+            followUp: ["Are there specific dishes that are traditionally prepared?", "How do these food traditions connect to national identity or history?"]
+          }
+        ];
+      }
+      // For Health and Wellness lesson
+      else if (content.title.includes('Health') || content.title.includes('Wellness') || content.title.includes('Nutrition') || content.title.includes('Exercise')) {
+        return [
+          {
+            question: "What healthy habits discussed in the reading do you already practice in your daily life?",
+            level: "basic",
+            focusVocabulary: ["routine", "nutrition", "exercise"],
+            followUp: ["How have these habits benefited you?", "Which habits would you like to improve?"]
+          },
+          {
+            question: "How do cultural beliefs and traditions influence health practices in your country?",
+            level: "critical",
+            focusVocabulary: ["belief", "traditional", "practice"],
+            followUp: ["Can you provide examples of traditional health remedies or practices?", "Are these traditional approaches becoming more or less common over time?"]
+          },
+          {
+            question: "What are the biggest challenges people face when trying to maintain a healthy lifestyle?",
+            level: "basic",
+            focusVocabulary: ["balance", "stress", "lifestyle"],
+            followUp: ["How do these challenges differ across age groups?", "What strategies can help overcome these challenges?"]
+          },
+          {
+            question: "How does mental health awareness in your culture compare to the information presented in the reading?",
+            level: "critical",
+            focusVocabulary: ["awareness", "stigma", "wellbeing"],
+            followUp: ["Has this awareness changed in recent years?", "What more could be done to improve mental health support?"]
+          },
+          {
+            question: "In what ways does technology impact both physical and mental health in modern society?",
+            level: "critical",
+            focusVocabulary: ["impact", "balance", "screen time"],
+            followUp: ["Can you give examples of both positive and negative effects?", "How can we use technology to improve health rather than harm it?"]
+          }
+        ];
+      }
     }
     
     // Default fallback: If we can't find anything else, return an empty array
