@@ -272,7 +272,7 @@ export function LessonContent({ content }: LessonContentProps) {
           console.log("Adding comprehension section as it doesn't exist");
           const readingSection = parsedContent.sections.find((s: any) => s.type === 'reading');
           
-          const comprehensionSection = {
+          const comprehensionSection: any = {
             type: 'comprehension',
             title: 'Reading Comprehension',
             questions: [],
@@ -296,6 +296,51 @@ export function LessonContent({ content }: LessonContentProps) {
           }
           
           parsedContent.sections.push(comprehensionSection);
+        }
+        
+        console.log("Parsed Content sections:", JSON.stringify(parsedContent.sections));
+        
+        // Ensure we have the other main sections in our lesson content
+        const requiredSections = ['reading', 'vocabulary', 'discussion', 'quiz'];
+        const existingSectionTypes = parsedContent.sections.map((s: any) => s.type);
+        
+        console.log("Existing section types:", existingSectionTypes);
+        
+        // Add missing sections with basic structure
+        for (const sectionType of requiredSections) {
+          if (!existingSectionTypes.includes(sectionType)) {
+            console.log(`Adding missing section: ${sectionType}`);
+            
+            let newSection: any = {
+              type: sectionType,
+              title: sectionType.charAt(0).toUpperCase() + sectionType.slice(1)
+            };
+            
+            // For specific section types, add some defaults
+            if (sectionType === 'reading') {
+              newSection = {
+                ...newSection,
+                content: "Reading content will be displayed here.",
+                paragraphs: ["Reading content will be displayed here."]
+              };
+            } else if (sectionType === 'vocabulary') {
+              newSection = {
+                ...newSection,
+                words: [
+                  { word: "Example", definition: "An example vocabulary word" }
+                ]
+              };
+            } else if (sectionType === 'discussion' || sectionType === 'quiz') {
+              newSection = {
+                ...newSection,
+                questions: [
+                  { question: "Example question?", answer: "Example answer" }
+                ]
+              };
+            }
+            
+            parsedContent.sections.push(newSection);
+          }
         }
         
         // Check if we need to extract sections from malformed structure
