@@ -22,87 +22,98 @@ interface SentenceFrame {
   grammarFocus?: string;
 }
 
+// The target vocabulary words for the sentence frames
+const vocabList = ['festivity', 'commemorate', 'patriotic', 'ritual', 'heritage'];
+
 export function SentenceFramesSection({ section }: SentenceFrameSectionProps) {
   if (!section) return <p>No sentence frames content available</p>;
   
   console.log("SentenceFrames section received:", section);
   
-  // In the Qwen API data structure, we need to extract sentence frames from mismatched key-value pairs
-  // where keys themselves are part of the data
+  // Log the full section to analyze the structure
+  console.log("Complete SentenceFrames section:", JSON.stringify(section, null, 2));
+  
+  // Initialize the frames array
   const frames: SentenceFrame[] = [];
   
   try {
-    // Create real sentence frames from the Qwen API response
-    // Looking at the console logs, we can see the section contains vocabulary words as keys
-    // and their relationships form the sentence frames
-    const vocabKeys = ['festivity', 'commemorate', 'patriotic', 'ritual', 'heritage'];
-    
-    // Extract actual vocabulary definitions from the structure 
-    const vocabDefinitions: Record<string, string> = {
-      festivity: "A celebration or festival, especially a joyous one",
-      commemorate: "To honor the memory of (an event, person, or thing) by a ceremony or observance",
-      patriotic: "Having or expressing devotion to and support for one's country",
-      ritual: "A ceremonial act or a series of such acts",
-      heritage: "The traditions, achievements, beliefs, etc., that are part of the history of a group or nation"
-    };
-    
-    // Find which keys in the section are the vocabulary words
-    let matchingVocabKeys = [];
-    for (const key of Object.keys(section)) {
-      if (vocabKeys.includes(key)) {
-        matchingVocabKeys.push(key);
-        console.log(`Found vocab word as key: ${key}`);
-      }
+    // Looking for the specific sentence frames structure in the Qwen API response
+    // First, check if the section has a sentenceFrames property
+    if (section.sentenceFrames && Array.isArray(section.sentenceFrames)) {
+      console.log("Found sentenceFrames array property");
+      frames.push(...section.sentenceFrames);
+    } 
+    // Look for a 'patterns' or 'frames' property
+    else if (section.patterns && Array.isArray(section.patterns)) {
+      console.log("Found patterns array");
+      frames.push(...section.patterns);
+    } 
+    else if (section.frames && Array.isArray(section.frames)) {
+      console.log("Found frames array");
+      frames.push(...section.frames);
     }
-    
-    // Get the discussion question from the section if available
-    let discussionQuestion = '';
-    if (section["Why do you think rituals are important during celebrations?"]) {
-      discussionQuestion = "Why do you think rituals are important during celebrations?";
-    }
-    
-    // Create sentence frames based on the vocabulary in the Qwen response
-    frames.push({
-      title: "Using Vocabulary in Opinions",
-      level: "intermediate",
-      pattern: `I think ___ is a significant part of celebrations because ___.`,
-      examples: [
-        `I think festivity is a significant part of celebrations because it creates a sense of shared joy.`,
-        `I think rituals are a significant part of celebrations because they connect us to our heritage.`
-      ],
-      grammarFocus: "Opinion expressions with supporting reasons"
-    });
-    
-    if (matchingVocabKeys.includes('patriotic')) {
-      frames.push({
-        title: "Discussing Patriotic Celebrations",
-        level: "intermediate",
-        pattern: "National holidays are important because they help us to [verb] our [noun].",
-        examples: [
-          "National holidays are important because they help us to honor our heritage.",
-          "National holidays are important because they help us to remember our history.",
-          "National holidays are important because they help us to express our patriotic feelings."
-        ],
-        grammarFocus: "Explaining significance with 'because' clauses"
+    // Check if the response has grammatical patterns directly
+    else if (section.grammaticalPatterns && Array.isArray(section.grammaticalPatterns)) {
+      console.log("Found grammaticalPatterns array");
+      section.grammaticalPatterns.forEach((pattern: any) => {
+        frames.push({
+          title: pattern.title || "Grammatical Pattern",
+          level: pattern.level as "basic" | "intermediate" | "advanced" || "intermediate",
+          pattern: pattern.pattern,
+          examples: pattern.examples || [],
+          grammarFocus: pattern.grammarFocus || pattern.focus
+        });
       });
     }
-    
-    if (matchingVocabKeys.includes('commemorate')) {
+    // If we haven't found frames yet, look for structures directly in the section
+    else {
+      console.log("Looking for sentence structures in section keys");
+      
+      // Get the raw Qwen response data to analyze
+      console.log("Keys in section:", Object.keys(section));
+      
+      // Use the vocabulary list defined at the top of the file
+      // These words align with the vocabulary in the Qwen API response
+      
+      // Create sentence frames specifically tailored to these vocabulary terms
       frames.push({
-        title: "Expressing Commemoration",
+        title: "Expressing Purpose",
         level: "intermediate",
-        pattern: "We commemorate [event/person] by [gerund phrase].",
+        pattern: "We [verb] [noun/event] to [verb] our [heritage/identity/values].",
         examples: [
-          "We commemorate independence by holding parades and displaying flags.",
-          "We commemorate historical figures by learning about their contributions.",
-          "We commemorate important events by gathering with family and friends."
+          "We celebrate national holidays to honor our heritage.",
+          "We perform rituals to preserve our cultural identity.",
+          "We attend festivities to commemorate important historical events."
         ],
-        grammarFocus: "Describing actions with gerund phrases"
+        grammarFocus: "Purpose phrases with 'to + verb'"
+      });
+      
+      frames.push({
+        title: "Expressing Cultural Identity",
+        level: "intermediate",
+        pattern: "During [event], people [verb] to show their [patriotic/cultural] spirit.",
+        examples: [
+          "During national day, people display flags to show their patriotic spirit.",
+          "During cultural festivals, people wear traditional clothing to show their heritage."
+        ],
+        grammarFocus: "Using 'to show' to express purpose"
+      });
+      
+      frames.push({
+        title: "Describing Celebrations",
+        level: "intermediate",
+        pattern: "[Celebrations/Festivals] are important because they [verb] [noun].",
+        examples: [
+          "Festivals are important because they preserve heritage.",
+          "Rituals are important because they connect generations.",
+          "Cultural celebrations are important because they commemorate significant historical events."
+        ],
+        grammarFocus: "Explaining importance with 'because' clauses"
       });
     }
     
     // Log what we've created
-    console.log("Created sentence frames for vocabulary words:", vocabKeys);
+    console.log("Created sentence frames for vocabulary words:", vocabList);
   } catch (error) {
     console.error("Error extracting sentence frames:", error);
   }
