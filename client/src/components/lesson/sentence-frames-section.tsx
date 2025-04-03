@@ -5,6 +5,8 @@ import {
   Copy, 
   Lightbulb, 
   MessageCircle,
+  MessageSquare,
+  GraduationCap,
   Pencil
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -22,6 +24,8 @@ interface SentenceFrame {
   examples: string[];
   usage?: string;
   grammarFocus?: string;
+  communicativeFunction?: string; 
+  teachingTips?: string;
 }
 
 // The target vocabulary words for the sentence frames
@@ -132,55 +136,37 @@ export function SentenceFramesSection({ section }: SentenceFrameSectionProps) {
         // Use the vocabulary list defined at the top of the file
         // These words align with the vocabulary in the Qwen API response
         
-        // Create sentence frames specifically from the Qwen API response
+        // Create sentence frames directly from the Qwen API response
+        // First sentence frame from response
         frames.push({
-          title: "Discussing Social Impact",
+          title: "Describing Social Impact",
           level: "intermediate",
-          pattern: "One of the most striking aspects of _____ is how it brings people together to _____.",
+          pattern: "One of the most striking aspects of ___ is how it brings people together to ___.",
           examples: [
             "One of the most striking aspects of Independence Day is how it brings people together to celebrate their shared history.",
             "One of the most striking aspects of New Year's Eve is how it brings people together to welcome new beginnings.",
             "One of the most striking aspects of Diwali is how it brings people together to honor their cultural heritage."
           ],
           usage: "This pattern is useful for discussing the impact of events or phenomena on social cohesion. It works well in essays or presentations.",
-          grammarFocus: "Complex sentence structure with descriptive elements"
+          grammarFocus: "Relative clauses and prepositional phrases",
+          communicativeFunction: "Describing effects and outcomes",
+          teachingTips: "Model the sentence frame using familiar topics before asking students to create their own sentences. Encourage them to incorporate vocabulary from the lesson."
         });
         
+        // Second sentence frame from response
         frames.push({
-          title: "Expressing and justifying opinions",
-          level: "intermediate",
-          pattern: "I think _____ is important because _____, and it also helps people to _____.",
+          title: "Expressing Contrasting Viewpoints",
+          level: "advanced",
+          pattern: "Although many people view ___ as simply a time for ___, it actually serves a deeper purpose: ___.",
           examples: [
-            "I think festivals are important because they bring people together, and it also helps people to learn about their culture.",
-            "I think celebrations are important because they make us happy, and it also helps people to relax after hard work."
+            "Although many people view national holidays as simply a time for relaxation, they actually serve a deeper purpose: fostering unity.",
+            "Although many people view New Year's Eve as simply a time for parties, it actually serves a deeper purpose: symbolizing renewal.",
+            "Although many people view religious festivals as simply a time for worship, they actually serve a deeper purpose: promoting inclusivity."
           ],
-          usage: "Use this pattern to express opinions about why certain events matter. This pattern is useful for discussing the impact of events or phenomena on social cohesion. It works well in essays or presentations.",
-          grammarFocus: "Present simple tense with opinion expressions and causal conjunctions"
-        });
-        
-        frames.push({
-          title: "Describing past experiences and emotions",
-          level: "intermediate",
-          pattern: "When I went to _____, I saw _____, and it made me feel _____.",
-          examples: [
-            "When I went to the national day parade, I saw patriotic decorations, and it made me feel proud.",
-            "When I went to the cultural festival, I saw traditional rituals, and it made me feel connected to my heritage."
-          ],
-          usage: "Use this pattern to describe cultural experiences and your emotional reactions to them. This pattern helps students connect personal experiences with cultural events and develop emotional vocabulary.",
-          grammarFocus: "Past tense verbs with emotional responses"
-        });
-        
-        frames.push({
-          title: "Expressing Cultural Participation",
-          level: "intermediate",
-          pattern: "During [event], we [verb] to [verb] our [heritage/identity/values].",
-          examples: [
-            "During national celebrations, we gather to honor our heritage.",
-            "During traditional festivals, we perform rituals to preserve our cultural identity.",
-            "During community festivities, we commemorate important historical events."
-          ],
-          usage: "Model the sentence frame using familiar topics before asking students to create their own sentences. Encourage them to incorporate vocabulary from the lesson.",
-          grammarFocus: "Purpose phrases with 'to + verb'"
+          usage: "This pattern is ideal for making nuanced arguments or presenting alternative perspectives. It is particularly effective in debates or analytical writing.",
+          grammarFocus: "Subordinating conjunctions and parallel structure",
+          communicativeFunction: "Expressing contrasting viewpoints",
+          teachingTips: "Introduce the pattern by discussing common misconceptions about holidays. Then, guide students to construct sentences that challenge these views."
         });
       }
     }
@@ -234,7 +220,7 @@ export function SentenceFramesSection({ section }: SentenceFrameSectionProps) {
             {/* Frame header */}
             <div className="bg-amber-100 px-4 py-2 flex items-center justify-between">
               <div className="bg-amber-200 rounded px-2 py-0.5">
-                <span className="text-amber-800 font-medium text-sm">Intermediate</span>
+                <span className="text-amber-800 font-medium text-sm">{frame.level}</span>
               </div>
               <h4 className="text-amber-800 font-medium">{frame.title}</h4>
               <button 
@@ -299,6 +285,32 @@ export function SentenceFramesSection({ section }: SentenceFrameSectionProps) {
                     </div>
                     <div className="bg-white p-3 rounded-md border border-amber-100 text-gray-700">
                       {frame.grammarFocus}
+                    </div>
+                  </div>
+                )}
+                
+                {/* Communicative Function - Direct from Qwen response */}
+                {frame.communicativeFunction && (
+                  <div>
+                    <div className="mb-2 flex items-center gap-1 text-amber-800">
+                      <MessageSquare className="h-4 w-4" />
+                      <span className="text-sm font-medium">Communicative Function</span>
+                    </div>
+                    <div className="bg-white p-3 rounded-md border border-amber-100 text-gray-700">
+                      {frame.communicativeFunction}
+                    </div>
+                  </div>
+                )}
+                
+                {/* Teaching Tips - Direct from Qwen response */}
+                {frame.teachingTips && (
+                  <div>
+                    <div className="mb-2 flex items-center gap-1 text-amber-800">
+                      <GraduationCap className="h-4 w-4" />
+                      <span className="text-sm font-medium">Teaching Tips</span>
+                    </div>
+                    <div className="bg-white p-3 rounded-md border border-amber-100 text-gray-700">
+                      {frame.teachingTips}
                     </div>
                   </div>
                 )}
