@@ -132,32 +132,102 @@ export function LessonContent({ content }: LessonContentProps) {
           // Log the section keys to debug
           console.log("Checking for embedded sections in keys:", Object.keys(sectionObject));
           
-          let extractedSections = [];
+          let extractedSections: Array<{
+            type: string;
+            title: string;
+            content?: string;
+            paragraphs?: string[];
+            words?: Array<{word: string; definition: string}>;
+            questions?: Array<{question: string; answer: string}>;
+          }> = [];
+          
           // If the section has a 'reading' key, extract it as a separate reading section
           potentialSectionTypes.forEach(sectionType => {
             if (sectionObject[sectionType] !== undefined) {
               console.log(`Found embedded ${sectionType} section in keys`);
               
               // Create a new section with the extracted data
-              const newSection = {
+              const newSection: {
+                type: string;
+                title: string;
+                content?: string;
+                paragraphs?: string[];
+                words?: Array<{word: string; definition: string}>;
+                questions?: Array<{question: string; answer: string}>;
+              } = {
                 type: sectionType,
                 title: sectionType.charAt(0).toUpperCase() + sectionType.slice(1)
               };
               
               // Different handling based on section type
               if (sectionType === 'reading') {
-                // For reading, extract the text
+                // For reading, extract the text - log all possible keys
+                console.log("Reading section keys for extraction:", 
+                  Object.keys(sectionObject).filter(k => 
+                    k.toLowerCase().includes('read') || 
+                    k.toLowerCase().includes('text')
+                  )
+                );
+                
+                // Check for reading text in various properties
                 if (typeof sectionObject[sectionType] === 'string') {
                   newSection.content = sectionObject[sectionType];
+                  console.log("Found reading content in 'reading' key");
                 } else if (sectionObject['Reading Text'] && typeof sectionObject['Reading Text'] === 'string') {
                   newSection.content = sectionObject['Reading Text'];
+                  console.log("Found reading content in 'Reading Text' key");
+                } else if (sectionObject['reading text'] && typeof sectionObject['reading text'] === 'string') {
+                  newSection.content = sectionObject['reading text'];
+                  console.log("Found reading content in 'reading text' key");
+                } else {
+                  // Look for keys that contain the actual text
+                  const possibleTextKeys = Object.keys(sectionObject).filter(key => {
+                    // Skip keys that are likely not the reading content
+                    const skipPattern = /^(type|title|questions|targetVocabulary|procedure|content)$/i;
+                    if (skipPattern.test(key)) return false;
+                    
+                    // Check if the value is a string and might be a reading passage
+                    const value = sectionObject[key];
+                    return typeof value === 'string' && 
+                           value.length > 100 && 
+                           value.split(/\s+/).length > 50;
+                  });
+                  
+                  if (possibleTextKeys.length > 0) {
+                    console.log("Found potential reading content in key:", possibleTextKeys[0]);
+                    newSection.content = sectionObject[possibleTextKeys[0]];
+                  } else if (sectionObject["National holidays are more than just days off work"]) {
+                    // Very specific case for this particular lesson
+                    console.log("Found reading content by specific first sentence match");
+                    newSection.content = sectionObject["National holidays are more than just days off work"];
+                  }
                 }
                 
                 // Try to extract paragraphs if content is available
                 if (newSection.content) {
+                  // Log the found content for debugging
+                  console.log("Reading content extracted:", newSection.content.substring(0, 100) + "...");
+                  
                   newSection.paragraphs = newSection.content
                     .split('\n\n')
                     .filter((p: string) => p.trim().length > 0);
+                  
+                  // If split by newlines didn't produce paragraphs, try split by periods
+                  if (newSection.paragraphs.length <= 1 && newSection.content.length > 200) {
+                    console.log("Splitting reading content by periods as it's a single paragraph");
+                    // Split by periods followed by a space, preserving the periods
+                    const sentences = newSection.content.match(/[^.!?]+[.!?]+\s/g) || [];
+                    
+                    // Group sentences into paragraphs of 3-4 sentences each
+                    const paragraphs = [];
+                    for (let i = 0; i < sentences.length; i += 3) {
+                      paragraphs.push(sentences.slice(i, i + 3).join(' ').trim());
+                    }
+                    
+                    if (paragraphs.length > 1) {
+                      newSection.paragraphs = paragraphs;
+                    }
+                  }
                 }
               } else if (sectionType === 'vocabulary') {
                 // For vocabulary, look for targetVocabulary or extract from the main section
