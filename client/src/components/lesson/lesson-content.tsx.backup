@@ -27,7 +27,6 @@ import {
   Book as BookIcon
 } from "lucide-react";
 import { ReadingSection } from "./reading-section";
-import { SentenceFramesSection } from "./sentence-frames-section";
 import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
@@ -1136,13 +1135,12 @@ export function LessonContent({ content }: LessonContentProps) {
     );
   };
 
-  const SentenceFramesSectionWrapper = () => {
+  const SentenceFramesSection = () => {
     // Try both sentenceFrames and grammar as possible section types
     const section = findSection('sentenceFrames') || findSection('grammar');
     if (!section) return <p>No sentence frames content available</p>;
     
-    // Use the imported SentenceFramesSection component
-    return <SentenceFramesSection section={section} />;
+    console.log("Sentence frames section:", section);
     
     // Add additional error handling for frames array
     let frames: any[] = [];
@@ -1894,7 +1892,7 @@ export function LessonContent({ content }: LessonContentProps) {
           </TabsContent>
           
           <TabsContent value="sentenceFrames" className="m-0">
-            <SentenceFramesSectionWrapper />
+            <SentenceFramesSection />
           </TabsContent>
           
           <TabsContent value="grammar" className="m-0">
