@@ -414,248 +414,175 @@ export function extractDiscussionQuestions(content: any): any[] {
   const questions: any[] = [];
   
   try {
-    // Special Case: Look for vocabulary section in sentenceFrames
-    // This is needed for the "Celebrations and Holidays" lesson which has vocabulary in a specific format
+    console.log("Extracting discussion questions from:", JSON.stringify(content).substring(0, 500));
+    
+    // Case 1: Look for discussion section in sections array
     if (content.sections && Array.isArray(content.sections)) {
-      const sentenceFrames = content.sections.find((s: any) => 
-        s.type === 'sentenceFrames' || 
-        (s.title && typeof s.title === 'string' && s.title.toLowerCase().includes('sentence'))
+      console.log("Looking for discussion section in sections array");
+      const discussionSection = content.sections.find((s: any) => 
+        s && typeof s === 'object' && s.type === 'discussion'
       );
       
-      if (sentenceFrames && typeof sentenceFrames === 'object') {
-        // Extract vocabulary words for use in discussion questions
-        const vocabularyWords: string[] = [];
-        if (sentenceFrames.targetVocabulary && typeof sentenceFrames.targetVocabulary === 'string') {
-          vocabularyWords.push(sentenceFrames.targetVocabulary);
-        }
+      if (discussionSection) {
+        console.log("Found discussion section:", discussionSection);
         
-        // Check for multiple vocabulary words as direct properties
-        const vocabKeys = ["festivity", "commemorate", "patriotic", "ritual", "heritage"];
-        for (const key of vocabKeys) {
-          if (sentenceFrames[key] !== undefined) {
-            vocabularyWords.push(key);
+        // Extract introduction if available
+        let introduction = discussionSection.introduction || "";
+        
+        // Handle Qwen API format with questions as array or object
+        if (discussionSection.questions) {
+          if (Array.isArray(discussionSection.questions)) {
+            // Handle array format
+            console.log("Discussion questions as array:", discussionSection.questions);
+            return discussionSection.questions.map((q: any) => {
+              if (typeof q === 'string') {
+                return { question: q, introduction: introduction };
+              } else if (typeof q === 'object') {
+                return { ...q, introduction: q.introduction || introduction };
+              }
+              return null;
+            }).filter(Boolean);
+          } else if (typeof discussionSection.questions === 'object') {
+            // Handle object format (Qwen sometimes returns objects instead of arrays)
+            console.log("Discussion questions as object:", discussionSection.questions);
+            
+            // Special case: Check if question keys themselves contain question marks
+            // This is the case with many Qwen API responses
+            const directQuestionKeys = Object.keys(discussionSection.questions).filter(
+              key => typeof key === 'string' && key.includes('?')
+            );
+            
+            if (directQuestionKeys.length > 0) {
+              console.log("Found direct question keys:", directQuestionKeys);
+              
+              directQuestionKeys.forEach(questionText => {
+                questions.push({
+                  question: questionText.trim(),
+                  introduction: introduction,
+                  level: "basic"
+                });
+              });
+              
+              if (questions.length > 0) {
+                console.log("Extracted direct question keys:", questions);
+                return questions;
+              }
+            }
+            
+            // Standard case: Look for question keys/values
+            const questionKeys = Object.keys(discussionSection.questions).filter(
+              key => typeof discussionSection.questions[key] === 'string' && 
+                    (key.includes('question') || discussionSection.questions[key].includes('?'))
+            );
+            
+            if (questionKeys.length > 0) {
+              questionKeys.forEach(key => {
+                const question = discussionSection.questions[key];
+                if (question && typeof question === 'string' && question.trim().length > 0) {
+                  questions.push({ 
+                    question: question.trim(),
+                    introduction: introduction,
+                    level: "basic"
+                  });
+                }
+              });
+              
+              if (questions.length > 0) {
+                console.log("Extracted questions from object:", questions);
+                return questions;
+              }
+            }
           }
         }
-        
-        // If we found vocabulary words from the sentence frames, we can use them
-        if (vocabularyWords.length > 0) {
-          console.log("Found vocabulary words in sentence frames:", vocabularyWords);
-        }
       }
     }
     
-    // Case 1: Look for direct discussion section
-    if (content.sections && Array.isArray(content.sections)) {
-      const section = content.sections.find((s: any) => 
-        s.type === 'discussion' || 
-        (s.title && typeof s.title === 'string' && s.title.toLowerCase().includes('discussion'))
-      );
+    // Case 2: Try to find discussion section directly in content
+    if (content.discussion && typeof content.discussion === 'object') {
+      console.log("Found discussion object directly in content");
+      const discussionData = content.discussion;
       
-      if (section && section.questions && Array.isArray(section.questions)) {
-        if (section.questions.length > 0 && section.questions[0].question !== 'question') {
-          return section.questions;
-        }
-      }
-    }
-    
-    // Case 2: Check for discussion in specific content fields
-    const discussionKeys = Object.keys(content).filter(key => {
-      const lowerKey = (typeof key === 'string') ? key.toLowerCase() : '';
-      return (
-        lowerKey.includes('discussion') || 
-        lowerKey.includes('speaking') || 
-        lowerKey.includes('conversation')
-      );
-    });
-    
-    for (const key of discussionKeys) {
-      const value = content[key];
-      
-      // If it's an array of questions
-      if (Array.isArray(value)) {
-        if (value.length >= 2 && typeof value[0] === 'object') {
-          return value;
-        }
+      // Extract introduction
+      let introduction = "";
+      if (discussionData.introduction && typeof discussionData.introduction === 'string') {
+        introduction = discussionData.introduction;
       }
       
-      // If it's a string, try to extract questions
-      if (typeof value === 'string' && value.includes('?')) {
-        const lines = value.split(/[\r\n]+/);
-        const questionLines = lines.filter(line => line.includes('?'));
-        
-        if (questionLines.length >= 2) {
-          questionLines.forEach(line => {
-            if (line.length > 20) {
-              questions.push({
-                question: line.trim(),
-                level: line.toLowerCase().includes('critical') ? 'critical' : 'basic',
-                followUp: []
+      // Extract questions
+      if (discussionData.questions) {
+        if (Array.isArray(discussionData.questions)) {
+          // Handle array format
+          return discussionData.questions.map((q: any) => {
+            if (typeof q === 'string') {
+              return { question: q, introduction: introduction };
+            } else if (typeof q === 'object') {
+              return { ...q, introduction: q.introduction || introduction };
+            }
+            return null;
+          }).filter(Boolean);
+        } else if (typeof discussionData.questions === 'object') {
+          // Extract questions from question object (common in Qwen API responses)
+          const extractedQuestions: any[] = [];
+          const questionValues = Object.values(discussionData.questions).filter(
+            (val: any) => typeof val === 'string' && val.includes('?')
+          );
+          
+          questionValues.forEach((q: any) => {
+            if (typeof q === 'string') {
+              extractedQuestions.push({
+                question: q,
+                introduction: introduction,
+                level: "basic"
               });
             }
           });
           
-          if (questions.length >= 2) {
-            return questions;
+          if (extractedQuestions.length > 0) {
+            return extractedQuestions;
           }
         }
       }
     }
     
-    // Case 3: Look for specific discussion questions for specific lessons
-    if (content.title && typeof content.title === 'string') {
-      // For Celebrations and Holidays lesson
-      if (content.title.includes('Celebrations and Holidays')) {
-        return [
-          {
-            question: "Which ritual or practice from a national holiday discussed in the text do you find most meaningful?",
-            level: "basic",
-            introduction: "Rituals and practices are central to how we experience holidays and connect with our heritage.",
-            focusVocabulary: ["ritual", "heritage"],
-            followUp: ["Why do you think this particular ritual resonates with you?", "How does it connect to the values being celebrated?"]
-          },
-          {
-            question: "How do national holidays in your country help to commemorate important historical events?",
-            level: "basic",
-            focusVocabulary: ["commemorate", "patriotic"],
-            followUp: ["What specific activities or ceremonies are part of these commemorations?", "Do you think they effectively preserve historical memory?"]
-          },
-          {
-            question: "In what ways have festivities associated with national holidays changed over time in your experience?",
-            level: "critical",
-            focusVocabulary: ["festivity", "heritage"],
-            followUp: ["What traditional elements have remained consistent?", "How has technology affected these celebrations?"]
-          },
-          {
-            question: "Do you think patriotic celebrations strengthen national identity, and if so, how?",
-            level: "critical",
-            focusVocabulary: ["patriotic", "heritage"],
-            followUp: ["Are there any potential drawbacks to strongly patriotic celebrations?", "How can celebrations balance patriotism with respect for diversity?"]
-          },
-          {
-            question: "How might national holidays serve different purposes for different generations within a society?",
-            level: "critical",
-            focusVocabulary: ["commemorate", "ritual"],
-            followUp: ["Why might younger and older generations experience the same holiday differently?", "How can holidays evolve while maintaining their core purpose?"]
-          }
-        ];
+    // Case 3: Fallback - look for any strings that look like questions in the lesson
+    console.log("Trying to extract questions from direct string properties");
+    const allStringProperties = Object.entries(content)
+      .filter(([key, value]) => typeof value === 'string' && value.includes('?') && value.length > 20)
+      .map(([key, value]) => ({ key, value }));
+    
+    if (allStringProperties.length > 0) {
+      for (const { key, value } of allStringProperties) {
+        if (key.toLowerCase().includes('question') || 
+            key.toLowerCase().includes('discussion') || 
+            key.toLowerCase().includes('speaking')) {
+          
+          // Split by line breaks and extract questions
+          const lines = String(value).split(/[\r\n]+/);
+          const questionLines = lines.filter(line => line.includes('?'));
+          
+          questionLines.forEach(line => {
+            if (line.length > 20) {
+              questions.push({
+                question: line.trim(),
+                level: line.toLowerCase().includes('critical') ? 'critical' : 'basic'
+              });
+            }
+          });
+        }
       }
-      // For Family Structures and Cultural Beliefs lesson
-      else if (content.title.includes('Family Structures') || content.title.includes('Cultural Beliefs')) {
-        return [
-          {
-            question: "How do family structures in your culture compare to those described in the reading?",
-            level: "basic",
-            introduction: "Family structures vary greatly across cultures. Let's explore these differences.",
-            focusVocabulary: ["extended", "nuclear", "roles"],
-            followUp: ["What similarities and differences do you notice?", "How have family structures changed over time in your culture?"]
-          },
-          {
-            question: "Which family values mentioned in the text are most important in your culture?",
-            level: "basic",
-            introduction: "Values are central to our understanding of family. Different cultures prioritize different values.",
-            focusVocabulary: ["respect", "tradition", "values"],
-            followUp: ["How are these values taught to children?", "Do you see these values changing in younger generations?"]
-          },
-          {
-            question: "How do cultural beliefs influence the way family members interact with each other?",
-            level: "critical",
-            introduction: "Cultural beliefs shape our daily interactions and relationships. Let's think about how they affect family dynamics.",
-            focusVocabulary: ["tradition", "respect", "responsibility"],
-            followUp: ["Can you provide specific examples from your experience?", "How might these interactions differ in other cultures?"]
-          },
-          {
-            question: "In what ways have gender roles within families evolved in recent decades?",
-            level: "critical",
-            introduction: "Gender roles in families have changed significantly over time. This reflection explores how these changes have affected family dynamics.",
-            focusVocabulary: ["gender roles", "tradition", "modern"],
-            followUp: ["What factors have contributed to these changes?", "Do you think these changes are positive, negative, or neutral?"]
-          },
-          {
-            question: "How do cultural celebrations reinforce family bonds and traditions?",
-            level: "basic",
-            introduction: "Celebrations often bring families together in meaningful ways. They can be central to preserving cultural heritage.",
-            focusVocabulary: ["tradition", "celebration", "heritage"],
-            followUp: ["What is your favorite family celebration and why?", "How do these celebrations help pass cultural knowledge to the next generation?"]
-          }
-        ];
-      }
-      // For National Holidays lesson
-      else if (content.title.includes('National Holiday') || content.title.includes('Independence Day') || content.title.includes('Patriotic')) {
-        return [
-          {
-            question: "What is the most important national holiday in your country and why?",
-            level: "basic",
-            focusVocabulary: ["commemorate", "celebration", "patriotic"],
-            followUp: ["How do people typically celebrate this holiday?", "What does this holiday represent to your country's identity?"]
-          },
-          {
-            question: "How do national holidays serve to strengthen people's sense of national identity?",
-            level: "critical",
-            focusVocabulary: ["patriotic", "identity", "heritage"],
-            followUp: ["Can you think of specific symbols or rituals that reinforce this identity?", "Do you think these celebrations successfully build unity?"]
-          },
-          {
-            question: "How might immigrants or people from different cultural backgrounds experience national holidays?",
-            level: "critical",
-            focusVocabulary: ["heritage", "tradition", "identity"],
-            followUp: ["What challenges might they face during these celebrations?", "How can national holidays become more inclusive?"]
-          },
-          {
-            question: "Do you think the way national holidays are celebrated has changed over time? If so, how?",
-            level: "basic",
-            focusVocabulary: ["tradition", "commemorate", "festivity"],
-            followUp: ["What factors have contributed to these changes?", "Do you think these changes reflect broader social changes?"]
-          },
-          {
-            question: "What role does food play in national holiday celebrations in your culture?",
-            level: "basic",
-            focusVocabulary: ["tradition", "celebration", "ritual"],
-            followUp: ["Are there specific dishes that are traditionally prepared?", "How do these food traditions connect to national identity or history?"]
-          }
-        ];
-      }
-      // For Health and Wellness lesson
-      else if (content.title.includes('Health') || content.title.includes('Wellness') || content.title.includes('Nutrition') || content.title.includes('Exercise')) {
-        return [
-          {
-            question: "What healthy habits discussed in the reading do you already practice in your daily life?",
-            level: "basic",
-            focusVocabulary: ["routine", "nutrition", "exercise"],
-            followUp: ["How have these habits benefited you?", "Which habits would you like to improve?"]
-          },
-          {
-            question: "How do cultural beliefs and traditions influence health practices in your country?",
-            level: "critical",
-            focusVocabulary: ["belief", "traditional", "practice"],
-            followUp: ["Can you provide examples of traditional health remedies or practices?", "Are these traditional approaches becoming more or less common over time?"]
-          },
-          {
-            question: "What are the biggest challenges people face when trying to maintain a healthy lifestyle?",
-            level: "basic",
-            focusVocabulary: ["balance", "stress", "lifestyle"],
-            followUp: ["How do these challenges differ across age groups?", "What strategies can help overcome these challenges?"]
-          },
-          {
-            question: "How does mental health awareness in your culture compare to the information presented in the reading?",
-            level: "critical",
-            focusVocabulary: ["awareness", "stigma", "wellbeing"],
-            followUp: ["Has this awareness changed in recent years?", "What more could be done to improve mental health support?"]
-          },
-          {
-            question: "In what ways does technology impact both physical and mental health in modern society?",
-            level: "critical",
-            focusVocabulary: ["impact", "balance", "screen time"],
-            followUp: ["Can you give examples of both positive and negative effects?", "How can we use technology to improve health rather than harm it?"]
-          }
-        ];
+      
+      if (questions.length > 0) {
+        console.log("Extracted questions from string properties:", questions);
+        return questions;
       }
     }
     
-    // Default fallback: If we can't find anything else, return an empty array
-    // The component will handle this gracefully
-    return questions;
+    // If we get to this point and haven't found valid discussion questions, 
+    // log the issue and return an empty array for the component to handle
+    console.log("No discussion questions found in the API response");
+    return [];
   } catch (err) {
     console.error("Error extracting discussion questions:", err);
-    return questions;
+    return [];
   }
 }

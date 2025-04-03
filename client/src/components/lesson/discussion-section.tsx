@@ -318,7 +318,9 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
                         
                         {/* Question introduction sentence if available */}
                         {q.introduction && (
-                          <p className="text-gray-700 mb-3 italic">{q.introduction}</p>
+                          <div className="p-3 mb-3 bg-blue-50 border border-blue-100 rounded-md text-gray-700">
+                            <p className="italic">{q.introduction}</p>
+                          </div>
                         )}
                         
                         <h3 className="text-xl font-medium mb-4">{q.question}</h3>
