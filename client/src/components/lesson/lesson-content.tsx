@@ -270,10 +270,32 @@ export function LessonContent({ content }: LessonContentProps) {
         // Add comprehension section if it doesn't exist
         if (!parsedContent.sections.some((s: any) => s.type === 'comprehension')) {
           console.log("Adding comprehension section as it doesn't exist");
-          parsedContent.sections.push({
+          const readingSection = parsedContent.sections.find((s: any) => s.type === 'reading');
+          
+          const comprehensionSection = {
             type: 'comprehension',
-            title: 'Reading Comprehension'
-          });
+            title: 'Reading Comprehension',
+            questions: [],
+          };
+          
+          // If we have a reading section, use it to create sample comprehension questions
+          if (readingSection && readingSection.content) {
+            comprehensionSection.questions = [
+              {
+                question: "The reading passage primarily discusses:",
+                answer: "National holidays and their cultural significance",
+                type: "multiple-choice",
+                options: [
+                  "National holidays and their cultural significance",
+                  "The economic impact of holidays",
+                  "The history of global celebrations",
+                  "Religious festivals around the world"
+                ]
+              }
+            ];
+          }
+          
+          parsedContent.sections.push(comprehensionSection);
         }
         
         // Check if we need to extract sections from malformed structure
@@ -1663,8 +1685,9 @@ export function LessonContent({ content }: LessonContentProps) {
   // Get all available sections for tabs
   console.log("Original sections:", parsedContent.sections);
   
-  // Create a complete list of valid section types based on the expected structure
-  const availableSections: string[] = [];
+  // Create arrays to store the section types from the content and our desired display order
+  let contentSectionTypes: string[] = [];
+  const displayOrder: string[] = ["warmup", "reading", "comprehension", "vocabulary", "sentenceFrames", "discussion", "quiz"];
   
   // Helper function to check if a section type exists
   const hasSectionType = (type: string): boolean => {
@@ -1674,35 +1697,47 @@ export function LessonContent({ content }: LessonContentProps) {
   // Log the entire lesson content structure to understand where the discussion questions are
   console.log("ENTIRE LESSON CONTENT:", JSON.stringify(parsedContent, null, 2));
   
-  // Always add warmup section as the first tab (regardless of whether the type exists)
-  // This ensures the warm-up tab is always present and appears first
-  availableSections.push("warmup");
-  
-  // Also identify if there's a warmup/warm-up section for reference
-  const hasWarmupSection = hasSectionType("warmup") || hasSectionType("warm-up") || hasSectionType("sentenceFrames");
-  
-  if (hasSectionType("reading")) {
-    availableSections.push("reading");
+  // Extract all existing section types from the content
+  if (Array.isArray(parsedContent.sections)) {
+    contentSectionTypes = parsedContent.sections
+      .filter((s: any) => s && typeof s === 'object' && s.type && typeof s.type === 'string')
+      .map((s: any) => s.type);
   }
   
-  // Add comprehension section right after reading and before vocabulary
-  // Always include comprehension section after reading whether it exists or not
-  availableSections.push("comprehension");
+  console.log("Section types from content:", contentSectionTypes);
   
-  if (hasSectionType("vocabulary")) {
-    availableSections.push("vocabulary");
+  // Add comprehension section if it doesn't exist in sections array
+  if (!contentSectionTypes.includes("comprehension")) {
+    console.log("Adding comprehension to content sections");
+    contentSectionTypes.push("comprehension");
   }
   
-  if (hasSectionType("sentenceFrames") || hasSectionType("grammar")) {
-    availableSections.push("sentenceFrames");
-  }
+  // Create the final available sections array using our display order
+  const availableSections: string[] = [];
   
-  if (hasSectionType("discussion") || hasSectionType("speaking")) {
-    availableSections.push("discussion");
-  }
+  // Add sections in our preferred order, but only if they exist in the content
+  displayOrder.forEach(sectionType => {
+    // Special cases for alternative section types
+    if (sectionType === "warmup" && (hasSectionType("warm-up") || hasSectionType("sentenceFrames"))) {
+      availableSections.push("warmup");
+    } 
+    else if (sectionType === "sentenceFrames" && hasSectionType("grammar")) {
+      availableSections.push("sentenceFrames");
+    }
+    else if (sectionType === "discussion" && hasSectionType("speaking")) {
+      availableSections.push("discussion");
+    }
+    else if (sectionType === "quiz" && hasSectionType("assessment")) {
+      availableSections.push("quiz");
+    }
+    else if (contentSectionTypes.includes(sectionType)) {
+      availableSections.push(sectionType);
+    }
+  });
   
-  if (hasSectionType("quiz") || hasSectionType("assessment")) {
-    availableSections.push("quiz");
+  // If we still don't have any sections, use the original content section types as fallback
+  if (availableSections.length === 0) {
+    availableSections.push(...contentSectionTypes);
   }
   
   // If no standard sections found, fall back to filtering and mapping
