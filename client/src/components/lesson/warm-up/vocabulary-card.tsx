@@ -7,72 +7,30 @@ export interface VocabularyWord {
   definition?: string;
   example?: string;
   pronunciation?: string;
+  syllables?: string[];
+  stressIndex?: number;
+  phoneticGuide?: string;
 }
 
 interface VocabularyCardProps {
   word: VocabularyWord;
 }
 
-type PronunciationData = {
-  [key: string]: {
-    pronunciation: string;
-    syllables: string[];
-    emphasisIndex: number;
-  };
-};
-
 export function VocabularyCard({ word }: VocabularyCardProps) {
-  // Hardcoded pronunciation and syllable data for demonstration
-  const pronunciationData: PronunciationData = {
-    parade: {
-      pronunciation: "puh-RAYD",
-      syllables: ["pa", "rade"],
-      emphasisIndex: 1
-    },
-    festivity: {
-      pronunciation: "fes-TIV-i-tee",
-      syllables: ["fes", "tiv", "i", "ty"],
-      emphasisIndex: 1
-    },
-    commemorate: {
-      pronunciation: "kuh-MEM-uh-rayt",
-      syllables: ["com", "mem", "o", "rate"],
-      emphasisIndex: 1
-    },
-    patriotic: {
-      pronunciation: "pay-tree-OT-ik",
-      syllables: ["pa", "tri", "ot", "ic"],
-      emphasisIndex: 2
-    },
-    ritual: {
-      pronunciation: "RICH-oo-uhl",
-      syllables: ["ri", "tu", "al"],
-      emphasisIndex: 0
-    },
-    heritage: {
-      pronunciation: "HAIR-i-tij",
-      syllables: ["her", "i", "tage"],
-      emphasisIndex: 0
-    },
-    celebration: {
-      pronunciation: "sel-uh-BRAY-shuhn",
-      syllables: ["cel", "e", "bra", "tion"],
-      emphasisIndex: 2
-    }
-  };
-  
-  // Look up the word in our pronunciation data
+  // Prepare pronunciation data from the word or use fallbacks
   const normalizedWord = word.word?.toLowerCase() || '';
-  let wordData = {
-    pronunciation: word.pronunciation || "Pronunciation not available",
-    syllables: [normalizedWord],
-    emphasisIndex: 0
-  };
   
-  // Check if we have this word in our pronunciation data
-  if (normalizedWord && normalizedWord in pronunciationData) {
-    wordData = pronunciationData[normalizedWord];
-  }
+  // Define pronunciation data structure with API data or fallbacks
+  let wordData = {
+    // If we have phoneticGuide from the API, use it, otherwise fall back to pronunciation field or default message
+    pronunciation: word.phoneticGuide || word.pronunciation || "Pronunciation not available",
+    
+    // If we have syllables from the API, use them, otherwise split the word into characters
+    syllables: word.syllables || [normalizedWord],
+    
+    // If we have stressIndex from the API, use it, otherwise default to 0
+    emphasisIndex: word.stressIndex !== undefined ? word.stressIndex : 0
+  };
 
   return (
     <div className="bg-blue-50 rounded-md p-5 border border-blue-100">

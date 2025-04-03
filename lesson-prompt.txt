@@ -91,6 +91,8 @@ sentences
 
 STEP 2: CREATE LESSON COMPONENTS
 
+CRITICALLY IMPORTANT: Your response MUST follow the EXACT formats shown in the examples provided throughout this prompt. The examples are not merely suggestions but required formats that must be followed precisely for each component of the lesson.
+
 After writing the reading text, create:
 
 - CRITICAL REQUIREMENT: You MUST include EXACTLY
@@ -281,14 +283,13 @@ level
 
 8. Pronunciation information with:
 
-   - syllables: The word broken down into syllables as an array of
+   - syllables: The word broken down into syllables as an array of
 strings
 
-   - stressIndex: Which syllable receives primary stress (zero-based
+   - stressIndex: Which syllable receives primary stress (zero-based
 index)
 
-   - phoneticGuide: A simplified pronunciation guide using regular
-characters
+   - phoneticGuide: A simplified pronunciation guide
 
 9. An image prompt (NEW!) - A detailed description (2-3 sentences) of
 what an image for this word should look like. The image prompt should:
@@ -348,7 +349,7 @@ academic/specialized terms acceptable.
 - C2: Proficient vocabulary with nuanced explanations. Full range of
 language structures. Can include specialized terminology.
 
-EXAMPLES OF PROPER SYLLABLE BREAKDOWNS:
+EXAMPLES OF PROPER SYLLABLE BREAKDOWNS - YOUR RESPONSE MUST MATCH THESE EXACT FORMATS:
 
 - "vocabulary" → syllables: ["vo", "cab", "u", "lar", "y"], stressIndex:
 1

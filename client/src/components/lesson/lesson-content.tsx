@@ -32,7 +32,7 @@ import { DiscussionSection } from "./discussion-section";
 import { DiscussionExtractor } from "./discussion-extractor";
 import { ComprehensionExtractor } from "./comprehension-extractor";
 import { QuizExtractor } from "./quiz-extractor";
-import { VocabularyCard } from "./warm-up/vocabulary-card";
+import { VocabularyCard, VocabularyWord } from "./warm-up/vocabulary-card";
 import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn, extractDiscussionQuestions, extractQuizQuestions, extractComprehensionQuestions } from "@/lib/utils";
@@ -744,13 +744,7 @@ export function LessonContent({ content }: LessonContentProps) {
     console.log("Warm-up section attempt:", section);
 
     // Extract or generate vocabulary words
-    let vocabWords: Array<{
-      word: string;
-      partOfSpeech?: string;
-      definition?: string;
-      example?: string;
-      pronunciation?: string;
-    }> = [];
+    let vocabWords: VocabularyWord[] = [];
 
     // Get vocabulary words from targetVocabulary if available
     if (section.targetVocabulary) {
@@ -1038,11 +1032,14 @@ export function LessonContent({ content }: LessonContentProps) {
               
               {/* Right Column: Vocabulary Card */}
               <VocabularyCard word={{
-                word: currentWord.word || currentWord.term || "",
+                word: currentWord.word || (currentWord as any).term || "",
                 partOfSpeech: currentWord.partOfSpeech || "noun",
                 definition: currentWord.definition || "",
                 example: currentWord.example || "",
-                pronunciation: currentWord.pronunciation || ""
+                pronunciation: currentWord.pronunciation || "",
+                syllables: currentWord.syllables || undefined,
+                stressIndex: currentWord.stressIndex || undefined,
+                phoneticGuide: currentWord.phoneticGuide || undefined
               }} />
             </div>
           </CardContent>
@@ -1086,41 +1083,56 @@ export function LessonContent({ content }: LessonContentProps) {
     
     // Define our vocabulary words for the Celebrations lesson 
     // (Using the predefined vocabulary from the Warm-up section)
-    const preDefinedVocabWords = [
+    const preDefinedVocabWords: VocabularyWord[] = [
       {
-        term: "festivity",
+        word: "festivity",
         partOfSpeech: "noun",
         definition: "A joyful celebration or festival with entertainment",
-        example: "The New Year's festivities included fireworks and music."
+        example: "The New Year's festivities included fireworks and music.",
+        pronunciation: "fes-TIV-i-tee",
+        syllables: ["fes", "tiv", "i", "ty"],
+        stressIndex: 1
       },
       {
-        term: "commemorate",
+        word: "commemorate",
         partOfSpeech: "verb",
         definition: "To honor and remember an important person or event",
-        example: "We commemorate Independence Day every year on July 4th."
+        example: "We commemorate Independence Day every year on July 4th.",
+        pronunciation: "kuh-MEM-uh-rayt",
+        syllables: ["com", "mem", "o", "rate"],
+        stressIndex: 1
       },
       {
-        term: "patriotic",
+        word: "patriotic",
         partOfSpeech: "adjective",
         definition: "Having love, loyalty and devotion to one's country",
-        example: "She felt patriotic when she saw the national flag."
+        example: "She felt patriotic when she saw the national flag.",
+        pronunciation: "pay-tree-OT-ik",
+        syllables: ["pa", "tri", "ot", "ic"],
+        stressIndex: 2
       },
       {
-        term: "ritual",
+        word: "ritual",
         partOfSpeech: "noun",
         definition: "A formal ceremony or series of acts always performed the same way",
-        example: "The lighting of candles is an important ritual in many celebrations."
+        example: "The lighting of candles is an important ritual in many celebrations.",
+        pronunciation: "RICH-oo-uhl",
+        syllables: ["ri", "tu", "al"],
+        stressIndex: 0
       },
       {
-        term: "heritage",
+        word: "heritage",
         partOfSpeech: "noun",
         definition: "Traditions and culture passed down from previous generations",
-        example: "Their cultural heritage influences how they celebrate holidays."
+        example: "Their cultural heritage influences how they celebrate holidays.",
+        pronunciation: "HAIR-i-tij",
+        syllables: ["her", "i", "tage"],
+        stressIndex: 0
       }
     ];
     
     // Use our predefined vocabulary words for consistent display
-    const words = preDefinedVocabWords;
+    const words: VocabularyWord[] = preDefinedVocabWords;
     
     // Animation variants for the flip card
     const cardVariants = {
@@ -1221,7 +1233,7 @@ export function LessonContent({ content }: LessonContentProps) {
                     
                     {/* Word display (centered on the card) */}
                     <div className="relative z-10 text-center p-6 bg-white/80 rounded-lg shadow-sm backdrop-blur-sm">
-                      <h2 className="text-3xl font-bold text-gray-800 mb-1">{currentWord.term}</h2>
+                      <h2 className="text-3xl font-bold text-gray-800 mb-1">{(currentWord as any).term || currentWord.word}</h2>
                       <p className="text-gray-500 italic mb-4">{currentWord.partOfSpeech}</p>
                       <p className="text-sm text-gray-600">Click to reveal definition</p>
                     </div>
@@ -1239,7 +1251,7 @@ export function LessonContent({ content }: LessonContentProps) {
                   <div className="h-full flex flex-col">
                     {/* Word title */}
                     <div className="mb-4 text-center">
-                      <h2 className="text-2xl font-bold text-gray-800">{currentWord.term}</h2>
+                      <h2 className="text-2xl font-bold text-gray-800">{(currentWord as any).term || currentWord.word}</h2>
                       <p className="text-gray-500 italic">{currentWord.partOfSpeech}</p>
                     </div>
                     
