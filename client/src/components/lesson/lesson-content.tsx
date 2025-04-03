@@ -29,6 +29,7 @@ import {
 import { ReadingSection } from "./reading-section";
 import { SentenceFramesSection } from "./sentence-frames-section";
 import { DiscussionSection } from "./discussion-section";
+import { DiscussionExtractor } from "./discussion-extractor";
 import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
@@ -416,6 +417,73 @@ export function LessonContent({ content }: LessonContentProps) {
     }
   };
 
+  // Utility function to extract discussion questions from the raw Qwen response
+  const extractQwenDiscussionQuestions = () => {
+    // Check if we have the raw content as a string
+    if (content && typeof content === 'string') {
+      console.log("Attempting to extract discussion questions from raw Qwen response");
+      
+      try {
+        // Look for the discussion section markers in the raw content
+        const discussionMatch = content.match(/\"type\"\s*\n\s*,\s*\n\s*\"discussion\"\s*\n\s*:\s*\n\s*\"title\"\s*\n\s*,\s*\n\s*\"([^\"]+)\"\s*\n\s*:\s*\n\s*\"introduction\"\s*\n\s*,\s*\n\s*\"([^\"]+)\"\s*\n\s*:\s*\n\s*\"questions\"\s*\n/);
+        
+        if (discussionMatch) {
+          console.log("Found discussion section marker in raw content!");
+          const title = discussionMatch[1] || "Discussion Questions";
+          const introduction = discussionMatch[2] || "";
+          
+          // Now look for question-answer pairs after the "questions" marker
+          // This regex pattern looks for quoted strings in the Qwen format
+          const questionsRegex = /\"([^\"]+)\"\s*\n\s*,\s*\n\s*\"([^\"]+)\"/g;
+          const questionStart = content.indexOf('"questions"');
+          
+          if (questionStart > -1) {
+            const questionsContent = content.substring(questionStart);
+            const questions = [];
+            let match;
+            
+            while ((match = questionsRegex.exec(questionsContent)) !== null) {
+              // Only capture until we hit another type marker
+              if (match[0].includes('"type"')) {
+                break;
+              }
+              
+              const question = match[1];
+              const answer = match[2];
+              
+              // Skip if this doesn't look like a real question
+              if (question === 'type' || question === 'title' || question === 'introduction' || question === 'questions') {
+                continue;
+              }
+              
+              questions.push({
+                question: question,
+                level: question.toLowerCase().includes('critical') ? 'critical' : 'basic',
+                followUp: answer ? [answer] : []
+              });
+              
+              console.log("Extracted question from raw content:", question);
+            }
+            
+            if (questions.length > 0) {
+              console.log(`Successfully extracted ${questions.length} discussion questions from raw content`);
+              return {
+                type: "discussion",
+                title: title,
+                introduction: introduction,
+                questions: questions
+              };
+            }
+          }
+        }
+      } catch (err) {
+        console.error("Error extracting discussion questions from raw content:", err);
+      }
+    }
+    
+    return null;
+  };
+  
   // Function to find a section by type with error handling
   const findSection = (type: string) => {
     try {
@@ -1725,174 +1793,13 @@ export function LessonContent({ content }: LessonContentProps) {
           </TabsContent>
           
           <TabsContent value="discussion" className="m-0">
-            {/* Extract and pass discussion questions directly */}
-            {(() => {
-              // Get the discussion section
-              let discussionSection = findSection("discussion") || findSection("speaking");
-              
-              // Attempt to specifically handle the Qwen format where discussion questions are 
-              // in questions key-value object
-              try {
-                if (discussionSection) {
-                  console.log("Processing discussion section for Qwen format questions");
-                  
-                  // Clone the discussion section to avoid modifying the original
-                  const processedSection = {...discussionSection};
-                  
-                  // Case 1: Qwen format where questions is an object of question-answer pairs
-                  if (discussionSection.questions && typeof discussionSection.questions === 'object' && 
-                      !Array.isArray(discussionSection.questions)) {
-                      
-                    console.log("Found Qwen question-answer object format");
-                    
-                    // Extract question keys and convert to array format expected by the component
-                    const questionKeys = Object.keys(discussionSection.questions);
-                    const questionArray = questionKeys
-                      .filter(q => typeof q === 'string' && q.trim() && q !== 'question')
-                      .map(q => ({
-                        question: q,
-                        level: q.toLowerCase().includes('critical') ? 'critical' : 'basic',
-                        followUp: [discussionSection.questions[q]]
-                      }));
-                    
-                    if (questionArray.length > 0) {
-                      processedSection.questions = questionArray;
-                      console.log("Extracted Qwen format questions:", questionArray.length);
-                    }
-                  }
-                  
-                  return <DiscussionSection section={processedSection} />;
-                }
-                
-                // If no discussion section found, check if discussion data is at the root level
-                if (parsedContent && parsedContent.discussion) {
-                  // Create a section from the discussion data at the root level
-                  const fabricatedSection: {
-                    type: string;
-                    title: string;
-                    introduction: string;
-                    questions: any[];
-                  } = {
-                    type: "discussion",
-                    title: parsedContent.discussion.title || "Discussion Questions",
-                    introduction: parsedContent.discussion.introduction || "",
-                    questions: []
-                  };
-                  
-                  // If discussion.questions exists in Qwen format, process it
-                  if (parsedContent.discussion.questions && 
-                      typeof parsedContent.discussion.questions === 'object' &&
-                      !Array.isArray(parsedContent.discussion.questions)) {
-                    
-                    console.log("Found Qwen format discussion questions at root level");
-                    
-                    const questionKeys = Object.keys(parsedContent.discussion.questions)
-                      .filter(q => typeof q === 'string' && q.trim() && q !== 'question');
-                    
-                    const questionArray = questionKeys.map(q => ({
-                      question: q,
-                      level: q.toLowerCase().includes('critical') ? 'critical' : 'basic',
-                      followUp: [parsedContent.discussion.questions[q]]
-                    }));
-                    
-                    fabricatedSection.questions = questionArray;
-                    console.log("Extracted root-level Qwen questions:", questionArray.length);
-                  }
-                  
-                  return <DiscussionSection section={fabricatedSection} />;
-                }
-              } catch (err) {
-                console.error("Error processing Qwen discussion format:", err);
-              }
-              
-              // Fallback to original section if all else fails
-              return <DiscussionSection section={discussionSection} />;
-            })()}
+            {/* Use our specialized DiscussionExtractor component */}
+            <DiscussionExtractor content={content} />
           </TabsContent>
           
           <TabsContent value="speaking" className="m-0">
-            {/* Extract and pass discussion questions directly */}
-            {(() => {
-              // Get the speaking section (or use discussion as fallback)
-              let speakingSection = findSection("speaking") || findSection("discussion");
-              
-              // Attempt to specifically handle the Qwen format where speaking questions are in questions object
-              try {
-                if (speakingSection) {
-                  console.log("Processing speaking section for Qwen format questions");
-                  
-                  // Clone the speaking section to avoid modifying the original
-                  const processedSection = {...speakingSection};
-                  
-                  // Case 1: Qwen format where questions is an object of question-answer pairs
-                  if (speakingSection.questions && typeof speakingSection.questions === 'object' && 
-                      !Array.isArray(speakingSection.questions)) {
-                      
-                    console.log("Found Qwen question-answer object format in speaking section");
-                    
-                    // Extract question keys and convert to array format expected by the component
-                    const questionKeys = Object.keys(speakingSection.questions);
-                    const questionArray = questionKeys
-                      .filter(q => typeof q === 'string' && q.trim() && q !== 'question')
-                      .map(q => ({
-                        question: q,
-                        level: q.toLowerCase().includes('critical') ? 'critical' : 'basic',
-                        followUp: [speakingSection.questions[q]]
-                      }));
-                    
-                    if (questionArray.length > 0) {
-                      processedSection.questions = questionArray;
-                      console.log("Extracted Qwen format questions from speaking section:", questionArray.length);
-                    }
-                  }
-                  
-                  return <DiscussionSection section={processedSection} />;
-                }
-                
-                // If no speaking section found, check if speaking data is at the root level
-                if (parsedContent && parsedContent.speaking) {
-                  // Create a section from the speaking data at the root level
-                  const fabricatedSection: {
-                    type: string;
-                    title: string;
-                    introduction: string;
-                    questions: any[];
-                  } = {
-                    type: "speaking",
-                    title: parsedContent.speaking.title || "Speaking Activity",
-                    introduction: parsedContent.speaking.introduction || "",
-                    questions: []
-                  };
-                  
-                  // If speaking.questions exists in Qwen format, process it
-                  if (parsedContent.speaking.questions && 
-                      typeof parsedContent.speaking.questions === 'object' &&
-                      !Array.isArray(parsedContent.speaking.questions)) {
-                    
-                    console.log("Found Qwen format speaking questions at root level");
-                    
-                    const questionKeys = Object.keys(parsedContent.speaking.questions)
-                      .filter(q => typeof q === 'string' && q.trim() && q !== 'question');
-                    
-                    const questionArray = questionKeys.map(q => ({
-                      question: q,
-                      level: q.toLowerCase().includes('critical') ? 'critical' : 'basic',
-                      followUp: [parsedContent.speaking.questions[q]]
-                    }));
-                    
-                    fabricatedSection.questions = questionArray;
-                    console.log("Extracted root-level Qwen speaking questions:", questionArray.length);
-                  }
-                  
-                  return <DiscussionSection section={fabricatedSection} />;
-                }
-              } catch (err) {
-                console.error("Error processing Qwen speaking format:", err);
-              }
-              
-              // Fallback to original section if all else fails
-              return <DiscussionSection section={speakingSection} />;
-            })()}
+            {/* Use our specialized DiscussionExtractor component with sectionType="speaking" */}
+            <DiscussionExtractor content={content} sectionType="speaking" />
           </TabsContent>
           
           <TabsContent value="quiz" className="m-0">
