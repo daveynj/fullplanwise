@@ -1,223 +1,11 @@
-import axios from 'axios';
-import { LessonGenerateParams } from '@shared/schema';
-import * as fs from 'fs';
 
-// Qwen API endpoint for international usage
-const QWEN_API_URL = 'https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions';
-
-/**
- * Service for interacting with the Qwen AI API
- */
-export class QwenService {
-  private apiKey: string;
-  
-  constructor(apiKey: string) {
-    if (!apiKey) {
-      console.warn('Qwen API key is not provided or is empty');
-    }
-    this.apiKey = apiKey;
-  }
-  
-  /**
-   * Generate a complete ESL lesson based on the provided parameters
-   * @param params Lesson generation parameters
-   * @returns Generated lesson content
-   */
-  async generateLesson(params: LessonGenerateParams): Promise<any> {
-    try {
-      if (!this.apiKey) {
-        throw new Error('Qwen API key is not configured');
-      }
-
-      console.log('Starting Qwen API lesson generation...');
-      
-      // Validate the API key format (basic validation)
-      if (!this.apiKey.trim()) {
-        throw new Error('Empty API key provided');
-      }
-      
-      // Log the key pattern (without revealing the actual key)
-      const keyPattern = this.apiKey.substring(0, 4) + '...' + this.apiKey.substring(this.apiKey.length - 4);
-      console.log(`Using API key pattern: ${keyPattern}`);
-
-      const prompt = this.constructLessonPrompt(params);
-      console.log('Constructed prompt successfully');
-      
-      // Use qwen-max model with longer outputs
-      const modelName = "qwen-max";
-      
-      // Request payload following OpenAI-compatible format for the international endpoint
-      const requestBody = {
-        model: modelName,
-        messages: [
-          { 
-            role: "system", 
-            content: `You are an expert ESL teacher. Follow these EXACT requirements:
-
-CRITICAL: Your output must be properly formatted JSON with NO ERRORS!
-
-1. EXTREMELY CRITICAL: ALL ARRAYS MUST CONTAIN FULL CONTENT, NOT NUMBERS OR COUNTS
-   CORRECT: "paragraphs": ["Paragraph 1 text here...", "Paragraph 2 text here...", "Paragraph 3 text here..."]
-   WRONG: "paragraphs": 5
-   CORRECT: "words": [{"term": "vocabulary1", "partOfSpeech": "noun", ...}, {"term": "vocabulary2", ...}]
-   WRONG: "words": 5
-
-2. ARRAYS MUST USE PROPER ARRAY FORMAT
-   CORRECT: "questions": ["Question 1", "Question 2", "Question 3", "Question 4", "Question 5"]
-   WRONG: "questions": ["Question 1"], "Question 2": "Question 3"
-
-3. CRITICAL: ALL CONTENT MUST BE ABOUT THE SPECIFIC TOPIC PROVIDED BY THE USER. The reading text, vocabulary, and all exercises must directly relate to the topic. Default/generic content is not acceptable.
-
-4. REQUIRED CONTENT IN EACH LESSON:
-   - Reading: EXACTLY 5 paragraphs as an ARRAY, EACH paragraph MUST have 3-4 complete sentences (min. 15 total)
-   - Vocabulary: EXACTLY 5 vocabulary words with complete details as an ARRAY OF OBJECTS
-   - Warm-up: EXACTLY 5 questions AND 5 target vocabulary words (both in array format)
-   - Comprehension: EXACTLY 5 questions as an ARRAY OF OBJECTS with question, options, answer, and explanation
-   - Sentence Frames: EXACTLY 2-5 sentence frames as an ARRAY OF OBJECTS with pattern, examples, etc.
-   - Discussion: EXACTLY 5 discussion questions as an ARRAY OF STRINGS
-   - Quiz: EXACTLY 5 quiz questions as an ARRAY OF OBJECTS with options and answers
-
-EXTREMELY IMPORTANT: ALWAYS return FULL OBJECT STRUCTURES with ALL content, NEVER just counts or numbers.` 
-          },
-          { 
-            role: "user", 
-            content: prompt 
-          }
-        ],
-        temperature: 0.3, 
-        top_p: 0.9,
-        max_tokens: 5000,
-        response_format: { type: "json_object" }
-      };
-      
-      console.log(`Using model: ${modelName}`);
-      console.log('Request endpoint:', QWEN_API_URL);
-      
-      // Make the API request
-      try {
-        // Create logs directory if it doesn't exist
-        if (!fs.existsSync('./logs')) {
-          fs.mkdirSync('./logs', { recursive: true });
-        }
-        
-        // Create unique identifiers for this request
-        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-        const topicSafe = params.topic.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 20);
-        const requestId = `${topicSafe}_${timestamp}`;
-        
-        // Save the raw prompt as plain text
-        const rawPromptPath = `./logs/RAW_prompt_${requestId}.txt`;
-        fs.writeFileSync(rawPromptPath, prompt);
-        console.log(`Raw prompt saved to ${rawPromptPath}`);
-        
-        console.log('Sending request to Qwen API...');
-        
-        const response = await axios({
-          method: 'post',
-          url: QWEN_API_URL,
-          headers: {
-            'Authorization': `Bearer ${this.apiKey}`,
-            'Content-Type': 'application/json'
-          },
-          data: requestBody,
-          timeout: 180000 // 3 minute timeout
-        });
-        
-        console.log('Received response from Qwen API');
-        
-        // Save ABSOLUTELY EVERYTHING in the response
-        const fullResponsePath = `./logs/FULL_response_${requestId}.json`;
-        fs.writeFileSync(
-          fullResponsePath,
-          JSON.stringify(response.data, null, 2)
-        );
-        console.log(`ABSOLUTELY EVERYTHING in the response saved to ${fullResponsePath}`);
-        
-        // Save raw choices content
-        if (response.data?.choices?.[0]?.message?.content) {
-          const contentPath = `./logs/RAW_message_content_${requestId}.txt`;
-          fs.writeFileSync(contentPath, response.data.choices[0].message.content);
-          console.log(`Raw message content saved to ${contentPath}`);
-        }
-        
-        // Parse the response, transform, and return
-        if (response.data?.choices?.[0]?.message?.content) {
-          try {
-            const content = response.data.choices[0].message.content;
-            try {
-              // First attempt to parse the JSON content
-              const jsonContent = JSON.parse(content);
-              return this.formatLessonContent(jsonContent);
-            } catch (jsonParseError) {
-              console.error('Error parsing response as JSON, attempting to clean content:', jsonParseError);
-              
-              // If direct parsing fails, try to clean up the content
-              let cleanedContent = content;
-              
-              // Remove any markdown code block markers if present
-              cleanedContent = cleanedContent.replace(/```json\s*/g, '').replace(/```\s*$/g, '').trim();
-              
-              try {
-                // Try parsing the cleaned content
-                const jsonContent = JSON.parse(cleanedContent);
-                console.log('Successfully parsed JSON after cleaning content');
-                return this.formatLessonContent(jsonContent);
-              } catch (secondParseError) {
-                console.error('Failed to parse JSON even after cleaning:', secondParseError);
-                // If all parsing attempts fail, return the error response
-                return {
-                  title: `Lesson on ${params.topic}`,
-                  content: response.data.choices[0].message.content,
-                  error: 'JSON parsing failed'
-                };
-              }
-            }
-          } catch (parseError) {
-            console.error('Error processing Qwen response:', parseError);
-            return {
-              title: `Lesson on ${params.topic}`,
-              content: response.data.choices[0].message.content,
-              error: 'JSON parsing failed'
-            };
-          }
-        }
-        
-        return {
-          title: params.topic ? `Lesson on ${params.topic}` : 'ESL Lesson',
-          content: 'Unable to generate lesson content',
-          error: 'No content in response'
-        };
-        
-      } catch (error: any) {
-        console.error('Error during API request:', error.message);
-        throw error;
-      }
-    } catch (error: any) {
-      console.error('Error in QwenService.generateLesson:', error.message);
-      throw error;
-    }
-  }
-  
-  /**
-   * Constructs a structured prompt for the Qwen AI model
-   */
-  private constructLessonPrompt(params: LessonGenerateParams): string {
-    const { cefrLevel, topic, focus, lessonLength, additionalNotes } = params;
-    
-    // We'll set some variables to match what the system prompt expects
-    const targetLevel = cefrLevel;
-    const text = topic;
-    const minVocabCount = 5;
-    const maxVocabCount = 5;
-    
-    return `
 You are an expert ESL (English as a Second Language) teacher and curriculum designer with over 20 years of experience.
 
 TASK OVERVIEW:
-You will create a complete ESL lesson for ${targetLevel} level students on a given topic.
+You will create a complete ESL lesson for B1 level students on a given topic.
 
 STEP 1: WRITE A READING TEXT
-- First, write an original reading text about the topic "${text}"
+- First, write an original reading text about the topic "Daily Life and Social Interactions:  Greetings and Farewells: (e.g., handshakes, bows, kisses, verbal greetings)"
 - Use a warm, accessible, and conversational tone
 - Include interesting facts and observations woven naturally into the narrative
 - Use vivid, descriptive language that brings topics to life
@@ -225,27 +13,27 @@ STEP 1: WRITE A READING TEXT
 - Use a mix of sentence lengths for good flow
 - Occasionally address the reader directly with rhetorical questions or observations
 
-- CRITICAL REQUIREMENT: For ${targetLevel} level, your text MUST be AT LEAST ${targetLevel === "B1" ? "200" : targetLevel === "C2" ? "500" : targetLevel === "C3" ? "600" : targetLevel === "A1" || targetLevel === "A2" ? "an appropriate length" : "300"} words
-- Your text will be REJECTED if it's shorter than ${targetLevel === "B1" ? "200" : targetLevel === "C2" ? "500" : targetLevel === "C3" ? "600" : targetLevel === "A1" || targetLevel === "A2" ? "the appropriate length" : "300"} words
+- CRITICAL REQUIREMENT: For B1 level, your text MUST be AT LEAST 200 words
+- Your text will be REJECTED if it's shorter than 200 words
 - The system counts words by splitting on whitespace - make sure you have enough actual words
 - Divide your text into 3-5 paragraphs with clear paragraph breaks (use double line breaks between paragraphs)
 - Focus on creating a substantial, informative text before moving on to other components
-- Make sure the vocabulary and sentence structures remain appropriate for ${targetLevel} level students
+- Make sure the vocabulary and sentence structures remain appropriate for B1 level students
 - For lower levels (A1, A2), simplify the language while maintaining a friendly, engaging tone
 - For higher levels (B2, C1, C2), use richer vocabulary and more complex sentences
 
 STEP 2: CREATE LESSON COMPONENTS
 After writing the reading text, create:
-- CRITICAL REQUIREMENT: You MUST include EXACTLY ${minVocabCount}-${maxVocabCount} vocabulary items from your text. The system requires a minimum of ${minVocabCount} vocabulary items and will REJECT the lesson if fewer are provided.
+- CRITICAL REQUIREMENT: You MUST include EXACTLY 5-5 vocabulary items from your text. The system requires a minimum of 5 vocabulary items and will REJECT the lesson if fewer are provided.
 - ABSOLUTELY CRITICAL: Each semantic group MUST contain at least 2-3 vocabulary words. DO NOT create groups with only one word.
 - DO NOT include basic words like "hi", "hello", "goodbye", or other extremely common words as vocabulary items.
-- Only choose words that are appropriate for the CEFR level ${targetLevel} and would be genuinely useful for students to learn.
+- Only choose words that are appropriate for the CEFR level B1 and would be genuinely useful for students to learn.
 - EXTREMELY IMPORTANT: Choose ONLY English words for vocabulary. DO NOT include foreign words (like "la bise," "sayonara," "wai," etc.) even if they appear in your text when discussing other cultures. ONLY ENGLISH VOCABULARY should be selected.
 - EXACTLY 3-5 reading comprehension activities - YOU MUST INCLUDE AT LEAST 3
 - 1-2 pre-reading discussion questions
 - EXACTLY 5-7 post-reading discussion questions - YOU MUST INCLUDE AT LEAST 5, and each question MUST directly reference specific content from your reading text
 - A brief warm-up activity that MUST incorporate all vocabulary items from your vocabulary list, not just one word
-- NEW REQUIREMENT: 2-4 sentence frames and templates appropriate for the ${targetLevel} level to help students with sentence structure and grammar
+- NEW REQUIREMENT: 2-4 sentence frames and templates appropriate for the B1 level to help students with sentence structure and grammar
 
 SENTENCE FRAMES REQUIREMENTS:
 For each sentence frame, include:
@@ -267,11 +55,11 @@ Tailor the complexity and number of sentence frames based on CEFR level:
 VOCABULARY REQUIREMENTS:
 For each vocabulary item, you MUST include:
 1. The word itself (ENGLISH ONLY - NO FOREIGN WORDS)
-2. A clear definition using language appropriate for ${targetLevel} level students
+2. A clear definition using language appropriate for B1 level students
 3. The part of speech (noun, verb, adjective, etc.)
-4. An example sentence using language appropriate for ${targetLevel} level
+4. An example sentence using language appropriate for B1 level
 5. Common collocations (phrases that often include this word)
-6. Usage notes written with ${targetLevel} level appropriate language
+6. Usage notes written with B1 level appropriate language
 7. Teaching tips
 8. Pronunciation information with:
    - syllables: The word broken down into syllables as an array of strings
@@ -300,13 +88,13 @@ DISCUSSION QUESTION REQUIREMENTS:
   1. A CEFR-level appropriate paragraph about an interesting and relevant aspect of the topic
   2. 5 discussion/debate topics related to the paragraph and the reading content
 - The paragraph should:
-  - Be written at the appropriate CEFR level (${targetLevel})
+  - Be written at the appropriate CEFR level (B1)
   - Focus on something interesting and thought-provoking about the subject
   - Be 3-5 sentences long
   - Create a foundation for meaningful discussion
   - Relate directly to the vocabulary being learned
   - Avoid simply summarizing the main reading
-  - CRITICAL: The language complexity MUST match exactly the ${targetLevel} level
+  - CRITICAL: The language complexity MUST match exactly the B1 level
 
 ⚠️ CRITICAL REQUIREMENT: You MUST provide EXACTLY 5 discussion/debate topics after the paragraph. Not providing exactly 5 topics will cause your response to be rejected and considered a failure.
 
@@ -329,9 +117,9 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
 
 {
   "title": "Descriptive lesson title",
-  "level": "${cefrLevel}",
-  "focus": "${focus}",
-  "estimatedTime": ${lessonLength},
+  "level": "B1",
+  "focus": "general",
+  "estimatedTime": 60,
   "sections": [
     {
       "type": "warmup",
@@ -558,91 +346,4 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
   ]
 }
 
-CRITICAL: Make sure your JSON is valid with no syntax errors. Use proper formatting with arrays using square brackets and objects using curly braces. Don't use property names as values, and ensure ALL string values are properly quoted.`;
-  }
-
-  /**
-   * Format and process the lesson content
-   */
-  private formatLessonContent(content: any): any {
-    try {
-      // If content is already an object (previously parsed JSON), work with it directly
-      if (typeof content === 'object' && content !== null) {
-        const lessonContent = content;
-        
-        // Check for discussion questions - sometimes they come in a format where each question is a key
-        // instead of an array element
-        if (lessonContent.sections) {
-          for (const section of lessonContent.sections) {
-            // Handle discussion section formatting
-            if (section.type === 'discussion' && section.questions) {
-              // If questions is an object but not an array, convert to array
-              if (typeof section.questions === 'object' && !Array.isArray(section.questions)) {
-                console.log('Converting discussion questions from object to array format');
-                const questionArray = [];
-                for (const key in section.questions) {
-                  if (key.startsWith('Question') || key.match(/^\d+$/) || key.match(/^[A-Za-z]$/)) {
-                    questionArray.push(section.questions[key]);
-                  }
-                }
-                
-                if (questionArray.length > 0) {
-                  section.questions = questionArray;
-                  console.log(`Converted ${questionArray.length} discussion questions to array format`);
-                }
-              }
-            }
-            
-            // Handle comprehension section formatting  
-            if (section.type === 'comprehension' && section.questions) {
-              // If questions is an object but not an array, convert to array
-              if (typeof section.questions === 'object' && !Array.isArray(section.questions)) {
-                console.log('Converting comprehension questions from object to array format');
-                const questionArray = [];
-                for (const key in section.questions) {
-                  if (section.questions[key] && typeof section.questions[key] === 'object') {
-                    questionArray.push(section.questions[key]);
-                  }
-                }
-                
-                if (questionArray.length > 0) {
-                  section.questions = questionArray;
-                  console.log(`Converted ${questionArray.length} comprehension questions to array format`);
-                }
-              }
-            }
-            
-            // Handle quiz section formatting
-            if (section.type === 'quiz' && section.questions) {
-              // If questions is an object but not an array, convert to array
-              if (typeof section.questions === 'object' && !Array.isArray(section.questions)) {
-                console.log('Converting quiz questions from object to array format');
-                const questionArray = [];
-                for (const key in section.questions) {
-                  if (section.questions[key] && typeof section.questions[key] === 'object') {
-                    questionArray.push(section.questions[key]);
-                  }
-                }
-                
-                if (questionArray.length > 0) {
-                  section.questions = questionArray;
-                  console.log(`Converted ${questionArray.length} quiz questions to array format`);
-                }
-              }
-            }
-          }
-        }
-        
-        return lessonContent;
-      }
-      
-      // Otherwise return the content as is
-      return content;
-    } catch (error: any) {
-      console.error('Error formatting lesson content:', error);
-      return content;
-    }
-  }
-}
-
-export const qwenService = new QwenService(process.env.QWEN_API_KEY || '');
+CRITICAL: Make sure your JSON is valid with no syntax errors. Use proper formatting with arrays using square brackets and objects using curly braces. Don't use property names as values, and ensure ALL string values are properly quoted.
