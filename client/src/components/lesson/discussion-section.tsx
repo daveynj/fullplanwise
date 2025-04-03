@@ -17,6 +17,7 @@ interface DiscussionQuestion {
   question: string;
   level?: "basic" | "critical";
   topic?: string;
+  introduction?: string; // Introduction sentence before the question
   focusVocabulary?: string[];
   followUp?: string[];
   paragraphContext?: string;
@@ -79,6 +80,7 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
         ).map((q: any) => ({
           question: q.question || q.text || "Discussion question",
           level: q.level || "basic",
+          introduction: q.introduction || "", // Extract introduction if present
           focusVocabulary: q.focusVocabulary || q.vocabulary || [],
           followUp: q.followUp || [],
           paragraphContext: q.paragraphContext || q.context || "",
@@ -312,6 +314,11 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
                         {/* Topic introduction paragraph if available */}
                         {q.topic && (
                           <p className="text-gray-700 mb-4">{q.topic}</p>
+                        )}
+                        
+                        {/* Question introduction sentence if available */}
+                        {q.introduction && (
+                          <p className="text-gray-700 mb-3 italic">{q.introduction}</p>
                         )}
                         
                         <h3 className="text-xl font-medium mb-4">{q.question}</h3>

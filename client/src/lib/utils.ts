@@ -509,6 +509,7 @@ export function extractDiscussionQuestions(content: any): any[] {
           {
             question: "Which ritual or practice from a national holiday discussed in the text do you find most meaningful?",
             level: "basic",
+            introduction: "Rituals and practices are central to how we experience holidays and connect with our heritage.",
             focusVocabulary: ["ritual", "heritage"],
             followUp: ["Why do you think this particular ritual resonates with you?", "How does it connect to the values being celebrated?"]
           },
@@ -544,30 +545,35 @@ export function extractDiscussionQuestions(content: any): any[] {
           {
             question: "How do family structures in your culture compare to those described in the reading?",
             level: "basic",
+            introduction: "Family structures vary greatly across cultures. Let's explore these differences.",
             focusVocabulary: ["extended", "nuclear", "roles"],
             followUp: ["What similarities and differences do you notice?", "How have family structures changed over time in your culture?"]
           },
           {
             question: "Which family values mentioned in the text are most important in your culture?",
             level: "basic",
+            introduction: "Values are central to our understanding of family. Different cultures prioritize different values.",
             focusVocabulary: ["respect", "tradition", "values"],
             followUp: ["How are these values taught to children?", "Do you see these values changing in younger generations?"]
           },
           {
             question: "How do cultural beliefs influence the way family members interact with each other?",
             level: "critical",
+            introduction: "Cultural beliefs shape our daily interactions and relationships. Let's think about how they affect family dynamics.",
             focusVocabulary: ["tradition", "respect", "responsibility"],
             followUp: ["Can you provide specific examples from your experience?", "How might these interactions differ in other cultures?"]
           },
           {
             question: "In what ways have gender roles within families evolved in recent decades?",
             level: "critical",
+            introduction: "Gender roles in families have changed significantly over time. This reflection explores how these changes have affected family dynamics.",
             focusVocabulary: ["gender roles", "tradition", "modern"],
             followUp: ["What factors have contributed to these changes?", "Do you think these changes are positive, negative, or neutral?"]
           },
           {
             question: "How do cultural celebrations reinforce family bonds and traditions?",
             level: "basic",
+            introduction: "Celebrations often bring families together in meaningful ways. They can be central to preserving cultural heritage.",
             focusVocabulary: ["tradition", "celebration", "heritage"],
             followUp: ["What is your favorite family celebration and why?", "How do these celebrations help pass cultural knowledge to the next generation?"]
           }

@@ -4,6 +4,7 @@ import { extractDiscussionQuestions } from "@/lib/utils";
 interface DiscussionQuestion {
   question: string;
   level?: "basic" | "critical";
+  introduction?: string; // Introduction sentence before the question
   focusVocabulary?: string[];
   followUp?: string[];
   answer?: string;
