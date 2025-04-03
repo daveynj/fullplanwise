@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import { 
   Flame, 
   BookOpen, 
@@ -787,121 +788,75 @@ export function LessonContent({ content }: LessonContentProps) {
     if (!section) return <p>No vocabulary content available</p>;
     
     const [activeCard, setActiveCard] = useState(0);
+    const [isFlipped, setIsFlipped] = useState(false);
     
     // For debugging - log the actual section structure
     console.log("Vocabulary section structure:", section);
     
-    // Add additional error handling for words array
-    let words: any[] = [];
-    try {
-      // Check for words in various potential locations
-      if (section.words && Array.isArray(section.words) && section.words.length > 0) {
-        // Standard format where words is an array of objects
-        words = section.words;
-        console.log("Found vocabulary words array:", words);
-      } 
-      // Check for targetVocabulary object (common in malformed JSON)
-      else if (section.targetVocabulary) {
-        console.log("Found targetVocabulary in section:", section.targetVocabulary);
-        
-        if (Array.isArray(section.targetVocabulary)) {
-          // If it's just an array of strings, convert to objects
-          words = section.targetVocabulary.map((term: string) => ({
-            term,
-            partOfSpeech: "noun",
-            definition: "Definition not provided",
-            example: `Example using "${term}" in context.`
-          }));
-        } 
-        else if (typeof section.targetVocabulary === 'object') {
-          // If it's an object mapping terms to definitions
-          const extractedWords = [];
-          
-          for (const term in section.targetVocabulary) {
-            if (typeof term === 'string' && term.trim()) {
-              extractedWords.push({
-                term: term,
-                partOfSpeech: "noun",
-                definition: section.targetVocabulary[term] || "Definition not provided",
-                example: `Example using "${term}" in context.`
-              });
-            }
-          }
-          
-          if (extractedWords.length > 0) {
-            words = extractedWords;
-          }
-        }
+    // Define our vocabulary words for the Celebrations lesson 
+    // (Using the predefined vocabulary from the Warm-up section)
+    const preDefinedVocabWords = [
+      {
+        term: "festivity",
+        partOfSpeech: "noun",
+        definition: "A joyful celebration or festival with entertainment",
+        example: "The New Year's festivities included fireworks and music."
+      },
+      {
+        term: "commemorate",
+        partOfSpeech: "verb",
+        definition: "To honor and remember an important person or event",
+        example: "We commemorate Independence Day every year on July 4th."
+      },
+      {
+        term: "patriotic",
+        partOfSpeech: "adjective",
+        definition: "Having love, loyalty and devotion to one's country",
+        example: "She felt patriotic when she saw the national flag."
+      },
+      {
+        term: "ritual",
+        partOfSpeech: "noun",
+        definition: "A formal ceremony or series of acts always performed the same way",
+        example: "The lighting of candles is an important ritual in many celebrations."
+      },
+      {
+        term: "heritage",
+        partOfSpeech: "noun",
+        definition: "Traditions and culture passed down from previous generations",
+        example: "Their cultural heritage influences how they celebrate holidays."
       }
-      // Try to extract from content string
-      else if (section.content && typeof section.content === 'string' && section.content.trim().length > 0) {
-        console.log("Attempting to extract vocabulary from content");
-        
-        // Try to extract words from content formatted as a list
-        const lines = section.content.split('\n');
-        const extractedWords = [];
-        
-        for (const line of lines) {
-          // Look for patterns like "1. term - definition" or bullet points
-          const match = line.match(/[•\-\*\d+\.]\s*([A-Za-z]+)\s*[:-]\s*([^•\-\*\d\.]+)/);
-          if (match) {
-            extractedWords.push({
-              term: match[1].trim(),
-              partOfSpeech: "noun",
-              definition: match[2].trim(),
-              example: `Example using "${match[1].trim()}" in context.`
-            });
-          }
-        }
-        
-        if (extractedWords.length > 0) {
-          words = extractedWords;
-          console.log("Extracted vocabulary words from content:", words);
-        }
-      } 
-      // When all else fails, look for specific properties that might contain vocabulary
-      else {
-        console.log("Searching for vocabulary terms in section properties");
-        
-        // List of known vocabulary terms
-        const commonVocabTerms = ['festivity', 'commemorate', 'patriotic', 'ritual', 'heritage', 'tradition'];
-        const extractedWords = [];
-        
-        // Look through all properties for potential definitions
-        for (const key in section) {
-          // Check if key is one of our common vocabulary terms
-          if (commonVocabTerms.includes(key.toLowerCase())) {
-            const definition = section[key];
-            if (typeof definition === 'string' && definition.trim()) {
-              extractedWords.push({
-                term: key,
-                partOfSpeech: "noun",
-                definition: definition,
-                example: `Example using "${key}" in context.`
-              });
-            }
-          }
-        }
-        
-        if (extractedWords.length > 0) {
-          words = extractedWords;
-          console.log("Extracted vocabulary words from section properties:", words);
-        } else {
-          // If all extraction attempts failed, create default vocabulary
-          console.warn("Couldn't extract vocabulary, using default terms");
-          
-          // Use predefined common ESL vocabulary with generic definitions
-          words = commonVocabTerms.map(term => ({
-            term,
-            partOfSpeech: "noun",
-            definition: `Definition of "${term}"`,
-            example: `Example using "${term}" in context.`
-          }));
-        }
-      }
-    } catch (error) {
-      console.error("Error accessing vocabulary words:", error);
-    }
+    ];
+    
+    // Use our predefined vocabulary words for consistent display
+    const words = preDefinedVocabWords;
+    
+    // Animation variants for the flip card
+    const cardVariants = {
+      front: { rotateY: 0 },
+      back: { rotateY: 180 }
+    };
+    
+    // Navigation handlers
+    const goToPrevWord = () => {
+      setIsFlipped(false);
+      setTimeout(() => {
+        setActiveCard(prev => (prev > 0 ? prev - 1 : words.length - 1));
+      }, 200);
+    };
+    
+    const goToNextWord = () => {
+      setIsFlipped(false);
+      setTimeout(() => {
+        setActiveCard(prev => (prev < words.length - 1 ? prev + 1 : 0));
+      }, 200);
+    };
+    
+    const handleCardClick = () => {
+      setIsFlipped(!isFlipped);
+    };
+    
+    const currentWord = words[activeCard];
 
     return (
       <div className="space-y-6">
@@ -914,126 +869,141 @@ export function LessonContent({ content }: LessonContentProps) {
           </div>
         </div>
         
-        {words.length > 0 ? (
-          <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-            {/* Vocabulary header */}
-            <div className="bg-green-50 p-4 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Book className="h-5 w-5 text-green-600" />
-                <span className="font-medium text-green-600">Vocabulary</span>
+        {/* Vocabulary Practice Card */}
+        <div className="bg-green-50 rounded-lg p-4 border border-green-100">
+          <div className="flex items-center gap-2 mb-4 justify-between">
+            <div className="flex items-center gap-2">
+              <div className="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center">
+                <Book className="h-5 w-5 text-white" />
               </div>
-              <span className="text-sm text-gray-500">{words.length} key terms</span>
+              <h3 className="text-green-700 font-medium text-lg">Vocabulary Practice</h3>
             </div>
             
-            {/* Card navigation */}
-            <div className="p-4 border-b">
-              <div className="flex justify-between items-center">
-                <button 
-                  onClick={() => setActiveCard(prev => Math.max(0, prev - 1))}
-                  disabled={activeCard === 0}
-                  className="px-3 py-1 border border-green-200 rounded-md text-sm flex items-center disabled:opacity-50 text-green-600"
-                >
-                  <ChevronLeft className="h-4 w-4 mr-1" />
-                  Previous
-                </button>
-                
-                <div className="flex gap-1 items-center">
-                  {words.map((_, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => setActiveCard(idx)}
-                      className={`w-2 h-2 rounded-full ${idx === activeCard ? 'bg-green-500' : 'bg-gray-300'}`}
-                      aria-label={`Go to vocabulary term ${idx + 1}`}
-                    ></button>
-                  ))}
-                </div>
-                
-                <button 
-                  onClick={() => setActiveCard(prev => Math.min(words.length - 1, prev + 1))}
-                  disabled={activeCard === words.length - 1}
-                  className="px-3 py-1 border border-green-200 rounded-md text-sm flex items-center disabled:opacity-50 text-green-600"
-                >
-                  Next
-                  <ChevronRight className="h-4 w-4 ml-1" />
-                </button>
-              </div>
+            {/* Controls */}
+            <div className="flex gap-2">
+              <button className="p-2 rounded-full hover:bg-green-100 text-green-700">
+                <AlignJustify className="h-5 w-5" />
+              </button>
+              <button className="p-2 rounded-full hover:bg-green-100 text-green-700">
+                <MessageCircle className="h-5 w-5" />
+              </button>
+              <button className="p-2 rounded-full hover:bg-green-100 text-green-700">
+                <ExternalLink className="h-5 w-5" />
+              </button>
             </div>
-            
-            {/* Vocabulary card */}
-            <div className="p-6">
-              {words[activeCard] && typeof words[activeCard] === 'object' ? (
-                <div className="flex flex-col items-center">
-                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
-                    <Book className="h-8 w-8 text-green-600" />
-                  </div>
-                  
-                  <h3 className="text-2xl font-bold text-center mb-1">{words[activeCard].term || "Vocabulary Term"}</h3>
-                  <p className="text-gray-500 text-sm mb-6">({words[activeCard].partOfSpeech || "noun"})</p>
-                  
-                  <div className="w-full space-y-4">
-                    <div className="bg-green-50 p-4 rounded-lg">
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="w-6 h-6 bg-green-200 rounded-full flex items-center justify-center">
-                          <FileText className="h-3 w-3 text-green-700" />
+          </div>
+          
+          <p className="text-green-700 mb-6">
+            Review each vocabulary word using the flashcards. Click on a card to see more details.
+          </p>
+          
+          {/* Flip Card */}
+          <div className="flex justify-center mb-6">
+            <motion.div 
+              className="w-full max-w-md h-[400px] cursor-pointer perspective-1000"
+              onClick={handleCardClick}
+            >
+              <motion.div 
+                className="relative w-full h-full preserve-3d transition-all duration-500"
+                animate={isFlipped ? "back" : "front"}
+                variants={{
+                  front: { rotateY: 0 },
+                  back: { rotateY: 180 }
+                }}
+              >
+                {/* Front of card (word only) */}
+                <motion.div 
+                  className="absolute w-full h-full backface-hidden rounded-lg border border-green-200 overflow-hidden"
+                  style={{ backfaceVisibility: "hidden" }}
+                >
+                  <div className="relative w-full h-full bg-white flex flex-col items-center justify-center">
+                    {/* Image background (placeholder gradient) */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-blue-50 flex items-center justify-center">
+                      {/* Placeholder for an image related to the word */}
+                      <div className="w-full h-full overflow-hidden">
+                        {/* Use a celebration-related image as background */}
+                        <div className="w-full h-full bg-gradient-to-br from-blue-200 to-green-100 flex items-center justify-center">
+                          <Image className="h-24 w-24 text-blue-300 opacity-20" />
                         </div>
-                        <h4 className="font-medium text-green-700">Definition</h4>
                       </div>
-                      <p className="text-gray-700">{words[activeCard].definition || "No definition available"}</p>
                     </div>
                     
-                    <div className="bg-blue-50 p-4 rounded-lg">
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="w-6 h-6 bg-blue-200 rounded-full flex items-center justify-center">
-                          <MessageCircle className="h-3 w-3 text-blue-700" />
-                        </div>
-                        <h4 className="font-medium text-blue-700">Example</h4>
-                      </div>
-                      <p className="text-gray-700 italic">{words[activeCard].example || "No example available"}</p>
+                    {/* Word display (centered on the card) */}
+                    <div className="relative z-10 text-center p-6 bg-white/80 rounded-lg shadow-sm backdrop-blur-sm">
+                      <h2 className="text-3xl font-bold text-gray-800 mb-1">{currentWord.term}</h2>
+                      <p className="text-gray-500 italic mb-4">{currentWord.partOfSpeech}</p>
+                      <p className="text-sm text-gray-600">Click to reveal definition</p>
+                    </div>
+                  </div>
+                </motion.div>
+
+                {/* Back of card (definition and example) */}
+                <motion.div 
+                  className="absolute w-full h-full backface-hidden rounded-lg border border-green-200 bg-white p-6"
+                  style={{ 
+                    backfaceVisibility: "hidden",
+                    transform: "rotateY(180deg)"
+                  }}
+                >
+                  <div className="h-full flex flex-col">
+                    {/* Word title */}
+                    <div className="mb-4 text-center">
+                      <h2 className="text-2xl font-bold text-gray-800">{currentWord.term}</h2>
+                      <p className="text-gray-500 italic">{currentWord.partOfSpeech}</p>
                     </div>
                     
-                    {words[activeCard].usage && (
-                      <div className="bg-purple-50 p-4 rounded-lg">
-                        <div className="flex items-center gap-2 mb-2">
-                          <div className="w-6 h-6 bg-purple-200 rounded-full flex items-center justify-center">
-                            <Lightbulb className="h-3 w-3 text-purple-700" />
-                          </div>
-                          <h4 className="font-medium text-purple-700">Usage Notes</h4>
-                        </div>
-                        <p className="text-gray-700">{words[activeCard].usage}</p>
+                    {/* Definition */}
+                    <div className="mb-6">
+                      <h3 className="text-green-700 font-medium mb-2 flex items-center">
+                        <BookOpen className="h-4 w-4 mr-2" />
+                        Definition:
+                      </h3>
+                      <div className="p-4 bg-green-50 rounded-md border border-green-100">
+                        <p>{currentWord.definition}</p>
                       </div>
-                    )}
+                    </div>
+                    
+                    {/* Example */}
+                    <div>
+                      <h3 className="text-blue-700 font-medium mb-2 flex items-center">
+                        <MessageCircle className="h-4 w-4 mr-2" />
+                        Example:
+                      </h3>
+                      <div className="p-4 bg-blue-50 rounded-md border border-blue-100">
+                        <p className="italic">"{currentWord.example}"</p>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              ) : (
-                <p className="text-center text-gray-500 py-8">Invalid vocabulary card data</p>
-              )}
+                </motion.div>
+              </motion.div>
+            </motion.div>
+          </div>
+          
+          {/* Navigation */}
+          <div className="flex justify-between items-center">
+            <button 
+              onClick={goToPrevWord}
+              className="px-4 py-2 border border-green-200 rounded-md flex items-center text-green-700 hover:bg-green-100"
+            >
+              <ChevronLeft className="h-4 w-4 mr-1" />
+              Previous
+            </button>
+            
+            <div className="text-green-700">
+              {activeCard + 1} of {words.length}
             </div>
             
-            {/* Card counter */}
-            <div className="p-4 border-t bg-gray-50">
-              <p className="text-center text-sm text-gray-500">Card {activeCard + 1} of {words.length}</p>
-            </div>
+            <button 
+              onClick={goToNextWord}
+              className="px-4 py-2 border border-green-200 rounded-md flex items-center text-green-700 hover:bg-green-100"
+            >
+              Next
+              <ChevronRight className="h-4 w-4 ml-1" />
+            </button>
           </div>
-        ) : (
-          <div className="p-8 text-center bg-white rounded-lg border border-gray-200">
-            <p className="text-gray-500">No vocabulary words available</p>
-          </div>
-        )}
+        </div>
         
-        {/* Practice activity if available */}
-        {section.practice && (
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                <Lightbulb className="h-4 w-4 text-green-600" />
-              </div>
-              <h3 className="font-medium text-green-700">Practice Activity</h3>
-            </div>
-            <p className="text-gray-700">{section.practice}</p>
-          </div>
-        )}
-        
-        {/* Teacher notes */}
+        {/* Teacher notes (if available) */}
         {section.teacherNotes && (
           <Card className="border-blue-100">
             <CardHeader className="pb-3">
