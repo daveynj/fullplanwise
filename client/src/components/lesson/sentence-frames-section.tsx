@@ -37,79 +37,121 @@ export function SentenceFramesSection({ section }: SentenceFrameSectionProps) {
   const frames: SentenceFrame[] = [];
   
   try {
-    // Looking for the specific sentence frames structure in the Qwen API response
-    // First, check if the section has a sentenceFrames property
-    if (section.sentenceFrames && Array.isArray(section.sentenceFrames)) {
-      console.log("Found sentenceFrames array property");
-      frames.push(...section.sentenceFrames);
-    } 
-    // Look for a 'patterns' or 'frames' property
-    else if (section.patterns && Array.isArray(section.patterns)) {
-      console.log("Found patterns array");
-      frames.push(...section.patterns);
-    } 
-    else if (section.frames && Array.isArray(section.frames)) {
-      console.log("Found frames array");
-      frames.push(...section.frames);
+    // Look specifically for "SentenceFrames" in the response
+    // Check if there are any keys that directly contain the text "SentenceFrames"
+    const sentenceFramesKeys = Object.keys(section).filter(key => 
+      key.toLowerCase().includes("sentenceframes") || 
+      key.toLowerCase().includes("sentence frames")
+    );
+    
+    console.log("Looking for SentenceFrames keys in section:", sentenceFramesKeys);
+    
+    // If we found any SentenceFrames keys, try to extract the frames from them
+    if (sentenceFramesKeys.length > 0) {
+      for (const key of sentenceFramesKeys) {
+        const value = section[key];
+        console.log(`Found SentenceFrames key: ${key}, with value type:`, typeof value);
+        
+        if (Array.isArray(value)) {
+          console.log("SentenceFrames value is an array, adding to frames");
+          frames.push(...value);
+        } else if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+          console.log("SentenceFrames value is an object, extracting properties");
+          // The object might contain sentence frames as properties
+          // Try to extract them if they look like frames
+          for (const propKey in value) {
+            const propValue = value[propKey];
+            if (typeof propValue === 'object' && propValue !== null) {
+              if (propValue.pattern && propValue.examples) {
+                frames.push({
+                  title: propValue.title || propKey,
+                  level: (propValue.level as "basic" | "intermediate" | "advanced") || "intermediate",
+                  pattern: propValue.pattern,
+                  examples: Array.isArray(propValue.examples) ? propValue.examples : [propValue.examples],
+                  grammarFocus: propValue.grammarFocus || propValue.focus
+                });
+              }
+            }
+          }
+        }
+      }
     }
-    // Check if the response has grammatical patterns directly
-    else if (section.grammaticalPatterns && Array.isArray(section.grammaticalPatterns)) {
-      console.log("Found grammaticalPatterns array");
-      section.grammaticalPatterns.forEach((pattern: any) => {
-        frames.push({
-          title: pattern.title || "Grammatical Pattern",
-          level: pattern.level as "basic" | "intermediate" | "advanced" || "intermediate",
-          pattern: pattern.pattern,
-          examples: pattern.examples || [],
-          grammarFocus: pattern.grammarFocus || pattern.focus
+    
+    // If we still don't have frames, look for other sentence-frame-related properties
+    if (frames.length === 0) {
+      // Check for specific sentence frames properties
+      if (section.sentenceFrames && Array.isArray(section.sentenceFrames)) {
+        console.log("Found sentenceFrames array property");
+        frames.push(...section.sentenceFrames);
+      } 
+      // Look for a 'patterns' or 'frames' property
+      else if (section.patterns && Array.isArray(section.patterns)) {
+        console.log("Found patterns array");
+        frames.push(...section.patterns);
+      } 
+      else if (section.frames && Array.isArray(section.frames)) {
+        console.log("Found frames array");
+        frames.push(...section.frames);
+      }
+      // Check if the response has grammatical patterns directly
+      else if (section.grammaticalPatterns && Array.isArray(section.grammaticalPatterns)) {
+        console.log("Found grammaticalPatterns array");
+        section.grammaticalPatterns.forEach((pattern: any) => {
+          frames.push({
+            title: pattern.title || "Grammatical Pattern",
+            level: (pattern.level as "basic" | "intermediate" | "advanced") || "intermediate",
+            pattern: pattern.pattern,
+            examples: pattern.examples || [],
+            grammarFocus: pattern.grammarFocus || pattern.focus
+          });
         });
-      });
-    }
-    // If we haven't found frames yet, look for structures directly in the section
-    else {
-      console.log("Looking for sentence structures in section keys");
-      
-      // Get the raw Qwen response data to analyze
-      console.log("Keys in section:", Object.keys(section));
-      
-      // Use the vocabulary list defined at the top of the file
-      // These words align with the vocabulary in the Qwen API response
-      
-      // Create sentence frames specifically tailored to these vocabulary terms
-      frames.push({
-        title: "Expressing Purpose",
-        level: "intermediate",
-        pattern: "We [verb] [noun/event] to [verb] our [heritage/identity/values].",
-        examples: [
-          "We celebrate national holidays to honor our heritage.",
-          "We perform rituals to preserve our cultural identity.",
-          "We attend festivities to commemorate important historical events."
-        ],
-        grammarFocus: "Purpose phrases with 'to + verb'"
-      });
-      
-      frames.push({
-        title: "Expressing Cultural Identity",
-        level: "intermediate",
-        pattern: "During [event], people [verb] to show their [patriotic/cultural] spirit.",
-        examples: [
-          "During national day, people display flags to show their patriotic spirit.",
-          "During cultural festivals, people wear traditional clothing to show their heritage."
-        ],
-        grammarFocus: "Using 'to show' to express purpose"
-      });
-      
-      frames.push({
-        title: "Describing Celebrations",
-        level: "intermediate",
-        pattern: "[Celebrations/Festivals] are important because they [verb] [noun].",
-        examples: [
-          "Festivals are important because they preserve heritage.",
-          "Rituals are important because they connect generations.",
-          "Cultural celebrations are important because they commemorate significant historical events."
-        ],
-        grammarFocus: "Explaining importance with 'because' clauses"
-      });
+      }
+      // If we still haven't found frames, look for structures directly in the section
+      else {
+        console.log("Looking for sentence structures in section keys");
+        
+        // Get the raw Qwen response data to analyze
+        console.log("Keys in section:", Object.keys(section));
+        
+        // Use the vocabulary list defined at the top of the file
+        // These words align with the vocabulary in the Qwen API response
+        
+        // Create sentence frames specifically tailored to these vocabulary terms
+        frames.push({
+          title: "Expressing Purpose",
+          level: "intermediate",
+          pattern: "We [verb] [noun/event] to [verb] our [heritage/identity/values].",
+          examples: [
+            "We celebrate national holidays to honor our heritage.",
+            "We perform rituals to preserve our cultural identity.",
+            "We attend festivities to commemorate important historical events."
+          ],
+          grammarFocus: "Purpose phrases with 'to + verb'"
+        });
+        
+        frames.push({
+          title: "Expressing Cultural Identity",
+          level: "intermediate",
+          pattern: "During [event], people [verb] to show their [patriotic/cultural] spirit.",
+          examples: [
+            "During national day, people display flags to show their patriotic spirit.",
+            "During cultural festivals, people wear traditional clothing to show their heritage."
+          ],
+          grammarFocus: "Using 'to show' to express purpose"
+        });
+        
+        frames.push({
+          title: "Describing Celebrations",
+          level: "intermediate",
+          pattern: "[Celebrations/Festivals] are important because they [verb] [noun].",
+          examples: [
+            "Festivals are important because they preserve heritage.",
+            "Rituals are important because they connect generations.",
+            "Cultural celebrations are important because they commemorate significant historical events."
+          ],
+          grammarFocus: "Explaining importance with 'because' clauses"
+        });
+      }
     }
     
     // Log what we've created
