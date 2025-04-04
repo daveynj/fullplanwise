@@ -419,9 +419,55 @@ export function extractDiscussionQuestions(content: any): any[] {
     // Case 1: Look for discussion section in sections array
     if (content.sections && Array.isArray(content.sections)) {
       console.log("Looking for discussion section in sections array");
-      const discussionSection = content.sections.find((s: any) => 
-        s && typeof s === 'object' && s.type === 'discussion'
+      
+      // Find the discussion section - it might be named "discussion" or have a title with "Discussion"
+      let discussionSection = content.sections.find((s: any) => 
+        s && typeof s === 'object' && 
+        (s.type === 'discussion' || 
+         (s.title && typeof s.title === 'string' && s.title.toLowerCase().includes('discussion')))
       );
+      
+      // If we couldn't find the discussion section, try to extract it from the non-standard format
+      // where section properties appear as separate top-level keys instead of properly nested
+      if (!discussionSection && content.sections.some((s: any) => typeof s === 'object' && s.type)) {
+        // Look for sections with "type" as a property (not part of the section object itself)
+        for (const section of content.sections) {
+          if (section.type && section.type === "discussion") {
+            discussionSection = section;
+            break;
+          }
+          
+          // Handle the case where "type" is a key and "discussion" is a string value
+          if (typeof section === 'object' && section["type"] === "discussion") {
+            discussionSection = section;
+            break;
+          }
+        }
+      }
+      
+      // If still no discussion section, look at top level "type:discussion" pattern
+      if (!discussionSection) {
+        for (const section of content.sections) {
+          const keys = Object.keys(section);
+          if (keys.includes("type") && section["type"] === "discussion") {
+            discussionSection = section;
+            break;
+          }
+        }
+      }
+      
+      // Last attempt: look at string value properties where the type might be in the value
+      if (!discussionSection) {
+        for (const section of content.sections) {
+          for (const [key, value] of Object.entries(section)) {
+            if (key === "type" && value === "discussion") {
+              discussionSection = section;
+              break;
+            }
+          }
+          if (discussionSection) break;
+        }
+      }
       
       if (discussionSection) {
         console.log("Found discussion section:", JSON.stringify(discussionSection).substring(0, 200) + "...");
@@ -434,13 +480,14 @@ export function extractDiscussionQuestions(content: any): any[] {
         // the keys themselves are the questions and the values are follow-ups
         const allKeys = Object.keys(discussionSection);
         
-        // Get all string keys that look like questions (end with ?)
+        // Get all string keys that look like questions (contain ?)
         const questionKeys = allKeys.filter(key => 
           typeof key === 'string' && 
           key.includes('?') && 
           key !== 'type' && 
           key !== 'title' && 
-          key !== 'introduction'
+          key !== 'introduction' &&
+          key !== 'questions'
         );
         
         if (questionKeys.length > 0) {
@@ -448,7 +495,7 @@ export function extractDiscussionQuestions(content: any): any[] {
           
           // Process each question as a key and extract follow-up questions from its value
           questionKeys.forEach(questionText => {
-            // The value associated with this question key might be a follow-up question
+            // The value associated with this question key might be a follow-up question or hint
             const value = discussionSection[questionText];
             
             // Initialize an array to hold extracted follow-up questions
@@ -456,20 +503,15 @@ export function extractDiscussionQuestions(content: any): any[] {
             
             // Process the value if it's a string that might contain follow-up questions
             if (typeof value === 'string' && value.trim()) {
-              // First, check if the whole value is a single question
-              if (value.trim().endsWith('?') || value.trim().match(/^(Why|How|What|Where|When|Who|Which|Can|Do|Would|Should)/i)) {
-                followUpQuestions = [value.trim()];
-              } else {
-                // Treat the paired value as the follow-up question
-                // This is the common pattern in the Qwen API where each question key is paired
-                // with a value that is often a related follow-up question
-                followUpQuestions = [value.trim()];
-              }
+              // Add the value as a follow-up regardless of its format
+              // This ensures we capture all potential follow-ups
+              followUpQuestions = [value.trim()];
             }
             
             // Push the extracted question and follow-ups to our result array
             questions.push({
               question: questionText.trim(),
+              answer: "",
               introduction: introduction,
               level: "basic",
               followUp: followUpQuestions

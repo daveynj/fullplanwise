@@ -1,0 +1,724 @@
+{
+  "title": "Historical Customs and Traditions: Ancient Civilizations",
+  "level": "B1",
+  "focus": "general",
+  "estimatedTime": 60,
+  "sections": [
+    {
+      "type": "warmup",
+      "title": "Warm-up Activity",
+      "content": "In this warm-up, we will explore five key words from the reading: 'ritual', 'hierarchy', 'symbolism', 'legacy', and 'civilization'. These words are important for understanding how ancient cultures lived and what they left behind. Let’s discuss their meanings and use them in sentences.",
+      "questions": 
+        "What do you think a ritual is? Can you give an example?",
+        "Why might a hierarchy be important in a society?"
+      :
+      "targetVocabulary" 
+        ,
+          "ritual"
+          :
+          "hierarchy"
+          ,
+          "symbolism"
+          :
+          "legacy"
+          ,
+          "civilization"
+        
+:
+      "procedure" 
+        ,
+          "Introduce each word one by one, providing simple definitions."
+          :
+          "Ask students to create sentences using these words."
+          ,
+          "Encourage discussion about how these concepts relate to modern life."
+        
+:
+      "teacherNotes" 
+        ,
+          "Ensure all vocabulary words are used during the activity."
+          :
+          "Use visuals or real-life examples to clarify meanings."
+        
+,
+    "type" 
+      :
+      "reading"
+      ,
+      "title" 
+        :
+        "Reading Text"
+        ,
+      "introduction" 
+        :
+        "Today, we’ll explore fascinating customs and traditions of ancient civilizations like Egypt, Rome, and Greece. These cultures shaped the world we live in today!"
+        ,
+      "paragraphs" 
+        :
+        "The ancient Egyptians were known for their incredible rituals. One of the most famous was the process of mummification, which they believed helped people reach the afterlife. Priests played a key role in these ceremonies, ensuring that every step followed strict rules. This shows us how much importance they placed on life after death.\",\":" 
+          ,
+           "These rituals were part of a larger societal structure called a hierarchy. In Egypt, the Pharaoh stood at the top, followed by priests, soldiers, and farmers. Each group had specific roles, creating order in daily life. Similarly, Roman society also operated under a clear hierarchy, with emperors leading powerful armies and governing vast territories.\",\":" 
+          :
+          "Symbolism was another crucial aspect of ancient traditions. For instance, Greeks used olive branches as symbols of peace during the Olympic Games. Egyptians relied heavily on hieroglyphics, which combined pictures and symbols to tell stories. These visual elements carried deep meanings that connected people to their beliefs.\",\":" 
+          ,
+          "The legacy of these civilizations continues to influence us today. From Roman architecture to Greek philosophy, their contributions remain relevant. Even our modern legal systems borrow ideas from ancient laws, such as Rome's Twelve Tables.\",\":" 
+          :
+          "Understanding these ancient customs helps us appreciate how far humanity has come. While some practices may seem strange now, they reflect the values and priorities of those times. What lessons can we learn from them?"
+        
+,
+      "teacherNotes" 
+        :
+        "Pause after each paragraph to check comprehension and clarify any doubts."
+        ,
+    "type" 
+      :
+      "vocabulary"
+      ,
+      "title" 
+        :
+        "Key Vocabulary"
+        ,
+      "words" 
+        :
+        "term" 
+          ,
+          "ritual"
+          :
+          "partOfSpeech" 
+          ,
+          "noun"
+          :
+          "definition" 
+          ,
+          "A ceremony or action performed in a traditional way, often for religious purposes."
+          :
+          "example" 
+          ,
+          "The wedding ritual included exchanging rings and saying vows."
+          :
+          "collocations" 
+          ,
+           ""
+           :"",
+           ""
+           :"",
+           ""
+           :"",
+          
+"notes" 
+          :
+          "Often used to describe actions tied to cultural or spiritual events."
+          ,
+          "teachingTips" 
+          :
+          "Show images of rituals like weddings or religious ceremonies to make it relatable."
+          ,
+          "pronunciation" 
+          :
+          "syllables" 
+          ,
+           ""
+           :"",
+           ""
+           :"",
+           ""
+           :"",
+          
+"stressIndex" 
+          :
+          0
+          ,
+          "phoneticGuide" 
+          :
+          "RIH-chuh-l"
+          ,
+          "imagePrompt" 
+          :
+          "An image showing people participating in a formal ceremony, such as lighting candles or bowing respectfully."
+        
+,
+        "term" 
+          :
+          "hierarchy"
+          ,
+          "partOfSpeech" 
+          :
+          "noun"
+          ,
+          "definition" 
+          :
+          "A system where people or things are arranged according to their importance or rank."
+          ,
+          "example" 
+          :
+          "In medieval Europe, kings were at the top of the social hierarchy."
+          ,
+          "collocations" 
+          :
+           ""
+           ,
+           ""
+           :"",
+           ""
+           :"",
+          
+"notes" 
+          :
+          "Used to describe organized structures in societies or organizations."
+          ,
+          "teachingTips" 
+          :
+          "Draw a pyramid diagram to visually explain levels within a hierarchy."
+          ,
+          "pronunciation" 
+          :
+          "syllables" 
+          ,
+           ""
+           :"",
+           ""
+           :"",
+           ""
+           :"",
+          
+"stressIndex" 
+          :
+          0
+          ,
+          "phoneticGuide" 
+          :
+          "HYE-ruh-kee"
+          ,
+          "imagePrompt" 
+          :
+          "A pyramid-shaped chart showing different ranks, such as CEO at the top and employees below."
+        
+,
+        "term" 
+          :
+          "symbolism"
+          ,
+          "partOfSpeech" 
+          :
+          "noun"
+          ,
+          "definition" 
+          :
+          "The use of symbols to represent ideas or qualities."
+          ,
+          "example" 
+          :
+          "Doves are often used as a symbolism of peace."
+          ,
+          "collocations" 
+          :
+           ""
+           ,
+           ""
+           :"",
+           ""
+           :"",
+          
+"notes" 
+          :
+          "Commonly found in art, literature, and cultural practices."
+          ,
+          "teachingTips" 
+          :
+          "Provide examples of well-known symbols, like hearts for love or flags for nations."
+          ,
+          "pronunciation" 
+          :
+          "syllables" 
+          ,
+           ""
+           :"",
+           ""
+           :"",
+           ""
+           :"",
+          
+"stressIndex" 
+          :
+          0
+          ,
+          "phoneticGuide" 
+          :
+          "SIM-buh-liz-um"
+          ,
+          "imagePrompt" 
+          :
+          "An illustration featuring various symbols, such as a dove, heart, or star, labeled with their meanings."
+        
+,
+        "term" 
+          :
+          "legacy"
+          ,
+          "partOfSpeech" 
+          :
+          "noun"
+          ,
+          "definition" 
+          :
+          "Something handed down from the past, such as traditions, achievements, or objects."
+          ,
+          "example" 
+          :
+          "The Great Wall of China is a legacy of ancient Chinese engineering."
+          ,
+          "collocations" 
+          :
+           ""
+           ,
+           ""
+           :"",
+           ""
+           :"",
+          
+"notes" 
+          :
+          "Frequently used when discussing historical impact or inheritance."
+          ,
+          "teachingTips" 
+          :
+          "Discuss famous legacies, like inventions or monuments, to engage students."
+          ,
+          "pronunciation" 
+          :
+          "syllables" 
+          ,
+           ""
+           :"",
+           ""
+           :"",
+           ""
+           :"",
+          
+"stressIndex" 
+          :
+          0
+          ,
+          "phoneticGuide" 
+          :
+          "LEH-guh-see"
+          ,
+          "imagePrompt" 
+          :
+          "A photo of an old artifact, like a statue or manuscript, placed next to a modern version inspired by it."
+        
+,
+        "term" 
+          :
+          "civilization"
+          ,
+          "partOfSpeech" 
+          :
+          "noun"
+          ,
+          "definition" 
+          :
+          "An advanced stage of human society, characterized by complex social structures and culture."
+          ,
+          "example" 
+          :
+          "Ancient Greece is considered one of the greatest civilizations in history."
+          ,
+          "collocations" 
+          :
+           ""
+           ,
+           ""
+           :"",
+           ""
+           :"",
+          
+"notes" 
+          :
+          "Refers to large groups of people living together with shared systems and values."
+          ,
+          "teachingTips" 
+          :
+          "Compare ancient civilizations to modern ones to highlight similarities and differences."
+          ,
+          "pronunciation" 
+          :
+          "syllables" 
+          ,
+           ""
+           :"",
+           ""
+           :"",
+           ""
+           :"",
+          
+"stressIndex" 
+          :
+          0
+          ,
+          "phoneticGuide" 
+          :
+          "sih-vuh-lih-ZAY-shuhn"
+          ,
+          "imagePrompt" 
+          :
+          "A bustling ancient cityscape with buildings, markets, and people going about their daily lives."
+        
+,
+    "type" 
+      :
+      "comprehension"
+      ,
+      "title" 
+        :
+        "Reading Comprehension"
+        ,
+      "questions" 
+        :
+        "question" 
+          ,
+          "What did Egyptians believe mummification helped achieve?"
+          :
+          "options" 
+          ,
+           ""
+           :"",
+           ""
+           :"",
+           ""
+           :"",
+           ""
+           :"",
+          
+"answer" 
+          :
+          "Reaching the afterlife"
+          ,
+          "explanation" 
+          :
+          "The text states that Egyptians believed mummification helped people reach the afterlife."
+        
+,
+        "question" 
+          :
+          "Which civilization used olive branches as symbols of peace?"
+          ,
+          "options" 
+          :
+           ""
+           ,
+           ""
+           :"",
+           ""
+           :"",
+           ""
+           :"",
+          
+"answer" 
+          :
+          "Greeks"
+          ,
+          "explanation" 
+          :
+          "According to the passage, Greeks used olive branches during the Olympic Games to symbolize peace."
+        
+,
+        "question" 
+          :
+          "True or False: Roman society lacked a clear hierarchy."
+          ,
+          "options" 
+          :
+           ""
+           ,
+           ""
+           :"",
+          
+"answer" 
+          :
+          "False"
+          ,
+          "explanation" 
+          :
+          "The text explains that Roman society had a clear hierarchy led by emperors."
+        
+,
+        "question" 
+          :
+          "Which of the following best describes the term 'legacy'?"
+          ,
+          "options" 
+          :
+           ""
+           ,
+           ""
+           :"",
+           ""
+           :"",
+           ""
+           :"",
+          
+"answer" 
+          :
+          "Something passed down from the past"
+          ,
+          "explanation" 
+          :
+          "The definition provided in the text matches this option perfectly."
+        
+,
+        "question" 
+          :
+          "What connects Egyptian hieroglyphics and Greek olive branches?"
+          ,
+          "options" 
+          :
+           ""
+           ,
+           ""
+           :"",
+           ""
+           :"",
+           ""
+           :"",
+          
+"answer" 
+          :
+          "They both involve symbolism"
+          ,
+          "explanation" 
+          :
+          "Both examples demonstrate how ancient cultures used symbols to convey deeper meanings."
+        
+,
+    "type" 
+      :
+      "sentenceFrames"
+      ,
+      "title" 
+        :
+        "Sentence Practice"
+        ,
+      "frames" 
+        :
+        "pattern" 
+          ,
+          "I think _____ is important because _____."
+          :
+          "examples" 
+          ,
+           ""
+           :"",
+           ""
+           :"",
+           ""
+           :"",
+          
+"usageNotes" 
+          :
+          "Use this frame to express opinions about topics from the lesson."
+          ,
+          "teachingTips" 
+          :
+          "Encourage students to incorporate vocabulary words into their responses."
+          ,
+          "difficultyLevel" 
+          :
+          "intermediate"
+          ,
+          "grammarFocus" 
+          :
+          "Expressing opinions with reasons"
+          ,
+          "communicativeFunction" 
+          :
+          "Sharing personal views"
+        
+,
+        "pattern" 
+          :
+          "If I lived in ancient _____, I would _____."
+          ,
+          "examples" 
+          :
+           ""
+           ,
+           ""
+           :"",
+           ""
+           :"",
+          
+"usageNotes" 
+          :
+          "This frame allows creative thinking about historical contexts."
+          ,
+          "teachingTips" 
+          :
+          "Pair students to share and compare their answers."
+          ,
+          "difficultyLevel" 
+          :
+          "intermediate"
+          ,
+          "grammarFocus" 
+          :
+          "Conditional sentences"
+          ,
+          "communicativeFunction" 
+          :
+          "Imagining hypothetical scenarios"
+        
+,
+    "type" 
+      :
+      "discussion"
+      ,
+      "title" 
+        :
+        "Discussion Questions"
+        ,
+      "introduction" 
+        :
+        "Ancient civilizations not only built impressive structures but also developed unique ways of thinking. Their philosophies, laws, and arts continue to shape our world. How might studying these cultures help us solve modern problems?"
+        ,
+      "questions" 
+        :
+        "How do you think ancient rituals compare to modern-day celebrations?"
+          ,
+          "Why do you think hierarchies were so common in ancient societies?"
+          :
+          "Can symbolism still play a role in today’s digital age?"
+          ,
+          "What aspects of ancient civilizations do you find most inspiring?"
+          :
+          "How could learning about legacies encourage us to preserve our environment?"
+        
+,
+    "type" 
+      :
+      "quiz"
+      ,
+      "title" 
+        :
+        "Knowledge Check"
+        ,
+      "questions" 
+        :
+        "question" 
+          ,
+          "What was the main purpose of Egyptian mummification?"
+          :
+          "options" 
+          ,
+           ""
+           :"",
+           ""
+           :"",
+           ""
+           :"",
+           ""
+           :"",
+          
+"answer" 
+          :
+          "To prepare for the afterlife"
+          ,
+          "explanation" 
+          :
+          "The text explicitly mentions this belief."
+        
+,
+        "question" 
+          :
+          "Which civilization introduced the Twelve Tables?"
+          ,
+          "options" 
+          :
+           ""
+           ,
+           ""
+           :"",
+           ""
+           :"",
+           ""
+           :"",
+          
+"answer" 
+          :
+          "Romans"
+          ,
+          "explanation" 
+          :
+          "The Romans created the Twelve Tables as part of their legal system."
+        
+,
+        "question" 
+          :
+          "True or False: Hieroglyphics were used solely for decoration."
+          ,
+          "options" 
+          :
+           ""
+           ,
+           ""
+           :"",
+          
+"answer" 
+          :
+          "False"
+          ,
+          "explanation" 
+          :
+          "Hieroglyphics told stories and conveyed deeper meanings beyond mere decoration."
+        
+,
+        "question" 
+          :
+          "Which word means 'something handed down from the past'?"
+          ,
+          "options" 
+          :
+           ""
+           ,
+           ""
+           :"",
+           ""
+           :"",
+           ""
+           :"",
+          
+"answer" 
+          :
+          "Legacy"
+          ,
+          "explanation" 
+          :
+          "This matches the definition given in the vocabulary section."
+        
+,
+        "question" 
+          :
+          "What does 'hierarchy' refer to?"
+          ,
+          "options" 
+          :
+           ""
+           ,
+           ""
+           :"",
+           ""
+           :"",
+           ""
+           :"",
+          
+"answer" 
+          :
+          "A ranking system based on importance"
+          ,
+          "explanation" 
+          :
+          "The text defines hierarchy as an arrangement according to rank or significance."
+        
+}
+]  
+}
