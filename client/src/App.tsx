@@ -16,6 +16,8 @@ import LessonHistoryPage from "@/pages/lesson-history-page";
 import BuyCreditsPage from "@/pages/buy-credits-page";
 import SettingsPage from "@/pages/settings-page";
 import FullScreenLessonPage from "@/pages/full-screen-lesson-page";
+import TestDiscussionPage from "@/pages/test-discussion-page";
+import PublicTestDiscussionPage from "@/pages/public-test-discussion";
 
 function Router() {
   return (
@@ -30,6 +32,8 @@ function Router() {
       <ProtectedRoute path="/fullscreen/:id" component={FullScreenLessonPage} />
       <ProtectedRoute path="/buy-credits" component={BuyCreditsPage} />
       <ProtectedRoute path="/settings" component={SettingsPage} />
+      <Route path="/test-discussion" component={TestDiscussionPage} />
+      <Route path="/public-test" component={PublicTestDiscussionPage} />
       <Route path="/auth" component={AuthPage} />
       <Route component={NotFound} />
     </Switch>
