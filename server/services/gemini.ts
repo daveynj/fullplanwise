@@ -215,10 +215,16 @@ Return your response as a valid, properly-formatted JSON object with the followi
     {
       "type": "warmup",
       "title": "Warm-up Activity",
-      "content": "Description of the warm-up activity",
-      "questions": ["Discussion question 1", "Discussion question 2"],
+      "content": "Detailed description of an engaging and interactive warm-up activity that activates prior knowledge about the topic and creates interest in the upcoming lesson",
+      "questions": [
+        "Thought-provoking question that connects to students' personal experiences",
+        "Question that helps students recall prior knowledge about the topic",
+        "Question that introduces key vocabulary or concepts that will appear in the lesson",
+        "Question that encourages critical thinking about the topic"
+      ],
       "targetVocabulary": ["word1", "word2", "word3", "word4", "word5"],
-      "procedure": "Step-by-step instructions"
+      "procedure": "Detailed step-by-step instructions for conducting the warm-up activity, including timing suggestions, grouping configurations, and specific prompts for the teacher to use",
+      "teacherNotes": "Additional guidance for teachers on how to adapt the warm-up for different student levels, potential challenges to anticipate, and connections to make with the main lesson"
     },
     {
       "type": "reading",
@@ -265,24 +271,6 @@ Return your response as a valid, properly-formatted JSON object with the followi
           "partOfSpeech": "noun/verb/adj",
           "definition": "Clear definition appropriate for the student level",
           "example": "Contextual example sentence using the word properly"
-        },
-        {
-          "term": "vocabulary word 6",
-          "partOfSpeech": "noun/verb/adj",
-          "definition": "Clear definition appropriate for the student level",
-          "example": "Contextual example sentence using the word properly"
-        },
-        {
-          "term": "vocabulary word 7",
-          "partOfSpeech": "noun/verb/adj",
-          "definition": "Clear definition appropriate for the student level",
-          "example": "Contextual example sentence using the word properly"
-        },
-        {
-          "term": "vocabulary word 8",
-          "partOfSpeech": "noun/verb/adj",
-          "definition": "Clear definition appropriate for the student level",
-          "example": "Contextual example sentence using the word properly"
         }
       ]
     },
@@ -324,29 +312,92 @@ Return your response as a valid, properly-formatted JSON object with the followi
     },
     {
       "type": "sentences",
-      "title": "Sentence Frames",
+      "title": "Sentence Frames and Language Structure",
+      "introduction": "These sentence frames will help students express their ideas about the topic using proper grammatical structures",
       "frames": [
         {
-          "pattern": "I think _____ because _____.",
-          "examples": ["Example 1", "Example 2"],
-          "grammarFocus": "Expressing opinions"
+          "pattern": "I believe that _____ is important because _____.",
+          "examples": [
+            "I believe that understanding cultural differences is important because it promotes tolerance and respect.",
+            "I believe that learning from history is important because it helps us avoid repeating past mistakes."
+          ],
+          "grammarFocus": "Expressing opinions with supporting reasons"
+        },
+        {
+          "pattern": "One interesting aspect of _____ is _____, which demonstrates _____.",
+          "examples": [
+            "One interesting aspect of this tradition is its historical origins, which demonstrates how cultural practices evolve over time.",
+            "One interesting aspect of this concept is its practical applications, which demonstrates why it remains relevant today."
+          ],
+          "grammarFocus": "Describing features and making connections"
+        },
+        {
+          "pattern": "Although many people think _____, I would argue that _____.",
+          "examples": [
+            "Although many people think this custom is outdated, I would argue that it still holds significant cultural value.",
+            "Although many people think this approach is too simplistic, I would argue that its simplicity is actually its strength."
+          ],
+          "grammarFocus": "Expressing contrasting opinions"
+        },
+        {
+          "pattern": "When we consider _____, we must also take into account _____.",
+          "examples": [
+            "When we consider the benefits of this practice, we must also take into account potential cultural misunderstandings.",
+            "When we consider the historical context, we must also take into account modern perspectives and values."
+          ],
+          "grammarFocus": "Expressing related considerations"
         }
-      ]
+      ],
+      "teacherNotes": "These sentence frames support the key language functions needed for discussing this topic. Encourage students to extend these patterns with their own ideas and vocabulary from the lesson."
     },
     {
       "type": "discussion",
-      "title": "Discussion",
-      "introduction": "Brief introduction to discussion topic",
-      "questions": ["Question 1", "Question 2", "Question 3", "Question 4", "Question 5"]
+      "title": "Discussion and Critical Thinking",
+      "introduction": "Comprehensive introduction to the discussion topic that connects with students' personal experiences and the broader themes of the reading",
+      "paragraphContext": "Detailed contextual information related to the topic that helps frame the discussion questions and extends beyond the reading",
+      "questions": [
+        "Thought-provoking question that requires personal reflection and connection to the reading text",
+        "Critical thinking question that encourages students to analyze cultural or social aspects of the topic",
+        "Open-ended question that promotes debate and different perspectives on the topic",
+        "Application question that asks students to relate the topic to their own experiences or communities",
+        "Forward-thinking question that encourages predictions or hypotheses about future developments related to the topic"
+      ],
+      "teacherNotes": "Detailed guidance for teachers on how to facilitate this discussion including potential challenges, key points to emphasize, and suggestions for extending the conversation"
     },
     {
       "type": "quiz",
-      "title": "Quiz",
+      "title": "Knowledge Check Quiz",
+      "introduction": "A comprehensive final assessment to test vocabulary, comprehension, and critical thinking related to the lesson",
       "questions": [
         {
-          "question": "Question?",
-          "options": ["Option A", "Option B", "Option C", "Option D"],
-          "answer": "Option A"
+          "question": "Challenging question about key vocabulary from the lesson?",
+          "options": ["Option A - detailed", "Option B - detailed", "Option C - detailed", "Option D - detailed"],
+          "answer": "Option A - detailed",
+          "explanation": "Detailed explanation of why this answer is correct with connections to the lesson content"
+        },
+        {
+          "question": "Question testing understanding of main concepts from the reading?",
+          "options": ["Option A - detailed", "Option B - detailed", "Option C - detailed", "Option D - detailed"],
+          "answer": "Option B - detailed",
+          "explanation": "Detailed explanation of why this answer is correct with connections to the lesson content"
+        },
+        {
+          "question": "Question requiring application of the learned concepts?",
+          "options": ["Option A - detailed", "Option B - detailed", "Option C - detailed", "Option D - detailed"],
+          "answer": "Option C - detailed",
+          "explanation": "Detailed explanation of why this answer is correct with connections to the lesson content"
+        },
+        {
+          "question": "Question testing critical analysis of the topic?",
+          "options": ["Option A - detailed", "Option B - detailed", "Option C - detailed", "Option D - detailed"],
+          "answer": "Option D - detailed",
+          "explanation": "Detailed explanation of why this answer is correct with connections to the lesson content"
+        },
+        {
+          "question": "Question requiring synthesis of multiple concepts from the lesson?",
+          "options": ["Option A - detailed", "Option B - detailed", "Option C - detailed", "Option D - detailed"],
+          "answer": "Option A - detailed",
+          "explanation": "Detailed explanation of why this answer is correct with connections to the lesson content"
         }
       ]
     }
