@@ -97,10 +97,14 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
     
     // If no valid questions found in array, look for keys that look like discussion questions 
     // but aren't standard section properties
+    // This is specifically to handle the Qwen API format where questions are keys and answers/follow-ups are values
     const questionPatterns = [
       /how/i, /why/i, /what/i, /which/i, /where/i, /when/i, /who/i, 
       /can/i, /do you think/i, /should/i, /could/i, /would/i, /discuss/i
     ];
+    
+    // Log the entire section for debugging
+    console.log("Exploring section for Qwen-style questions as keys:", Object.keys(section));
     
     const discussionQuestionsKeys = Object.keys(section).filter(key => 
       // Check for question patterns

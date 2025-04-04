@@ -35,7 +35,7 @@ import { QuizExtractor } from "./quiz-extractor";
 import { VocabularyCard, VocabularyWord } from "./warm-up/vocabulary-card";
 import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { cn, extractDiscussionQuestions, extractQuizQuestions, extractComprehensionQuestions } from "@/lib/utils";
+import { cn, extractDiscussionQuestions, extractQuizQuestions, extractComprehensionQuestions, extractWarmupQuestions } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
@@ -941,16 +941,56 @@ export function LessonContent({ content }: LessonContentProps) {
     }
 
     // DISCUSSION QUESTIONS EXTRACTION:
-    // Get discussion questions from the section
+    // Get discussion questions from the section using our specialized utility
     let discussionQuestions: string[] = [];
     
-    if (section.questions) {
-      if (Array.isArray(section.questions)) {
-        discussionQuestions = section.questions;
-      } else if (typeof section.questions === 'object') {
-        // Extract questions from object format (Qwen API format)
+    // Try to get questions from the utility first (safer approach)
+    try {
+      discussionQuestions = extractWarmupQuestions(parsedContent);
+      console.log("Extracted warmup questions from utility:", discussionQuestions);
+    } catch (error) {
+      console.error("Error using extractWarmupQuestions:", error);
+    }
+    
+    // If we don't have any questions yet, try to extract them directly from this section
+    if (!discussionQuestions || discussionQuestions.length === 0) {
+      console.log("Trying to extract warmup questions directly from section:", section);
+      
+      // Check for the Qwen API alternating pattern where questions is a string
+      // and question keys contain questions with values that might be follow-ups
+      if (typeof section.questions === 'string' && section.questions.includes('?')) {
+        console.log("Found string-type questions in warmup:", section.questions);
+        // Add the first question
+        discussionQuestions.push(section.questions);
+        
+        // Look for question keys (anything with a ? that's not a standard key)
+        const questionKeys = Object.keys(section).filter(key => 
+          key !== 'type' && 
+          key !== 'title' && 
+          key !== 'content' && 
+          key !== 'questions' &&
+          key.includes('?')
+        );
+        
+        if (questionKeys.length > 0) {
+          console.log("Found additional question keys:", questionKeys);
+          discussionQuestions.push(...questionKeys);
+        }
+      } 
+      // Standard array format
+      else if (Array.isArray(section.questions)) {
+        discussionQuestions = section.questions.map((q: any) => 
+          typeof q === 'string' ? q : (q.question || '')
+        ).filter(Boolean);
+      }
+      // Object format with questions as keys
+      else if (typeof section.questions === 'object') {
         discussionQuestions = Object.keys(section.questions)
-          .filter(q => typeof q === 'string' && q.trim().length > 0);
+          .filter(q => 
+            typeof q === 'string' && 
+            q.trim().length > 0 &&
+            q.includes('?')
+          );
       }
     }
     

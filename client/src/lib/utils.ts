@@ -203,6 +203,159 @@ export function extractQuizQuestions(content: any): { question: string; answer: 
  * Utility to extract comprehension questions from lesson content
  * Works with various Qwen API response formats
  */
+/**
+ * Utility to extract warmup questions from lesson content
+ * Works with various Qwen API response formats
+ */
+export function extractWarmupQuestions(content: any): string[] {
+  if (!content) return [];
+  
+  try {
+    console.log('Extracting warmup questions from:', JSON.stringify(content).substring(0, 300) + '...');
+    
+    // Attempt to find the warmup section
+    let warmupSection = content.sections?.find((section: any) => 
+      section && section.type === 'warmup' || section.type === 'warm-up'
+    );
+    
+    // If we don't have a properly labeled warmup section, try content-based detection
+    if (!warmupSection && content.sections) {
+      warmupSection = content.sections.find((section: any) => 
+        section && typeof section === 'object' && 
+        ((section.content && typeof section.content === 'string' && 
+         (section.content.toLowerCase().includes('warm-up') || 
+          section.content.toLowerCase().includes('vocabulary') || 
+          section.content.toLowerCase().includes('explore five key words'))) ||
+         // Check for common vocabulary markers in the Qwen API responses
+         (section.targetVocabulary || 
+          section.ritual || 
+          section.hierarchy || 
+          section.symbolism || 
+          section.legacy || 
+          section.civilization))
+      );
+      
+      if (warmupSection) {
+        console.log("Found warmup section through content detection:", warmupSection);
+        // Ensure the section is properly typed for the rest of the app
+        warmupSection.type = 'warmup';
+      }
+    }
+    
+    if (!warmupSection) {
+      console.log("No warmup section found in content");
+      return [];
+    }
+    
+    console.log("Working with warmup section:", JSON.stringify(warmupSection).substring(0, 300) + '...');
+    
+    // QWEN SPECIFIC FORMAT: First check if questions is a string value and there are question-like keys
+    // This handles the alternating pattern we see in the logs
+    if (typeof warmupSection.questions === 'string' && warmupSection.questions.includes('?')) {
+      console.log("Found string-format question in warmup:", warmupSection.questions);
+      
+      const questions: string[] = [warmupSection.questions];
+      
+      // Check for question keys that contain question marks
+      const questionKeys = Object.keys(warmupSection).filter(key => 
+        key !== 'type' && 
+        key !== 'title' && 
+        key !== 'content' && 
+        key !== 'questions' &&
+        key.includes('?')
+      );
+      
+      if (questionKeys.length > 0) {
+        console.log("Found additional question keys in warmup:", questionKeys);
+        questions.push(...questionKeys);
+      }
+      
+      if (questions.length > 0) {
+        console.log("Extracted Qwen-format questions:", questions);
+        return questions.map(q => q.trim());
+      }
+    }
+    
+    // Check for direct questions array format
+    if (Array.isArray(warmupSection.questions)) {
+      console.log("Extracting array-format warmup questions:", warmupSection.questions);
+      return warmupSection.questions.map((q: any) => 
+        typeof q === 'string' ? q.trim() : (q.question || '')
+      ).filter(Boolean);
+    }
+    
+    // Check for questions as a string that needs splitting
+    if (typeof warmupSection.questions === 'string') {
+      console.log("Splitting string-format warmup questions:", warmupSection.questions);
+      // Split by newlines or bullet points
+      const splitQuestions = warmupSection.questions
+        .split(/[\n\r]+|•|\*|-|\d+\.|;/)
+        .map((q: string) => q.trim())
+        .filter((q: string) => q && q.length > 5);
+        
+      if (splitQuestions.length > 0) {
+        console.log("Split warmup questions:", splitQuestions);
+        return splitQuestions;
+      }
+    }
+    
+    // Try to extract questions from non-standard format
+    // where questions might be embedded in other properties
+    if (typeof warmupSection === 'object') {
+      console.log("Searching for questions in warmup object properties");
+      const possibleQuestions: string[] = [];
+      
+      // Look for keys that contain question marks - this is the common Qwen pattern
+      for (const key in warmupSection) {
+        if (typeof key === 'string' && key.includes('?')) {
+          console.log("Found question in key:", key);
+          possibleQuestions.push(key.trim());
+        }
+      }
+      
+      // Look for string values that contain question marks
+      for (const key in warmupSection) {
+        const value = warmupSection[key];
+        if (typeof value === 'string' && value.includes('?')) {
+          console.log("Found question in value:", value);
+          possibleQuestions.push(value.trim());
+        }
+      }
+      
+      // Filter out non-questions and return
+      const filteredQuestions = possibleQuestions.filter(q => q.includes('?'));
+      
+      if (filteredQuestions.length > 0) {
+        console.log("Extracted warmup questions from properties:", filteredQuestions);
+        return filteredQuestions;
+      }
+    }
+    
+    // Final fallback: check content field for questions
+    if (warmupSection.content && typeof warmupSection.content === 'string' && warmupSection.content.includes('?')) {
+      console.log("Extracting questions from content field");
+      
+      // Split content by sentences and filter for questions
+      const sentences = warmupSection.content
+        .split(/[.!?]+/)
+        .map((s: string) => s.trim())
+        .filter((s: string) => s.includes('?') || /what|how|why|when|where|who|which/i.test(s))
+        .map((s: string) => s.endsWith('?') ? s : s + '?');
+      
+      if (sentences.length > 0) {
+        console.log("Extracted questions from content:", sentences);
+        return sentences.filter((s: string) => s.length > 10);
+      }
+    }
+  
+    console.log("Failed to extract any warmup questions");
+    return [];
+  } catch (error) {
+    console.error("Error extracting warmup questions:", error);
+    return [];
+  }
+}
+
 export function extractComprehensionQuestions(content: any): { question: string; answer: string; type?: string; options?: string[] }[] {
   if (!content) return [];
   
