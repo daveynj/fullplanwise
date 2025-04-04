@@ -1,0 +1,1045 @@
+{
+  "title": "Medieval Traditions: Feudal Customs and Chivalry",
+  "level": "B1",
+  "focus": "general",
+  "estimatedTime": 60,
+  "sections": [
+    {
+      "type": "warmup",
+      "title": "Warm-up Activity",
+      "content": "In this warm-up, we will explore key terms related to medieval traditions. Imagine you are a knight or a lord in the Middle Ages. How would your life be different? Think about words like 'feudal', 'chivalry', 'vassal', 'tournament', and 'heraldry'. These words will help us understand the reading better.",
+      "questions": 
+        "What do you think 'chivalry' means?",
+        "Can you guess what a 'vassal' might be?"
+      :
+      "targetVocabulary" 
+        ,
+        "feudal"
+        :
+        "procedure" 
+        ,
+        "Start by asking students if they know anything about the Middle Ages. Introduce each vocabulary word one by one, using simple definitions and examples. For instance, explain that 'feudal' relates to a system where lords owned land and gave it to vassals. Ask students to repeat the words after you. Then, have them work in pairs to use each word in a sentence."
+      :
+      "teacherNotes" 
+        ,
+        "Encourage students to ask questions if they don't understand a word. Use gestures or visuals to clarify meanings."
+      
+    :
+    "type" 
+      ,
+      "reading"
+      :
+      "title" 
+        ,
+        "Reading Text"
+        :
+        "introduction" 
+          ,
+          "Let's take a journey back to the Middle Ages, a time of knights, castles, and grand traditions. This text will introduce you to feudal customs and the code of chivalry."
+          :
+          "paragraphs" 
+          ,
+           "While most of us today live in modern cities, people in the Middle Ages lived very differently. The feudal system was the way society was organized. In this system, powerful lords owned large areas of land. They allowed vassals, who were lesser nobles, to live on and work their land in exchange for loyalty and military service. This arrangement helped keep order in a time when there were no strong central governments. Can you imagine living in such a structured world? It might feel strange to us now, but it worked for them.\\" 
+
+         :
+          "teacherNotes" 
+          ,
+          "Pause after each paragraph to check comprehension and clarify any difficult vocabulary."
+        
+:
+"type" 
+  ,
+  "vocabulary"
+  :
+  "title" 
+    ,
+    "Key Vocabulary"
+    :
+    "words" 
+    ,
+      "term" 
+        :
+        "feudal"
+        ,
+        "partOfSpeech" 
+          :
+          "adjective"
+          ,
+          "definition" 
+          :
+          "Relating to a system in which lords controlled land and gave it to vassals in exchange for loyalty and service."
+          ,
+          "example" 
+          :
+          "The feudal system was common in Europe during the Middle Ages."
+          ,
+          "collocations" 
+          :
+           "fuedal system"
+           ,
+           "fuedal society"
+          
+:
+"notes" 
+  ,
+  "Use this word when talking about historical systems of government or social organization."
+  :
+  "teachingTips" 
+  ,
+  "Draw a simple diagram showing lords, vassals, and peasants to illustrate the feudal system."
+  :
+  "pronunciation" 
+    ,
+    "syllables" 
+    :
+      "feu"
+      ,
+      "dal"
+    
+:
+"stressIndex" 
+  ,
+    "":
+  "phoneticGuide" 
+  ,
+  "FEE-juh-l"
+  :
+  "imagePrompt" 
+  ,
+  "An image showing a medieval castle with knights and peasants working in the fields nearby."
+  
+:
+"term" 
+  ,
+  "chivalry"
+  :
+  "partOfSpeech" 
+    ,
+    "noun"
+    :
+    "definition" 
+    ,
+    "A code of conduct followed by knights in the Middle Ages, emphasizing honor, bravery, and respect for women."
+    :
+    "example" 
+    ,
+    "Knights were expected to follow the rules of chivalry in battle and in daily life."
+    :
+    "collocations" 
+    ,
+      "code of chivalry"
+      :
+      "practice chivalry"
+    
+  
+  ,
+  "notes" 
+  :
+  "This word is often used to describe noble behavior or ideals of honor."
+  ,
+  "teachingTips" 
+  :
+  "Show a picture of a knight in shining armor and discuss how they might behave according to chivalry."
+  ,
+  "pronunciation" 
+    :
+    "syllables" 
+    ,
+      "chi"
+      :
+      "val"
+      ,
+      "ry"
+    
+  
+  :
+  "stressIndex" 
+  ,
+   "":
+  "phoneticGuide" 
+  ,
+  "SHIV-uhl-ree"
+  :
+  "imagePrompt" 
+  ,
+  "A painting of a knight kneeling before a lady, offering his sword as a sign of respect."
+  
+
+:
+"term" 
+  ,
+  "vassal"
+  :
+  "partOfSpeech" 
+    ,
+    "noun"
+    :
+    "definition" 
+    ,
+    "A person who received land from a lord in the Middle Ages and promised to serve and protect the lord."
+    :
+    "example" 
+    ,
+    "The vassal swore loyalty to the lord and fought in his army."
+    :
+    "collocations" 
+    ,
+      "loyal vassal"
+      :
+      "vassal's duty"
+    
+  
+  ,
+  "notes" 
+  :
+  "This word is specific to historical contexts like the feudal system."
+  ,
+  "teachingTips" 
+  :
+  "Role-play a conversation between a lord and a vassal to demonstrate their relationship."
+  ,
+  "pronunciation" 
+    :
+    "syllables" 
+    ,
+      "vas"
+      :
+      "sal"
+    
+  
+  ,
+  "stressIndex" 
+  :
+  0
+  ,
+  "phoneticGuide" 
+  :
+  "VAS-uhl"
+  ,
+  "imagePrompt" 
+  :
+  "A drawing of a man in medieval clothing bowing to a king, holding a scroll symbolizing a land agreement."
+  
+
+,
+"term" 
+  :
+  "tournament"
+  ,
+  "partOfSpeech" 
+    :
+    "noun"
+    ,
+    "definition" 
+    :
+    "A competition in the Middle Ages where knights fought each other to show their skills."
+    ,
+    "example" 
+    :
+    "The tournament attracted many spectators who cheered for their favorite knights."
+    ,
+    "collocations" 
+    :
+      "knight's tournament"
+      ,
+      "win a tournament"
+    
+  
+  :
+  "notes" 
+  ,
+  "This word is still used today for sports competitions, but its origin is medieval."
+  :
+  "teachingTips" 
+  ,
+  "Ask students to imagine organizing a modern-day tournament and compare it to medieval ones."
+  :
+  "pronunciation" 
+    ,
+    "syllables" 
+    :
+      "tour"
+      ,
+      "na"
+      :
+      "ment"
+    
+  
+  ,
+  "stressIndex" 
+  :
+  0
+  ,
+  "phoneticGuide" 
+  :
+  "TOOR-nuh-muhnt"
+  ,
+  "imagePrompt" 
+  :
+  "A colorful illustration of knights jousting on horseback while a crowd watches."
+  
+
+,
+"term" 
+  :
+  "heraldry"
+  ,
+  "partOfSpeech" 
+    :
+    "noun"
+    ,
+    "definition" 
+    :
+    "The practice of designing and displaying coats of arms and badges in the Middle Ages."
+    ,
+    "example" 
+    :
+    "Heraldry was important because it showed a family's history and status."
+    ,
+    "collocations" 
+    :
+      "coat of arms"
+      ,
+      "family heraldry"
+    
+  
+  :
+  "notes" 
+  ,
+  "This word is useful for discussing symbols and identity in history."
+  :
+  "teachingTips" 
+  ,
+  "Have students design their own coat of arms using colors and symbols that represent them."
+  :
+  "pronunciation" 
+    ,
+    "syllables" 
+    :
+      "her"
+      ,
+      "ald"
+      :
+      "ry"
+    
+  
+  ,
+  "stressIndex" 
+  :
+  0
+  ,
+  "phoneticGuide" 
+  :
+  "HEH-ruhl-dree"
+  ,
+  "imagePrompt" 
+  :
+  "A shield decorated with intricate patterns, animals, and colors, representing a noble family."
+  
+
+  
+,
+"type" 
+  :
+  "comprehension"
+  ,
+  "title" 
+    :
+    "Reading Comprehension"
+    ,
+    "questions" 
+    :
+      "question" 
+      ,
+      "What did vassals receive from lords in the feudal system?"
+      :
+      "options" 
+      ,
+        "Land"
+        :
+        "Money"
+        ,
+        "Weapons"
+        :
+        "Food"
+      
+    ,
+    "answer" 
+    :
+    "Land"
+    ,
+    "explanation" 
+    :
+    "According to the text, vassals received land from lords in exchange for loyalty and service."
+    
+
+  
+  ,
+      "question" 
+      :
+      "Which of the following best describes chivalry?"
+      ,
+      "options" 
+      :
+        "A type of weapon"
+        ,
+        "A code of conduct for knights"
+        :
+        "A kind of tournament"
+        ,
+        "A method of farming"
+      
+    :
+    "answer" 
+    ,
+    "A code of conduct for knights"
+    :
+    "explanation" 
+    ,
+    "Chivalry was a set of rules that knights followed to show honor and bravery."
+    
+
+  
+  :
+      "question" 
+      ,
+      "Why were tournaments important in the Middle Ages?"
+      :
+      "options" 
+      ,
+        "They helped knights train for battle."
+        :
+        "They were used to elect kings."
+        ,
+        "They provided entertainment for peasants."
+        :
+        "They decided who would become vassals."
+      
+    ,
+    "answer" 
+    :
+    "They helped knights train for battle."
+    ,
+    "explanation" 
+    :
+    "Tournaments allowed knights to practice their fighting skills and gain recognition."
+    
+
+  
+  ,
+      "question" 
+      :
+      "True or False: Heraldry was only used by peasants."
+      ,
+      "options" 
+      :
+        "True"
+        ,
+        "False"
+      
+    :
+    "answer" 
+    ,
+    "False"
+    :
+    "explanation" 
+    ,
+    "Heraldry was used by noble families to display their history and status, not by peasants."
+    
+
+  
+  :
+      "question" 
+      ,
+      "What was the main purpose of the feudal system?"
+      :
+      "options" 
+      ,
+        "To organize society through land ownership and loyalty."
+        :
+        "To create schools for children."
+        ,
+        "To promote trade between countries."
+        :
+        "To encourage artistic expression."
+      
+    ,
+    "answer" 
+    :
+    "To organize society through land ownership and loyalty."
+    ,
+    "explanation" 
+    :
+    "The feudal system helped maintain order by structuring relationships between lords and vassals."
+    
+
+  
+
+,
+"type" 
+  :
+  "sentenceFrames"
+  ,
+  "title" 
+    :
+    "Sentence Practice"
+    ,
+    "frames" 
+    :
+      "pattern" 
+      ,
+      "I think _____ is interesting because _____."
+      :
+      "examples" 
+      ,
+        "I think chivalry is interesting because it shows how people valued honor in the past."
+        :
+        "I think tournaments are interesting because they were both fun and useful for training."
+        ,
+        "I think heraldry is interesting because it tells stories about families."
+      
+    :
+    "usageNotes" 
+    ,
+    "Use this pattern to express opinions about topics you find fascinating."
+    :
+    "teachingTips" 
+    ,
+    "Encourage students to share personal interests using this frame."
+    :
+    "difficultyLevel" 
+    ,
+    "basic"
+    :
+    "grammarFocus" 
+    ,
+    "Expressing opinions with reasons."
+    :
+    "communicativeFunction" 
+    ,
+    "Sharing thoughts and justifying them."
+    
+
+  
+  :
+      "pattern" 
+      ,
+      "If I were a _____, I would _____."
+      :
+      "examples" 
+      ,
+        "If I were a knight, I would fight bravely in tournaments."
+        :
+        "If I were a vassal, I would protect my lord's land carefully."
+        ,
+        "If I were a lord, I would treat my vassals fairly."
+      
+    :
+    "usageNotes" 
+    ,
+    "This pattern helps imagine roles and responsibilities in different situations."
+    :
+    "teachingTips" 
+    ,
+    "Role-play scenarios where students pretend to be characters from the Middle Ages."
+    :
+    "difficultyLevel" 
+    ,
+    "intermediate"
+    :
+    "grammarFocus" 
+    ,
+    "Second conditional sentences."
+    :
+    "communicativeFunction" 
+    ,
+    "Imagining hypothetical situations."
+    
+
+  
+
+:
+"type" 
+  ,
+  "discussion"
+  :
+  "title" 
+    ,
+    "Discussion Questions"
+    :
+    "introduction" 
+    ,
+    "The Middle Ages may seem far away, but many traditions from that time influenced our world today. For example, ideas of honor and bravery can still be seen in modern stories and movies. Even some sports events resemble medieval tournaments. Let's explore these connections further."
+    :
+    "questions" 
+    ,
+      "How do you think chivalry might influence modern ideas of politeness?"
+      :
+      "Would you want to live under the feudal system? Why or why not?"
+      ,
+      "What similarities can you find between medieval tournaments and modern sports?"
+      :
+      "Do you think heraldry is still relevant today? Why?"
+      ,
+      "If you could design your own coat of arms, what symbols would you include and why?"
+    
+
+  
+
+:
+"type" 
+  ,
+  "quiz"
+  :
+  "title" 
+    ,
+    "Knowledge Check"
+    :
+    "questions" 
+    ,
+      "question" 
+      :
+      "What did vassals promise to lords in the feudal system?"
+      ,
+      "options" 
+      :
+        "Loyalty and military service"
+        ,
+        "Gold coins"
+        :
+        "Free labor"
+        ,
+        "Food supplies"
+      
+    :
+    "answer" 
+    ,
+    "Loyalty and military service"
+    :
+    "explanation" 
+    ,
+    "Vassals pledged loyalty and agreed to fight for their lords."
+    
+
+  
+  :
+      "question" 
+      ,
+      "Which of the following is NOT part of chivalry?"
+      :
+      "options" 
+      ,
+        "Bravery"
+        :
+        "Dishonesty"
+        ,
+        "Respect for women"
+        :
+        "Honor"
+      
+    ,
+    "answer" 
+    :
+    "Dishonesty"
+    ,
+    "explanation" 
+    :
+    "Chivalry emphasized positive qualities like bravery and honor, not dishonesty."
+    
+
+  
+  ,
+      "question" 
+      :
+      "What was the main goal of a tournament?"
+      ,
+      "options" 
+      :
+        "To entertain peasants"
+        ,
+        "To train knights"
+        :
+        "To elect leaders"
+        ,
+        "To distribute land"
+      
+    :
+    "answer" 
+    ,
+    "To train knights"
+    :
+    "explanation" 
+    ,
+    "Tournaments helped knights improve their combat skills."
+    
+
+  
+  :
+      "question" 
+      ,
+      "True or False: Heraldry was used to identify noble families."
+      :
+      "options" 
+      ,
+        "True"
+        :
+        "False"
+      
+    ,
+    "answer" 
+    :
+    "True"
+    ,
+    "explanation" 
+    :
+    "Heraldry displayed family histories and statuses through symbols."
+    
+
+  
+  ,
+      "question" 
+      :
+      "What was the role of lords in the feudal system?"
+      ,
+      "options" 
+      :
+        "To provide land and protection"
+        ,
+        "To collect taxes"
+        :
+        "To teach children"
+        ,
+        "To organize festivals"
+      
+    :
+    "answer" 
+    ,
+    "To provide land and protection"
+    :
+    "explanation" 
+    ,
+    "Lords gave land to vassals and offered protection in return for loyalty."
+    
+
+  
+
+ :
+
+
+
+
+
+  
+  "type" 
+  ,
+  "discussion"
+  :
+  "title" 
+    ,
+    "Discussion Questions"
+    :
+    "introduction" 
+    ,
+    "The Middle Ages may seem far away, but many traditions from that time influenced our world today. For example, ideas of honor and bravery can still be seen in modern stories and movies. Even some sports events resemble medieval tournaments. Let's explore these connections further."
+    :
+    "questions" 
+    ,
+      "How do you think chivalry might influence modern ideas of politeness?"
+      :
+      "Would you want to live under the feudal system? Why or why not?"
+      ,
+      "What similarities can you find between medieval tournaments and modern sports?"
+      :
+      "Do you think heraldry is still relevant today? Why?"
+      ,
+      "If you could design your own coat of arms, what symbols would you include and why?"
+    
+
+  
+
+:
+"type" 
+  ,
+  "quiz"
+  :
+  "title" 
+    ,
+    "Knowledge Check"
+    :
+    "questions" 
+    ,
+      "question" 
+      :
+      "What did vassals promise to lords in the feudal system?"
+      ,
+      "options" 
+      :
+        "Loyalty and military service"
+        ,
+        "Gold coins"
+        :
+        "Free labor"
+        ,
+        "Food supplies"
+      
+    :
+    "answer" 
+    ,
+    "Loyalty and military service"
+    :
+    "explanation" 
+    ,
+    "Vassals pledged loyalty and agreed to fight for their lords."
+    
+
+  
+  :
+      "question" 
+      ,
+      "Which of the following is NOT part of chivalry?"
+      :
+      "options" 
+      ,
+        "Bravery"
+        :
+        "Dishonesty"
+        ,
+        "Respect for women"
+        :
+        "Honor"
+      
+    ,
+    "answer" 
+    :
+    "Dishonesty"
+    ,
+    "explanation" 
+    :
+    "Chivalry emphasized positive qualities like bravery and honor, not dishonesty."
+    
+
+  
+  ,
+      "question" 
+      :
+      "What was the main goal of a tournament?"
+      ,
+      "options" 
+      :
+        "To entertain peasants"
+        ,
+        "To train knights"
+        :
+        "To elect leaders"
+        ,
+        "To distribute land"
+      
+    :
+    "answer" 
+    ,
+    "To train knights"
+    :
+    "explanation" 
+    ,
+    "Tournaments helped knights improve their combat skills."
+    
+
+  
+  :
+      "question" 
+      ,
+      "True or False: Heraldry was used to identify noble families."
+      :
+      "options" 
+      ,
+        "True"
+        :
+        "False"
+      
+    ,
+    "answer" 
+    :
+    "True"
+    ,
+    "explanation" 
+    :
+    "Heraldry displayed family histories and statuses through symbols."
+    
+
+  
+  ,
+      "question" 
+      :
+      "What was the role of lords in the feudal system?"
+      ,
+      "options" 
+      :
+        "To provide land and protection"
+        ,
+        "To collect taxes"
+        :
+        "To teach children"
+        ,
+        "To organize festivals"
+      
+    :
+    "answer" 
+    ,
+    "To provide land and protection"
+    :
+    "explanation" 
+    ,
+    "Lords gave land to vassals and offered protection in return for loyalty."
+    
+
+  
+
+ :
+
+
+
+
+
+  
+  "type" 
+  ,
+  "discussion"
+  :
+  "title" 
+    ,
+    "Discussion Questions"
+    :
+    "introduction" 
+    ,
+    "The Middle Ages may seem far away, but many traditions from that time influenced our world today. For example, ideas of honor and bravery can still be seen in modern stories and movies. Even some sports events resemble medieval tournaments. Let's explore these connections further."
+    :
+    "questions" 
+    ,
+      "How do you think chivalry might influence modern ideas of politeness?"
+      :
+      "Would you want to live under the feudal system? Why or why not?"
+      ,
+      "What similarities can you find between medieval tournaments and modern sports?"
+      :
+      "Do you think heraldry is still relevant today? Why?"
+      ,
+      "If you could design your own coat of arms, what symbols would you include and why?"
+    
+
+  
+
+:
+"type" 
+  ,
+  "quiz"
+  :
+  "title" 
+    ,
+    "Knowledge Check"
+    :
+    "questions" 
+    ,
+      "question" 
+      :
+      "What did vassals promise to lords in the feudal system?"
+      ,
+      "options" 
+      :
+        "Loyalty and military service"
+        ,
+        "Gold coins"
+        :
+        "Free labor"
+        ,
+        "Food supplies"
+      
+    :
+    "answer" 
+    ,
+    "Loyalty and military service"
+    :
+    "explanation" 
+    ,
+    "Vassals pledged loyalty and agreed to fight for their lords."
+    
+
+  
+  :
+      "question" 
+      ,
+      "Which of the following is NOT part of chivalry?"
+      :
+      "options" 
+      ,
+        "Bravery"
+        :
+        "Dishonesty"
+        ,
+        "Respect for women"
+        :
+        "Honor"
+      
+    ,
+    "answer" 
+    :
+    "Dishonesty"
+    ,
+    "explanation" 
+    :
+    "Chivalry emphasized positive qualities like bravery and honor, not dishonesty."
+    
+
+  
+  ,
+      "question" 
+      :
+      "What was the main goal of a tournament?"
+      ,
+      "options" 
+      :
+        "To entertain peasants"
+        ,
+        "To train knights"
+        :
+        "To elect leaders"
+        ,
+        "To distribute land"
+      
+    :
+    "answer" 
+    ,
+    "To train knights"
+    :
+    "explanation" 
+    ,
+    "Tournaments helped knights improve their combat skills."
+    
+
+  
+  :
+      "question" 
+      ,
+      "True or False: Heraldry was used to identify noble families."
+      :
+      "options" 
+      ,
+        "True"
+        :
+        "False"
+      
+    ,
+    "answer" 
+    :
+    "True"
+    ,
+    "explanation" 
+    :
+    "Heraldry displayed family histories and statuses through symbols."
+    
+
+  
+  ,
+      "question" 
+      :
+      "What was the role of lords in the feudal system?"
+     

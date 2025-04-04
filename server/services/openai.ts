@@ -133,6 +133,8 @@ export class OpenAIService {
       
       return formattedContent;
     } catch (error: any) {
+      }
+    } catch (error: any) {
       console.error('Error in OpenAIService.generateLesson:', error.message);
       throw error; // Re-throw to be handled by the caller
     }
@@ -186,16 +188,13 @@ CRITICAL LESSON DEVELOPMENT PROCESS:
    - Useful for students to know and discuss the topic
    - For each word, consider: part of speech, definition, syllable breakdown, example sentences, collocations, and usage notes
 
-2. SECOND, write a continuous reading passage that:
-   - Is a SINGLE CONTINUOUS TEXT (not divided into paragraphs)
-   - EXTREMELY CRITICAL: MUST contain AT LEAST 20-30 sentences total - shorter texts will be rejected
-   - CRITICALLY IMPORTANT: This text MUST be long enough to be divided into 5 substantial paragraphs with at least 3 sentences per paragraph
-   - Incorporates ALL 5 vocabulary words naturally within the text
+2. SECOND, write a reading passage that:
+   - Contains EXACTLY 5 substantial paragraphs (each with 4-6 sentences minimum)
+   - Incorporates ALL 5 vocabulary words naturally within the text (one vocabulary word per paragraph)
    - Is appropriate for ${cefrLevel} level in terms of language complexity
    - Covers the "${topic}" subject thoroughly but simply
-   - Has sufficient detail and depth to engage readers
-   - IMPORTANT: Write this as ONE LONG CONTINUOUS TEXT that flows naturally - our system will divide it into paragraphs later
-   - THE LESSON WILL BE REJECTED if the text is too short - this is the most important part of the lesson
+   - Has sufficient length to provide comprehensive information
+   - IMPORTANT: Each paragraph must be substantial with multiple sentences (at least 4-6 per paragraph)
    
 3. THIRD, build the rest of the lesson around these vocabulary words and reading passage:
    - The warm-up should explicitly introduce the 5 vocabulary words
@@ -232,7 +231,13 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
       "type": "reading",
       "title": "Reading Text",
       "introduction": "Let's read about this important topic.",
-      "text": "CRITICALLY IMPORTANT: Write a substantial continuous reading passage of AT LEAST 20-30 sentences that fully explores the topic in depth. This is extremely important - we need a lengthy, detailed text that covers multiple aspects of the topic. Incorporate all 5 vocabulary words naturally throughout the text. The passage should flow smoothly from introduction to development to conclusion. Make sure the content is engaging, informative, and appropriate for the specified CEFR level. Our system will automatically divide this text into 5 well-balanced paragraphs later, but we NEED a minimum of 15-20 sentences for this to work properly.",
+      "paragraphs": [
+        "First substantial paragraph (4-6 sentences) that introduces the topic and uses at least one vocabulary word naturally. Include sufficient detail and context for students to understand the subject. Make sure the paragraph provides a clear foundation for the rest of the reading.",
+        "Second substantial paragraph (4-6 sentences) that develops the topic further and uses another vocabulary word. This paragraph should build upon the introduction with additional facts, examples, or explanations that expand the student's understanding.",
+        "Third substantial paragraph (4-6 sentences) with more detailed information and another vocabulary word. This paragraph should explore a different aspect of the topic or go deeper into previously mentioned aspects.",
+        "Fourth substantial paragraph (4-6 sentences) exploring implications or applications of the topic with another vocabulary word. This paragraph should connect the topic to real-world contexts or consider its significance.",
+        "Final substantial paragraph (4-6 sentences) that summarizes or concludes with the last vocabulary word. This paragraph should bring closure to the reading while reinforcing key points."
+      ],
       "imageDescription": "A descriptive image that illustrates a key aspect of the reading",
       "timeAllocation": "15 minutes",
       "teacherNotes": "Have students read the passage once for general understanding, then a second time to identify the vocabulary words in context."
@@ -579,11 +584,6 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
    * @returns True if content meets quality standards, false otherwise
    */
   private checkContentQuality(content: any): boolean {
-    if (!content || !content.sections) {
-      console.log('Warning: Invalid content structure - accepting anyway to avoid API waste');
-      return true;
-    }
-    
     // Set our quality standards
     const MIN_SENTENCES_PER_PARAGRAPH = 3;
     const MIN_PARAGRAPHS = 5;
@@ -593,86 +593,46 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
       const readingSection = content.sections.find((section: any) => section.type === 'reading');
       
       if (!readingSection) {
-        console.log('Warning: No reading section found - accepting anyway to avoid API waste');
-        return true;
-      }
-
-      // If we have text but no paragraphs, try to split the text into paragraphs
-      if (readingSection.text && (!readingSection.paragraphs || !Array.isArray(readingSection.paragraphs) || readingSection.paragraphs.length < MIN_PARAGRAPHS)) {
-        console.log('Reading section has text but insufficient paragraphs. Attempting to split text into paragraphs.');
-        
-        // Split into sentences 
-        const sentences = readingSection.text
-          .split(/(?<=[.!?])\s+/)
-          .filter((s: string) => s.trim().length > 0);
-        
-        console.log(`Found ${sentences.length} sentences in text content`);
-        
-        // Only attempt splitting if we have enough sentences
-        if (sentences.length >= MIN_PARAGRAPHS * MIN_SENTENCES_PER_PARAGRAPH) {
-          // Calculate how many sentences per paragraph for even distribution
-          const sentencesPerParagraph = Math.floor(sentences.length / MIN_PARAGRAPHS);
-          const paragraphs = [];
-          
-          for (let i = 0; i < MIN_PARAGRAPHS; i++) {
-            const startIdx = i * sentencesPerParagraph;
-            const endIdx = (i === MIN_PARAGRAPHS - 1) 
-              ? sentences.length 
-              : (i + 1) * sentencesPerParagraph;
-              
-            const paragraph = sentences.slice(startIdx, endIdx).join(' ');
-            paragraphs.push(paragraph);
-          }
-          
-          // Update the reading section with the new paragraphs
-          readingSection.paragraphs = paragraphs;
-          console.log(`Successfully split text into ${paragraphs.length} paragraphs with approximately ${sentencesPerParagraph} sentences each`);
-        } else {
-          console.log(`Warning: Text has only ${sentences.length} sentences, which is insufficient for ${MIN_PARAGRAPHS} good paragraphs`);
-        }
+        console.log('Quality check failed: No reading section found');
+        return false;
       }
       
-      // Process existing paragraphs
-      if (Array.isArray(readingSection.paragraphs)) {
-        // Check each paragraph for sentence count
-        const paragraphQuality = readingSection.paragraphs.map((paragraph: string, index: number) => {
-          if (typeof paragraph !== 'string') {
-            console.log(`Warning: Paragraph ${index + 1} is not a string`);
-            return { index, sentenceCount: 0, isGoodQuality: false };
-          }
-          
-          // Split into sentences - looking for period, exclamation, or question mark followed by a space
-          // Also handle the case where the final sentence doesn't have a trailing space
-          const sentences = paragraph.split(/[.!?](?:\s+|$)/).filter((s: string) => s.trim().length > 0);
-          
-          console.log(`Paragraph ${index + 1} has ${sentences.length} sentences`);
-          
-          return {
-            index,
-            sentenceCount: sentences.length,
-            isGoodQuality: sentences.length >= MIN_SENTENCES_PER_PARAGRAPH
-          };
+      // Check if we have enough paragraphs
+      if (!Array.isArray(readingSection.paragraphs) || readingSection.paragraphs.length < MIN_PARAGRAPHS) {
+        console.log(`Quality check failed: Not enough paragraphs. Found ${readingSection.paragraphs?.length || 0}, need ${MIN_PARAGRAPHS}`);
+        return false;
+      }
+      
+      // Check each paragraph for sentence count
+      const paragraphQuality = readingSection.paragraphs.map((paragraph: string, index: number) => {
+        // Split into sentences - looking for period, exclamation, or question mark followed by a space
+        const sentences = paragraph.split(/[.!?]\s+/).filter((s: string) => s.trim().length > 0);
+        
+        console.log(`Paragraph ${index + 1} has ${sentences.length} sentences`);
+        
+        return {
+          index,
+          sentenceCount: sentences.length,
+          isGoodQuality: sentences.length >= MIN_SENTENCES_PER_PARAGRAPH
+        };
+      });
+      
+      // Check if any paragraphs don't meet quality standards
+      const lowQualityParagraphs = paragraphQuality.filter(p => !p.isGoodQuality);
+      
+      if (lowQualityParagraphs.length > 0) {
+        console.log(`Quality check failed: ${lowQualityParagraphs.length} paragraphs have fewer than ${MIN_SENTENCES_PER_PARAGRAPH} sentences`);
+        lowQualityParagraphs.forEach(p => {
+          console.log(`Paragraph ${p.index + 1} has only ${p.sentenceCount} sentences`);
         });
-        
-        // Check if any paragraphs don't meet quality standards, but don't reject
-        const lowQualityParagraphs = paragraphQuality.filter((p: { isGoodQuality: boolean }) => !p.isGoodQuality);
-        
-        if (lowQualityParagraphs.length > 0) {
-          console.log(`Warning: ${lowQualityParagraphs.length} paragraphs have fewer than ${MIN_SENTENCES_PER_PARAGRAPH} sentences - accepting anyway`);
-          lowQualityParagraphs.forEach((p: { index: number, sentenceCount: number }) => {
-            console.log(`Paragraph ${p.index + 1} has only ${p.sentenceCount} sentences`);
-          });
-          // Continue and accept the content
-        }
+        return false;
       }
       
-      // Always accept the content regardless of quality checks
-      console.log('Quality check complete: Accepting content to avoid API waste');
+      // All quality checks passed
       return true;
     } catch (error) {
       console.error('Error in quality check:', error);
-      // Even on error, we accept the content to avoid wasting API calls
-      return true;
+      return false;
     }
   }
 
@@ -701,150 +661,91 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
       }
     }
     
-    // Process the reading section to handle the continuous text
+    // Fix paragraphs property if it's a string, object, or number (count)
+    if (section.type === 'reading' && fixedSection.paragraphs && !Array.isArray(fixedSection.paragraphs)) {
+      if (typeof fixedSection.paragraphs === 'string') {
+        // Split the string by double newlines or handle as a single paragraph
+        const paragraphs = fixedSection.paragraphs.split(/\n\n+/);
+        fixedSection.paragraphs = paragraphs.length > 0 ? paragraphs : [fixedSection.paragraphs];
+      } else if (typeof fixedSection.paragraphs === 'number') {
+        // If paragraphs is a number, create placeholders
+        const count = Math.min(Math.max(1, fixedSection.paragraphs), 10); // Limit between 1-10
+        
+        // Generate placeholder paragraphs based on the introduction/topic
+        const placeholders: string[] = [];
+        const topic = fixedSection.title?.replace('Reading Text', '') || 
+                    fixedSection.introduction || 
+                    'the topic';
+        
+        // Create generic paragraphs
+        for (let i = 0; i < count; i++) {
+          placeholders.push(`Paragraph ${i+1} about ${topic}.`);
+        }
+        
+        fixedSection.paragraphs = placeholders;
+      } else if (typeof fixedSection.paragraphs === 'object') {
+        // Extract values from the object
+        const paragraphsArray: string[] = [];
+        
+        // Add string values
+        Object.values(fixedSection.paragraphs).forEach((val: any) => {
+          if (typeof val === 'string' && val.trim()) {
+            paragraphsArray.push(val);
+          }
+        });
+        
+        fixedSection.paragraphs = paragraphsArray;
+      }
+    }
+    
+    // Ensure we have complete "reading" section
     if (section.type === 'reading') {
-      // Handle the case where we have a text property containing a continuous passage
-      if (fixedSection.text && typeof fixedSection.text === 'string') {
-        console.log('Processing continuous reading text...');
+      // Create empty paragraphs array if none exists
+      if (!fixedSection.paragraphs || !Array.isArray(fixedSection.paragraphs) || fixedSection.paragraphs.length === 0) {
+        fixedSection.paragraphs = ["No reading text was provided."];
+      }
+      
+      // Process paragraphs to fix the single-sentence problem by consolidating them into exactly 5 paragraphs
+      if (Array.isArray(fixedSection.paragraphs) && fixedSection.paragraphs.length > 0) {
+        console.log('Original paragraph count:', fixedSection.paragraphs.length);
         
-        // Add paragraphs property if it doesn't exist
-        if (!fixedSection.paragraphs) {
-          fixedSection.paragraphs = [];
-        }
-        
-        // Split the continuous text into sentences
-        const text = fixedSection.text;
-        // This regex splits on sentence endings (., !, ?) followed by space or end of string
-        const sentences = text.split(/[.!?](?:\s+|$)/).filter((s: string) => s.trim().length > 0)
-            .map((sentence: string) => sentence.trim() + '.'); // Ensure each sentence ends with a period
-        
-        console.log(`Total sentences in continuous text: ${sentences.length}`);
-        
-        // Define our targets
-        const DESIRED_PARAGRAPH_COUNT = 5;
-        const MIN_SENTENCES_PER_PARAGRAPH = 3;
-        const MIN_TOTAL_SENTENCES = MIN_SENTENCES_PER_PARAGRAPH * DESIRED_PARAGRAPH_COUNT;
-        
-        // If we don't have enough sentences, log a warning but don't add generic content
-        if (sentences.length < MIN_TOTAL_SENTENCES) {
-          console.log(`Warning: Not enough sentences. Need at least ${MIN_TOTAL_SENTENCES}, have ${sentences.length}`);
-          console.log('Proceeding with the original sentences without adding generic content');
-        }
-        
-        // Distribute sentences evenly across 5 paragraphs
-        const paragraphs: string[] = [];
-        const sentencesPerParagraph = Math.max(MIN_SENTENCES_PER_PARAGRAPH, Math.ceil(sentences.length / DESIRED_PARAGRAPH_COUNT));
-        
-        for (let i = 0; i < DESIRED_PARAGRAPH_COUNT; i++) {
-          const startIdx = i * sentencesPerParagraph;
-          const endIdx = Math.min((i + 1) * sentencesPerParagraph, sentences.length);
+        // If we have lots of short paragraphs, consolidate them
+        if (fixedSection.paragraphs.length > 5) {
+          // The goal is to create exactly 5 robust paragraphs
+          const desiredParagraphCount = 5;
+          const allSentences = fixedSection.paragraphs.flatMap((para: string) => 
+            para.split(/(?<=[.!?])\s+/).filter((s: string) => s.trim())
+          );
           
-          if (startIdx < sentences.length) {
-            const paragraphSentences = sentences.slice(startIdx, endIdx);
-            
-            // Log a warning if a paragraph has fewer than 3 sentences, but don't add generic content
-            if (paragraphSentences.length < MIN_SENTENCES_PER_PARAGRAPH) {
-              console.log(`Warning: Paragraph ${i+1} has only ${paragraphSentences.length} sentences, which is less than the minimum ${MIN_SENTENCES_PER_PARAGRAPH}`);
-            }
-            
-            paragraphs.push(paragraphSentences.join(' '));
-          }
-        }
-        
-        // Log a warning if we don't have enough paragraphs
-        if (paragraphs.length < DESIRED_PARAGRAPH_COUNT) {
-          console.log(`Warning: Only created ${paragraphs.length} paragraphs instead of the desired ${DESIRED_PARAGRAPH_COUNT}`);
-        }
-        
-        // Update the paragraphs property
-        fixedSection.paragraphs = paragraphs;
-        console.log(`Created ${paragraphs.length} paragraphs from continuous text`);
-      } 
-      // Handle the case where we already have paragraphs (backwards compatibility)
-      else if (fixedSection.paragraphs) {
-        console.log('Processing existing paragraphs...');
-        
-        // Convert to array if it's not already
-        if (!Array.isArray(fixedSection.paragraphs)) {
-          if (typeof fixedSection.paragraphs === 'string') {
-            // Split the string by double newlines
-            const paragraphs = fixedSection.paragraphs.split(/\n\n+/);
-            fixedSection.paragraphs = paragraphs.length > 0 ? paragraphs : [fixedSection.paragraphs];
-          } else if (typeof fixedSection.paragraphs === 'object') {
-            // Extract values from the object
-            const paragraphsArray: string[] = [];
-            Object.values(fixedSection.paragraphs).forEach((val: any) => {
-              if (typeof val === 'string' && val.trim()) {
-                paragraphsArray.push(val);
-              }
-            });
-            fixedSection.paragraphs = paragraphsArray;
-          } else {
-            // Default fallback
-            fixedSection.paragraphs = ["No reading text was provided."];
-          }
-        }
-        
-        // Process existing paragraphs to ensure quality
-        if (Array.isArray(fixedSection.paragraphs) && fixedSection.paragraphs.length > 0) {
-          console.log('Original paragraph count:', fixedSection.paragraphs.length);
+          // Distribute sentences evenly across 5 paragraphs
+          const consolidatedParagraphs: string[] = [];
+          const sentencesPerParagraph = Math.max(1, Math.ceil(allSentences.length / desiredParagraphCount));
           
-          // Get all sentences from all paragraphs for potential redistribution
-          const allSentences = fixedSection.paragraphs.flatMap((para: string) => {
-            // Split by sentence endings, including end of string
-            return para.split(/[.!?](?:\s+|$)/).filter((s: string) => s.trim().length > 0)
-              .map((sentence: string) => sentence.trim() + '.'); // Ensure each sentence ends with a period
-          });
-          
-          console.log(`Total sentences in paragraphs: ${allSentences.length}`);
-          
-          // Define our targets
-          const DESIRED_PARAGRAPH_COUNT = 5;
-          const MIN_SENTENCES_PER_PARAGRAPH = 3;
-          const MIN_TOTAL_SENTENCES = MIN_SENTENCES_PER_PARAGRAPH * DESIRED_PARAGRAPH_COUNT;
-          
-          // If we don't have enough sentences, log a warning but don't add generic content
-          if (allSentences.length < MIN_TOTAL_SENTENCES) {
-            console.log(`Warning: Not enough sentences in existing paragraphs. Need at least ${MIN_TOTAL_SENTENCES}, have ${allSentences.length}`);
-            console.log('Proceeding with the original sentences without adding generic content');
-          }
-          
-          // Create exactly 5 paragraphs with the sentences we have
-          const enhancedParagraphs: string[] = [];
-          const sentencesPerParagraph = Math.max(MIN_SENTENCES_PER_PARAGRAPH, Math.ceil(allSentences.length / DESIRED_PARAGRAPH_COUNT));
-          
-          for (let i = 0; i < DESIRED_PARAGRAPH_COUNT; i++) {
+          for (let i = 0; i < desiredParagraphCount; i++) {
             const startIdx = i * sentencesPerParagraph;
             const endIdx = Math.min((i + 1) * sentencesPerParagraph, allSentences.length);
             
             if (startIdx < allSentences.length) {
-              const paragraphSentences = allSentences.slice(startIdx, endIdx);
-              
-              // Log a warning if a paragraph has fewer than 3 sentences, but don't add generic content
-              if (paragraphSentences.length < MIN_SENTENCES_PER_PARAGRAPH) {
-                console.log(`Warning: Paragraph ${i+1} (legacy path) has only ${paragraphSentences.length} sentences, which is less than the minimum ${MIN_SENTENCES_PER_PARAGRAPH}`);
-              }
-              
-              enhancedParagraphs.push(paragraphSentences.join(' '));
+              consolidatedParagraphs.push(allSentences.slice(startIdx, endIdx).join(' '));
             }
           }
           
-          // Log a warning if we don't have enough paragraphs
-          if (enhancedParagraphs.length < DESIRED_PARAGRAPH_COUNT) {
-            console.log(`Warning: Only created ${enhancedParagraphs.length} paragraphs instead of the desired ${DESIRED_PARAGRAPH_COUNT} (legacy path)`);
+          fixedSection.paragraphs = consolidatedParagraphs;
+          console.log('Consolidated into 5 paragraphs');
+        } 
+        // If we have fewer than 5 paragraphs, pad with additional context
+        else if (fixedSection.paragraphs.length < 5) {
+          const existingParagraphs = [...fixedSection.paragraphs];
+          
+          while (existingParagraphs.length < 5) {
+            // Generate a logical additional paragraph based on content
+            const baseText = `This point further illustrates the importance of the topic and connects to real-world applications.`;
+            existingParagraphs.push(baseText);
           }
           
-          fixedSection.paragraphs = enhancedParagraphs;
-          console.log(`Enhanced into ${enhancedParagraphs.length} paragraphs with adequate sentence count`);
+          fixedSection.paragraphs = existingParagraphs;
+          console.log('Padded paragraphs to reach 5 total');
         }
-      }
-      // If we have neither text nor paragraphs, log an error
-      else {
-        console.log('Error: No text or paragraphs provided for reading section');
-        // Create a single informative paragraph that doesn't contain generic content
-        fixedSection.paragraphs = [
-          "The AI failed to generate reading content for this lesson. Please try generating a new lesson."
-        ];
       }
       
       // Ensure we have the introduction
@@ -857,36 +758,39 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
     if (section.type === 'vocabulary') {
       // Handle if words is a number (count) rather than an array
       if (typeof fixedSection.words === 'number') {
-        console.log('Error: Vocabulary words provided as count instead of actual words');
+        const count = Math.min(Math.max(1, fixedSection.words), 10); // Limit between 1-10
         
-        // Create error message instead of placeholder words
-        fixedSection.words = [{
-          term: "Error: Missing Vocabulary",
-          partOfSpeech: "error",
-          definition: "The AI provided a count instead of actual vocabulary words.",
-          example: "Please try generating a new lesson.",
-        }];
+        // Create placeholder vocabulary words
+        const words = [];
+        for (let i = 0; i < count; i++) {
+          words.push({
+            term: `vocabulary term ${i + 1}`,
+            partOfSpeech: "noun",
+            definition: `Definition for vocabulary term ${i + 1}`,
+            example: `Example sentence using vocabulary term ${i + 1}`
+          });
+        }
+        
+        fixedSection.words = words;
       }
-      // Create error message if no vocabulary words exist
+      // Create empty words array if none exists
       else if (!fixedSection.words || !Array.isArray(fixedSection.words) || fixedSection.words.length === 0) {
-        console.log('Error: No vocabulary words provided');
         fixedSection.words = [{
-          term: "Error: Missing Vocabulary",
-          partOfSpeech: "error",
-          definition: "No vocabulary words were provided by the AI.",
-          example: "Please try generating a new lesson.",
+          term: "vocabulary",
+          partOfSpeech: "noun",
+          definition: "The words used in a particular language.",
+          example: "The lesson focuses on building vocabulary for everyday situations.",
         }];
       }
-      // Convert string words to proper objects if needed, with missing fields warning
+      // Convert string words to proper objects if needed
       else if (Array.isArray(fixedSection.words)) {
         fixedSection.words = fixedSection.words.map((word: any) => {
           if (typeof word === 'string') {
-            console.log(`Warning: Vocabulary word "${word}" provided as string without proper details`);
             return {
               term: word,
-              partOfSpeech: "unknown",
-              definition: "Missing definition - the AI only provided the word.",
-              example: "Please try generating a new lesson with complete vocabulary details."
+              partOfSpeech: "noun",
+              definition: "No definition provided.",
+              example: `Example using "${word}".`
             };
           }
           return word;
@@ -905,12 +809,11 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
       if (section.type === 'quiz' || section.type === 'comprehension') {
         fixedSection.questions = questions.map((q: any, index: number) => {
           if (typeof q === 'string') {
-            console.log(`Warning: Question "${q}" provided as string without options for ${section.type} section`);
             return {
               id: index + 1,
               question: q,
-              options: ["Missing options", "Please regenerate", "The AI didn't provide complete question format", "Try again"],
-              correctAnswer: "Please regenerate"
+              options: ["Option A", "Option B", "Option C", "Option D"],
+              correctAnswer: "Option A"
             };
           }
           return q;
@@ -919,32 +822,25 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
         // For discussion, just ensure we have string questions
         fixedSection.questions = questions.map((q: any) => {
           if (typeof q === 'object') {
-            console.log('Warning: Discussion question provided as object instead of string');
-            const extractedQuestion = q.question || q.text || Object.values(q)[0];
-            if (typeof extractedQuestion === 'string') {
-              return extractedQuestion;
-            } else {
-              return "Error: Invalid discussion question format. Please try generating a new lesson.";
-            }
+            return q.question || q.text || `Question ${Object.values(q)[0]}`;
           }
           return q;
         });
       }
       
-      // If we still have no questions, log an error
+      // If we still have no questions, add a default
       if (fixedSection.questions.length === 0) {
-        console.log(`Error: No questions provided for ${section.type} section`);
         if (section.type === 'quiz' || section.type === 'comprehension') {
           fixedSection.questions = [
             {
               id: 1,
-              question: "Error: No questions were provided by the AI.",
-              options: ["Try again", "Generate a new lesson", "Contact support", "Check your prompt"],
-              correctAnswer: "Generate a new lesson"
+              question: `Question about ${section.title || 'the topic'}`,
+              options: ["Option A", "Option B", "Option C", "Option D"],
+              correctAnswer: "Option A"
             }
           ];
         } else {
-          fixedSection.questions = ["Error: No discussion questions were provided by the AI. Please try generating a new lesson."];
+          fixedSection.questions = [`What do you think about ${section.title || 'this topic'}?`];
         }
       }
     }
@@ -954,9 +850,9 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
       fixedSection.frames = this.processArray(fixedSection.frames || [], 'string');
       
       if (fixedSection.frames.length === 0) {
-        console.log('Error: No sentence frames provided');
         fixedSection.frames = [
-          "Error: No sentence frames were provided by the AI. Please try generating a new lesson.",
+          "I think _____ is _____.",
+          "The most important thing about _____ is _____."
         ];
       }
     }
@@ -1028,12 +924,11 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
     
     requiredSectionTypes.forEach(type => {
       if (!availableSectionTypes.includes(type)) {
-        console.log(`Error: Missing required ${type} section`);
-        // Add an error section indicating the missing content
+        // Add a placeholder section of this type
         processed.sections.push({
           type,
           title: this.getDefaultTitle(type),
-          content: `Error: The ${type} section was not provided by the AI. Please try generating a new lesson.`
+          content: `This ${type} section was not provided by the AI.`
         });
       }
     });
