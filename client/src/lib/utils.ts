@@ -424,14 +424,17 @@ export function extractDiscussionQuestions(content: any): any[] {
       );
       
       if (discussionSection) {
-        console.log("Found discussion section:", JSON.stringify(discussionSection));
+        console.log("Found discussion section:", JSON.stringify(discussionSection).substring(0, 200) + "...");
         
         // Extract introduction if available
         let introduction = discussionSection.introduction || "";
         
-        // DIRECT KEY EXTRACTION - Special case for the specific format seen in logs
-        // This is a critical case for the Qwen API format where question keys are the actual questions
+        // QWEN API FORMAT DETECTION: Test for non-standard key-value question format
+        // This is the format we're finding in the Qwen API responses where
+        // the keys themselves are the questions and the values are follow-ups
         const allKeys = Object.keys(discussionSection);
+        
+        // Get all string keys that look like questions (end with ?)
         const questionKeys = allKeys.filter(key => 
           typeof key === 'string' && 
           key.includes('?') && 
@@ -441,50 +444,30 @@ export function extractDiscussionQuestions(content: any): any[] {
         );
         
         if (questionKeys.length > 0) {
-          console.log("Found question keys directly in section:", questionKeys);
+          console.log("Found Qwen API question-as-keys format with", questionKeys.length, "questions");
           
-          // Process each question and look for follow-up questions
+          // Process each question as a key and extract follow-up questions from its value
           questionKeys.forEach(questionText => {
-            // Check if the value associated with this question might contain follow-up questions
+            // The value associated with this question key might be a follow-up question
             const value = discussionSection[questionText];
+            
+            // Initialize an array to hold extracted follow-up questions
             let followUpQuestions: string[] = [];
             
-            // Process value as potential follow-up questions if it's a string
+            // Process the value if it's a string that might contain follow-up questions
             if (typeof value === 'string' && value.trim()) {
-              // Split by bullet points, line breaks, or numbered lists and filter valid questions
-              const splitPatterns = [/•\s+/, /\n+/, /\r\n+/, /\d+\.\s+/, /[\?\.\!]\s+/];
-              
-              let potentialFollowUps = [value.trim()]; // Start with the whole value
-              
-              // Try each splitting pattern
-              for (const pattern of splitPatterns) {
-                // Check if the first item has multiple parts using this pattern
-                const parts = potentialFollowUps[0].split(pattern).filter(p => p.trim().length > 0);
-                if (parts.length > 1) {
-                  potentialFollowUps = parts;
-                  break; // We found a successful splitting pattern
-                }
-              }
-              
-              // Filter potential follow-ups to keep only question-like items
-              followUpQuestions = potentialFollowUps
-                .filter(text => 
-                  text.trim().length > 0 && 
-                  (text.includes('?') || 
-                   /^(why|how|what|where|when|who|which|can|do|would|should)/i.test(text.trim())
-                  )
-                )
-                .map(text => text.trim());
-                
-              // If we didn't get any follow-up questions, but the value contains question words,
-              // just use the whole value as a single follow-up question
-              if (followUpQuestions.length === 0 && 
-                  (/^(why|how|what|where|when|who|which|can|do|would|should)/i.test(value.trim()) || 
-                   value.includes('?'))) {
+              // First, check if the whole value is a single question
+              if (value.trim().endsWith('?') || value.trim().match(/^(Why|How|What|Where|When|Who|Which|Can|Do|Would|Should)/i)) {
+                followUpQuestions = [value.trim()];
+              } else {
+                // Treat the paired value as the follow-up question
+                // This is the common pattern in the Qwen API where each question key is paired
+                // with a value that is often a related follow-up question
                 followUpQuestions = [value.trim()];
               }
             }
             
+            // Push the extracted question and follow-ups to our result array
             questions.push({
               question: questionText.trim(),
               introduction: introduction,
@@ -493,8 +476,9 @@ export function extractDiscussionQuestions(content: any): any[] {
             });
           });
           
+          // Only return if we successfully extracted some questions
           if (questions.length > 0) {
-            console.log("Successfully extracted direct question keys with follow-ups:", questions);
+            console.log(`Successfully extracted ${questions.length} direct question keys with ${questions.reduce((sum, q) => sum + (q.followUp?.length || 0), 0)} follow-ups`);
             return questions;
           }
         }
@@ -537,7 +521,7 @@ export function extractDiscussionQuestions(content: any): any[] {
                   // Try each splitting pattern
                   for (const pattern of splitPatterns) {
                     // Check if the first item has multiple parts using this pattern
-                    const parts = potentialFollowUps[0].split(pattern).filter(p => p.trim().length > 0);
+                    const parts = potentialFollowUps[0].split(pattern).filter((p: string) => p.trim().length > 0);
                     if (parts.length > 1) {
                       potentialFollowUps = parts;
                       break; // We found a successful splitting pattern
@@ -558,8 +542,8 @@ export function extractDiscussionQuestions(content: any): any[] {
                   // just use the first sentence with a question mark
                   if (followUpQuestions.length === 0 && q.answer.includes('?')) {
                     const questionSentences = q.answer.split(/[\.\?\!]\s+/)
-                      .filter(sent => sent.includes('?'))
-                      .map(sent => sent.trim() + '?');
+                      .filter((sent: string) => sent.includes('?'))
+                      .map((sent: string) => sent.trim() + '?');
                     
                     if (questionSentences.length > 0) {
                       followUpQuestions = questionSentences;
