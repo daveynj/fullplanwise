@@ -742,6 +742,29 @@ export function LessonContent({ content }: LessonContentProps) {
     
     // Let's look at what we're dealing with
     console.log("Warm-up section attempt:", section);
+    
+    // Extract vocabulary words from section.procedure if they exist
+    let vocabFromProcedure: string[] = [];
+    if (section.procedure && typeof section.procedure === 'string') {
+      // Look for patterns like "target vocabulary on the board: 'word1,' 'word2,'"
+      const boardPattern = /target vocabulary (?:on the board|words?):?\s+['"]([^'"]+)['"](?:\s*,\s*['"]([^'"]+)['"])*(?:\s*,?\s*and\s*['"]([^'"]+)['"])?/i;
+      const boardMatch = section.procedure.match(boardPattern);
+      
+      if (boardMatch) {
+        // Extract all matches including those in capture groups
+        const procedureText = section.procedure;
+        const vocabRegex = /['"]([^'"]+)['"]/g;
+        let match;
+        
+        while ((match = vocabRegex.exec(procedureText)) !== null) {
+          if (match[1] && !vocabFromProcedure.includes(match[1])) {
+            vocabFromProcedure.push(match[1]);
+          }
+        }
+        
+        console.log("Extracted vocabulary from procedure:", vocabFromProcedure);
+      }
+    }
 
     // Extract or generate vocabulary words
     let vocabWords: VocabularyWord[] = [];
@@ -750,7 +773,17 @@ export function LessonContent({ content }: LessonContentProps) {
     if (section.targetVocabulary) {
       console.log("Found targetVocabulary in section:", section.targetVocabulary);
       
-      if (Array.isArray(section.targetVocabulary)) {
+      // Handle special case where targetVocabulary is a string representing an incomplete array
+      if (typeof section.targetVocabulary === 'string' && section.targetVocabulary.includes('targetVocabulary: [')) {
+        console.log("Found malformed targetVocabulary string format. Will use vocabulary section instead.");
+        // Skip this section and use the dedicated vocabulary section instead
+      }
+      // Handle case where targetVocabulary is just a number (count of vocabulary words)
+      else if (typeof section.targetVocabulary === 'number') {
+        console.log("targetVocabulary is a number:", section.targetVocabulary, "Will use vocabulary section instead.");
+        // Skip this section and use the dedicated vocabulary section instead
+      }
+      else if (Array.isArray(section.targetVocabulary)) {
         // If it's an array of strings, convert to objects with enhanced data
         vocabWords = section.targetVocabulary.map((term: any) => {
           // Handle both string values and object values
@@ -829,18 +862,58 @@ export function LessonContent({ content }: LessonContentProps) {
     // If no vocabulary words found yet, check if there's a vocabulary section elsewhere
     if (vocabWords.length === 0) {
       const vocabularySection = parsedContent.sections.find((s: any) => s.type === 'vocabulary');
-      if (vocabularySection && vocabularySection.words && Array.isArray(vocabularySection.words)) {
-        console.log("Found vocabulary section, using its words for warm-up");
-        vocabWords = vocabularySection.words.map((word: any) => {
-          // Convert to VocabularyWord format
-          return {
-            word: typeof word === 'string' ? word : word.word || word.term || '',
-            partOfSpeech: typeof word === 'object' ? (word.partOfSpeech || "noun") : "noun",
-            definition: typeof word === 'object' ? (word.definition || "") : `Definition for ${typeof word === 'string' ? word : ''}`,
-            example: typeof word === 'object' ? (word.example || "") : "",
-            pronunciation: typeof word === 'object' ? (word.pronunciation || "") : ""
-          };
-        });
+      if (vocabularySection) {
+        console.log("Found vocabulary section:", vocabularySection);
+        
+        // Check if the vocabulary section has words as an array
+        if (vocabularySection.words && Array.isArray(vocabularySection.words)) {
+          console.log("Found vocabulary section with words array, using its words for warm-up");
+          vocabWords = vocabularySection.words.map((word: any) => {
+            // Convert to VocabularyWord format
+            return {
+              word: typeof word === 'string' ? word : word.word || word.term || '',
+              partOfSpeech: typeof word === 'object' ? (word.partOfSpeech || "noun") : "noun",
+              definition: typeof word === 'object' ? (word.definition || "") : `Definition for ${typeof word === 'string' ? word : ''}`,
+              example: typeof word === 'object' ? (word.example || "") : "",
+              pronunciation: typeof word === 'object' ? (word.pronunciation || "") : ""
+            };
+          });
+        }
+        // Check if the vocabulary section has words as a non-array object
+        else if (vocabularySection.words && typeof vocabularySection.words === 'object') {
+          console.log("Found vocabulary section with words object");
+          const extractedWords = [];
+          
+          // Loop through each property of the words object
+          for (const key in vocabularySection.words) {
+            const word = vocabularySection.words[key];
+            
+            if (typeof word === 'object') {
+              extractedWords.push({
+                word: word.term || key,
+                partOfSpeech: word.partOfSpeech || "noun",
+                definition: word.definition || "",
+                example: word.example || "",
+                pronunciation: word.pronunciation || "",
+                syllables: word.syllables || undefined,
+                stressIndex: word.stressIndex !== undefined ? word.stressIndex : undefined,
+                phoneticGuide: word.phoneticGuide || undefined
+              });
+            } else if (typeof word === 'string') {
+              extractedWords.push({
+                word: key,
+                definition: word,
+                partOfSpeech: "noun",
+                example: "",
+                pronunciation: ""
+              });
+            }
+          }
+          
+          if (extractedWords.length > 0) {
+            vocabWords = extractedWords;
+          }
+        }
       }
     }
 
@@ -899,6 +972,42 @@ export function LessonContent({ content }: LessonContentProps) {
       }
     }
 
+    // If no vocabulary words yet but we found some in the procedure section, use those
+    if (vocabWords.length === 0 && vocabFromProcedure.length > 0) {
+      console.log("Using vocabulary extracted from procedure text");
+      
+      // Convert procedure vocabulary words to VocabularyWord objects
+      vocabWords = vocabFromProcedure.map(term => {
+        // Try to find a definition or example in the procedure text
+        let definition = "";
+        let example = "";
+        
+        // Look for a quote after the term that might be an example
+        if (section.procedure) {
+          const exampleRegex = new RegExp(`['"]${term}[^'"]*['"][^'".]*?['"]([^'"]+)['"]`, 'i');
+          const exampleMatch = section.procedure.match(exampleRegex);
+          if (exampleMatch && exampleMatch[1]) {
+            example = exampleMatch[1];
+          }
+          
+          // Look for a definition pattern like "term is/means/refers to..."
+          const definitionRegex = new RegExp(`['"]${term}['"]\\s+(?:is|means|refers to)\\s+([^.]+)`, 'i');
+          const definitionMatch = section.procedure.match(definitionRegex);
+          if (definitionMatch && definitionMatch[1]) {
+            definition = definitionMatch[1].trim();
+          }
+        }
+        
+        return {
+          word: term,
+          partOfSpeech: "noun", // Default to noun as we can't easily determine part of speech
+          definition: definition || `Definition for ${term}`,
+          example: example || `Example using "${term}" in context.`,
+          pronunciation: term
+        };
+      });
+    }
+    
     // Ensure we have at least some vocabulary words for the UI
     if (vocabWords.length === 0) {
       // Fallback to at least one word from the section title or content
