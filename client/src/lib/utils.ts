@@ -525,66 +525,55 @@ export function extractDiscussionQuestions(content: any): any[] {
           }
         }
         
-        // Special case for the Qwen API alternating pattern
-        if (discussionSection.questions) {
-          // Check if we have the unique alternating pattern with questions directly as value, then as keys
-          const questionsValue = discussionSection.questions;
-          console.log("CHECKING Qwen API alternating pattern:", JSON.stringify(questionsValue).substring(0, 200));
+        // Special case: First check for the Qwen alternating pattern in direct section content
+        if (typeof discussionSection.questions === 'string') {
+          console.log("Found Qwen API string-value questions:", discussionSection.questions);
           
-          // Step 1: Check if the first question is directly the value of the "questions" property
-          if (typeof questionsValue === 'string' && 
-              (questionsValue.includes('?') || 
-               /^(why|how|what|where|when|who|which|can|do|would|should)/i.test(questionsValue.trim()))) {
+          // This is the first question in the alternating pattern
+          const firstQuestion = {
+            question: discussionSection.questions.trim(),
+            answer: "",
+            level: "basic",
+            introduction: introduction,
+            followUp: []
+          };
+          
+          questions.push(firstQuestion);
+          
+          // Look for question-as-key pattern for the remaining questions and their follow-ups
+          const questionKeyPattern = /^(How|Why|What|Where|When|Who|Which|Can|Do|Should|Does|Has|In what way)/i;
+          const questionKeys = Object.keys(discussionSection).filter(key => 
+            key !== 'type' && 
+            key !== 'title' && 
+            key !== 'introduction' && 
+            key !== 'questions' &&
+            (key.includes('?') || questionKeyPattern.test(key))
+          );
+          
+          console.log("Found possible question keys:", questionKeys);
+          
+          // Process each key as a question with its value as a follow-up
+          questionKeys.forEach(key => {
+            const value = discussionSection[key];
             
-            console.log("Found Qwen API alternating pattern - first question is direct value");
-            
-            // This indicates we have the alternating pattern
-            // First, extract the first question that's directly the value
-            const firstQuestion = {
-              question: questionsValue.trim(),
+            // Add this question with the value as follow-up
+            questions.push({
+              question: key.trim(),
               answer: "",
               level: "basic",
               introduction: introduction,
-              followUp: []
-            };
-            
-            questions.push(firstQuestion);
-            
-            // Now handle the alternating key:value pairs that follow (where keys are questions and values are follow-ups)
-            // Get all the remaining keys in discussionSection that aren't standard section properties
-            const allKeys = Object.keys(discussionSection);
-            const questionKeys = allKeys.filter(key => 
-              key !== 'type' && 
-              key !== 'title' && 
-              key !== 'introduction' && 
-              key !== 'questions' &&
-              key.includes('?')
-            );
-            
-            console.log("Found alternating question keys:", questionKeys);
-            
-            // Process these keys (which are the next questions) and their values (which are follow-ups)
-            for (const key of questionKeys) {
-              const followUpValue = discussionSection[key];
-              
-              const questionObj = {
-                question: key.trim(),
-                answer: "",
-                level: "basic",
-                introduction: introduction,
-                followUp: typeof followUpValue === 'string' && followUpValue.trim() ? [followUpValue.trim()] : []
-              };
-              
-              questions.push(questionObj);
-            }
-            
-            if (questions.length > 0) {
-              console.log("Successfully extracted questions from alternating pattern:", questions);
-              return questions;
-            }
-          }
+              followUp: typeof value === 'string' && value.trim() ? [value.trim()] : []
+            });
+          });
           
-          // Handle regular array format
+          if (questions.length > 0) {
+            console.log("Extracted questions from Qwen alternating pattern:", questions);
+            return questions;
+          }
+        }
+        
+        // Handle standard Qwen API format with questions as array or object
+        if (discussionSection.questions) {
           if (Array.isArray(discussionSection.questions)) {
             // Handle array format
             console.log("Discussion questions as array:", discussionSection.questions);
