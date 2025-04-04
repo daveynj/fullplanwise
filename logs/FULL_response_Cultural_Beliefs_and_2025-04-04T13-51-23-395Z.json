@@ -1,0 +1,26 @@
+{
+  "choices": [
+    {
+      "message": {
+        "role": "assistant",
+        "content": "{\n  \"title\": \"Cultural Beliefs and Values: Family Structures and Roles\",\n  \"level\": \"B1\",\n  \"focus\": \"general\",\n  \"estimatedTime\": 60,\n  \"sections\": [\n    {\n      \"type\": \"warmup\",\n      \"title\": \"Warm-up Activity\",\n      \"content\": \"In this warm-up, we will explore words like 'extended', 'respect', 'gender roles', 'tradition', and 'responsibility'. These terms are key to understanding how families function in different cultures. We’ll discuss what they mean and how they relate to family life.\",\n      \"questions\": 2,\n      \"targetVocabulary\": 5,\n      \"procedure\": \"Begin by writing the vocabulary words on the board: 'extended', 'respect', 'gender roles', 'tradition', and 'responsibility'. Ask students to share their thoughts about each word. For example, ask, 'What does it mean to show respect to elders?' or 'Can you describe an extended family?' Use these prompts to encourage discussion and ensure all words are covered.\",\n      \"teacherNotes\": \"Encourage students to use the vocabulary in full sentences. Provide examples if needed to clarify meanings.\"\n    },\n    {\n      \"type\": \"reading\",\n      \"title\": \"Reading Text\",\n      \"introduction\": \"This text explores how family structures and roles vary across cultures, focusing on extended families, respect for elders, and gender roles.\",\n      \"paragraphs\": 5,\n      \"teacherNotes\": \"Pause after each paragraph to check comprehension and highlight key vocabulary.\"\n    },\n    {\n      \"type\": \"vocabulary\",\n      \"title\": \"Key Vocabulary\",\n      \"words\": 5\n    },\n    {\n      \"type\": \"comprehension\",\n      \"title\": \"Reading Comprehension\",\n      \"questions\": 5\n    },\n    {\n      \"type\": \"sentenceFrames\",\n      \"title\": \"Sentence Practice\",\n      \"frames\": 3\n    },\n    {\n      \"type\": \"discussion\",\n      \"title\": \"Discussion Questions\",\n      \"introduction\": \"Family structures often reflect cultural values. Let’s explore how traditions shape family roles and responsibilities.\",\n      \"questions\": 5\n    },\n    {\n      \"type\": \"quiz\",\n      \"title\": \"Knowledge Check\",\n      \"questions\": 5\n    }\n  ]\n}"
+      },
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null
+    }
+  ],
+  "object": "chat.completion",
+  "usage": {
+    "prompt_tokens": 4786,
+    "completion_tokens": 491,
+    "total_tokens": 5277,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    }
+  },
+  "created": 1743774700,
+  "system_fingerprint": null,
+  "model": "qwen-max",
+  "id": "chatcmpl-ff0d0d98-ad55-9c0e-aff9-969379d69ee4"
+}

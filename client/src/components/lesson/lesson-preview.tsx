@@ -59,65 +59,41 @@ export function LessonPreview({ lesson }: LessonPreviewProps) {
   // Parse the content if it's a string (from database)
   let parsedContent;
   try {
-    if (typeof lesson.content === 'string') {
+    if (lesson.content && typeof lesson.content === 'string') {
       try {
-        // Try to parse it as JSON
+        // First attempt to parse as JSON directly
+        console.log("Attempting to parse lesson content as JSON");
         parsedContent = JSON.parse(lesson.content);
-        console.log("Successfully parsed string content");
-      } catch (jsonError) {
-        console.error("Error parsing JSON string:", jsonError);
+        console.log("Successfully parsed lesson content as JSON:", parsedContent);
+      } catch (parseError) {
+        console.warn("Failed to parse lesson content as JSON, attempting cleanup:", parseError);
         
-        // Try to clean up the JSON string and parse again
+        // Clean up the content before attempting to parse again
+        let cleanedContent = lesson.content
+          .replace(/```json\s*/g, '') // Remove markdown code blocks
+          .replace(/```\s*$/g, '')
+          .trim();
+        
         try {
-          const cleanedContent = lesson.content
-            .replace(/```json\s*/g, '')
-            .replace(/```\s*$/g, '')
-            .trim();
-          
-          console.log("Attempting to parse cleaned JSON");
           parsedContent = JSON.parse(cleanedContent);
-          console.log("Successfully parsed cleaned JSON content");
-        } catch (secondJsonError) {
-          console.error("Error parsing cleaned JSON:", secondJsonError);
+          console.log("Successfully parsed cleaned lesson content");
+        } catch (secondError) {
+          console.error("Failed to parse cleaned content, falling back to direct content:", secondError);
           
-          // Try to fix malformed JSON with colons instead of commas
-          try {
-            console.log("Attempting to fix malformed JSON structure with colons");
-            let fixedContent = lesson.content
-              .replace(/"([^"]+)":\s*{([^}]+)}:\s*/g, '"$1": {$2},') // Fix objects with trailing colons
-              .replace(/},\s*"([^"]+)":\s*{/g, '}, "$1": {') // Fix comma placement between objects
-              .replace(/},\s*"([^"]+)":\s*"/g, '}, "$1": "') // Fix comma placement for string values
-              .replace(/"\s*,\s*"([^"]+)":/g, '", "$1":') // Fix array-like structures
-              .replace(/},\s*}/g, '}}') // Fix nested object closures
-              .replace(/],\s*}/g, ']}') // Fix array closures in objects
-              .replace(/"\s*:\s*"([^"]+)"\s*:/g, '": "$1",') // Fix object properties misusing colons
-              .replace(/},(?!\s*["}])/g, '},'); // Add missing commas after objects
-            
-            parsedContent = JSON.parse(fixedContent);
-            console.log("Successfully parsed fixed JSON structure");
-          } catch (fixError) {
-            console.error("Failed to fix JSON structure:", fixError);
-            
-            // If all parsing fails, set a structured error object that will display well in the UI
-            parsedContent = { 
-              title: lesson.title || "Lesson Preview",
-              sections: [
-                { 
-                  type: 'reading', 
-                  title: "Reading",
-                  content: "The lesson content couldn't be parsed properly. Please try regenerating the lesson."
-                },
-                { 
-                  type: 'error', 
-                  title: "Error Details",
-                  content: 'The system encountered an error parsing the lesson JSON. This is likely due to a formatting issue in the API response.' 
-                }
-              ] 
-            };
-          }
+          // Use the raw content as fallback
+          parsedContent = { 
+            title: lesson.title || "Lesson Preview",
+            sections: [{ 
+              type: 'error', 
+              title: "JSON Parsing Error",
+              content: 'The lesson content could not be parsed correctly. Please try regenerating the lesson.' 
+            }],
+            rawContent: lesson.content // Store the raw content for debugging
+          };
         }
       }
-    } else if (lesson.content && typeof lesson.content === 'object') {
+    } 
+    else if (lesson.content && typeof lesson.content === 'object') {
       // It's already an object (from direct API response)
       console.log("Content is already an object, no parsing needed");
       parsedContent = lesson.content;
@@ -156,6 +132,42 @@ export function LessonPreview({ lesson }: LessonPreviewProps) {
       content: 'The lesson structure is incomplete or invalid. Please try regenerating the lesson.' 
     }];
   }
+  
+  // Special handling for Qwen's unique format
+  // Look for sections that have questionable format (with colons instead of proper JSON)
+  parsedContent.sections.forEach((section, index) => {
+    if (section && typeof section === 'object') {
+      // Check for improperly formatted arrays
+      Object.keys(section).forEach(key => {
+        const value = section[key];
+        
+        // If we find a string value that looks like it should be an array
+        if (typeof value === 'string' && value.includes(':') && value.includes(',')) {
+          console.log(`Found potentially malformed array in section ${section.type}, key ${key}`);
+          
+          // Try to convert it to an array
+          const items = value.split(',').map(item => item.trim().replace(/^"(.*)"$/, '$1'));
+          if (items.length > 0) {
+            console.log(`Converting string "${value}" to array with ${items.length} items`);
+            section[key] = items;
+          }
+        }
+        
+        // If we have a property that should be an array but isn't
+        if (['questions', 'options', 'targetVocabulary', 'paragraphs'].includes(key) && !Array.isArray(value)) {
+          console.log(`Property ${key} should be an array but is ${typeof value}`);
+          
+          if (typeof value === 'string') {
+            // Try to convert the string to an array with one item
+            section[key] = [value];
+          } else if (typeof value === 'object') {
+            // If it's an object, try to extract values into an array
+            section[key] = Object.values(value).filter(v => v !== null && v !== undefined);
+          }
+        }
+      });
+    }
+  });
 
   return (
     <Card className="bg-white rounded-xl shadow-sm overflow-hidden flex flex-col h-full">
@@ -203,32 +215,27 @@ export function LessonPreview({ lesson }: LessonPreviewProps) {
         <TabsContent value="notes" className="flex-1 overflow-y-auto p-6 m-0">
           <h2 className="text-xl font-nunito font-semibold mb-4">Teacher Notes</h2>
           
-          <div className="bg-gray-light rounded-lg p-4 mb-4">
-            <h3 className="font-semibold mb-2">Lesson Objectives</h3>
-            <ul className="list-disc list-inside space-y-1">
-              <li>Develop vocabulary related to {lesson.topic}</li>
-              <li>Practice reading comprehension with {lesson.cefrLevel}-level text</li>
-              <li>Encourage critical thinking about {lesson.topic}</li>
-              <li>Practice expressing opinions using provided sentence frames</li>
-            </ul>
-          </div>
-          
-          <div className="bg-gray-light rounded-lg p-4 mb-4">
-            <h3 className="font-semibold mb-2">Student Background</h3>
-            <p>
-              {parsedContent.teacherNotes || 
-               `This lesson is designed for ${lesson.cefrLevel} level students. Focus on helping them use the new vocabulary actively in discussion.`}
-            </p>
-          </div>
-          
-          <div className="bg-gray-light rounded-lg p-4">
-            <h3 className="font-semibold mb-2">Additional Resources</h3>
-            <ul className="list-disc list-inside space-y-1">
-              <li>Short video clips (2-3 minutes) if time permits</li>
-              <li>Infographic on {lesson.topic}</li>
-              <li>Follow-up homework suggestion: Write a short paragraph about {lesson.topic}</li>
-            </ul>
-          </div>
+          {parsedContent.teacherNotes ? (
+            <div className="bg-gray-light rounded-lg p-4 mb-4">
+              <p>{parsedContent.teacherNotes}</p>
+            </div>
+          ) : (
+            // Look for teacher notes in sections
+            parsedContent.sections?.some((section: any) => section.teacherNotes) ? (
+              parsedContent.sections
+                .filter((section: any) => section.teacherNotes)
+                .map((section: any, idx: number) => (
+                  <div key={`teacher-note-${idx}`} className="bg-gray-light rounded-lg p-4 mb-4">
+                    <h3 className="font-semibold mb-2">{section.title || 'Section Notes'}</h3>
+                    <p>{section.teacherNotes}</p>
+                  </div>
+                ))
+            ) : (
+              <div className="bg-gray-light rounded-lg p-4 mb-4 text-gray-500 italic">
+                <p>No teacher notes are available for this lesson.</p>
+              </div>
+            )
+          )}
         </TabsContent>
         
         <TabsContent value="slides" className="flex-1 overflow-y-auto p-6 m-0">

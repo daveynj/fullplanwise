@@ -268,7 +268,7 @@ export function LessonContent({ content }: LessonContentProps) {
   useEffect(() => {
     if (parsedContent?.sections && Array.isArray(parsedContent.sections) && parsedContent.sections.length > 0) {
       try {
-        // Add comprehension section if it doesn't exist
+        // Check if we need to add the comprehension section
         if (!parsedContent.sections.some((s: any) => s.type === 'comprehension')) {
           console.log("Adding comprehension section as it doesn't exist");
           const readingSection = parsedContent.sections.find((s: any) => s.type === 'reading');
@@ -281,19 +281,8 @@ export function LessonContent({ content }: LessonContentProps) {
           
           // If we have a reading section, use it to create sample comprehension questions
           if (readingSection && readingSection.content) {
-            comprehensionSection.questions = [
-              {
-                question: "The reading passage primarily discusses:",
-                answer: "National holidays and their cultural significance",
-                type: "multiple-choice",
-                options: [
-                  "National holidays and their cultural significance",
-                  "The economic impact of holidays",
-                  "The history of global celebrations",
-                  "Religious festivals around the world"
-                ]
-              }
-            ];
+            // Don't create sample questions, just keep the empty array
+            // We'll only show what came from the AI response
           }
           
           parsedContent.sections.push(comprehensionSection);
@@ -307,69 +296,8 @@ export function LessonContent({ content }: LessonContentProps) {
         
         console.log("Existing section types:", existingSectionTypes);
         
-        // Add missing sections with basic structure
-        for (const sectionType of requiredSections) {
-          if (!existingSectionTypes.includes(sectionType)) {
-            console.log(`Adding missing section: ${sectionType}`);
-            
-            let newSection: any = {
-              type: sectionType,
-              title: sectionType.charAt(0).toUpperCase() + sectionType.slice(1)
-            };
-            
-            // For specific section types, add some defaults
-            if (sectionType === 'reading') {
-              newSection = {
-                ...newSection,
-                content: "Reading content will be displayed here.",
-                paragraphs: ["Reading content will be displayed here."]
-              };
-            } else if (sectionType === 'vocabulary') {
-              newSection = {
-                ...newSection,
-                words: [
-                  { word: "Example", definition: "An example vocabulary word" }
-                ]
-              };
-            } else if (sectionType === 'discussion') {
-              // For discussion, use the utility to extract proper questions
-              const extractedQuestions = extractDiscussionQuestions(content);
-              newSection = {
-                ...newSection,
-                questions: extractedQuestions.length > 0
-                  ? extractedQuestions
-                  : [
-                    { question: "Discuss a national holiday from your country. What rituals or traditions are associated with it?", answer: "", level: "basic" },
-                    { question: "How do celebrations differ between urban and rural areas in your experience?", answer: "", level: "basic" },
-                    { question: "In what ways have traditional celebrations changed over time?", answer: "", level: "critical" }
-                  ]
-              };
-            } else if (sectionType === 'quiz') {
-              // For quiz, use the utility to extract proper questions
-              const extractedQuestions = extractQuizQuestions(content);
-              newSection = {
-                ...newSection,
-                questions: extractedQuestions.length > 0
-                  ? extractedQuestions
-                  : [
-                    { 
-                      question: "Which of the following best describes the purpose of cultural celebrations according to the text?",
-                      answer: "To strengthen community bonds and preserve cultural heritage",
-                      type: "multiple-choice",
-                      options: [
-                        "To provide entertainment only",
-                        "To strengthen community bonds and preserve cultural heritage",
-                        "To create tourism opportunities",
-                        "To give people days off from work"
-                      ]
-                    }
-                  ]
-              };
-            }
-            
-            parsedContent.sections.push(newSection);
-          }
-        }
+        // We no longer add missing sections with default content
+        // Instead, we'll just display what we have from the AI response
         
         // Check if we need to extract sections from malformed structure
         if (parsedContent.sections.length === 1 && parsedContent.sections[0].type === 'sentenceFrames') {
@@ -389,7 +317,7 @@ export function LessonContent({ content }: LessonContentProps) {
             questions?: Array<{question: string; answer: string}>;
           }> = [];
           
-          // If the section has a 'reading' key, extract it as a separate reading section
+          // Extract embedded section data, but don't add default content
           potentialSectionTypes.forEach(sectionType => {
             if (sectionObject[sectionType] !== undefined) {
               console.log(`Found embedded ${sectionType} section in keys`);
@@ -444,18 +372,12 @@ export function LessonContent({ content }: LessonContentProps) {
                   if (possibleTextKeys.length > 0) {
                     console.log("Found potential reading content in key:", possibleTextKeys[0]);
                     newSection.content = sectionObject[possibleTextKeys[0]];
-                  } else if (sectionObject["National holidays are more than just days off work"]) {
-                    // Very specific case for this particular lesson
-                    console.log("Found reading content by specific first sentence match");
-                    newSection.content = sectionObject["National holidays are more than just days off work"];
                   }
                 }
                 
-                // Try to extract paragraphs if content is available
+                // Only add the section if we found actual content
                 if (newSection.content) {
-                  // Log the found content for debugging
-                  console.log("Reading content extracted:", newSection.content.substring(0, 100) + "...");
-                  
+                  // Try to extract paragraphs if content is available
                   newSection.paragraphs = newSection.content
                     .split('\n\n')
                     .filter((p: string) => p.trim().length > 0);
@@ -476,6 +398,9 @@ export function LessonContent({ content }: LessonContentProps) {
                       newSection.paragraphs = paragraphs;
                     }
                   }
+                  
+                  // Only add if we have real content
+                  extractedSections.push(newSection);
                 }
               } else if (sectionType === 'vocabulary') {
                 // For vocabulary, look for targetVocabulary or extract from the main section
@@ -490,12 +415,17 @@ export function LessonContent({ content }: LessonContentProps) {
                         });
                       }
                     }
-                    newSection.words = words;
-                  } else if (Array.isArray(sectionObject.targetVocabulary)) {
+                    // Only add if we found actual vocabulary words
+                    if (words.length > 0) {
+                      newSection.words = words;
+                      extractedSections.push(newSection);
+                    }
+                  } else if (Array.isArray(sectionObject.targetVocabulary) && sectionObject.targetVocabulary.length > 0) {
                     newSection.words = sectionObject.targetVocabulary.map((word: string) => ({
                       word: word,
                       definition: "No definition provided"
                     }));
+                    extractedSections.push(newSection);
                   }
                 }
               } else if (sectionType === 'comprehension' || sectionType === 'discussion') {
@@ -512,16 +442,18 @@ export function LessonContent({ content }: LessonContentProps) {
                         });
                       }
                     }
-                    newSection.questions = questionArray;
-                  } else if (typeof sectionObject.questions === 'string') {
+                    // Only add if we found actual questions
+                    if (questionArray.length > 0) {
+                      newSection.questions = questionArray;
+                      extractedSections.push(newSection);
+                    }
+                  } else if (typeof sectionObject.questions === 'string' && sectionObject.questions.trim()) {
                     // Questions are in a string - try to parse
                     newSection.questions = [{ question: sectionObject.questions, answer: "" }];
+                    extractedSections.push(newSection);
                   }
                 }
               }
-              
-              // Add the extracted section
-              extractedSections.push(newSection);
             }
           });
           

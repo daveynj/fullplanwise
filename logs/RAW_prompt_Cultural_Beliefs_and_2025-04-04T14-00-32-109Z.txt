@@ -5,7 +5,7 @@ TASK OVERVIEW:
 You will create a complete ESL lesson for B1 level students on a given topic.
 
 STEP 1: WRITE A READING TEXT
-- First, write an original reading text about the topic "Historical Customs and Traditions:  Ancient Civilizations: (e.g., Egyptian, Roman, Greek customs)"
+- First, write an original reading text about the topic "Cultural Beliefs and Values:  Family Structures and Roles: (e.g., extended families, respect for elders, gender roles)"
 - Use a warm, accessible, and conversational tone
 - Include interesting facts and observations woven naturally into the narrative
 - Use vivid, descriptive language that brings topics to life
@@ -346,4 +346,33 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
   ]
 }
 
-CRITICAL: Make sure your JSON is valid with no syntax errors. Use proper formatting with arrays using square brackets and objects using curly braces. Don't use property names as values, and ensure ALL string values are properly quoted.
+VALID FORMAT EXAMPLE:
+{
+  "property1": "value1",
+  "property2": ["item1", "item2", "item3"],
+  "property3": {
+    "nestedProperty1": "nestedValue1",
+    "nestedProperty2": ["nestedItem1", "nestedItem2"]
+  }
+}
+
+⚠️ INVALID FORMAT (NEVER DO THIS):
+{
+  "property1": "value1":
+  "property2":
+    "item1":
+    "item2":
+    "item3"
+  :
+  "property3":
+    "nestedProperty1": "nestedValue1":
+    "nestedProperty2": 
+      "nestedItem1":
+      "nestedItem2"
+}
+
+VERIFY that your response can be parsed with JSON.parse() before submitting.
+If you can't run a validator on your response, ensure that:
+1. Every array element ends with a comma except the last one
+2. Every property ends with a comma except the last one
+3. You used square brackets [] for arrays, not some other syntax

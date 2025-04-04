@@ -1,0 +1,79 @@
+{
+  "title": "Cultural Beliefs and Values: Family Structures and Roles",
+  "level": "B1",
+  "focus": "general",
+  "estimatedTime": 60,
+  "sections": [
+    {
+      "type": "warmup",
+      "title": "Warm-up Activity",
+      "content": "In this warm-up, students will explore key vocabulary related to family structures and roles. They will discuss terms like 'extended family,' 'respect,' 'gender roles,' 'tradition,' and 'responsibility' through engaging activities.",
+      "questions": 
+        "What does the term 'extended family' mean to you?",
+        "Why do you think respecting elders is important in many cultures?"
+      :
+      "targetVocabulary" 
+        ,
+        "extended family"
+        :
+        "respect"
+        ,
+        "gender roles"
+        :
+        "tradition"
+        ,
+        "responsibility"
+      :
+      "procedure" 
+        ,
+        "Start by writing all five target words on the board."
+        :
+        "Ask students to share what they already know about each word."
+        ,
+        "Use simple definitions and examples to clarify meanings."
+        :
+        "Divide students into pairs and have them create sentences using all five words."
+        ,
+        "Invite volunteers to share their sentences with the class."
+      :
+      "teacherNotes" 
+        ,
+        "Encourage students to use gestures or drawings if they struggle with explanations."
+        :
+        "Monitor pair work closely to ensure correct usage of vocabulary."
+      }
+    ],
+    "reading" 
+      :
+      "type"
+      ,
+      "Reading Text"
+      :
+      "title"
+      ,
+      "Family Structures and Their Importance"
+      :
+      "introduction" 
+        ,
+        "Families come in many shapes and sizes, but they all play a vital role in shaping who we are. Let’s explore how different cultures view family structures and roles."
+      :
+      "paragraphs" 
+        ,
+        "In many cultures, an extended family includes grandparents, aunts, uncles, and cousins living together or staying closely connected. This setup provides emotional support and helps share responsibilities. For example, older siblings might help care for younger ones, while grandparents often pass down traditions. Can you imagine growing up surrounded by so many relatives? It can be both comforting and challenging!"
+        :
+        "Respect for elders is another important value in many societies. Elders are seen as wise figures who offer guidance based on their life experiences. In some families, decisions about education or marriage require input from older members. Do you think this strengthens family bonds, or does it limit individual freedom?"
+        ,
+        "Gender roles also shape family dynamics. Traditionally, men were often seen as breadwinners, while women managed household duties. However, these roles are changing in modern times. More families now encourage equal participation from all members. How do you feel about these shifts? Are there still areas where change is needed?"
+        :
+        "Traditions hold families together by creating shared memories and values. Celebrating festivals, cooking special meals, or observing rituals keeps cultural heritage alive. These practices remind us of our roots and give us a sense of belonging. What traditions does your family follow?"
+        ,
+        "Finally, responsibility plays a big part in maintaining strong family ties. Whether it’s helping with chores, supporting siblings, or caring for aging parents, everyone has a role to play. By fulfilling these responsibilities, families build trust and mutual respect. How do responsibilities differ in your family compared to others you know?"
+      :
+      "teacherNotes" 
+        ,
+        "Pause after each paragraph to check comprehension and address questions."
+        :
+        "Encourage students to relate the text to their own experiences."
+      }
+    
+   

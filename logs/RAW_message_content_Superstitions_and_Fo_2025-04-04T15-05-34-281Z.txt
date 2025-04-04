@@ -1,0 +1,325 @@
+{
+  "title": "Superstitions and Folklore: Lucky and Unlucky Numbers, Myths, and Legends",
+  "level": "B1",
+  "focus": "general",
+  "estimatedTime": 60,
+  "sections": [
+    {
+      "type": "warmup",
+      "title": "Warm-up Activity",
+      "content": "In this warm-up activity, students will explore superstitions and folklore through engaging questions and vocabulary practice. They will discuss common beliefs about luck, myths, and legends while becoming familiar with key terms like 'superstition,' 'omen,' 'ritual,' 'legend,' and 'curse.'",
+      "questions": 
+        "What is a superstition you have heard of?",
+        "Do you know any famous legends or myths from your culture?"
+      :
+      "targetVocabulary" 
+        ,
+          "superstition"
+          : "omen",
+        "ritual"
+        :
+        "legend"
+        ,
+        "curse"
+      :
+      "procedure" 
+        ,
+        "Begin by writing the target vocabulary words on the board. Ask students if they recognize any of these words. Provide brief definitions and examples for each word. Next, ask students to work in pairs to discuss the warm-up questions using the new vocabulary. Encourage them to create sentences such as 'A superstition is something people believe brings good or bad luck' or 'An omen is a sign that predicts future events.' Finally, invite pairs to share their sentences with the class."
+      :
+      "teacherNotes" 
+        ,
+        "Ensure all students understand the meanings of the vocabulary words before moving on to the reading. Use gestures and visuals to clarify abstract concepts like 'omen' and 'curse.'"
+      
+    :
+    "type" 
+      ,
+      "reading"
+    :
+    "title" 
+      ,
+      "Reading Text"
+    :
+    "introduction" 
+      ,
+      "Today, we’ll explore the fascinating world of superstitions and folklore. From lucky numbers to ancient legends, these stories and beliefs shape cultures around the globe."
+    :
+    "paragraphs" 
+        ,
+        "Superstitions are beliefs that certain actions can bring good or bad luck. For example, many people think breaking a mirror causes seven years of bad luck. Others believe walking under a ladder is unlucky. These ideas might seem silly, but they have been passed down for generations. Why do people still follow them? Perhaps because they offer comfort or a sense of control over unpredictable events."
+        :
+        "Lucky and unlucky numbers also play a big role in superstitions. In some cultures, the number 13 is considered unlucky, while in others, it has no special meaning. On the other hand, the number 7 is often seen as lucky worldwide. Have you ever noticed how many buildings skip the 13th floor? This shows how deeply superstitions influence daily life."
+        ,
+        "Legends and myths are another part of folklore. These are traditional stories that explain natural phenomena or historical events. For instance, the legend of King Arthur tells of a brave leader who fought to protect his land. Myths often involve gods or magical creatures, like the Greek myth of Medusa, whose gaze could turn people to stone."
+        :
+        "Rituals are actions performed to prevent bad luck or invite good fortune. Some people carry charms or talismans for protection. Others perform specific routines before important events, like athletes wearing their 'lucky socks.' Rituals give people hope and confidence, even if there’s no scientific proof they work."
+        ,
+        "Finally, curses are believed to cause harm or misfortune. Famous examples include the curse of Tutankhamun’s tomb, which supposedly affected those who disturbed it. While most curses are fictional, they remain popular in movies and books. Do you think curses are real, or are they just fun stories?"
+      :
+      "teacherNotes" 
+        ,
+        "Encourage students to highlight unfamiliar words during the reading. Pause after each paragraph to check comprehension and clarify doubts."
+      
+    :
+    "type" 
+      ,
+      "vocabulary"
+    :
+    "title" 
+      ,
+      "Key Vocabulary"
+    :
+    "words" 
+        ,
+        "term" 
+          :
+          "superstition"
+        ,
+        "partOfSpeech" 
+          :
+          "noun"
+        ,
+        "definition" 
+          :
+          "A belief that certain actions can bring good or bad luck."
+        ,
+        "example" 
+          :
+          "Many people avoid opening umbrellas indoors because of superstition."
+        ,
+        "collocations" 
+          :
+           "People believe"
+          ,
+          "common superstition"
+          :
+          "old superstition"
+        ,
+        "notes" 
+          :
+          "Use this word when talking about cultural beliefs related to luck."
+        ,
+        "teachingTips" 
+          :
+          "Ask students to share superstitions from their own countries."
+        ,
+        "pronunciation" 
+          :
+           "Syllables" 
+          ,
+           "Syl"
+          :
+           "Luh"
+          ,
+          "StressIndex" 
+          :
+          0
+          ,
+          "PhoneticGuide" 
+          :
+          "Soo-per-stih-shuhn"
+        ,
+        "imagePrompt" 
+          :
+          "An image showing someone knocking on wood or avoiding a black cat crossing their path."
+        
+,
+        "term" 
+          :
+          "omen"
+        ,
+        "partOfSpeech" 
+          :
+          "noun"
+        ,
+        "definition" 
+          :
+          "A sign that something good or bad will happen in the future."
+        ,
+        "example" 
+          :
+          "Seeing a black cat was once considered an omen of bad luck."
+        ,
+        "collocations" 
+          :
+           "A bad omen"
+          ,
+          "a good omen"
+          :
+          "an ominous sign"
+        ,
+        "notes" 
+          :
+          "This word is often used in storytelling or discussions about predictions."
+        ,
+        "teachingTips" 
+          :
+          "Show pictures of omens, like storm clouds or shooting stars, to illustrate its meaning."
+        ,
+        "pronunciation" 
+          :
+           "Syllables" 
+          ,
+           "Oh"
+          :
+           "Mehn"
+          ,
+          "StressIndex" 
+          :
+          0
+          ,
+          "PhoneticGuide" 
+          :
+          "Oh-mehn"
+        ,
+        "imagePrompt" 
+          :
+          "An image of dark storm clouds forming, symbolizing an ominous event."
+        
+,
+        "term" 
+          :
+          "ritual"
+        ,
+        "partOfSpeech" 
+          :
+          "noun"
+        ,
+        "definition" 
+          :
+          "A series of actions performed regularly, often for religious or cultural reasons."
+        ,
+        "example" 
+          :
+          "Before exams, she follows a ritual of drinking tea and reviewing her notes."
+        ,
+        "collocations" 
+          :
+           "Cultural ritual"
+          ,
+          "daily ritual"
+          :
+          "religious ritual"
+        ,
+        "notes" 
+          :
+          "This word can describe both formal ceremonies and personal habits."
+        ,
+        "teachingTips" 
+          :
+          "Have students describe rituals they perform in their daily lives."
+        ,
+        "pronunciation" 
+          :
+           "Syllables" 
+          ,
+           "Rih"
+          :
+           "Tchuhl"
+          ,
+          "StressIndex" 
+          :
+          0
+          ,
+          "PhoneticGuide" 
+          :
+          "Rih-chew-uhl"
+        ,
+        "imagePrompt" 
+          :
+          "An image of candles being lit during a ceremony or meditation session."
+        
+,
+        "term" 
+          :
+          "legend"
+        ,
+        "partOfSpeech" 
+          :
+          "noun"
+        ,
+        "definition" 
+          :
+          "A traditional story sometimes based on historical facts."
+        ,
+        "example" 
+          :
+          "The legend of Robin Hood is well-known in English folklore."
+        ,
+        "collocations" 
+          :
+           "Famous legend"
+          ,
+          "ancient legend"
+          :
+          "local legend"
+        ,
+        "notes" 
+          :
+          "Use this word when discussing stories passed down through generations."
+        ,
+        "teachingTips" 
+          :
+          "Ask students to research and present a legend from their country."
+        ,
+        "pronunciation" 
+          :
+           "Syllables" 
+          ,
+           "Ledj"
+          :
+           "And"
+          ,
+          "StressIndex" 
+          :
+          0
+          ,
+          "PhoneticGuide" 
+          :
+          "Leh-jend"
+        ,
+        "imagePrompt" 
+          :
+          "An illustration of a knight standing near a castle, representing medieval legends."
+        
+,
+        "term" 
+          :
+          "curse"
+        ,
+        "partOfSpeech" 
+          :
+          "noun"
+        ,
+        "definition" 
+          :
+          "A spell or phrase intended to cause harm or bad luck to someone."
+        ,
+        "example" 
+          :
+          "In the movie, the main character was haunted by a terrible curse."
+        ,
+        "collocations" 
+          :
+           "Ancient curse"
+          ,
+          "powerful curse"
+          :
+          "family curse"
+        ,
+        "notes" 
+          :
+          "This word is commonly used in fantasy literature and films."
+        ,
+        "teachingTips" 
+          :
+          "Discuss famous curses, like the one associated with King Tut's tomb."
+        ,
+        "pronunciation" 
+          :
+           "Syllables" 
+          ,
+           "Kurs"
+          :
+          "StressIndex" 
+          ,
+           ":[-1] ;;=; ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;= ;;=

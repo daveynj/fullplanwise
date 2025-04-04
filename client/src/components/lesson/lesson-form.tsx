@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Student } from "@shared/schema";
+import { Student, AIProviderEnum } from "@shared/schema";
 import {
   Form,
   FormControl,
@@ -18,7 +18,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent } from "@/components/ui/card";
-import { Wand2, Image, History } from "lucide-react";
+import { Wand2, Image, History, Bot, Sparkles } from "lucide-react";
 
 // Define CEFR levels
 const cefrLevels = [
@@ -42,6 +42,12 @@ const lessonComponents = [
   { id: "homework", label: "Homework" },
 ];
 
+// AI providers
+const aiProviders = [
+  { value: "qwen", label: "Qwen AI", icon: Bot },
+  { value: "gemini", label: "Google Gemini", icon: Sparkles }
+];
+
 // Schema for the form
 const formSchema = z.object({
   studentId: z.string().optional(),
@@ -51,6 +57,7 @@ const formSchema = z.object({
   components: z.array(z.string()).min(1, "Select at least one component"),
   generateImages: z.boolean().default(true),
   useStudentHistory: z.boolean().default(true),
+  aiProvider: AIProviderEnum.default("qwen"),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -74,6 +81,7 @@ export function LessonForm({ students, onSubmit, credits }: LessonFormProps) {
       components: ["warm-up", "vocabulary", "reading", "comprehension", "sentences", "discussion", "quiz"],
       generateImages: true,
       useStudentHistory: true,
+      aiProvider: "qwen",
     },
   });
 
@@ -187,6 +195,35 @@ export function LessonForm({ students, onSubmit, credits }: LessonFormProps) {
                       {...field} 
                     />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            {/* AI Provider */}
+            <FormField
+              control={form.control}
+              name="aiProvider"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="font-semibold">AI Provider</FormLabel>
+                  <div className="grid grid-cols-2 gap-2">
+                    {aiProviders.map((provider) => {
+                      const Icon = provider.icon;
+                      return (
+                        <Button
+                          key={provider.value}
+                          type="button"
+                          variant={field.value === provider.value ? "default" : "outline"}
+                          className={field.value === provider.value ? "bg-primary" : "border-gray-300"}
+                          onClick={() => field.onChange(provider.value)}
+                        >
+                          <Icon className="mr-2 h-4 w-4" />
+                          {provider.label}
+                        </Button>
+                      );
+                    })}
+                  </div>
                   <FormMessage />
                 </FormItem>
               )}

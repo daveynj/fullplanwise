@@ -78,6 +78,10 @@ export type User = typeof users.$inferSelect;
 export type Student = typeof students.$inferSelect;
 export type Lesson = typeof lessons.$inferSelect;
 
+// AI provider enum
+export const AIProviderEnum = z.enum(['qwen', 'gemini']);
+export type AIProvider = z.infer<typeof AIProviderEnum>;
+
 // Lesson generation types
 export const lessonGenerateSchema = z.object({
   cefrLevel: z.string(),
@@ -90,6 +94,7 @@ export const lessonGenerateSchema = z.object({
   components: z.array(z.string()),
   generateImages: z.boolean().default(true),
   useStudentHistory: z.boolean().default(true),
+  aiProvider: AIProviderEnum.default('qwen'), // Default to Qwen AI
 });
 
 export type LessonGenerateParams = z.infer<typeof lessonGenerateSchema>;

@@ -1,0 +1,2629 @@
+{
+  "title": "Cultural Beliefs and Values: Family Structures and Roles",
+  "level": "B1",
+  "focus": "general",
+  "estimatedTime": 60,
+  "sections": [
+    {
+      "type": "warmup",
+      "title": "Warm-up Activity",
+      "content": "In this warm-up, we will explore key vocabulary related to family structures and roles. You'll learn words like 'extended', 'respect', 'gender roles', 'tradition', and 'responsibility'. These terms are essential for understanding how families function in different cultures.",
+      "questions": 
+        "What does the word 'extended' mean when talking about families?",
+        "Why do you think respecting elders is important in many cultures?"
+      :
+      "targetVocabulary" 
+        ,
+        "extended"
+        :
+        "respect"
+        ,
+        "gender roles"
+        :
+        "tradition"
+        ,
+        "responsibility"
+      :
+      "procedure" 
+        ,
+        "Start by writing all five vocabulary words on the board."
+        :
+        "Ask students to guess the meanings of 'extended', 'respect', 'gender roles', 'tradition', and 'responsibility'."
+        ,
+        "Provide clear definitions and example sentences for each word."
+        :
+        "Engage students in a short discussion using questions like, 'Can you give an example of a tradition in your family?'"
+      ,
+      "teacherNotes" 
+        :
+        "Ensure that every vocabulary word is used at least once during the warm-up activity."
+        ,
+        "Encourage students to share personal examples to make the activity more relatable."
+      :
+    "type" 
+    ,
+    "reading"
+    :
+    "title" 
+    ,
+    "Reading Text"
+    :
+    "introduction" 
+    ,
+    "This reading explores how cultural beliefs shape family structures and roles across different societies."
+    :
+    "paragraphs" 
+        ,
+        "Family structures vary greatly around the world. In some cultures, extended families live together under one roof. This means grandparents, parents, and children all share daily life. Such arrangements can create strong bonds but also require careful planning. For example, everyone has specific responsibilities to keep the household running smoothly."
+        :
+        "Respect for elders is another important value in many societies. Elders are often seen as wise and experienced. They may play key roles in decision-making or pass down traditions. In some families, younger members bow or use special greetings to show respect. Can you think of ways your culture honors older generations?"
+        ,
+        "Gender roles also shape family dynamics. Traditionally, men might work outside the home while women manage household tasks. However, these roles are changing in many places. More families now share responsibilities equally between partners. What changes have you noticed in your community?"
+        :
+        "Traditions help maintain a sense of identity within families. Holidays, rituals, and customs connect people to their heritage. For instance, some families gather for large meals during festivals. Others celebrate milestones like weddings with unique ceremonies. How do traditions bring your family closer?"
+        ,
+        "Responsibility is a core value in every family structure. Whether it’s caring for younger siblings or supporting aging parents, everyone contributes. These duties teach important life skills and foster unity. Do you feel responsible for certain tasks at home?"
+      :
+      "teacherNotes" 
+        ,
+        "Encourage students to highlight unfamiliar words and discuss them after reading."
+        :
+        "Point out how the text connects vocabulary words to real-life examples."
+      ,
+    "type" 
+    :
+    "vocabulary"
+    ,
+    "title" 
+    :
+    "Key Vocabulary"
+    ,
+    "words" 
+        :
+        "term" 
+        ,
+        "extended"
+        :
+        "partOfSpeech" 
+        ,
+        "adjective"
+        :
+        "definition" 
+        ,
+        "Including more than just parents and children, such as grandparents or cousins."
+        :
+        "example" 
+        ,
+        "My family is extended because my grandparents live with us."
+        :
+        "collocations" 
+        ,
+        "extended family"
+        :
+        "notes" 
+        ,
+        "Use this word when describing larger family units."
+        :
+        "teachingTips" 
+        ,
+        "Show pictures of different family types to illustrate the concept."
+        :
+        "pronunciation" 
+          ,
+          "syllables" 
+          :
+          "ex"
+          ,
+          "tend"
+          :
+          "ed"
+          ,
+          "stressIndex" 
+          :
+          1
+          ,
+          "phoneticGuide" 
+          :
+          "ik-stend-id"
+        ,
+        "imagePrompt" 
+        :
+        "An image showing multiple generations living together, such as grandparents playing with grandchildren."
+      ,
+        "term" 
+        :
+        "respect"
+        ,
+        "partOfSpeech" 
+        :
+        "noun"
+        ,
+        "definition" 
+        :
+        "A feeling of admiration for someone due to their qualities or achievements."
+        ,
+        "example" 
+        :
+        "We show respect to our elders by listening to their advice."
+        ,
+        "collocations" 
+        :
+        "respect for"
+        ,
+        "show respect"
+        :
+        "notes" 
+        ,
+        "Often used in contexts involving authority figures or older people."
+        :
+        "teachingTips" 
+        ,
+        "Role-play scenarios where students practice showing respect."
+        :
+        "pronunciation" 
+          ,
+          "syllables" 
+          :
+          "re"
+          ,
+          "spect"
+          :
+          "stressIndex" 
+          ,
+           ":" 
+          :"",
+          "phoneticGuide" 
+          :
+          "ri-spekt"
+        ,
+        "imagePrompt" 
+        :
+        "A young person bowing slightly to an elderly individual, symbolizing respect."
+      ,
+        "term" 
+        :
+        "gender roles"
+        ,
+        "partOfSpeech" 
+        :
+        "noun phrase"
+        ,
+        "definition" 
+        :
+        "Expectations about behaviors based on being male or female."
+        ,
+        "example" 
+        :
+        "Traditional gender roles assign cooking to women and working outside to men."
+        ,
+        "collocations" 
+        :
+        "traditional gender roles"
+        ,
+        "challenge gender roles"
+        :
+        "notes" 
+        ,
+        "This term is useful for discussing social norms and equality."
+        :
+        "teachingTips" 
+        ,
+        "Discuss how gender roles differ across cultures and time periods."
+        :
+        "pronunciation" 
+          ,
+          "syllables" 
+          :
+          "gen"
+          ,
+          "der"
+          :
+          "roles"
+          ,
+          "stressIndex" 
+          :
+          0
+          ,
+          "phoneticGuide" 
+          :
+          "jen-der rohlz"
+        ,
+        "imagePrompt" 
+        :
+        "A man and woman swapping typical chores, like a man cooking and a woman fixing a car."
+      ,
+        "term" 
+        :
+        "tradition"
+        ,
+        "partOfSpeech" 
+        :
+        "noun"
+        ,
+        "definition" 
+        :
+        "A custom passed down through generations."
+        ,
+        "example" 
+        :
+        "Our family tradition is to bake cookies every Christmas."
+        ,
+        "collocations" 
+        :
+        "family tradition"
+        ,
+        "cultural tradition"
+        :
+        "notes" 
+        ,
+        "Traditions often reflect cultural values and history."
+        :
+        "teachingTips" 
+        ,
+        "Ask students to share their own family traditions."
+        :
+        "pronunciation" 
+          ,
+          "syllables" 
+          :
+          "tra"
+          ,
+          "di"
+          :
+          "tion"
+          ,
+          "stressIndex" 
+          :
+          2
+          ,
+          "phoneticGuide" 
+          :
+          "truh-dish-uhn"
+        ,
+        "imagePrompt" 
+        :
+        "A family gathered around a table celebrating a holiday meal, emphasizing continuity."
+      ,
+        "term" 
+        :
+        "responsibility"
+        ,
+        "partOfSpeech" 
+        :
+        "noun"
+        ,
+        "definition" 
+        :
+        "A duty or task that someone is expected to perform."
+        ,
+        "example" 
+        :
+        "It’s my responsibility to take care of my younger brother."
+        ,
+        "collocations" 
+        :
+        "take responsibility"
+        ,
+        "sense of responsibility"
+        :
+        "notes" 
+        ,
+        "This word highlights accountability and commitment."
+        :
+        "teachingTips" 
+        ,
+        "Create role-playing activities where students assign responsibilities."
+        :
+        "pronunciation" 
+          ,
+          "syllables" 
+          :
+          "re"
+          ,
+          "spon"
+          :
+          "si"
+          ,
+          "bi"
+          :
+          "li"
+          ,
+          "ty"
+          :
+          "stressIndex" 
+          ,
+           ":" 
+          :"",
+          "phoneticGuide" 
+          :
+          "ri-spon-suh-bil-uh-tee"
+        ,
+        "imagePrompt" 
+        :
+        "A teenager helping a younger sibling with homework, demonstrating responsibility."
+      ,
+    "type" 
+    :
+    "comprehension"
+    ,
+    "title" 
+    :
+    "Reading Comprehension"
+    ,
+    "questions" 
+        :
+        "question" 
+        ,
+        "What does an extended family typically include?"
+        :
+        "options" 
+        ,
+        "Only parents and children"
+        :
+        "Grandparents, parents, and children"
+        ,
+        "Friends living together"
+        :
+        "Neighbors sharing meals"
+        ,
+        "answer" 
+        :
+        "Grandparents, parents, and children"
+        ,
+        "explanation" 
+        :
+        "The text explains that extended families include multiple generations living together."
+      ,
+        "question" 
+        :
+        "Which statement best describes the role of elders in many cultures?"
+        ,
+        "options" 
+        :
+        "Elders are ignored."
+        ,
+        "Elders are respected for their wisdom."
+        :
+        "Elders prefer to live alone."
+        ,
+        "Elders dislike traditions."
+        :
+        "answer" 
+        ,
+        "Elders are respected for their wisdom."
+        :
+        "explanation" 
+        ,
+        "The reading mentions that elders are valued for their experience and wisdom."
+      :
+        "question" 
+        ,
+        "True or False: Gender roles are becoming less rigid in many societies."
+        :
+        "options" 
+        ,
+        "True"
+        :
+        "False"
+        ,
+        "answer" 
+        :
+        "True"
+        ,
+        "explanation" 
+        :
+        "The text states that traditional gender roles are evolving, with more shared responsibilities."
+      ,
+        "question" 
+        :
+        "How do traditions benefit families according to the text?"
+        ,
+        "options" 
+        :
+        "They create conflict."
+        ,
+        "They connect people to their heritage."
+        :
+        "They make chores easier."
+        ,
+        "They reduce communication."
+        :
+        "answer" 
+        ,
+        "They connect people to their heritage."
+        :
+        "explanation" 
+        ,
+        "Traditions are described as a way to maintain identity and strengthen family ties."
+      :
+        "question" 
+        ,
+        "What is the main idea of the last paragraph?"
+        :
+        "options" 
+        ,
+        "Families avoid responsibilities."
+        :
+        "Responsibilities divide families."
+        ,
+        "Responsibilities unite families and teach skills."
+        :
+        "Responsibilities are unnecessary."
+        ,
+        "answer" 
+        :
+        "Responsibilities unite families and teach skills."
+        ,
+        "explanation" 
+        :
+        "The final paragraph emphasizes how shared responsibilities foster unity and skill development."
+      ,
+    "type" 
+    :
+    "sentenceFrames"
+    ,
+    "title" 
+    :
+    "Sentence Practice"
+    ,
+    "frames" 
+        :
+        "pattern" 
+        ,
+        "I think that _____ is important because _____."
+        :
+        "examples" 
+        ,
+        "I think that respecting elders is important because they offer valuable guidance."
+        :
+        "I think that sharing responsibilities is important because it strengthens family bonds."
+        ,
+        "I think that maintaining traditions is important because it preserves cultural identity."
+        :
+        "usageNotes" 
+        ,
+        "Use this pattern to express opinions about family values."
+        :
+        "teachingTips" 
+        ,
+        "Have students complete the sentence frame using vocabulary from the lesson."
+        :
+        "difficultyLevel" 
+        ,
+        "intermediate"
+        :
+        "grammarFocus" 
+        ,
+        "Expressing opinions with reasons."
+        :
+        "communicativeFunction" 
+        ,
+        "Opinion expression."
+      :
+        "pattern" 
+        ,
+        "In my family, we usually _____."
+        :
+        "examples" 
+        ,
+        "In my family, we usually celebrate birthdays with big parties."
+        :
+        "In my family, we usually visit grandparents on weekends."
+        ,
+        "In my family, we usually cook traditional dishes during holidays."
+        :
+        "usageNotes" 
+        ,
+        "This pattern helps describe personal family habits."
+        :
+        "teachingTips" 
+        ,
+        "Encourage students to share their answers with classmates."
+        :
+        "difficultyLevel" 
+        ,
+        "basic"
+        :
+        "grammarFocus" 
+        ,
+        "Describing routines."
+        :
+        "communicativeFunction" 
+        ,
+        "Sharing personal experiences."
+      :
+    "type" 
+    ,
+    "discussion"
+    :
+    "title" 
+    ,
+    "Discussion Questions"
+    :
+    "introduction" 
+    ,
+    "Family structures and roles influence how individuals interact with each other. While some families prioritize collective responsibilities, others focus on individual freedoms. Understanding these differences can deepen our appreciation for diverse lifestyles."
+    :
+    "questions" 
+        ,
+        "How does your family compare to the concept of an extended family mentioned in the text?"
+        :
+        "Do you agree that respecting elders is universally important? Why or why not?"
+        ,
+        "What are some challenges of balancing traditional gender roles with modern expectations?"
+        :
+        "Can you think of a tradition in your family that has changed over time?"
+        ,
+        "How do responsibilities in your family contribute to its overall harmony?"
+      :
+    "type" 
+    ,
+    "quiz"
+    :
+    "title" 
+    ,
+    "Knowledge Check"
+    :
+    "questions" 
+        ,
+        "question" 
+        :
+        "What does 'extended' refer to in the context of families?"
+        ,
+        "options" 
+        :
+        "Living far apart"
+        ,
+        "Including multiple generations"
+        :
+        "Having no relatives"
+        ,
+        "Avoiding responsibilities"
+        :
+        "answer" 
+        ,
+        "Including multiple generations"
+        :
+        "explanation" 
+        ,
+        "Extended families involve grandparents, parents, and children living together."
+      :
+        "question" 
+        ,
+        "Which word means 'a custom passed down through generations'?"
+        :
+        "options" 
+        ,
+        "Responsibility"
+        :
+        "Tradition"
+        ,
+        "Gender roles"
+        :
+        "Respect"
+        ,
+        "answer" 
+        :
+        "Tradition"
+        ,
+        "explanation" 
+        :
+        "A tradition is a long-standing practice maintained over time."
+      ,
+        "question" 
+        :
+        "True or False: Respect for elders is rarely practiced in modern societies."
+        ,
+        "options" 
+        :
+        "True"
+        ,
+        "False"
+        :
+        "answer" 
+        ,
+        "False"
+        :
+        "explanation" 
+        ,
+        "The text highlights that respect for elders remains significant in many cultures."
+      :
+        "question" 
+        ,
+        "What is one advantage of shared responsibilities in families?"
+        :
+        "options" 
+        ,
+        "Increased conflict"
+        :
+        "Stronger relationships"
+        ,
+        "Less communication"
+        :
+        "More isolation"
+        ,
+        "answer" 
+        :
+        "Stronger relationships"
+        ,
+        "explanation" 
+        :
+        "Shared responsibilities promote teamwork and unity among family members."
+      ,
+        "question" 
+        :
+        "Which term describes expectations based on gender?"
+        ,
+        "options" 
+        :
+        "Tradition"
+        ,
+        "Respect"
+        :
+        "Gender roles"
+        ,
+        "Responsibility"
+        :
+        "answer" 
+        ,
+        "Gender roles"
+        :
+        "explanation" 
+        ,
+        "Gender roles define societal expectations for men and women."
+      :
+  "}"
+} 
+
+  
+  
+
+  ]
+
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  :
+
+
+
+  
+  
+  "], ["
+
+
+  
+  
+  ,
+
+
+
+  
+  
+  "],

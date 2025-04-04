@@ -11,6 +11,7 @@ import {
 } from "@shared/schema";
 import Stripe from "stripe";
 import { qwenService } from "./services/qwen";
+import { geminiService } from "./services/gemini";
 
 // Initialize Stripe if API key is available
 const stripe = process.env.STRIPE_SECRET_KEY 
@@ -182,8 +183,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log(`Starting lesson generation for user ${user.id}, topic: ${validatedData.topic}, CEFR level: ${validatedData.cefrLevel}`);
       
       try {
-        // Generate lesson content using Qwen AI
-        const generatedContent = await qwenService.generateLesson(validatedData);
+        // Generate lesson content using the selected AI provider
+        let generatedContent;
+        const aiProvider = validatedData.aiProvider || 'qwen'; // Default to Qwen if not specified
+        
+        console.log(`Using AI provider: ${aiProvider}`);
+        
+        if (aiProvider === 'gemini') {
+          // Use Gemini API
+          generatedContent = await geminiService.generateLesson(validatedData);
+        } else {
+          // Default to Qwen AI
+          generatedContent = await qwenService.generateLesson(validatedData);
+        }
         
         // Calculate time taken
         const endTime = Date.now();
