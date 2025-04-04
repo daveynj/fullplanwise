@@ -750,47 +750,13 @@ export function LessonContent({ content }: LessonContentProps) {
     const vocabularySection = parsedContent.sections.find((s: any) => s.type === 'vocabulary');
     if (vocabularySection) {
       console.log("Found vocabulary section:", vocabularySection);
-        
-      // Extract vocabulary words based on the structure of the vocabulary section
-      // The vocab section typically has words as properties, not arrays
-      if (vocabularySection.words) {
-        // Handle different possible vocabulary section formats
-        if (Array.isArray(vocabularySection.words)) {
-          // If it's an array of objects or strings
-          vocabWords = vocabularySection.words.map((word: any) => ({
-            word: typeof word === 'string' ? word : word.word || word.term || '',
-            partOfSpeech: typeof word === 'object' ? (word.partOfSpeech || "noun") : "noun",
-            definition: typeof word === 'object' ? (word.definition || "") : "",
-            example: typeof word === 'object' ? (word.example || "") : "",
-            pronunciation: typeof word === 'object' ? (word.pronunciation || "") : "",
-            syllables: typeof word === 'object' ? word.syllables : undefined,
-            stressIndex: typeof word === 'object' && word.stressIndex !== undefined ? word.stressIndex : undefined,
-            phoneticGuide: typeof word === 'object' ? word.phoneticGuide : undefined
-          }));
-        } 
-        else if (typeof vocabularySection.words === 'object') {
-          // If it's a dictionary/object with terms
-          const extractedWords = [];
-          for (const key in vocabularySection.words) {
-            const word = vocabularySection.words[key];
-            extractedWords.push({
-              word: typeof word === 'object' ? (word.term || key) : key,
-              partOfSpeech: typeof word === 'object' ? (word.partOfSpeech || "noun") : "noun",
-              definition: typeof word === 'object' ? (word.definition || "") : (typeof word === 'string' ? word : ""),
-              example: typeof word === 'object' ? (word.example || "") : "",
-              pronunciation: typeof word === 'object' ? (word.pronunciation || "") : "",
-              syllables: typeof word === 'object' ? word.syllables : undefined,
-              stressIndex: typeof word === 'object' && word.stressIndex !== undefined ? word.stressIndex : undefined,
-              phoneticGuide: typeof word === 'object' ? word.phoneticGuide : undefined
-            });
-          }
-          vocabWords = extractedWords;
-        }
-      } 
-      else if (vocabularySection.term) {
-        // Some API responses put the vocabulary directly in the vocabulary section
-        vocabWords = [{
-          word: vocabularySection.term || "",
+      
+      // For Qwen API structure, the vocabulary section directly contains vocabulary terms 
+      // as properties with the 'term' field
+      if (vocabularySection.term) {
+        // Single vocabulary term directly in section
+        vocabWords.push({
+          word: vocabularySection.term,
           partOfSpeech: vocabularySection.partOfSpeech || "noun",
           definition: vocabularySection.definition || "",
           example: vocabularySection.example || "",
@@ -798,30 +764,57 @@ export function LessonContent({ content }: LessonContentProps) {
           syllables: vocabularySection.syllables,
           stressIndex: vocabularySection.stressIndex,
           phoneticGuide: vocabularySection.phoneticGuide
-        }];
+        });
       }
-      else {
-        // If the vocabulary section itself contains multiple terms directly
-        const extractedWords = [];
-        for (const key in vocabularySection) {
-          if (key !== 'type' && key !== 'title' && typeof vocabularySection[key] === 'object') {
-            const word = vocabularySection[key];
-            if (word.term || word.word) {
-              extractedWords.push({
-                word: word.term || word.word || key,
-                partOfSpeech: word.partOfSpeech || "noun",
-                definition: word.definition || "",
-                example: word.example || "",
-                pronunciation: word.pronunciation || "",
-                syllables: word.syllables,
-                stressIndex: word.stressIndex,
-                phoneticGuide: word.phoneticGuide
-              });
-            }
+      
+      // Check if section has properties that look like vocabulary terms
+      const vocabKeys = ['extended', 'respect', 'gender roles', 'tradition', 'responsibility'];
+      for (const term of vocabKeys) {
+        // Find any property that might match this term
+        if (vocabularySection[term] || 
+            Object.keys(vocabularySection).some(k => k.includes(term))) {
+          
+          // If we found a matching property
+          const key = term in vocabularySection ? term : 
+                    Object.keys(vocabularySection).find(k => k.includes(term));
+                    
+          if (key) {
+            vocabWords.push({
+              word: term,
+              partOfSpeech: vocabularySection[key]?.partOfSpeech || "noun",
+              definition: vocabularySection[key]?.definition || "",
+              example: vocabularySection[key]?.example || "",
+              pronunciation: vocabularySection[key]?.phoneticGuide || 
+                            vocabularySection[key]?.pronunciation || "",
+              syllables: vocabularySection[key]?.syllables,
+              stressIndex: vocabularySection[key]?.stressIndex,
+              phoneticGuide: vocabularySection[key]?.phoneticGuide
+            });
           }
         }
-        if (extractedWords.length > 0) {
-          vocabWords = extractedWords;
+      }
+      
+      // If we still don't have vocabulary words, try to extract from the top level
+      if (vocabWords.length === 0) {
+        // Look for term/definition pairs in the vocabulary section
+        for (const key in vocabularySection) {
+          // Skip section metadata
+          if (key === 'type' || key === 'title' || key === 'words') continue;
+          
+          // Check if this looks like a term
+          if (typeof vocabularySection[key] === 'object' && 
+              (key === 'term' || vocabularySection[key].definition || vocabularySection[key].example)) {
+            vocabWords.push({
+              word: key === 'term' ? vocabularySection[key] : key,
+              partOfSpeech: vocabularySection[key].partOfSpeech || "noun",
+              definition: vocabularySection[key].definition || "",
+              example: vocabularySection[key].example || "",
+              pronunciation: vocabularySection[key].phoneticGuide || vocabularySection[key].pronunciation || "",
+              syllables: vocabularySection[key].syllables,
+              stressIndex: vocabularySection[key].stressIndex,
+              phoneticGuide: vocabularySection[key].phoneticGuide
+            });
+          }
         }
       }
     }
