@@ -415,7 +415,7 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
         ],
         temperature: 0.3, 
         top_p: 0.9,
-        max_tokens: 8192,
+        max_tokens: 16384,
         response_format: { type: "json_object" }
       };
       
