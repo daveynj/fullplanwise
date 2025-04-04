@@ -34,51 +34,51 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
 
   return (
     <div className="bg-blue-50 rounded-md p-5 border border-blue-100">
-      <div className="mb-3">
-        <h2 className="text-2xl font-medium text-blue-900">{word.word}</h2>
-        <p className="text-blue-600 text-base">{word.partOfSpeech || 'noun'}</p>
+      <div className="mb-2">
+        <h2 className="text-xl font-medium text-blue-900">{word.word}</h2>
+        <p className="text-blue-600 text-sm">{word.partOfSpeech || 'noun'}</p>
       </div>
       
       {/* Definition */}
-      <div className="mb-4">
-        <h3 className="text-blue-800 font-medium flex items-center mb-2 text-base">
-          <Book className="mr-2 h-5 w-5" />
+      <div className="mb-3">
+        <h3 className="text-blue-800 font-medium flex items-center mb-1 text-sm">
+          <Book className="mr-2 h-4 w-4" />
           Definition
         </h3>
-        <p className="p-3 bg-white rounded border border-blue-100 text-lg">
+        <p className="p-2 bg-white rounded border border-blue-100">
           {word.definition || `A definition for ${word.word}`}
         </p>
       </div>
       
       {/* Example */}
-      <div className="mb-4">
-        <h3 className="text-blue-800 font-medium flex items-center mb-2 text-base">
-          <BookOpen className="mr-2 h-5 w-5" />
+      <div className="mb-3">
+        <h3 className="text-blue-800 font-medium flex items-center mb-1 text-sm">
+          <BookOpen className="mr-2 h-4 w-4" />
           Example
         </h3>
-        <p className="p-3 bg-white rounded border border-blue-100 italic text-lg">
+        <p className="p-2 bg-white rounded border border-blue-100 italic">
           "{word.example || `This is an example sentence using the word ${word.word}.`}"
         </p>
       </div>
       
       {/* Pronunciation */}
       <div>
-        <h3 className="text-blue-800 font-medium flex items-center mb-2 text-base">
-          <Radio className="mr-2 h-5 w-5" />
+        <h3 className="text-blue-800 font-medium flex items-center mb-1 text-sm">
+          <Radio className="mr-2 h-4 w-4" />
           Pronunciation
         </h3>
-        <p className="p-3 bg-white rounded border border-blue-100 font-mono text-lg">
+        <p className="p-2 bg-white rounded border border-blue-100 font-mono">
           {wordData.pronunciation}
         </p>
         
         {/* Syllable breakdown - using predefined data */}
-        <div className="flex justify-center mt-3 gap-1">
+        <div className="flex justify-center mt-2 gap-0.5">
           {wordData.syllables.map((syllable: string, idx: number) => (
             <span 
               key={idx}
-              className={`px-3 py-2 text-base ${
+              className={`px-2 py-1 text-sm ${
                 idx === wordData.emphasisIndex
-                  ? 'bg-blue-200 text-blue-800 font-bold' 
+                  ? 'bg-blue-200 text-blue-800' 
                   : 'bg-gray-100 text-gray-700'
               }`}
             >

@@ -203,159 +203,6 @@ export function extractQuizQuestions(content: any): { question: string; answer: 
  * Utility to extract comprehension questions from lesson content
  * Works with various Qwen API response formats
  */
-/**
- * Utility to extract warmup questions from lesson content
- * Works with various Qwen API response formats
- */
-export function extractWarmupQuestions(content: any): string[] {
-  if (!content) return [];
-  
-  try {
-    console.log('Extracting warmup questions from:', JSON.stringify(content).substring(0, 300) + '...');
-    
-    // Attempt to find the warmup section
-    let warmupSection = content.sections?.find((section: any) => 
-      section && section.type === 'warmup' || section.type === 'warm-up'
-    );
-    
-    // If we don't have a properly labeled warmup section, try content-based detection
-    if (!warmupSection && content.sections) {
-      warmupSection = content.sections.find((section: any) => 
-        section && typeof section === 'object' && 
-        ((section.content && typeof section.content === 'string' && 
-         (section.content.toLowerCase().includes('warm-up') || 
-          section.content.toLowerCase().includes('vocabulary') || 
-          section.content.toLowerCase().includes('explore five key words'))) ||
-         // Check for common vocabulary markers in the Qwen API responses
-         (section.targetVocabulary || 
-          section.ritual || 
-          section.hierarchy || 
-          section.symbolism || 
-          section.legacy || 
-          section.civilization))
-      );
-      
-      if (warmupSection) {
-        console.log("Found warmup section through content detection:", warmupSection);
-        // Ensure the section is properly typed for the rest of the app
-        warmupSection.type = 'warmup';
-      }
-    }
-    
-    if (!warmupSection) {
-      console.log("No warmup section found in content");
-      return [];
-    }
-    
-    console.log("Working with warmup section:", JSON.stringify(warmupSection).substring(0, 300) + '...');
-    
-    // QWEN SPECIFIC FORMAT: First check if questions is a string value and there are question-like keys
-    // This handles the alternating pattern we see in the logs
-    if (typeof warmupSection.questions === 'string' && warmupSection.questions.includes('?')) {
-      console.log("Found string-format question in warmup:", warmupSection.questions);
-      
-      const questions: string[] = [warmupSection.questions];
-      
-      // Check for question keys that contain question marks
-      const questionKeys = Object.keys(warmupSection).filter(key => 
-        key !== 'type' && 
-        key !== 'title' && 
-        key !== 'content' && 
-        key !== 'questions' &&
-        key.includes('?')
-      );
-      
-      if (questionKeys.length > 0) {
-        console.log("Found additional question keys in warmup:", questionKeys);
-        questions.push(...questionKeys);
-      }
-      
-      if (questions.length > 0) {
-        console.log("Extracted Qwen-format questions:", questions);
-        return questions.map(q => q.trim());
-      }
-    }
-    
-    // Check for direct questions array format
-    if (Array.isArray(warmupSection.questions)) {
-      console.log("Extracting array-format warmup questions:", warmupSection.questions);
-      return warmupSection.questions.map((q: any) => 
-        typeof q === 'string' ? q.trim() : (q.question || '')
-      ).filter(Boolean);
-    }
-    
-    // Check for questions as a string that needs splitting
-    if (typeof warmupSection.questions === 'string') {
-      console.log("Splitting string-format warmup questions:", warmupSection.questions);
-      // Split by newlines or bullet points
-      const splitQuestions = warmupSection.questions
-        .split(/[\n\r]+|•|\*|-|\d+\.|;/)
-        .map((q: string) => q.trim())
-        .filter((q: string) => q && q.length > 5);
-        
-      if (splitQuestions.length > 0) {
-        console.log("Split warmup questions:", splitQuestions);
-        return splitQuestions;
-      }
-    }
-    
-    // Try to extract questions from non-standard format
-    // where questions might be embedded in other properties
-    if (typeof warmupSection === 'object') {
-      console.log("Searching for questions in warmup object properties");
-      const possibleQuestions: string[] = [];
-      
-      // Look for keys that contain question marks - this is the common Qwen pattern
-      for (const key in warmupSection) {
-        if (typeof key === 'string' && key.includes('?')) {
-          console.log("Found question in key:", key);
-          possibleQuestions.push(key.trim());
-        }
-      }
-      
-      // Look for string values that contain question marks
-      for (const key in warmupSection) {
-        const value = warmupSection[key];
-        if (typeof value === 'string' && value.includes('?')) {
-          console.log("Found question in value:", value);
-          possibleQuestions.push(value.trim());
-        }
-      }
-      
-      // Filter out non-questions and return
-      const filteredQuestions = possibleQuestions.filter(q => q.includes('?'));
-      
-      if (filteredQuestions.length > 0) {
-        console.log("Extracted warmup questions from properties:", filteredQuestions);
-        return filteredQuestions;
-      }
-    }
-    
-    // Final fallback: check content field for questions
-    if (warmupSection.content && typeof warmupSection.content === 'string' && warmupSection.content.includes('?')) {
-      console.log("Extracting questions from content field");
-      
-      // Split content by sentences and filter for questions
-      const sentences = warmupSection.content
-        .split(/[.!?]+/)
-        .map((s: string) => s.trim())
-        .filter((s: string) => s.includes('?') || /what|how|why|when|where|who|which/i.test(s))
-        .map((s: string) => s.endsWith('?') ? s : s + '?');
-      
-      if (sentences.length > 0) {
-        console.log("Extracted questions from content:", sentences);
-        return sentences.filter((s: string) => s.length > 10);
-      }
-    }
-  
-    console.log("Failed to extract any warmup questions");
-    return [];
-  } catch (error) {
-    console.error("Error extracting warmup questions:", error);
-    return [];
-  }
-}
-
 export function extractComprehensionQuestions(content: any): { question: string; answer: string; type?: string; options?: string[] }[] {
   if (!content) return [];
   
@@ -572,240 +419,56 @@ export function extractDiscussionQuestions(content: any): any[] {
     // Case 1: Look for discussion section in sections array
     if (content.sections && Array.isArray(content.sections)) {
       console.log("Looking for discussion section in sections array");
-      
-      // Find the discussion section - it might be named "discussion" or have a title with "Discussion"
-      let discussionSection = content.sections.find((s: any) => 
-        s && typeof s === 'object' && 
-        (s.type === 'discussion' || 
-         (s.title && typeof s.title === 'string' && s.title.toLowerCase().includes('discussion')))
+      const discussionSection = content.sections.find((s: any) => 
+        s && typeof s === 'object' && s.type === 'discussion'
       );
       
-      // If we couldn't find the discussion section, try to extract it from the non-standard format
-      // where section properties appear as separate top-level keys instead of properly nested
-      if (!discussionSection && content.sections.some((s: any) => typeof s === 'object' && s.type)) {
-        // Look for sections with "type" as a property (not part of the section object itself)
-        for (const section of content.sections) {
-          if (section.type && section.type === "discussion") {
-            discussionSection = section;
-            break;
-          }
-          
-          // Handle the case where "type" is a key and "discussion" is a string value
-          if (typeof section === 'object' && section["type"] === "discussion") {
-            discussionSection = section;
-            break;
-          }
-        }
-      }
-      
-      // If still no discussion section, look at top level "type:discussion" pattern
-      if (!discussionSection) {
-        for (const section of content.sections) {
-          const keys = Object.keys(section);
-          if (keys.includes("type") && section["type"] === "discussion") {
-            discussionSection = section;
-            break;
-          }
-        }
-      }
-      
-      // Last attempt: look at string value properties where the type might be in the value
-      if (!discussionSection) {
-        for (const section of content.sections) {
-          for (const [key, value] of Object.entries(section)) {
-            if (key === "type" && value === "discussion") {
-              discussionSection = section;
-              break;
-            }
-          }
-          if (discussionSection) break;
-        }
-      }
-      
       if (discussionSection) {
-        console.log("Found discussion section:", JSON.stringify(discussionSection).substring(0, 200) + "...");
+        console.log("Found discussion section:", JSON.stringify(discussionSection));
         
         // Extract introduction if available
         let introduction = discussionSection.introduction || "";
         
-        // QWEN API FORMAT DETECTION: Test for non-standard key-value question format
-        // This is the format we're finding in the Qwen API responses where
-        // the keys themselves are the questions and the values are follow-ups
+        // DIRECT KEY EXTRACTION - Special case for the specific format seen in logs
+        // This is a critical case for the Qwen API format where question keys are the actual questions
         const allKeys = Object.keys(discussionSection);
-        
-        // Get all string keys that look like questions (contain ?)
         const questionKeys = allKeys.filter(key => 
           typeof key === 'string' && 
           key.includes('?') && 
           key !== 'type' && 
           key !== 'title' && 
-          key !== 'introduction' &&
-          key !== 'questions'
+          key !== 'introduction'
         );
         
         if (questionKeys.length > 0) {
-          console.log("Found Qwen API question-as-keys format with", questionKeys.length, "questions");
-          
-          // Process each question as a key and extract follow-up questions from its value
+          console.log("Found question keys directly in section:", questionKeys);
           questionKeys.forEach(questionText => {
-            // The value associated with this question key might be a follow-up question or hint
-            const value = discussionSection[questionText];
-            
-            // Initialize an array to hold extracted follow-up questions
-            let followUpQuestions: string[] = [];
-            
-            // Process the value if it's a string that might contain follow-up questions
-            if (typeof value === 'string' && value.trim()) {
-              // Add the value as a follow-up regardless of its format
-              // This ensures we capture all potential follow-ups
-              followUpQuestions = [value.trim()];
-            }
-            
-            // Push the extracted question and follow-ups to our result array
             questions.push({
               question: questionText.trim(),
-              answer: "",
               introduction: introduction,
-              level: "basic",
-              followUp: followUpQuestions
-            });
-          });
-          
-          // Only return if we successfully extracted some questions
-          if (questions.length > 0) {
-            console.log(`Successfully extracted ${questions.length} direct question keys with ${questions.reduce((sum, q) => sum + (q.followUp?.length || 0), 0)} follow-ups`);
-            return questions;
-          }
-        }
-        
-        // Special case: First check for the Qwen alternating pattern in direct section content
-        if (typeof discussionSection.questions === 'string') {
-          console.log("Found Qwen API string-value questions:", discussionSection.questions);
-          
-          // This is the first question in the alternating pattern
-          const firstQuestion = {
-            question: discussionSection.questions.trim(),
-            answer: "",
-            level: "basic",
-            introduction: introduction,
-            followUp: []
-          };
-          
-          questions.push(firstQuestion);
-          
-          // Look for question-as-key pattern for the remaining questions and their follow-ups
-          const questionKeyPattern = /^(How|Why|What|Where|When|Who|Which|Can|Do|Should|Does|Has|In what way)/i;
-          const questionKeys = Object.keys(discussionSection).filter(key => 
-            key !== 'type' && 
-            key !== 'title' && 
-            key !== 'introduction' && 
-            key !== 'questions' &&
-            (key.includes('?') || questionKeyPattern.test(key))
-          );
-          
-          console.log("Found possible question keys:", questionKeys);
-          
-          // Process each key as a question with its value as a follow-up
-          questionKeys.forEach(key => {
-            const value = discussionSection[key];
-            
-            // Add this question with the value as follow-up
-            questions.push({
-              question: key.trim(),
-              answer: "",
-              level: "basic",
-              introduction: introduction,
-              followUp: typeof value === 'string' && value.trim() ? [value.trim()] : []
+              level: "basic"
             });
           });
           
           if (questions.length > 0) {
-            console.log("Extracted questions from Qwen alternating pattern:", questions);
+            console.log("Successfully extracted direct question keys:", questions);
             return questions;
           }
         }
         
-        // Handle standard Qwen API format with questions as array or object
+        // Handle Qwen API format with questions as array or object
         if (discussionSection.questions) {
           if (Array.isArray(discussionSection.questions)) {
             // Handle array format
             console.log("Discussion questions as array:", discussionSection.questions);
-            
-            // Process each question in the array
-            const processedQuestions = discussionSection.questions.map((q: any) => {
+            return discussionSection.questions.map((q: any) => {
               if (typeof q === 'string') {
-                return { question: q, introduction: introduction, followUp: [] };
+                return { question: q, introduction: introduction };
               } else if (typeof q === 'object') {
-                // Extract potential follow-up questions
-                let followUpQuestions: string[] = [];
-                
-                // Check for explicitly defined followUp array
-                if (Array.isArray(q.followUp)) {
-                  followUpQuestions = q.followUp;
-                } 
-                // Check for followUpQuestions array (alternative name)
-                else if (Array.isArray(q.followUpQuestions)) {
-                  followUpQuestions = q.followUpQuestions;
-                }
-                // Check if the answer/responses might contain follow-up questions
-                else if (q.answer && typeof q.answer === 'string') {
-                  // Try different splitting patterns to extract follow-up questions
-                  const splitPatterns = [
-                    /[•-]\s+/, // Bullet points
-                    /\n+/, // Line breaks 
-                    /\r\n+/, // Windows line breaks
-                    /\d+\.\s+/, // Numbered lists
-                    /[\?\.\!]\s+/ // End of sentences
-                  ];
-                  
-                  let potentialFollowUps = [q.answer.trim()]; // Start with the whole answer
-                  
-                  // Try each splitting pattern
-                  for (const pattern of splitPatterns) {
-                    // Check if the first item has multiple parts using this pattern
-                    const parts = potentialFollowUps[0].split(pattern).filter((p: string) => p.trim().length > 0);
-                    if (parts.length > 1) {
-                      potentialFollowUps = parts;
-                      break; // We found a successful splitting pattern
-                    }
-                  }
-                  
-                  // Filter potential follow-ups to keep only question-like items
-                  followUpQuestions = potentialFollowUps
-                    .filter(text => 
-                      text.trim().length > 0 && 
-                      (text.includes('?') || 
-                      /^(why|how|what|where|when|who|which|can|do|would|should)/i.test(text.trim())
-                      )
-                    )
-                    .map(text => text.trim());
-                  
-                  // If we didn't extract any questions but the answer has question marks,
-                  // just use the first sentence with a question mark
-                  if (followUpQuestions.length === 0 && q.answer.includes('?')) {
-                    const questionSentences = q.answer.split(/[\.\?\!]\s+/)
-                      .filter((sent: string) => sent.includes('?'))
-                      .map((sent: string) => sent.trim() + '?');
-                    
-                    if (questionSentences.length > 0) {
-                      followUpQuestions = questionSentences;
-                    }
-                  }
-                }
-                
-                return { 
-                  ...q, 
-                  introduction: q.introduction || introduction,
-                  followUp: followUpQuestions
-                };
+                return { ...q, introduction: q.introduction || introduction };
               }
               return null;
             }).filter(Boolean);
-            
-            if (processedQuestions.length > 0) {
-              console.log("Processed discussion questions from array with follow-ups:", processedQuestions);
-              return processedQuestions;
-            }
           } else if (typeof discussionSection.questions === 'object') {
             // Handle object format (Qwen sometimes returns objects instead of arrays)
             console.log("Discussion questions as object:", discussionSection.questions);
@@ -820,50 +483,15 @@ export function extractDiscussionQuestions(content: any): any[] {
               console.log("Found direct question keys in questions object:", directQuestionKeys);
               
               directQuestionKeys.forEach(questionText => {
-                // Extract potential follow-up questions from the value
-                const value = discussionSection.questions[questionText];
-                let followUpQuestions: string[] = [];
-                
-                if (typeof value === 'string' && value.trim()) {
-                  // Try to extract follow-up questions from the value
-                  // Split by bullet points, line breaks, or numbered lists
-                  const splitPattern = /[•-]\s+|\n+|\r\n+|\d+\.\s+|[\?\.\!]\s+/;
-                  const parts = value.split(splitPattern).filter(p => p.trim().length > 0);
-                  
-                  if (parts.length > 1) {
-                    // We have multiple parts, likely follow-up questions
-                    followUpQuestions = parts
-                      .filter(text => 
-                        text.trim().length > 0 && 
-                        (text.includes('?') || 
-                         /^(why|how|what|where|when|who|which|can|do|would|should)/i.test(text.trim())
-                        )
-                      )
-                      .map(p => p.trim());
-                  } else if (value.includes('?')) {
-                    // Single follow-up question
-                    followUpQuestions = [value.trim()];
-                  }
-                  
-                  // If we didn't get any follow-up questions, but the value contains question words,
-                  // just use the whole value as a single follow-up question
-                  if (followUpQuestions.length === 0 && 
-                      (/^(why|how|what|where|when|who|which|can|do|would|should)/i.test(value.trim()) || 
-                       value.includes('?'))) {
-                    followUpQuestions = [value.trim()];
-                  }
-                }
-                
                 questions.push({
                   question: questionText.trim(),
                   introduction: introduction,
-                  level: "basic",
-                  followUp: followUpQuestions
+                  level: "basic"
                 });
               });
               
               if (questions.length > 0) {
-                console.log("Extracted direct question keys with follow-ups:", questions);
+                console.log("Extracted direct question keys from questions object:", questions);
                 return questions;
               }
             }
@@ -878,36 +506,16 @@ export function extractDiscussionQuestions(content: any): any[] {
               questionKeys.forEach(key => {
                 const question = discussionSection.questions[key];
                 if (question && typeof question === 'string' && question.trim().length > 0) {
-                  // Try to extract follow-up questions from other related fields
-                  let followUpQuestions: string[] = [];
-                  
-                  // Look for follow-up keys that might be related to this question
-                  const followUpKey = `${key}_followup` || `${key}_follow_up`;
-                  if (discussionSection.questions[followUpKey]) {
-                    const followUpValue = discussionSection.questions[followUpKey];
-                    
-                    if (Array.isArray(followUpValue)) {
-                      followUpQuestions = followUpValue;
-                    } else if (typeof followUpValue === 'string') {
-                      // Split by bullet points or line breaks
-                      followUpQuestions = followUpValue
-                        .split(/[•-]\s+|\n+|\r\n+|\d+\.\s+/)
-                        .filter(p => p.trim().length > 0)
-                        .map(p => p.trim());
-                    }
-                  }
-                  
                   questions.push({ 
                     question: question.trim(),
                     introduction: introduction,
-                    level: "basic",
-                    followUp: followUpQuestions
+                    level: "basic"
                   });
                 }
               });
               
               if (questions.length > 0) {
-                console.log("Extracted questions from object with follow-ups:", questions);
+                console.log("Extracted questions from object:", questions);
                 return questions;
               }
             }
@@ -931,81 +539,32 @@ export function extractDiscussionQuestions(content: any): any[] {
       if (discussionData.questions) {
         if (Array.isArray(discussionData.questions)) {
           // Handle array format
-          const processedQuestions = discussionData.questions.map((q: any) => {
+          return discussionData.questions.map((q: any) => {
             if (typeof q === 'string') {
-              return { question: q, introduction: introduction, followUp: [] };
+              return { question: q, introduction: introduction };
             } else if (typeof q === 'object') {
-              // Extract follow-up questions if they exist
-              let followUpQuestions: string[] = [];
-              
-              if (Array.isArray(q.followUp)) {
-                followUpQuestions = q.followUp;
-              } else if (Array.isArray(q.followUpQuestions)) {
-                followUpQuestions = q.followUpQuestions;
-              } else if (q.answer && typeof q.answer === 'string') {
-                // Try to extract follow-ups from the answer
-                const lines = q.answer.split(/[\r\n]+/).filter((line: string) => 
-                  line.trim().length > 0 && 
-                  (line.includes('?') || /^[•-]\s/.test(line))
-                );
-                
-                if (lines.length > 0) {
-                  followUpQuestions = lines.map((line: string) => line.trim());
-                }
-              }
-              
-              return { 
-                ...q, 
-                introduction: q.introduction || introduction,
-                followUp: followUpQuestions
-              };
+              return { ...q, introduction: q.introduction || introduction };
             }
             return null;
           }).filter(Boolean);
-          
-          if (processedQuestions.length > 0) {
-            console.log("Processed questions from discussion data:", processedQuestions);
-            return processedQuestions;
-          }
         } else if (typeof discussionData.questions === 'object') {
           // Extract questions from question object (common in Qwen API responses)
           const extractedQuestions: any[] = [];
+          const questionValues = Object.values(discussionData.questions).filter(
+            (val: any) => typeof val === 'string' && val.includes('?')
+          );
           
-          // Process each key in the questions object
-          for (const key in discussionData.questions) {
-            const value = discussionData.questions[key];
-            
-            // Skip if not a string value or doesn't look like a question
-            if (typeof value !== 'string' || !value.includes('?')) continue;
-            
-            // Look for follow-up questions in related fields
-            let followUpQuestions: string[] = [];
-            const followUpKey = `${key}_followup` || `${key}_follow_up`;
-            
-            if (discussionData.questions[followUpKey]) {
-              const followUpValue = discussionData.questions[followUpKey];
-              
-              if (Array.isArray(followUpValue)) {
-                followUpQuestions = followUpValue;
-              } else if (typeof followUpValue === 'string') {
-                // Split by bullet points or line breaks
-                followUpQuestions = followUpValue
-                  .split(/[•-]\s+|\n+|\r\n+|\d+\.\s+/)
-                  .filter(p => p.trim().length > 0)
-                  .map(p => p.trim());
-              }
+          questionValues.forEach((q: any) => {
+            if (typeof q === 'string') {
+              extractedQuestions.push({
+                question: q,
+                introduction: introduction,
+                level: "basic"
+              });
             }
-            
-            extractedQuestions.push({
-              question: value.trim(),
-              introduction: introduction,
-              level: "basic",
-              followUp: followUpQuestions
-            });
-          }
+          });
           
           if (extractedQuestions.length > 0) {
-            console.log("Extracted questions with follow-ups from object:", extractedQuestions);
             return extractedQuestions;
           }
         }
@@ -1028,49 +587,19 @@ export function extractDiscussionQuestions(content: any): any[] {
           const lines = String(value).split(/[\r\n]+/);
           const questionLines = lines.filter(line => line.includes('?'));
           
-          // Group questions and follow-ups
-          let currentQuestion: any = null;
-          
-          for (let i = 0; i < questionLines.length; i++) {
-            const line = questionLines[i].trim();
-            
-            // Skip empty lines
-            if (line.length < 5) continue;
-            
-            // Check if this looks like a main question or a follow-up
-            const isMainQuestion = line.length > 20 && 
-                                !line.startsWith('-') && 
-                                !line.startsWith('•') && 
-                                !line.startsWith('*') &&
-                                !/^\d+\.\s/.test(line);
-            
-            if (isMainQuestion) {
-              // Add previous question if we have one
-              if (currentQuestion) {
-                questions.push(currentQuestion);
-              }
-              
-              // Start new question
-              currentQuestion = {
-                question: line,
-                level: line.toLowerCase().includes('critical') ? 'critical' : 'basic',
-                followUp: []
-              };
-            } else if (currentQuestion) {
-              // This is likely a follow-up
-              currentQuestion.followUp.push(line);
+          questionLines.forEach(line => {
+            if (line.length > 20) {
+              questions.push({
+                question: line.trim(),
+                level: line.toLowerCase().includes('critical') ? 'critical' : 'basic'
+              });
             }
-          }
-          
-          // Add the last question if we have one
-          if (currentQuestion) {
-            questions.push(currentQuestion);
-          }
+          });
         }
       }
       
       if (questions.length > 0) {
-        console.log("Extracted questions with follow-ups from string properties:", questions);
+        console.log("Extracted questions from string properties:", questions);
         return questions;
       }
     }

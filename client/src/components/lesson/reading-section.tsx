@@ -93,7 +93,7 @@ export function ReadingSection({ section }: ReadingSectionProps) {
         
         {/* Reading content */}
         <div className="p-6 border-t">
-          <div className="leading-relaxed text-gray-800 text-xl">
+          <div className="leading-relaxed text-gray-800">
             {paragraphs[activeParagraph]}
           </div>
         </div>

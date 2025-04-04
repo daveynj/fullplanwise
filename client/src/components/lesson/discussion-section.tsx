@@ -97,14 +97,10 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
     
     // If no valid questions found in array, look for keys that look like discussion questions 
     // but aren't standard section properties
-    // This is specifically to handle the Qwen API format where questions are keys and answers/follow-ups are values
     const questionPatterns = [
       /how/i, /why/i, /what/i, /which/i, /where/i, /when/i, /who/i, 
       /can/i, /do you think/i, /should/i, /could/i, /would/i, /discuss/i
     ];
-    
-    // Log the entire section for debugging
-    console.log("Exploring section for Qwen-style questions as keys:", Object.keys(section));
     
     const discussionQuestionsKeys = Object.keys(section).filter(key => 
       // Check for question patterns
@@ -310,34 +306,34 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
                       <div className="md:w-7/12">
                         {/* Paragraph context if available */}
                         {q.paragraphContext && (
-                          <div className="mb-4 p-4 bg-gray-50 border rounded-md text-gray-700 italic text-lg">
+                          <div className="mb-4 p-3 bg-gray-50 border rounded-md text-gray-700 italic">
                             <p>{q.paragraphContext}</p>
                           </div>
                         )}
                         
                         {/* Topic introduction paragraph if available */}
                         {q.topic && (
-                          <p className="text-gray-700 mb-4 text-lg">{q.topic}</p>
+                          <p className="text-gray-700 mb-4">{q.topic}</p>
                         )}
                         
                         {/* Question introduction sentence if available */}
                         {q.introduction && (
-                          <div className="p-4 mb-3 bg-blue-50 border border-blue-100 rounded-md text-gray-700">
-                            <p className="italic text-lg">{q.introduction}</p>
+                          <div className="p-3 mb-3 bg-blue-50 border border-blue-100 rounded-md text-gray-700">
+                            <p className="italic">{q.introduction}</p>
                           </div>
                         )}
                         
-                        <h3 className="text-2xl font-medium mb-4">{q.question}</h3>
+                        <h3 className="text-xl font-medium mb-4">{q.question}</h3>
                         
                         {/* Focus vocabulary */}
                         {Array.isArray(q.focusVocabulary) && q.focusVocabulary.length > 0 && (
-                          <div className="bg-green-50 p-4 rounded-md mb-4">
-                            <h4 className="text-base font-medium flex items-center gap-2 mb-3">
-                              <Book className="h-5 w-5" /> Focus Vocabulary
+                          <div className="bg-green-50 p-3 rounded-md mb-4">
+                            <h4 className="text-sm font-medium flex items-center gap-1 mb-2">
+                              <Book className="h-4 w-4" /> Focus Vocabulary
                             </h4>
                             <div className="flex flex-wrap gap-2">
                               {q.focusVocabulary.map((word, wIdx) => (
-                                <Badge key={wIdx} variant="outline" className="bg-green-50 border-green-200 text-base px-3 py-1.5">
+                                <Badge key={wIdx} variant="outline" className="bg-green-50 border-green-200">
                                   {word}
                                 </Badge>
                               ))}
@@ -347,11 +343,11 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
                         
                         {/* Follow-up questions */}
                         {q.followUp && q.followUp.length > 0 && (
-                          <div className="mt-5">
-                            <h4 className="text-base font-medium mb-3">Follow-up Questions:</h4>
-                            <ul className="list-disc list-inside space-y-3 text-gray-700">
+                          <div className="mt-4">
+                            <h4 className="text-sm font-medium mb-2">Follow-up Questions:</h4>
+                            <ul className="list-disc list-inside space-y-1 text-gray-700">
                               {q.followUp.map((follow, fIdx) => (
-                                <li key={`followup-${fIdx}`} className="text-lg">{follow}</li>
+                                <li key={`followup-${fIdx}`}>{follow}</li>
                               ))}
                             </ul>
                           </div>

@@ -35,7 +35,7 @@ import { QuizExtractor } from "./quiz-extractor";
 import { VocabularyCard, VocabularyWord } from "./warm-up/vocabulary-card";
 import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { cn, extractDiscussionQuestions, extractQuizQuestions, extractComprehensionQuestions, extractWarmupQuestions } from "@/lib/utils";
+import { cn, extractDiscussionQuestions, extractQuizQuestions, extractComprehensionQuestions } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
@@ -220,81 +220,38 @@ export function LessonContent({ content }: LessonContentProps) {
       if (processedContent.sections && Array.isArray(processedContent.sections)) {
         const normalizedSections: any[] = [];
         
-        // Check if we have a warmup section
-      let hasWarmupSection = processedContent.sections.some((section: any) => 
-        section && typeof section === 'object' && (section.type === 'warmup' || section.type === 'warm-up')
-      );
-      
-      // Special handling for the broken Qwen API format seen in logs 
-      // Look for first section with clear markers of being a warm-up
-      if (!hasWarmupSection) {
-        const potentialWarmupSection = processedContent.sections.find((section: any) => 
-          section && typeof section === 'object' && 
-          section.content && 
-          typeof section.content === 'string' && 
-          (section.content.toLowerCase().includes('warm-up') || 
-           section.content.toLowerCase().includes('explore five key words'))
-        );
-        
-        if (potentialWarmupSection) {
-          console.log("Found potential warm-up section by content:", potentialWarmupSection);
-          potentialWarmupSection.type = 'warmup';
-          hasWarmupSection = true;
-        }
-      }
-      
-      // Check if we need to extract a warmup section from the non-standard format
-      if (!hasWarmupSection) {
-        // Look for a section with the typical Qwen API pattern where the section has targetVocabulary
-        const potentialWarmupSection = processedContent.sections.find((section: any) => 
-          section && typeof section === 'object' && 
-          (section.targetVocabulary || 
-           section.ritual || 
-           section.hierarchy || 
-           section.symbolism || 
-           section.legacy || 
-           section.civilization)
-        );
-        
-        if (potentialWarmupSection) {
-          console.log("Found warm-up section by vocabulary markers:", potentialWarmupSection);
-          potentialWarmupSection.type = 'warmup';
-          hasWarmupSection = true;
-        }
-      }
-
-      // Process each section to ensure all have proper 'type' field
-      processedContent.sections.forEach((section: any) => {
-        if (section && typeof section === 'object') {
-          // Make sure each section has a valid type
-          if (!section.type || typeof section.type !== 'string') {
-            // Try to infer type from section keys if not available
-            const possibleTypeKeys = Object.keys(section).filter(key => 
-              supportedSectionTypes.includes(key.toLowerCase()));
-            
-            if (possibleTypeKeys.length > 0) {
-              console.log("Fixing section type from keys:", possibleTypeKeys[0]);
-              section.type = possibleTypeKeys[0];
-            } else {
-              // If we can't determine a type, assign a default one based on content patterns
-              if (typeof section.paragraphs === 'object' || 
-                  (typeof section.content === 'string' && section.content.includes('paragraph'))) {
-                section.type = 'reading';
-              } else if (typeof section.words === 'object' || 
-                         (typeof section.content === 'string' && section.content.includes('vocabulary'))) {
-                section.type = 'vocabulary';
-              } else if (typeof section.questions === 'object' || 
-                        (typeof section.content === 'string' && section.content.includes('questions'))) {
-                section.type = 'comprehension';
+        // Process each section to ensure all have proper 'type' field
+        processedContent.sections.forEach((section: any) => {
+          if (section && typeof section === 'object') {
+            // Make sure each section has a valid type
+            if (!section.type || typeof section.type !== 'string') {
+              // Try to infer type from section keys if not available
+              const possibleTypeKeys = Object.keys(section).filter(key => 
+                supportedSectionTypes.includes(key.toLowerCase()));
+              
+              if (possibleTypeKeys.length > 0) {
+                console.log("Fixing section type from keys:", possibleTypeKeys[0]);
+                section.type = possibleTypeKeys[0];
               } else {
-                // Default fallback if we can't determine a specific type
-                section.type = 'warmup';
+                // If we can't determine a type, assign a default one based on content patterns
+                if (typeof section.paragraphs === 'object' || 
+                    (typeof section.content === 'string' && section.content.includes('paragraph'))) {
+                  section.type = 'reading';
+                } else if (typeof section.words === 'object' || 
+                           (typeof section.content === 'string' && section.content.includes('vocabulary'))) {
+                  section.type = 'vocabulary';
+                } else if (typeof section.questions === 'object' || 
+                          (typeof section.content === 'string' && section.content.includes('questions'))) {
+                  section.type = 'comprehension';
+                } else {
+                  // Default fallback if we can't determine a specific type
+                  section.type = 'warmup';
+                }
               }
             }
-          }
-          
-          // Add the processed section 
-          normalizedSections.push(section);
+            
+            // Add the processed section 
+            normalizedSections.push(section);
           }
         });
         
@@ -777,115 +734,45 @@ export function LessonContent({ content }: LessonContentProps) {
   // Components for each section type
   const WarmupSection = () => {
     // Try to find the warm-up section from multiple possible types/locations
-    let section = 
+    const section = 
       findSection("warmup") || 
       findSection("warm-up") || 
-      findSection("sentenceFrames"); // Some Qwen responses use sentenceFrames for warm-up
-    
-    // Try to detect the non-standard Qwen API pattern if we still don't have a warmup
-    if (!section) {
-      // Look for a section with typical warm-up vocabulary indicators like "ritual", "hierarchy", etc.
-      section = parsedContent.sections.find((s: any) => 
-        s && typeof s === 'object' && 
-        (s.targetVocabulary || 
-         s.ritual || 
-         s.hierarchy || 
-         s.symbolism || 
-         s.legacy || 
-         s.civilization)
-      );
-      
-      if (section) {
-        console.log("Found warm-up section by vocabulary markers:", section);
-        section.type = 'warmup';
-      } else {
-        // Last resort: use the first section
-        section = parsedContent.sections[0];
-      }
-    }
+      findSection("sentenceFrames") || // Some Qwen responses use sentenceFrames for warm-up
+      parsedContent.sections[0]; // Last resort, use the first section
     
     if (!section) return <p>No warm-up content available</p>;
     
     console.log("Warm-up section attempt:", section);
-    
-    // Ensure the section is marked as warmup type
-    if (section && section.type !== 'warmup' && section.type !== 'warm-up') {
-      section.type = 'warmup';
-    }
 
     // VOCABULARY EXTRACTION:
     // The Qwen API provides vocabulary in different structures
     const vocabWords: VocabularyWord[] = [];
     
-    // First check for vocabulary words in the current section (non-standard Qwen API format)
-    const targetVocabFromSection = [];
+    // We'll extract vocabulary words using direct key matching based on the sample images
+    const vocabularySection = parsedContent.sections.find((s: any) => s.type === 'vocabulary');
     
-    // Look for targetVocabulary as a separate property
-    if (section.targetVocabulary) {
-      if (typeof section.targetVocabulary === 'string') {
-        // Single vocabulary word
-        targetVocabFromSection.push(section.targetVocabulary);
-      } else if (Array.isArray(section.targetVocabulary)) {
-        // Array of vocabulary words
-        targetVocabFromSection.push(...section.targetVocabulary);
-      } else if (typeof section.targetVocabulary === 'object') {
-        // Object with vocab words as keys
-        targetVocabFromSection.push(...Object.keys(section.targetVocabulary));
-      }
-    }
-    
-    // Look for specific vocabulary words that we know appear in the Qwen API format
-    const specificVocabWords = ['ritual', 'hierarchy', 'symbolism', 'legacy', 'civilization'];
-    specificVocabWords.forEach(word => {
-      if (section[word] !== undefined) {
-        targetVocabFromSection.push(word);
-      }
-    });
-    
-    // If we found vocabulary words directly in the section, use them
-    if (targetVocabFromSection.length > 0) {
-      console.log("Found vocab words directly in warmup section:", targetVocabFromSection);
-      targetVocabFromSection.forEach(word => {
-        vocabWords.push({
-          word: word,
-          partOfSpeech: "noun", // Default
-          definition: "Key vocabulary term for this lesson", // Default
-          example: section[word] || "",
-          pronunciation: "",
-          syllables: word.match(/[aeiouy]+[^aeiouy]*/gi) || [],
-          stressIndex: 0
-        });
-      });
-    }
-    
-    // Otherwise, check the vocabulary section
-    if (vocabWords.length === 0) {
-      const vocabularySection = parsedContent.sections.find((s: any) => s.type === 'vocabulary');
+    if (vocabularySection) {
+      // Direct access to common vocabulary terms based on your sample images
+      const expectedVocabTerms = [
+        'festivity', 'commemorate', 'patriotic', 'ritual', 'heritage'
+      ];
       
-      if (vocabularySection) {
-        // Direct access to common vocabulary terms
-        const expectedVocabTerms = [
-          'festivity', 'commemorate', 'patriotic', 'ritual', 'heritage',
-          'hierarchy', 'symbolism', 'legacy', 'civilization'
-        ];
-        
-        // Check each expected term
-        expectedVocabTerms.forEach(term => {
-          if (vocabularySection[term] && 
-              typeof vocabularySection[term] === 'object') {
-            const wordData = vocabularySection[term];
-            vocabWords.push({
-              word: term,
-              partOfSpeech: wordData.partOfSpeech || "noun",
-              definition: wordData.definition || "",
-              example: wordData.example || "",
-              pronunciation: wordData.pronunciation || "",
-              syllables: wordData.syllables,
-              stressIndex: wordData.stressIndex
-            });
-          }
-        });
-      }
+      // Check each expected term
+      expectedVocabTerms.forEach(term => {
+        if (vocabularySection[term] && 
+            typeof vocabularySection[term] === 'object') {
+          const wordData = vocabularySection[term];
+          vocabWords.push({
+            word: term,
+            partOfSpeech: wordData.partOfSpeech || "noun",
+            definition: wordData.definition || "",
+            example: wordData.example || "",
+            pronunciation: wordData.pronunciation || "",
+            syllables: wordData.syllables,
+            stressIndex: wordData.stressIndex
+          });
+        }
+      });
     }
     
     // If we still don't have vocabulary words, use predefined ones
@@ -941,56 +828,16 @@ export function LessonContent({ content }: LessonContentProps) {
     }
 
     // DISCUSSION QUESTIONS EXTRACTION:
-    // Get discussion questions from the section using our specialized utility
+    // Get discussion questions from the section
     let discussionQuestions: string[] = [];
     
-    // Try to get questions from the utility first (safer approach)
-    try {
-      discussionQuestions = extractWarmupQuestions(parsedContent);
-      console.log("Extracted warmup questions from utility:", discussionQuestions);
-    } catch (error) {
-      console.error("Error using extractWarmupQuestions:", error);
-    }
-    
-    // If we don't have any questions yet, try to extract them directly from this section
-    if (!discussionQuestions || discussionQuestions.length === 0) {
-      console.log("Trying to extract warmup questions directly from section:", section);
-      
-      // Check for the Qwen API alternating pattern where questions is a string
-      // and question keys contain questions with values that might be follow-ups
-      if (typeof section.questions === 'string' && section.questions.includes('?')) {
-        console.log("Found string-type questions in warmup:", section.questions);
-        // Add the first question
-        discussionQuestions.push(section.questions);
-        
-        // Look for question keys (anything with a ? that's not a standard key)
-        const questionKeys = Object.keys(section).filter(key => 
-          key !== 'type' && 
-          key !== 'title' && 
-          key !== 'content' && 
-          key !== 'questions' &&
-          key.includes('?')
-        );
-        
-        if (questionKeys.length > 0) {
-          console.log("Found additional question keys:", questionKeys);
-          discussionQuestions.push(...questionKeys);
-        }
-      } 
-      // Standard array format
-      else if (Array.isArray(section.questions)) {
-        discussionQuestions = section.questions.map((q: any) => 
-          typeof q === 'string' ? q : (q.question || '')
-        ).filter(Boolean);
-      }
-      // Object format with questions as keys
-      else if (typeof section.questions === 'object') {
+    if (section.questions) {
+      if (Array.isArray(section.questions)) {
+        discussionQuestions = section.questions;
+      } else if (typeof section.questions === 'object') {
+        // Extract questions from object format (Qwen API format)
         discussionQuestions = Object.keys(section.questions)
-          .filter(q => 
-            typeof q === 'string' && 
-            q.trim().length > 0 &&
-            q.includes('?')
-          );
+          .filter(q => typeof q === 'string' && q.trim().length > 0);
       }
     }
     
