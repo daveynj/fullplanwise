@@ -7,10 +7,16 @@ export function TestDiscussion() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch the test data from the public directory
-    fetch('/data/test_discussion.json')
-      .then(response => response.json())
+    // Fetch the test data from our API endpoint
+    fetch('/api/test-data')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
       .then(testData => {
+        console.log("Test data loaded:", testData);
         // Get the discussion section from the test data
         const section = testData.sections.find((s: any) => s.type === "discussion");
         if (section) {
