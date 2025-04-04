@@ -442,16 +442,51 @@ export function extractDiscussionQuestions(content: any): any[] {
         
         if (questionKeys.length > 0) {
           console.log("Found question keys directly in section:", questionKeys);
+          
+          // Process each question and look for follow-up questions
           questionKeys.forEach(questionText => {
+            // Check if the value associated with this question might contain follow-up questions
+            const value = discussionSection[questionText];
+            let followUpQuestions: string[] = [];
+            
+            // Process value as potential follow-up questions if it's a string
+            if (typeof value === 'string' && value.trim()) {
+              // Split by bullet points, line breaks, or numbered lists and filter valid questions
+              const splitPatterns = [/•\s+/, /\n+/, /\r\n+/, /\d+\.\s+/];
+              
+              let potentialFollowUps = [value.trim()]; // Start with the whole value
+              
+              // Try each splitting pattern
+              for (const pattern of splitPatterns) {
+                // Check if the first item has multiple parts using this pattern
+                const parts = potentialFollowUps[0].split(pattern).filter(p => p.trim().length > 0);
+                if (parts.length > 1) {
+                  potentialFollowUps = parts;
+                  break; // We found a successful splitting pattern
+                }
+              }
+              
+              // Filter potential follow-ups to keep only question-like items
+              followUpQuestions = potentialFollowUps
+                .filter(text => 
+                  text.trim().length > 0 && 
+                  (text.includes('?') || 
+                   /^(why|how|what|where|when|who|which|can|do|would|should)/i.test(text.trim())
+                  )
+                )
+                .map(text => text.trim());
+            }
+            
             questions.push({
               question: questionText.trim(),
               introduction: introduction,
-              level: "basic"
+              level: "basic",
+              followUp: followUpQuestions
             });
           });
           
           if (questions.length > 0) {
-            console.log("Successfully extracted direct question keys:", questions);
+            console.log("Successfully extracted direct question keys with follow-ups:", questions);
             return questions;
           }
         }
@@ -461,14 +496,48 @@ export function extractDiscussionQuestions(content: any): any[] {
           if (Array.isArray(discussionSection.questions)) {
             // Handle array format
             console.log("Discussion questions as array:", discussionSection.questions);
-            return discussionSection.questions.map((q: any) => {
+            
+            // Process each question in the array
+            const processedQuestions = discussionSection.questions.map((q: any) => {
               if (typeof q === 'string') {
-                return { question: q, introduction: introduction };
+                return { question: q, introduction: introduction, followUp: [] };
               } else if (typeof q === 'object') {
-                return { ...q, introduction: q.introduction || introduction };
+                // Extract potential follow-up questions
+                let followUpQuestions: string[] = [];
+                
+                // Check for explicitly defined followUp array
+                if (Array.isArray(q.followUp)) {
+                  followUpQuestions = q.followUp;
+                } 
+                // Check for followUpQuestions array (alternative name)
+                else if (Array.isArray(q.followUpQuestions)) {
+                  followUpQuestions = q.followUpQuestions;
+                }
+                // Check if the answer/responses might contain follow-up questions
+                else if (q.answer && typeof q.answer === 'string') {
+                  const lines = q.answer.split(/[\r\n]+/).filter((line: string) => 
+                    line.trim().length > 0 && 
+                    (line.includes('?') || /^[•-]\s/.test(line))
+                  );
+                  
+                  if (lines.length > 0) {
+                    followUpQuestions = lines.map((line: string) => line.trim());
+                  }
+                }
+                
+                return { 
+                  ...q, 
+                  introduction: q.introduction || introduction,
+                  followUp: followUpQuestions
+                };
               }
               return null;
             }).filter(Boolean);
+            
+            if (processedQuestions.length > 0) {
+              console.log("Processed discussion questions from array with follow-ups:", processedQuestions);
+              return processedQuestions;
+            }
           } else if (typeof discussionSection.questions === 'object') {
             // Handle object format (Qwen sometimes returns objects instead of arrays)
             console.log("Discussion questions as object:", discussionSection.questions);
@@ -483,15 +552,35 @@ export function extractDiscussionQuestions(content: any): any[] {
               console.log("Found direct question keys in questions object:", directQuestionKeys);
               
               directQuestionKeys.forEach(questionText => {
+                // Extract potential follow-up questions from the value
+                const value = discussionSection.questions[questionText];
+                let followUpQuestions: string[] = [];
+                
+                if (typeof value === 'string' && value.trim()) {
+                  // Try to extract follow-up questions from the value
+                  // Split by bullet points, line breaks, or numbered lists
+                  const splitPattern = /[•-]\s+|\n+|\r\n+|\d+\.\s+/;
+                  const parts = value.split(splitPattern).filter(p => p.trim().length > 0);
+                  
+                  if (parts.length > 1) {
+                    // We have multiple parts, likely follow-up questions
+                    followUpQuestions = parts.map(p => p.trim());
+                  } else if (value.includes('?')) {
+                    // Single follow-up question
+                    followUpQuestions = [value.trim()];
+                  }
+                }
+                
                 questions.push({
                   question: questionText.trim(),
                   introduction: introduction,
-                  level: "basic"
+                  level: "basic",
+                  followUp: followUpQuestions
                 });
               });
               
               if (questions.length > 0) {
-                console.log("Extracted direct question keys from questions object:", questions);
+                console.log("Extracted direct question keys with follow-ups:", questions);
                 return questions;
               }
             }
@@ -506,16 +595,36 @@ export function extractDiscussionQuestions(content: any): any[] {
               questionKeys.forEach(key => {
                 const question = discussionSection.questions[key];
                 if (question && typeof question === 'string' && question.trim().length > 0) {
+                  // Try to extract follow-up questions from other related fields
+                  let followUpQuestions: string[] = [];
+                  
+                  // Look for follow-up keys that might be related to this question
+                  const followUpKey = `${key}_followup` || `${key}_follow_up`;
+                  if (discussionSection.questions[followUpKey]) {
+                    const followUpValue = discussionSection.questions[followUpKey];
+                    
+                    if (Array.isArray(followUpValue)) {
+                      followUpQuestions = followUpValue;
+                    } else if (typeof followUpValue === 'string') {
+                      // Split by bullet points or line breaks
+                      followUpQuestions = followUpValue
+                        .split(/[•-]\s+|\n+|\r\n+|\d+\.\s+/)
+                        .filter(p => p.trim().length > 0)
+                        .map(p => p.trim());
+                    }
+                  }
+                  
                   questions.push({ 
                     question: question.trim(),
                     introduction: introduction,
-                    level: "basic"
+                    level: "basic",
+                    followUp: followUpQuestions
                   });
                 }
               });
               
               if (questions.length > 0) {
-                console.log("Extracted questions from object:", questions);
+                console.log("Extracted questions from object with follow-ups:", questions);
                 return questions;
               }
             }
@@ -539,32 +648,81 @@ export function extractDiscussionQuestions(content: any): any[] {
       if (discussionData.questions) {
         if (Array.isArray(discussionData.questions)) {
           // Handle array format
-          return discussionData.questions.map((q: any) => {
+          const processedQuestions = discussionData.questions.map((q: any) => {
             if (typeof q === 'string') {
-              return { question: q, introduction: introduction };
+              return { question: q, introduction: introduction, followUp: [] };
             } else if (typeof q === 'object') {
-              return { ...q, introduction: q.introduction || introduction };
+              // Extract follow-up questions if they exist
+              let followUpQuestions: string[] = [];
+              
+              if (Array.isArray(q.followUp)) {
+                followUpQuestions = q.followUp;
+              } else if (Array.isArray(q.followUpQuestions)) {
+                followUpQuestions = q.followUpQuestions;
+              } else if (q.answer && typeof q.answer === 'string') {
+                // Try to extract follow-ups from the answer
+                const lines = q.answer.split(/[\r\n]+/).filter((line: string) => 
+                  line.trim().length > 0 && 
+                  (line.includes('?') || /^[•-]\s/.test(line))
+                );
+                
+                if (lines.length > 0) {
+                  followUpQuestions = lines.map((line: string) => line.trim());
+                }
+              }
+              
+              return { 
+                ...q, 
+                introduction: q.introduction || introduction,
+                followUp: followUpQuestions
+              };
             }
             return null;
           }).filter(Boolean);
+          
+          if (processedQuestions.length > 0) {
+            console.log("Processed questions from discussion data:", processedQuestions);
+            return processedQuestions;
+          }
         } else if (typeof discussionData.questions === 'object') {
           // Extract questions from question object (common in Qwen API responses)
           const extractedQuestions: any[] = [];
-          const questionValues = Object.values(discussionData.questions).filter(
-            (val: any) => typeof val === 'string' && val.includes('?')
-          );
           
-          questionValues.forEach((q: any) => {
-            if (typeof q === 'string') {
-              extractedQuestions.push({
-                question: q,
-                introduction: introduction,
-                level: "basic"
-              });
+          // Process each key in the questions object
+          for (const key in discussionData.questions) {
+            const value = discussionData.questions[key];
+            
+            // Skip if not a string value or doesn't look like a question
+            if (typeof value !== 'string' || !value.includes('?')) continue;
+            
+            // Look for follow-up questions in related fields
+            let followUpQuestions: string[] = [];
+            const followUpKey = `${key}_followup` || `${key}_follow_up`;
+            
+            if (discussionData.questions[followUpKey]) {
+              const followUpValue = discussionData.questions[followUpKey];
+              
+              if (Array.isArray(followUpValue)) {
+                followUpQuestions = followUpValue;
+              } else if (typeof followUpValue === 'string') {
+                // Split by bullet points or line breaks
+                followUpQuestions = followUpValue
+                  .split(/[•-]\s+|\n+|\r\n+|\d+\.\s+/)
+                  .filter(p => p.trim().length > 0)
+                  .map(p => p.trim());
+              }
             }
-          });
+            
+            extractedQuestions.push({
+              question: value.trim(),
+              introduction: introduction,
+              level: "basic",
+              followUp: followUpQuestions
+            });
+          }
           
           if (extractedQuestions.length > 0) {
+            console.log("Extracted questions with follow-ups from object:", extractedQuestions);
             return extractedQuestions;
           }
         }
@@ -587,19 +745,49 @@ export function extractDiscussionQuestions(content: any): any[] {
           const lines = String(value).split(/[\r\n]+/);
           const questionLines = lines.filter(line => line.includes('?'));
           
-          questionLines.forEach(line => {
-            if (line.length > 20) {
-              questions.push({
-                question: line.trim(),
-                level: line.toLowerCase().includes('critical') ? 'critical' : 'basic'
-              });
+          // Group questions and follow-ups
+          let currentQuestion: any = null;
+          
+          for (let i = 0; i < questionLines.length; i++) {
+            const line = questionLines[i].trim();
+            
+            // Skip empty lines
+            if (line.length < 5) continue;
+            
+            // Check if this looks like a main question or a follow-up
+            const isMainQuestion = line.length > 20 && 
+                                !line.startsWith('-') && 
+                                !line.startsWith('•') && 
+                                !line.startsWith('*') &&
+                                !/^\d+\.\s/.test(line);
+            
+            if (isMainQuestion) {
+              // Add previous question if we have one
+              if (currentQuestion) {
+                questions.push(currentQuestion);
+              }
+              
+              // Start new question
+              currentQuestion = {
+                question: line,
+                level: line.toLowerCase().includes('critical') ? 'critical' : 'basic',
+                followUp: []
+              };
+            } else if (currentQuestion) {
+              // This is likely a follow-up
+              currentQuestion.followUp.push(line);
             }
-          });
+          }
+          
+          // Add the last question if we have one
+          if (currentQuestion) {
+            questions.push(currentQuestion);
+          }
         }
       }
       
       if (questions.length > 0) {
-        console.log("Extracted questions from string properties:", questions);
+        console.log("Extracted questions with follow-ups from string properties:", questions);
         return questions;
       }
     }
