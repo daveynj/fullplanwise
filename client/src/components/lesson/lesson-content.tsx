@@ -863,14 +863,25 @@ export function LessonContent({ content }: LessonContentProps) {
       if (vocabularySection.words && Array.isArray(vocabularySection.words)) {
         vocabularySection.words.forEach((wordData: any) => {
           if (typeof wordData === 'object') {
+            // Handle complex pronunciation object structure
+            let pronunciationData;
+            if (wordData.pronunciation && typeof wordData.pronunciation === 'object') {
+              // Keep the object structure intact
+              pronunciationData = wordData.pronunciation;
+            } else {
+              // Use the string value or extract from pronunciation field
+              pronunciationData = wordData.pronunciation || "";
+            }
+            
             vocabWords.push({
               word: wordData.term || wordData.word || "",
               partOfSpeech: wordData.partOfSpeech || "noun",
               definition: wordData.definition || "",
               example: wordData.example || "",
-              pronunciation: wordData.pronunciation || "",
+              pronunciation: pronunciationData,
               syllables: wordData.syllables,
-              stressIndex: wordData.stressIndex
+              stressIndex: wordData.stressIndex,
+              phoneticGuide: wordData.phoneticGuide
             });
           }
         });
@@ -1151,14 +1162,25 @@ export function LessonContent({ content }: LessonContentProps) {
     if (section.words && Array.isArray(section.words)) {
       section.words.forEach((wordData: any) => {
         if (typeof wordData === 'object') {
+          // Handle complex pronunciation object structure
+          let pronunciationData;
+          if (wordData.pronunciation && typeof wordData.pronunciation === 'object') {
+            // Keep the object structure intact
+            pronunciationData = wordData.pronunciation;
+          } else {
+            // Use the string value or extract from pronunciation field
+            pronunciationData = wordData.pronunciation || "";
+          }
+          
           extractedVocabWords.push({
             word: wordData.term || wordData.word || "",
             partOfSpeech: wordData.partOfSpeech || "noun",
             definition: wordData.definition || "",
             example: wordData.example || "",
-            pronunciation: wordData.pronunciation || "",
+            pronunciation: pronunciationData,
             syllables: wordData.syllables,
-            stressIndex: wordData.stressIndex
+            stressIndex: wordData.stressIndex,
+            phoneticGuide: wordData.phoneticGuide
           });
         }
       });

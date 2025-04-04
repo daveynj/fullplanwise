@@ -6,7 +6,7 @@ export interface VocabularyWord {
   partOfSpeech?: string;
   definition?: string;
   example?: string;
-  pronunciation?: string;
+  pronunciation?: string | { syllables?: string[], stressIndex?: number, phoneticGuide?: string };
   syllables?: string[];
   stressIndex?: number;
   phoneticGuide?: string;
@@ -20,17 +20,27 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
   // Prepare pronunciation data from the word or use fallbacks
   const normalizedWord = word.word?.toLowerCase() || '';
   
-  // Define pronunciation data structure with API data or fallbacks
-  let wordData = {
-    // If we have phoneticGuide from the API, use it, otherwise fall back to pronunciation field or default message
-    pronunciation: word.phoneticGuide || word.pronunciation || "Pronunciation not available",
+  // Handle complex pronunciation object
+  const getPronunciationData = () => {
+    // Handle complex pronunciation object
+    if (word.pronunciation && typeof word.pronunciation === 'object') {
+      return {
+        pronunciation: word.pronunciation.phoneticGuide || "Pronunciation not available",
+        syllables: word.pronunciation.syllables || [normalizedWord],
+        emphasisIndex: word.pronunciation.stressIndex !== undefined ? word.pronunciation.stressIndex : 0
+      };
+    }
     
-    // If we have syllables from the API, use them, otherwise split the word into characters
-    syllables: word.syllables || [normalizedWord],
-    
-    // If we have stressIndex from the API, use it, otherwise default to 0
-    emphasisIndex: word.stressIndex !== undefined ? word.stressIndex : 0
+    // Handle direct fields
+    return {
+      pronunciation: word.phoneticGuide || (typeof word.pronunciation === 'string' ? word.pronunciation : "Pronunciation not available"),
+      syllables: word.syllables || [normalizedWord],
+      emphasisIndex: word.stressIndex !== undefined ? word.stressIndex : 0
+    };
   };
+  
+  // Define pronunciation data structure with API data or fallbacks
+  const wordData = getPronunciationData();
 
   return (
     <div className="bg-blue-50 rounded-md p-5 border border-blue-100">
