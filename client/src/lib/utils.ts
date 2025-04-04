@@ -525,8 +525,66 @@ export function extractDiscussionQuestions(content: any): any[] {
           }
         }
         
-        // Handle Qwen API format with questions as array or object
+        // Special case for the Qwen API alternating pattern
         if (discussionSection.questions) {
+          // Check if we have the unique alternating pattern with questions directly as value, then as keys
+          const questionsValue = discussionSection.questions;
+          console.log("CHECKING Qwen API alternating pattern:", JSON.stringify(questionsValue).substring(0, 200));
+          
+          // Step 1: Check if the first question is directly the value of the "questions" property
+          if (typeof questionsValue === 'string' && 
+              (questionsValue.includes('?') || 
+               /^(why|how|what|where|when|who|which|can|do|would|should)/i.test(questionsValue.trim()))) {
+            
+            console.log("Found Qwen API alternating pattern - first question is direct value");
+            
+            // This indicates we have the alternating pattern
+            // First, extract the first question that's directly the value
+            const firstQuestion = {
+              question: questionsValue.trim(),
+              answer: "",
+              level: "basic",
+              introduction: introduction,
+              followUp: []
+            };
+            
+            questions.push(firstQuestion);
+            
+            // Now handle the alternating key:value pairs that follow (where keys are questions and values are follow-ups)
+            // Get all the remaining keys in discussionSection that aren't standard section properties
+            const allKeys = Object.keys(discussionSection);
+            const questionKeys = allKeys.filter(key => 
+              key !== 'type' && 
+              key !== 'title' && 
+              key !== 'introduction' && 
+              key !== 'questions' &&
+              key.includes('?')
+            );
+            
+            console.log("Found alternating question keys:", questionKeys);
+            
+            // Process these keys (which are the next questions) and their values (which are follow-ups)
+            for (const key of questionKeys) {
+              const followUpValue = discussionSection[key];
+              
+              const questionObj = {
+                question: key.trim(),
+                answer: "",
+                level: "basic",
+                introduction: introduction,
+                followUp: typeof followUpValue === 'string' && followUpValue.trim() ? [followUpValue.trim()] : []
+              };
+              
+              questions.push(questionObj);
+            }
+            
+            if (questions.length > 0) {
+              console.log("Successfully extracted questions from alternating pattern:", questions);
+              return questions;
+            }
+          }
+          
+          // Handle regular array format
           if (Array.isArray(discussionSection.questions)) {
             // Handle array format
             console.log("Discussion questions as array:", discussionSection.questions);
