@@ -424,10 +424,37 @@ export function extractDiscussionQuestions(content: any): any[] {
       );
       
       if (discussionSection) {
-        console.log("Found discussion section:", discussionSection);
+        console.log("Found discussion section:", JSON.stringify(discussionSection));
         
         // Extract introduction if available
         let introduction = discussionSection.introduction || "";
+        
+        // DIRECT KEY EXTRACTION - Special case for the specific format seen in logs
+        // This is a critical case for the Qwen API format where question keys are the actual questions
+        const allKeys = Object.keys(discussionSection);
+        const questionKeys = allKeys.filter(key => 
+          typeof key === 'string' && 
+          key.includes('?') && 
+          key !== 'type' && 
+          key !== 'title' && 
+          key !== 'introduction'
+        );
+        
+        if (questionKeys.length > 0) {
+          console.log("Found question keys directly in section:", questionKeys);
+          questionKeys.forEach(questionText => {
+            questions.push({
+              question: questionText.trim(),
+              introduction: introduction,
+              level: "basic"
+            });
+          });
+          
+          if (questions.length > 0) {
+            console.log("Successfully extracted direct question keys:", questions);
+            return questions;
+          }
+        }
         
         // Handle Qwen API format with questions as array or object
         if (discussionSection.questions) {
@@ -453,7 +480,7 @@ export function extractDiscussionQuestions(content: any): any[] {
             );
             
             if (directQuestionKeys.length > 0) {
-              console.log("Found direct question keys:", directQuestionKeys);
+              console.log("Found direct question keys in questions object:", directQuestionKeys);
               
               directQuestionKeys.forEach(questionText => {
                 questions.push({
@@ -464,7 +491,7 @@ export function extractDiscussionQuestions(content: any): any[] {
               });
               
               if (questions.length > 0) {
-                console.log("Extracted direct question keys:", questions);
+                console.log("Extracted direct question keys from questions object:", questions);
                 return questions;
               }
             }
