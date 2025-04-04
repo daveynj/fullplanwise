@@ -452,7 +452,7 @@ export function extractDiscussionQuestions(content: any): any[] {
             // Process value as potential follow-up questions if it's a string
             if (typeof value === 'string' && value.trim()) {
               // Split by bullet points, line breaks, or numbered lists and filter valid questions
-              const splitPatterns = [/•\s+/, /\n+/, /\r\n+/, /\d+\.\s+/];
+              const splitPatterns = [/•\s+/, /\n+/, /\r\n+/, /\d+\.\s+/, /[\?\.\!]\s+/];
               
               let potentialFollowUps = [value.trim()]; // Start with the whole value
               
@@ -475,6 +475,14 @@ export function extractDiscussionQuestions(content: any): any[] {
                   )
                 )
                 .map(text => text.trim());
+                
+              // If we didn't get any follow-up questions, but the value contains question words,
+              // just use the whole value as a single follow-up question
+              if (followUpQuestions.length === 0 && 
+                  (/^(why|how|what|where|when|who|which|can|do|would|should)/i.test(value.trim()) || 
+                   value.includes('?'))) {
+                followUpQuestions = [value.trim()];
+              }
             }
             
             questions.push({
@@ -515,13 +523,47 @@ export function extractDiscussionQuestions(content: any): any[] {
                 }
                 // Check if the answer/responses might contain follow-up questions
                 else if (q.answer && typeof q.answer === 'string') {
-                  const lines = q.answer.split(/[\r\n]+/).filter((line: string) => 
-                    line.trim().length > 0 && 
-                    (line.includes('?') || /^[•-]\s/.test(line))
-                  );
+                  // Try different splitting patterns to extract follow-up questions
+                  const splitPatterns = [
+                    /[•-]\s+/, // Bullet points
+                    /\n+/, // Line breaks 
+                    /\r\n+/, // Windows line breaks
+                    /\d+\.\s+/, // Numbered lists
+                    /[\?\.\!]\s+/ // End of sentences
+                  ];
                   
-                  if (lines.length > 0) {
-                    followUpQuestions = lines.map((line: string) => line.trim());
+                  let potentialFollowUps = [q.answer.trim()]; // Start with the whole answer
+                  
+                  // Try each splitting pattern
+                  for (const pattern of splitPatterns) {
+                    // Check if the first item has multiple parts using this pattern
+                    const parts = potentialFollowUps[0].split(pattern).filter(p => p.trim().length > 0);
+                    if (parts.length > 1) {
+                      potentialFollowUps = parts;
+                      break; // We found a successful splitting pattern
+                    }
+                  }
+                  
+                  // Filter potential follow-ups to keep only question-like items
+                  followUpQuestions = potentialFollowUps
+                    .filter(text => 
+                      text.trim().length > 0 && 
+                      (text.includes('?') || 
+                      /^(why|how|what|where|when|who|which|can|do|would|should)/i.test(text.trim())
+                      )
+                    )
+                    .map(text => text.trim());
+                  
+                  // If we didn't extract any questions but the answer has question marks,
+                  // just use the first sentence with a question mark
+                  if (followUpQuestions.length === 0 && q.answer.includes('?')) {
+                    const questionSentences = q.answer.split(/[\.\?\!]\s+/)
+                      .filter(sent => sent.includes('?'))
+                      .map(sent => sent.trim() + '?');
+                    
+                    if (questionSentences.length > 0) {
+                      followUpQuestions = questionSentences;
+                    }
                   }
                 }
                 
@@ -559,14 +601,29 @@ export function extractDiscussionQuestions(content: any): any[] {
                 if (typeof value === 'string' && value.trim()) {
                   // Try to extract follow-up questions from the value
                   // Split by bullet points, line breaks, or numbered lists
-                  const splitPattern = /[•-]\s+|\n+|\r\n+|\d+\.\s+/;
+                  const splitPattern = /[•-]\s+|\n+|\r\n+|\d+\.\s+|[\?\.\!]\s+/;
                   const parts = value.split(splitPattern).filter(p => p.trim().length > 0);
                   
                   if (parts.length > 1) {
                     // We have multiple parts, likely follow-up questions
-                    followUpQuestions = parts.map(p => p.trim());
+                    followUpQuestions = parts
+                      .filter(text => 
+                        text.trim().length > 0 && 
+                        (text.includes('?') || 
+                         /^(why|how|what|where|when|who|which|can|do|would|should)/i.test(text.trim())
+                        )
+                      )
+                      .map(p => p.trim());
                   } else if (value.includes('?')) {
                     // Single follow-up question
+                    followUpQuestions = [value.trim()];
+                  }
+                  
+                  // If we didn't get any follow-up questions, but the value contains question words,
+                  // just use the whole value as a single follow-up question
+                  if (followUpQuestions.length === 0 && 
+                      (/^(why|how|what|where|when|who|which|can|do|would|should)/i.test(value.trim()) || 
+                       value.includes('?'))) {
                     followUpQuestions = [value.trim()];
                   }
                 }
