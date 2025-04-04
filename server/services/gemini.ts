@@ -83,40 +83,79 @@ export class GeminiService {
         console.log(`Raw message content saved to ${contentPath}`);
         
         try {
-          // First attempt to parse the JSON content directly
-          const jsonContent = JSON.parse(text);
-          return this.formatLessonContent(jsonContent);
-        } catch (error) {
-          console.error('Error parsing Gemini response as JSON:', error);
-          
-          // Try to clean up the content first
+          // First, attempt to clean up the content and remove markdown code block markers
           let cleanedContent = text;
           
-          // Remove any markdown code block markers if present
-          cleanedContent = cleanedContent.replace(/```json\s*/g, '').replace(/```\s*$/g, '').trim();
+          // Check if content starts with ```json and ends with ``` which is common in Gemini responses
+          if (text.trim().startsWith('```json') && text.trim().endsWith('```')) {
+            console.log('Detected markdown code block, cleaning content');
+            cleanedContent = text.replace(/```json\s*/g, '').replace(/```\s*$/g, '').trim();
+          }
           
+          // Now try to parse the cleaned content
           try {
-            // Try parsing the cleaned content
             const jsonContent = JSON.parse(cleanedContent);
-            console.log('Successfully parsed JSON after cleaning content');
-            return this.formatLessonContent(jsonContent);
-          } catch (error) {
-            console.error('Failed to parse JSON even after cleaning, returning error response');
+            console.log('Successfully parsed JSON content');
             
-            // If all parsing attempts fail, return the error response
+            // Check if jsonContent has required structure
+            if (jsonContent.title && jsonContent.sections && Array.isArray(jsonContent.sections)) {
+              console.log('Lesson content has valid structure, returning formatted content');
+              return this.formatLessonContent(jsonContent);
+            } else {
+              console.warn('Parsed JSON is missing required structure');
+              return {
+                title: `Lesson on ${params.topic}`,
+                content: "The generated lesson is missing required structure",
+                error: 'Invalid lesson structure',
+                sections: [
+                  {
+                    type: "error",
+                    title: "Content Error",
+                    content: "The lesson structure is incomplete. Please try regenerating the lesson."
+                  }
+                ]
+              };
+            }
+          } catch (jsonError) {
+            // If we fail to parse as JSON, try to handle it as best we can
+            console.error('Error parsing Gemini response as JSON:', jsonError);
+            
             return {
               title: `Lesson on ${params.topic}`,
-              content: text,
-              error: 'JSON parsing failed'
+              sections: [
+                {
+                  type: "error",
+                  title: "Content Error",
+                  content: "The lesson could not be properly formatted. Please try regenerating the lesson."
+                }
+              ]
             };
           }
+        } catch (error) {
+          console.error('Unexpected error processing Gemini response:', error);
+          return {
+            title: `Lesson on ${params.topic}`,
+            sections: [
+              {
+                type: "error",
+                title: "Processing Error",
+                content: "An unexpected error occurred. Please try regenerating the lesson."
+              }
+            ]
+          };
         }
       } catch (error: any) {
         console.error('Error during Gemini API request:', error.message);
         return {
           title: `Lesson on ${params.topic}`,
-          content: 'Failed to generate lesson content',
-          error: error.message
+          error: error.message,
+          sections: [
+            {
+              type: "error",
+              title: "API Error",
+              content: `The lesson could not be generated due to an API error: ${error.message}`
+            }
+          ]
         };
       }
     } catch (error: any) {
