@@ -306,7 +306,8 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
                       <div className="md:w-7/12">
                         {/* Paragraph context if available */}
                         {q.paragraphContext && (
-                          <div className="mb-4 p-3 bg-gray-50 border rounded-md text-gray-700 italic">
+                          <div className="mb-4 p-3 bg-gray-50 border border-indigo-100 rounded-md text-gray-700 italic">
+                            <h4 className="text-sm font-medium text-indigo-700 mb-2">Context:</h4>
                             <p>{q.paragraphContext}</p>
                           </div>
                         )}

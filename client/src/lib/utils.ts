@@ -416,7 +416,66 @@ export function extractDiscussionQuestions(content: any): any[] {
   try {
     console.log("Extracting discussion questions from:", JSON.stringify(content).substring(0, 500));
     
-    // Case 1: Look for discussion section in sections array
+    // NEW APPROACH: Look for structured string discussion prompt responses in reading
+    // Some Qwen responses put the structured discussion paragraph + questions in a string within reading
+    if (content.sections && Array.isArray(content.sections)) {
+      // First check reading sections for discussion prompts
+      const readingSections = content.sections.filter((s: any) => 
+        s && typeof s === 'object' && (s.type === 'reading' || s.type === 'post-reading')
+      );
+      
+      for (const readingSection of readingSections) {
+        // Check various possible fields for discussion content
+        const possibleFields = ['afterReading', 'discussion', 'discussionQuestions', 'postReading', 'followUp'];
+        
+        for (const field of possibleFields) {
+          if (readingSection[field] && typeof readingSection[field] === 'string') {
+            const text = readingSection[field];
+            console.log(`Found potential discussion content in reading section.${field}:`, text.substring(0, 100));
+            
+            // Try to extract a paragraph and questions pattern
+            const lines = text.split(/\n+/);
+            
+            // Look for paragraph (typically the first few non-empty lines without question marks)
+            let paragraphContext = "";
+            let followUpQuestions: string[] = [];
+            
+            // First, find paragraph content (lines without question marks, at the beginning)
+            for (let i = 0; i < lines.length; i++) {
+              const line = lines[i].trim();
+              if (line && !line.includes('?') && paragraphContext.length < 500 && followUpQuestions.length === 0) {
+                if (paragraphContext) paragraphContext += " ";
+                paragraphContext += line;
+              } else if (line && line.includes('?')) {
+                // Once we hit a question, record it and stop considering text as part of paragraph
+                followUpQuestions.push(line);
+              }
+            }
+            
+            if (paragraphContext && followUpQuestions.length > 0) {
+              console.log("Extracted discussion paragraph:", paragraphContext.substring(0, 100));
+              console.log("Extracted follow-up questions:", followUpQuestions);
+              
+              // Create a discussion question for each follow-up question
+              followUpQuestions.forEach((q, idx) => {
+                questions.push({
+                  question: q,
+                  paragraphContext,
+                  level: q.toLowerCase().includes("critical") ? "critical" : "basic"
+                });
+              });
+              
+              if (questions.length > 0) {
+                console.log("Successfully extracted discussion questions from reading section content");
+                return questions;
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    // Standard case: Look for discussion section in sections array
     if (content.sections && Array.isArray(content.sections)) {
       console.log("Looking for discussion section in sections array");
       const discussionSection = content.sections.find((s: any) => 
@@ -429,9 +488,23 @@ export function extractDiscussionQuestions(content: any): any[] {
         // Extract introduction if available
         let introduction = discussionSection.introduction || "";
         
+        // Check if we have a paragraph context at the section level
+        let sectionParagraphContext = discussionSection.paragraphContext || discussionSection.context || "";
+        
+        // If introduction looks like a paragraph (has periods, no questions), it might be the paragraph context
+        if (!sectionParagraphContext && introduction && introduction.includes('.') && !introduction.includes('?')) {
+          console.log("Introduction looks like a paragraph context, storing it as such");
+          sectionParagraphContext = introduction;
+        }
+        
+        if (sectionParagraphContext) {
+          console.log("Found section-level paragraph context:", sectionParagraphContext.substring(0, 100));
+        }
+        
         // DIRECT KEY EXTRACTION - Special case for the specific format seen in logs
         // This is a critical case for the Qwen API format where question keys are the actual questions
         const allKeys = Object.keys(discussionSection);
+        console.log("Looking for direct question keys in discussion section:", allKeys);
         const questionKeys = allKeys.filter(key => 
           typeof key === 'string' && 
           key.includes('?') && 
@@ -461,14 +534,49 @@ export function extractDiscussionQuestions(content: any): any[] {
           if (Array.isArray(discussionSection.questions)) {
             // Handle array format
             console.log("Discussion questions as array:", discussionSection.questions);
-            return discussionSection.questions.map((q: any) => {
+            
+            // Map the questions, but with enhanced structure debugging
+            const processedQuestions = discussionSection.questions.map((q: any) => {
+              console.log("Processing discussion question item:", q);
+              
               if (typeof q === 'string') {
-                return { question: q, introduction: introduction };
+                return { 
+                  question: q, 
+                  introduction: introduction,
+                  paragraphContext: sectionParagraphContext || null
+                };
               } else if (typeof q === 'object') {
-                return { ...q, introduction: q.introduction || introduction };
+                // Look for paragraph context, followUp, and other possible fields
+                console.log("Question object fields:", Object.keys(q));
+                
+                // Check for paragraph context in various possible field names
+                const paragraphContext = q.paragraphContext || q.context || q.paragraph || q.introduction || "";
+                if (paragraphContext) {
+                  console.log("Found paragraph context:", paragraphContext.substring(0, 100) + "...");
+                }
+                
+                // Check for follow-up questions in various possible field names
+                const followUp = q.followUp || q.followUpQuestions || [];
+                if (Array.isArray(followUp) && followUp.length > 0) {
+                  console.log("Found follow-up questions:", followUp);
+                } else if (typeof q.answer === 'string' && q.answer.trim()) {
+                  // If there's an answer field but no followUp, the answer might contain follow-up information
+                  console.log("Found possible follow-up in answer field:", q.answer);
+                }
+                
+                return { 
+                  ...q, 
+                  introduction: q.introduction || introduction,
+                  // Explicitly ensure followUp and paragraphContext are included
+                  followUp: followUp,
+                  paragraphContext: paragraphContext
+                };
               }
               return null;
             }).filter(Boolean);
+            
+            console.log("Final processed questions:", processedQuestions);
+            return processedQuestions;
           } else if (typeof discussionSection.questions === 'object') {
             // Handle object format (Qwen sometimes returns objects instead of arrays)
             console.log("Discussion questions as object:", discussionSection.questions);
@@ -486,6 +594,7 @@ export function extractDiscussionQuestions(content: any): any[] {
                 questions.push({
                   question: questionText.trim(),
                   introduction: introduction,
+                  paragraphContext: sectionParagraphContext || null,
                   level: "basic"
                 });
               });
@@ -509,6 +618,7 @@ export function extractDiscussionQuestions(content: any): any[] {
                   questions.push({ 
                     question: question.trim(),
                     introduction: introduction,
+                    paragraphContext: sectionParagraphContext || null,
                     level: "basic"
                   });
                 }

@@ -628,31 +628,68 @@ CRITICAL: Make sure your JSON is valid with no syntax errors. Use proper formatt
       if (typeof content === 'object' && content !== null) {
         const lessonContent = content;
         
-        // Check for discussion questions - sometimes they come in a format where each question is a key
-        // instead of an array element
-        if (lessonContent.sections) {
+        // Process each section if sections array exists
+        if (lessonContent.sections && Array.isArray(lessonContent.sections)) {
           for (const section of lessonContent.sections) {
-            // Handle discussion section formatting
-            if (section.type === 'discussion' && section.questions) {
-              // If questions is an object but not an array, convert to array
-              if (typeof section.questions === 'object' && !Array.isArray(section.questions)) {
-                console.log('Converting discussion questions from object to array format');
-                const questionArray = [];
-                for (const key in section.questions) {
-                  if (key.startsWith('Question') || key.match(/^\d+$/) || key.match(/^[A-Za-z]$/)) {
-                    questionArray.push(section.questions[key]);
+            // Skip if not a valid section object
+            if (!section || typeof section !== 'object') continue;
+            
+            // Handle discussion section specially
+            if (section.type === 'discussion') {
+              // Handle the introduction field possibly containing the paragraph context
+              if (section.introduction && typeof section.introduction === 'string') {
+                // If the introduction field looks like a paragraph (multiple sentences, no question marks)
+                // then we store it as paragraphContext for the UI to render properly
+                if (section.introduction.includes('.') && !section.introduction.includes('?')) {
+                  section.paragraphContext = section.introduction;
+                  console.log("Setting paragraphContext from introduction:", section.paragraphContext);
+                }
+              }
+              
+              // Process questions if they exist
+              if (section.questions) {
+                // If questions is an object but not an array, convert to array
+                if (typeof section.questions === 'object' && !Array.isArray(section.questions)) {
+                  console.log('Converting discussion questions from object to array format');
+                  const questionArray = [];
+                  for (const key in section.questions) {
+                    if (key.startsWith('Question') || key.match(/^\d+$/) || key.match(/^[A-Za-z]$/)) {
+                      questionArray.push(section.questions[key]);
+                    }
+                  }
+                  
+                  if (questionArray.length > 0) {
+                    section.questions = questionArray;
+                    console.log(`Converted ${questionArray.length} discussion questions to array format`);
                   }
                 }
                 
-                if (questionArray.length > 0) {
-                  section.questions = questionArray;
-                  console.log(`Converted ${questionArray.length} discussion questions to array format`);
+                // Ensure questions format is an array of objects with paragraphContext
+                if (Array.isArray(section.questions)) {
+                  console.log("Processing discussion questions to ensure proper structure");
+                  section.questions = section.questions.map((q: any) => {
+                    if (typeof q === 'string') {
+                      // For string questions, create a structured object
+                      return {
+                        question: q,
+                        // If we have a paragraphContext at the section level, include it with each question
+                        paragraphContext: section.paragraphContext || null
+                      };
+                    } else if (typeof q === 'object') {
+                      // For object questions, ensure paragraphContext is included
+                      return {
+                        ...q,
+                        paragraphContext: q.paragraphContext || section.paragraphContext || null
+                      };
+                    }
+                    return q;
+                  });
                 }
               }
             }
             
             // Handle comprehension section formatting  
-            if (section.type === 'comprehension' && section.questions) {
+            else if (section.type === 'comprehension' && section.questions) {
               // If questions is an object but not an array, convert to array
               if (typeof section.questions === 'object' && !Array.isArray(section.questions)) {
                 console.log('Converting comprehension questions from object to array format');
@@ -671,7 +708,7 @@ CRITICAL: Make sure your JSON is valid with no syntax errors. Use proper formatt
             }
             
             // Handle quiz section formatting
-            if (section.type === 'quiz' && section.questions) {
+            else if (section.type === 'quiz' && section.questions) {
               // If questions is an object but not an array, convert to array
               if (typeof section.questions === 'object' && !Array.isArray(section.questions)) {
                 console.log('Converting quiz questions from object to array format');

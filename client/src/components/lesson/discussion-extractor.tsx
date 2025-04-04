@@ -27,11 +27,49 @@ export const DiscussionExtractor = ({ content, sectionType = "discussion" }: Dis
       (s: any) => s && typeof s === 'object' && s.type === 'discussion'
     );
     
-    if (discussionSection && discussionSection.introduction && typeof discussionSection.introduction === 'string') {
-      sectionIntroduction = discussionSection.introduction;
+    if (discussionSection) {
+      console.log("Found discussion section in content:", discussionSection);
+      
+      // Extract introduction if available
+      if (discussionSection.introduction && typeof discussionSection.introduction === 'string') {
+        sectionIntroduction = discussionSection.introduction;
+        console.log("Found section introduction:", sectionIntroduction.substring(0, 100));
+      }
+      
+      // Try to get paragraph context if available - this is a key addition for our new format
+      const paragraphContext = discussionSection.paragraphContext || 
+                              discussionSection.context || 
+                              discussionSection.paragraph;
+                              
+      if (paragraphContext && typeof paragraphContext === 'string') {
+        console.log("Found paragraph context in discussion section:", paragraphContext.substring(0, 100));
+        // Store it as the introduction if no other intro exists
+        if (!sectionIntroduction) {
+          sectionIntroduction = paragraphContext;
+        }
+      }
     }
-  } else if (content.discussion && content.discussion.introduction && typeof content.discussion.introduction === 'string') {
-    sectionIntroduction = content.discussion.introduction;
+  } else if (content.discussion && typeof content.discussion === 'object') {
+    console.log("Found discussion object directly in content");
+    
+    // Extract introduction if available
+    if (content.discussion.introduction && typeof content.discussion.introduction === 'string') {
+      sectionIntroduction = content.discussion.introduction;
+      console.log("Found direct discussion introduction:", sectionIntroduction.substring(0, 100));
+    }
+    
+    // Try to get paragraph context if available
+    const paragraphContext = content.discussion.paragraphContext || 
+                            content.discussion.context || 
+                            content.discussion.paragraph;
+                            
+    if (paragraphContext && typeof paragraphContext === 'string') {
+      console.log("Found paragraph context in direct discussion:", paragraphContext.substring(0, 100));
+      // Store it as the introduction if no other intro exists
+      if (!sectionIntroduction) {
+        sectionIntroduction = paragraphContext;
+      }
+    }
   }
   
   // Use our utility function to extract discussion questions
