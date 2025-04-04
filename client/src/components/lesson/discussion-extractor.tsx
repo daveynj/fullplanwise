@@ -7,7 +7,6 @@ interface DiscussionQuestion {
   introduction?: string; // Introduction sentence before the question
   focusVocabulary?: string[];
   followUp?: string[];
-  paragraphContext?: string; // Context paragraph for the discussion question
   answer?: string;
 }
 

@@ -9,7 +9,6 @@ import {
 import { Badge } from "@/components/ui/badge";
 import {
   Book,
-  BookOpen,
   MessageCircle,
   GraduationCap,
 } from "lucide-react";
@@ -307,34 +306,25 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
                       <div className="md:w-7/12">
                         {/* Paragraph context if available */}
                         {q.paragraphContext && (
-                          <div className="mb-5 p-4 bg-indigo-50 border border-indigo-100 rounded-md text-gray-700">
-                            <h4 className="text-sm font-medium text-indigo-700 mb-2 flex items-center gap-2">
-                              <BookOpen className="h-4 w-4" /> Discussion Context:
-                            </h4>
-                            <p className="leading-relaxed">{q.paragraphContext}</p>
+                          <div className="mb-4 p-3 bg-gray-50 border border-indigo-100 rounded-md text-gray-700 italic">
+                            <h4 className="text-sm font-medium text-indigo-700 mb-2">Context:</h4>
+                            <p>{q.paragraphContext}</p>
                           </div>
                         )}
                         
                         {/* Topic introduction paragraph if available */}
                         {q.topic && (
-                          <div className="mb-4 p-3 bg-gray-50 border border-indigo-100 rounded-md text-gray-700">
-                            <h4 className="text-sm font-medium text-indigo-700 mb-2">Topic:</h4>
-                            <p>{q.topic}</p>
-                          </div>
+                          <p className="text-gray-700 mb-4">{q.topic}</p>
                         )}
                         
                         {/* Question introduction sentence if available */}
-                        {q.introduction && q.introduction !== q.paragraphContext && (
+                        {q.introduction && (
                           <div className="p-3 mb-3 bg-blue-50 border border-blue-100 rounded-md text-gray-700">
                             <p className="italic">{q.introduction}</p>
                           </div>
                         )}
                         
-                        <div className="mb-5 mt-4">
-                          <h3 className="text-xl font-medium text-indigo-800 pb-2 border-b border-indigo-200">
-                            {q.question}
-                          </h3>
-                        </div>
+                        <h3 className="text-xl font-medium mb-4">{q.question}</h3>
                         
                         {/* Focus vocabulary */}
                         {Array.isArray(q.focusVocabulary) && q.focusVocabulary.length > 0 && (
@@ -354,16 +344,11 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
                         
                         {/* Follow-up questions */}
                         {q.followUp && q.followUp.length > 0 && (
-                          <div className="mt-6 p-4 bg-blue-50 border border-blue-100 rounded-md">
-                            <h4 className="text-sm font-medium mb-3 text-blue-700 flex items-center gap-2">
-                              <MessageCircle className="h-4 w-4" /> Follow-up Questions:
-                            </h4>
-                            <ul className="space-y-3 text-gray-700">
+                          <div className="mt-4">
+                            <h4 className="text-sm font-medium mb-2">Follow-up Questions:</h4>
+                            <ul className="list-disc list-inside space-y-1 text-gray-700">
                               {q.followUp.map((follow, fIdx) => (
-                                <li key={`followup-${fIdx}`} className="flex items-start gap-2">
-                                  <span className="text-blue-500 mt-1">•</span>
-                                  <span>{follow}</span>
-                                </li>
+                                <li key={`followup-${fIdx}`}>{follow}</li>
                               ))}
                             </ul>
                           </div>

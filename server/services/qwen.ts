@@ -354,13 +354,10 @@ WARM-UP ACTIVITY REQUIREMENTS:
 - The system will check that each vocabulary word appears in the warm-up - if any are missing, the lesson will be rejected
 
 DISCUSSION QUESTION REQUIREMENTS:
-- IMPORTANT FORMAT: Each post-reading discussion will now consist of:
-  1. A general section-level paragraph that introduces the theme of the discussion
-  2. 5 discussion/debate questions, each with:
-     a. Its own specific paragraph context (3-5 sentences)
-     b. 2-3 follow-up questions for deeper exploration
-
-- The paragraph contexts should:
+- IMPORTANT NEW FORMAT: Each post-reading discussion will now consist of:
+  1. A CEFR-level appropriate paragraph about an interesting and relevant aspect of the topic
+  2. 5 discussion/debate topics related to the paragraph and the reading content
+- The paragraph should:
   - Be written at the appropriate CEFR level (${targetLevel})
   - Focus on something interesting and thought-provoking about the subject
   - Be 3-5 sentences long
@@ -369,13 +366,7 @@ DISCUSSION QUESTION REQUIREMENTS:
   - Avoid simply summarizing the main reading
   - CRITICAL: The language complexity MUST match exactly the ${targetLevel} level
 
-- Each discussion question should:
-  1. Have its own paragraph context that frames the specific question
-  2. Include 2-3 follow-up questions that explore the topic more deeply
-  3. Directly reference content or concepts from the reading
-  4. Be suitable for classroom discussion or debate
-
-⚠️ CRITICAL REQUIREMENT: You MUST provide EXACTLY 5 discussion questions, each with its own paragraph context and follow-up questions. Not following this format will cause your response to be rejected and considered a failure.
+⚠️ CRITICAL REQUIREMENT: You MUST provide EXACTLY 5 discussion/debate topics after the paragraph. Not providing exactly 5 topics will cause your response to be rejected and considered a failure.
 
 !!! EXTREMELY IMPORTANT - READING COMPREHENSION FORMAT !!!
 You MUST ONLY create reading comprehension questions in these two formats:
@@ -578,48 +569,12 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
       "type": "discussion",
       "title": "Discussion Questions",
       "introduction": "A CEFR-level appropriate paragraph (3-5 sentences) about an interesting aspect of the topic that provides context for the discussion",
-      "paragraphContext": "A carefully crafted paragraph that provides background context for the discussion questions",
       "questions": [
-        {
-          "question": "Discussion question 1 directly referencing specific content from the reading",
-          "paragraphContext": "Specific context paragraph related to this question (3-5 sentences)",
-          "followUp": [
-            "Follow-up question 1 related to the main question",
-            "Follow-up question 2 related to the main question"
-          ]
-        },
-        {
-          "question": "Discussion question 2 directly referencing specific content from the reading",
-          "paragraphContext": "Specific context paragraph related to this question (3-5 sentences)",
-          "followUp": [
-            "Follow-up question 1 related to the main question",
-            "Follow-up question 2 related to the main question"
-          ]
-        },
-        {
-          "question": "Discussion question 3 directly referencing specific content from the reading",
-          "paragraphContext": "Specific context paragraph related to this question (3-5 sentences)",
-          "followUp": [
-            "Follow-up question 1 related to the main question",
-            "Follow-up question 2 related to the main question"
-          ]
-        },
-        {
-          "question": "Discussion question 4 directly referencing specific content from the reading",
-          "paragraphContext": "Specific context paragraph related to this question (3-5 sentences)",
-          "followUp": [
-            "Follow-up question 1 related to the main question",
-            "Follow-up question 2 related to the main question"
-          ]
-        },
-        {
-          "question": "Discussion question 5 directly referencing specific content from the reading",
-          "paragraphContext": "Specific context paragraph related to this question (3-5 sentences)",
-          "followUp": [
-            "Follow-up question 1 related to the main question",
-            "Follow-up question 2 related to the main question"
-          ]
-        }
+        "Discussion question 1 directly referencing specific content from the reading",
+        "Discussion question 2 directly referencing specific content from the reading",
+        "Discussion question 3 directly referencing specific content from the reading",
+        "Discussion question 4 directly referencing specific content from the reading",
+        "Discussion question 5 directly referencing specific content from the reading"
       ]
     },
     {
@@ -712,34 +667,23 @@ CRITICAL: Make sure your JSON is valid with no syntax errors. Use proper formatt
                 // Ensure questions format is an array of objects with paragraphContext
                 if (Array.isArray(section.questions)) {
                   console.log("Processing discussion questions to ensure proper structure");
-                  
-                  // Store paragraph context at section level for reference by all questions
-                  const sectionContext = section.paragraphContext || section.introduction || "";
-                  
                   section.questions = section.questions.map((q: any) => {
                     if (typeof q === 'string') {
                       // For string questions, create a structured object
                       return {
                         question: q,
                         // If we have a paragraphContext at the section level, include it with each question
-                        paragraphContext: sectionContext || null,
-                        // Add empty followUp array to ensure consistent structure
-                        followUp: []
+                        paragraphContext: section.paragraphContext || null
                       };
                     } else if (typeof q === 'object') {
-                      // For object questions, ensure paragraphContext and followUp are included
+                      // For object questions, ensure paragraphContext is included
                       return {
                         ...q,
-                        paragraphContext: q.paragraphContext || sectionContext || null,
-                        followUp: q.followUp || []
+                        paragraphContext: q.paragraphContext || section.paragraphContext || null
                       };
                     }
                     return q;
                   });
-                  
-                  // Log the processed questions for debugging
-                  console.log(`Processed ${section.questions.length} discussion questions with structure:`, 
-                    JSON.stringify(section.questions[0], null, 2).substring(0, 200));
                 }
               }
             }
