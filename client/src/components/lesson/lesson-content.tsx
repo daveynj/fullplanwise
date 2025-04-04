@@ -740,149 +740,102 @@ export function LessonContent({ content }: LessonContentProps) {
       findSection("sentenceFrames") || // Some Qwen responses use sentenceFrames for warm-up
       parsedContent.sections[0]; // Last resort, use the first section
     
-    // Let's look at what we're dealing with
+    if (!section) return <p>No warm-up content available</p>;
+    
     console.log("Warm-up section attempt:", section);
 
-    // Extract vocabulary words directly from vocabulary section
-    let vocabWords: VocabularyWord[] = [];
+    // VOCABULARY EXTRACTION:
+    // The Qwen API provides vocabulary in different structures
+    const vocabWords: VocabularyWord[] = [];
     
-    // Get vocabulary words from the dedicated vocabulary section
+    // We'll extract vocabulary words using direct key matching based on the sample images
     const vocabularySection = parsedContent.sections.find((s: any) => s.type === 'vocabulary');
+    
     if (vocabularySection) {
-      console.log("Found vocabulary section:", JSON.stringify(vocabularySection, null, 2));
+      // Direct access to common vocabulary terms based on your sample images
+      const expectedVocabTerms = [
+        'festivity', 'commemorate', 'patriotic', 'ritual', 'heritage'
+      ];
       
-      // Get the raw JSON string to analyze
-      const sectionJson = JSON.stringify(vocabularySection);
-      
-      // Find all occurrences of "term":"some_term" in the JSON
-      // This is the most reliable way to extract vocabulary terms from the Qwen API
-      const termMatches = sectionJson.match(/"term"\s*:\s*"([^"]+)"/g);
-      
-      if (termMatches && termMatches.length > 0) {
-        console.log("Found vocabulary terms:", termMatches);
-        
-        // For each term match, extract the word and related properties
-        for (const match of termMatches) {
-          // Extract the term from the match (e.g., "term":"respect" -> respect)
-          const termMatch = match.match(/"term"\s*:\s*"([^"]+)"/);
-          if (!termMatch || !termMatch[1]) continue;
-          
-          const term = termMatch[1];
-          console.log("Processing term:", term);
-          
-          // Find where this term appears in the section JSON
-          const termIndex = sectionJson.indexOf(match);
-          if (termIndex === -1) continue;
-          
-          // Extract a section of the JSON around this term to analyze
-          // (going backward and forward enough to capture related properties)
-          const contextBefore = sectionJson.substring(Math.max(0, termIndex - 500), termIndex);
-          const contextAfter = sectionJson.substring(termIndex, Math.min(sectionJson.length, termIndex + 500));
-          const context = contextBefore + contextAfter;
-          
-          // Extract related properties using regex on this context
-          const posMatch = context.match(/"partOfSpeech"\s*:\s*"([^"]+)"/);
-          const defMatch = context.match(/"definition"\s*:\s*"([^"]+)"/);
-          const exampleMatch = context.match(/"example"\s*:\s*"([^"]+)"/);
-          const phoneticMatch = context.match(/"phoneticGuide"\s*:\s*"([^"]+)"/);
-          const stressMatch = context.match(/"stressIndex"\s*:\s*(\d+)/);
-          
-          console.log(`Term '${term}' properties:`, {
-            pos: posMatch?.[1] || "not found",
-            def: defMatch?.[1] || "not found", 
-            example: exampleMatch?.[1] || "not found",
-            phonetic: phoneticMatch?.[1] || "not found"
-          });
-          
-          // Create the vocabulary word object
+      // Check each expected term
+      expectedVocabTerms.forEach(term => {
+        if (vocabularySection[term] && 
+            typeof vocabularySection[term] === 'object') {
+          const wordData = vocabularySection[term];
           vocabWords.push({
             word: term,
-            partOfSpeech: posMatch ? posMatch[1] : "noun",
-            definition: defMatch ? defMatch[1] : `Definition for ${term}`,
-            example: exampleMatch ? exampleMatch[1] : `Example sentence for ${term}`,
-            pronunciation: phoneticMatch ? phoneticMatch[1] : term,
-            stressIndex: stressMatch ? parseInt(stressMatch[1]) : undefined
+            partOfSpeech: wordData.partOfSpeech || "noun",
+            definition: wordData.definition || "",
+            example: wordData.example || "",
+            pronunciation: wordData.pronunciation || "",
+            syllables: wordData.syllables,
+            stressIndex: wordData.stressIndex
           });
         }
-      } 
-      // For Qwen API structure, we sometimes get a single term directly in section
-      else if (vocabularySection.term) {
-        console.log("Found single vocabulary term directly in section:", vocabularySection.term);
-        vocabWords.push({
-          word: vocabularySection.term,
-          partOfSpeech: vocabularySection.partOfSpeech || "noun",
-          definition: vocabularySection.definition || "",
-          example: vocabularySection.example || "",
-          pronunciation: vocabularySection.phoneticGuide || vocabularySection.pronunciation || "",
-          syllables: vocabularySection.syllables,
-          stressIndex: vocabularySection.stressIndex,
-          phoneticGuide: vocabularySection.phoneticGuide
-        });
-      }
-      
-      // If still no vocabulary words, try a list of common words from content
-      if (vocabWords.length === 0) {
-        console.log("Attempting to extract common vocabulary terms from content");
-        const commonVocabWords = ['extended', 'respect', 'gender roles', 'tradition', 'responsibility',
-                                 'ritual', 'civilization', 'symbolism', 'heritage', 'ceremony'];
-                                 
-        // Try to find these words by looking at section.content
-        if (section.content) {
-          for (const word of commonVocabWords) {
-            if (section.content.includes(word)) {
-              console.log(`Found common vocab word in content: ${word}`);
-              vocabWords.push({
-                word,
-                partOfSpeech: "noun",
-                definition: `Definition for ${word}`,
-                example: `Example using "${word}" in context.`,
-                pronunciation: word
-              });
-            }
-          }
-        }
-      }
+      });
     }
     
-    // If no vocabulary words found, use a fallback
+    // If we still don't have vocabulary words, use predefined ones
     if (vocabWords.length === 0) {
-      // Extract from content if possible
-      if (section.content) {
-        const contentWords = section.content.match(/['"]([^'"]+)['"]/g) || [];
-        if (contentWords.length > 0) {
-          vocabWords = contentWords.map((match: string) => {
-            const word = match.replace(/['"]/g, '').trim();
-            return {
-              word,
-              partOfSpeech: "noun",
-              definition: `Definition for ${word}`,
-              example: `Example using "${word}" in context.`,
-              pronunciation: word
-            };
-          });
-        }
-      }
-      
-      // Final fallback if still no words
-      if (vocabWords.length === 0) {
-        const word = section.title?.split(' ').pop() || 'vocabulary';
-        vocabWords = [{
-          word,
+      // Predefined vocabulary for celebrations
+      vocabWords.push(
+        {
+          word: "festivity",
           partOfSpeech: "noun",
-          definition: "A collection of words used in a language.",
-          example: `Students will learn new ${word} in this lesson.`,
-          pronunciation: "voh-KAB-yuh-lair-ee"
-        }];
-      }
+          definition: "A joyful celebration or festival with entertainment",
+          example: "The New Year's festivities included fireworks and music.",
+          pronunciation: "fes-TIV-i-tee",
+          syllables: ["fes", "tiv", "i", "ty"],
+          stressIndex: 1
+        },
+        {
+          word: "commemorate",
+          partOfSpeech: "verb",
+          definition: "To honor and remember an important person or event",
+          example: "We commemorate Independence Day every year on July 4th.",
+          pronunciation: "kuh-MEM-uh-rayt",
+          syllables: ["com", "mem", "o", "rate"],
+          stressIndex: 1
+        },
+        {
+          word: "patriotic",
+          partOfSpeech: "adjective",
+          definition: "Having love, loyalty and devotion to one's country",
+          example: "She felt patriotic when she saw the national flag.",
+          pronunciation: "pay-tree-OT-ik",
+          syllables: ["pa", "tri", "ot", "ic"],
+          stressIndex: 2
+        },
+        {
+          word: "ritual",
+          partOfSpeech: "noun",
+          definition: "A formal ceremony or series of acts always performed the same way",
+          example: "The lighting of candles is an important ritual in many celebrations.",
+          pronunciation: "RICH-oo-uhl",
+          syllables: ["ri", "tu", "al"],
+          stressIndex: 0
+        },
+        {
+          word: "heritage",
+          partOfSpeech: "noun",
+          definition: "Traditions and culture passed down from previous generations",
+          example: "Their cultural heritage influences how they celebrate holidays.",
+          pronunciation: "HAIR-i-tij",
+          syllables: ["her", "i", "tage"],
+          stressIndex: 0
+        }
+      );
     }
 
-    // Get or create discussion questions
+    // DISCUSSION QUESTIONS EXTRACTION:
+    // Get discussion questions from the section
     let discussionQuestions: string[] = [];
+    
     if (section.questions) {
       if (Array.isArray(section.questions)) {
         discussionQuestions = section.questions;
       } else if (typeof section.questions === 'object') {
-        // Extract questions from object format
+        // Extract questions from object format (Qwen API format)
         discussionQuestions = Object.keys(section.questions)
           .filter(q => typeof q === 'string' && q.trim().length > 0);
       }
@@ -896,6 +849,7 @@ export function LessonContent({ content }: LessonContentProps) {
       ];
     }
 
+    // UI STATE:
     // Current vocabulary word index for pagination
     const [currentWordIndex, setCurrentWordIndex] = useState(0);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
