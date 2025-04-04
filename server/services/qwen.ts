@@ -397,8 +397,8 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
 
 Ensure the entire output is a single, valid JSON object starting with { and ending with }.`;
       
-      // Use qwen-plus model, which might be more stable with JSON output
-      const modelName = "qwen-plus";
+      // Use qwen-max model for better JSON handling ability
+      const modelName = "qwen-max";
       
       // Request payload following OpenAI-compatible format for the international endpoint
       const requestBody = {
@@ -415,12 +415,23 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
         ],
         temperature: 0.3, 
         top_p: 0.9,
-        max_tokens: 16384,
-        response_format: { type: "json_object" }
+        max_tokens: 16384
       };
       
       console.log(`Using model: ${modelName}`);
       console.log('Request endpoint:', QWEN_API_URL);
+      
+      // Log request details without sensitive information
+      console.log('Request structure:', JSON.stringify({
+        model: requestBody.model,
+        messages: [
+          { role: requestBody.messages[0].role, content: "**system prompt content** [redacted]" },
+          { role: requestBody.messages[1].role, content: "**user prompt content** [redacted]" }
+        ],
+        temperature: requestBody.temperature,
+        top_p: requestBody.top_p,
+        max_tokens: requestBody.max_tokens
+      }, null, 2));
       
       // Make the API request
       try {
@@ -510,7 +521,8 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
                 return {
                   title: `Lesson on ${params.topic}`,
                   content: content,
-                  error: 'JSON parsing failed'
+                  error: 'JSON parsing failed',
+                  provider: 'qwen'
                 };
               }
             }
@@ -520,11 +532,68 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
         return {
           title: params.topic ? `Lesson on ${params.topic}` : 'ESL Lesson',
           content: 'Unable to generate lesson content',
-          error: 'No content in response'
+          error: 'No content in response',
+          provider: 'qwen'
         };
       } catch (error: any) {
         console.error('Error during API request:', error.message);
-        throw error;
+        
+        // Provide more detailed error information for debugging
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          console.error('Qwen API Response Error:');
+          console.error('Status:', error.response.status);
+          console.error('Status Text:', error.response.statusText);
+          console.error('Headers:', JSON.stringify(error.response.headers, null, 2));
+          console.error('Response Data:', JSON.stringify(error.response.data, null, 2));
+          
+          // Return a formatted error to the client
+          return {
+            title: `Lesson Generation Error`,
+            provider: 'qwen',
+            error: `Qwen API Error: ${error.response.status} - ${error.response.statusText}`,
+            sections: [{
+              type: "error",
+              title: "API Error",
+              content: `The Qwen AI service returned an error: ${error.response.status} ${error.response.statusText}. ${
+                error.response.data && error.response.data.message 
+                  ? `\n\nMessage: ${error.response.data.message}` 
+                  : ''
+              }`
+            }]
+          };
+        } else if (error.request) {
+          // The request was made but no response was received
+          console.error('Qwen API No Response Error:');
+          console.error('Request:', error.request);
+          
+          // Return a formatted error to the client
+          return {
+            title: `Lesson Generation Error`,
+            provider: 'qwen',
+            error: 'No response received from Qwen API',
+            sections: [{
+              type: "error",
+              title: "Connection Error",
+              content: "No response was received from the Qwen AI service. This could be due to a timeout or network issue."
+            }]
+          };
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.error('Qwen API Setup Error:', error.message);
+          
+          // Return a formatted error to the client
+          return {
+            title: `Lesson Generation Error`,
+            provider: 'qwen',
+            error: `Error setting up request: ${error.message}`,
+            sections: [{
+              type: "error",
+              title: "Request Error",
+              content: `An error occurred while preparing the request: ${error.message}`
+            }]
+          };
+        }
       }
     } catch (error: any) {
       console.error('Error in QwenService.generateLesson:', error.message);
@@ -603,10 +672,15 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
           }
         }
         
+        // Add provider field to ensure consistent response structure
+        lessonContent.provider = 'qwen';
         return lessonContent;
       }
       
-      // Otherwise return the content as is
+      // Add provider field to ensure all services return the same structure
+      if (typeof content === 'object' && content !== null) {
+        content.provider = 'qwen';
+      }
       return content;
     } catch (error: any) {
       console.error('Error formatting lesson content:', error);
