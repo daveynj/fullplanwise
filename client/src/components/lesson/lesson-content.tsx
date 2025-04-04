@@ -856,27 +856,41 @@ export function LessonContent({ content }: LessonContentProps) {
     const vocabularySection = parsedContent.sections.find((s: any) => s.type === 'vocabulary');
     
     if (vocabularySection) {
-      // Direct access to common vocabulary terms based on your sample images
-      const expectedVocabTerms = [
-        'festivity', 'commemorate', 'patriotic', 'ritual', 'heritage'
-      ];
+      // Get vocabulary words from the content
+      // Do not use hardcoded fallback values - extract from the actual content
       
-      // Check each expected term
-      expectedVocabTerms.forEach(term => {
-        if (vocabularySection[term] && 
-            typeof vocabularySection[term] === 'object') {
-          const wordData = vocabularySection[term];
-          vocabWords.push({
-            word: term,
-            partOfSpeech: wordData.partOfSpeech || "noun",
-            definition: wordData.definition || "",
-            example: wordData.example || "",
-            pronunciation: wordData.pronunciation || "",
-            syllables: wordData.syllables,
-            stressIndex: wordData.stressIndex
-          });
-        }
-      });
+      // Look for the 'words' array in the vocabulary section (Gemini format)
+      if (vocabularySection.words && Array.isArray(vocabularySection.words)) {
+        vocabularySection.words.forEach((wordData: any) => {
+          if (typeof wordData === 'object') {
+            vocabWords.push({
+              word: wordData.term || wordData.word || "",
+              partOfSpeech: wordData.partOfSpeech || "noun",
+              definition: wordData.definition || "",
+              example: wordData.example || "",
+              pronunciation: wordData.pronunciation || "",
+              syllables: wordData.syllables,
+              stressIndex: wordData.stressIndex
+            });
+          }
+        });
+        console.log("Extracted vocabulary words from Gemini format:", vocabWords);
+      }
+      
+      // Check for targetVocabulary in warmup section (also common in Gemini format)
+      if (section.targetVocabulary && Array.isArray(section.targetVocabulary) && vocabWords.length === 0) {
+        section.targetVocabulary.forEach((term: string) => {
+          if (typeof term === 'string') {
+            vocabWords.push({
+              word: term,
+              partOfSpeech: "noun",
+              definition: "Definition will be provided by teacher",
+              example: ""
+            });
+          }
+        });
+        console.log("Extracted vocabulary from targetVocabulary:", vocabWords);
+      }
     }
     
     // If we still don't have vocabulary words, use predefined ones
@@ -1130,58 +1144,29 @@ export function LessonContent({ content }: LessonContentProps) {
     // For debugging - log the actual section structure
     console.log("Vocabulary section structure:", section);
     
-    // Define our vocabulary words for the Celebrations lesson 
-    // (Using the predefined vocabulary from the Warm-up section)
-    const preDefinedVocabWords: VocabularyWord[] = [
-      {
-        word: "festivity",
-        partOfSpeech: "noun",
-        definition: "A joyful celebration or festival with entertainment",
-        example: "The New Year's festivities included fireworks and music.",
-        pronunciation: "fes-TIV-i-tee",
-        syllables: ["fes", "tiv", "i", "ty"],
-        stressIndex: 1
-      },
-      {
-        word: "commemorate",
-        partOfSpeech: "verb",
-        definition: "To honor and remember an important person or event",
-        example: "We commemorate Independence Day every year on July 4th.",
-        pronunciation: "kuh-MEM-uh-rayt",
-        syllables: ["com", "mem", "o", "rate"],
-        stressIndex: 1
-      },
-      {
-        word: "patriotic",
-        partOfSpeech: "adjective",
-        definition: "Having love, loyalty and devotion to one's country",
-        example: "She felt patriotic when she saw the national flag.",
-        pronunciation: "pay-tree-OT-ik",
-        syllables: ["pa", "tri", "ot", "ic"],
-        stressIndex: 2
-      },
-      {
-        word: "ritual",
-        partOfSpeech: "noun",
-        definition: "A formal ceremony or series of acts always performed the same way",
-        example: "The lighting of candles is an important ritual in many celebrations.",
-        pronunciation: "RICH-oo-uhl",
-        syllables: ["ri", "tu", "al"],
-        stressIndex: 0
-      },
-      {
-        word: "heritage",
-        partOfSpeech: "noun",
-        definition: "Traditions and culture passed down from previous generations",
-        example: "Their cultural heritage influences how they celebrate holidays.",
-        pronunciation: "HAIR-i-tij",
-        syllables: ["her", "i", "tage"],
-        stressIndex: 0
-      }
-    ];
+    // Extract vocabulary words from the section
+    const extractedVocabWords: VocabularyWord[] = [];
     
-    // Use our predefined vocabulary words for consistent display
-    const words: VocabularyWord[] = preDefinedVocabWords;
+    // Look for the 'words' array in the vocabulary section (Gemini format)
+    if (section.words && Array.isArray(section.words)) {
+      section.words.forEach((wordData: any) => {
+        if (typeof wordData === 'object') {
+          extractedVocabWords.push({
+            word: wordData.term || wordData.word || "",
+            partOfSpeech: wordData.partOfSpeech || "noun",
+            definition: wordData.definition || "",
+            example: wordData.example || "",
+            pronunciation: wordData.pronunciation || "",
+            syllables: wordData.syllables,
+            stressIndex: wordData.stressIndex
+          });
+        }
+      });
+      console.log("Extracted vocabulary words from Gemini format:", extractedVocabWords);
+    }
+    
+    // Use the extracted vocabulary words
+    const words: VocabularyWord[] = extractedVocabWords;
     
     // Animation variants for the flip card
     const cardVariants = {
