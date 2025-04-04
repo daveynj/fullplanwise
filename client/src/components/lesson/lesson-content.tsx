@@ -74,6 +74,12 @@ export function LessonContent({ content }: LessonContentProps) {
       console.log("Content received in LessonContent component:", content);
       console.log("FULL LESSON DATA:", JSON.stringify(content, null, 2).substring(0, 3000) + "...");
       
+      // Check if this is a Gemini-formatted response (usually has different structure)
+      const isGeminiResponse = content.provider === 'gemini';
+      if (isGeminiResponse) {
+        console.log("Detected Gemini-formatted response - applying special processing");
+      }
+      
       // Don't try to log sections from parsedContent until it's set
       if (parsedContent) {
         console.log("Original sections:", parsedContent.sections);
@@ -215,6 +221,172 @@ export function LessonContent({ content }: LessonContentProps) {
       
       // Clone the content to avoid modifying the original
       const processedContent = {...content};
+      
+      // Special handling for Gemini responses
+      if (processedContent.provider === 'gemini') {
+        console.log("Applying Gemini-specific processing");
+        
+        // For Gemini, if sections aren't already in the correct format, try to extract them
+        // Check if we need to extract sections from the top-level object
+        if (!processedContent.sections || !Array.isArray(processedContent.sections) || processedContent.sections.length === 0) {
+          console.log("No proper sections array found in Gemini response, attempting to create one");
+          
+          // Create sections array if it doesn't exist
+          if (!processedContent.sections) {
+            processedContent.sections = [];
+          }
+          
+          // Look for reading sections
+          if (processedContent.reading || processedContent.readingText || processedContent.readingPassage) {
+            const readingContent = processedContent.reading || processedContent.readingText || processedContent.readingPassage;
+            processedContent.sections.push({
+              type: 'reading',
+              title: 'Reading',
+              content: readingContent,
+              paragraphs: Array.isArray(readingContent) ? readingContent : 
+                readingContent.split(/\n\n+/).filter((p: string) => p.trim().length > 0)
+            });
+            
+            console.log("Added reading section from top-level keys");
+          }
+          
+          // Look for vocabulary sections
+          if (processedContent.vocabulary || processedContent.targetVocabulary) {
+            const vocabContent = processedContent.vocabulary || processedContent.targetVocabulary;
+            let vocabularyWords = [];
+            
+            // Handle various formats for vocabulary
+            if (Array.isArray(vocabContent)) {
+              vocabularyWords = vocabContent.map((word: any) => {
+                if (typeof word === 'string') {
+                  return { word, definition: 'No definition provided' };
+                } else if (typeof word === 'object') {
+                  return word;
+                }
+                return null;
+              }).filter(Boolean);
+            } else if (typeof vocabContent === 'object') {
+              // Handle object format (term: definition)
+              for (const [term, definition] of Object.entries(vocabContent)) {
+                vocabularyWords.push({ 
+                  word: term, 
+                  definition: typeof definition === 'string' ? definition : 'No definition provided'
+                });
+              }
+            }
+            
+            if (vocabularyWords.length > 0) {
+              processedContent.sections.push({
+                type: 'vocabulary',
+                title: 'Vocabulary',
+                words: vocabularyWords
+              });
+              
+              console.log("Added vocabulary section from top-level keys");
+            }
+          }
+          
+          // Look for comprehension sections
+          if (processedContent.comprehension || processedContent.comprehensionQuestions) {
+            const compContent = processedContent.comprehension || processedContent.comprehensionQuestions;
+            let questions = [];
+            
+            // Handle various formats for comprehension questions
+            if (Array.isArray(compContent)) {
+              questions = compContent;
+            } else if (typeof compContent === 'object') {
+              // Handle object format (question: answer)
+              for (const [question, answer] of Object.entries(compContent)) {
+                if (question.includes('?')) {
+                  questions.push({ 
+                    question, 
+                    answer: typeof answer === 'string' ? answer : 'No answer provided'
+                  });
+                }
+              }
+            }
+            
+            if (questions.length > 0) {
+              processedContent.sections.push({
+                type: 'comprehension',
+                title: 'Reading Comprehension',
+                questions: questions
+              });
+              
+              console.log("Added comprehension section from top-level keys");
+            }
+          }
+          
+          // Look for discussion sections
+          if (processedContent.discussion || processedContent.discussionQuestions) {
+            const discContent = processedContent.discussion || processedContent.discussionQuestions;
+            let questions = [];
+            
+            // Handle various formats for discussion questions
+            if (Array.isArray(discContent)) {
+              questions = discContent.map((q: any) => {
+                if (typeof q === 'string') {
+                  return { question: q };
+                } else if (typeof q === 'object' && q.question) {
+                  return q;
+                }
+                return null;
+              }).filter(Boolean);
+            } else if (typeof discContent === 'object') {
+              // Handle object format 
+              for (const [question, followUp] of Object.entries(discContent)) {
+                if (question.includes('?') || question.length > 10) {
+                  questions.push({ 
+                    question, 
+                    followUp: typeof followUp === 'string' ? [followUp] : []
+                  });
+                }
+              }
+            }
+            
+            if (questions.length > 0) {
+              processedContent.sections.push({
+                type: 'discussion',
+                title: 'Discussion Questions',
+                questions: questions
+              });
+              
+              console.log("Added discussion section from top-level keys");
+            }
+          }
+          
+          // Look for quiz sections
+          if (processedContent.quiz || processedContent.quizQuestions || processedContent.assessment) {
+            const quizContent = processedContent.quiz || processedContent.quizQuestions || processedContent.assessment;
+            let questions = [];
+            
+            // Handle various formats for quiz questions
+            if (Array.isArray(quizContent)) {
+              questions = quizContent;
+            } else if (typeof quizContent === 'object') {
+              // Handle object format (question: answer)
+              for (const [question, answer] of Object.entries(quizContent)) {
+                if (question.includes('?') || question.length > 10) {
+                  questions.push({ 
+                    question, 
+                    answer: typeof answer === 'string' ? answer : 'No answer provided'
+                  });
+                }
+              }
+            }
+            
+            if (questions.length > 0) {
+              processedContent.sections.push({
+                type: 'quiz',
+                title: 'Quiz',
+                questions: questions
+              });
+              
+              console.log("Added quiz section from top-level keys");
+            }
+          }
+        }
+      }
       
       // Make sure sections are properly structured
       if (processedContent.sections && Array.isArray(processedContent.sections)) {

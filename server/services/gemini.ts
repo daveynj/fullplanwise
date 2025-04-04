@@ -107,6 +107,7 @@ export class GeminiService {
                 title: `Lesson on ${params.topic}`,
                 content: "The generated lesson is missing required structure",
                 error: 'Invalid lesson structure',
+                provider: 'gemini',
                 sections: [
                   {
                     type: "error",
@@ -122,6 +123,7 @@ export class GeminiService {
             
             return {
               title: `Lesson on ${params.topic}`,
+              provider: 'gemini',
               sections: [
                 {
                   type: "error",
@@ -135,6 +137,7 @@ export class GeminiService {
           console.error('Unexpected error processing Gemini response:', error);
           return {
             title: `Lesson on ${params.topic}`,
+            provider: 'gemini',
             sections: [
               {
                 type: "error",
@@ -149,6 +152,7 @@ export class GeminiService {
         return {
           title: `Lesson on ${params.topic}`,
           error: error.message,
+          provider: 'gemini',
           sections: [
             {
               type: "error",
@@ -297,9 +301,11 @@ CRITICAL: Ensure all arrays have complete content (not just placeholders) and th
    * Format and process the lesson content
    */
   private formatLessonContent(content: any): any {
-    // Just return the content as is for now
-    // We can add more formatting logic later if needed
-    return content;
+    // Add provider identifier to the content
+    return {
+      ...content,
+      provider: 'gemini'
+    };
   }
 }
 

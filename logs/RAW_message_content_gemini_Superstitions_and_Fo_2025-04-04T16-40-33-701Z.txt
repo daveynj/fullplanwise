@@ -1,0 +1,161 @@
+```json
+{
+  "title": "Unlocking Legends: Exploring Superstitions and Folklore",
+  "level": "B1",
+  "focus": "general",
+  "estimatedTime": 60,
+  "sections": [
+    {
+      "type": "warmup",
+      "title": "Warm-up Activity: Superstition Share",
+      "content": "Students will brainstorm and share common superstitions they know from their own cultures.  This can be done individually, then in pairs, and finally as a whole class.",
+      "questions": [
+        "What are some common superstitions in your culture?",
+        "Do you believe in any superstitions? Why or why not?"
+      ],
+      "targetVocabulary": [
+        "superstition",
+        "folklore",
+        "myth",
+        "legend",
+        "belief"
+      ],
+      "procedure": "1. Individual brainstorming (2 minutes). 2. Pair sharing (5 minutes). 3. Whole-class discussion (10 minutes). Teacher writes key vocabulary on the board."
+    },
+    {
+      "type": "reading",
+      "title": "Reading Text: The Legend of the Leprechaun",
+      "introduction": "We will read a short text about a famous Irish legend, the Leprechaun. Pay attention to the details of the story and the vocabulary used.",
+      "paragraphs": [
+        "Leprechauns are small, mischievous creatures from Irish folklore. They are said to be shoemakers who guard pots of gold at the end of rainbows.  These elusive beings are rarely seen, adding to the mystery surrounding them.",
+        "According to legend, if you catch a leprechaun, he will be forced to reveal the location of his hidden treasure. However, it's said that leprechauns are incredibly tricky and will often lead you on a wild goose chase, making it nearly impossible to find the gold.",
+        "The legend of the leprechaun reflects a deeper cultural belief in hidden fortunes and the importance of luck. It also highlights the dangers of greed and the potential for deception.  The story continues to capture imaginations worldwide."
+      ]
+    },
+    {
+      "type": "vocabulary",
+      "title": "Key Vocabulary",
+      "words": [
+        {
+          "term": "mischievous",
+          "partOfSpeech": "adjective",
+          "definition": "Naughty; playfully causing trouble.",
+          "example": "The mischievous children played pranks on their neighbors."
+        },
+        {
+          "term": "elusive",
+          "partOfSpeech": "adjective",
+          "definition": "Difficult to find, catch, or achieve.",
+          "example": "The elusive thief managed to escape the police."
+        },
+        {
+          "term": "legend",
+          "partOfSpeech": "noun",
+          "definition": "A traditional story sometimes popularly regarded as historical but unauthenticated.",
+          "example": "The legend of King Arthur is well-known."
+        },
+        {
+          "term": "folklore",
+          "partOfSpeech": "noun",
+          "definition": "The traditional beliefs, customs, and stories of a community, passed through generations by word of mouth.",
+          "example": "Irish folklore is rich with tales of fairies and mythical creatures."
+        },
+        {
+          "term": "deception",
+          "partOfSpeech": "noun",
+          "definition": "The action of deceiving someone.",
+          "example": "He was found guilty of deception and fraud."
+        }
+      ]
+    },
+    {
+      "type": "comprehension",
+      "title": "Comprehension Questions",
+      "questions": [
+        {
+          "question": "What is a leprechaun, according to the text?",
+          "options": [
+            "A type of large, friendly animal",
+            "A small, mischievous creature who guards gold",
+            "A powerful wizard who grants wishes",
+            "A type of rare flower found in Ireland"
+          ],
+          "answer": "A small, mischievous creature who guards gold",
+          "explanation": "The text explicitly states that leprechauns are small, mischievous creatures who guard pots of gold."
+        },
+        {
+          "question": "What happens if you catch a leprechaun?",
+          "options": [
+            "He will give you a magical gift.",
+            "He will grant you three wishes.",
+            "He will reveal the location of his gold.",
+            "He will turn you into a frog."
+          ],
+          "answer": "He will reveal the location of his gold.",
+          "explanation": "The text mentions that a caught leprechaun will reveal the location of his hidden treasure."
+        }
+      ]
+    },
+    {
+      "type": "sentences",
+      "title": "Sentence Frames",
+      "frames": [
+        {
+          "pattern": "I think _____ because _____.",
+          "examples": [
+            "I think leprechauns are fascinating because of their connection to Irish folklore.",
+            "I think the legend of the leprechaun is popular because it involves hidden treasure."
+          ],
+          "grammarFocus": "Expressing opinions"
+        },
+        {
+          "pattern": "According to the legend, _____.",
+          "examples": [
+            "According to the legend, leprechauns are excellent shoemakers.",
+            "According to the legend, finding a leprechaun's gold is very difficult."
+          ],
+          "grammarFocus": "Reporting information from a source"
+        }
+      ]
+    },
+    {
+      "type": "discussion",
+      "title": "Discussion: Superstitions and Beliefs",
+      "introduction": "Let's discuss the role of superstitions and beliefs in different cultures.  Consider the impact of these beliefs on people's lives.",
+      "questions": [
+        "Do you think superstitions are harmful or helpful?",
+        "How do superstitions influence people's decisions?",
+        "Are there any superstitions you would like to share from your own culture?",
+        "How do legends and myths shape cultural identity?",
+        "What makes a good story or legend compelling?"
+      ]
+    },
+    {
+      "type": "quiz",
+      "title": "Quiz: Test Your Knowledge",
+      "questions": [
+        {
+          "question": "What is the main characteristic of a leprechaun?",
+          "options": [
+            "Kindness",
+            "Generosity",
+            "Mischief",
+            "Wisdom"
+          ],
+          "answer": "Mischief"
+        },
+        {
+          "question": "What do leprechauns supposedly guard?",
+          "options": [
+            "Magical artifacts",
+            "Ancient secrets",
+            "Pots of gold",
+            "Rare jewels"
+          ],
+          "answer": "Pots of gold"
+        }
+      ]
+    }
+  ]
+}
+```
