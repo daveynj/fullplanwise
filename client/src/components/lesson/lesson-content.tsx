@@ -750,70 +750,97 @@ export function LessonContent({ content }: LessonContentProps) {
     if (section.targetVocabulary) {
       console.log("Found targetVocabulary in section:", section.targetVocabulary);
       
-      // Define default pronunciations and definitions for common celebration words
-      const pronunciations: { [key: string]: string } = {
-        festivity: "fes-TIV-i-tee",
-        commemorate: "kuh-MEM-uh-rayt",
-        patriotic: "pay-tree-OT-ik",
-        ritual: "RICH-oo-uhl",
-        heritage: "HAIR-i-tij",
-        parade: "puh-RAYD",
-        celebration: "sel-uh-BRAY-shuhn"
-      };
-      
-      const definitions: { [key: string]: string } = {
-        festivity: "A joyful celebration or festival with entertainment",
-        commemorate: "To honor and remember an important person or event",
-        patriotic: "Having love, loyalty and devotion to one's country",
-        ritual: "A formal ceremony or series of acts always performed the same way",
-        heritage: "Traditions and culture passed down from previous generations",
-        parade: "A public procession with music, dancing, or floats",
-        celebration: "A special event held to mark an important occasion"
-      };
-      
-      const examples: { [key: string]: string } = {
-        festivity: "The New Year's festivities included fireworks and music.",
-        commemorate: "We commemorate Independence Day every year on July 4th.",
-        patriotic: "She felt patriotic when she saw the national flag.",
-        ritual: "The lighting of candles is an important ritual in many celebrations.",
-        heritage: "Their cultural heritage influences how they celebrate holidays.",
-        parade: "The carnival parade attracted thousands of visitors.",
-        celebration: "The celebration lasted all night with music and dancing."
-      };
-      
       if (Array.isArray(section.targetVocabulary)) {
         // If it's an array of strings, convert to objects with enhanced data
-        vocabWords = section.targetVocabulary.map((term: string) => {
-          const normalizedTerm = term.toLowerCase().trim();
+        vocabWords = section.targetVocabulary.map((term: any) => {
+          // Handle both string values and object values
+          const vocabWord = typeof term === 'string' ? term : term.word || term.term || '';
+          const definition = typeof term === 'object' ? (term.definition || '') : '';
+          const partOfSpeech = typeof term === 'object' ? (term.partOfSpeech || '') : '';
+          const example = typeof term === 'object' ? (term.example || '') : '';
+          const pronunciation = typeof term === 'object' ? (term.pronunciation || '') : '';
+          
           return {
-            word: term,
-            partOfSpeech: "noun",
-            definition: definitions[normalizedTerm] || "Definition not provided",
-            example: examples[normalizedTerm] || `Example using "${term}" in context.`,
-            pronunciation: pronunciations[normalizedTerm] || "Pronunciation not provided"
+            word: vocabWord,
+            partOfSpeech: partOfSpeech || "noun",
+            definition: definition || `Definition for ${vocabWord}`,
+            example: example || `Example using "${vocabWord}" in context.`,
+            pronunciation: pronunciation || vocabWord
           };
         });
       } 
       else if (typeof section.targetVocabulary === 'object') {
-        // If it's an object mapping terms to definitions
+        // If it's an object mapping terms to definitions or a collection of vocab objects
         const extractedWords = [];
         
-        for (const term in section.targetVocabulary) {
-          if (typeof term === 'string' && term.trim()) {
-            const normalizedTerm = term.toLowerCase().trim();
-            extractedWords.push({
-              word: term,
-              partOfSpeech: "noun",
-              definition: section.targetVocabulary[term] || definitions[normalizedTerm] || "Definition not provided",
-              example: examples[normalizedTerm] || `Example using "${term}" in context.`,
-              pronunciation: pronunciations[normalizedTerm] || "Pronunciation not provided"
-            });
+        // Check if it's an object with numeric keys (often from the API)
+        const hasNumericKeys = Object.keys(section.targetVocabulary).some(k => !isNaN(parseInt(k)));
+        
+        if (hasNumericKeys) {
+          // It's likely an array-like object with numbered keys
+          for (const key in section.targetVocabulary) {
+            const term = section.targetVocabulary[key];
+            
+            // Handle different possible formats
+            if (typeof term === 'string') {
+              extractedWords.push({
+                word: term,
+                partOfSpeech: "noun",
+                definition: `Definition for ${term}`,
+                example: `Example using "${term}" in context.`,
+                pronunciation: term
+              });
+            } else if (typeof term === 'object') {
+              extractedWords.push({
+                word: term.word || term.term || key,
+                partOfSpeech: term.partOfSpeech || "noun",
+                definition: term.definition || `Definition for ${term.word || term.term || key}`,
+                example: term.example || `Example using "${term.word || term.term || key}" in context.`,
+                pronunciation: term.pronunciation || (term.word || term.term || key)
+              });
+            }
+          }
+        } else {
+          // It's a traditional object with terms as keys and definitions as values
+          for (const term in section.targetVocabulary) {
+            if (typeof term === 'string' && term.trim()) {
+              const value = section.targetVocabulary[term];
+              
+              extractedWords.push({
+                word: term,
+                partOfSpeech: typeof value === 'object' ? (value.partOfSpeech || "noun") : "noun",
+                definition: typeof value === 'object' ? (value.definition || "") : (typeof value === 'string' ? value : `Definition for ${term}`),
+                example: typeof value === 'object' ? (value.example || "") : `Example using "${term}" in context.`,
+                pronunciation: typeof value === 'object' ? (value.pronunciation || "") : term
+              });
+            }
           }
         }
         
         if (extractedWords.length > 0) {
           vocabWords = extractedWords;
         }
+      }
+      
+      // Log the extracted vocabulary words
+      console.log("Extracted vocabulary words:", vocabWords);
+    }
+    
+    // If no vocabulary words found yet, check if there's a vocabulary section elsewhere
+    if (vocabWords.length === 0) {
+      const vocabularySection = parsedContent.sections.find((s: any) => s.type === 'vocabulary');
+      if (vocabularySection && vocabularySection.words && Array.isArray(vocabularySection.words)) {
+        console.log("Found vocabulary section, using its words for warm-up");
+        vocabWords = vocabularySection.words.map((word: any) => {
+          // Convert to VocabularyWord format
+          return {
+            word: typeof word === 'string' ? word : word.word || word.term || '',
+            partOfSpeech: typeof word === 'object' ? (word.partOfSpeech || "noun") : "noun",
+            definition: typeof word === 'object' ? (word.definition || "") : `Definition for ${typeof word === 'string' ? word : ''}`,
+            example: typeof word === 'object' ? (word.example || "") : "",
+            pronunciation: typeof word === 'object' ? (word.pronunciation || "") : ""
+          };
+        });
       }
     }
 
