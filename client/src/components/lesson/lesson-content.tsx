@@ -749,7 +749,12 @@ export function LessonContent({ content }: LessonContentProps) {
     // Get vocabulary words from the dedicated vocabulary section
     const vocabularySection = parsedContent.sections.find((s: any) => s.type === 'vocabulary');
     if (vocabularySection) {
-      console.log("Found vocabulary section:", vocabularySection);
+      console.log("Found vocabulary section:", JSON.stringify(vocabularySection, null, 2));
+      // Also log content keys and structure
+      console.log("Vocabulary section keys:", Object.keys(vocabularySection));
+      if (vocabularySection.words) {
+        console.log("Words array/object:", typeof vocabularySection.words, JSON.stringify(vocabularySection.words, null, 2));
+      }
       
       // For Qwen API structure, the vocabulary section directly contains vocabulary terms 
       // as properties with the 'term' field
