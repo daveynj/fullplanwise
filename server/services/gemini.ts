@@ -55,7 +55,7 @@ export class GeminiService {
         generationConfig: {
           temperature: 0.3,
           topP: 0.9,
-          maxOutputTokens: 8192,
+          maxOutputTokens: 16384, // Increased token count from 8192 to 16384 for more detailed lessons
         },
       });
       
@@ -223,11 +223,13 @@ Return your response as a valid, properly-formatted JSON object with the followi
     {
       "type": "reading",
       "title": "Reading Text",
-      "introduction": "Brief introduction",
+      "introduction": "Detailed introduction to the topic",
       "paragraphs": [
-        "Paragraph 1 with at least 3-4 sentences",
-        "Paragraph 2 with at least 3-4 sentences",
-        "Paragraph 3 with at least 3-4 sentences"
+        "Paragraph 1 with at least 4-5 detailed sentences that provide rich content for readers",
+        "Paragraph 2 with at least 4-5 detailed sentences that build upon the previous paragraph",
+        "Paragraph 3 with at least 4-5 detailed sentences that further develop the topic",
+        "Paragraph 4 with at least 4-5 detailed sentences that add depth to the reading",
+        "Paragraph 5 with at least 4-5 detailed sentences that conclude the reading section"
       ]
     },
     {
@@ -237,14 +239,50 @@ Return your response as a valid, properly-formatted JSON object with the followi
         {
           "term": "vocabulary word 1",
           "partOfSpeech": "noun/verb/adj",
-          "definition": "Clear definition",
-          "example": "Example sentence"
+          "definition": "Clear definition appropriate for the student level",
+          "example": "Contextual example sentence using the word properly"
         },
         {
           "term": "vocabulary word 2",
           "partOfSpeech": "noun/verb/adj",
-          "definition": "Clear definition",
-          "example": "Example sentence"
+          "definition": "Clear definition appropriate for the student level",
+          "example": "Contextual example sentence using the word properly"
+        },
+        {
+          "term": "vocabulary word 3",
+          "partOfSpeech": "noun/verb/adj",
+          "definition": "Clear definition appropriate for the student level",
+          "example": "Contextual example sentence using the word properly"
+        },
+        {
+          "term": "vocabulary word 4",
+          "partOfSpeech": "noun/verb/adj",
+          "definition": "Clear definition appropriate for the student level",
+          "example": "Contextual example sentence using the word properly"
+        },
+        {
+          "term": "vocabulary word 5",
+          "partOfSpeech": "noun/verb/adj",
+          "definition": "Clear definition appropriate for the student level",
+          "example": "Contextual example sentence using the word properly"
+        },
+        {
+          "term": "vocabulary word 6",
+          "partOfSpeech": "noun/verb/adj",
+          "definition": "Clear definition appropriate for the student level",
+          "example": "Contextual example sentence using the word properly"
+        },
+        {
+          "term": "vocabulary word 7",
+          "partOfSpeech": "noun/verb/adj",
+          "definition": "Clear definition appropriate for the student level",
+          "example": "Contextual example sentence using the word properly"
+        },
+        {
+          "term": "vocabulary word 8",
+          "partOfSpeech": "noun/verb/adj",
+          "definition": "Clear definition appropriate for the student level",
+          "example": "Contextual example sentence using the word properly"
         }
       ]
     },
@@ -253,10 +291,34 @@ Return your response as a valid, properly-formatted JSON object with the followi
       "title": "Comprehension Questions",
       "questions": [
         {
-          "question": "Question about the text?",
-          "options": ["Option A", "Option B", "Option C", "Option D"],
-          "answer": "Option A",
-          "explanation": "Why this is correct"
+          "question": "Detailed question about the main idea of the text?",
+          "options": ["Option A - detailed", "Option B - detailed", "Option C - detailed", "Option D - detailed"],
+          "answer": "Option A - detailed",
+          "explanation": "Thorough explanation of why this answer is correct with reference to the reading text"
+        },
+        {
+          "question": "Detailed question about specific details in the reading?",
+          "options": ["Option A - detailed", "Option B - detailed", "Option C - detailed", "Option D - detailed"],
+          "answer": "Option B - detailed",
+          "explanation": "Thorough explanation of why this answer is correct with reference to the reading text"
+        },
+        {
+          "question": "Detailed question testing vocabulary understanding?",
+          "options": ["Option A - detailed", "Option B - detailed", "Option C - detailed", "Option D - detailed"],
+          "answer": "Option C - detailed",
+          "explanation": "Thorough explanation of why this answer is correct with reference to the reading text"
+        },
+        {
+          "question": "Detailed question about inference from the text?",
+          "options": ["Option A - detailed", "Option B - detailed", "Option C - detailed", "Option D - detailed"],
+          "answer": "Option D - detailed",
+          "explanation": "Thorough explanation of why this answer is correct with reference to the reading text"
+        },
+        {
+          "question": "Detailed question about the author's purpose or tone?",
+          "options": ["Option A - detailed", "Option B - detailed", "Option C - detailed", "Option D - detailed"],
+          "answer": "Option B - detailed",
+          "explanation": "Thorough explanation of why this answer is correct with reference to the reading text"
         }
       ]
     },
