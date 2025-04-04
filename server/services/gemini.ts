@@ -49,8 +49,9 @@ export class GeminiService {
       console.log(`Raw prompt saved to ${rawPromptPath}`);
       
       // Configure the model and features
+      // Using Gemini 1.5 Flash model per the latest API documentation
       const model = this.genAI.getGenerativeModel({ 
-        model: 'gemini-pro',
+        model: 'gemini-1.5-flash',
         generationConfig: {
           temperature: 0.3,
           topP: 0.9,
