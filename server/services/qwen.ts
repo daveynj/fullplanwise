@@ -415,7 +415,7 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
         ],
         temperature: 0.3, 
         top_p: 0.9,
-        max_tokens: 16384
+        max_tokens: 8192 // Qwen API maximum limit
       };
       
       console.log(`Using model: ${modelName}`);
@@ -556,9 +556,11 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
               type: "error",
               title: "API Error",
               content: `The Qwen AI service returned an error: ${error.response.status} ${error.response.statusText}. ${
-                error.response.data && error.response.data.message 
-                  ? `\n\nMessage: ${error.response.data.message}` 
-                  : ''
+                error.response.data && error.response.data.error && error.response.data.error.message
+                  ? `\n\nAPI error: ${error.response.data.error.message}` 
+                  : error.response.data && error.response.data.message
+                    ? `\n\nMessage: ${error.response.data.message}`
+                    : ''
               }`
             }]
           };
