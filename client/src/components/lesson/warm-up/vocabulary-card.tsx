@@ -49,17 +49,7 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
         <h2 className="text-xl font-medium text-blue-900">{word.word}</h2>
         <p className="text-blue-600 text-sm">{word.partOfSpeech || 'noun'}</p>
       </div>
-      
-      {/* Display Image if available */}
-      {word.imageBase64 && (
-        <div className="mb-4 flex justify-center">
-          <img 
-            src={`data:image/png;base64,${word.imageBase64}`}
-            alt={`Illustration for ${word.word}`}
-            className="rounded-lg border border-blue-200 shadow-sm max-w-full h-auto max-h-48"
-          />
-        </div>
-      )}
+
       
       {/* Definition */}
       <div className="mb-3">
