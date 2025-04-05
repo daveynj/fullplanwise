@@ -1044,10 +1044,18 @@ export function LessonContent({ content }: LessonContentProps) {
                   
                   {/* Image related to vocabulary */}
                   <div className="relative aspect-video mb-4 rounded-md overflow-hidden border border-amber-200">
-                    {/* Placeholder image - in a real implementation, you would use an actual image */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center">
-                      <Image className="h-full w-full object-cover" />
-                    </div>
+                    {currentWord.imageBase64 ? (
+                      <img 
+                        src={`data:image/png;base64,${currentWord.imageBase64}`}
+                        alt={`Illustration for ${currentWord.word}`}
+                        className="absolute inset-0 h-full w-full object-cover"
+                      />
+                    ) : (
+                      /* Placeholder image when no image data is available */
+                      <div className="absolute inset-0 bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center">
+                        <Image className="h-16 w-16 text-amber-300" />
+                      </div>
+                    )}
                   </div>
                   
                   {/* Pagination Controls */}
@@ -1280,15 +1288,23 @@ export function LessonContent({ content }: LessonContentProps) {
                   style={{ backfaceVisibility: "hidden" }}
                 >
                   <div className="relative w-full h-full bg-white flex flex-col items-center justify-center">
-                    {/* Image background (placeholder gradient) */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-blue-50 flex items-center justify-center">
-                      {/* Placeholder for an image related to the word */}
-                      <div className="w-full h-full overflow-hidden">
-                        {/* Use a celebration-related image as background */}
-                        <div className="w-full h-full bg-gradient-to-br from-blue-200 to-green-100 flex items-center justify-center">
-                          <Image className="h-24 w-24 text-blue-300 opacity-20" />
+                    {/* Image background */}
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      {currentWord.imageBase64 ? (
+                        /* Show actual image when available */
+                        <img 
+                          src={`data:image/png;base64,${currentWord.imageBase64}`}
+                          alt={`Illustration for ${currentWord.word}`}
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        /* Placeholder gradient when no image is available */
+                        <div className="w-full h-full overflow-hidden">
+                          <div className="w-full h-full bg-gradient-to-br from-blue-200 to-green-100 flex items-center justify-center">
+                            <Image className="h-24 w-24 text-blue-300 opacity-20" />
+                          </div>
                         </div>
-                      </div>
+                      )}
                     </div>
                     
                     {/* Word display (centered on the card) */}
