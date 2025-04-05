@@ -882,7 +882,8 @@ export function LessonContent({ content }: LessonContentProps) {
               pronunciation: pronunciationData,
               syllables: wordData.syllables,
               stressIndex: wordData.stressIndex,
-              phoneticGuide: wordData.phoneticGuide
+              phoneticGuide: wordData.phoneticGuide,
+              imageBase64: wordData.imageBase64 || null
             });
           }
         });
@@ -1114,7 +1115,8 @@ export function LessonContent({ content }: LessonContentProps) {
                 pronunciation: currentWord.pronunciation || "",
                 syllables: currentWord.syllables || undefined,
                 stressIndex: currentWord.stressIndex || undefined,
-                phoneticGuide: currentWord.phoneticGuide || undefined
+                phoneticGuide: currentWord.phoneticGuide || undefined,
+                imageBase64: currentWord.imageBase64 || null
               }} />
             </div>
           </CardContent>
@@ -1181,7 +1183,8 @@ export function LessonContent({ content }: LessonContentProps) {
             pronunciation: pronunciationData,
             syllables: wordData.syllables,
             stressIndex: wordData.stressIndex,
-            phoneticGuide: wordData.phoneticGuide
+            phoneticGuide: wordData.phoneticGuide,
+            imageBase64: wordData.imageBase64 || null
           });
         }
       });

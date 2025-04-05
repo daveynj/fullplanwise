@@ -1,0 +1,248 @@
+```json
+{
+  "title": "A Legacy of Service: Queen Elizabeth II",
+  "level": "B1",
+  "focus": "general",
+  "estimatedTime": 60,
+  "sections": [
+    {
+      "type": "warmup",
+      "title": "Royal Warm-up",
+      "content": "Let's talk about words related to royalty!  We'll explore 'reign,' 'coronation,' 'duty,' 'dedication,' and 'historic.'  Can you think of any other words that come to mind when you think of kings and queens?",
+      "questions": [
+        "What does it mean for someone to 'reign' over a country?",
+        "What happens during a 'coronation' ceremony?",
+        "What does the word 'duty' mean to you?",
+        "Can you describe someone who shows 'dedication' to something?",
+        "What is a 'historic' event that you remember?"
+      ],
+      "targetVocabulary": ["reign", "coronation", "duty", "dedication", "historic"],
+      "procedure": "1. Ask students the discussion questions, encouraging them to share their initial thoughts and understanding of the vocabulary words. 2. Briefly discuss the meaning of each word, providing simple examples: 'reign' (a king's reign), 'coronation' (a crowning ceremony), 'duty' (responsibilities), 'dedication' (commitment), 'historic' (a significant event). 3. Ask students to create their own sentences using each vocabulary word.",
+      "teacherNotes": "Encourage open discussion and accept various interpretations of the vocabulary words. This warm-up aims to activate prior knowledge and introduce the key terms in a relaxed and engaging way."
+    },
+    {
+      "type": "reading",
+      "title": "Queen Elizabeth II: A Life of Service",
+      "introduction": "Queen Elizabeth II was more than just a monarch; she was a symbol of stability and continuity for over seventy years.  Her reign spanned a period of immense change, and her life story is a fascinating glimpse into the evolution of the modern world. Let's delve into her remarkable journey.",
+      "paragraphs": [
+        "Queen Elizabeth II ascended to the throne in 1952, a time when the world was still recovering from the Second World War.  Her coronation was a spectacle, televised for the first time, bringing the grandeur of the monarchy into homes around the globe.  Can you imagine the impact of seeing such a ceremony on television back then?",
+        "Throughout her reign, the Queen witnessed remarkable transformations, from the rise of the internet to the end of the Cold War.  She navigated these changes with grace and adaptability, maintaining her role as a steadfast figurehead for the United Kingdom and the Commonwealth.",
+        "Her sense of duty was unwavering.  She dedicated her life to serving her people, carrying out countless engagements and meeting with world leaders.  She understood the importance of her role and embraced it fully.",
+        "The Queen's dedication extended beyond her official duties.  She was a patron of numerous charities and organizations, demonstrating a deep commitment to making a positive impact on the world.  Her quiet acts of service often went unnoticed, but they spoke volumes about her character.",
+        "Queen Elizabeth II's reign was truly historic.  She became the longest-reigning British monarch, a testament to her resilience and the enduring power of the monarchy.  Her life and legacy will continue to inspire generations to come."
+      ],
+      "teacherNotes": "Encourage students to visualize the historical context and consider the significance of the Queen's long reign.  Prompt them to think about how the world has changed during her lifetime."
+    },
+    {
+      "type": "vocabulary",
+      "title": "Key Vocabulary",
+      "words": [
+        {
+          "term": "reign",
+          "partOfSpeech": "noun",
+          "definition": "The period of time that a king or queen rules a country.",
+          "example": "Queen Victoria's reign was very long.",
+          "collocations": ["long reign", "short reign", "during the reign of"],
+          "notes": "Often used to talk about the period a monarch is in power.",
+          "teachingTips": "Use a timeline to visually represent different reigns.",
+          "pronunciation": {
+            "syllables": ["reign"],
+            "stressIndex": 0,
+            "phoneticGuide": "rayn"
+          },
+          "imagePrompt": "A king or queen sitting on a throne with a crown, symbolizing their reign. The background could show a historical setting with castles and flags. No text or words should appear in the image."
+        },
+        {
+          "term": "coronation",
+          "partOfSpeech": "noun",
+          "definition": "The ceremony of crowning a king or queen.",
+          "example": "The coronation was televised around the world.",
+          "collocations": ["coronation ceremony", "coronation day"],
+          "notes": "A significant event marking the beginning of a monarch's reign.",
+          "teachingTips": "Show pictures or videos of coronation ceremonies.",
+          "pronunciation": {
+            "syllables": ["cor", "o", "na", "tion"],
+            "stressIndex": 2,
+            "phoneticGuide": "kor-uh-nay-shuhn"
+          },
+          "imagePrompt": "A king or queen being crowned in a grand ceremony, with people watching and celebrating. The setting should be a large, ornate hall or church. No text or words should appear in the image."
+        },
+        {
+          "term": "duty",
+          "partOfSpeech": "noun",
+          "definition": "A moral or legal obligation; a responsibility.",
+          "example": "It is the Queen's duty to serve her country.",
+          "collocations": ["sense of duty", "perform a duty", "fulfill a duty"],
+          "notes": "Can refer to personal or professional responsibilities.",
+          "teachingTips": "Discuss different types of duties people have.",
+          "pronunciation": {
+            "syllables": ["du", "ty"],
+            "stressIndex": 0,
+            "phoneticGuide": "doo-tee"
+          },
+          "imagePrompt": "A person in uniform, like a police officer or firefighter, performing their duty. The image should convey a sense of responsibility and service. No text or words should appear in the image."
+        },
+        {
+          "term": "dedication",
+          "partOfSpeech": "noun",
+          "definition": "The quality of being committed to a task or purpose.",
+          "example": "The Queen's dedication to her people was admirable.",
+          "collocations": ["show dedication", "dedication to", "complete dedication"],
+          "notes": "Implies a strong sense of commitment and perseverance.",
+          "teachingTips": "Ask students to give examples of dedication in their own lives.",
+          "pronunciation": {
+            "syllables": ["ded", "i", "ca", "tion"],
+            "stressIndex": 2,
+            "phoneticGuide": "ded-i-kay-shuhn"
+          },
+          "imagePrompt": "A person working diligently on a project, showing focus and commitment. The image could be someone studying, painting, or practicing a sport. No text or words should appear in the image."
+        },
+        {
+          "term": "historic",
+          "partOfSpeech": "adjective",
+          "definition": "Famous or important in history; having great significance.",
+          "example": "The Queen's reign was a historic one.",
+          "collocations": ["historic event", "historic moment", "historic landmark"],
+          "notes": "Used to describe something that will be remembered in history.",
+          "teachingTips": "Brainstorm a list of historic events.",
+          "pronunciation": {
+            "syllables": ["his", "tor", "ic"],
+            "stressIndex": 1,
+            "phoneticGuide": "his-tor-ik"
+          },
+          "imagePrompt": "A famous historical landmark, like the pyramids or the Great Wall of China, conveying a sense of history and importance. The image should be visually striking and recognizable. No text or words should appear in the image."
+        }
+      ]
+    },
+    {
+      "type": "comprehension",
+      "title": "Reading Comprehension",
+      "questions": [
+        {
+          "question": "When did Queen Elizabeth II ascend to the throne?",
+          "options": ["1945", "1952", "1960", "1955"],
+          "answer": "1952",
+          "explanation": "The text states she ascended in 1952."
+        },
+        {
+          "question": "What was televised for the first time during Queen Elizabeth II's reign?",
+          "options": ["A royal wedding", "Her coronation", "Her birthday celebration"],
+          "answer": "Her coronation",
+          "explanation": "The text mentions her coronation was the first televised."
+        },
+        {
+          "question": "Was Queen Elizabeth II known for her adaptability?",
+          "options": ["True", "False"],
+          "answer": "True",
+          "explanation": "The text describes her as navigating changes with 'grace and adaptability'."
+        },
+        {
+          "question": "The Queen's dedication was limited to her official duties.",
+          "options": ["True", "False"],
+          "answer": "False",
+          "explanation": "The text mentions her patronage of charities and organizations, showing dedication beyond official duties."
+        },
+        {
+          "question": "Is Queen Elizabeth II considered the shortest-reigning British monarch?",
+          "options": ["True", "False"],
+          "answer": "False",
+          "explanation": "The text states she was the longest-reigning monarch."
+        }
+      ]
+    },
+    {
+      "type": "sentenceFrames",
+      "title": "Sentence Practice",
+      "frames": [
+        {
+          "pattern": "The _____ of Queen Elizabeth II was marked by _____.",
+          "examples": [
+            "The reign of Queen Elizabeth II was marked by significant social change.",
+            "The coronation of Queen Elizabeth II was marked by a sense of hope."
+          ],
+          "usageNotes": "Use this pattern to describe key features of a period or event.",
+          "teachingTips": "Encourage students to use vocabulary from the text.",
+          "difficultyLevel": "intermediate",
+          "grammarFocus": "Past simple passive voice",
+          "communicativeFunction": "Describing historical events"
+        },
+        {
+          "pattern": "Despite the challenges, she showed great _____ to her _____.",
+          "examples": [
+            "Despite the challenges, she showed great dedication to her duty.",
+            "Despite the challenges, she showed great dedication to her people."
+          ],
+          "usageNotes": "Use this pattern to highlight someone's commitment in the face of adversity.",
+          "teachingTips": "Discuss different types of challenges and commitments.",
+          "difficultyLevel": "intermediate",
+          "grammarFocus": "Prepositions, noun phrases",
+          "communicativeFunction": "Expressing admiration"
+        }
+      ]
+    },
+    {
+      "type": "discussion",
+      "title": "Discussion Questions",
+      "introduction": "Queen Elizabeth's reign coincided with a period of rapid technological advancement.  From the advent of television to the rise of the internet, she witnessed transformations that reshaped communication and global interconnectedness.  How did these changes impact the monarchy's role and relationship with the public?  Did it become more challenging to maintain tradition in a rapidly modernizing world?",
+      "questions": [
+        {
+          "question": "How did the rise of television and the internet change the way people viewed the monarchy?",
+          "imagePrompt": "A split screen showing a traditional newspaper next to a smartphone displaying news, representing the shift in media consumption. No text or words should appear in the image."
+        },
+        {
+          "question": "Do you think the Queen's long reign helped or hindered the monarchy's ability to adapt to modern times?",
+          "imagePrompt": "A balance scale with tradition on one side and modernity on the other, representing the challenge of balancing the two. No text or words should appear in the image."
+        },
+        {
+          "question": "What were some of the biggest challenges Queen Elizabeth faced during her reign, and how did she address them?",
+          "imagePrompt": "A ship navigating stormy waters, symbolizing the challenges faced during a long reign. No text or words should appear in the image."
+        },
+        {
+          "question": "How did Queen Elizabeth's sense of duty and dedication influence her decisions and actions as a monarch?",
+          "imagePrompt": "A crown resting on a book, symbolizing the weight of responsibility and the guidance of tradition. No text or words should appear in the image."
+        },
+        {
+          "question": "What do you think Queen Elizabeth's legacy will be, and how will she be remembered in history?",
+          "imagePrompt": "A statue of a queen, symbolizing her lasting legacy and how she will be remembered. No text or words should appear in the image."
+        }
+      ]
+    },
+    {
+      "type": "quiz",
+      "title": "Knowledge Check",
+      "questions": [
+        {
+          "question": "The word 'reign' refers to...",
+          "options": ["A type of jewelry", "The period a monarch rules", "A royal ceremony"],
+          "answer": "The period a monarch rules",
+          "explanation": "As defined in the vocabulary section."
+        },
+        {
+          "question": "'Coronation' means...",
+          "options": ["A type of hat", "The crowning of a monarch", "A royal celebration"],
+          "answer": "The crowning of a monarch",
+          "explanation": "As defined in the vocabulary section."
+        },
+        {
+          "question": "Which word describes a strong sense of commitment?",
+          "options": ["Duty", "Dedication", "Reign", "Historic"],
+          "answer": "Dedication",
+          "explanation": "As defined in the vocabulary section."
+        },
+        {
+          "question": "The Queen's reign was marked by technological advancements.",
+          "options": ["True", "False"],
+          "answer": "True",
+          "explanation": "Discussed in both the reading and discussion sections."
+        },
+        {
+          "question": "Queen Elizabeth II's coronation was not a historic event.",
+          "options": ["True", "False"],
+          "answer": "False",
+          "explanation": "It was a historic event, as discussed in the reading."
+        }
+      ]
+    }
+  ]
+}
+```
