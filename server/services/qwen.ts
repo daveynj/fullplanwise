@@ -516,14 +516,14 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
                 return this.formatLessonContent(jsonContent);
               } catch (error) {
                 console.error('Failed to parse JSON even after fixing, returning error response');
-                
-                // If all parsing attempts fail, return the error response
-                return {
-                  title: `Lesson on ${params.topic}`,
-                  content: content,
+              
+              // If all parsing attempts fail, return the error response
+              return {
+                title: `Lesson on ${params.topic}`,
+                content: content,
                   error: 'JSON parsing failed',
                   provider: 'qwen'
-                };
+              };
               }
             }
           }

@@ -4,7 +4,7 @@ TASK OVERVIEW:
 You will create a complete ESL lesson for B1 level students on a given topic.
 
 STEP 1: WRITE A READING TEXT
-- First, write an original reading text about the topic "Art and Music Traditions: (e.g., traditional music, dance, visual arts)"
+- First, write an original reading text about the topic "Daily Life and Social Interactions:  Greetings and Farewells: (e.g., handshakes, bows, kisses, verbal greetings)"
 - Use a warm, accessible, and conversational tone
 - Include interesting facts and observations woven naturally into the narrative
 - Use vivid, descriptive language that brings topics to life
@@ -234,7 +234,7 @@ IMPORTANT: Adjust question complexity based on the CEFR level (B1):
 FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure all fields contain complete content. Do not use placeholders.
 
 {
-  "title": "Descriptive lesson title about Art and Music Traditions: (e.g., traditional music, dance, visual arts)",
+  "title": "Descriptive lesson title about Daily Life and Social Interactions:  Greetings and Farewells: (e.g., handshakes, bows, kisses, verbal greetings)",
   "level": "B1",
   "focus": "general",
   "estimatedTime": 60,

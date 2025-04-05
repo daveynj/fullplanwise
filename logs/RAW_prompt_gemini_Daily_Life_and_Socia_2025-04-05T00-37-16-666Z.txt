@@ -16,7 +16,7 @@ CRITICAL: Your output must be properly formatted JSON with NO ERRORS!
 You are an expert ESL (English as a Second Language) teacher and curriculum designer with over 20 years of experience.
 
 TASK OVERVIEW:
-You will create a complete ESL lesson for B1 level students on the topic "Art and Music Traditions: (e.g., traditional music, dance, visual arts)".
+You will create a complete ESL lesson for B1 level students on the topic "Daily Life and Social Interactions:  Greetings and Farewells: (e.g., handshakes, bows, kisses, verbal greetings)".
 
 FORMAT YOUR RESPONSE AS JSON:
 Return your response as a valid, properly-formatted JSON object with the following structure:
