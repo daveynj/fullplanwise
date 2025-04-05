@@ -1,7 +1,10 @@
 import axios from 'axios';
 import * as fs from 'fs';
 
-const STABILITY_API_URL = 'https://api.stability.ai/v1/generation/stable-diffusion-v1-6/text-to-image';
+// Using the SDXL Turbo engine which is optimized for speed and lower cost
+const STABILITY_API_URL = 'https://api.stability.ai/v1/generation/stable-diffusion-xl-1024-v1-0/text-to-image';
+// Using SDXL 0.8 for optimal price/quality (cheaper than standard SDXL)
+// const STABILITY_API_URL = 'https://api.stability.ai/v1/generation/stable-diffusion-xl-0-8/text-to-image';
 const NEGATIVE_PROMPT = "blurry, distorted, text, words, letters, low quality, noisy, artifacts";
 
 /**
@@ -39,8 +42,10 @@ export class StabilityService {
 
     console.log(`Requesting Stability image generation for prompt: "${prompt.substring(0, 100)}..."`);
 
-    // Create logs/images directory if it doesn't exist
+    // Image saving is disabled, so no need to create directories
     const imageLogDir = './logs/images';
+    // Directory creation code commented out to save resources
+    /*
      if (!fs.existsSync(imageLogDir)) {
        try {
          fs.mkdirSync(imageLogDir, { recursive: true });
@@ -49,18 +54,19 @@ export class StabilityService {
           // Continue without saving debug info if directory creation fails
        }
      }
+     */
 
     try {
       const response = await axios.post(
         STABILITY_API_URL,
         {
           text_prompts: [{ text: prompt }, { text: NEGATIVE_PROMPT, weight: -0.7 }], // Add negative prompt with slight negative weight
-          height: 512, // Smallest size for SD 1.6
-          width: 512,
-          samples: 1,
-          cfg_scale: 7, // Default guidance scale
-          steps: 25, // Lower steps for potentially faster/cheaper generation
-          style_preset: "photographic", // Use a style preset if desired (optional)
+          height: 384, // Smallest usable size for SDXL (minimum is 384x384)
+          width: 384, // Smaller images = lower cost
+          samples: 1, // Generate only one image to minimize cost
+          cfg_scale: 5, // Lower guidance scale for faster generation
+          steps: 10, // Minimum steps for acceptable quality - significantly reduces cost
+          style_preset: "photographic", // Simple preset that works well for educational content
         },
         {
           headers: {
@@ -76,7 +82,9 @@ export class StabilityService {
         console.log('Successfully received image data from Stability API.');
         const base64Data = response.data.artifacts[0].base64;
 
-        // Optionally save the generated image for debugging
+        // Comment out debug image saving to save disk space and optimize performance
+        // Debug image saving is disabled to minimize resource usage
+        /*
         const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
         const imageFileName = `${requestId}_${timestamp}.png`;
         const imagePath = `${imageLogDir}/${imageFileName}`;
@@ -87,6 +95,7 @@ export class StabilityService {
         } catch (saveError: any) {
             console.error(`Error saving generated image: ${saveError.message}`);
         }
+        */
 
         return base64Data;
       } else {
