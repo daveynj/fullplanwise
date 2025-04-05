@@ -26,10 +26,10 @@ CRITICAL: Your output must be properly formatted JSON with NO ERRORS!
 You are an expert ESL (English as a Second Language) teacher and curriculum designer with over 20 years of experience.
 
 TASK OVERVIEW:
-You will create a complete ESL lesson for B1 level students on the topic "queen Elizabeth the second".
+You will create a complete ESL lesson for B1 level students on the topic "the history of the internet".
 
 STEP 1: WRITE A READING TEXT
-- First, write an original reading text about the topic "queen Elizabeth the second"
+- First, write an original reading text about the topic "the history of the internet"
 - Use a warm, accessible, and conversational tone
 - Include interesting facts and observations woven naturally into the narrative
 - Use vivid, descriptive language that brings topics to life
@@ -259,7 +259,7 @@ IMPORTANT: Adjust question complexity based on the CEFR level (B1):
 FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure all fields contain complete content. Do not use placeholders.
 
 {
-  "title": "Descriptive lesson title about queen Elizabeth the second",
+  "title": "Descriptive lesson title about the history of the internet",
   "level": "B1",
   "focus": "general",
   "estimatedTime": 60,

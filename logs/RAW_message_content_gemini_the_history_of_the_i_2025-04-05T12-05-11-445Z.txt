@@ -1,0 +1,248 @@
+```json
+{
+  "title": "A Journey Through the History of the Internet",
+  "level": "B1",
+  "focus": "general",
+  "estimatedTime": 60,
+  "sections": [
+    {
+      "type": "warmup",
+      "title": "Warm-up Activity: Internet Time Capsule",
+      "content": "Imagine you're creating a time capsule to explain the internet to someone 50 years in the future.  What five key terms would you include and why?  Think about words that capture the essence of what the internet is and how it impacts our lives.",
+      "questions": [
+        "What are some words you associate with the internet?",
+        "If you had to explain the internet in one sentence, what would you say?",
+        "How has the internet changed communication?",
+        "Can you imagine life without the internet?",
+        "What do you think the internet will be like in the future?"
+      ],
+      "targetVocabulary": ["network", "transmit", "access", "innovation", "essential"],
+      "procedure": "1. Brainstorm words related to the internet. 2. Introduce the target vocabulary: network, transmit, access, innovation, and essential.  Discuss their meanings and how they relate to the internet. 3. Have students individually choose five key terms (including the target vocabulary) for their time capsule and write a brief explanation for each. 4. Students share their time capsule contents with the class, explaining their choices.",
+      "teacherNotes": "Encourage students to think broadly about the internet's impact on society, communication, and daily life. This activity primes them for the reading text."
+    },
+    {
+      "type": "reading",
+      "title": "Reading Text: From Cold War Roots to Global Phenomenon: The Story of the Internet",
+      "introduction": "Ever wonder how the internet came to be? It wasn't an overnight invention but a fascinating journey of innovation and collaboration.  Get ready to explore the key milestones that transformed a Cold War project into the global network we know today.",
+      "paragraphs": [
+        "The story begins in the late 1960s, amidst the Cold War tensions. The US Department of Defense wanted a decentralized communication system that could withstand attacks. This led to the creation of ARPANET, the precursor to the internet.  It was a network of computers that could communicate with each other, even if parts of the network were destroyed.  Can you imagine a world without instant communication?",
+        "The 1970s saw the development of crucial technologies like email and TCP/IP, the language that allows computers to talk to each other across different networks.  These innovations laid the groundwork for a truly interconnected system.  Think about how email revolutionized communication – it was a game-changer!",
+        "The 1980s and 90s witnessed the rise of the World Wide Web, the user-friendly interface that made the internet accessible to everyone.  Tim Berners-Lee's invention of the web, with its hyperlinks and easy navigation, opened up a whole new world of information and connection.  Suddenly, anyone could access information from across the globe.",
+        "The internet's growth has been exponential.  From dial-up connections to high-speed broadband, the way we access and use the internet has transformed dramatically.  Social media platforms, e-commerce, and online learning have become integral parts of our lives.  It's hard to believe how much has changed in just a few decades!",
+        "Today, the internet is an essential tool for communication, education, commerce, and entertainment.  It connects billions of people worldwide, fostering collaboration and sharing of information on an unprecedented scale.  What will the next chapter of the internet look like?  It's an exciting question to ponder."
+      ],
+      "teacherNotes": "Encourage students to visualize the historical context and consider the impact of each development."
+    },
+    {
+      "type": "vocabulary",
+      "title": "Key Vocabulary",
+      "words": [
+        {
+          "term": "network",
+          "partOfSpeech": "noun",
+          "definition": "A system of interconnected things, especially computers.",
+          "example": "The internet is a vast network of computers.",
+          "collocations": ["computer network", "global network", "social network"],
+          "notes": "Often used to describe complex systems.",
+          "teachingTips": "Use visuals to illustrate the concept of a network.",
+          "pronunciation": {
+            "syllables": ["net", "work"],
+            "stressIndex": 0,
+            "phoneticGuide": "net-wurk"
+          },
+          "imagePrompt": "A web of interconnected points, with lines connecting them, symbolizing a network. Some points should be brighter, representing key hubs. No text or words should appear in the image."
+        },
+        {
+          "term": "transmit",
+          "partOfSpeech": "verb",
+          "definition": "To send or transfer something, especially information or data.",
+          "example": "Data is transmitted over the internet.",
+          "collocations": ["transmit data", "transmit information", "transmit signals"],
+          "notes": "Often used in the context of communication technology.",
+          "teachingTips": "Use the example of sending a text message to explain the concept.",
+          "pronunciation": {
+            "syllables": ["trans", "mit"],
+            "stressIndex": 1,
+            "phoneticGuide": "trans-MIT"
+          },
+          "imagePrompt": "A stylized representation of data moving from one point to another, perhaps as a stream of light or particles. The points should represent devices like computers or phones. No text or words should appear in the image."
+        },
+        {
+          "term": "access",
+          "partOfSpeech": "noun/verb",
+          "definition": "The ability to use or obtain something / to gain entry to something.",
+          "example": "I have access to the internet / I can access the internet.",
+          "collocations": ["internet access", "gain access", "provide access"],
+          "notes": "Can be used as both a noun and a verb.",
+          "teachingTips": "Discuss different ways of accessing the internet.",
+          "pronunciation": {
+            "syllables": ["ac", "cess"],
+            "stressIndex": 1,
+            "phoneticGuide": "AK-sess"
+          },
+          "imagePrompt": "A person sitting at a computer with a world map displayed on the screen, symbolizing access to global information. The person should look engaged and focused. No text or words should appear in the image."
+        },
+        {
+          "term": "innovation",
+          "partOfSpeech": "noun",
+          "definition": "A new method, idea, product, etc.",
+          "example": "The internet is a constant source of innovation.",
+          "collocations": ["technological innovation", "innovative idea", "drive innovation"],
+          "notes": "Often used in the context of technology and progress.",
+          "teachingTips": "Brainstorm examples of recent internet innovations.",
+          "pronunciation": {
+            "syllables": ["in", "no", "va", "tion"],
+            "stressIndex": 2,
+            "phoneticGuide": "in-no-VAY-shun"
+          },
+          "imagePrompt": "A lightbulb with interconnected circuits inside, symbolizing technological innovation. The lightbulb should be glowing brightly. No text or words should appear in the image."
+        },
+        {
+          "term": "essential",
+          "partOfSpeech": "adjective",
+          "definition": "Absolutely necessary; extremely important.",
+          "example": "The internet has become essential for modern life.",
+          "collocations": ["essential service", "essential tool", "absolutely essential"],
+          "notes": "Emphasizes the importance of something.",
+          "teachingTips": "Ask students to list things they consider essential.",
+          "pronunciation": {
+            "syllables": ["es", "sen", "tial"],
+            "stressIndex": 1,
+            "phoneticGuide": "e-SEN-shul"
+          },
+          "imagePrompt": "A hand holding a smartphone with various app icons displayed, representing the essential role of the internet in daily life. The background should be a busy city street. No text or words should appear in the image."
+        }
+      ]
+    },
+    {
+      "type": "comprehension",
+      "title": "Reading Comprehension",
+      "questions": [
+        {
+          "question": "What was the initial purpose of ARPANET?",
+          "options": ["Commercial use", "Social networking", "Decentralized communication for defense", "Entertainment"],
+          "answer": "C",
+          "explanation": "The text states that ARPANET was created by the US Department of Defense for a decentralized communication system that could withstand attacks."
+        },
+        {
+          "question": "Who invented the World Wide Web?",
+          "options": ["Bill Gates", "Steve Jobs", "Tim Berners-Lee", "Mark Zuckerberg"],
+          "answer": "C",
+          "explanation": "The text credits Tim Berners-Lee with the invention of the World Wide Web."
+        },
+        {
+          "question": "What is TCP/IP?",
+          "options": ["A type of computer", "The language that allows computers to communicate across networks", "A social media platform", "An early email provider"],
+          "answer": "B",
+          "explanation": "The text explains that TCP/IP is the language that allows computers to talk to each other across different networks."
+        },
+        {
+          "question": "Has the internet's growth been slow and steady?",
+          "options": ["True", "False"],
+          "answer": "False",
+          "explanation": "The text describes the internet's growth as exponential."
+        },
+        {
+          "question": "Was the internet originally designed for entertainment?",
+          "options": ["True", "False"],
+          "answer": "False",
+          "explanation": "The text clearly states the internet's origins were rooted in Cold War defense strategy."
+        }
+      ]
+    },
+    {
+      "type": "sentenceFrames",
+      "title": "Sentence Practice",
+      "frames": [
+        {
+          "pattern": "I think _____ is essential because _____.",
+          "examples": [
+            "I think the internet is essential because it connects people worldwide.",
+            "I think access to information is essential because it empowers individuals."
+          ],
+          "usageNotes": "Use this pattern to express your opinion about the importance of something.",
+          "teachingTips": "Encourage students to use vocabulary from the lesson.",
+          "difficultyLevel": "intermediate",
+          "grammarFocus": "Expressing opinions",
+          "communicativeFunction": "Giving reasons"
+        },
+        {
+          "pattern": "_____ is an important innovation because _____.",
+          "examples": [
+            "The internet is an important innovation because it has revolutionized communication.",
+            "Email is an important innovation because it allows for quick and easy messaging."
+          ],
+          "usageNotes": "Use this pattern to explain the significance of an innovation.",
+          "teachingTips": "Have students discuss different innovations related to the internet.",
+          "difficultyLevel": "intermediate",
+          "grammarFocus": "Explaining cause and effect",
+          "communicativeFunction": "Describing impact"
+        }
+      ]
+    },
+    {
+      "type": "discussion",
+      "title": "Discussion Questions",
+      "introduction": "The internet has undeniably transformed our world, connecting us in ways previously unimaginable.  It's a powerful tool for communication, education, and access to information. However, it also presents challenges, such as misinformation and privacy concerns.  How do we navigate this complex digital landscape responsibly?",
+      "questions": [
+        {
+          "question": "How has the internet changed the way you access information compared to previous generations?",
+          "imagePrompt": "A split screen showing a person using a smartphone to access information on one side, and a person using a library card catalog on the other. No text or words should appear in the image."
+        },
+        {
+          "question": "Do you think the internet has made innovation faster or slower? Why?",
+          "imagePrompt": "A fast-moving montage of various technological advancements, from early computers to modern smartphones. No text or words should appear in the image."
+        },
+        {
+          "question": "What are some essential skills for navigating the internet safely and effectively?",
+          "imagePrompt": "A person wearing a superhero costume with a shield that has a lock icon, symbolizing online safety and protection. No text or words should appear in the image."
+        },
+        {
+          "question": "How can we ensure everyone has equal access to the internet and its benefits?",
+          "imagePrompt": "A diverse group of people using different devices to access the internet, symbolizing equal access. No text or words should appear in the image."
+        },
+        {
+          "question": "What are the potential consequences of relying too heavily on the internet for communication and information?",
+          "imagePrompt": "A person surrounded by screens, looking overwhelmed and disconnected from the real world. No text or words should appear in the image."
+        }
+      ]
+    },
+    {
+      "type": "quiz",
+      "title": "Knowledge Check",
+      "questions": [
+        {
+          "question": "ARPANET was initially created for:",
+          "options": ["Social media", "E-commerce", "Defense communication", "Online gaming"],
+          "answer": "C",
+          "explanation": "ARPANET's primary goal was to create a decentralized communication network for defense purposes."
+        },
+        {
+          "question": "The World Wide Web made the internet more:",
+          "options": ["Complex", "Expensive", "Accessible", "Limited"],
+          "answer": "C",
+          "explanation": "The World Wide Web simplified internet access for the general public."
+        },
+        {
+          "question": "TCP/IP is essential for:",
+          "options": ["Playing video games", "Online shopping", "Sending emails", "Computer communication across networks"],
+          "answer": "D",
+          "explanation": "TCP/IP allows computers to communicate with each other across different networks."
+        },
+        {
+          "question": "The internet has had a minimal impact on modern life.",
+          "options": ["True", "False"],
+          "answer": "False",
+          "explanation": "The internet has profoundly impacted almost every aspect of modern life."
+        },
+        {
+          "question": "Innovation in technology has slowed down since the advent of the internet.",
+          "options": ["True", "False"],
+          "answer": "False",
+          "explanation": "The internet has fostered and accelerated technological innovation."
+        }
+      ]
+    }
+  ]
+}
+```

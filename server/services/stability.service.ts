@@ -1,10 +1,10 @@
 import axios from 'axios';
 import * as fs from 'fs';
 
-// Using the SDXL Turbo engine which is optimized for speed and lower cost
-const STABILITY_API_URL = 'https://api.stability.ai/v1/generation/stable-diffusion-xl-1024-v1-0/text-to-image';
-// Using SDXL 0.8 for optimal price/quality (cheaper than standard SDXL)
-// const STABILITY_API_URL = 'https://api.stability.ai/v1/generation/stable-diffusion-xl-0-8/text-to-image';
+// Using SD 1.6 which supports smaller dimensions and is more cost-effective
+const STABILITY_API_URL = 'https://api.stability.ai/v1/generation/stable-diffusion-v1-6/text-to-image';
+// SDXL models have fixed dimension requirements - 1024x1024, 1152x896, etc.
+// const STABILITY_API_URL = 'https://api.stability.ai/v1/generation/stable-diffusion-xl-1024-v1-0/text-to-image';
 const NEGATIVE_PROMPT = "blurry, distorted, text, words, letters, low quality, noisy, artifacts";
 
 /**
@@ -61,12 +61,12 @@ export class StabilityService {
         STABILITY_API_URL,
         {
           text_prompts: [{ text: prompt }, { text: NEGATIVE_PROMPT, weight: -0.7 }], // Add negative prompt with slight negative weight
-          height: 384, // Smallest usable size for SDXL (minimum is 384x384)
-          width: 384, // Smaller images = lower cost
+          height: 512, // SD 1.6 supports 512x512 as the smallest size
+          width: 512, // Keeping dimensions small to minimize cost
           samples: 1, // Generate only one image to minimize cost
           cfg_scale: 5, // Lower guidance scale for faster generation
           steps: 10, // Minimum steps for acceptable quality - significantly reduces cost
-          style_preset: "photographic", // Simple preset that works well for educational content
+          style_preset: "photographic" // Simple preset that works well for educational content
         },
         {
           headers: {
