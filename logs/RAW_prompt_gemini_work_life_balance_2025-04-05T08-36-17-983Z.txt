@@ -13,17 +13,27 @@ CRITICAL: Your output must be properly formatted JSON with NO ERRORS!
 
 3. CRITICAL: ALL CONTENT MUST BE ABOUT THE SPECIFIC TOPIC PROVIDED BY THE USER.
 
+4. CRITICAL: FOR EACH VOCABULARY WORD, YOU MUST INCLUDE THE 'pronunciation' OBJECT WITH 'syllables', 'stressIndex', AND 'phoneticGuide' FIELDS. This is mandatory.
+
+5. TONE & STYLE: Apply the following writing style to ALL generated text (reading, questions, definitions, notes, etc.):
+   - Use a warm, accessible, and conversational tone
+   - Include interesting facts and observations woven naturally into the narrative
+   - Use vivid, descriptive language that brings topics to life
+   - Make complex information approachable through clear explanations and engaging examples
+   - Use a mix of sentence lengths for good flow
+   - Occasionally address the reader directly with rhetorical questions or observations
+
 You are an expert ESL (English as a Second Language) teacher and curriculum designer with over 20 years of experience.
 
 TASK OVERVIEW:
-You will create a complete ESL lesson for B1 level students on the topic "Daily Life and Social Interactions:  Greetings and Farewells: (e.g., handshakes, bows, kisses, verbal greetings)".
+You will create a complete ESL lesson for B2 level students on the topic "work life balance".
 
 FORMAT YOUR RESPONSE AS JSON:
 Return your response as a valid, properly-formatted JSON object with the following structure:
 
 {
   "title": "Descriptive lesson title",
-  "level": "B1",
+  "level": "B2",
   "focus": "general",
   "estimatedTime": 60,
   "sections": [
@@ -61,31 +71,56 @@ Return your response as a valid, properly-formatted JSON object with the followi
           "term": "vocabulary word 1",
           "partOfSpeech": "noun/verb/adj",
           "definition": "Clear definition appropriate for the student level",
-          "example": "Contextual example sentence using the word properly"
+          "example": "Contextual example sentence using the word properly",
+          "pronunciation": {
+            "syllables": ["vo", "cab"],
+            "stressIndex": 0,
+            "phoneticGuide": "voh-KAB"
+          }
         },
         {
           "term": "vocabulary word 2",
           "partOfSpeech": "noun/verb/adj",
           "definition": "Clear definition appropriate for the student level",
-          "example": "Contextual example sentence using the word properly"
+          "example": "Contextual example sentence using the word properly",
+          "pronunciation": {
+            "syllables": ["ex", "am", "ple"],
+            "stressIndex": 1,
+            "phoneticGuide": "eg-ZAM-pul"
+          }
         },
         {
           "term": "vocabulary word 3",
           "partOfSpeech": "noun/verb/adj",
           "definition": "Clear definition appropriate for the student level",
-          "example": "Contextual example sentence using the word properly"
+          "example": "Contextual example sentence using the word properly",
+          "pronunciation": {
+            "syllables": ["syl", "la", "ble"],
+            "stressIndex": 0,
+            "phoneticGuide": "SIL-uh-bul"
+          }
         },
         {
           "term": "vocabulary word 4",
           "partOfSpeech": "noun/verb/adj",
           "definition": "Clear definition appropriate for the student level",
-          "example": "Contextual example sentence using the word properly"
+          "example": "Contextual example sentence using the word properly",
+          "pronunciation": {
+            "syllables": ["pho", "ne", "tic"],
+            "stressIndex": 1,
+            "phoneticGuide": "foh-NET-ik"
+          }
         },
         {
           "term": "vocabulary word 5",
           "partOfSpeech": "noun/verb/adj",
           "definition": "Clear definition appropriate for the student level",
-          "example": "Contextual example sentence using the word properly"
+          "example": "Contextual example sentence using the word properly",
+          "pronunciation": {
+            "syllables": ["gui", "dance"],
+            "stressIndex": 0,
+            "phoneticGuide": "GY-dunss"
+          }
         }
       ]
     },

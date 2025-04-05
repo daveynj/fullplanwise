@@ -11,6 +11,7 @@ import {
   Book,
   MessageCircle,
   GraduationCap,
+  Image as ImageIcon
 } from "lucide-react";
 
 interface DiscussionQuestion {
@@ -22,6 +23,7 @@ interface DiscussionQuestion {
   followUp?: string[];
   paragraphContext?: string;
   answer?: string; // Add support for answer field
+  imageBase64?: string | null; // Added for Stability AI image
 }
 
 interface DiscussionSectionProps {
@@ -355,11 +357,21 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
                         )}
                       </div>
                       
-                      {/* Image placeholder */}
-                      <div className="md:w-5/12 border rounded-md p-2 bg-gray-50">
-                        <div className="aspect-video bg-gray-200 rounded-md flex items-center justify-center">
-                          <MessageCircle className="h-8 w-8 text-gray-400" />
-                        </div>
+                      {/* Image Display */}
+                      <div className="md:w-5/12">
+                        {q.imageBase64 ? (
+                          <img 
+                            src={`data:image/png;base64,${q.imageBase64}`}
+                            alt={`Illustration for discussion question`}
+                            className="rounded-lg border border-indigo-200 shadow-sm max-w-full h-auto aspect-video object-cover"
+                          />
+                        ) : (
+                          <div className="border rounded-md p-2 bg-gray-50">
+                            <div className="aspect-video bg-gray-200 rounded-md flex items-center justify-center">
+                              <ImageIcon className="h-8 w-8 text-gray-400" />
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>

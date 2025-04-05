@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { LessonGenerateParams } from '@shared/schema';
 import * as fs from 'fs';
+import { stabilityService } from './stability.service';
 
 // Qwen API endpoint for international usage
 const QWEN_API_URL = 'https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions';
@@ -487,46 +488,35 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
         // Parse the response, transform, and return
         if (response.data?.choices?.[0]?.message?.content) {
           const content = response.data.choices[0].message.content;
+          let jsonContent: any;
           try {
-            // First attempt to parse the JSON content directly
-            const jsonContent = JSON.parse(content);
-            return this.formatLessonContent(jsonContent);
+            jsonContent = JSON.parse(content);
           } catch (error) {
             console.error('Error parsing Qwen response as JSON:', error);
-            
-            // Try to clean up the content first
-            let cleanedContent = content;
-            
-            // Remove any markdown code block markers if present
-            cleanedContent = cleanedContent.replace(/```json\s*/g, '').replace(/```\s*$/g, '').trim();
-            
+            let cleanedContent = content.replace(/```json\s*/g, '').replace(/```\s*$/g, '').trim();
             try {
-              // Try parsing the cleaned content
-              const jsonContent = JSON.parse(cleanedContent);
+              jsonContent = JSON.parse(cleanedContent);
               console.log('Successfully parsed JSON after cleaning content');
-              return this.formatLessonContent(jsonContent);
-            } catch (error) {
+            } catch (cleanError) {
               console.error('Failed to parse JSON even after cleaning, trying to fix malformed JSON');
-              
-              // Try to fix the malformed JSON with our custom function
               const fixedContent = this.parseQwenColonFormat(cleanedContent);
               try {
-                const jsonContent = JSON.parse(fixedContent);
+                jsonContent = JSON.parse(fixedContent);
                 console.log('Successfully parsed JSON after fixing malformed content');
-                return this.formatLessonContent(jsonContent);
-              } catch (error) {
+              } catch (fixError) {
                 console.error('Failed to parse JSON even after fixing, returning error response');
-              
-              // If all parsing attempts fail, return the error response
-              return {
-                title: `Lesson on ${params.topic}`,
-                content: content,
+                return {
+                  title: `Lesson on ${params.topic}`,
+                  content: content,
                   error: 'JSON parsing failed',
                   provider: 'qwen'
-              };
+                };
               }
             }
           }
+          
+          // Format content AND generate images
+          return await this.formatLessonContent(jsonContent);
         }
         
         return {
@@ -604,9 +594,9 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
   }
   
   /**
-   * Format and process the lesson content
+   * Format and process the lesson content, adding image data
    */
-  private formatLessonContent(content: any): any {
+  private async formatLessonContent(content: any): Promise<any> {
     try {
       // If content is already an object (previously parsed JSON), work with it directly
       if (typeof content === 'object' && content !== null) {
@@ -614,11 +604,29 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
         
         // Process each section if sections array exists
         if (lessonContent.sections && Array.isArray(lessonContent.sections)) {
+          console.log('Starting image generation loop for Qwen lesson...');
           for (const section of lessonContent.sections) {
             // Skip if not a valid section object
             if (!section || typeof section !== 'object') continue;
             
-            // Handle discussion section specially
+            // Generate images for Vocabulary
+            if (section.type === 'vocabulary' && section.words && Array.isArray(section.words)) {
+              console.log(`Found ${section.words.length} vocabulary words, generating images...`);
+              for (const word of section.words) {
+                if (word.imagePrompt) {
+                  try {
+                    // Generate unique ID for logging
+                    const requestId = `vocab_${word.term ? word.term.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 15) : 'word'}`;
+                    word.imageBase64 = await stabilityService.generateImage(word.imagePrompt, requestId);
+                  } catch (imgError) {
+                    console.error(`Error generating image for vocab word ${word.term}:`, imgError);
+                    word.imageBase64 = null; // Ensure field exists even on error
+                  }
+                }
+              }
+            }
+
+            // Handle discussion section specially (including image generation)
             if (section.type === 'discussion') {
               // Handle the introduction field possibly containing the paragraph context
               if (section.introduction && typeof section.introduction === 'string') {
@@ -630,7 +638,7 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
                 }
               }
               
-              // Process questions if they exist
+              // Process questions if they exist (including image generation)
               if (section.questions) {
                 // If questions is an object but not an array, convert to array
                 if (typeof section.questions === 'object' && !Array.isArray(section.questions)) {
@@ -648,30 +656,38 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
                   }
                 }
                 
-                // Ensure questions format is an array of objects with paragraphContext
+                // Ensure questions format is an array of objects and generate images
                 if (Array.isArray(section.questions)) {
-                  console.log("Processing discussion questions to ensure proper structure");
-                  section.questions = section.questions.map((q: any) => {
+                  console.log(`Found ${section.questions.length} discussion questions, generating images...`);
+                  // Use Promise.all for potentially faster image generation if needed, but sequential for now
+                  for (let i = 0; i < section.questions.length; i++) {
+                    let q = section.questions[i];
+                    
+                    // Ensure question structure
                     if (typeof q === 'string') {
-                      // For string questions, create a structured object
-                      return {
-                        question: q,
-                        // If we have a paragraphContext at the section level, include it with each question
-                        paragraphContext: section.paragraphContext || null
-                      };
+                      q = { question: q, paragraphContext: section.paragraphContext || null };
                     } else if (typeof q === 'object') {
-                      // For object questions, ensure paragraphContext is included
-                      return {
-                        ...q,
-                        paragraphContext: q.paragraphContext || section.paragraphContext || null
-                      };
+                      q = { ...q, paragraphContext: q.paragraphContext || section.paragraphContext || null };
                     }
-                    return q;
-                  });
+                    
+                    // Generate image if prompt exists
+                    if (q.imagePrompt) {
+                      try {
+                        // Generate unique ID for logging
+                        const requestId = `disc_${q.question ? q.question.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 15) : 'question'}`;
+                        q.imageBase64 = await stabilityService.generateImage(q.imagePrompt, requestId);
+                      } catch (imgError) {
+                        console.error(`Error generating image for discussion question:`, imgError);
+                        q.imageBase64 = null; // Ensure field exists even on error
+                      }
+                    }
+                    section.questions[i] = q; // Update the array with potentially added imageBase64
+                  }
                 }
               }
             }
           }
+          console.log('Finished image generation loop for Qwen lesson.');
         }
         
         // Add provider field to ensure consistent response structure
@@ -679,14 +695,14 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
         return lessonContent;
       }
       
-      // Add provider field to ensure all services return the same structure
+      // Add provider field if content was not already an object
       if (typeof content === 'object' && content !== null) {
         content.provider = 'qwen';
       }
       return content;
     } catch (error: any) {
       console.error('Error formatting lesson content:', error);
-      return content;
+      return content; // Return original content on formatting error
     }
   }
 

@@ -8,6 +8,8 @@ interface DiscussionQuestion {
   focusVocabulary?: string[];
   followUp?: string[];
   answer?: string;
+  imagePrompt?: string; // Assuming this already exists for generation
+  imageBase64?: string | null; // Added for Stability AI image
 }
 
 interface DiscussionExtractorProps {

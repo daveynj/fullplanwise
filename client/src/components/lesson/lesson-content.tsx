@@ -38,6 +38,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn, extractDiscussionQuestions, extractQuizQuestions, extractComprehensionQuestions } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Button } from "@/components/ui/button"; // Added import for Button
 
 interface LessonContentProps {
   content: any;
@@ -1846,10 +1847,10 @@ export function LessonContent({ content }: LessonContentProps) {
   // Add sections in our preferred order, but only if they exist in the content
   displayOrder.forEach(sectionType => {
     // Special cases for alternative section types
-    if (sectionType === "warmup" && (hasSectionType("warm-up") || hasSectionType("sentenceFrames"))) {
+    if (sectionType === "warmup" && hasSectionType("warm-up")) {
       availableSections.push("warmup");
     } 
-    else if (sectionType === "sentenceFrames" && hasSectionType("grammar")) {
+    else if (sectionType === "sentenceFrames" && (hasSectionType("sentenceFrames") || hasSectionType("grammar"))) {
       availableSections.push("sentenceFrames");
     }
     else if (sectionType === "discussion" && hasSectionType("speaking")) {
@@ -1879,8 +1880,23 @@ export function LessonContent({ content }: LessonContentProps) {
     
   console.log("Available sections for tabs:", availableSections);
   
+  // Navigation logic
+  const currentIndex = availableSections.indexOf(activeTab);
+  
+  const handlePrev = () => {
+    if (currentIndex > 0) {
+      setActiveTab(availableSections[currentIndex - 1]);
+    }
+  };
+  
+  const handleNext = () => {
+    if (currentIndex < availableSections.length - 1) {
+      setActiveTab(availableSections[currentIndex + 1]);
+    }
+  };
+  
   return (
-    <div className="lesson-content max-w-5xl mx-auto">
+    <div className="lesson-content max-w-7xl mx-auto"> {/* Increased max-width */}
       {/* Lesson header */}
       <div className="mb-8">
         <h1 className="text-2xl md:text-3xl font-bold mb-2">{parsedContent.title}</h1>
@@ -1932,7 +1948,7 @@ export function LessonContent({ content }: LessonContentProps) {
         </div>
         
         {/* Section content */}
-        <div className="p-1">
+        <div className="p-1 text-xl leading-relaxed"> {/* Changed text-lg to text-xl */}
           <TabsContent value="warmup" className="m-0">
             <WarmupSection />
           </TabsContent>
@@ -1981,6 +1997,33 @@ export function LessonContent({ content }: LessonContentProps) {
           </TabsContent>
         </div>
       </Tabs>
+      
+      {/* Navigation Buttons */}
+      <div className="flex justify-between items-center mt-8">
+        <Button 
+          variant="outline" 
+          onClick={handlePrev} 
+          disabled={currentIndex === 0}
+          aria-label="Previous Section"
+          className="flex items-center"
+        >
+          <ChevronLeft className="h-5 w-5 mr-2" />
+          Previous
+        </Button>
+        <span className="text-sm text-gray-500">
+          Section {currentIndex + 1} of {availableSections.length}
+        </span>
+        <Button 
+          variant="outline" 
+          onClick={handleNext} 
+          disabled={currentIndex === availableSections.length - 1}
+          aria-label="Next Section"
+          className="flex items-center"
+        >
+          Next
+          <ChevronRight className="h-5 w-5 ml-2" />
+        </Button>
+      </div>
     </div>
   );
 }

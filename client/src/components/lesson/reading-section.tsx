@@ -106,7 +106,7 @@ export function ReadingSection({ section }: ReadingSectionProps) {
         {/* Reading content */}
         <div className="p-6 border-t">
           {sectionParagraphs.length > 0 ? (
-            <div className="leading-relaxed text-gray-800">
+            <div className="leading-relaxed text-xl text-gray-800">
               {sectionParagraphs[activeParagraph]}
             </div>
           ) : (

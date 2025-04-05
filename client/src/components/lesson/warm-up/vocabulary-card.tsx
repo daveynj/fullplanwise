@@ -10,6 +10,7 @@ export interface VocabularyWord {
   syllables?: string[];
   stressIndex?: number;
   phoneticGuide?: string;
+  imageBase64?: string | null;
 }
 
 interface VocabularyCardProps {
@@ -44,10 +45,21 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
 
   return (
     <div className="bg-blue-50 rounded-md p-5 border border-blue-100">
-      <div className="mb-2">
+      <div className="mb-4">
         <h2 className="text-xl font-medium text-blue-900">{word.word}</h2>
         <p className="text-blue-600 text-sm">{word.partOfSpeech || 'noun'}</p>
       </div>
+      
+      {/* Display Image if available */}
+      {word.imageBase64 && (
+        <div className="mb-4 flex justify-center">
+          <img 
+            src={`data:image/png;base64,${word.imageBase64}`}
+            alt={`Illustration for ${word.word}`}
+            className="rounded-lg border border-blue-200 shadow-sm max-w-full h-auto max-h-48"
+          />
+        </div>
+      )}
       
       {/* Definition */}
       <div className="mb-3">
@@ -77,24 +89,27 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
           <Radio className="mr-2 h-4 w-4" />
           Pronunciation
         </h3>
-        <p className="p-2 bg-white rounded border border-blue-100 font-mono">
-          {wordData.pronunciation}
-        </p>
-        
-        {/* Syllable breakdown - using predefined data */}
-        <div className="flex justify-center mt-2 gap-0.5">
-          {wordData.syllables.map((syllable: string, idx: number) => (
-            <span 
-              key={idx}
-              className={`px-2 py-1 text-sm ${
-                idx === wordData.emphasisIndex
-                  ? 'bg-blue-200 text-blue-800' 
-                  : 'bg-gray-100 text-gray-700'
-              }`}
-            >
-              {syllable}
-            </span>
-          ))}
+        {/* New container for pronunciation box */}
+        <div className="p-3 bg-blue-100 rounded-md border border-blue-200 space-y-2">
+          <p className="font-mono text-blue-900"> {/* Removed individual bg/border */}
+            {wordData.pronunciation}
+          </p>
+          
+          {/* Syllable breakdown - using predefined data */}
+          <div className="flex justify-center gap-0.5"> {/* Removed mt-2, handled by space-y-2 on parent */}
+            {wordData.syllables.map((syllable: string, idx: number) => (
+              <span 
+                key={idx}
+                className={`px-2 py-1 text-sm rounded ${
+                  idx === wordData.emphasisIndex
+                    ? 'bg-blue-600 text-white' // Adjusted emphasis style slightly for contrast
+                    : 'bg-white text-gray-700' // Adjusted non-emphasis style for contrast
+                }`}
+              >
+                {syllable}
+              </span>
+            ))}
+          </div>
         </div>
       </div>
     </div>
