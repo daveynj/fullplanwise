@@ -77,12 +77,7 @@ export function ReadingSection({ section }: ReadingSectionProps) {
           </div>
         </div>
         
-        {/* Introduction display */}
-        {section?.introduction && (
-          <div className="p-4 bg-blue-50 border-b border-blue-100">
-            <p className="text-gray-700 italic">{section.introduction}</p>
-          </div>
-        )}
+        {/* Removed fixed introduction - first paragraph will serve as introduction */}
         
         {/* Progress indicator */}
         {sectionParagraphs.length > 0 && (
@@ -154,20 +149,7 @@ export function ReadingSection({ section }: ReadingSectionProps) {
         )}
       </div>
       
-      {/* Teacher notes */}
-      {section?.teacherNotes && (
-        <Card className="border-blue-100">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm flex items-center gap-2 text-blue-600">
-              <GraduationCap className="h-4 w-4" />
-              Teacher Notes
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-0 text-sm text-gray-700">
-            <p>{section.teacherNotes}</p>
-          </CardContent>
-        </Card>
-      )}
+      {/* Teacher notes have been moved to the notes tab */}
     </div>
   );
 }

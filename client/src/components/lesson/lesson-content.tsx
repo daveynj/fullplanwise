@@ -45,6 +45,7 @@ interface LessonContentProps {
 }
 
 type SectionType = 
+  | "notes" 
   | "warmup" 
   | "warm-up" 
   | "reading" 
@@ -216,7 +217,7 @@ export function LessonContent({ content }: LessonContentProps) {
 
       // Add all supported section types to recognize
       const supportedSectionTypes = [
-        "warmup", "warm-up", "reading", "vocabulary", "comprehension", 
+        "notes", "warmup", "warm-up", "reading", "vocabulary", "comprehension", 
         "sentenceFrames", "grammar", "discussion", "speaking", "quiz", "assessment"
       ];
       
@@ -677,6 +678,13 @@ export function LessonContent({ content }: LessonContentProps) {
 
   // Map of section types to their details
   const sectionDetails: Record<SectionType, SectionDetails> = {
+    "notes": {
+      icon: GraduationCap,
+      label: "Teacher Notes",
+      color: "bg-blue-100",
+      textColor: "text-blue-700",
+      description: "Teaching guidance and tips"
+    },
     "warmup": { 
       icon: Flame, 
       label: "Warm-up",
@@ -1027,123 +1035,107 @@ export function LessonContent({ content }: LessonContentProps) {
             </div>
           </CardHeader>
           <CardContent className="pt-6">
-            <div className="grid md:grid-cols-2 gap-6">
-              {/* Left Column: Vocabulary Preview & Discussion */}
-              <div className="space-y-6">
-                {/* Key Vocabulary Preview */}
-                <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-amber-800 font-medium flex items-center">
-                      <BookOpen className="mr-2 h-4 w-4" />
-                      Key Vocabulary Preview
-                    </h3>
-                    <span className="text-xs text-amber-600">
-                      All vocabulary words for this lesson
-                    </span>
-                  </div>
-                  
-                  {/* Image related to vocabulary */}
-                  <div className="relative aspect-video mb-4 rounded-md overflow-hidden border border-amber-200">
-                    {currentWord.imageBase64 ? (
-                      <img 
-                        src={`data:image/png;base64,${currentWord.imageBase64}`}
-                        alt={`Illustration for ${currentWord.word}`}
-                        className="absolute inset-0 h-full w-full object-cover"
-                      />
-                    ) : (
-                      /* Placeholder image when no image data is available */
-                      <div className="absolute inset-0 bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center">
-                        <Image className="h-16 w-16 text-amber-300" />
-                      </div>
-                    )}
-                  </div>
-                  
-                  {/* Pagination Controls */}
-                  <div className="flex items-center justify-between bg-amber-50 rounded-md p-2 border border-amber-200">
-                    <button 
-                      onClick={goToPrevWord}
-                      className="p-2 text-amber-700 hover:bg-amber-100 rounded-md"
-                    >
-                      <ChevronLeft className="h-4 w-4" />
-                    </button>
-                    <span className="text-sm font-medium">
-                      {currentWordIndex + 1} of {totalWords}
-                    </span>
-                    <button 
-                      onClick={goToNextWord}
-                      className="p-2 text-amber-700 hover:bg-amber-100 rounded-md"
-                    >
-                      <ChevronRight className="h-4 w-4" />
-                    </button>
-                  </div>
+            <div className="grid md:grid-cols-3 gap-6">
+              {/* Left Column: Vocabulary Image */}
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-amber-800 font-medium flex items-center">
+                    <BookOpen className="mr-2 h-4 w-4" />
+                    Key Vocabulary Preview
+                  </h3>
                 </div>
                 
-                {/* Discussion Questions */}
-                <div>
-                  <h3 className="text-amber-800 font-medium flex items-center mb-4">
-                    <MessageCircle className="mr-2 h-4 w-4" />
-                    Discussion Questions
-                  </h3>
-                  
-                  {discussionQuestions.length > 0 && (
-                    <div className="space-y-3">
-                      {discussionQuestions.map((question, idx) => (
-                        <div 
-                          key={`question-${idx}`} 
-                          className="p-4 bg-amber-50 border border-amber-200 rounded-md"
-                        >
-                          <div className="flex gap-3">
-                            <div className="flex-shrink-0 w-6 h-6 rounded-full bg-amber-500 text-white flex items-center justify-center text-sm font-medium">
-                              {idx + 1}
-                            </div>
-                            <p className="text-amber-900">{question}</p>
-                          </div>
-                          
-                          {idx === 0 && (
-                            <div className="mt-3 ml-9">
-                              <p className="text-sm text-amber-700 flex items-center">
-                                <ChevronRight className="h-3 w-3 mr-1" />
-                                What makes those celebrations special?
-                              </p>
-                            </div>
-                          )}
-                        </div>
-                      ))}
+                {/* Image related to vocabulary */}
+                <div className="relative aspect-square mb-4 rounded-md overflow-hidden border border-amber-200">
+                  {currentWord.imageBase64 ? (
+                    <img 
+                      src={`data:image/png;base64,${currentWord.imageBase64}`}
+                      alt={`Illustration for ${currentWord.word}`}
+                      className="absolute inset-0 h-full w-full object-cover"
+                    />
+                  ) : (
+                    /* Placeholder image when no image data is available */
+                    <div className="absolute inset-0 bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center">
+                      <Image className="h-16 w-16 text-amber-300" />
                     </div>
                   )}
                 </div>
+                
+                {/* Pagination Controls */}
+                <div className="flex items-center justify-between bg-amber-50 rounded-md p-2 border border-amber-200">
+                  <button 
+                    onClick={goToPrevWord}
+                    className="p-2 text-amber-700 hover:bg-amber-100 rounded-md"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </button>
+                  <span className="text-sm font-medium">
+                    {currentWordIndex + 1} of {totalWords}
+                  </span>
+                  <button 
+                    onClick={goToNextWord}
+                    className="p-2 text-amber-700 hover:bg-amber-100 rounded-md"
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
+                </div>
               </div>
               
-              {/* Right Column: Vocabulary Card */}
-              <VocabularyCard word={{
-                word: currentWord.word || (currentWord as any).term || "",
-                partOfSpeech: currentWord.partOfSpeech || "noun",
-                definition: currentWord.definition || "",
-                example: currentWord.example || "",
-                pronunciation: currentWord.pronunciation || "",
-                syllables: currentWord.syllables || undefined,
-                stressIndex: currentWord.stressIndex || undefined,
-                phoneticGuide: currentWord.phoneticGuide || undefined,
-                imageBase64: currentWord.imageBase64 || null
-              }} />
+              {/* Middle Column: Vocabulary Card */}
+              <div>
+                <VocabularyCard word={{
+                  word: currentWord.word || (currentWord as any).term || "",
+                  partOfSpeech: currentWord.partOfSpeech || "noun",
+                  definition: currentWord.definition || "",
+                  example: currentWord.example || "",
+                  pronunciation: currentWord.pronunciation || "",
+                  syllables: currentWord.syllables || undefined,
+                  stressIndex: currentWord.stressIndex || undefined,
+                  phoneticGuide: currentWord.phoneticGuide || undefined,
+                  // Removed imageBase64 here so image only displays in left column
+                  imageBase64: null
+                }} />
+              </div>
+              
+              {/* Right Column: Discussion Questions */}
+              <div>
+                <h3 className="text-amber-800 font-medium flex items-center mb-4">
+                  <MessageCircle className="mr-2 h-4 w-4" />
+                  Discussion Questions
+                </h3>
+                
+                {discussionQuestions.length > 0 && (
+                  <div className="space-y-3">
+                    {discussionQuestions.map((question, idx) => (
+                      <div 
+                        key={`question-${idx}`} 
+                        className="p-4 bg-amber-50 border border-amber-200 rounded-md"
+                      >
+                        <div className="flex gap-3">
+                          <div className="flex-shrink-0 w-6 h-6 rounded-full bg-amber-500 text-white flex items-center justify-center text-sm font-medium">
+                            {idx + 1}
+                          </div>
+                          <p className="text-amber-900">{question}</p>
+                        </div>
+                        
+                        {idx === 0 && (
+                          <div className="mt-3 ml-9">
+                            <p className="text-sm text-amber-700 flex items-center">
+                              <ChevronRight className="h-3 w-3 mr-1" />
+                              What makes those celebrations special?
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </CardContent>
         </Card>
         
-        {/* Teacher notes */}
-        {section.teacherNotes && (
-          <Card className="border-blue-100">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm flex items-center gap-2 text-blue-600">
-                <GraduationCap className="h-4 w-4" />
-                Teacher Notes
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0 text-sm text-gray-700">
-              <p>{section.teacherNotes}</p>
-            </CardContent>
-          </Card>
-        )}
+        {/* Teacher notes have been moved to the notes tab */}
       </div>
     );
   };
@@ -1382,20 +1374,7 @@ export function LessonContent({ content }: LessonContentProps) {
           </div>
         </div>
         
-        {/* Teacher notes (if available) */}
-        {section.teacherNotes && (
-          <Card className="border-blue-100">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm flex items-center gap-2 text-blue-600">
-                <GraduationCap className="h-4 w-4" />
-                Teacher Notes
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0 text-sm text-gray-700">
-              <p>{section.teacherNotes}</p>
-            </CardContent>
-          </Card>
-        )}
+        {/* Teacher notes have been moved to the notes tab */}
       </div>
     );
   };
@@ -1496,20 +1475,7 @@ export function LessonContent({ content }: LessonContentProps) {
           </CardContent>
         </Card>
         
-        {/* Teacher notes */}
-        {section.teacherNotes && (
-          <Card className="border-blue-100">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm flex items-center gap-2 text-blue-600">
-                <GraduationCap className="h-4 w-4" />
-                Teacher Notes
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0 text-sm text-gray-700">
-              <p>{section.teacherNotes}</p>
-            </CardContent>
-          </Card>
-        )}
+        {/* Teacher notes have been moved to the notes tab */}
       </div>
     );
   };
@@ -1810,17 +1776,79 @@ export function LessonContent({ content }: LessonContentProps) {
           </CardContent>
         </Card>
         
-        {/* Teacher notes */}
-        {section.teacherNotes && (
-          <Card className="border-blue-100">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm flex items-center gap-2 text-blue-600">
-                <GraduationCap className="h-4 w-4" />
-                Teacher Notes
-              </CardTitle>
+        {/* Teacher notes have been moved to the notes tab */}
+      </div>
+    );
+  };
+
+  // We're now using our specialized QuizExtractor component for the quiz/assessment sections
+
+  // Teacher Notes Section to collect all teacher notes
+  const TeacherNotesSection = () => {
+    // Collect all teacher notes from all sections
+    const allNotes: {[key: string]: string} = {};
+    
+    if (Array.isArray(parsedContent.sections)) {
+      parsedContent.sections.forEach((section: any) => {
+        if (section && typeof section === 'object' && section.teacherNotes) {
+          // Use section type or title as the key
+          const sectionName = section.title || 
+                             (section.type && sectionDetails[section.type as SectionType] ? 
+                              sectionDetails[section.type as SectionType].label : 
+                              section.type) || 
+                             "Untitled Section";
+          
+          allNotes[sectionName] = section.teacherNotes;
+        }
+      });
+    }
+    
+    const noteKeys = Object.keys(allNotes);
+    
+    return (
+      <div className="space-y-6">
+        {/* Notes Header Card */}
+        <Card className="border-blue-200 bg-blue-50">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-blue-700">
+              <GraduationCap className="h-5 w-5" />
+              Teacher Notes
+            </CardTitle>
+            <CardDescription>
+              Teaching guidance, suggestions, and additional resources
+            </CardDescription>
+          </CardHeader>
+        </Card>
+        
+        {noteKeys.length > 0 ? (
+          <Card>
+            <CardHeader className="bg-blue-50 border-b border-blue-100">
+              <CardTitle className="text-blue-700">Teaching Guidance</CardTitle>
             </CardHeader>
-            <CardContent className="pt-0 text-sm text-gray-700">
-              <p>{section.teacherNotes}</p>
+            <CardContent className="pt-6">
+              <div className="space-y-6">
+                {noteKeys.map((sectionName) => (
+                  <div key={sectionName} className="p-4 border border-blue-100 rounded-lg">
+                    <h3 className="text-blue-800 font-medium mb-2 flex items-center gap-2">
+                      <FileText className="h-4 w-4" />
+                      {sectionName}
+                    </h3>
+                    <div className="pl-6 border-l-2 border-blue-100 text-gray-700">
+                      <p>{allNotes[sectionName]}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <Card>
+            <CardContent className="py-8">
+              <div className="text-center">
+                <GraduationCap className="mx-auto h-12 w-12 text-blue-300" />
+                <h3 className="mt-4 text-lg font-medium">No teacher notes available</h3>
+                <p className="mt-2 text-sm text-gray-500">This lesson doesn't include specific teaching notes or guidance</p>
+              </div>
             </CardContent>
           </Card>
         )}
@@ -1828,14 +1856,12 @@ export function LessonContent({ content }: LessonContentProps) {
     );
   };
 
-  // We're now using our specialized QuizExtractor component for the quiz/assessment sections
-
   // Get all available sections for tabs
   console.log("Original sections:", parsedContent.sections);
   
   // Create arrays to store the section types from the content and our desired display order
   let contentSectionTypes: string[] = [];
-  const displayOrder: string[] = ["warmup", "reading", "comprehension", "vocabulary", "sentenceFrames", "discussion", "quiz"];
+  const displayOrder: string[] = ["warmup", "reading", "comprehension", "vocabulary", "sentenceFrames", "discussion", "quiz", "notes"];
   
   // Helper function to check if a section type exists
   const hasSectionType = (type: string): boolean => {
@@ -1886,6 +1912,11 @@ export function LessonContent({ content }: LessonContentProps) {
   // If we still don't have any sections, use the original content section types as fallback
   if (availableSections.length === 0) {
     availableSections.push(...contentSectionTypes);
+  }
+  
+  // Always add the notes tab regardless of whether we have teacher notes or not
+  if (!availableSections.includes("notes")) {
+    availableSections.push("notes");
   }
   
   // If no standard sections found, fall back to filtering and mapping
@@ -2013,6 +2044,10 @@ export function LessonContent({ content }: LessonContentProps) {
           
           <TabsContent value="assessment" className="m-0">
             <QuizExtractor content={parsedContent} sectionType="assessment" />
+          </TabsContent>
+          
+          <TabsContent value="notes" className="m-0">
+            <TeacherNotesSection />
           </TabsContent>
         </div>
       </Tabs>
