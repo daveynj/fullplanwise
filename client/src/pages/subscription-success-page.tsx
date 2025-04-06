@@ -29,6 +29,7 @@ export default function SubscriptionSuccessPage() {
   const { toast } = useToast();
   const [subscriptionDetails, setSubscriptionDetails] = useState<SubscriptionDetails | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [planTier, setPlanTier] = useState<string>('');
   
   // Extract session ID from URL
   const searchParams = new URLSearchParams(window.location.search);
@@ -59,6 +60,9 @@ export default function SubscriptionSuccessPage() {
       // Force annual plan to show 250 credits for now
       const forcedTier = searchParams.get("plan");
       const tier = forcedTier === "annual_plan" ? "annual" : user?.subscriptionTier;
+      
+      // Save the tier to state so we can use it in the render function
+      setPlanTier(tier || '');
       
       console.log(`Subscription tier: ${tier}, forced tier from params: ${forcedTier}`);
       
@@ -120,7 +124,7 @@ export default function SubscriptionSuccessPage() {
                     </div>
                     
                     <div className="pt-2 border-t mt-3">
-                      {tier === 'annual' || searchParams.get("plan") === "annual_plan" ? (
+                      {planTier === 'annual' || searchParams.get("plan") === "annual_plan" ? (
                         <p className="text-gray-700">You've received <span className="font-semibold">{subscriptionDetails.monthlyCredits} credits</span> with this annual plan.</p>
                       ) : (
                         <p className="text-gray-700">You'll receive <span className="font-semibold">{subscriptionDetails.monthlyCredits} credits</span> each billing period with this plan.</p>
