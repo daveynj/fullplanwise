@@ -12,13 +12,19 @@ import {
 import { extractComprehensionQuestions } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
+// Interface for object-format options (for consistency with quiz-extractor)
+interface ComprehensionOptionObject {
+  text: string;
+  correct: boolean;
+}
+
 interface ComprehensionQuestion {
   question: string;
   answer: string;
   correctAnswer?: string;
   explanation?: string;
   type?: "true-false" | "multiple-choice" | string;
-  options?: string[];
+  options?: Array<string | ComprehensionOptionObject>;
 }
 
 interface ComprehensionExtractorProps {
@@ -39,7 +45,34 @@ export const ComprehensionExtractor = ({ content }: ComprehensionExtractorProps)
   
   // Find the correct answer for the current question
   const getCorrectAnswer = (question: ComprehensionQuestion): string => {
-    return question.correctAnswer || question.answer || '';
+    console.log("Getting correct answer for:", question);
+    
+    // Check for various formats of correctAnswer
+    if (question.correctAnswer) {
+      return question.correctAnswer;
+    }
+    
+    // Some AI responses use 'answer' field
+    if (question.answer) {
+      return question.answer;
+    }
+    
+    // If the question has options and one is marked as "correct" (object format)
+    if (question.options && Array.isArray(question.options)) {
+      // Check for object format options (legacy format support)
+      const correctOption = question.options.find(opt => 
+        typeof opt === 'object' && opt !== null && 
+        'correct' in (opt as ComprehensionOptionObject) && 
+        (opt as ComprehensionOptionObject).correct === true
+      );
+      
+      if (correctOption && typeof correctOption === 'object' && 
+          'text' in (correctOption as ComprehensionOptionObject)) {
+        return (correctOption as ComprehensionOptionObject).text || '';
+      }
+    }
+    
+    return '';
   };
   
   // Handle submitting an answer
@@ -213,10 +246,15 @@ export const ComprehensionExtractor = ({ content }: ComprehensionExtractorProps)
                      extractedQuestions[activeQuestion].options.length > 0 && 
                      extractedQuestions[activeQuestion].type !== "true-false" && (
                       <div className="space-y-2">
-                        {extractedQuestions[activeQuestion].options.map((option: string, idx: number) => {
-                          const isSelected = selectedOption === option;
+                        {extractedQuestions[activeQuestion].options.map((option: string | ComprehensionOptionObject, idx: number) => {
+                          // Handle both string and object options
+                          const optionText = typeof option === 'string' 
+                            ? option 
+                            : (option as ComprehensionOptionObject).text || '';
+                            
+                          const isSelected = selectedOption === optionText;
                           const correctAnswer = getCorrectAnswer(extractedQuestions[activeQuestion]);
-                          const isCorrect = option === correctAnswer;
+                          const isCorrect = optionText === correctAnswer;
                           
                           let optionClass = "flex items-center p-3 border rounded-md cursor-pointer";
                           
@@ -239,13 +277,13 @@ export const ComprehensionExtractor = ({ content }: ComprehensionExtractorProps)
                           return (
                             <div 
                               key={`option-${idx}`}
-                              onClick={() => !submitted && setSelectedOption(option)}
+                              onClick={() => !submitted && setSelectedOption(optionText)}
                               className={optionClass}
                             >
                               <div className={`h-4 w-4 mr-3 rounded-full ${
                                 isSelected ? (submitted && !isCorrect ? 'bg-red-500' : 'bg-purple-500') : 'bg-gray-200'
                               }`} />
-                              <span>{option}</span>
+                              <span>{optionText}</span>
                               
                               {submitted && isCorrect && (
                                 <CheckCircle2 className="ml-auto h-5 w-5 text-green-500" />

@@ -18,13 +18,32 @@ import {
 import { extractQuizQuestions } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
+// Utility function to normalize text for more flexible matching
+const normalizeText = (text: string): string => {
+  if (!text) return '';
+  
+  return text
+    .toLowerCase()
+    .trim()
+    // Remove punctuation
+    .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "")
+    // Replace multiple spaces with single space
+    .replace(/\s{2,}/g, " ");
+};
+
+// Interface for object-format options (legacy support)
+interface QuizOptionObject {
+  text: string;
+  correct: boolean;
+}
+
 interface QuizQuestion {
   question: string;
   answer: string;
   correctAnswer?: string;
   explanation?: string;
   type?: "true-false" | "multiple-choice" | string;
-  options?: string[];
+  options?: Array<string | QuizOptionObject>;
 }
 
 interface QuizExtractorProps {
@@ -50,7 +69,36 @@ export const QuizExtractor = ({ content, sectionType = "quiz" }: QuizExtractorPr
 
   // Find the correct answer for the current question
   const getCorrectAnswer = (question: QuizQuestion): string => {
-    return question.correctAnswer || question.answer || '';
+    console.log("Question data:", question);
+    console.log("Correct answer field:", question.correctAnswer);
+    console.log("Answer field:", question.answer);
+    
+    // Check for various formats of correctAnswer
+    if (question.correctAnswer) {
+      return question.correctAnswer;
+    }
+    
+    // Some AI responses use 'answer' field
+    if (question.answer) {
+      return question.answer;
+    }
+    
+    // If the question has options and one is marked as "correct" (object format)
+    if (question.options && Array.isArray(question.options)) {
+      // Check for object format options (legacy format support)
+      const correctOption = question.options.find(opt => 
+        typeof opt === 'object' && opt !== null && 
+        'correct' in (opt as QuizOptionObject) && 
+        (opt as QuizOptionObject).correct === true
+      );
+      
+      if (correctOption && typeof correctOption === 'object' && 
+          'text' in (correctOption as QuizOptionObject)) {
+        return (correctOption as QuizOptionObject).text || '';
+      }
+    }
+    
+    return '';
   };
 
   // Check if the selected answer is correct
@@ -58,7 +106,15 @@ export const QuizExtractor = ({ content, sectionType = "quiz" }: QuizExtractorPr
     if (!selectedOption) return false;
     
     const correctAnswer = getCorrectAnswer(questions[activeQuestion]);
-    return selectedOption === correctAnswer;
+    console.log("Comparing answers:", {
+      selected: selectedOption,
+      correct: correctAnswer,
+      isMatch: selectedOption === correctAnswer,
+      normalizedMatch: selectedOption.toLowerCase().trim() === correctAnswer.toLowerCase().trim()
+    });
+    
+    // Try case-insensitive matching as AI responses might have different casing
+    return selectedOption.toLowerCase().trim() === correctAnswer.toLowerCase().trim();
   };
 
   // Handle submitting an answer
@@ -164,10 +220,15 @@ export const QuizExtractor = ({ content, sectionType = "quiz" }: QuizExtractorPr
                 {questions[activeQuestion] && 
                  Array.isArray(questions[activeQuestion].options) && 
                  questions[activeQuestion].options!.length > 0 ? (
-                  questions[activeQuestion].options!.map((option: string, idx: number) => {
-                    const isSelected = selectedOption === option;
+                  questions[activeQuestion].options!.map((option: string | QuizOptionObject, idx: number) => {
+                    // Handle both string and object options
+                    const optionText = typeof option === 'string' 
+                      ? option 
+                      : (option as QuizOptionObject).text || '';
+                    
+                    const isSelected = selectedOption === optionText;
                     const correctAnswer = getCorrectAnswer(questions[activeQuestion]);
-                    const isCorrect = option === correctAnswer;
+                    const isCorrect = optionText === correctAnswer;
                     
                     let optionClass = "flex items-center p-3 border rounded-md cursor-pointer";
                     
@@ -191,12 +252,12 @@ export const QuizExtractor = ({ content, sectionType = "quiz" }: QuizExtractorPr
                       <div 
                         key={`quiz-option-${idx}`} 
                         className={optionClass}
-                        onClick={() => !submitted && setSelectedOption(option)}
+                        onClick={() => !submitted && setSelectedOption(optionText)}
                       >
                         <div className="w-5 h-5 flex items-center justify-center border border-gray-300 rounded-full mr-3">
                           {['A', 'B', 'C', 'D'][idx]}
                         </div>
-                        <span>{option}</span>
+                        <span>{optionText}</span>
                         
                         {submitted && isCorrect && (
                           <CheckCircle2 className="ml-auto h-5 w-5 text-green-500" />

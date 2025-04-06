@@ -417,6 +417,9 @@ You MUST ONLY create reading comprehension questions in these two formats:
 1. Multiple-choice questions with 3-4 options and one correct answer
 2. True-false questions with exactly ["True", "False"] options
 
+CRITICAL: You MUST mark the correct answer in the "correctAnswer" field for each question, not just in the "answer" field.
+For example: {"question": "What is the capital of France?", "options": ["London", "Paris", "Berlin"], "answer": "Paris", "correctAnswer": "Paris", "explanation": "Paris is the capital city of France."}
+
 DO NOT create any short-answer questions or questions that ask students to "explain" or "write."
 ALL questions must have selectable options. This includes ALL questions in the reading comprehension section, especially the third question.
 
@@ -516,11 +519,11 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
       "type": "comprehension",
       "title": "Reading Comprehension",
       "questions": [
-        {"question": "Complete Question 1?", "options": ["A", "B"], "answer": "A", "explanation": "Complete explanation..."},
-        {"question": "Complete Question 2?", "options": ["A", "B", "C"], "answer": "C", "explanation": "Complete explanation..."},
-        {"question": "Complete Question 3?", "options": ["A", "B", "C", "D"], "answer": "D", "explanation": "Complete explanation..."},
-        {"question": "Complete Question 4?", "options": ["True", "False"], "answer": "True", "explanation": "Complete explanation..."},
-        {"question": "Complete Question 5?", "options": ["True", "False"], "answer": "False", "explanation": "Complete explanation..."}
+        {"question": "Complete Question 1?", "options": ["A", "B"], "answer": "A", "correctAnswer": "A", "explanation": "Complete explanation..."},
+        {"question": "Complete Question 2?", "options": ["A", "B", "C"], "answer": "C", "correctAnswer": "C", "explanation": "Complete explanation..."},
+        {"question": "Complete Question 3?", "options": ["A", "B", "C", "D"], "answer": "D", "correctAnswer": "D", "explanation": "Complete explanation..."},
+        {"question": "Complete Question 4?", "options": ["True", "False"], "answer": "True", "correctAnswer": "True", "explanation": "Complete explanation..."},
+        {"question": "Complete Question 5?", "options": ["True", "False"], "answer": "False", "correctAnswer": "False", "explanation": "Complete explanation..."}
       ]
     },
     // SENTENCE FRAMES SECTION (Complete - 2-5 frames)
@@ -573,11 +576,11 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
       "type": "quiz",
       "title": "Knowledge Check",
       "questions": [
-        {"question": "Complete Quiz Q1?", "options": ["A", "B"], "answer": "A", "explanation": "Complete explanation..."},
-        {"question": "Complete Quiz Q2?", "options": ["A", "B", "C"], "answer": "C", "explanation": "Complete explanation..."},
-        {"question": "Complete Quiz Q3?", "options": ["A", "B", "C", "D"], "answer": "D", "explanation": "Complete explanation..."},
-        {"question": "Complete Quiz Q4?", "options": ["True", "False"], "answer": "True", "explanation": "Complete explanation..."},
-        {"question": "Complete Quiz Q5?", "options": ["True", "False"], "answer": "False", "explanation": "Complete explanation..."}
+        {"question": "Complete Quiz Q1?", "options": ["A", "B"], "answer": "A", "correctAnswer": "A", "explanation": "Complete explanation..."},
+        {"question": "Complete Quiz Q2?", "options": ["A", "B", "C"], "answer": "C", "correctAnswer": "C", "explanation": "Complete explanation..."},
+        {"question": "Complete Quiz Q3?", "options": ["A", "B", "C", "D"], "answer": "D", "correctAnswer": "D", "explanation": "Complete explanation..."},
+        {"question": "Complete Quiz Q4?", "options": ["True", "False"], "answer": "True", "correctAnswer": "True", "explanation": "Complete explanation..."},
+        {"question": "Complete Quiz Q5?", "options": ["True", "False"], "answer": "False", "correctAnswer": "False", "explanation": "Complete explanation..."}
       ]
     }
   ]
