@@ -209,7 +209,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         // Prepare response
         const lessonResponse: any = {
-          title: generatedContent.title,
+          // Use a fallback title if the title from generatedContent is missing
+          title: generatedContent.title || `Lesson on ${validatedData.topic}`,
           topic: validatedData.topic,
           cefrLevel: validatedData.cefrLevel,
           content: generatedContent, // Send the content directly without JSON.stringify
@@ -223,7 +224,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const lessonToSave = {
             teacherId: req.user!.id,
             studentId: validatedData.studentId || null,
-            title: generatedContent.title,
+            title: generatedContent.title || `Lesson on ${validatedData.topic}`, // Use fallback title
             topic: validatedData.topic,
             cefrLevel: validatedData.cefrLevel,
             content: JSON.stringify(generatedContent), // Store as string in database
