@@ -58,9 +58,17 @@ export default function LessonHistoryPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const { toast } = useToast();
   
-  // Fetch paginated lessons
+  // Fetch paginated lessons with server-side filtering
   const { data: lessonData, isLoading } = useQuery<PaginatedLessons>({
-    queryKey: ["/api/lessons", { page: currentPage }],
+    queryKey: [
+      "/api/lessons", 
+      { 
+        page: currentPage,
+        search: searchQuery,
+        cefrLevel: cefrFilter,
+        dateFilter: dateFilter
+      }
+    ],
     retry: false,
   });
   
@@ -171,33 +179,7 @@ export default function LessonHistoryPage() {
   const totalLessons = lessonData?.total || 0;
   const totalPages = Math.ceil(totalLessons / 10); // 10 items per page
   
-  // Filter lessons based on search and filters (client-side filtering)
-  const filteredLessons = lessons.filter((lesson: Lesson) => {
-    const matchesSearch = 
-      searchQuery === "" || 
-      lesson.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      lesson.topic.toLowerCase().includes(searchQuery.toLowerCase());
-      
-    const matchesCefr = cefrFilter === "" || cefrFilter === "all" || lesson.cefrLevel === cefrFilter;
-    
-    let matchesDate = true;
-    if (dateFilter && dateFilter !== "all" && lesson.createdAt) {
-      const lessonDate = new Date(lesson.createdAt);
-      const today = new Date();
-      const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
-      const monthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
-      
-      if (dateFilter === "today") {
-        matchesDate = lessonDate.toDateString() === today.toDateString();
-      } else if (dateFilter === "week") {
-        matchesDate = lessonDate >= weekAgo;
-      } else if (dateFilter === "month") {
-        matchesDate = lessonDate >= monthAgo;
-      }
-    }
-    
-    return matchesSearch && matchesCefr && matchesDate;
-  });
+  // Using server-side filtering now - no need for client-side filtering
   
   // Handle page change
   const goToPage = (page: number) => {
@@ -257,13 +239,22 @@ export default function LessonHistoryPage() {
                     placeholder="Search by title or topic..." 
                     className="pl-10 pr-4 py-2 w-full"
                     value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onChange={(e) => {
+                      setSearchQuery(e.target.value);
+                      setCurrentPage(1); // Reset to first page on search change
+                    }}
                   />
                   <Search className="absolute left-3 top-2.5 text-gray-400 h-5 w-5" />
                 </div>
                 
                 <div className="relative">
-                  <Select value={cefrFilter} onValueChange={setCefrFilter}>
+                  <Select 
+                    value={cefrFilter} 
+                    onValueChange={(value) => {
+                      setCefrFilter(value);
+                      setCurrentPage(1); // Reset to first page on filter change
+                    }}
+                  >
                     <SelectTrigger className="w-full">
                       <div className="flex items-center">
                         <Filter className="mr-2 h-4 w-4 text-gray-400" />
@@ -285,7 +276,13 @@ export default function LessonHistoryPage() {
                 </div>
                 
                 <div className="relative">
-                  <Select value={dateFilter} onValueChange={setDateFilter}>
+                  <Select 
+                    value={dateFilter} 
+                    onValueChange={(value) => {
+                      setDateFilter(value);
+                      setCurrentPage(1); // Reset to first page on date filter change
+                    }}
+                  >
                     <SelectTrigger className="w-full">
                       <div className="flex items-center">
                         <Calendar className="mr-2 h-4 w-4 text-gray-400" />
@@ -309,10 +306,10 @@ export default function LessonHistoryPage() {
                 <div className="flex justify-center py-12">
                   <Loader2 className="h-8 w-8 animate-spin text-primary" />
                 </div>
-              ) : filteredLessons.length > 0 ? (
+              ) : lessons.length > 0 ? (
                 <>
                   <div className="space-y-4">
-                    {filteredLessons.map((lesson: Lesson) => (
+                    {lessons.map((lesson: Lesson) => (
                       <Card key={lesson.id} className="hover:shadow-md transition-shadow">
                         <CardContent className="p-6">
                           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
@@ -425,6 +422,7 @@ export default function LessonHistoryPage() {
                             setSearchQuery("");
                             setCefrFilter("all");
                             setDateFilter("all");
+                            setCurrentPage(1); // Reset to first page on filter clear
                           }}
                         >
                           Clear Filters

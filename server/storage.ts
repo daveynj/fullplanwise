@@ -3,7 +3,7 @@ import createMemoryStore from "memorystore";
 import session from "express-session";
 import { Store } from "express-session";
 import { db } from "./db";
-import { eq, and, desc, count } from "drizzle-orm";
+import { eq, and, desc, count, or, ilike, gte } from "drizzle-orm";
 import connectPg from "connect-pg-simple";
 import { pool } from "./db";
 
@@ -30,7 +30,7 @@ export interface IStorage {
   deleteStudent(id: number): Promise<boolean>;
   
   // Lesson methods
-  getLessons(teacherId: number, page?: number, pageSize?: number): Promise<{lessons: Lesson[], total: number}>;
+  getLessons(teacherId: number, page?: number, pageSize?: number, search?: string, cefrLevel?: string, dateFilter?: string): Promise<{lessons: Lesson[], total: number}>;
   getLessonsByStudent(studentId: number): Promise<Lesson[]>;
   getLesson(id: number): Promise<Lesson | undefined>;
   createLesson(lesson: InsertLesson): Promise<Lesson>;
@@ -292,24 +292,74 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Lesson methods
-  async getLessons(teacherId: number, page: number = 1, pageSize: number = 10): Promise<{lessons: Lesson[], total: number}> {
+  async getLessons(
+    teacherId: number, 
+    page: number = 1, 
+    pageSize: number = 10, 
+    search?: string, 
+    cefrLevel?: string, 
+    dateFilter?: string
+  ): Promise<{lessons: Lesson[], total: number}> {
     try {
       // Calculate offset based on page number and page size
       const offset = (page - 1) * pageSize;
       
-      // Get total count for pagination
+      // Build the where conditions
+      let whereConditions = [eq(lessons.teacherId, teacherId)];
+      
+      // Add search filter if provided
+      if (search && search.trim() !== '') {
+        const searchTerm = `%${search.trim()}%`;
+        whereConditions.push(
+          or(
+            ilike(lessons.title, searchTerm),
+            ilike(lessons.topic, searchTerm),
+            ilike(lessons.cefrLevel, searchTerm)
+          ) as any // Type assertion to fix TypeScript error
+        );
+      }
+      
+      // Add CEFR level filter if provided
+      if (cefrLevel && cefrLevel !== 'all') {
+        whereConditions.push(eq(lessons.cefrLevel, cefrLevel));
+      }
+      
+      // Add date filter if provided
+      if (dateFilter) {
+        const now = new Date();
+        let startDate: Date;
+        
+        switch (dateFilter) {
+          case 'today':
+            startDate = new Date(now.setHours(0, 0, 0, 0));
+            whereConditions.push(gte(lessons.createdAt, startDate));
+            break;
+          case 'week':
+            startDate = new Date(now);
+            startDate.setDate(now.getDate() - 7);
+            whereConditions.push(gte(lessons.createdAt, startDate));
+            break;
+          case 'month':
+            startDate = new Date(now);
+            startDate.setMonth(now.getMonth() - 1);
+            whereConditions.push(gte(lessons.createdAt, startDate));
+            break;
+        }
+      }
+      
+      // Get total count with all filters applied
       const totalCountResult = await db
         .select({ count: count() })
         .from(lessons)
-        .where(eq(lessons.teacherId, teacherId));
+        .where(and(...whereConditions));
       
       const total = totalCountResult[0]?.count || 0;
       
-      // Get paginated lessons ordered by most recent first
+      // Get paginated lessons with all filters applied
       const lessonsList = await db
         .select()
         .from(lessons)
-        .where(eq(lessons.teacherId, teacherId))
+        .where(and(...whereConditions))
         .orderBy(desc(lessons.createdAt))
         .limit(pageSize)
         .offset(offset);

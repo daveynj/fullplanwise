@@ -120,8 +120,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const page = parseInt(req.query.page as string) || 1;
       const pageSize = parseInt(req.query.pageSize as string) || 10;
       
-      // Fetch paginated lessons
-      const result = await storage.getLessons(req.user!.id, page, pageSize);
+      // Get filter parameters from query string
+      const search = req.query.search as string || '';
+      const cefrLevel = req.query.cefrLevel as string || 'all';
+      const dateFilter = req.query.dateFilter as string || '';
+      
+      // Fetch paginated and filtered lessons
+      const result = await storage.getLessons(
+        req.user!.id, 
+        page, 
+        pageSize,
+        search,
+        cefrLevel,
+        dateFilter
+      );
+      
       res.json(result);
     } catch (error: any) {
       res.status(500).json({ message: error.message });

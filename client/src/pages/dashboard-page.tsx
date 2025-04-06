@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { BookOpen, Users, Clock, BarChart2, ArrowRight } from "lucide-react";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { Lesson } from "@shared/schema";
+import { Lesson, Student } from "@shared/schema";
 
 // Define interface for paginated lessons
 interface PaginatedLessons {
@@ -18,7 +18,7 @@ export default function DashboardPage() {
   const { user } = useAuth();
   
   // Fetch students for quick access
-  const { data: students = [] } = useQuery({
+  const { data: students = [] } = useQuery<Student[]>({
     queryKey: ["/api/students"],
     retry: false,
   });
@@ -186,7 +186,7 @@ export default function DashboardPage() {
                 <CardContent>
                   {students.length > 0 ? (
                     <div className="space-y-4">
-                      {students.slice(0, 5).map((student, idx) => (
+                      {students.slice(0, 5).map((student: Student, idx: number) => (
                         <div key={idx} className="flex items-center p-3 bg-gray-50 rounded-lg">
                           <div className="bg-amber-100 p-2 rounded-lg mr-3">
                             <Users className="h-5 w-5 text-amber-500" />
