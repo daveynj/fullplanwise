@@ -458,6 +458,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log(`Subscription checkout session created: ${session.id}`);
       console.log(`Session URL: ${session.url}`);
       
+      // IMMEDIATE CREDIT ALLOCATION: Add credits directly since webhooks seem to be failing
+      if (planId === 'annual_plan') {
+        // Add 250 credits for annual plan
+        const user = await storage.getUser(userId);
+        if (user) {
+          const updatedUser = await storage.updateUser(userId, {
+            subscriptionTier: 'annual',
+            credits: user.credits + 250
+          });
+          console.log(`IMMEDIATE CREDIT ALLOCATION: Added 250 credits to user ${userId} for annual plan. New total: ${updatedUser.credits}`);
+        }
+      } else if (planId === 'premium_monthly') {
+        // Add 60 credits for premium plan
+        const user = await storage.getUser(userId);
+        if (user) {
+          const updatedUser = await storage.updateUser(userId, {
+            subscriptionTier: 'premium',
+            credits: user.credits + 60
+          });
+          console.log(`IMMEDIATE CREDIT ALLOCATION: Added 60 credits to user ${userId} for premium plan. New total: ${updatedUser.credits}`);
+        }
+      } else if (planId === 'basic_monthly') {
+        // Add 20 credits for basic plan
+        const user = await storage.getUser(userId);
+        if (user) {
+          const updatedUser = await storage.updateUser(userId, {
+            subscriptionTier: 'basic',
+            credits: user.credits + 20
+          });
+          console.log(`IMMEDIATE CREDIT ALLOCATION: Added 20 credits to user ${userId} for basic plan. New total: ${updatedUser.credits}`);
+        }
+      }
+      
       res.json({ 
         sessionId: session.id,
         url: session.url

@@ -37,13 +37,23 @@ export default function SubscriptionSuccessPage() {
 
   // When the component mounts, refresh the user data and fetch subscription details
   useEffect(() => {
+    // Force a refresh of user data to get updated credits
     queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+    
+    // Set a timeout to refresh user data again after a short delay
+    // This ensures we catch the updated credit count after the backend processes it
+    const refreshTimer = setTimeout(() => {
+      queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+      console.log("Refreshing user data to get latest credit count");
+    }, 1000);
     
     // Show success toast
     toast({
       title: "Subscription Activated",
       description: "Your subscription has been successfully activated.",
     });
+    
+    return () => clearTimeout(refreshTimer);
 
     // If we have a session ID and user data, try to fetch subscription details
     if (sessionId && user) {
