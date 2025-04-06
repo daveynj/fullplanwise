@@ -914,57 +914,8 @@ export function LessonContent({ content }: LessonContentProps) {
       }
     }
     
-    // If we still don't have vocabulary words, use predefined ones
-    if (vocabWords.length === 0) {
-      // Predefined vocabulary for celebrations
-      vocabWords.push(
-        {
-          word: "festivity",
-          partOfSpeech: "noun",
-          definition: "A joyful celebration or festival with entertainment",
-          example: "The New Year's festivities included fireworks and music.",
-          pronunciation: "fes-TIV-i-tee",
-          syllables: ["fes", "tiv", "i", "ty"],
-          stressIndex: 1
-        },
-        {
-          word: "commemorate",
-          partOfSpeech: "verb",
-          definition: "To honor and remember an important person or event",
-          example: "We commemorate Independence Day every year on July 4th.",
-          pronunciation: "kuh-MEM-uh-rayt",
-          syllables: ["com", "mem", "o", "rate"],
-          stressIndex: 1
-        },
-        {
-          word: "patriotic",
-          partOfSpeech: "adjective",
-          definition: "Having love, loyalty and devotion to one's country",
-          example: "She felt patriotic when she saw the national flag.",
-          pronunciation: "pay-tree-OT-ik",
-          syllables: ["pa", "tri", "ot", "ic"],
-          stressIndex: 2
-        },
-        {
-          word: "ritual",
-          partOfSpeech: "noun",
-          definition: "A formal ceremony or series of acts always performed the same way",
-          example: "The lighting of candles is an important ritual in many celebrations.",
-          pronunciation: "RICH-oo-uhl",
-          syllables: ["ri", "tu", "al"],
-          stressIndex: 0
-        },
-        {
-          word: "heritage",
-          partOfSpeech: "noun",
-          definition: "Traditions and culture passed down from previous generations",
-          example: "Their cultural heritage influences how they celebrate holidays.",
-          pronunciation: "HAIR-i-tij",
-          syllables: ["her", "i", "tage"],
-          stressIndex: 0
-        }
-      );
-    }
+    // No hard-coded fallback vocabulary - only use AI-generated content
+    // If we don't have any vocabulary, we'll display a message to generate new content
 
     // DISCUSSION QUESTIONS EXTRACTION:
     // Get discussion questions from the section
@@ -980,13 +931,8 @@ export function LessonContent({ content }: LessonContentProps) {
       }
     }
     
-    // Ensure we have at least one discussion question
-    if (discussionQuestions.length === 0) {
-      discussionQuestions = [
-        "What kinds of celebrations do you know about?",
-        "What makes those celebrations special?"
-      ];
-    }
+    // No hard-coded fallback questions - only use AI-generated content
+    // We'll display a message if no questions are available
 
     // UI STATE:
     // Current vocabulary word index for pagination
@@ -1104,32 +1050,21 @@ export function LessonContent({ content }: LessonContentProps) {
                   Discussion Questions
                 </h3>
                 
-                {discussionQuestions.length > 0 && (
-                  <div className="space-y-3">
-                    {discussionQuestions.map((question, idx) => (
-                      <div 
-                        key={`question-${idx}`} 
-                        className="p-4 bg-amber-50 border border-amber-200 rounded-md"
-                      >
-                        <div className="flex gap-3">
-                          <div className="flex-shrink-0 w-6 h-6 rounded-full bg-amber-500 text-white flex items-center justify-center text-sm font-medium">
-                            {idx + 1}
-                          </div>
-                          <p className="text-amber-900">{question}</p>
+                <div className="space-y-3">
+                  {discussionQuestions.map((question, idx) => (
+                    <div 
+                      key={`question-${idx}`} 
+                      className="p-4 bg-amber-50 border border-amber-200 rounded-md"
+                    >
+                      <div className="flex gap-3">
+                        <div className="flex-shrink-0 w-6 h-6 rounded-full bg-amber-500 text-white flex items-center justify-center text-sm font-medium">
+                          {idx + 1}
                         </div>
-                        
-                        {idx === 0 && (
-                          <div className="mt-3 ml-9">
-                            <p className="text-sm text-amber-700 flex items-center">
-                              <ChevronRight className="h-3 w-3 mr-1" />
-                              What makes those celebrations special?
-                            </p>
-                          </div>
-                        )}
+                        <p className="text-amber-900">{question}</p>
                       </div>
-                    ))}
-                  </div>
-                )}
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </CardContent>
@@ -1142,15 +1077,12 @@ export function LessonContent({ content }: LessonContentProps) {
 
   const ReadingTabSection = () => {
     const section = findSection('reading');
-    if (!section) return <p>No reading content available</p>;
-    
     // Use the imported ReadingSection component
     return <ReadingSection section={section} />;
   };
 
   const VocabularySection = () => {
     const section = findSection('vocabulary');
-    if (!section) return <p>No vocabulary content available</p>;
     
     const [activeCard, setActiveCard] = useState(0);
     const [isFlipped, setIsFlipped] = useState(false);
@@ -1370,7 +1302,6 @@ export function LessonContent({ content }: LessonContentProps) {
 
   const ComprehensionSection = () => {
     const section = findSection('comprehension');
-    if (!section) return <p>No comprehension content available</p>;
     
     const [activeQuestion, setActiveQuestion] = useState(0);
     
@@ -1472,304 +1403,11 @@ export function LessonContent({ content }: LessonContentProps) {
   const SentenceFramesSectionWrapper = () => {
     // Try both sentenceFrames and grammar as possible section types
     const section = findSection('sentenceFrames') || findSection('grammar');
-    if (!section) return <p>No sentence frames content available</p>;
     
     // Use the imported SentenceFramesSection component
     return <SentenceFramesSection section={section} />;
-    
-    // Add additional error handling for frames array
-    let frames: any[] = [];
-    try {
-      // Check different possible structures and ensure we have a valid array
-      if (section.frames && Array.isArray(section.frames) && section.frames.length > 0) {
-        frames = section.frames;
-      } else if (section.sentenceFrames && Array.isArray(section.sentenceFrames) && section.sentenceFrames.length > 0) {
-        // Some APIs return sentence frames in a property called 'sentenceFrames'
-        frames = section.sentenceFrames;
-      } else if (section.frames && typeof section.frames === 'object' && !Array.isArray(section.frames)) {
-        // Handle case where frames is an object instead of an array (malformed JSON structure)
-        console.log("Found frames as an object, converting to array", section.frames);
-        const framesArray = [];
-        for (const key in section.frames) {
-          if (typeof section.frames[key] === 'object') {
-            framesArray.push({
-              ...section.frames[key],
-              pattern: section.frames[key].pattern || key
-            });
-          }
-        }
-        frames = framesArray;
-      } else if (section.examples) {
-        // Try to handle examples in different formats
-        if (Array.isArray(section.examples)) {
-          frames = [{ pattern: section.examples.join("\n"), level: "intermediate" }];
-        } else if (typeof section.examples === 'string') {
-          frames = [{ pattern: section.examples, level: "intermediate" }];
-        } else if (typeof section.examples === 'object') {
-          // Handle case where examples is an object
-          const examplesArray = [];
-          for (const key in section.examples) {
-            if (typeof section.examples[key] === 'string') {
-              examplesArray.push(section.examples[key]);
-            }
-          }
-          frames = [{ pattern: "Example sentences", examples: examplesArray, level: "intermediate" }];
-        } else {
-          console.warn("Examples found but in unexpected format");
-        }
-      } else if (section.content && typeof section.content === 'string' && 
-                 (section.content.includes("pattern") || section.content.includes("sentence frame"))) {
-        // Try to extract from content string if it contains patterns
-        const contentLines = section.content.split('\n');
-        const extractedFrames = [];
-        let currentFrame: any = { examples: [] };
-        
-        for (const line of contentLines) {
-          if (line.includes("Pattern:") || line.includes("Frame:")) {
-            // If we found a new pattern and already have one, save the current and start a new one
-            if (currentFrame.pattern) {
-              extractedFrames.push(currentFrame);
-              currentFrame = { examples: [] };
-            }
-            currentFrame.pattern = line.split(":")[1]?.trim() || line;
-          } else if (line.includes("Example:") || line.startsWith("- ")) {
-            // Add to examples for the current pattern
-            const example = line.replace(/^- |Example: ?/i, '').trim();
-            if (example) {
-              currentFrame.examples.push(example);
-            }
-          } else if (line.includes("Difficulty:") || line.includes("Level:")) {
-            currentFrame.level = line.split(":")[1]?.trim().toLowerCase() || "intermediate";
-          }
-        }
-        
-        // Add the last frame if it has a pattern
-        if (currentFrame.pattern) {
-          extractedFrames.push(currentFrame);
-        }
-        
-        if (extractedFrames.length > 0) {
-          frames = extractedFrames;
-        }
-      } else {
-        // Handle the very specific case we've observed in the Qwen API responses where
-        // there's a malformed section with colon delimiters instead of proper JSON structure
-        console.log("Trying colon-delimited section reconstruction for sentence frames");
-        
-        // Check if we have misplaced key-value pairs where values are directly keys without quotes
-        if (typeof section === 'object') {
-          // Iterate through all keys that don't start with 'type' or 'title'
-          const specialKeys = ['content', 'questions', 'targetVocabulary', 'procedure'];
-          const extractableKeys = Object.keys(section).filter(key => 
-            !['type', 'title'].includes(key) && 
-            typeof section[key] === 'string' && !specialKeys.includes(key));
-          
-          // Look for frame patterns in various places
-          if (extractableKeys.length > 0) {
-            console.log("Found potential frame patterns in keys:", extractableKeys);
-            
-            // Extract potential frame patterns
-            const framePatterns = extractableKeys.map(key => {
-              return {
-                pattern: key,
-                examples: [section[key]],
-                level: "intermediate"
-              };
-            });
-            
-            if (framePatterns.length > 0) {
-              frames = framePatterns;
-            }
-          }
-        }
-        
-        // If we still don't have frames, try to extract from content
-        if (frames.length === 0 && section.content && typeof section.content === 'string') {
-          console.log("Trying to extract frames from content field");
-          
-          const lines = section.content.split('\n');
-          const extractedContentFrames = [];
-          
-          // Simple pattern recognition - look for lines that contain phrases like "pattern" or "structure"
-          for (let i = 0; i < lines.length; i++) {
-            const line = lines[i];
-            if (
-              line.match(/pattern/i) || 
-              line.match(/structure/i) || 
-              line.match(/template/i) || 
-              line.match(/frame/i)
-            ) {
-              // Try to extract a pattern and examples
-              const examples = [];
-              
-              // Look forward a few lines for examples
-              for (let j = i + 1; j < Math.min(i + 5, lines.length); j++) {
-                if (lines[j] && lines[j].trim() && !lines[j].match(/pattern|structure|template|frame/i)) {
-                  examples.push(lines[j].trim());
-                }
-              }
-              
-              extractedContentFrames.push({
-                pattern: line.replace(/pattern:|structure:|template:|frame:/i, '').trim(),
-                examples,
-                level: "intermediate"
-              });
-            }
-          }
-          
-          if (extractedContentFrames.length > 0) {
-            frames = extractedContentFrames;
-          }
-        }
-        
-        // Last attempt - build a simple frame from targetVocabulary and other props
-        if (frames.length === 0) {
-          console.log("Last resort: building frames from available properties");
-          
-          let targetVocabulary: string[] = [];
-          if (section.targetVocabulary) {
-            if (Array.isArray(section.targetVocabulary)) {
-              targetVocabulary = section.targetVocabulary;
-            } else if (typeof section.targetVocabulary === 'string') {
-              targetVocabulary = [section.targetVocabulary];
-            } else if (typeof section.targetVocabulary === 'object') {
-              // Handle the case where targetVocabulary is a key-value object
-              for (const key in section.targetVocabulary) {
-                if (typeof key === 'string' && key) {
-                  targetVocabulary.push(key);
-                }
-              }
-            }
-          }
-          
-          if (targetVocabulary.length > 0) {
-            // Create sample patterns using the vocabulary words
-            const patterns = [
-              {
-                pattern: `I think that [subject] [verb] ${targetVocabulary[0] || '___'} because ___.`,
-                examples: [
-                  `I think that celebrations ${targetVocabulary[0] || 'enhance'} cultural identity because they connect people to their roots.`,
-                  `I think that holidays help ${targetVocabulary[0] || 'strengthen'} family bonds because they bring everyone together.`
-                ],
-                level: "intermediate"
-              },
-              {
-                pattern: `Despite [subject] [verb], [subject] [verb] ${targetVocabulary.length > 1 ? targetVocabulary[1] : '___'}.`,
-                examples: [
-                  `Despite the changes in how we celebrate, many traditions remain ${targetVocabulary.length > 1 ? targetVocabulary[1] : 'important'}.`,
-                  `Despite cultural differences, most holidays serve to ${targetVocabulary.length > 1 ? targetVocabulary[1] : 'unite'} communities.`
-                ],
-                level: "advanced"
-              }
-            ];
-            
-            frames = patterns;
-          }
-        }
-        
-        if (frames.length === 0) {
-          console.warn("All attempts to extract sentence frames failed");
-        }
-      }
-    } catch (error) {
-      console.error("Error processing sentence frames:", error);
-    }
-
-    return (
-      <div className="space-y-6">
-        <Card>
-          <CardHeader className="bg-yellow-50">
-            <CardTitle className="flex items-center gap-2 text-yellow-700">
-              <AlignJustify className="h-5 w-5" />
-              {section.title || "Sentence Frames"}
-            </CardTitle>
-            {(section.introduction || section.explanation) && (
-              <CardDescription>{section.introduction || section.explanation}</CardDescription>
-            )}
-          </CardHeader>
-          <CardContent className="pt-6">
-            <div className="space-y-6">
-              {frames.length > 0 ? (
-                frames.map((frame: any, idx: number) => (
-                  <div key={`frame-${idx}`} className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
-                    {/* Frame level */}
-                    <div className="flex items-center gap-2 mb-2">
-                      <Badge variant="outline" className={cn(
-                        frame.level === 'basic' ? 'bg-green-100 text-green-700 border-green-200' : 
-                        frame.level === 'intermediate' ? 'bg-yellow-100 text-yellow-700 border-yellow-200' : 
-                        'bg-red-100 text-red-700 border-red-200'
-                      )}>
-                        {frame.level ? frame.level.charAt(0).toUpperCase() + frame.level.slice(1) : 'Intermediate'}
-                      </Badge>
-                      {frame.grammarFocus && <span className="text-sm text-gray-500">{frame.grammarFocus}</span>}
-                    </div>
-                    
-                    {/* Sentence pattern */}
-                    <div className="p-3 bg-white rounded border border-yellow-200 mb-4 font-mono">
-                      {frame.pattern}
-                      <button className="float-right text-gray-400 hover:text-gray-600">
-                        <Copy className="h-4 w-4" />
-                      </button>
-                    </div>
-                    
-                    {/* Examples */}
-                    {frame.examples && frame.examples.length > 0 && (
-                      <div className="mt-4">
-                        <h4 className="text-sm font-medium flex items-center gap-1 mb-2">
-                          <FileText className="h-4 w-4" /> Examples
-                        </h4>
-                        <div className="space-y-2">
-                          {frame.examples.map((example: string, eIdx: number) => (
-                            <p key={`example-${eIdx}`} className="text-gray-700 bg-yellow-50 p-2 rounded border border-yellow-100">
-                              {example}
-                            </p>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                    
-                    {/* Usage */}
-                    {frame.usage && (
-                      <div className="mt-4">
-                        <h4 className="text-sm font-medium flex items-center gap-1 mb-2">
-                          <Lightbulb className="h-4 w-4" /> Usage
-                        </h4>
-                        <p className="text-sm text-gray-700">{frame.usage}</p>
-                      </div>
-                    )}
-                  </div>
-                ))
-              ) : (
-                // Fallback for traditional grammar structure
-                <div className="space-y-4">
-                  {section.explanation && (
-                    <div className="bg-yellow-50 p-3 rounded">
-                      <h4 className="font-medium mb-2">Grammar Explanation</h4>
-                      <p>{section.explanation}</p>
-                    </div>
-                  )}
-                  {section.examples && !frames.length && (
-                    <div className="space-y-2">
-                      <h4 className="font-medium mb-2">Examples</h4>
-                      {Array.isArray(section.examples) ? 
-                        section.examples.map((example: string, i: number) => (
-                          <p key={i} className="p-2 bg-yellow-50 border border-yellow-100 rounded">{example}</p>
-                        )) : 
-                        <p className="p-2 bg-yellow-50 border border-yellow-100 rounded">{section.examples}</p>
-                      }
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-        
-        {/* Teacher notes have been moved to the notes tab */}
-      </div>
-    );
   };
-
+  
   // We're now using our specialized QuizExtractor component for the quiz/assessment sections
 
   // Teacher Notes Section to collect all teacher notes
