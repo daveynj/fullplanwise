@@ -1,11 +1,22 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { HelpCircle, Radio, ChevronLeft, ChevronRight } from "lucide-react";
+import { 
+  HelpCircle, 
+  Radio, 
+  ChevronLeft, 
+  ChevronRight, 
+  CheckCircle2, 
+  XCircle, 
+  AlertCircle 
+} from "lucide-react";
 import { extractComprehensionQuestions } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 interface ComprehensionQuestion {
   question: string;
   answer: string;
+  correctAnswer?: string;
+  explanation?: string;
   type?: "true-false" | "multiple-choice" | string;
   options?: string[];
 }
@@ -19,10 +30,47 @@ export const ComprehensionExtractor = ({ content }: ComprehensionExtractorProps)
   console.log("COMPREHENSION EXTRACTOR CONTENT:", JSON.stringify(content, null, 2).substring(0, 500));
   const [activeQuestion, setActiveQuestion] = useState(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
+  const [submitted, setSubmitted] = useState(false);
+  const [userAnswers, setUserAnswers] = useState<(string | null)[]>([]);
   
   // Use the utility function to extract comprehension questions
   const extractedQuestions: ComprehensionQuestion[] = extractComprehensionQuestions(content);
   console.log("EXTRACTED COMPREHENSION QUESTIONS:", extractedQuestions);
+  
+  // Find the correct answer for the current question
+  const getCorrectAnswer = (question: ComprehensionQuestion): string => {
+    return question.correctAnswer || question.answer || '';
+  };
+  
+  // Handle submitting an answer
+  const handleSubmit = () => {
+    if (!selectedOption) return;
+    
+    // Update the user answers array
+    const newUserAnswers = [...userAnswers];
+    newUserAnswers[activeQuestion] = selectedOption;
+    setUserAnswers(newUserAnswers);
+    
+    setSubmitted(true);
+  };
+
+  // Move to the next question
+  const handleNext = () => {
+    if (activeQuestion < extractedQuestions.length - 1) {
+      setActiveQuestion(prev => prev + 1);
+      setSelectedOption(userAnswers[activeQuestion + 1] || null);
+      setSubmitted(false);
+    }
+  };
+
+  // Move to the previous question
+  const handlePrevious = () => {
+    if (activeQuestion > 0) {
+      setActiveQuestion(prev => prev - 1);
+      setSelectedOption(userAnswers[activeQuestion - 1] || null);
+      setSubmitted(false);
+    }
+  };
   
   // Check if we have found any questions
   if (extractedQuestions.length === 0) {
@@ -75,30 +123,17 @@ export const ComprehensionExtractor = ({ content }: ComprehensionExtractorProps)
         </CardHeader>
         <CardContent className="pt-6">
           <div>
-            <div className="flex justify-between items-center mb-4">
-              <button 
-                onClick={() => {
-                  setActiveQuestion(prev => (prev > 0 ? prev - 1 : prev));
-                  setSelectedOption(null);
-                }}
-                disabled={activeQuestion === 0}
-                className="px-3 py-1 border rounded-md disabled:opacity-50 hover:bg-gray-50 flex items-center gap-1"
-                aria-label="Previous question"
-              >
-                <ChevronLeft className="h-4 w-4" /> Previous
-              </button>
-              <span className="text-sm text-gray-500">Question {activeQuestion + 1} of {extractedQuestions.length}</span>
-              <button 
-                onClick={() => {
-                  setActiveQuestion(prev => (prev < extractedQuestions.length - 1 ? prev + 1 : prev));
-                  setSelectedOption(null);
-                }}
-                disabled={activeQuestion === extractedQuestions.length - 1}
-                className="px-3 py-1 border rounded-md disabled:opacity-50 hover:bg-gray-50 flex items-center gap-1"
-                aria-label="Next question"
-              >
-                Next <ChevronRight className="h-4 w-4" />
-              </button>
+            {/* Progress indicator */}
+            <div className="bg-purple-50 p-3 rounded-md mb-4">
+              <div className="text-sm text-purple-700">
+                Question {activeQuestion + 1} of {extractedQuestions.length}
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-1.5 mt-1">
+                <div 
+                  className="bg-purple-600 h-1.5 rounded-full" 
+                  style={{ width: `${((activeQuestion + 1) / extractedQuestions.length) * 100}%` }}
+                ></div>
+              </div>
             </div>
 
             <div className="p-5 border rounded-lg">
@@ -126,29 +161,50 @@ export const ComprehensionExtractor = ({ content }: ComprehensionExtractorProps)
                   <div className="space-y-2 mt-4">
                     {'type' in extractedQuestions[activeQuestion] && extractedQuestions[activeQuestion].type === "true-false" && (
                       <div className="space-y-2">
-                        <div 
-                          onClick={() => setSelectedOption('True')}
-                          className={`flex items-center p-3 border ${
-                            selectedOption === 'True' ? 'border-purple-400 bg-purple-50' : 'border-gray-200'
-                          } rounded hover:bg-purple-50 cursor-pointer transition-colors`}
-                        >
-                          <div className={`h-4 w-4 mr-3 rounded-full ${
-                            selectedOption === 'True' ? 'bg-purple-500' : 'bg-gray-200'
-                          }`} />
-                          <span>True</span>
-                        </div>
-                        
-                        <div 
-                          onClick={() => setSelectedOption('False')}
-                          className={`flex items-center p-3 border ${
-                            selectedOption === 'False' ? 'border-purple-400 bg-purple-50' : 'border-gray-200'
-                          } rounded hover:bg-purple-50 cursor-pointer transition-colors`}
-                        >
-                          <div className={`h-4 w-4 mr-3 rounded-full ${
-                            selectedOption === 'False' ? 'bg-purple-500' : 'bg-gray-200'
-                          }`} />
-                          <span>False</span>
-                        </div>
+                        {['True', 'False'].map((option, idx) => {
+                          const isSelected = selectedOption === option;
+                          const correctAnswer = getCorrectAnswer(extractedQuestions[activeQuestion]);
+                          const isCorrect = option === correctAnswer;
+                          
+                          let optionClass = "flex items-center p-3 border rounded-md cursor-pointer";
+                          
+                          if (submitted) {
+                            if (isSelected && isCorrect) {
+                              optionClass += " border-green-500 bg-green-50";
+                            } else if (isSelected && !isCorrect) {
+                              optionClass += " border-red-500 bg-red-50";
+                            } else if (isCorrect) {
+                              optionClass += " border-green-500 bg-green-50 opacity-70";
+                            } else {
+                              optionClass += " border-gray-200 hover:bg-purple-50";
+                            }
+                          } else {
+                            optionClass += isSelected
+                              ? " border-purple-500 bg-purple-50"
+                              : " border-gray-200 hover:bg-purple-50";
+                          }
+
+                          return (
+                            <div 
+                              key={`option-${idx}`}
+                              onClick={() => !submitted && setSelectedOption(option)}
+                              className={optionClass}
+                            >
+                              <div className={`h-4 w-4 mr-3 rounded-full ${
+                                isSelected ? (submitted && !isCorrect ? 'bg-red-500' : 'bg-purple-500') : 'bg-gray-200'
+                              }`} />
+                              <span>{option}</span>
+                              
+                              {submitted && isCorrect && (
+                                <CheckCircle2 className="ml-auto h-5 w-5 text-green-500" />
+                              )}
+                              
+                              {submitted && isSelected && !isCorrect && (
+                                <XCircle className="ml-auto h-5 w-5 text-red-500" />
+                              )}
+                            </div>
+                          );
+                        })}
                       </div>
                     )}
                     
@@ -157,25 +213,109 @@ export const ComprehensionExtractor = ({ content }: ComprehensionExtractorProps)
                      extractedQuestions[activeQuestion].options.length > 0 && 
                      extractedQuestions[activeQuestion].type !== "true-false" && (
                       <div className="space-y-2">
-                        {extractedQuestions[activeQuestion].options.map((option: string, idx: number) => (
-                          <div 
-                            key={`option-${idx}`} 
-                            onClick={() => setSelectedOption(option)}
-                            className={`flex items-center p-3 border ${
-                              selectedOption === option ? 'border-purple-400 bg-purple-50' : 'border-gray-200'
-                            } rounded hover:bg-purple-50 cursor-pointer transition-colors`}
-                          >
-                            <div className={`h-4 w-4 mr-3 rounded-full ${
-                              selectedOption === option ? 'bg-purple-500' : 'bg-gray-200'
-                            }`} />
-                            <span>{option}</span>
-                          </div>
-                        ))}
+                        {extractedQuestions[activeQuestion].options.map((option: string, idx: number) => {
+                          const isSelected = selectedOption === option;
+                          const correctAnswer = getCorrectAnswer(extractedQuestions[activeQuestion]);
+                          const isCorrect = option === correctAnswer;
+                          
+                          let optionClass = "flex items-center p-3 border rounded-md cursor-pointer";
+                          
+                          if (submitted) {
+                            if (isSelected && isCorrect) {
+                              optionClass += " border-green-500 bg-green-50";
+                            } else if (isSelected && !isCorrect) {
+                              optionClass += " border-red-500 bg-red-50";
+                            } else if (isCorrect) {
+                              optionClass += " border-green-500 bg-green-50 opacity-70";
+                            } else {
+                              optionClass += " border-gray-200 hover:bg-purple-50";
+                            }
+                          } else {
+                            optionClass += isSelected
+                              ? " border-purple-500 bg-purple-50"
+                              : " border-gray-200 hover:bg-purple-50";
+                          }
+
+                          return (
+                            <div 
+                              key={`option-${idx}`}
+                              onClick={() => !submitted && setSelectedOption(option)}
+                              className={optionClass}
+                            >
+                              <div className={`h-4 w-4 mr-3 rounded-full ${
+                                isSelected ? (submitted && !isCorrect ? 'bg-red-500' : 'bg-purple-500') : 'bg-gray-200'
+                              }`} />
+                              <span>{option}</span>
+                              
+                              {submitted && isCorrect && (
+                                <CheckCircle2 className="ml-auto h-5 w-5 text-green-500" />
+                              )}
+                              
+                              {submitted && isSelected && !isCorrect && (
+                                <XCircle className="ml-auto h-5 w-5 text-red-500" />
+                              )}
+                            </div>
+                          );
+                        })}
                       </div>
                     )}
                     
+                    {/* Explanation after submission */}
+                    {submitted && extractedQuestions[activeQuestion].explanation && (
+                      <div className="mt-4 p-3 bg-indigo-50 border border-indigo-200 rounded-md">
+                        <div className="flex items-start gap-2">
+                          <AlertCircle className="h-5 w-5 text-indigo-500 mt-0.5 flex-shrink-0" />
+                          <div>
+                            <p className="font-medium text-indigo-700">Explanation</p>
+                            <p className="text-sm text-indigo-800">{extractedQuestions[activeQuestion].explanation}</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {/* Submit or Continue Button */}
+                    <div className="mt-6 flex justify-center">
+                      {!submitted ? (
+                        <Button
+                          onClick={handleSubmit}
+                          disabled={!selectedOption}
+                          className="px-6 py-2 bg-purple-600 text-white rounded-md disabled:opacity-50"
+                        >
+                          Submit Answer
+                        </Button>
+                      ) : (
+                        <Button
+                          onClick={handleNext}
+                          disabled={activeQuestion === extractedQuestions.length - 1}
+                          className="px-6 py-2 bg-green-600 text-white rounded-md disabled:opacity-50"
+                        >
+                          Continue
+                        </Button>
+                      )}
+                    </div>
+                    
+                    {/* Navigation */}
+                    <div className="flex justify-between mt-4">
+                      <button 
+                        onClick={handlePrevious}
+                        disabled={activeQuestion === 0}
+                        className="px-4 py-2 border rounded-md disabled:opacity-50 flex items-center gap-1"
+                        aria-label="Previous question"
+                      >
+                        <ChevronLeft className="h-4 w-4" /> Previous
+                      </button>
+                      <button 
+                        onClick={handleNext}
+                        disabled={activeQuestion === extractedQuestions.length - 1}
+                        className="px-4 py-2 border rounded-md disabled:opacity-50 flex items-center gap-1"
+                        aria-label="Next question"
+                      >
+                        Next <ChevronRight className="h-4 w-4" />
+                      </button>
+                    </div>
+                    
                     {/* Progress indicator dots */}
-                    <div className="flex justify-center space-x-2 mt-8">
+                    <div className="flex justify-center space-x-2 mt-4">
                       {extractedQuestions.map((_, index) => (
                         <div
                           key={`dot-${index}`}
