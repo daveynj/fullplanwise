@@ -196,8 +196,12 @@ export function SentenceFramesSection({ section }: SentenceFrameSectionProps) {
                       {/* Frame header */}
                       <div className="bg-amber-100 px-4 py-2 flex flex-col gap-2">
                         <div className="flex items-center justify-between">
-                          <div className="bg-amber-200 rounded px-2 py-0.5">
-                            <span className="text-amber-800 font-medium text-sm">{frame.level}</span>
+                          <div className={`rounded px-2 py-0.5 ${
+                            frame.level === 'basic' ? 'bg-green-100 text-green-800' : 
+                            frame.level === 'intermediate' ? 'bg-amber-200 text-amber-800' : 
+                            'bg-red-100 text-red-800'
+                          }`}>
+                            <span className="font-medium text-sm">{frame.level}</span>
                           </div>
                           <h4 className="text-amber-800 font-medium">{frame.title}</h4>
                           <button 
