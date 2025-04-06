@@ -152,10 +152,19 @@ export class GeminiService {
               console.log('Patched structure with available content, proceeding');
               return await this.formatLessonContent(patchedContent);
             }
-          } catch (jsonError) {
+          } catch (error) {
             // If we fail to parse as JSON, try to handle it as best we can
-            console.error('Error parsing Gemini response as JSON:', jsonError);
-            console.error('Error details:', jsonError.message, 'at position:', jsonError.message.match(/position (\d+)/)?.[1]);
+            console.error('Error parsing Gemini response as JSON:', error);
+            
+            // Type-safe way to extract error details if it's a SyntaxError or similar
+            if (error instanceof Error) {
+              console.error('Error details:', error.message);
+              // Try to extract position info if available in the message
+              const positionMatch = error.message.match(/position (\d+)/);
+              if (positionMatch) {
+                console.error('Error at position:', positionMatch[1]);
+              }
+            }
             
             // Save the problematic content for diagnosis
             const errorContentPath = `./logs/ERROR_content_gemini_${requestId}.txt`;
@@ -827,7 +836,23 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
     fixed = fixed.replace(/([{,]\s*)'([^']+)'(\s*:)/g, '$1"$2"$3');
     
     // Step 4: Fix unescaped quotes in strings
-    // This is the most complex to fix and may require more sophisticated handling
+    // This is the most challenging part of JSON fixing
+    
+    // 4.1: Fix unescaped quotes in specific patterns we've seen in image prompts
+    // The pattern is like: concept like "justice" on 
+    fixed = fixed.replace(/(like\s+)"([^"]+)"(\s+on)/g, '$1\\"$2\\"$3');
+    
+    // 4.2: More general fix for unescaped quotes in known contexts
+    // Look for patterns like: "imagePrompt": "A person with "air quotes" standing"
+    fixed = fixed.replace(/("imagePrompt":\s*"[^"]*)"([^"]+)"([^"]*")/g, '$1\\"$2\\"$3');
+    fixed = fixed.replace(/("paragraphContext":\s*"[^"]*)"([^"]+)"([^"]*")/g, '$1\\"$2\\"$3');
+    fixed = fixed.replace(/("question":\s*"[^"]*)"([^"]+)"([^"]*")/g, '$1\\"$2\\"$3');
+    fixed = fixed.replace(/("examples":\s*\[\s*"[^"]*)"([^"]+)"([^"]*")/g, '$1\\"$2\\"$3');
+    fixed = fixed.replace(/("description":\s*"[^"]*)"([^"]+)"([^"]*")/g, '$1\\"$2\\"$3');
+    fixed = fixed.replace(/("definition":\s*"[^"]*)"([^"]+)"([^"]*")/g, '$1\\"$2\\"$3');
+    fixed = fixed.replace(/("usageNotes":\s*"[^"]*)"([^"]+)"([^"]*")/g, '$1\\"$2\\"$3');
+    fixed = fixed.replace(/("teachingTips":\s*"[^"]*)"([^"]+)"([^"]*")/g, '$1\\"$2\\"$3');
+    fixed = fixed.replace(/("usage":\s*"[^"]*)"([^"]+)"([^"]*")/g, '$1\\"$2\\"$3');
     
     // Step 5: Fix common formatting issues
     fixed = fixed.replace(/\r\n|\r|\n/g, ' '); // Replace newlines with spaces
@@ -845,19 +870,68 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
    */
   private extractJsonFromText(text: string): any | null {
     try {
+      console.log('Attempting to extract JSON from text...');
+      
       // First attempt: Find content between braces { ... } that looks like JSON
       const braceMatch = text.match(/{[\s\S]*}/);
       if (braceMatch) {
         // Try to parse the extracted content
         try {
           const extracted = this.fixCommonJsonIssues(braceMatch[0]);
+          console.log('Applying fixes and attempting to parse extracted JSON...');
           return JSON.parse(extracted);
         } catch (e) {
           console.log('Brace extraction failed:', e);
+          
+          // Try a more aggressive approach with additional fixes
+          try {
+            // Try to recover just the object structure with basic properties
+            const titleMatch = text.match(/"title"\s*:\s*"([^"]+)"/);
+            const sectionsStart = text.indexOf('"sections"');
+            
+            if (titleMatch && sectionsStart > -1) {
+              console.log('Attempting to reconstruct basic lesson structure...');
+              // Construct a minimal valid JSON object
+              const basicStructure = {
+                title: titleMatch[1],
+                provider: 'gemini',
+                sections: []
+              };
+              
+              return basicStructure;
+            }
+          } catch (recoveryError) {
+            console.log('Failed to recover basic structure:', recoveryError);
+          }
         }
       }
       
+      // Second attempt: Try to extract JSON section by section
+      console.log('Attempting to extract sections individually...');
+      const vocabMatch = text.match(/"vocabulary"\s*:\s*\[[\s\S]*?\]/);
+      const readingMatch = text.match(/"reading"\s*:\s*\{[\s\S]*?\}/);
+      const discussionMatch = text.match(/"discussion"\s*:\s*\{[\s\S]*?\}/);
+      
+      if (vocabMatch || readingMatch || discussionMatch) {
+        // Build partial content
+        const partialContent: any = {
+          title: "Recovered Lesson",
+          provider: 'gemini',
+          sections: []
+        };
+        
+        // Try to extract title
+        const titleMatch = text.match(/"title"\s*:\s*"([^"]+)"/);
+        if (titleMatch) {
+          partialContent.title = titleMatch[1];
+        }
+        
+        console.log('Successfully created partial content from sections');
+        return partialContent;
+      }
+      
       // If we reached here, no extraction method worked
+      console.log('All JSON extraction methods failed');
       return null;
     } catch (error) {
       console.error('Error in JSON extraction:', error);
