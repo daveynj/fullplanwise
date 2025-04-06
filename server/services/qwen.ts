@@ -202,47 +202,32 @@ WARM-UP ACTIVITY REQUIREMENTS:
 - The system will check that each vocabulary word appears in the warm-up - if any are missing, the lesson will be rejected
 
 DISCUSSION QUESTION REQUIREMENTS:
-- IMPORTANT NEW FORMAT: Each post-reading discussion will now consist of:
-  1. A CEFR-level appropriate paragraph about an interesting and relevant aspect of the topic
-  2. 5 discussion/debate topics related to the paragraph and the reading content
+- IMPORTANT NEW FORMAT: Each discussion question MUST be preceded by its own unique, CEFR-level appropriate paragraph (3-5 sentences) that provides context or an interesting angle related to the question. The question should directly relate to this paragraph.
+- You MUST provide EXACTLY 5 such paragraph-question pairs.
 - The paragraph should:
   - Be written at the appropriate CEFR level (${params.cefrLevel})
-  - Focus on something interesting and thought-provoking about the subject
-  - Be 3-5 sentences long
+  - Focus on something interesting and thought-provoking related to the question topic
   - Create a foundation for meaningful discussion
   - Relate directly to the vocabulary being learned
   - Avoid simply summarizing the main reading
-  - CRITICAL: The language complexity MUST match exactly the ${params.cefrLevel} level:
-    * A1-A2: Use very simple vocabulary, basic sentence structures, and short sentences
-    * B1-B2: Use moderate vocabulary complexity and some compound sentences
-    * C1-C2: Use sophisticated vocabulary and complex sentence structures
+  - CRITICAL: The language complexity MUST match exactly the ${params.cefrLevel} level
   - Be designed to stand out visually when displayed in the UI
-- The 5 discussion/debate topics should:
-  - Be phrased as interesting prompts that encourage different viewpoints
+- The discussion question should:
+  - Directly follow its context paragraph.
+  - Be phrased as an interesting prompt that encourages different viewpoints
   - Include topics that could generate healthy debate between teacher and student
   - Range from simpler questions to more thought-provoking debates
   - Be appropriate for one-on-one teaching via screen sharing
   - Encourage use of the target vocabulary
   - Be designed for in-depth conversation, not just short answers
-  - Reference specific content from both the main reading and the new paragraph
+  - Reference specific content from both its context paragraph and the main reading
 
-⚠️ CRITICAL REQUIREMENT: You MUST provide EXACTLY 5 discussion/debate topics after the paragraph. Not providing exactly 5 topics will cause your response to be rejected and considered a failure.
+⚠️ CRITICAL REQUIREMENT: You MUST provide EXACTLY 5 paragraph-question pairs. Failure to provide 5 pairs, each with a paragraph and a question, will cause your response to be rejected.
 
 - Avoid generic questions - make them specific to the content and culturally relevant
-- Adjust topic complexity appropriately for the target CEFR level:
-  - A1-A2: Use concrete topics with simple structures that relate to everyday experiences
-  - B1-B2: Include comparative topics, hypotheticals, and reasoning that encourage deeper thinking
-  - C1-C2: Develop abstract thinking and evaluation of complex ideas that challenge assumptions
-- Structure topics to build genuine discussion in a one-on-one context:
-  - Create opportunities for both teacher and student to take positions
-  - Encourage the use of evidence from the reading and personal experience
-  - Allow for exploration of cultural differences and similarities
-  - Encourage critical thinking appropriate to the CEFR level
-- For each discussion topic, include an image prompt (NEW!) - A detailed description (2-3 sentences) of what an image for this discussion topic should look like. The image prompt should:
-  - Visually represent the key topics in the discussion
-  - Be concrete and specific enough for an AI image generator to create a clear, relevant image
-  - Include cultural or contextual elements related to the topic
-  - Specify NO text or words should appear in the image
+- Adjust topic complexity appropriately for the target CEFR level
+- Structure topics to build genuine discussion in a one-on-one context
+- For each discussion question, include an image prompt (NEW!) - A detailed description (2-3 sentences) of what an image for this discussion topic should look like.
 
 !!! EXTREMELY IMPORTANT - READING COMPREHENSION FORMAT !!!
 You MUST ONLY create reading comprehension questions in these two formats:
@@ -368,17 +353,36 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
         // (Include 1-4 more complete frames)
       ]
     },
-    // DISCUSSION SECTION (Complete - 1 intro para, 5 questions)
+    // DISCUSSION SECTION (Complete - 5 pairs)
     {
       "type": "discussion",
       "title": "Discussion Questions",
-      "introduction": "Complete introductory paragraph (3-5 sentences)...",
       "questions": [
-        {"question": "Complete discussion question 1?", "imagePrompt": "Complete image prompt (no text)..."},
-        {"question": "Complete discussion question 2?", "imagePrompt": "Complete image prompt (no text)..."},
-        {"question": "Complete discussion question 3?", "imagePrompt": "Complete image prompt (no text)..."},
-        {"question": "Complete discussion question 4?", "imagePrompt": "Complete image prompt (no text)..."},
-        {"question": "Complete discussion question 5?", "imagePrompt": "Complete image prompt (no text)..."}
+        {
+          "paragraphContext": "Complete, unique context paragraph 1 (3-5 sentences)...",
+          "question": "Complete discussion question 1 related to paragraph 1?", 
+          "imagePrompt": "Complete image prompt for Q1 (no text)..."
+        },
+        {
+          "paragraphContext": "Complete, unique context paragraph 2 (3-5 sentences)...",
+          "question": "Complete discussion question 2 related to paragraph 2?", 
+          "imagePrompt": "Complete image prompt for Q2 (no text)..."
+        },
+        {
+          "paragraphContext": "Complete, unique context paragraph 3 (3-5 sentences)...",
+          "question": "Complete discussion question 3 related to paragraph 3?", 
+          "imagePrompt": "Complete image prompt for Q3 (no text)..."
+        },
+        {
+          "paragraphContext": "Complete, unique context paragraph 4 (3-5 sentences)...",
+          "question": "Complete discussion question 4 related to paragraph 4?", 
+          "imagePrompt": "Complete image prompt for Q4 (no text)..."
+        },
+        {
+          "paragraphContext": "Complete, unique context paragraph 5 (3-5 sentences)...",
+          "question": "Complete discussion question 5 related to paragraph 5?", 
+          "imagePrompt": "Complete image prompt for Q5 (no text)..."
+        }
       ]
     },
     // QUIZ SECTION (Complete - 5 questions)
@@ -663,12 +667,36 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
                   for (let i = 0; i < section.questions.length; i++) {
                     let q = section.questions[i];
                     
-                    // Ensure question structure
+                    // Standardize question format
+                    let questionObj: any;
+                    
                     if (typeof q === 'string') {
-                      q = { question: q, paragraphContext: section.paragraphContext || null };
-                    } else if (typeof q === 'object') {
-                      q = { ...q, paragraphContext: q.paragraphContext || section.paragraphContext || null };
+                      // Convert string questions to objects
+                      questionObj = { question: q, paragraphContext: null };
+                    } else if (typeof q === 'object' && q !== null) {
+                      // Use existing object structure
+                      questionObj = { ...q };
+                      // Ensure question field exists
+                      questionObj.question = q.question || q.text || `Discussion Question ${i + 1}`;
+                    } else {
+                      // Create default object for invalid types
+                      questionObj = {
+                        question: `Discussion Question ${i + 1}`,
+                        paragraphContext: null
+                      };
                     }
+                    
+                    // Check for paragraph context in various possible field names
+                    if (!questionObj.paragraphContext) {
+                      // Try to find paragraph context in other properties
+                      questionObj.paragraphContext = 
+                        questionObj.context || 
+                        questionObj.paragraph || 
+                        questionObj.introduction || 
+                        (section.paragraphContext ? section.paragraphContext : null);
+                    }
+                    
+                    q = questionObj;
                     
                     // Generate image if prompt exists
                     if (q.imagePrompt) {

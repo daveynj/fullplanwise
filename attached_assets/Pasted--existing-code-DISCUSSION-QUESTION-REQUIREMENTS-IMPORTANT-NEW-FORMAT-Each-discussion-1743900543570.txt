@@ -1,0 +1,68 @@
+
+// ... existing code ...
+
+DISCUSSION QUESTION REQUIREMENTS:
+- IMPORTANT NEW FORMAT: Each discussion question MUST be preceded by its own unique, CEFR-level appropriate paragraph (3-5 sentences) that provides context or an interesting angle related to the question. The question should directly relate to this paragraph.
+- You MUST provide EXACTLY 5 such paragraph-question pairs.
+- The paragraph should:
+  - Be written at the appropriate CEFR level (${params.cefrLevel})
+  - Focus on something interesting and thought-provoking related to the question topic
+  - Create a foundation for meaningful discussion
+  - Relate directly to the vocabulary being learned
+  - Avoid simply summarizing the main reading
+  - CRITICAL: The language complexity MUST match exactly the ${params.cefrLevel} level
+  - Be designed to stand out visually when displayed in the UI
+- The discussion question should:
+  - Directly follow its context paragraph.
+  - Be phrased as an interesting prompt that encourages different viewpoints
+  - Include topics that could generate healthy debate between teacher and student
+  - Range from simpler questions to more thought-provoking debates
+  - Be appropriate for one-on-one teaching via screen sharing
+  - Encourage use of the target vocabulary
+  - Be designed for in-depth conversation, not just short answers
+  - Reference specific content from both its context paragraph and the main reading
+
+⚠️ CRITICAL REQUIREMENT: You MUST provide EXACTLY 5 paragraph-question pairs. Failure to provide 5 pairs, each with a paragraph and a question, will cause your response to be rejected.
+
+- Avoid generic questions - make them specific to the content and culturally relevant
+- Adjust topic complexity appropriately for the target CEFR level
+- Structure topics to build genuine discussion in a one-on-one context
+- For each discussion question, include an image prompt (NEW!) - A detailed description (2-3 sentences) of what an image for this discussion topic should look like.
+
+// ... rest of prompt ...
+
+// Modify JSON structure example for discussion section
+    // DISCUSSION SECTION (Complete - 5 pairs)
+    {
+      "type": "discussion",
+      "title": "Discussion Questions",
+      // REMOVED top-level introduction/paragraphContext
+      "questions": [
+        {
+          "paragraphContext": "Complete, unique context paragraph 1 (3-5 sentences)...",
+          "question": "Complete discussion question 1 related to paragraph 1?", 
+          "imagePrompt": "Complete image prompt for Q1 (no text)..."
+        },
+        {
+          "paragraphContext": "Complete, unique context paragraph 2 (3-5 sentences)...",
+          "question": "Complete discussion question 2 related to paragraph 2?", 
+          "imagePrompt": "Complete image prompt for Q2 (no text)..."
+        },
+        {
+          "paragraphContext": "Complete, unique context paragraph 3 (3-5 sentences)...",
+          "question": "Complete discussion question 3 related to paragraph 3?", 
+          "imagePrompt": "Complete image prompt for Q3 (no text)..."
+        },
+        {
+          "paragraphContext": "Complete, unique context paragraph 4 (3-5 sentences)...",
+          "question": "Complete discussion question 4 related to paragraph 4?", 
+          "imagePrompt": "Complete image prompt for Q4 (no text)..."
+        },
+        {
+          "paragraphContext": "Complete, unique context paragraph 5 (3-5 sentences)...",
+          "question": "Complete discussion question 5 related to paragraph 5?", 
+          "imagePrompt": "Complete image prompt for Q5 (no text)..."
+        }
+      ]
+    },
+// ... rest of JSON example ...

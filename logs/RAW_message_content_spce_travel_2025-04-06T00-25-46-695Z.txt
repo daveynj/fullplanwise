@@ -1,0 +1,163 @@
+{
+  "title": "Space Travel: Exploring the Final Frontier",
+  "level": "B1",
+  "focus": "general",
+  "estimatedTime": 60,
+  "sections": [
+    {
+      "type": "warmup",
+      "title": "Warm-up Activity",
+      "content": "In this warm-up, we will explore key vocabulary related to space travel. You'll learn words like 'astronaut,' 'mission,' 'gravity,' 'orbit,' and 'satellite.' These terms are essential for understanding how humans explore space.",
+      "questions": [
+        "What do you think an astronaut does during a mission?",
+        "Can you guess what happens to objects in zero gravity?",
+        "How would you describe the path a satellite takes around Earth?",
+        "Why is it important for spacecraft to enter orbit correctly?",
+        "What challenges might astronauts face while traveling in space?"
+      ],
+      "targetVocabulary": ["astronaut", "mission", "gravity", "orbit", "satellite"],
+      "procedure": "Begin by introducing each word with its definition and example sentence. Use images or gestures to clarify meanings. Then, ask students to match the words with their definitions. Next, have them work in pairs to create sentences using all five words. Finally, discuss their examples as a group.",
+      "teacherNotes": "Encourage creativity when forming sentences. Ensure pronunciation is clear, especially for multi-syllable words like 'astronaut' and 'satellite.'"
+    },
+    {
+      "type": "reading",
+      "title": "Reading Text: The Wonders of Space Travel",
+      "introduction": "Have you ever wondered what it’s like to leave Earth and journey into space? Let’s dive into the exciting world of space exploration!",
+      "paragraphs": [
+        "Space travel has fascinated people for centuries. From ancient myths about the stars to modern rockets blasting off into the sky, humanity’s dream of reaching space has become a reality. Today, astronauts from different countries work together on missions that help us understand our universe better. For example, the International Space Station (ISS) orbits Earth and serves as a laboratory where scientists conduct experiments in zero gravity.",
+
+        "But why is space travel so challenging? One reason is gravity. To escape Earth’s pull, rockets must reach speeds of over 28,000 kilometers per hour! Once in space, astronauts experience weightlessness because there’s no gravity pulling them down. This can be fun but also tricky—for instance, eating and sleeping require special techniques.",
+
+Modern technology plays a huge role in making space travel possible. Satellites orbiting Earth provide communication services, weather forecasts, and even GPS navigation. Without these machines, life on Earth would look very different. Scientists are now working on new ways to make space travel safer and more efficient, such as reusable rockets and advanced propulsion systems.",
+
+        "Looking ahead, space agencies plan ambitious projects. Some aim to send humans to Mars, while others focus on mining asteroids for valuable resources. Imagine living on another planet someday—what would that be like? While it sounds like science fiction, many experts believe it could happen within your lifetime!"
+      ],
+      "teacherNotes": "Pause after each paragraph to check comprehension. Highlight interesting facts and encourage curiosity about space."
+    },
+    {
+      "type": "vocabulary",
+      "title": "Key Vocabulary",
+      "words": [
+        {
+          "term": "astronaut",
+          "partOfSpeech": "noun",
+          "definition": "A person trained to travel and work in space.",
+          "example": "The astronaut floated gracefully in the spacecraft.",
+          "collocations": ["space astronaut", "trained astronaut"],
+          "notes": "Used specifically for humans who go to space; not robots or machines.",
+          "teachingTips": "Show pictures of famous astronauts like Neil Armstrong or Valentina Tereshkova.",
+          "pronunciation": {"syllables": ["as", "tro", "naut"], "stressIndex": 1, "phoneticGuide": "AS-truh-nawt"},
+          "imagePrompt": "An astronaut wearing a spacesuit floating inside a spacecraft, with Earth visible through a window. No text or words should appear in the image."
+        },
+        {
+          "term": "mission",
+          "partOfSpeech": "noun",
+          "definition": "A specific task or project, often involving space exploration.",
+          "example": "Their mission was to repair the damaged satellite.",
+          "collocations": ["space mission", "successful mission"],
+          "notes": "Can refer to both crewed and uncrewed missions.",
+          "teachingTips": "Discuss real-life missions like Apollo 11 or Mars rovers.",
+          "pronunciation": {"syllables": ["mis", "sion"], "stressIndex": 0, "phoneticGuide": "MISH-uhn"},
+          "imagePrompt": "A rocket launching into space with flames beneath it, symbolizing the start of a space mission. No text or words should appear in the image."
+        },
+        {
+          "term": "gravity",
+          "partOfSpeech": "noun",
+          "definition": "The force that pulls objects toward the center of a planet or star.",
+          "example": "Without gravity, everything would float away.",
+          "collocations": ["zero gravity", "strong gravity"],
+          "notes": "Explains why things fall to the ground and why planets stay in orbit.",
+          "teachingTips": "Demonstrate gravity by dropping a small object.",
+          "pronunciation": {"syllables": ["grav", "i", "ty"], "stressIndex": 0, "phoneticGuide": "GRAV-i-tee"},
+          "imagePrompt": "A ball falling toward the ground, illustrating the effect of gravity. No text or words should appear in the image."
+        },
+        {
+          "term": "orbit",
+          "partOfSpeech": "noun",
+          "definition": "The curved path of an object around a planet, star, or moon.",
+          "example": "The satellite stays in orbit around Earth.",
+          "collocations": ["Earth orbit", "low orbit"],
+          "notes": "Orbits keep satellites and spacecraft moving without crashing.",
+          "teachingTips": "Draw a diagram showing Earth and a satellite in orbit.",
+          "pronunciation": {"syllables": ["or", "bit"], "stressIndex": 0, "phoneticGuide": "OR-bit"},
+          "imagePrompt": "A satellite circling Earth in space, showing its orbital path. No text or words should appear in the image."
+        },
+        {
+          "term": "satellite",
+          "partOfSpeech": "noun",
+          "definition": "An object that moves around a planet or star, either natural or artificial.",
+          "example": "Weather forecasts rely on data from satellites.",
+          "collocations": ["communication satellite", "weather satellite"],
+          "notes": "Includes both man-made satellites and natural ones like the Moon.",
+          "teachingTips": "Compare natural satellites (e.g., the Moon) with artificial ones.",
+          "pronunciation": {"syllables": ["sat", "el", "lite"], "stressIndex": 0, "phoneticGuide": "SAT-eh-lite"},
+          "imagePrompt": "A metallic, box-shaped satellite with solar panels orbiting Earth. No text or words should appear in the image."
+        }
+      ]
+    },
+    {
+      "type": "comprehension",
+      "title": "Reading Comprehension",
+      "questions": [
+        {"question": "What is the main purpose of the International Space Station?", "options": ["To study zero gravity", "To observe Earth's weather", "To prepare for Mars missions"], "answer": "To study zero gravity", "explanation": "The ISS is described as a laboratory for conducting experiments in zero gravity."},
+        {"question": "Why must rockets travel at high speeds to reach space?", "options": ["To avoid collisions", "To escape Earth’s gravity", "To save fuel"], "answer": "To escape Earth’s gravity", "explanation": "The text explains that escaping Earth’s gravity requires tremendous speed."},
+        {"question": "Which statement is true about satellites?", "options": ["They only orbit the Moon", "They help with GPS navigation", "They cannot function in space"], "answer": "They help with GPS navigation", "explanation": "The reading mentions that satellites assist with GPS and other services."},
+        {"question": "Is it easy for astronauts to eat and sleep in space?", "options": ["True", "False"], "answer": "False", "explanation": "The text states that eating and sleeping in space require special techniques due to weightlessness."},
+        {"question": "Do scientists believe humans might live on Mars someday?", "options": ["True", "False"], "answer": "True", "explanation": "The final paragraph suggests that living on Mars could happen within our lifetimes."}
+      ]
+    },
+    {
+      "type": "sentenceFrames",
+      "title": "Sentence Practice",
+      "frames": [
+        {
+          "pattern": "I think that _____ is amazing because _____.",
+          "examples": [
+            "I think that space travel is amazing because it helps us discover new things about the universe.",
+            "I think that the International Space Station is amazing because astronauts live and work there."
+          ],
+          "usageNotes": "Use this frame to express opinions about space-related topics.",
+          "teachingTips": "Model the pattern first, then let students practice with partners.",
+          "difficultyLevel": "basic",
+          "grammarFocus": "Expressing opinions with reasons",
+          "communicativeFunction": "Sharing personal views"
+        },
+        {
+          "pattern": "If I were an astronaut, I would _____.",
+          "examples": [
+            "If I were an astronaut, I would take photos of Earth from space.",
+            "If I were an astronaut, I would try to grow plants in zero gravity."
+          ],
+          "usageNotes": "This frame encourages imagination and hypothetical thinking.",
+          "teachingTips": "Ask follow-up questions like 'Why would you do that?'",
+          "difficultyLevel": "intermediate",
+          "grammarFocus": "Second conditional",
+          "communicativeFunction": "Imagining possibilities"
+        }
+      ]
+    },
+    {
+      "type": "discussion",
+      "title": "Discussion Questions",
+      "introduction": "Space exploration continues to inspire wonder and innovation. Whether it’s developing new technologies or planning trips to distant planets, the possibilities seem endless. What excites you most about the future of space travel?",
+      "questions": [
+        {"question": "Would you volunteer for a one-way trip to Mars if given the chance?", "imagePrompt": "A futuristic Mars colony with domes and red terrain, representing human settlement on Mars. No text or words should appear in the image."},
+        {"question": "How do you think space travel will change daily life on Earth in the next 50 years?", "imagePrompt": "A city skyline with satellites orbiting above, symbolizing technological advancements. No text or words should appear in the image."},
+        {"question": "Should governments spend money on space exploration instead of solving problems on Earth?", "imagePrompt": "A globe with a rocket launching from one side and a hospital on the other, highlighting priorities. No text or words should appear in the image."},
+        {"question": "What skills do you think an astronaut needs to succeed in space?", "imagePrompt": "An astronaut repairing equipment outside a spacecraft, emphasizing technical skills. No text or words should appear in the image."},
+        {"question": "Do you believe aliens exist somewhere in the universe?", "imagePrompt": "A mysterious alien landscape with strange rock formations, sparking curiosity about extraterrestrial life. No text or words should appear in the image."}
+      ]
+    },
+    {
+      "type": "quiz",
+      "title": "Knowledge Check",
+      "questions": [
+        {"question": "What keeps satellites in orbit around Earth?", "options": ["Wind", "Gravity", "Engines"], "answer": "Gravity", "explanation": "Gravity pulls satellites toward Earth, keeping them in orbit."},
+        {"question": "What happens to objects in zero gravity?", "options": ["They sink", "They float", "They explode"], "answer": "They float", "explanation": "In zero gravity, objects have no weight and float freely."},
+        {"question": "Which of these is NOT a type of space mission?", "options": ["Repairing a satellite", "Studying Mars", "Building houses on Earth"], "answer": "Building houses on Earth", "explanation": "Building houses is unrelated to space missions."},
+        {"question": "Are satellites used for weather forecasting?", "options": ["True", "False"], "answer": "True", "explanation": "Satellites collect data for accurate weather predictions."},
+        {"question": "Can humans currently live on Mars?", "options": ["True", "False"], "answer": "False", "explanation": "Humans have not yet established colonies on Mars."}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,241 @@
+```json
+{
+  "title": "A Journey Through Chinese History",
+  "level": "B1",
+  "focus": "general",
+  "estimatedTime": 60,
+  "sections": [
+    {
+      "type": "warmup",
+      "title": "Warm-up Activity: Picture This!",
+      "content": "Let's warm up our imaginations! I'll give you a word, and you describe a picture that represents it.  No drawing – just describe it to me. We'll use words like 'dynasty,' 'influence,' 'revolution,' 'philosophy,' and 'innovation.'",
+      "questions": [],
+      "targetVocabulary": ["dynasty", "influence", "revolution", "philosophy", "innovation"],
+      "procedure": "1. Say: 'Imagine a picture representing a powerful dynasty. Describe what you see.'\n2. After the student describes the image for 'dynasty,' continue with the remaining vocabulary words: 'influence,' 'revolution,' 'philosophy,' and 'innovation,' each time asking the student to describe a related image.",
+      "teacherNotes": "Encourage creativity and vivid descriptions. Gently guide students if they struggle to connect the words to images."
+    },
+    {
+      "type": "reading",
+      "title": "Reading Text: The Story of China",
+      "introduction": "China, a land of ancient traditions and remarkable progress, boasts a history that spans millennia.  From emperors and inventions to philosophies and revolutions, let's dive into a simplified overview of this fascinating story.",
+      "paragraphs": [
+        "Imagine a land ruled by emperors and dynasties, families who held power for centuries.  China's history is filled with such dynasties, each leaving its unique mark. The Han Dynasty, for instance, is known for its innovations like papermaking and the Silk Road, a vast trade network connecting East and West.  Think about the influence this had on the world!",
+        "But power doesn't last forever.  Dynasties rose and fell, often marked by periods of conflict and revolution.  The Qing Dynasty, the last imperial dynasty, faced internal rebellion and external pressure, ultimately leading to its downfall in the early 20th century.  Can you imagine the changes that such a revolution brought?",
+        "Throughout its history, China has been a cradle of philosophy and innovation.  Confucianism, a philosophy emphasizing social harmony and respect for elders, has deeply influenced Chinese culture for centuries.  Even today, its principles resonate in many aspects of Chinese life.  It's fascinating how ideas from so long ago can still shape societies today, isn't it?",
+        "From gunpowder and the compass to printing and porcelain, China has gifted the world with countless innovations.  These inventions didn't just stay within China's borders; they traveled along trade routes, influencing cultures and societies across the globe.  It's a testament to human ingenuity and the interconnectedness of our world."
+      ],
+      "teacherNotes": "Encourage students to visualize the events and concepts as they read.  Point out the cause-and-effect relationships between historical events."
+    },
+    {
+      "type": "vocabulary",
+      "title": "Key Vocabulary",
+      "words": [
+        {
+          "term": "dynasty",
+          "partOfSpeech": "noun",
+          "definition": "A sequence of rulers from the same family",
+          "example": "The Ming dynasty ruled China for centuries.",
+          "collocations": ["ruling dynasty", "powerful dynasty", "end of a dynasty"],
+          "notes": "Often used to refer to the period of time a particular family ruled.",
+          "teachingTips": "Use a family tree diagram to illustrate the concept of a dynasty.",
+          "pronunciation": {
+            "syllables": ["dyn", "as", "ty"],
+            "stressIndex": 1,
+            "phoneticGuide": "DIE-nuh-stee"
+          },
+          "imagePrompt": "A series of crowned figures, each slightly different but clearly related, sitting on thrones in a grand hall.  Each figure holds a symbol of power. No text or words should appear in the image."
+        },
+        {
+          "term": "influence",
+          "partOfSpeech": "noun",
+          "definition": "The power to affect something or someone",
+          "example": "Confucianism had a great influence on Chinese culture.",
+          "collocations": ["strong influence", "cultural influence", "under the influence"],
+          "notes": "Can also be used as a verb.",
+          "teachingTips": "Discuss different types of influence (positive, negative, subtle, direct).",
+          "pronunciation": {
+            "syllables": ["in", "flu", "ence"],
+            "stressIndex": 1,
+            "phoneticGuide": "IN-floo-ence"
+          },
+          "imagePrompt": "A ripple spreading outwards in a pond, with leaves and other small objects being moved by the expanding waves. No text or words should appear in the image."
+        },
+        {
+          "term": "revolution",
+          "partOfSpeech": "noun",
+          "definition": "A forcible overthrow of a government or social order",
+          "example": "The Chinese revolution led to significant changes.",
+          "collocations": ["political revolution", "social revolution", "industrial revolution"],
+          "notes": "Often involves major upheaval and change.",
+          "teachingTips": "Discuss the difference between a revolution and a rebellion.",
+          "pronunciation": {
+            "syllables": ["rev", "o", "lu", "tion"],
+            "stressIndex": 2,
+            "phoneticGuide": "rev-uh-LOO-shun"
+          },
+          "imagePrompt": "A crowd of people holding flags and banners, marching towards a large government building. The sky is dramatic with swirling clouds. No text or words should appear in the image."
+        },
+        {
+          "term": "philosophy",
+          "partOfSpeech": "noun",
+          "definition": "A system of beliefs and values",
+          "example": "Confucianism is a major philosophy in China.",
+          "collocations": ["ancient philosophy", "modern philosophy", "political philosophy"],
+          "notes": "Often deals with fundamental questions about life and existence.",
+          "teachingTips": "Have students discuss their own personal philosophies.",
+          "pronunciation": {
+            "syllables": ["phi", "los", "o", "phy"],
+            "stressIndex": 2,
+            "phoneticGuide": "fi-LOS-uh-fee"
+          },
+          "imagePrompt": "A person sitting under a tree in deep thought, surrounded by books and scrolls.  The setting is peaceful and contemplative. No text or words should appear in the image."
+        },
+        {
+          "term": "innovation",
+          "partOfSpeech": "noun",
+          "definition": "A new method, idea, product, etc.",
+          "example": "Gunpowder was a significant innovation from China.",
+          "collocations": ["technological innovation", "creative innovation", "recent innovation"],
+          "notes": "Often leads to progress and change.",
+          "teachingTips": "Brainstorm examples of modern innovations.",
+          "pronunciation": {
+            "syllables": ["in", "no", "va", "tion"],
+            "stressIndex": 3,
+            "phoneticGuide": "in-uh-VEY-shun"
+          },
+          "imagePrompt": "A glowing lightbulb with gears and circuits visible inside, symbolizing a new idea or invention. No text or words should appear in the image."
+        }
+      ]
+    },
+    {
+      "type": "comprehension",
+      "title": "Reading Comprehension",
+      "questions": [
+        {
+          "question": "Which dynasty is known for the Silk Road?",
+          "options": ["Han Dynasty", "Qing Dynasty", "Ming Dynasty", "Yuan Dynasty"],
+          "answer": "Han Dynasty",
+          "explanation": "The text mentions the Han Dynasty and its association with the Silk Road."
+        },
+        {
+          "question": "What is Confucianism?",
+          "options": ["A type of food", "A philosophy", "A martial art", "A type of government"],
+          "answer": "A philosophy",
+          "explanation": "The text describes Confucianism as a philosophy emphasizing social harmony and respect for elders."
+        },
+        {
+          "question": "Was the Qing Dynasty the first imperial dynasty?",
+          "options": ["True", "False"],
+          "answer": "False",
+          "explanation": "The text states that the Qing Dynasty was the *last* imperial dynasty."
+        },
+        {
+          "question": "Did Chinese innovations spread to other parts of the world?",
+          "options": ["True", "False"],
+          "answer": "True",
+          "explanation": "The text mentions that inventions like gunpowder, the compass, printing, and porcelain traveled along trade routes and influenced other cultures."
+        },
+        {
+          "question": "The text focuses primarily on the geography of China.",
+          "options": ["True", "False"],
+          "answer": "False",
+          "explanation": "The text focuses on the history of China, not its geography."
+        }
+      ]
+    },
+    {
+      "type": "sentenceFrames",
+      "title": "Sentence Practice",
+      "frames": [
+        {
+          "pattern": "The _____ dynasty had a significant influence on China because _____.",
+          "examples": [
+            "The Han dynasty had a significant influence on China because of its innovations like papermaking.",
+            "The Qing dynasty had a significant influence on China because it was the last imperial dynasty."
+          ],
+          "usageNotes": "Use this pattern to discuss the impact of different dynasties.",
+          "teachingTips": "Have students research different dynasties and complete the sentence.",
+          "difficultyLevel": "intermediate",
+          "grammarFocus": "Past simple tense, cause and effect",
+          "communicativeFunction": "Describing historical impact"
+        },
+        {
+          "pattern": "One major innovation of ancient China was _____, which influenced _____ by _____.",
+          "examples": [
+            "One major innovation of ancient China was gunpowder, which influenced warfare by making battles more destructive.",
+            "One major innovation of ancient China was the compass, which influenced navigation by allowing sailors to determine direction."
+          ],
+          "usageNotes": "Use this pattern to explain how Chinese innovations impacted different areas of life.",
+          "teachingTips": "Encourage students to think beyond the examples given in the text.",
+          "difficultyLevel": "intermediate",
+          "grammarFocus": "Past simple tense, relative clauses",
+          "communicativeFunction": "Explaining historical impact"
+        }
+      ]
+    },
+    {
+      "type": "discussion",
+      "title": "Discussion Questions",
+      "introduction": "The rise and fall of dynasties is a recurring theme in Chinese history.  Each dynasty, from the ancient Xia to the more recent Qing, contributed to the rich tapestry of Chinese culture.  But what factors led to their eventual decline?  Were these internal weaknesses, external pressures, or a combination of both?  Let's discuss!",
+      "questions": [
+        {
+          "question": "If you could travel back in time to visit one Chinese dynasty, which would you choose and why?",
+          "imagePrompt": "A person wearing modern clothes standing in front of a swirling portal that shows glimpses of different historical periods in China. No text or words should appear in the image."
+        },
+        {
+          "question": "How do you think the philosophy of Confucianism has shaped modern Chinese society?",
+          "imagePrompt": "A modern cityscape with subtle overlays of traditional Chinese symbols and architecture, representing the blend of old and new. No text or words should appear in the image."
+        },
+        {
+          "question": "What do you think is the most significant innovation from ancient China and why?",
+          "imagePrompt": "A collage of images representing different ancient Chinese inventions, such as gunpowder, the compass, printing, and porcelain. No text or words should appear in the image."
+        },
+        {
+          "question": "How do you think the history of China has influenced its relationship with other countries today?",
+          "imagePrompt": "A world map with lines connecting China to other countries, with the thickness of the lines representing the strength of the relationship. No text or words should appear in the image."
+        },
+        {
+          "question": "If you could ask a historian one question about Chinese history, what would it be?",
+          "imagePrompt": "A person in modern clothes talking to a historian in period costume, with ancient scrolls and artifacts in the background. No text or words should appear in the image."
+        }
+      ]
+    },
+    {
+      "type": "quiz",
+      "title": "Knowledge Check",
+      "questions": [
+        {
+          "question": "Which of these is NOT a Chinese innovation mentioned in the text?",
+          "options": ["Gunpowder", "Compass", "Telescope", "Printing"],
+          "answer": "Telescope",
+          "explanation": "The telescope was not a Chinese invention."
+        },
+        {
+          "question": "Which dynasty was the last imperial dynasty of China?",
+          "options": ["Han", "Ming", "Qing", "Sui"],
+          "answer": "Qing",
+          "explanation": "The text identifies the Qing dynasty as the last imperial dynasty."
+        },
+        {
+          "question": "Confucianism is a...",
+          "options": ["Religion", "Philosophy", "Martial Art", "Type of government"],
+          "answer": "Philosophy",
+          "explanation": "The text describes Confucianism as a philosophy."
+        },
+        {
+          "question": "The Silk Road was a major trade route.",
+          "options": ["True", "False"],
+          "answer": "True",
+          "explanation": "The text mentions the Silk Road as a vast trade network."
+        },
+        {
+          "question": "The text primarily discusses the future of China.",
+          "options": ["True", "False"],
+          "answer": "False",
+          "explanation": "The text focuses on the history of China."
+        }
+      ]
+    }
+  ]
+}
+```

@@ -35,6 +35,7 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
 
   // Process discussion questions from the section
   let questions: DiscussionQuestion[] = [];
+  let sectionTitle = section.title || "Post-reading Discussion"; // Keep section title
 
   try {
     console.log("Discussion section structure:", JSON.stringify({
@@ -76,23 +77,26 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
       if (Array.isArray(section.questions) && section.questions.length > 0) {
         console.log("Found questions array in section:", section.questions.length, "questions");
         
-        // Clean up any malformed questions
+        // Clean up any malformed questions and ensure paragraphContext is kept
         const validQuestions = section.questions.filter((q: any) => 
           q && typeof q === 'object' && (q.question || q.text)
         ).map((q: any) => ({
           question: q.question || q.text || "Discussion question",
           level: q.level || "basic",
-          introduction: q.introduction || "", // Extract introduction if present
+          introduction: q.introduction || "", // Keep this if AI provides it per question
           focusVocabulary: q.focusVocabulary || q.vocabulary || [],
           followUp: q.followUp || [],
-          paragraphContext: q.paragraphContext || q.context || "",
-          topic: q.topic || ""
+          paragraphContext: q.paragraphContext || q.context || q.paragraph || "", // Prioritize paragraphContext
+          topic: q.topic || "",
+          imageBase64: q.imageBase64 || null, // Keep imageBase64
+          imagePrompt: q.imagePrompt || "" // Keep imagePrompt
         }));
         
-        // If we have valid questions use them
-        if (validQuestions.length > 0 && validQuestions[0].question !== 'question') {
-          questions = validQuestions;
-          console.log("Using questions array with", questions.length, "valid questions");
+        if (validQuestions.length > 0) {
+            questions = validQuestions;
+            console.log("Using questions array with", questions.length, "valid questions including paragraphContext");
+        } else {
+            console.warn("Questions array found but no valid questions extracted.");
         }
       }
     }
@@ -257,13 +261,18 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
     console.error("Error processing discussion questions:", error);
   }
 
+  // Update section title if it's the speaking section
+  if (section.type === 'speaking') {
+      sectionTitle = section.title || "Speaking Activity";
+  }
+
   return (
     <div className="space-y-6">
       {/* Main section header */}
       <div className="bg-indigo-50 rounded-lg p-4 flex items-center gap-3">
         <MessageCircle className="h-6 w-6 text-indigo-600" />
         <div>
-          <h2 className="text-indigo-600 font-medium text-lg">Discussion</h2>
+          <h2 className="text-indigo-600 font-medium text-lg">{sectionTitle}</h2>
           <p className="text-gray-600 text-sm">Reflect on the reading through guided discussion</p>
         </div>
       </div>
@@ -272,11 +281,8 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
         <CardHeader className="bg-indigo-50">
           <CardTitle className="flex items-center gap-2 text-indigo-700">
             <MessageCircle className="h-5 w-5" />
-            {section.title || "Post-reading Discussion"} ({questions.length} questions)
+            {sectionTitle} ({questions.length} questions)
           </CardTitle>
-          <CardDescription>
-            {section.introduction || "Discuss these questions to deepen understanding of the reading"}
-          </CardDescription>
         </CardHeader>
         <CardContent className="pt-6">
           <div className="space-y-6">
@@ -290,53 +296,49 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
                   </div>
                   
                   <div className="p-4">
-                    {/* Question introduction */}
-                    <div className="flex items-start gap-2 mb-2">
-                      <span className="w-8 h-8 flex items-center justify-center bg-indigo-100 text-indigo-800 rounded-full font-medium">
-                        {idx + 1}
-                      </span>
-                      {Array.isArray(q.focusVocabulary) && q.focusVocabulary.length > 0 && (
-                        <p className="text-gray-600">
-                          This discussion incorporates key vocabulary including {q.focusVocabulary.join(', ')}. 
-                          Using these terms in your discussion will help reinforce their meaning and usage in context.
-                        </p>
-                      )}
-                    </div>
-                    
                     {/* Question content */}
-                    <div className="mt-4 flex flex-col md:flex-row gap-4 items-start">
-                      <div className="md:w-7/12">
-                        {/* Paragraph context if available */}
+                    <div className="flex flex-col md:flex-row gap-4 items-start">
+                      {/* Text content area */}
+                      <div className="md:w-7/12 space-y-4">
+                         {/* Paragraph context rendered PER question */}
                         {q.paragraphContext && (
-                          <div className="mb-4 p-3 bg-gray-50 border border-indigo-100 rounded-md text-gray-700 italic">
-                            <h4 className="text-sm font-medium text-indigo-700 mb-2">Context:</h4>
+                          <div className="p-3 bg-gray-50 border border-indigo-100 rounded-md text-gray-700">
+                            <h4 className="text-sm font-medium text-indigo-700 mb-2 flex items-center gap-1">
+                               <Book className="h-4 w-4 text-indigo-500" /> Context:
+                            </h4>
                             <p>{q.paragraphContext}</p>
                           </div>
                         )}
+
+                        {/* Question Number and Text */}
+                        <div className="flex items-start gap-2">
+                           <span className="w-8 h-8 flex-shrink-0 flex items-center justify-center bg-indigo-100 text-indigo-800 rounded-full font-medium mt-1">
+                             {idx + 1}
+                           </span>
+                           <h3 className="text-xl font-medium">{q.question}</h3>
+                        </div>
                         
-                        {/* Topic introduction paragraph if available */}
+                        {/* Topic introduction paragraph (if AI still provides it, display it) */}
                         {q.topic && (
-                          <p className="text-gray-700 mb-4">{q.topic}</p>
+                          <p className="text-gray-700 italic pl-10">{q.topic}</p>
                         )}
                         
-                        {/* Question introduction sentence if available */}
+                        {/* Question introduction sentence (if AI still provides it, display it) */}
                         {q.introduction && (
-                          <div className="p-3 mb-3 bg-blue-50 border border-blue-100 rounded-md text-gray-700">
+                          <div className="p-3 bg-blue-50 border border-blue-100 rounded-md text-gray-700 ml-10">
                             <p className="italic">{q.introduction}</p>
                           </div>
                         )}
-                        
-                        <h3 className="text-xl font-medium mb-4">{q.question}</h3>
-                        
+                                                
                         {/* Focus vocabulary */}
                         {Array.isArray(q.focusVocabulary) && q.focusVocabulary.length > 0 && (
-                          <div className="bg-green-50 p-3 rounded-md mb-4">
+                          <div className="bg-green-50 p-3 rounded-md ml-10">
                             <h4 className="text-sm font-medium flex items-center gap-1 mb-2">
-                              <Book className="h-4 w-4" /> Focus Vocabulary
+                              <Book className="h-4 w-4 text-green-600" /> Focus Vocabulary
                             </h4>
                             <div className="flex flex-wrap gap-2">
                               {q.focusVocabulary.map((word, wIdx) => (
-                                <Badge key={wIdx} variant="outline" className="bg-green-50 border-green-200">
+                                <Badge key={wIdx} variant="outline" className="bg-white border-green-200 text-green-800">
                                   {word}
                                 </Badge>
                               ))}
@@ -346,7 +348,7 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
                         
                         {/* Follow-up questions */}
                         {q.followUp && q.followUp.length > 0 && (
-                          <div className="mt-4">
+                          <div className="ml-10">
                             <h4 className="text-sm font-medium mb-2">Follow-up Questions:</h4>
                             <ul className="list-disc list-inside space-y-1 text-gray-700">
                               {q.followUp.map((follow, fIdx) => (
@@ -357,8 +359,8 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
                         )}
                       </div>
                       
-                      {/* Image Display */}
-                      <div className="md:w-5/12">
+                       {/* Image Display */}
+                       <div className="md:w-5/12">
                         {q.imageBase64 ? (
                           <img 
                             src={`data:image/png;base64,${q.imageBase64}`}
@@ -366,7 +368,7 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
                             className="rounded-lg border border-indigo-200 shadow-sm max-w-full h-auto aspect-video object-cover"
                           />
                         ) : (
-                          <div className="border rounded-md p-2 bg-gray-50">
+                           <div className="border rounded-md p-2 bg-gray-50">
                             <div className="aspect-video bg-gray-200 rounded-md flex items-center justify-center">
                               <ImageIcon className="h-8 w-8 text-gray-400" />
                             </div>
