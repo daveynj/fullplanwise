@@ -93,12 +93,33 @@ export class GeminiService {
             cleanedContent = text.replace(/```json\s*/g, '').replace(/```\s*$/g, '').trim();
           }
           
+          // Debug: Log the length of the response to diagnose if it's too large
+          console.log(`Response length: ${cleanedContent.length} characters`);
+          
           // Now try to parse the cleaned content
           try {
             // Attempt to fix common JSON issues before parsing
             const fixedContent = this.fixCommonJsonIssues(cleanedContent);
-            const jsonContent = JSON.parse(fixedContent);
-            console.log('Successfully parsed JSON content');
+            console.log('Applied JSON fixes, attempting to parse');
+            
+            let jsonContent;
+            try {
+              jsonContent = JSON.parse(fixedContent);
+              console.log('Successfully parsed JSON content');
+            } catch (parseError) {
+              // If JSON.parse fails with the entire content, try to parse it in chunks or with a more targeted approach
+              console.log('Standard parsing failed, attempting alternative parsing methods');
+              
+              // Let's try extracting the JSON with regex
+              const extractedJson = this.extractJsonFromText(cleanedContent);
+              if (extractedJson) {
+                console.log('Successfully extracted JSON structure through regex');
+                jsonContent = extractedJson;
+              } else {
+                // Rethrow the original error if extraction fails
+                throw parseError;
+              }
+            }
             
             // Check if jsonContent has required structure
             if (jsonContent.title && jsonContent.sections && Array.isArray(jsonContent.sections)) {
@@ -106,35 +127,40 @@ export class GeminiService {
               return await this.formatLessonContent(jsonContent);
             } else {
               console.warn('Parsed JSON is missing required structure');
-              return {
-                title: `Lesson on ${params.topic}`,
-                content: "The generated lesson is missing required structure",
-                error: 'Invalid lesson structure',
+              // Try to construct a valid structure from what we have
+              const patchedContent = {
+                title: jsonContent.title || `Lesson on ${params.topic}`,
                 provider: 'gemini',
-                sections: [
-                  {
-                    type: "error",
-                    title: "Content Error",
-                    content: "The lesson structure is incomplete. Please try regenerating the lesson."
-                  }
-                ]
+                sections: jsonContent.sections || []
               };
+              
+              if (!Array.isArray(patchedContent.sections) || patchedContent.sections.length === 0) {
+                console.warn('No valid sections found, returning error');
+                return {
+                  title: patchedContent.title,
+                  provider: 'gemini',
+                  sections: [
+                    {
+                      type: "error",
+                      title: "Content Error",
+                      content: "The lesson structure is incomplete. Please try regenerating the lesson."
+                    }
+                  ]
+                };
+              }
+              
+              console.log('Patched structure with available content, proceeding');
+              return await this.formatLessonContent(patchedContent);
             }
           } catch (jsonError) {
             // If we fail to parse as JSON, try to handle it as best we can
             console.error('Error parsing Gemini response as JSON:', jsonError);
+            console.error('Error details:', jsonError.message, 'at position:', jsonError.message.match(/position (\d+)/)?.[1]);
             
-            // Try alternative parsing through regex extraction
-            try {
-              console.log('Attempting to recover JSON structure through regex...');
-              const extractedJson = this.extractJsonFromText(cleanedContent);
-              if (extractedJson) {
-                console.log('Successfully extracted JSON structure through regex');
-                return await this.formatLessonContent(extractedJson);
-              }
-            } catch (extractionError) {
-              console.error('JSON extraction recovery failed:', extractionError);
-            }
+            // Save the problematic content for diagnosis
+            const errorContentPath = `./logs/ERROR_content_gemini_${requestId}.txt`;
+            fs.writeFileSync(errorContentPath, cleanedContent);
+            console.log(`Problematic content saved to ${errorContentPath}`);
             
             return {
               title: `Lesson on ${params.topic}`,
