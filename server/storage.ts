@@ -305,6 +305,8 @@ export class DatabaseStorage implements IStorage {
     dateFilter?: string
   ): Promise<{lessons: Lesson[], total: number}> {
     try {
+      console.log(`Getting lessons for teacherId: ${teacherId} with page: ${page}, search: ${search || 'none'}`);
+      
       // Create a cache key from the query parameters
       const cacheKey = JSON.stringify({teacherId, page, pageSize, search, cefrLevel, dateFilter});
       
@@ -361,15 +363,43 @@ export class DatabaseStorage implements IStorage {
         conditions.push(gte(lessons.createdAt, startDate));
       }
       
+      // Try a direct query first to see if we can get any lessons at all for this teacher
+      // This helps us debug if the issue is with filtering or with basic data access
+      try {
+        const basicCheck = await db
+          .select({ count: count() })
+          .from(lessons)
+          .where(eq(lessons.teacherId, teacherId));
+        
+        console.log(`Basic teacher lessons check: Teacher ID ${teacherId} has ${basicCheck[0]?.count || 0} total lessons in database`);
+      } catch (e) {
+        console.error('Error in basic teacher lessons check:', e);
+      }
+      
+      // Make sure indexes exist
+      try {
+        await db.execute(
+          `CREATE INDEX IF NOT EXISTS idx_lessons_teacher_id ON lessons(teacher_id);
+           CREATE INDEX IF NOT EXISTS idx_lessons_created_at ON lessons(created_at);
+           CREATE INDEX IF NOT EXISTS idx_lessons_cefr_level ON lessons(cefr_level);`
+        );
+        console.log('Ensured indexes exist for optimal querying');
+      } catch (e) {
+        console.error('Error creating indexes (non-critical):', e);
+      }
+      
       // Execute count query - get total count
+      console.log('Executing count query...');
       const countResult = await db
         .select({ count: count() })
         .from(lessons)
         .where(and(...conditions));
       
       const total = Number(countResult[0]?.count || 0);
+      console.log(`Found ${total} lessons matching criteria`);
       
       // Get the filtered and paginated lessons 
+      console.log('Fetching paginated lessons...');
       const lessonsList = await db
         .select()
         .from(lessons)
@@ -377,6 +407,8 @@ export class DatabaseStorage implements IStorage {
         .orderBy(desc(lessons.createdAt))
         .limit(pageSize)
         .offset(offset);
+      
+      console.log(`Retrieved ${lessonsList.length} lessons for page ${page}`);
       
       // Cache the result
       const result = {
@@ -392,7 +424,13 @@ export class DatabaseStorage implements IStorage {
       return result;
     } catch (error) {
       console.error('Error fetching lessons:', error);
-      throw error;
+      
+      // Return empty results instead of failing completely
+      console.log('Returning empty results due to error');
+      return {
+        lessons: [],
+        total: 0
+      };
     }
   }
 

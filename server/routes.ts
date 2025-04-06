@@ -14,6 +14,7 @@ import { mailchimpService } from "./services/mailchimp.service";
 import Stripe from "stripe";
 import { qwenService } from "./services/qwen";
 import { geminiService } from "./services/gemini";
+import { db } from "./db";
 
 // Initialize Stripe if API key is available
 const stripe = process.env.STRIPE_SECRET_KEY 
@@ -125,6 +126,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const cefrLevel = req.query.cefrLevel as string || 'all';
       const dateFilter = req.query.dateFilter as string || '';
       
+      console.log(`API Request: GET /api/lessons for teacherId=${req.user!.id}, page=${page}, search=${search || 'none'}, cefrLevel=${cefrLevel}, dateFilter=${dateFilter || 'all'}`);
+      
+      // First check if user is authenticated properly
+      if (!req.user?.id) {
+        console.error("Missing user ID in authenticated request");
+        return res.status(400).json({ error: "User ID not found in request" });
+      }
+      
+      try {
+        // Do a direct database check to ensure connectivity
+        await db.execute("SELECT 1");
+        console.log("Database connection verified");
+      } catch (dbError) {
+        console.error("Database connection error:", dbError);
+        return res.status(500).json({ error: "Database connection failed", details: String(dbError) });
+      }
+      
       // Fetch paginated and filtered lessons
       const result = await storage.getLessons(
         req.user!.id, 
@@ -135,9 +153,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         dateFilter
       );
       
+      console.log(`API Response: Returning ${result.lessons.length} lessons out of ${result.total} total`);
+      
       res.json(result);
     } catch (error: any) {
-      res.status(500).json({ message: error.message });
+      console.error("Error in /api/lessons:", error);
+      res.status(500).json({ 
+        error: "Failed to fetch lessons", 
+        message: error.message,
+        stack: process.env.NODE_ENV === 'production' ? undefined : error.stack
+      });
     }
   });
   
