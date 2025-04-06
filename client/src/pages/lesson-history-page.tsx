@@ -12,7 +12,6 @@ import { Link } from "wouter";
 import { 
   BookOpen, 
   Search, 
-  Download, 
   Plus, 
   Filter, 
   Calendar, 
@@ -323,9 +322,6 @@ export default function LessonHistoryPage() {
                           </div>
                           
                           <div className="mt-4 md:mt-0 flex flex-wrap gap-2">
-                            <Button variant="outline" size="sm">
-                              <Download className="mr-2 h-4 w-4" /> Export
-                            </Button>
                             <Link href={`/history/${lesson.id}`}>
                               <Button size="sm" className="bg-primary hover:bg-primary/90">
                                 View Lesson
@@ -342,7 +338,7 @@ export default function LessonHistoryPage() {
                               className="bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100 hover:text-blue-700"
                               onClick={() => handleAssignLesson(lesson)}
                             >
-                              <UserPlus className="mr-2 h-4 w-4" /> {lesson.studentId ? "Reassign" : "Assign to Student"}
+                              <UserPlus className="mr-2 h-4 w-4" /> Assign to Student
                             </Button>
                             <Button 
                               size="sm" 
@@ -452,7 +448,6 @@ export default function LessonHistoryPage() {
               {lessonToAssign ? (
                 <>
                   Assign the lesson <span className="font-semibold">"{lessonToAssign.title}"</span> to a student.
-                  {lessonToAssign.studentId && " This will reassign the lesson from its current student."}
                 </>
               ) : (
                 <>Select a student to assign this lesson to.</>
