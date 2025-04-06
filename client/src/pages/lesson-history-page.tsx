@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Lesson, Student } from "@shared/schema";
 import { Sidebar } from "@/components/layout/sidebar";
@@ -47,7 +47,9 @@ interface PaginatedLessons {
 }
 
 export default function LessonHistoryPage() {
-  const [searchQuery, setSearchQuery] = useState("");
+  // State for filters and UI
+  const [searchInput, setSearchInput] = useState(""); // Immediate input value
+  const [searchQuery, setSearchQuery] = useState(""); // Debounced query sent to API
   const [cefrFilter, setCefrFilter] = useState<string>("all");
   const [dateFilter, setDateFilter] = useState<string>("all");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -57,6 +59,15 @@ export default function LessonHistoryPage() {
   const [selectedStudentId, setSelectedStudentId] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const { toast } = useToast();
+  
+  // Debounce search input to reduce frequent API calls
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSearchQuery(searchInput);
+    }, 300); // 300ms debounce
+    
+    return () => clearTimeout(timer);
+  }, [searchInput]);
   
   // Fetch paginated lessons with server-side filtering
   const { data: lessonData, isLoading } = useQuery<PaginatedLessons>({
@@ -70,6 +81,7 @@ export default function LessonHistoryPage() {
       }
     ],
     retry: false,
+    staleTime: 2000 // Add 2s stale time to reduce refetches
   });
   
   // Fetch all students for assignment dropdown
@@ -238,9 +250,9 @@ export default function LessonHistoryPage() {
                     type="text" 
                     placeholder="Search by title or topic..." 
                     className="pl-10 pr-4 py-2 w-full"
-                    value={searchQuery}
+                    value={searchInput}
                     onChange={(e) => {
-                      setSearchQuery(e.target.value);
+                      setSearchInput(e.target.value);
                       setCurrentPage(1); // Reset to first page on search change
                     }}
                   />
@@ -410,7 +422,7 @@ export default function LessonHistoryPage() {
                 <Card>
                   <CardContent className="flex flex-col items-center justify-center py-12">
                     <BookOpen className="h-16 w-16 text-gray-300 mb-4" />
-                    {searchQuery || (cefrFilter && cefrFilter !== "all") || (dateFilter && dateFilter !== "all") ? (
+                    {searchInput || (cefrFilter && cefrFilter !== "all") || (dateFilter && dateFilter !== "all") ? (
                       <>
                         <h3 className="text-xl font-nunito font-semibold mb-2">No lessons found</h3>
                         <p className="text-gray-500 text-center mb-4">
@@ -419,6 +431,7 @@ export default function LessonHistoryPage() {
                         <Button 
                           variant="outline" 
                           onClick={() => {
+                            setSearchInput("");
                             setSearchQuery("");
                             setCefrFilter("all");
                             setDateFilter("all");

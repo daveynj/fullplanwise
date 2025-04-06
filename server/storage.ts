@@ -3,7 +3,7 @@ import createMemoryStore from "memorystore";
 import session from "express-session";
 import { Store } from "express-session";
 import { db } from "./db";
-import { eq, and, desc, count, or, ilike, gte } from "drizzle-orm";
+import { SQL, eq, and, desc, count, or, ilike, gte } from "drizzle-orm";
 import connectPg from "connect-pg-simple";
 import { pool } from "./db";
 
@@ -292,6 +292,10 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Lesson methods
+  // Simple caching for getLessons queries to improve performance
+  private lessonsCache: Map<string, {lessons: Lesson[], total: number, timestamp: number}> = new Map();
+  private CACHE_TTL = 5000; // Cache time-to-live in ms (5 seconds)
+
   async getLessons(
     teacherId: number, 
     page: number = 1, 
@@ -301,73 +305,91 @@ export class DatabaseStorage implements IStorage {
     dateFilter?: string
   ): Promise<{lessons: Lesson[], total: number}> {
     try {
+      // Create a cache key from the query parameters
+      const cacheKey = JSON.stringify({teacherId, page, pageSize, search, cefrLevel, dateFilter});
+      
+      // Check cache first
+      const cachedResult = this.lessonsCache.get(cacheKey);
+      if (cachedResult && (Date.now() - cachedResult.timestamp < this.CACHE_TTL)) {
+        console.log('Returning cached lessons result');
+        return {
+          lessons: cachedResult.lessons,
+          total: cachedResult.total
+        };
+      }
+      
       // Calculate offset based on page number and page size
       const offset = (page - 1) * pageSize;
       
-      // Build the where conditions
-      let whereConditions = [eq(lessons.teacherId, teacherId)];
+      // Build filter conditions
+      const conditions = [eq(lessons.teacherId, teacherId)];
       
       // Add search filter if provided
       if (search && search.trim() !== '') {
         const searchTerm = `%${search.trim()}%`;
-        whereConditions.push(
+        conditions.push(
           or(
             ilike(lessons.title, searchTerm),
-            ilike(lessons.topic, searchTerm),
-            ilike(lessons.cefrLevel, searchTerm)
-          ) as any // Type assertion to fix TypeScript error
+            ilike(lessons.topic, searchTerm)
+          )
         );
       }
       
       // Add CEFR level filter if provided
       if (cefrLevel && cefrLevel !== 'all') {
-        whereConditions.push(eq(lessons.cefrLevel, cefrLevel));
+        conditions.push(eq(lessons.cefrLevel, cefrLevel));
       }
       
       // Add date filter if provided
-      if (dateFilter) {
+      if (dateFilter && dateFilter !== 'all') {
         const now = new Date();
         let startDate: Date;
         
-        switch (dateFilter) {
-          case 'today':
-            startDate = new Date(now.setHours(0, 0, 0, 0));
-            whereConditions.push(gte(lessons.createdAt, startDate));
-            break;
-          case 'week':
-            startDate = new Date(now);
-            startDate.setDate(now.getDate() - 7);
-            whereConditions.push(gte(lessons.createdAt, startDate));
-            break;
-          case 'month':
-            startDate = new Date(now);
-            startDate.setMonth(now.getMonth() - 1);
-            whereConditions.push(gte(lessons.createdAt, startDate));
-            break;
+        if (dateFilter === 'today') {
+          startDate = new Date(now);
+          startDate.setHours(0, 0, 0, 0);
+        } else if (dateFilter === 'week') {
+          startDate = new Date(now);
+          startDate.setDate(now.getDate() - 7);
+        } else if (dateFilter === 'month') {
+          startDate = new Date(now);
+          startDate.setMonth(now.getMonth() - 1);
+        } else {
+          startDate = new Date(0); // Default to epoch start if unknown filter
         }
+        
+        conditions.push(gte(lessons.createdAt, startDate));
       }
       
-      // Get total count with all filters applied
-      const totalCountResult = await db
+      // Execute count query - get total count
+      const countResult = await db
         .select({ count: count() })
         .from(lessons)
-        .where(and(...whereConditions));
+        .where(and(...conditions));
       
-      const total = totalCountResult[0]?.count || 0;
+      const total = Number(countResult[0]?.count || 0);
       
-      // Get paginated lessons with all filters applied
+      // Get the filtered and paginated lessons 
       const lessonsList = await db
         .select()
         .from(lessons)
-        .where(and(...whereConditions))
+        .where(and(...conditions))
         .orderBy(desc(lessons.createdAt))
         .limit(pageSize)
         .offset(offset);
       
-      return {
+      // Cache the result
+      const result = {
         lessons: lessonsList,
         total
       };
+      
+      this.lessonsCache.set(cacheKey, {
+        ...result,
+        timestamp: Date.now()
+      });
+      
+      return result;
     } catch (error) {
       console.error('Error fetching lessons:', error);
       throw error;
