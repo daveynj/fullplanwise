@@ -14,6 +14,8 @@ export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   getUserByStripeCustomerId(stripeCustomerId: string): Promise<User | undefined>;
+  getUsersByEmail(email: string): Promise<User[]>;
+  getUserByResetToken(token: string): Promise<User[]>;
   createUser(user: InsertUser): Promise<User>;
   updateUserCredits(userId: number, credits: number): Promise<User>;
   updateUserStripeInfo(userId: number, stripeInfo: { stripeCustomerId: string, stripeSubscriptionId: string | null }): Promise<User>;
@@ -167,6 +169,32 @@ export class DatabaseStorage implements IStorage {
       return user;
     } catch (error) {
       console.error('Error fetching user by Stripe customer ID:', error);
+      throw error;
+    }
+  }
+  
+  async getUsersByEmail(email: string): Promise<User[]> {
+    try {
+      const foundUsers = await db
+        .select()
+        .from(users)
+        .where(eq(users.email, email));
+      return foundUsers;
+    } catch (error) {
+      console.error('Error fetching users by email:', error);
+      throw error;
+    }
+  }
+  
+  async getUserByResetToken(token: string): Promise<User[]> {
+    try {
+      const foundUsers = await db
+        .select()
+        .from(users)
+        .where(eq(users.resetPasswordToken, token));
+      return foundUsers;
+    } catch (error) {
+      console.error('Error fetching user by reset token:', error);
       throw error;
     }
   }

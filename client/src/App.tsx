@@ -17,6 +17,8 @@ import BuyCreditsPage from "@/pages/buy-credits-page";
 import SettingsPage from "@/pages/settings-page";
 import FullScreenLessonPage from "@/pages/full-screen-lesson-page";
 import SubscriptionSuccessPage from "@/pages/subscription-success-page";
+import ForgotPasswordPage from "@/pages/forgot-password-page";
+import ResetPasswordPage from "@/pages/reset-password-page";
 
 function Router() {
   return (
@@ -33,6 +35,8 @@ function Router() {
       <ProtectedRoute path="/subscription-success" component={SubscriptionSuccessPage} />
       <ProtectedRoute path="/settings" component={SettingsPage} />
       <Route path="/auth" component={AuthPage} />
+      <Route path="/forgot-password" component={ForgotPasswordPage} />
+      <Route path="/reset-password/:token" component={ResetPasswordPage} />
       <Route component={NotFound} />
     </Switch>
   );

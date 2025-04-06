@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { insertUserSchema } from "@shared/schema";
 import { useAuth } from "@/hooks/use-auth";
-import { useLocation } from "wouter";
+import { useLocation, Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -133,6 +133,12 @@ export default function AuthPage() {
                           </>
                         ) : "Sign in"}
                       </Button>
+                      
+                      <div className="mt-4 text-center">
+                        <Link to="/forgot-password" className="text-sm text-primary hover:underline">
+                          Forgot password?
+                        </Link>
+                      </div>
                     </form>
                   </Form>
                 </CardContent>
