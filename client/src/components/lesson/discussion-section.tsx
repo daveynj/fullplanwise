@@ -306,7 +306,7 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
                             <h4 className="text-sm font-medium text-indigo-700 mb-2 flex items-center gap-1">
                                <Book className="h-4 w-4 text-indigo-500" /> Context:
                             </h4>
-                            <p>{q.paragraphContext}</p>
+                            <p className="font-medium text-gray-800">{q.paragraphContext}</p>
                           </div>
                         )}
 
@@ -320,13 +320,13 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
                         
                         {/* Topic introduction paragraph (if AI still provides it, display it) */}
                         {q.topic && (
-                          <p className="text-gray-700 italic pl-10">{q.topic}</p>
+                          <p className="text-gray-700 italic pl-10 font-medium">{q.topic}</p>
                         )}
                         
                         {/* Question introduction sentence (if AI still provides it, display it) */}
                         {q.introduction && (
                           <div className="p-3 bg-blue-50 border border-blue-100 rounded-md text-gray-700 ml-10">
-                            <p className="italic">{q.introduction}</p>
+                            <p className="italic font-medium text-gray-800">{q.introduction}</p>
                           </div>
                         )}
                                                 
@@ -352,7 +352,7 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
                             <h4 className="text-sm font-medium mb-2">Follow-up Questions:</h4>
                             <ul className="list-disc list-inside space-y-1 text-gray-700">
                               {q.followUp.map((follow, fIdx) => (
-                                <li key={`followup-${fIdx}`}>{follow}</li>
+                                <li key={`followup-${fIdx}`} className="font-medium text-gray-800">{follow}</li>
                               ))}
                             </ul>
                           </div>
@@ -396,7 +396,7 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-0 text-sm text-gray-700">
-            <p>{section.teacherNotes}</p>
+            <p className="font-medium text-gray-800">{section.teacherNotes}</p>
           </CardContent>
         </Card>
       )}

@@ -1288,7 +1288,7 @@ export function LessonContent({ content }: LessonContentProps) {
                         Definition:
                       </h3>
                       <div className="p-4 bg-green-50 rounded-md border border-green-100">
-                        <p>{currentWord.definition}</p>
+                        <p className="font-medium text-gray-800">{currentWord.definition}</p>
                       </div>
                     </div>
                     
@@ -1299,7 +1299,7 @@ export function LessonContent({ content }: LessonContentProps) {
                         Example:
                       </h3>
                       <div className="p-4 bg-blue-50 rounded-md border border-blue-100">
-                        <p className="italic">"{currentWord.example}"</p>
+                        <p className="italic font-medium text-gray-800">"{currentWord.example}"</p>
                       </div>
                     </div>
                   </div>
@@ -1393,7 +1393,7 @@ export function LessonContent({ content }: LessonContentProps) {
                     <>
                       <div className="mb-4">
                         <h3 className="font-medium text-lg mb-2">Question {activeQuestion + 1}</h3>
-                        <p className="text-gray-800">{questions[activeQuestion].question || "No question text available"}</p>
+                        <p className="text-gray-800 font-medium">{questions[activeQuestion].question || "No question text available"}</p>
                         
                         {/* Instructions based on question type */}
                         {questions[activeQuestion].type === "true-false" && (
@@ -1415,7 +1415,7 @@ export function LessonContent({ content }: LessonContentProps) {
                           questions[activeQuestion].options.map((option: string, idx: number) => (
                             <div key={`option-${idx}`} className="flex items-center p-3 border border-gray-200 rounded hover:bg-gray-50">
                               <Radio className="h-4 w-4 mr-3 text-gray-400" />
-                              <span>{option}</span>
+                              <span className="font-medium text-gray-800">{option}</span>
                             </div>
                           ))
                         }

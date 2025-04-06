@@ -173,8 +173,8 @@ export const ComprehensionExtractor = ({ content }: ComprehensionExtractorProps)
               {extractedQuestions[activeQuestion] ? (
                 <>
                   <div className="mb-4">
-                    <h3 className="font-medium text-lg mb-2">Question {activeQuestion + 1}</h3>
-                    <p className="text-gray-800">{extractedQuestions[activeQuestion].question || "No question text available"}</p>
+                    <h3 className="font-semibold text-lg mb-2">Question {activeQuestion + 1}</h3>
+                    <p className="text-gray-900 font-medium">{extractedQuestions[activeQuestion].question || "No question text available"}</p>
                     
                     {/* Instructions based on question type */}
                     {'type' in extractedQuestions[activeQuestion] && extractedQuestions[activeQuestion].type === "true-false" && (
@@ -226,7 +226,7 @@ export const ComprehensionExtractor = ({ content }: ComprehensionExtractorProps)
                               <div className={`h-4 w-4 mr-3 rounded-full ${
                                 isSelected ? (submitted && !isCorrect ? 'bg-red-500' : 'bg-purple-500') : 'bg-gray-200'
                               }`} />
-                              <span>{option}</span>
+                              <span className="font-medium">{option}</span>
                               
                               {submitted && isCorrect && (
                                 <CheckCircle2 className="ml-auto h-5 w-5 text-green-500" />
@@ -283,7 +283,7 @@ export const ComprehensionExtractor = ({ content }: ComprehensionExtractorProps)
                               <div className={`h-4 w-4 mr-3 rounded-full ${
                                 isSelected ? (submitted && !isCorrect ? 'bg-red-500' : 'bg-purple-500') : 'bg-gray-200'
                               }`} />
-                              <span>{optionText}</span>
+                              <span className="font-medium">{optionText}</span>
                               
                               {submitted && isCorrect && (
                                 <CheckCircle2 className="ml-auto h-5 w-5 text-green-500" />
@@ -305,7 +305,7 @@ export const ComprehensionExtractor = ({ content }: ComprehensionExtractorProps)
                           <AlertCircle className="h-5 w-5 text-indigo-500 mt-0.5 flex-shrink-0" />
                           <div>
                             <p className="font-medium text-indigo-700">Explanation</p>
-                            <p className="text-sm text-indigo-800">{extractedQuestions[activeQuestion].explanation}</p>
+                            <p className="text-sm text-indigo-800 font-medium">{extractedQuestions[activeQuestion].explanation}</p>
                           </div>
                         </div>
                       </div>
@@ -383,7 +383,7 @@ export const ComprehensionExtractor = ({ content }: ComprehensionExtractorProps)
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-0 text-sm text-gray-700">
-            <p>{content.comprehension.teacherNotes}</p>
+            <p className="font-medium text-gray-800">{content.comprehension.teacherNotes}</p>
           </CardContent>
         </Card>
       )}

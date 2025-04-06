@@ -264,7 +264,7 @@ export function SentenceFramesSection({ section }: SentenceFrameSectionProps) {
                             </div>
                             <div className="space-y-2">
                               {frame.examples.map((example, eIdx) => (
-                                <div key={`example-${eIdx}`} className="bg-white p-3 rounded-md border border-amber-100 text-gray-700">
+                                <div key={`example-${eIdx}`} className="bg-white p-3 rounded-md border border-amber-100 text-gray-800 font-medium">
                                   {example}
                                 </div>
                               ))}
@@ -278,7 +278,7 @@ export function SentenceFramesSection({ section }: SentenceFrameSectionProps) {
                                 <Lightbulb className="h-4 w-4" />
                                 <span className="text-sm font-medium">Grammar Focus</span>
                               </div>
-                              <div className="bg-white p-3 rounded-md border border-amber-100 text-gray-700">
+                              <div className="bg-white p-3 rounded-md border border-amber-100 text-gray-800 font-medium">
                                 {frame.grammarFocus}
                               </div>
                             </div>
@@ -291,7 +291,7 @@ export function SentenceFramesSection({ section }: SentenceFrameSectionProps) {
                                 <GraduationCap className="h-4 w-4" />
                                 <span className="text-sm font-medium">Teaching Tips</span>
                               </div>
-                              <div className="bg-white p-3 rounded-md border border-amber-100 text-gray-700">
+                              <div className="bg-white p-3 rounded-md border border-amber-100 text-gray-800 font-medium">
                                 {frame.teachingTips}
                               </div>
                             </div>
@@ -345,7 +345,7 @@ export function SentenceFramesSection({ section }: SentenceFrameSectionProps) {
           <div className="flex items-center gap-2 mb-2">
             <span className="font-medium text-blue-700">Teacher Notes</span>
           </div>
-          <p className="text-sm text-gray-700">{section.teacherNotes}</p>
+          <p className="text-sm text-gray-800 font-medium">{section.teacherNotes}</p>
         </div>
       )}
     </div>
