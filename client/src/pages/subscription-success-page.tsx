@@ -19,7 +19,7 @@ interface SubscriptionDetails {
 const subscriptionTierMap: Record<string, { name: string, monthlyCredits: number }> = {
   'basic': { name: 'Basic Plan', monthlyCredits: 20 },
   'premium': { name: 'Premium Plan', monthlyCredits: 60 },
-  'annual': { name: 'Annual Plan', monthlyCredits: 20.8 }
+  'annual': { name: 'Annual Plan', monthlyCredits: 250 }
 };
 
 export default function SubscriptionSuccessPage() {

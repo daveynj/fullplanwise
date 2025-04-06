@@ -1,9 +1,33 @@
-import express, { type Request, Response, NextFunction } from "express";
+import express, { type Request as ExpressRequest, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { buffer } from "micro";
+
+// Extend Express Request type
+interface Request extends ExpressRequest {
+  rawBody?: Buffer;
+}
 
 const app = express();
-app.use(express.json());
+
+// Create a raw body parser middleware for Stripe webhooks
+const rawBodyParser = async (req: Request, res: Response, next: NextFunction) => {
+  if (req.path === '/api/webhooks/stripe' && req.headers['stripe-signature']) {
+    const rawBody = await buffer(req);
+    req.rawBody = rawBody;
+  }
+  next();
+};
+
+// Apply raw body parser before json parser for webhook endpoint
+app.use(rawBodyParser);
+app.use(express.json({
+  verify: (req: Request, res: Response, buf: Buffer) => {
+    if (req.path === '/api/webhooks/stripe') {
+      req.rawBody = buf;
+    }
+  }
+}));
 app.use(express.urlencoded({ extended: false }));
 
 app.use((req, res, next) => {

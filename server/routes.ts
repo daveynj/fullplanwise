@@ -547,9 +547,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Stripe webhook handler
-  app.post("/api/webhooks/stripe", async (req, res) => {
-    // Stripe webhook requires raw body
-    const payload = JSON.stringify(req.body);
+  app.post("/api/webhooks/stripe", async (req: any, res) => {
+    // Use the rawBody property set in our custom middleware
+    const payload = req.rawBody;
     const sig = req.headers['stripe-signature'] as string;
     
     console.log("Received Stripe webhook event");
@@ -567,6 +567,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!webhookSecret) {
         console.error("Stripe webhook secret not configured");
         return res.status(500).json({ message: "Stripe webhook secret not configured" });
+      }
+      
+      if (!payload) {
+        console.error("No raw body found in webhook request");
+        return res.status(400).json({ message: "No raw body found in webhook request" });
       }
       
       // Verify webhook signature

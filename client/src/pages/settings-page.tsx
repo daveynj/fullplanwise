@@ -195,8 +195,15 @@ export default function SettingsPage() {
                         <h3 className="font-semibold text-lg">{user?.fullName}</h3>
                         <p className="text-gray-500">{user?.email}</p>
                         <p className="text-sm text-gray-500 mt-1">
-                          {user?.subscriptionTier === "premium" ? "Premium Account" : "Free Account"}
+                          {user?.subscriptionTier === "premium" ? "Premium Account" : 
+                           user?.subscriptionTier === "basic" ? "Basic Account" :
+                           user?.subscriptionTier === "annual" ? "Annual Account" : "Free Account"}
                         </p>
+                        {user?.subscriptionTier !== "free" && (
+                          <div className="mt-1 text-sm text-primary-600 font-medium">
+                            Active Subscription
+                          </div>
+                        )}
                       </div>
                     </div>
                     
