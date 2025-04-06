@@ -430,9 +430,9 @@ export default function BuyCreditsPage() {
                       if (plan) {
                         // Stripe Price IDs mapped to plan IDs
                         const priceIdMap: Record<string, string> = {
-                          'basic_monthly': 'price_1RAt02Bnt8Mku7BYkWKvOK2b',
-                          'premium_monthly': 'price_1RAt7eBnt8Mku7BYlXyoSLho', // Premium monthly plan
-                          'annual_plan': 'price_1RAtCMBnt8Mku7BYA0A30DLW'      // Annual plan
+                          'basic_monthly': 'price_1RAwzFAsWPZqDtgQDk06P5r1',  // Basic monthly plan
+                          'premium_monthly': 'price_1RAx0iAsWPZqDtgQ4wc1T8a9', // Premium monthly plan
+                          'annual_plan': 'price_1RAx2NAsWPZqDtgQl2HPLAng'      // Annual plan
                         };
                         const priceId = priceIdMap[plan.id] || `price_${plan.id}`;
                         createSubscriptionMutation.mutate({ 
