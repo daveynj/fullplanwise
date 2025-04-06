@@ -891,7 +891,18 @@ export function LessonContent({ content }: LessonContentProps) {
               syllables: wordData.syllables,
               stressIndex: wordData.stressIndex,
               phoneticGuide: wordData.phoneticGuide,
-              imageBase64: wordData.imageBase64 || null
+              imageBase64: wordData.imageBase64 || null,
+              
+              // New enhanced vocabulary fields
+              semanticGroup: wordData.semanticGroup || wordData.category || wordData.group,
+              additionalExamples: Array.isArray(wordData.additionalExamples) ? wordData.additionalExamples : 
+                                  Array.isArray(wordData.examples) ? wordData.examples.slice(1) : undefined,
+              wordFamily: wordData.wordFamily || (wordData.relatedWords ? {
+                words: Array.isArray(wordData.relatedWords) ? wordData.relatedWords : [],
+                description: typeof wordData.wordFamilyDescription === 'string' ? wordData.wordFamilyDescription : undefined
+              } : undefined),
+              collocations: Array.isArray(wordData.collocations) ? wordData.collocations : undefined,
+              usageNotes: wordData.usageNotes || wordData.usage || undefined
             });
           }
         });
@@ -1030,14 +1041,7 @@ export function LessonContent({ content }: LessonContentProps) {
               {/* Middle Column: Vocabulary Card */}
               <div>
                 <VocabularyCard word={{
-                  word: currentWord.word || (currentWord as any).term || "",
-                  partOfSpeech: currentWord.partOfSpeech || "noun",
-                  definition: currentWord.definition || "",
-                  example: currentWord.example || "",
-                  pronunciation: currentWord.pronunciation || "",
-                  syllables: currentWord.syllables || undefined,
-                  stressIndex: currentWord.stressIndex || undefined,
-                  phoneticGuide: currentWord.phoneticGuide || undefined,
+                  ...currentWord,
                   // Removed imageBase64 here so image only displays in left column
                   imageBase64: null
                 }} />
@@ -1116,7 +1120,18 @@ export function LessonContent({ content }: LessonContentProps) {
             syllables: wordData.syllables,
             stressIndex: wordData.stressIndex,
             phoneticGuide: wordData.phoneticGuide,
-            imageBase64: wordData.imageBase64 || null
+            imageBase64: wordData.imageBase64 || null,
+            
+            // New enhanced vocabulary fields
+            semanticGroup: wordData.semanticGroup || wordData.category || wordData.group,
+            additionalExamples: Array.isArray(wordData.additionalExamples) ? wordData.additionalExamples : 
+                               Array.isArray(wordData.examples) ? wordData.examples.slice(1) : undefined,
+            wordFamily: wordData.wordFamily || (wordData.relatedWords ? {
+              words: Array.isArray(wordData.relatedWords) ? wordData.relatedWords : [],
+              description: typeof wordData.wordFamilyDescription === 'string' ? wordData.wordFamilyDescription : undefined
+            } : undefined),
+            collocations: Array.isArray(wordData.collocations) ? wordData.collocations : undefined,
+            usageNotes: wordData.usageNotes || wordData.usage || undefined
           });
         }
       });

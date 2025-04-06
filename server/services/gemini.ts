@@ -362,14 +362,19 @@ For each vocabulary item, you MUST include:
 2. A clear definition using language appropriate for ${targetLevel} level students
 3. The part of speech (noun, verb, adjective, etc.)
 4. An example sentence using language appropriate for ${targetLevel} level
-5. Common collocations (phrases that often include this word)
-6. Usage notes written with ${targetLevel} level appropriate language
-7. Teaching tips
-8. Pronunciation information with:
+5. ENHANCED (REQUIRED): semanticGroup - Words must be grouped thematically. Each semantic group MUST have 2-3 related vocabulary words (e.g., "Weather Terms", "Food Vocabulary", "Travel Expressions")
+6. ENHANCED (REQUIRED): additionalExamples - 2-3 additional example sentences showing the word in different contexts
+7. ENHANCED (REQUIRED): wordFamily - An object containing:
+   - words: An array of 2-5 related words from the same word family (e.g., "happy, happiness, happily, unhappy")
+   - description: A brief explanation of how these words are related
+8. Common collocations (phrases that often include this word) as an array of strings
+9. Usage notes written with ${targetLevel} level appropriate language
+10. Teaching tips
+11. Pronunciation information with:
    - syllables: The word broken down into syllables as an array of strings
    - stressIndex: Which syllable receives primary stress (zero-based index)
    - phoneticGuide: A simplified pronunciation guide using regular characters
-9. An image prompt (NEW!) - A detailed description (2-3 sentences) of what an image for this word should look like. The image prompt should:
+12. An image prompt (NEW!) - A detailed description (2-3 sentences) of what an image for this word should look like. The image prompt should:
    - Clearly illustrate the meaning of the word in a visual way
    - Include specific visual elements that relate to the example sentence
    - Be detailed enough for an AI image generator to create a clear, relevant image
@@ -538,31 +543,56 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
       "words": [
         {
           "term": "word1", "partOfSpeech": "noun", "definition": "Complete definition...", "example": "Complete example...",
-          "collocations": ["phrase1", "phrase2"], "notes": "Complete notes...", "teachingTips": "Complete tips...",
+          "semanticGroup": "Group Name", 
+          "additionalExamples": ["Example 1", "Example 2"],
+          "wordFamily": {"words": ["related1", "related2"], "description": "How these words are related"},
+          "collocations": ["phrase1", "phrase2"], 
+          "usageNotes": "Complete usage notes...",
+          "teachingTips": "Complete tips...",
           "pronunciation": {"syllables": ["syl"], "stressIndex": 0, "phoneticGuide": "guide"},
           "imagePrompt": "Complete image prompt (no text)..."
         },
         {
           "term": "word2", "partOfSpeech": "verb", "definition": "Complete definition...", "example": "Complete example...",
-          "collocations": ["phrase1"], "notes": "Complete notes...", "teachingTips": "Complete tips...",
+          "semanticGroup": "Group Name", 
+          "additionalExamples": ["Example 1", "Example 2"],
+          "wordFamily": {"words": ["related1", "related2"], "description": "How these words are related"},
+          "collocations": ["phrase1", "phrase2"], 
+          "usageNotes": "Complete usage notes...",
+          "teachingTips": "Complete tips...",
           "pronunciation": {"syllables": ["syl"], "stressIndex": 0, "phoneticGuide": "guide"},
           "imagePrompt": "Complete image prompt (no text)..."
         },
         {
           "term": "word3", "partOfSpeech": "adj", "definition": "Complete definition...", "example": "Complete example...",
-          "collocations": ["phrase1"], "notes": "Complete notes...", "teachingTips": "Complete tips...",
+          "semanticGroup": "Group Name", 
+          "additionalExamples": ["Example 1", "Example 2"],
+          "wordFamily": {"words": ["related1", "related2"], "description": "How these words are related"},
+          "collocations": ["phrase1", "phrase2"], 
+          "usageNotes": "Complete usage notes...",
+          "teachingTips": "Complete tips...",
           "pronunciation": {"syllables": ["syl"], "stressIndex": 0, "phoneticGuide": "guide"},
           "imagePrompt": "Complete image prompt (no text)..."
         },
         {
           "term": "word4", "partOfSpeech": "adv", "definition": "Complete definition...", "example": "Complete example...",
-          "collocations": ["phrase1"], "notes": "Complete notes...", "teachingTips": "Complete tips...",
+          "semanticGroup": "Group Name", 
+          "additionalExamples": ["Example 1", "Example 2"],
+          "wordFamily": {"words": ["related1", "related2"], "description": "How these words are related"},
+          "collocations": ["phrase1", "phrase2"], 
+          "usageNotes": "Complete usage notes...",
+          "teachingTips": "Complete tips...",
           "pronunciation": {"syllables": ["syl"], "stressIndex": 0, "phoneticGuide": "guide"},
           "imagePrompt": "Complete image prompt (no text)..."
         },
         {
           "term": "word5", "partOfSpeech": "noun", "definition": "Complete definition...", "example": "Complete example...",
-          "collocations": ["phrase1"], "notes": "Complete notes...", "teachingTips": "Complete tips...",
+          "semanticGroup": "Group Name", 
+          "additionalExamples": ["Example 1", "Example 2"],
+          "wordFamily": {"words": ["related1", "related2"], "description": "How these words are related"},
+          "collocations": ["phrase1", "phrase2"], 
+          "usageNotes": "Complete usage notes...",
+          "teachingTips": "Complete tips...",
           "pronunciation": {"syllables": ["syl"], "stressIndex": 0, "phoneticGuide": "guide"},
           "imagePrompt": "Complete image prompt (no text)..."
         }
