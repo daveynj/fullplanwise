@@ -605,14 +605,7 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
                   title: `Lesson on ${params.topic}`,
                   content: content,
                   error: 'JSON parsing failed',
-                  provider: 'qwen',
-                  sections: [
-                    {
-                      type: "error",
-                      title: "Content Parsing Error",
-                      content: "There was an error parsing the AI-generated content."
-                    }
-                  ]
+                  provider: 'qwen'
                 };
               }
             }
@@ -626,14 +619,7 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
           title: params.topic ? `Lesson on ${params.topic}` : 'ESL Lesson',
           content: 'Unable to generate lesson content',
           error: 'No content in response',
-          provider: 'qwen',
-          sections: [
-            {
-              type: "error",
-              title: "No Content Error",
-              content: "The AI service did not return any content for the lesson."
-            }
-          ]
+          provider: 'qwen'
         };
       } catch (error: any) {
         console.error('Error during API request:', error.message);
@@ -711,24 +697,6 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
       // If content is already an object (previously parsed JSON), work with it directly
       if (typeof content === 'object' && content !== null) {
         const lessonContent = content;
-        
-        // Ensure title exists in the returned object
-        if (!lessonContent.title) {
-          lessonContent.title = "ESL Lesson";
-          console.log("Added default title to lesson content since it was missing");
-        }
-        
-        // Make sure sections array exists
-        if (!lessonContent.sections || !Array.isArray(lessonContent.sections)) {
-          lessonContent.sections = [
-            {
-              type: "reading",
-              title: "Reading",
-              content: "The AI service returned content without a proper sections array."
-            }
-          ];
-          console.log("Added default sections array since it was missing");
-        }
         
         // Process each section if sections array exists
         if (lessonContent.sections && Array.isArray(lessonContent.sections)) {
@@ -847,41 +815,14 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
         return lessonContent;
       }
       
-      // Content is not an object, create a basic lesson structure
-      if (typeof content !== 'object' || content === null) {
-        console.log('Content is not an object, creating basic lesson structure');
-        // Create a minimal valid structure
-        return {
-          title: 'ESL Lesson',
-          provider: 'qwen',
-          sections: [
-            {
-              type: "error",
-              title: "Content Error",
-              content: "The AI service returned an unexpected format. Please try again."
-            }
-          ]
-        };
+      // Add provider field if content was not already an object
+      if (typeof content === 'object' && content !== null) {
+        content.provider = 'qwen';
       }
-      
-      // Add provider field
-      content.provider = 'qwen';
       return content;
     } catch (error: any) {
       console.error('Error formatting lesson content:', error);
-      // Return a valid structure even on error
-      return {
-        title: 'ESL Lesson Error',
-        provider: 'qwen',
-        error: error.message,
-        sections: [
-          {
-            type: "error",
-            title: "Processing Error",
-            content: `An error occurred while processing the lesson content: ${error.message}`
-          }
-        ]
-      };
+      return content; // Return original content on formatting error
     }
   }
 

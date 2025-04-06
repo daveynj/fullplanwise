@@ -1,5 +1,5 @@
-import React from 'react';
-import { Book, BookOpen, Radio, Lightbulb, MessageSquare, Heart, Users, Tag } from 'lucide-react';
+import React, { useState } from 'react';
+import { Book, BookOpen, Radio, Lightbulb, MessageSquare, Heart, Users, ChevronDown, ChevronUp, Tag } from 'lucide-react';
 
 export interface VocabularyWord {
   word: string;
@@ -28,6 +28,11 @@ interface VocabularyCardProps {
 }
 
 export function VocabularyCard({ word }: VocabularyCardProps) {
+  // State for expandable sections
+  const [showAdditionalExamples, setShowAdditionalExamples] = useState(false);
+  const [showWordFamily, setShowWordFamily] = useState(false);
+  const [showCollocations, setShowCollocations] = useState(false);
+  
   // Prepare pronunciation data from the word or use fallbacks
   const normalizedWord = word.word?.toLowerCase() || '';
   
@@ -52,6 +57,13 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
   
   // Define pronunciation data structure with API data or fallbacks
   const wordData = getPronunciationData();
+
+  // Check if we have any expanded content
+  const hasExpandedContent = 
+    (word.additionalExamples && word.additionalExamples.length > 0) || 
+    (word.wordFamily && word.wordFamily.words.length > 0) || 
+    (word.collocations && word.collocations.length > 0) ||
+    word.usageNotes;
 
   return (
     <div className="bg-blue-50 rounded-md p-5 border border-blue-100">
@@ -92,20 +104,29 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
         </p>
       </div>
       
-      {/* Additional Examples - Not expandable */}
+      {/* Additional Examples - Expandable */}
       {word.additionalExamples && word.additionalExamples.length > 0 && (
         <div className="mb-3">
-          <h3 className="text-blue-800 font-medium flex items-center mb-1 text-sm">
-            <MessageSquare className="mr-2 h-4 w-4" />
-            More Examples
-          </h3>
-          <div className="p-2 bg-white rounded border border-blue-100 space-y-2">
-            {word.additionalExamples.map((example, index) => (
-              <p key={index} className="italic text-sm border-l-2 border-blue-300 pl-2">
-                "{example}"
-              </p>
-            ))}
-          </div>
+          <button 
+            onClick={() => setShowAdditionalExamples(!showAdditionalExamples)}
+            className="w-full flex justify-between items-center text-blue-800 font-medium mb-1 text-sm bg-blue-100 p-2 rounded hover:bg-blue-200 transition-colors"
+          >
+            <span className="flex items-center">
+              <MessageSquare className="mr-2 h-4 w-4" />
+              More Examples
+            </span>
+            {showAdditionalExamples ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+          </button>
+          
+          {showAdditionalExamples && (
+            <div className="p-2 bg-white rounded border border-blue-100 space-y-2">
+              {word.additionalExamples.map((example, index) => (
+                <p key={index} className="italic text-sm border-l-2 border-blue-300 pl-2">
+                  "{example}"
+                </p>
+              ))}
+            </div>
+          )}
         </div>
       )}
       
@@ -122,44 +143,62 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
         </div>
       )}
       
-      {/* Word Family - Not expandable */}
+      {/* Word Family - Expandable */}
       {word.wordFamily && word.wordFamily.words.length > 0 && (
         <div className="mb-3">
-          <h3 className="text-blue-800 font-medium flex items-center mb-1 text-sm">
-            <Heart className="mr-2 h-4 w-4" />
-            Word Family
-          </h3>
-          <div className="p-3 bg-white rounded border border-blue-100">
-            {word.wordFamily.description && (
-              <p className="text-sm mb-2">{word.wordFamily.description}</p>
-            )}
-            <div className="flex flex-wrap gap-1">
-              {word.wordFamily.words.map((relatedWord, index) => (
-                <span key={index} className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">
-                  {relatedWord}
-                </span>
-              ))}
+          <button 
+            onClick={() => setShowWordFamily(!showWordFamily)}
+            className="w-full flex justify-between items-center text-blue-800 font-medium mb-1 text-sm bg-blue-100 p-2 rounded hover:bg-blue-200 transition-colors"
+          >
+            <span className="flex items-center">
+              <Heart className="mr-2 h-4 w-4" />
+              Word Family
+            </span>
+            {showWordFamily ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+          </button>
+          
+          {showWordFamily && (
+            <div className="p-3 bg-white rounded border border-blue-100">
+              {word.wordFamily.description && (
+                <p className="text-sm mb-2">{word.wordFamily.description}</p>
+              )}
+              <div className="flex flex-wrap gap-1">
+                {word.wordFamily.words.map((relatedWord, index) => (
+                  <span key={index} className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">
+                    {relatedWord}
+                  </span>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       )}
       
-      {/* Collocations - Not expandable */}
+      {/* Collocations - Expandable */}
       {word.collocations && word.collocations.length > 0 && (
         <div className="mb-3">
-          <h3 className="text-blue-800 font-medium flex items-center mb-1 text-sm">
-            <Users className="mr-2 h-4 w-4" />
-            Common Phrases
-          </h3>
-          <div className="p-2 bg-white rounded border border-blue-100">
-            <div className="flex flex-wrap gap-1">
-              {word.collocations.map((collocation, index) => (
-                <span key={index} className="bg-blue-50 border border-blue-200 text-blue-800 px-2 py-1 rounded text-sm inline-block m-1">
-                  {collocation}
-                </span>
-              ))}
+          <button 
+            onClick={() => setShowCollocations(!showCollocations)}
+            className="w-full flex justify-between items-center text-blue-800 font-medium mb-1 text-sm bg-blue-100 p-2 rounded hover:bg-blue-200 transition-colors"
+          >
+            <span className="flex items-center">
+              <Users className="mr-2 h-4 w-4" />
+              Common Phrases
+            </span>
+            {showCollocations ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+          </button>
+          
+          {showCollocations && (
+            <div className="p-2 bg-white rounded border border-blue-100">
+              <div className="flex flex-wrap gap-1">
+                {word.collocations.map((collocation, index) => (
+                  <span key={index} className="bg-blue-50 border border-blue-200 text-blue-800 px-2 py-1 rounded text-sm inline-block m-1">
+                    {collocation}
+                  </span>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       )}
       

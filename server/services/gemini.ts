@@ -68,7 +68,7 @@ export class GeminiService {
         const response = result.response;
         const text = response.text();
         
-        console.log(`Received response from Gemini API - length: ${text.length} characters`);
+        console.log('Received response from Gemini API');
         
         // Save the raw response
         const fullResponsePath = `./logs/FULL_response_gemini_${requestId}.json`;
@@ -93,78 +93,34 @@ export class GeminiService {
             cleanedContent = text.replace(/```json\s*/g, '').replace(/```\s*$/g, '').trim();
           }
           
-          // Try to parse the cleaned content with improved error recovery
+          // Now try to parse the cleaned content
           try {
-            // First try standard JSON parsing
-            let jsonContent;
-            try {
-              jsonContent = JSON.parse(cleanedContent);
-              console.log('Successfully parsed JSON content with standard JSON.parse');
-            } catch (initialParseError: any) {
-              // Log detailed error information for debugging
-              console.error('Initial JSON parsing error:', initialParseError.message);
-              
-              // Try to identify the position of the error
-              const errorMatch = initialParseError.message.match(/at position (\d+)/);
-              if (errorMatch && errorMatch[1]) {
-                const errorPos = parseInt(errorMatch[1]);
-                const errorContext = cleanedContent.substring(
-                  Math.max(0, errorPos - 30),
-                  Math.min(cleanedContent.length, errorPos + 30)
-                );
-                console.error(`Error context around position ${errorPos}: "${errorContext}"`);
-                
-                // Try to fix common JSON issues:
-                
-                // 1. Fix unescaped quotes in string values
-                const fixedContent = this.fixUnescapedQuotes(cleanedContent);
-                
-                // 2. Try to parse again with the fixed content
-                try {
-                  jsonContent = JSON.parse(fixedContent);
-                  console.log('Successfully parsed JSON content after fixing unescaped quotes');
-                } catch (fixedParseError) {
-                  // Still failed - try fallback solutions
-                  console.error('Failed to parse even after fixing quotes:', fixedParseError);
-                  
-                  // Save error information to a log file for debugging
-                  const errorLogPath = `./logs/ERROR_json_parse_${requestId}.txt`;
-                  fs.writeFileSync(errorLogPath, 
-                    `Original Error: ${initialParseError.message}\n` +
-                    `Error Position: ${errorPos}\n` +
-                    `Error Context: "${errorContext}"\n` +
-                    `Content Length: ${cleanedContent.length}\n\n` +
-                    `First 500 chars:\n${cleanedContent.substring(0, 500)}\n\n` +
-                    `Last 500 chars:\n${cleanedContent.substring(Math.max(0, cleanedContent.length - 500))}`
-                  );
-                  
-                  // Re-throw the error to be caught by the outer try/catch
-                  throw fixedParseError;
-                }
-              } else {
-                // Unable to determine error position, re-throw the error
-                throw initialParseError;
-              }
+            const jsonContent = JSON.parse(cleanedContent);
+            console.log('Successfully parsed JSON content');
+            
+            // Check if jsonContent has required structure
+            if (jsonContent.title && jsonContent.sections && Array.isArray(jsonContent.sections)) {
+              console.log('Lesson content has valid structure, returning formatted content');
+              return await this.formatLessonContent(jsonContent);
+            } else {
+              console.warn('Parsed JSON is missing required structure');
+              return {
+                title: `Lesson on ${params.topic}`,
+                content: "The generated lesson is missing required structure",
+                error: 'Invalid lesson structure',
+                provider: 'gemini',
+                sections: [
+                  {
+                    type: "error",
+                    title: "Content Error",
+                    content: "The lesson structure is incomplete. Please try regenerating the lesson."
+                  }
+                ]
+              };
             }
-            
-            // At this point, we should have parsed JSON content
-            // Ensure the lesson has required structure with fallbacks for missing fields
-            if (!jsonContent.title) {
-              console.warn('JSON content missing title, using fallback');
-              jsonContent.title = `Lesson on ${params.topic}`;
-            }
-            
-            if (!jsonContent.sections || !Array.isArray(jsonContent.sections) || jsonContent.sections.length === 0) {
-              console.warn('JSON content has invalid or missing sections, using fallback empty array');
-              jsonContent.sections = [];
-            }
-            
-            console.log('Lesson content parsed, returning formatted content');
-            return await this.formatLessonContent(jsonContent);
-            
           } catch (jsonError) {
-            // All JSON parsing attempts failed, log the error and return a fallback response
-            console.error('All attempts to parse Gemini response as JSON failed:', jsonError);
+            // If we fail to parse as JSON, try to handle it as best we can
+            console.error('Error parsing Gemini response as JSON:', jsonError);
             
             return {
               title: `Lesson on ${params.topic}`,
@@ -214,31 +170,6 @@ export class GeminiService {
   }
   
   /**
-   * Fix unescaped quotes within JSON string values
-   * This is a common issue with AI-generated JSON
-   */
-  private fixUnescapedQuotes(content: string): string {
-    // This is a complex problem, but we'll implement a basic version
-    // that handles some common cases of unescaped quotes in string values
-    
-    // First replace all properly escaped quotes with a temporary marker
-    let fixed = content.replace(/\\"/g, "ESCAPED_QUOTE_MARKER");
-    
-    // Regex pattern to find strings like: "key": "value with "quotes" inside"
-    // This is a simplified approach and won't catch all cases, but handles common ones
-    const stringValuePattern = /"([^"]+)":\s*"([^"]*)"([^"]*)"([^"]*)"(?=\s*[,}])/g;
-    fixed = fixed.replace(stringValuePattern, (match, key, before, inner, after) => {
-      // Escape the inner quotes
-      return `"${key}": "${before}\\"${inner}\\"${after}"`;
-    });
-    
-    // Restore properly escaped quotes
-    fixed = fixed.replace(/ESCAPED_QUOTE_MARKER/g, '\\"');
-    
-    return fixed;
-  }
-  
-  /**
    * Constructs a structured prompt for the Gemini AI model
    */
   private constructLessonPrompt(params: LessonGenerateParams): string {
@@ -266,16 +197,7 @@ CRITICAL: Your output must be properly formatted JSON with NO ERRORS!
 
 3. CRITICAL: ALL CONTENT MUST BE ABOUT THE SPECIFIC TOPIC PROVIDED BY THE USER.
 
-4. CRITICAL: FOR EACH VOCABULARY WORD, YOU MUST INCLUDE THE 'pronunciation' OBJECT WITH:
-   - 'syllables': An array of syllables (e.g., ["vo", "cab", "u", "lar", "y"] for "vocabulary")
-   - 'stressIndex': The index of the stressed syllable (0-based, e.g., 1 for "vocabulary" where "cab" is stressed)
-   - 'phoneticGuide': A NATURAL pronunciation guide that shows how to pronounce the word as would be found in a dictionary. 
-      GOOD EXAMPLE: /vəˈkæbjələri/ or /voh-KAB-yuh-lair-ee/
-      BAD EXAMPLE: "v as in victory, o as in orange, cab as in cabinet..."
-
-For multi-word phrases, break down EACH WORD into syllables and list them sequentially as shown here:
-- "industrial revolution" → syllables: ["in", "dus", "tri", "al", "rev", "o", "lu", "tion"], stressIndex: 6
-- "climate change" → syllables: ["cli", "mate", "change"], stressIndex: 0
+4. CRITICAL: FOR EACH VOCABULARY WORD, YOU MUST INCLUDE THE 'pronunciation' OBJECT WITH 'syllables', 'stressIndex', AND 'phoneticGuide' FIELDS. This is mandatory.
 
 5. TONE & STYLE: Apply the following writing style to ALL generated text (reading, questions, definitions, notes, etc.):
    - Use a warm, accessible, and conversational tone
