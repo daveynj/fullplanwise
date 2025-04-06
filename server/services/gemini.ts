@@ -200,10 +200,10 @@ CRITICAL: Your output must be properly formatted JSON with NO ERRORS!
 4. CRITICAL: FOR EACH VOCABULARY WORD, YOU MUST INCLUDE THE 'pronunciation' OBJECT WITH:
    - 'syllables': An array of syllables (e.g., ["vo", "cab", "u", "lar", "y"] for "vocabulary")
    - 'stressIndex': The index of the stressed syllable (0-based, e.g., 1 for "vocabulary" where "cab" is stressed)
-   - 'phoneticGuide': A NATURAL pronunciation guide that shows how to pronounce the word using either:
-      - IPA notation (e.g., "/vəˈkæbjələri/")
-      - OR syllable-by-syllable pronunciation with capitals for stress (e.g., "voh-KAB-yuh-lair-ee")
-      BAD EXAMPLE: "v as in victory, o as in orange, cab as in cabinet..."
+   - 'phoneticGuide': A NATURAL syllable-by-syllable pronunciation guide with capitals for stress 
+      (e.g., "voh-KAB-yuh-lair-ee" for "vocabulary")
+      DO NOT use IPA notation like "/vəˈkæbjələri/"
+      DO NOT use the format "v as in victory, o as in orange, cab as in cabinet..."
 
 For multi-word phrases, break down EACH WORD into syllables and list them sequentially as shown here:
 - "industrial revolution" → syllables: ["in", "dus", "tri", "al", "rev", "o", "lu", "tion"], stressIndex: 6
@@ -383,7 +383,7 @@ For each vocabulary item, you MUST include:
 11. Pronunciation information with:
    - syllables: The word broken down into syllables as an array of strings
    - stressIndex: Which syllable receives primary stress (zero-based index)
-   - phoneticGuide: A natural pronunciation guide in IPA format or simplified pronunciation notation like "/vəˈkæbjʊləri/" or "/voh-KAB-yuh-lair-ee/" - NEVER use the format "v as in victory, o as in orange" etc.
+   - phoneticGuide: A natural syllable-by-syllable pronunciation guide with capitals for stress (e.g., "voh-KAB-yuh-lair-ee" for "vocabulary"). DO NOT use IPA notation. DO NOT use the format "v as in victory, o as in orange" etc.
 12. An image prompt (NEW!) - A detailed description (2-3 sentences) of what an image for this word should look like. The image prompt should:
    - Clearly illustrate the meaning of the word in a visual way
    - Include specific visual elements that relate to the example sentence
