@@ -101,8 +101,22 @@ export type LessonGenerateParams = z.infer<typeof lessonGenerateSchema>;
 
 // Credit purchase schema
 export const creditPurchaseSchema = z.object({
-  amount: z.number().int().positive(),
+  amount: z.number().positive(),
   quantity: z.number().int().positive(),
 });
 
 export type CreditPurchase = z.infer<typeof creditPurchaseSchema>;
+
+// Subscription tiers enum
+export const SubscriptionTierEnum = z.enum(['free', 'basic', 'premium', 'annual']);
+export type SubscriptionTier = z.infer<typeof SubscriptionTierEnum>;
+
+// Subscription schema for creating subscriptions
+export const subscriptionSchema = z.object({
+  planId: z.string(),
+  customerId: z.string().optional(),
+  priceId: z.string(),
+  quantity: z.number().int().positive().default(1),
+});
+
+export type SubscriptionCreate = z.infer<typeof subscriptionSchema>;

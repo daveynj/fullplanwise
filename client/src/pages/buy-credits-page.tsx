@@ -31,48 +31,52 @@ import {
 } from "lucide-react";
 
 // Import Stripe components only if VITE_STRIPE_PUBLIC_KEY is available
-let Elements: any;
-let PaymentElement: any;
-let useElements: any;
-let useStripe: any;
-let loadStripe: any;
-let stripePromise: any;
+import { loadStripe } from '@stripe/stripe-js';
+import { 
+  Elements, 
+  PaymentElement, 
+  useElements, 
+  useStripe 
+} from '@stripe/react-stripe-js';
 
-// Check if Stripe key is available and import components
-if (import.meta.env.VITE_STRIPE_PUBLIC_KEY) {
-  const stripeImport = await import('@stripe/react-stripe-js');
-  const stripeJsImport = await import('@stripe/stripe-js');
+// Initialize Stripe with the public key
+const STRIPE_KEY = import.meta.env.VITE_STRIPE_PUBLIC_KEY 
+  ? import.meta.env.VITE_STRIPE_PUBLIC_KEY as string
+  : '';
   
-  Elements = stripeImport.Elements;
-  PaymentElement = stripeImport.PaymentElement;
-  useElements = stripeImport.useElements;
-  useStripe = stripeImport.useStripe;
-  loadStripe = stripeJsImport.loadStripe;
-  
-  stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
-}
+const stripePromise = STRIPE_KEY ? loadStripe(STRIPE_KEY) : null;
 
 // Credit package options
 const creditPackages = [
-  { id: "basic", title: "Basic", credits: 20, price: 9.99, popular: false },
-  { id: "standard", title: "Standard", credits: 50, price: 19.99, popular: true },
-  { id: "premium", title: "Premium", credits: 100, price: 34.99, popular: false },
+  { id: "starter", title: "Starter Pack", credits: 10, price: 15, popular: false, pricePerCredit: 1.50 },
+  { id: "standard", title: "Standard Pack", credits: 50, price: 60, popular: true, pricePerCredit: 1.20 },
+  { id: "pro", title: "Pro Pack", credits: 100, price: 100, popular: false, pricePerCredit: 1.00 },
+  { id: "bulk1", title: "Bulk Pack", credits: 200, price: 180, popular: false, pricePerCredit: 0.90 },
+  { id: "bulk2", title: "Enterprise Pack", credits: 500, price: 400, popular: false, pricePerCredit: 0.80 },
 ];
 
 // Subscription options
 const subscriptionPlans = [
-  { id: "pro_monthly", title: "Pro Monthly", credits: 50, price: 24.99, period: "month", features: [
-    "50 credits per month",
+  { id: "basic_monthly", title: "Basic Plan", credits: 20, price: 19, period: "month", features: [
+    "20 credits per month",
     "Access to all CEFR levels",
     "AI-generated images",
-    "Priority support"
+    "Email support"
   ]},
-  { id: "pro_yearly", title: "Pro Yearly", credits: 600, price: 239.88, period: "year", features: [
-    "50 credits per month (600 total)",
+  { id: "premium_monthly", title: "Premium Plan", credits: 60, price: 49, period: "month", features: [
+    "60 credits per month",
+    "Access to all CEFR levels",
+    "AI-generated images",
+    "Priority email support",
+    "Advanced lesson customization"
+  ]},
+  { id: "annual_plan", title: "Annual Plan", credits: 250, price: 199, period: "year", features: [
+    "250 credits per year (20.8 credits/month)",
     "Access to all CEFR levels",
     "AI-generated images",
     "Priority support",
-    "Save 20% compared to monthly"
+    "Advanced lesson customization",
+    "Save 32% compared to monthly plans"
   ], recommended: true },
 ];
 
@@ -155,7 +159,7 @@ function CheckoutForm({ amount, quantity, onSuccess }: { amount: number, quantit
 export default function BuyCreditsPage() {
   const [activeTab, setActiveTab] = useState("credits");
   const [selectedPackage, setSelectedPackage] = useState<string>("standard");
-  const [selectedSubscription, setSelectedSubscription] = useState<string>("pro_yearly");
+  const [selectedSubscription, setSelectedSubscription] = useState<string>("annual_plan");
   const [clientSecret, setClientSecret] = useState<string>("");
   const { user } = useAuth();
   const { toast } = useToast();
@@ -187,11 +191,30 @@ export default function BuyCreditsPage() {
     }
   };
 
+  // Create subscription mutation
+  const createSubscriptionMutation = useMutation({
+    mutationFn: async ({ planId, priceId }: { planId: string, priceId: string }) => {
+      const res = await apiRequest("POST", "/api/create-subscription", { planId, priceId });
+      return await res.json();
+    },
+    onSuccess: (data) => {
+      if (data.url) {
+        // Redirect to Stripe Checkout
+        window.location.href = data.url;
+      }
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error Creating Subscription",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  });
+
   // Handle subscription plan selection
   const handleSelectSubscription = (planId: string) => {
     setSelectedSubscription(planId);
-    // In a real implementation, we would handle subscription creation here
-    // or when the user confirms the selection
   };
 
   // Handle successful payment
@@ -400,13 +423,38 @@ export default function BuyCreditsPage() {
                 <div className="text-center">
                   <Button 
                     className="bg-primary hover:bg-primary/90 px-8 py-6 text-lg"
-                    disabled={true} // Disabled as subscription implementation would require additional backend setup
+                    onClick={() => {
+                      const plan = subscriptionPlans.find(p => p.id === selectedSubscription);
+                      if (plan) {
+                        // Real Stripe Price IDs mapped to plan IDs
+                        const priceIdMap: Record<string, string> = {
+                          'basic_monthly': 'price_1OqPXdJHyZhOzXGtGRrXk1iM',
+                          'premium_monthly': 'price_1OqPY7JHyZhOzXGtvh7i5lp8',
+                          'annual_plan': 'price_1OqPYdJHyZhOzXGtXTg8jGXa'
+                        };
+                        const priceId = priceIdMap[plan.id] || `price_${plan.id}`;
+                        createSubscriptionMutation.mutate({ 
+                          planId: plan.id, 
+                          priceId 
+                        });
+                      }
+                    }}
+                    disabled={!selectedSubscription || createSubscriptionMutation.isPending}
                   >
-                    <CreditCardIcon className="mr-2 h-5 w-5" />
-                    Subscribe Now
+                    {createSubscriptionMutation.isPending ? (
+                      <>
+                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                        Processing...
+                      </>
+                    ) : (
+                      <>
+                        <CreditCardIcon className="mr-2 h-5 w-5" />
+                        Subscribe Now
+                      </>
+                    )}
                   </Button>
                   <p className="text-sm text-gray-500 mt-2">
-                    Subscription feature coming soon
+                    Cancel anytime from your account settings
                   </p>
                 </div>
               </TabsContent>

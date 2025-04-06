@@ -7,7 +7,8 @@ import {
   insertStudentSchema, 
   insertLessonSchema, 
   lessonGenerateSchema,
-  creditPurchaseSchema
+  creditPurchaseSchema,
+  subscriptionSchema
 } from "@shared/schema";
 import Stripe from "stripe";
 import { qwenService } from "./services/qwen";
@@ -383,6 +384,103 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: error.message });
     }
   });
+  
+  // Subscription Routes
+  app.post("/api/create-subscription", ensureAuthenticated, async (req, res) => {
+    try {
+      if (!stripe) {
+        return res.status(500).json({ message: "Stripe API key not configured" });
+      }
+
+      const { planId, priceId } = subscriptionSchema.parse(req.body);
+      const userId = req.user!.id;
+      
+      // Get the user from the database
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      // Create or get Stripe customer
+      let customerId = user.stripeCustomerId;
+      
+      if (!customerId) {
+        // Create a new customer in Stripe
+        const customer = await stripe.customers.create({
+          email: user.email,
+          name: user.fullName || user.username,
+          metadata: {
+            userId: userId.toString()
+          }
+        });
+        
+        customerId = customer.id;
+        
+        // Update the user in the database with the Stripe customer ID
+        await storage.updateUserStripeInfo(userId, { 
+          stripeCustomerId: customerId,
+          stripeSubscriptionId: null
+        });
+      }
+      
+      // Start the subscription checkout session
+      const session = await stripe.checkout.sessions.create({
+        customer: customerId,
+        payment_method_types: ['card'],
+        line_items: [
+          {
+            price: priceId,
+            quantity: 1,
+          },
+        ],
+        mode: 'subscription',
+        success_url: `${process.env.PUBLIC_URL || req.headers.origin}/subscription-success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${process.env.PUBLIC_URL || req.headers.origin}/buy-credits`,
+        metadata: {
+          userId: userId.toString(),
+          planId: planId
+        },
+      });
+      
+      res.json({ 
+        sessionId: session.id,
+        url: session.url
+      });
+    } catch (error: any) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid subscription data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Error creating subscription: " + error.message });
+    }
+  });
+  
+  app.post("/api/subscriptions/cancel", ensureAuthenticated, async (req, res) => {
+    try {
+      if (!stripe) {
+        return res.status(500).json({ message: "Stripe API key not configured" });
+      }
+      
+      const userId = req.user!.id;
+      const user = await storage.getUser(userId);
+      
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      if (!user.stripeSubscriptionId) {
+        return res.status(400).json({ message: "No active subscription found" });
+      }
+      
+      // Cancel the subscription at the end of the current period
+      await stripe.subscriptions.update(user.stripeSubscriptionId, {
+        cancel_at_period_end: true
+      });
+      
+      res.json({ message: "Subscription scheduled for cancellation at the end of the current billing period" });
+    } catch (error: any) {
+      res.status(500).json({ message: "Error cancelling subscription: " + error.message });
+    }
+  });
 
   // Admin management route
   app.post("/api/admin/set-admin-status", ensureAuthenticated, async (req, res) => {
@@ -428,6 +526,154 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Stripe webhook handler
+  app.post("/api/webhooks/stripe", async (req, res) => {
+    // Stripe webhook requires raw body
+    const payload = req.body;
+    const sig = req.headers['stripe-signature'] as string;
+
+    if (!stripe) {
+      return res.status(500).json({ message: "Stripe API key not configured" });
+    }
+
+    let event;
+
+    try {
+      const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+      
+      if (!webhookSecret) {
+        return res.status(500).json({ message: "Stripe webhook secret not configured" });
+      }
+      
+      // Verify webhook signature
+      event = stripe.webhooks.constructEvent(payload, sig, webhookSecret);
+    } catch (err: any) {
+      console.error(`Webhook Error: ${err.message}`);
+      return res.status(400).send(`Webhook Error: ${err.message}`);
+    }
+
+    // Handle the event
+    try {
+      switch (event.type) {
+        case 'checkout.session.completed': {
+          const session = event.data.object as Stripe.Checkout.Session;
+          
+          // Handle if this is a subscription checkout
+          if (session.mode === 'subscription' && session.metadata?.userId) {
+            const userId = parseInt(session.metadata.userId);
+            const subscriptionId = session.subscription as string;
+            const planId = session.metadata.planId;
+            
+            // Update user with subscription info
+            const user = await storage.getUser(userId);
+            if (user) {
+              await storage.updateUserStripeInfo(userId, {
+                stripeCustomerId: session.customer as string,
+                stripeSubscriptionId: subscriptionId
+              });
+              
+              // Set the subscription tier based on the plan
+              let subscriptionTier = 'free';
+              let creditsToAdd = 0;
+              
+              // Map the plan ID to the appropriate tier and credits
+              if (planId === 'basic_monthly') {
+                subscriptionTier = 'basic';
+                creditsToAdd = 20; // Basic plan includes 20 credits per month
+              } else if (planId === 'premium_monthly') {
+                subscriptionTier = 'premium';
+                creditsToAdd = 60; // Premium plan includes 60 credits per month
+              } else if (planId === 'annual_plan') {
+                subscriptionTier = 'annual';
+                creditsToAdd = 250; // Annual plan includes 250 credits per year
+              }
+              
+              // Update user's subscription tier
+              const updatedUser = await storage.updateUser(userId, {
+                subscriptionTier,
+                credits: user.credits + creditsToAdd
+              });
+              
+              console.log(`User ${userId} subscribed to ${subscriptionTier} plan. Added ${creditsToAdd} credits.`);
+            }
+          }
+          break;
+        }
+        
+        case 'invoice.payment_succeeded': {
+          const invoice = event.data.object as Stripe.Invoice;
+          
+          // If this is a recurring payment (not the first one)
+          if (invoice.billing_reason === 'subscription_cycle' && invoice.metadata?.userId) {
+            const userId = parseInt(invoice.metadata.userId);
+            const user = await storage.getUser(userId);
+            
+            if (user) {
+              let creditsToAdd = 0;
+              
+              // Add credits based on the subscription tier
+              if (user.subscriptionTier === 'basic') {
+                creditsToAdd = 20;
+              } else if (user.subscriptionTier === 'premium') {
+                creditsToAdd = 60;
+              } else if (user.subscriptionTier === 'annual') {
+                // Annual plan is billed yearly, so we credit the full 250 credits
+                creditsToAdd = 250;
+              }
+              
+              if (creditsToAdd > 0) {
+                await storage.updateUserCredits(userId, user.credits + creditsToAdd);
+                console.log(`Added ${creditsToAdd} credits to user ${userId} for recurring subscription payment.`);
+              }
+            }
+          }
+          break;
+        }
+        
+        case 'customer.subscription.deleted': {
+          const subscription = event.data.object as Stripe.Subscription;
+          
+          // Find user with this subscription ID
+          // Note: In a production system, we would store a mapping of subscription IDs to users
+          const customers = await stripe.customers.list({
+            limit: 1,
+            email: subscription.customer.toString()
+          });
+          
+          if (customers.data.length > 0) {
+            const customerId = customers.data[0].id;
+            
+            // Find user with this customer ID
+            // TODO: This should be optimized with an index in a production system
+            const user = await storage.getUserByStripeCustomerId(customerId);
+            
+            if (user) {
+              // Reset subscription status
+              await storage.updateUser(user.id, {
+                subscriptionTier: 'free',
+                stripeSubscriptionId: null
+              });
+              
+              console.log(`User ${user.id} subscription has been canceled.`);
+            }
+          }
+          break;
+        }
+        
+        // Add more event handlers as needed
+        
+        default:
+          console.log(`Unhandled event type ${event.type}`);
+      }
+    } catch (error) {
+      console.error(`Error processing webhook: ${error}`);
+      return res.status(500).json({ error: 'Webhook processing failed' });
+    }
+
+    // Return a 200 response to acknowledge receipt of the event
+    res.json({ received: true });
+  });
+  
   // Create HTTP server
   const httpServer = createServer(app);
   return httpServer;

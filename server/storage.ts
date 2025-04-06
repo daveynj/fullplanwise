@@ -13,10 +13,12 @@ export interface IStorage {
   // User methods
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
+  getUserByStripeCustomerId(stripeCustomerId: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   updateUserCredits(userId: number, credits: number): Promise<User>;
   updateUserStripeInfo(userId: number, stripeInfo: { stripeCustomerId: string, stripeSubscriptionId: string | null }): Promise<User>;
   updateUserAdminStatus(userId: number, isAdmin: boolean): Promise<User>;
+  updateUser(userId: number, updates: Partial<User>): Promise<User>;
   
   // Student methods
   getStudents(teacherId: number): Promise<Student[]>;
@@ -152,6 +154,39 @@ export class DatabaseStorage implements IStorage {
       return updatedUser;
     } catch (error) {
       console.error('Error updating user admin status:', error);
+      throw error;
+    }
+  }
+  
+  async getUserByStripeCustomerId(stripeCustomerId: string): Promise<User | undefined> {
+    try {
+      const [user] = await db
+        .select()
+        .from(users)
+        .where(eq(users.stripeCustomerId, stripeCustomerId));
+      return user;
+    } catch (error) {
+      console.error('Error fetching user by Stripe customer ID:', error);
+      throw error;
+    }
+  }
+  
+  async updateUser(userId: number, updates: Partial<User>): Promise<User> {
+    try {
+      const [updatedUser] = await db
+        .update(users)
+        .set(updates)
+        .where(eq(users.id, userId))
+        .returning();
+      
+      if (!updatedUser) {
+        throw new Error("User not found");
+      }
+      
+      console.log(`User ${userId} updated with changes:`, updates);
+      return updatedUser;
+    } catch (error) {
+      console.error('Error updating user:', error);
       throw error;
     }
   }
