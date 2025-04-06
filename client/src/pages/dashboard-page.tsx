@@ -6,6 +6,13 @@ import { Button } from "@/components/ui/button";
 import { BookOpen, Users, Clock, BarChart2, ArrowRight } from "lucide-react";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
+import { Lesson } from "@shared/schema";
+
+// Define interface for paginated lessons
+interface PaginatedLessons {
+  lessons: Lesson[];
+  total: number;
+}
 
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -16,12 +23,16 @@ export default function DashboardPage() {
     retry: false,
   });
   
-  // Fetch recent lessons
-  const { data: lessons = [] } = useQuery({
+  // Fetch recent lessons (now returns paginated response)
+  const { data: lessonData } = useQuery<PaginatedLessons>({
     queryKey: ["/api/lessons"],
     retry: false,
   });
 
+  // Extract lesson array from the paginated response
+  const lessons = lessonData?.lessons || [];
+  const totalLessons = lessonData?.total || 0;
+  
   // For demo purposes, we'll show the most recent lessons
   const recentLessons = lessons.slice(0, 3);
 
@@ -29,7 +40,7 @@ export default function DashboardPage() {
   const stats = [
     { 
       title: "Total Lessons", 
-      value: lessons.length, 
+      value: totalLessons, 
       icon: <BookOpen className="h-8 w-8 text-primary" />, 
       trend: "+5% from last week",
       color: "bg-blue-50" 
