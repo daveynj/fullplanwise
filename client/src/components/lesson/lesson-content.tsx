@@ -1861,7 +1861,8 @@ export function LessonContent({ content }: LessonContentProps) {
   
   // Create arrays to store the section types from the content and our desired display order
   let contentSectionTypes: string[] = [];
-  const displayOrder: string[] = ["warmup", "reading", "comprehension", "vocabulary", "sentenceFrames", "discussion", "quiz", "notes"];
+  const displayOrder: string[] = ["warmup", "reading", "comprehension", "vocabulary", "sentenceFrames", "discussion", "quiz"];
+  // Note: "notes" tab is handled separately via the TeacherNotesSection component
   
   // Helper function to check if a section type exists
   const hasSectionType = (type: string): boolean => {
