@@ -963,118 +963,140 @@ export function LessonContent({ content }: LessonContentProps) {
     const totalWords = vocabWords.length;
 
     return (
-      <div className="space-y-6">
+      <div className="space-y-4">
         {/* Warm-up Header Card */}
         <Card className="border-amber-200 bg-amber-50">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-amber-700">
-              <Flame className="h-5 w-5" />
-              Warm-up
-            </CardTitle>
-            <CardDescription>
-              Prepare students for the lesson with engaging activities
+          <CardHeader className="py-3">
+            <div className="flex justify-between items-center">
+              <CardTitle className="flex items-center gap-2 text-amber-700 text-base">
+                <Flame className="h-4 w-4" />
+                Warm-up
+              </CardTitle>
+              <div className="flex items-center text-xs text-amber-700">
+                <ClockIcon className="mr-1 h-3 w-3" />
+                5-10 minutes
+              </div>
+            </div>
+            <CardDescription className="text-xs">
+              {section.title || "Exploring vocabulary and activating prior knowledge"}
             </CardDescription>
           </CardHeader>
         </Card>
         
-        {/* Warm-up Content Card */}
-        <Card>
-          <CardHeader className="bg-amber-50 border-b border-amber-100">
-            <div className="flex justify-between items-center">
-              <CardTitle className="flex items-center gap-2 text-amber-700">
-                <Flame className="h-5 w-5" />
-                {section.title || "Exploring Celebrations Vocabulary"}
-              </CardTitle>
-              <div className="flex items-center text-sm text-amber-700">
-                <ClockIcon className="mr-1 h-4 w-4" />
-                5-10 minutes
+        {/* Compact Warm-up Content */}
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
+          {/* Column 1: Image + Discussion */}
+          <div className="space-y-3">
+            {/* Image with Pagination Controls */}
+            <div className="bg-white rounded-md border border-amber-100 p-2">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-amber-800 font-medium text-xs flex items-center">
+                  <BookOpen className="mr-1 h-3 w-3" />
+                  Vocabulary Preview
+                </h3>
+                <div className="text-amber-800 font-medium text-xs">
+                  {currentWord.word || "Vocabulary"}
+                </div>
+              </div>
+              
+              {/* Image container */}
+              <div className="relative h-40 mb-2 rounded-md overflow-hidden border border-amber-200">
+                {currentWord.imageBase64 ? (
+                  <img 
+                    src={`data:image/png;base64,${currentWord.imageBase64}`}
+                    alt={`Illustration for ${currentWord.word}`}
+                    className="h-full w-full object-cover object-center"
+                  />
+                ) : (
+                  <div className="h-full w-full bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center">
+                    <Image className="h-8 w-8 text-amber-300" />
+                  </div>
+                )}
+              </div>
+              
+              {/* Compact pagination */}
+              <div className="flex items-center justify-between bg-amber-50 rounded px-1 py-1 border border-amber-100 text-xs">
+                <button 
+                  onClick={goToPrevWord}
+                  className="p-1 text-amber-700 hover:bg-amber-100 rounded"
+                >
+                  <ChevronLeft className="h-3 w-3" />
+                </button>
+                <span className="font-medium">{currentWordIndex + 1} of {totalWords}</span>
+                <button 
+                  onClick={goToNextWord}
+                  className="p-1 text-amber-700 hover:bg-amber-100 rounded"
+                >
+                  <ChevronRight className="h-3 w-3" />
+                </button>
               </div>
             </div>
-          </CardHeader>
-          <CardContent className="pt-6">
-            <div className="grid md:grid-cols-3 gap-6">
-              {/* Left Column: Vocabulary Image */}
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-amber-800 font-medium flex items-center">
-                    <BookOpen className="mr-2 h-4 w-4" />
-                    Key Vocabulary Preview
+            
+            {/* Discussion Questions - Limited to just 2 shown by default */}
+            <div className="bg-white rounded-md border border-amber-100 p-2">
+              <h3 className="text-amber-800 font-medium text-xs flex items-center mb-2">
+                <MessageCircle className="mr-1 h-3 w-3" />
+                Discussion Questions
+              </h3>
+              
+              <div className="space-y-2">
+                {discussionQuestions.slice(0, 3).map((question, idx) => (
+                  <div 
+                    key={`question-${idx}`} 
+                    className="p-2 bg-amber-50 border border-amber-100 rounded text-sm"
+                  >
+                    <div className="flex gap-2">
+                      <div className="flex-shrink-0 w-4 h-4 rounded-full bg-amber-500 text-white flex items-center justify-center text-xs">
+                        {idx + 1}
+                      </div>
+                      <p className="text-amber-900 text-xs">{question}</p>
+                    </div>
+                  </div>
+                ))}
+                {discussionQuestions.length > 3 && (
+                  <div className="text-center text-xs text-amber-500">
+                    +{discussionQuestions.length - 3} more questions
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+          
+          {/* Column 2: Vocabulary Cards Carousel */}
+          <div className="xl:col-span-2">
+            <div className="bg-white rounded-md border border-amber-100 h-full">
+              <div className="p-2">
+                <div className="flex items-center justify-between border-b border-amber-100 pb-1 mb-2">
+                  <h3 className="text-amber-800 font-medium text-xs flex items-center">
+                    <BookIcon className="mr-1 h-3 w-3" />
+                    Target Vocabulary
                   </h3>
-                </div>
-                
-                {/* Image related to vocabulary */}
-                <div className="relative aspect-square mb-4 rounded-md overflow-hidden border border-amber-200">
-                  {currentWord.imageBase64 ? (
-                    <img 
-                      src={`data:image/png;base64,${currentWord.imageBase64}`}
-                      alt={`Illustration for ${currentWord.word}`}
-                      className="absolute inset-0 h-full w-full object-cover"
-                    />
-                  ) : (
-                    /* Placeholder image when no image data is available */
-                    <div className="absolute inset-0 bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center">
-                      <Image className="h-16 w-16 text-amber-300" />
+                  
+                  {vocabWords.length > 0 && (
+                    <div className="flex">
+                      {vocabWords.map((_, idx) => (
+                        <button 
+                          key={idx}
+                          onClick={() => setCurrentWordIndex(idx)}
+                          className={`w-2 h-2 rounded-full mx-0.5 ${
+                            idx === currentWordIndex ? 'bg-amber-500' : 'bg-amber-200'
+                          }`}
+                        />
+                      ))}
                     </div>
                   )}
                 </div>
                 
-                {/* Pagination Controls */}
-                <div className="flex items-center justify-between bg-amber-50 rounded-md p-2 border border-amber-200">
-                  <button 
-                    onClick={goToPrevWord}
-                    className="p-2 text-amber-700 hover:bg-amber-100 rounded-md"
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                  </button>
-                  <span className="text-sm font-medium">
-                    {currentWordIndex + 1} of {totalWords}
-                  </span>
-                  <button 
-                    onClick={goToNextWord}
-                    className="p-2 text-amber-700 hover:bg-amber-100 rounded-md"
-                  >
-                    <ChevronRight className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
-              
-              {/* Middle Column: Vocabulary Card */}
-              <div>
+                {/* Vocabulary Card */}
                 <VocabularyCard word={{
                   ...currentWord,
                   // Removed imageBase64 here so image only displays in left column
                   imageBase64: null
                 }} />
               </div>
-              
-              {/* Right Column: Discussion Questions */}
-              <div>
-                <h3 className="text-amber-800 font-medium flex items-center mb-4">
-                  <MessageCircle className="mr-2 h-4 w-4" />
-                  Discussion Questions
-                </h3>
-                
-                <div className="space-y-3">
-                  {discussionQuestions.map((question, idx) => (
-                    <div 
-                      key={`question-${idx}`} 
-                      className="p-4 bg-amber-50 border border-amber-200 rounded-md"
-                    >
-                      <div className="flex gap-3">
-                        <div className="flex-shrink-0 w-6 h-6 rounded-full bg-amber-500 text-white flex items-center justify-center text-sm font-medium">
-                          {idx + 1}
-                        </div>
-                        <p className="text-amber-900">{question}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
             </div>
-          </CardContent>
-        </Card>
-        
-        {/* Teacher notes have been moved to the notes tab */}
+          </div>
+        </div>
       </div>
     );
   };
