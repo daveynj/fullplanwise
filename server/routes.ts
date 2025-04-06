@@ -116,8 +116,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Lesson Routes
   app.get("/api/lessons", ensureAuthenticated, async (req, res) => {
     try {
-      const lessons = await storage.getLessons(req.user!.id);
-      res.json(lessons);
+      // Get pagination parameters from query string with defaults
+      const page = parseInt(req.query.page as string) || 1;
+      const pageSize = parseInt(req.query.pageSize as string) || 10;
+      
+      // Fetch paginated lessons
+      const result = await storage.getLessons(req.user!.id, page, pageSize);
+      res.json(result);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }

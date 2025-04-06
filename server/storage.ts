@@ -3,7 +3,7 @@ import createMemoryStore from "memorystore";
 import session from "express-session";
 import { Store } from "express-session";
 import { db } from "./db";
-import { eq, and } from "drizzle-orm";
+import { eq, and, desc, count } from "drizzle-orm";
 import connectPg from "connect-pg-simple";
 import { pool } from "./db";
 
@@ -30,7 +30,7 @@ export interface IStorage {
   deleteStudent(id: number): Promise<boolean>;
   
   // Lesson methods
-  getLessons(teacherId: number): Promise<Lesson[]>;
+  getLessons(teacherId: number, page?: number, pageSize?: number): Promise<{lessons: Lesson[], total: number}>;
   getLessonsByStudent(studentId: number): Promise<Lesson[]>;
   getLesson(id: number): Promise<Lesson | undefined>;
   createLesson(lesson: InsertLesson): Promise<Lesson>;
@@ -292,12 +292,32 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Lesson methods
-  async getLessons(teacherId: number): Promise<Lesson[]> {
+  async getLessons(teacherId: number, page: number = 1, pageSize: number = 10): Promise<{lessons: Lesson[], total: number}> {
     try {
-      return await db
-        .select()
+      // Calculate offset based on page number and page size
+      const offset = (page - 1) * pageSize;
+      
+      // Get total count for pagination
+      const totalCountResult = await db
+        .select({ count: count() })
         .from(lessons)
         .where(eq(lessons.teacherId, teacherId));
+      
+      const total = totalCountResult[0]?.count || 0;
+      
+      // Get paginated lessons ordered by most recent first
+      const lessonsList = await db
+        .select()
+        .from(lessons)
+        .where(eq(lessons.teacherId, teacherId))
+        .orderBy(desc(lessons.createdAt))
+        .limit(pageSize)
+        .offset(offset);
+      
+      return {
+        lessons: lessonsList,
+        total
+      };
     } catch (error) {
       console.error('Error fetching lessons:', error);
       throw error;

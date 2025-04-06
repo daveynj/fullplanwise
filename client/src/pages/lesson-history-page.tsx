@@ -35,11 +35,16 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   DialogFooter,
 } from "@/components/ui/dialog";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+
+// Define interface for paginated response
+interface PaginatedLessons {
+  lessons: Lesson[];
+  total: number;
+}
 
 export default function LessonHistoryPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -50,11 +55,12 @@ export default function LessonHistoryPage() {
   const [assignDialogOpen, setAssignDialogOpen] = useState(false);
   const [lessonToAssign, setLessonToAssign] = useState<Lesson | null>(null);
   const [selectedStudentId, setSelectedStudentId] = useState<number | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
   const { toast } = useToast();
   
-  // Fetch all lessons
-  const { data: lessons = [], isLoading } = useQuery<Lesson[]>({
-    queryKey: ["/api/lessons"],
+  // Fetch paginated lessons
+  const { data: lessonData, isLoading } = useQuery<PaginatedLessons>({
+    queryKey: ["/api/lessons", { page: currentPage }],
     retry: false,
   });
   
@@ -160,7 +166,12 @@ export default function LessonHistoryPage() {
     }
   };
   
-  // Filter lessons based on search and filters
+  // Extract data from the paginated response
+  const lessons = lessonData?.lessons || [];
+  const totalLessons = lessonData?.total || 0;
+  const totalPages = Math.ceil(totalLessons / 10); // 10 items per page
+  
+  // Filter lessons based on search and filters (client-side filtering)
   const filteredLessons = lessons.filter((lesson: Lesson) => {
     const matchesSearch = 
       searchQuery === "" || 
@@ -187,6 +198,11 @@ export default function LessonHistoryPage() {
     
     return matchesSearch && matchesCefr && matchesDate;
   });
+  
+  // Handle page change
+  const goToPage = (page: number) => {
+    setCurrentPage(page);
+  };
   
   // Format date
   const formatDate = (dateString: string | Date) => {
@@ -294,66 +310,105 @@ export default function LessonHistoryPage() {
                   <Loader2 className="h-8 w-8 animate-spin text-primary" />
                 </div>
               ) : filteredLessons.length > 0 ? (
-                <div className="space-y-4">
-                  {filteredLessons.map((lesson: Lesson) => (
-                    <Card key={lesson.id} className="hover:shadow-md transition-shadow">
-                      <CardContent className="p-6">
-                        <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-                          <div className="flex items-start">
-                            <div className="bg-primary/10 p-2 rounded-lg mr-4 flex-shrink-0">
-                              <BookOpen className="h-6 w-6 text-primary" />
-                            </div>
-                            <div>
-                              <h3 className="font-nunito font-semibold text-lg">{lesson.title}</h3>
-                              <div className="flex flex-wrap items-center gap-2 mt-1">
-                                <Badge variant="outline" className="bg-blue-100 text-blue-800">
-                                  CEFR {lesson.cefrLevel}
-                                </Badge>
-                                <span className="text-sm text-gray-500">
-                                  {lesson.createdAt ? formatDate(lesson.createdAt) : 'No date'}
-                                </span>
-                                {lesson.studentId && (
-                                  <Badge variant="outline" className="bg-gray-100">
-                                    Student #{lesson.studentId}
+                <>
+                  <div className="space-y-4">
+                    {filteredLessons.map((lesson: Lesson) => (
+                      <Card key={lesson.id} className="hover:shadow-md transition-shadow">
+                        <CardContent className="p-6">
+                          <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+                            <div className="flex items-start">
+                              <div className="bg-primary/10 p-2 rounded-lg mr-4 flex-shrink-0">
+                                <BookOpen className="h-6 w-6 text-primary" />
+                              </div>
+                              <div>
+                                <h3 className="font-nunito font-semibold text-lg">{lesson.title}</h3>
+                                <div className="flex flex-wrap items-center gap-2 mt-1">
+                                  <Badge variant="outline" className="bg-blue-100 text-blue-800">
+                                    CEFR {lesson.cefrLevel}
                                   </Badge>
-                                )}
+                                  <span className="text-sm text-gray-500">
+                                    {lesson.createdAt ? formatDate(lesson.createdAt) : 'No date'}
+                                  </span>
+                                  {lesson.studentId && (
+                                    <Badge variant="outline" className="bg-gray-100">
+                                      Student #{lesson.studentId}
+                                    </Badge>
+                                  )}
+                                </div>
                               </div>
                             </div>
-                          </div>
-                          
-                          <div className="mt-4 md:mt-0 flex flex-wrap gap-2">
-                            <Link href={`/history/${lesson.id}`}>
-                              <Button size="sm" className="bg-primary hover:bg-primary/90">
-                                View Lesson
+                            
+                            <div className="mt-4 md:mt-0 flex flex-wrap gap-2">
+                              <Link href={`/history/${lesson.id}`}>
+                                <Button size="sm" className="bg-primary hover:bg-primary/90">
+                                  View Lesson
+                                </Button>
+                              </Link>
+                              <Link href={`/fullscreen/${lesson.id}`}>
+                                <Button size="sm" variant="outline" className="bg-green-50 text-green-600 border-green-200 hover:bg-green-100 hover:text-green-700">
+                                  Fullscreen View
+                                </Button>
+                              </Link>
+                              <Button 
+                                size="sm" 
+                                variant="outline" 
+                                className="bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100 hover:text-blue-700"
+                                onClick={() => handleAssignLesson(lesson)}
+                              >
+                                <UserPlus className="mr-2 h-4 w-4" /> Assign to Student
                               </Button>
-                            </Link>
-                            <Link href={`/fullscreen/${lesson.id}`}>
-                              <Button size="sm" variant="outline" className="bg-green-50 text-green-600 border-green-200 hover:bg-green-100 hover:text-green-700">
-                                Fullscreen View
+                              <Button 
+                                size="sm" 
+                                variant="outline" 
+                                className="bg-red-50 text-red-600 border-red-200 hover:bg-red-100 hover:text-red-700"
+                                onClick={() => handleDeleteLesson(lesson)}
+                              >
+                                <Trash2 className="mr-2 h-4 w-4" /> Delete
                               </Button>
-                            </Link>
-                            <Button 
-                              size="sm" 
-                              variant="outline" 
-                              className="bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100 hover:text-blue-700"
-                              onClick={() => handleAssignLesson(lesson)}
-                            >
-                              <UserPlus className="mr-2 h-4 w-4" /> Assign to Student
-                            </Button>
-                            <Button 
-                              size="sm" 
-                              variant="outline" 
-                              className="bg-red-50 text-red-600 border-red-200 hover:bg-red-100 hover:text-red-700"
-                              onClick={() => handleDeleteLesson(lesson)}
-                            >
-                              <Trash2 className="mr-2 h-4 w-4" /> Delete
-                            </Button>
+                            </div>
                           </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                  
+                  {/* Pagination */}
+                  {totalPages > 1 && (
+                    <div className="flex justify-center mt-6">
+                      <div className="flex items-center space-x-2">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => goToPage(Math.max(1, currentPage - 1))}
+                          disabled={currentPage === 1}
+                        >
+                          Previous
+                        </Button>
+                        
+                        {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                          <Button
+                            key={page}
+                            variant={currentPage === page ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => goToPage(page)}
+                            className={currentPage === page ? "bg-primary" : ""}
+                          >
+                            {page}
+                          </Button>
+                        ))}
+                        
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => goToPage(Math.min(totalPages, currentPage + 1))}
+                          disabled={currentPage === totalPages}
+                        >
+                          Next
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                </>
               ) : (
                 <Card>
                   <CardContent className="flex flex-col items-center justify-center py-12">
