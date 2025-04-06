@@ -78,68 +78,93 @@ After writing the reading text, create:
 - NEW REQUIREMENT: 2-4 sentence frames and templates appropriate for the ${params.cefrLevel} level to help students with sentence structure and grammar
 
 SENTENCE FRAMES REQUIREMENTS:
-For each sentence frame, include:
-1. The pattern (e.g., "I think that _____ because _____.")
-2. 2-3 example sentences using the pattern and vocabulary from the lesson
-3. Usage notes explaining when and how to use this pattern
-4. Teaching tips for introducing and practicing the pattern
-5. Difficulty level (basic, intermediate, or advanced) relative to the overall CEFR level
-6. Grammar focus (what grammar point this pattern helps practice)
-7. Communicative function (e.g., expressing opinions, making comparisons, etc.)
+For each sentence frame, create practical, meaningful templates that students can use in real communication about "${params.topic}".
 
-Tailor the complexity and number of sentence frames based on CEFR level:
-- A1: 3-4 very simple frames with basic structures (subject + verb + object). Focus on present tense, personal information, and everyday needs. Example: "I like ____." or "This is ____."
-- A2: 3-4 simple frames that may include one conjunction or preposition. Introduce basic past tense, simple questions, and descriptions. Example: "I went to ____ yesterday and I saw ____."
-- B1: 2-3 frames with moderate complexity. Include various tenses, modal verbs, and expressions of opinion. Example: "I think ____ is important because it helps people to ____ and also ____."
-- B2: 2-3 more complex frames with multiple clauses, conditionals, or comparisons. Example: "Although many people believe ____, I would argue that ____ because ____."
-- C1/C2: 1-2 sophisticated frames with complex structures, academic language, or nuanced expressions. Example: "Despite the widespread assumption that ____, recent evidence suggests that ____, which implies that ____."
+KEY REQUIREMENTS FOR SENTENCE FRAMES:
 
-CEFR-SPECIFIC EXAMPLES:
+1. AUTHENTIC COMMUNICATION: Create frames that students will actually use in real-world conversations about "${params.topic}". They should sound natural, not contrived or overly academic.
 
-A1 Examples:
-- "I like to eat _____."
-- "My favorite _____ is _____."
-- "I can _____ very well."
-- "In the morning, I _____."
+2. VOCABULARY INTEGRATION: Each frame MUST incorporate at least one of the vocabulary words from your lesson's vocabulary list to reinforce learning.
 
-A2 Examples:
-- "Last weekend, I went to _____ and I saw _____."
-- "I usually _____ because I think it's _____."
-- "I would like to _____ next _____."
-- "If I have time, I will _____."
+3. CONTENT CONNECTION: The frames must connect directly to the main reading text's content, themes, or concepts.
 
-B1 Examples:
-- "I believe that _____ is _____ because _____, although some people think _____."
-- "When I was _____, I used to _____, but now I prefer to _____."
-- "I've always wanted to _____, which would allow me to _____."
+4. CLEAR FORMATTING: Use "_____" (exactly 5 underscores) consistently for blanks. No parentheses, variables, or other formats.
 
-B2 Examples:
-- "While it's often argued that _____, I would suggest that _____, particularly when considering _____."
-- "Having _____, I now realize that _____, which has led me to _____."
-- "If I had the opportunity to _____, I would definitely _____, as it would enable me to _____."
+5. PURPOSEFUL DESIGN: Each frame should serve a specific communicative function that's useful for discussing "${params.topic}" (e.g., expressing opinions, making comparisons, describing processes).
 
-C1/C2 Examples:
-- "Despite the prevailing view that _____, a more nuanced analysis reveals _____, which consequently _____."
-- "The extent to which _____ influences _____ remains a subject of debate; however, what cannot be disputed is that _____, regardless of how _____."
+6. SCAFFOLDED COMPLEXITY: Provide a mix of complexity levels appropriate for ${params.cefrLevel} students - from simpler to more advanced structures within the target CEFR level.
 
-IMPORTANT: Make frames progressively more complex from basic to advanced within each CEFR level. Each frame should:
-1. Be meaningful and authentic to real communication
-2. Include opportunities for personalization and creativity
-3. Incorporate elements from the lesson vocabulary and topic
-4. For higher levels (B1+), add elements like follow-up questions, conditionals, or alternatives
+7. REALISTIC EXAMPLES: Include 2-3 example sentences that:
+   - Use the frame pattern naturally
+   - Incorporate vocabulary from your lesson
+   - Relate directly to the reading text content
+   - Model authentic language use at the ${params.cefrLevel} level
+   - Sound like something a student would actually say in conversation
 
-For teacher instructions (only shown in teacher view):
-1. Include specific drilling techniques relevant to the frame
-2. Suggest pair/group activities to practice the frame
-3. Provide ideas for extending the frame through additional questions
-4. Recommend error correction strategies for common mistakes
-5. Suggest ways to adapt the frame for different proficiency levels within the class
+For each sentence frame, include ALL of the following properties in a structured JSON format:
 
-AVOID:
-1. Creating frames that are too artificial or overly complex for the level
-2. Using vocabulary beyond the target CEFR level
-3. Making frames too topic-specific (they should be adaptable)
-4. Creating frames with too many blanks or complex structures for lower levels
+- pattern: The sentence frame with blanks shown as "_____" (e.g., "I think _____ is important because _____.")
+- examples: Array of 2-3 complete, natural-sounding example sentences using vocabulary from the lesson
+- level: Difficulty level relative to the CEFR level ("basic", "intermediate", or "advanced")
+- title: Short, descriptive title (3-5 words) that explains the communicative purpose
+- usage: When and how to use this pattern in real-world situations (2-3 sentences)
+- communicativeFunction: The specific real-world purpose (e.g., "Expressing preferences", "Making predictions")
+- grammarFocus: The grammar structure being practiced, explained simply (e.g., "Present perfect with 'for' and 'since'")
+- teachingTips: Practical advice for teachers on how to present and practice this pattern (3-4 sentences)
+
+CEFR-SPECIFIC GUIDELINES:
+For ${params.cefrLevel} level students, create frames with appropriate complexity:
+
+- A1 LEVEL FRAMES: 3-4 very simple frames using:
+  • Basic subject-verb-object structures
+  • Present simple tense only
+  • Common everyday vocabulary
+  • 1-2 blanks maximum per frame
+  • Example: "I like _____ because it's _____."
+
+- A2 LEVEL FRAMES: 3-4 frames using:
+  • Simple conjunctions (and, but, because)
+  • Present and past simple tenses
+  • Basic modals (can, should)
+  • 1-2 blanks per frame
+  • Example: "In my country, people usually _____ when they _____."
+
+- B1 LEVEL FRAMES: 2-3 frames with:
+  • Varied tenses (present perfect, conditionals)
+  • Expressing opinions with supporting reasons
+  • Comparing and contrasting
+  • 2-3 blanks per frame
+  • Example: "Although many people believe _____, I think _____ because _____."
+
+- B2 LEVEL FRAMES: 2-3 frames with:
+  • Complex sentences with multiple clauses
+  • Expressing hypothetical situations
+  • Discussing advantages/disadvantages
+  • 2-3 blanks strategically placed
+  • Example: "One of the main advantages of _____ is _____, which can lead to _____."
+
+- C1/C2 LEVEL FRAMES: 1-2 sophisticated frames with:
+  • Nuanced language for expressing complex ideas
+  • Academic language patterns for discussing abstract concepts
+  • Critical thinking structures
+  • 2-3 blanks in meaningful positions
+  • Example: "Recent research suggests that _____, which contradicts the conventional wisdom that _____, indicating that _____."
+
+CRITICAL ISSUES TO AVOID:
+1. DO NOT create frames that are too theoretical or academic for real conversation
+2. DO NOT use blanks for every other word - be strategic with blank placement
+3. DO NOT include confusing grammar terminology in the pattern
+4. DO NOT create frames with vocabulary beyond the ${params.cefrLevel} level
+5. DO NOT create frames unrelated to "${params.topic}" - they must be topic-specific
+6. DO NOT create patterns that are so specific they can only be used in one particular scenario
+
+IMPLEMENTATION REQUIREMENT: Each frame must be a complete JSON object with ALL the required fields populated.
+
+For teacher instructions:
+1. Focus on practical classroom activities related to the specific topic
+2. Suggest conversation prompts that use the frame and topic vocabulary
+3. Provide ideas that will work in screen-sharing scenarios where students interact verbally
+4. Keep instructions concise and action-oriented
 
 VOCABULARY REQUIREMENTS:
 For each vocabulary item, you MUST include:
