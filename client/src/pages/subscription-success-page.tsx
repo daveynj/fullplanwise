@@ -56,9 +56,15 @@ export default function SubscriptionSuccessPage() {
         nextRenewal.setDate(nextRenewal.getDate() + 30);
       }
       
-      const subscriptionInfo = subscriptionTierMap[user.subscriptionTier as string] || {
+      // Force annual plan to show 250 credits for now
+      const forcedTier = searchParams.get("plan");
+      const tier = forcedTier === "annual_plan" ? "annual" : user?.subscriptionTier;
+      
+      console.log(`Subscription tier: ${tier}, forced tier from params: ${forcedTier}`);
+      
+      const subscriptionInfo = subscriptionTierMap[tier as string] || {
         name: 'Subscription',
-        monthlyCredits: 0
+        monthlyCredits: forcedTier === "annual_plan" ? 250 : 0
       };
       
       // Set the subscription details
@@ -114,7 +120,7 @@ export default function SubscriptionSuccessPage() {
                     </div>
                     
                     <div className="pt-2 border-t mt-3">
-                      {user?.subscriptionTier === 'annual' ? (
+                      {tier === 'annual' || searchParams.get("plan") === "annual_plan" ? (
                         <p className="text-gray-700">You've received <span className="font-semibold">{subscriptionDetails.monthlyCredits} credits</span> with this annual plan.</p>
                       ) : (
                         <p className="text-gray-700">You'll receive <span className="font-semibold">{subscriptionDetails.monthlyCredits} credits</span> each billing period with this plan.</p>

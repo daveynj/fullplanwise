@@ -440,7 +440,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           },
         ],
         mode: 'subscription',
-        success_url: `${process.env.PUBLIC_URL || req.headers.origin}/subscription-success?session_id={CHECKOUT_SESSION_ID}`,
+        success_url: `${process.env.PUBLIC_URL || req.headers.origin}/subscription-success?session_id={CHECKOUT_SESSION_ID}&plan=${planId}`,
         cancel_url: `${process.env.PUBLIC_URL || req.headers.origin}/buy-credits`,
         metadata: {
           userId: userId.toString(),
