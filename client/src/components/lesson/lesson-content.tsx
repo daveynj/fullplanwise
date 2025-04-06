@@ -965,19 +965,19 @@ export function LessonContent({ content }: LessonContentProps) {
     return (
       <div className="space-y-4">
         {/* Warm-up Header Card */}
-        <Card className="border-amber-200 bg-amber-50">
-          <CardHeader className="py-3">
+        <Card className="border-2 border-amber-300 bg-amber-50 shadow-md">
+          <CardHeader className="py-4">
             <div className="flex justify-between items-center">
-              <CardTitle className="flex items-center gap-2 text-amber-700 text-base">
-                <Flame className="h-4 w-4" />
+              <CardTitle className="flex items-center gap-2 text-amber-700 text-xl font-bold">
+                <Flame className="h-5 w-5" />
                 Warm-up
               </CardTitle>
-              <div className="flex items-center text-xs text-amber-700">
-                <ClockIcon className="mr-1 h-3 w-3" />
+              <div className="flex items-center text-sm font-medium text-amber-700">
+                <ClockIcon className="mr-1 h-4 w-4" />
                 5-10 minutes
               </div>
             </div>
-            <CardDescription className="text-xs">
+            <CardDescription className="text-sm text-amber-700 font-medium">
               {section.title || "Exploring vocabulary and activating prior knowledge"}
             </CardDescription>
           </CardHeader>
@@ -986,21 +986,21 @@ export function LessonContent({ content }: LessonContentProps) {
         {/* Compact Warm-up Content */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
           {/* Column 1: Image + Discussion */}
-          <div className="space-y-3">
+          <div className="space-y-4">
             {/* Image with Pagination Controls */}
-            <div className="bg-white rounded-md border border-amber-100 p-2">
+            <div className="bg-white rounded-md border-2 border-amber-200 p-3 shadow-sm">
               <div className="flex items-center justify-between mb-2">
-                <h3 className="text-amber-800 font-medium text-xs flex items-center">
-                  <BookOpen className="mr-1 h-3 w-3" />
+                <h3 className="text-amber-800 font-bold text-base flex items-center">
+                  <BookOpen className="mr-2 h-4 w-4" />
                   Vocabulary Preview
                 </h3>
-                <div className="text-amber-800 font-medium text-xs">
+                <div className="text-amber-800 font-bold text-base">
                   {currentWord.word || "Vocabulary"}
                 </div>
               </div>
               
               {/* Image container */}
-              <div className="relative h-40 mb-2 rounded-md overflow-hidden border border-amber-200">
+              <div className="relative h-48 mb-3 rounded-md overflow-hidden border-2 border-amber-200">
                 {currentWord.imageBase64 ? (
                   <img 
                     src={`data:image/png;base64,${currentWord.imageBase64}`}
@@ -1009,52 +1009,52 @@ export function LessonContent({ content }: LessonContentProps) {
                   />
                 ) : (
                   <div className="h-full w-full bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center">
-                    <Image className="h-8 w-8 text-amber-300" />
+                    <Image className="h-12 w-12 text-amber-300" />
                   </div>
                 )}
               </div>
               
-              {/* Compact pagination */}
-              <div className="flex items-center justify-between bg-amber-50 rounded px-1 py-1 border border-amber-100 text-xs">
+              {/* Pagination Controls */}
+              <div className="flex items-center justify-between bg-amber-50 rounded-md p-2 border-2 border-amber-200 text-sm">
                 <button 
                   onClick={goToPrevWord}
-                  className="p-1 text-amber-700 hover:bg-amber-100 rounded"
+                  className="p-2 text-amber-700 hover:bg-amber-100 rounded-md"
                 >
-                  <ChevronLeft className="h-3 w-3" />
+                  <ChevronLeft className="h-4 w-4" />
                 </button>
-                <span className="font-medium">{currentWordIndex + 1} of {totalWords}</span>
+                <span className="font-bold">{currentWordIndex + 1} of {totalWords}</span>
                 <button 
                   onClick={goToNextWord}
-                  className="p-1 text-amber-700 hover:bg-amber-100 rounded"
+                  className="p-2 text-amber-700 hover:bg-amber-100 rounded-md"
                 >
-                  <ChevronRight className="h-3 w-3" />
+                  <ChevronRight className="h-4 w-4" />
                 </button>
               </div>
             </div>
             
-            {/* Discussion Questions - Limited to just 2 shown by default */}
-            <div className="bg-white rounded-md border border-amber-100 p-2">
-              <h3 className="text-amber-800 font-medium text-xs flex items-center mb-2">
-                <MessageCircle className="mr-1 h-3 w-3" />
+            {/* Discussion Questions - Limited to just 3 shown by default */}
+            <div className="bg-white rounded-md border-2 border-amber-200 p-3 shadow-sm">
+              <h3 className="text-amber-800 font-bold text-base flex items-center mb-3">
+                <MessageCircle className="mr-2 h-4 w-4" />
                 Discussion Questions
               </h3>
               
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {discussionQuestions.slice(0, 3).map((question, idx) => (
                   <div 
                     key={`question-${idx}`} 
-                    className="p-2 bg-amber-50 border border-amber-100 rounded text-sm"
+                    className="p-3 bg-amber-50 border-2 border-amber-200 rounded-md"
                   >
-                    <div className="flex gap-2">
-                      <div className="flex-shrink-0 w-4 h-4 rounded-full bg-amber-500 text-white flex items-center justify-center text-xs">
+                    <div className="flex gap-3">
+                      <div className="flex-shrink-0 w-6 h-6 rounded-full bg-amber-500 text-white flex items-center justify-center text-sm font-bold">
                         {idx + 1}
                       </div>
-                      <p className="text-amber-900 text-xs">{question}</p>
+                      <p className="text-amber-900 text-base font-medium">{question}</p>
                     </div>
                   </div>
                 ))}
                 {discussionQuestions.length > 3 && (
-                  <div className="text-center text-xs text-amber-500">
+                  <div className="text-center text-sm font-bold text-amber-600">
                     +{discussionQuestions.length - 3} more questions
                   </div>
                 )}
@@ -1064,11 +1064,11 @@ export function LessonContent({ content }: LessonContentProps) {
           
           {/* Column 2: Vocabulary Cards Carousel */}
           <div className="xl:col-span-2">
-            <div className="bg-white rounded-md border border-amber-100 h-full">
-              <div className="p-2">
-                <div className="flex items-center justify-between border-b border-amber-100 pb-1 mb-2">
-                  <h3 className="text-amber-800 font-medium text-xs flex items-center">
-                    <BookIcon className="mr-1 h-3 w-3" />
+            <div className="bg-white rounded-md border-2 border-amber-200 h-full shadow-sm">
+              <div className="p-3">
+                <div className="flex items-center justify-between border-b-2 border-amber-200 pb-2 mb-3">
+                  <h3 className="text-amber-800 font-bold text-base flex items-center">
+                    <BookIcon className="mr-2 h-4 w-4" />
                     Target Vocabulary
                   </h3>
                   
@@ -1078,7 +1078,7 @@ export function LessonContent({ content }: LessonContentProps) {
                         <button 
                           key={idx}
                           onClick={() => setCurrentWordIndex(idx)}
-                          className={`w-2 h-2 rounded-full mx-0.5 ${
+                          className={`w-3 h-3 rounded-full mx-1 ${
                             idx === currentWordIndex ? 'bg-amber-500' : 'bg-amber-200'
                           }`}
                         />
