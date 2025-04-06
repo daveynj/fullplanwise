@@ -99,7 +99,7 @@ function CheckoutForm({ amount, quantity, onSuccess }: { amount: number, quantit
     const { error } = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        return_url: window.location.origin + "/buy-credits?success=true",
+        return_url: "https://planwiseesl.com/buy-credits?success=true",
       },
       redirect: "if_required",
     });
