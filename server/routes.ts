@@ -450,7 +450,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ message: "Invalid subscription data", errors: error.errors });
       }
-      res.status(500).json({ message: "Error creating subscription: " + error.message });
+      console.error("Subscription creation error:", error);
+      res.status(500).json({ 
+        message: "Error creating subscription: " + error.message,
+        details: error.type || error.code || "Unknown error" 
+      });
     }
   });
   

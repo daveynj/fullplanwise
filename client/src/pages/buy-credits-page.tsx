@@ -426,11 +426,14 @@ export default function BuyCreditsPage() {
                     onClick={() => {
                       const plan = subscriptionPlans.find(p => p.id === selectedSubscription);
                       if (plan) {
-                        // Real Stripe Price IDs mapped to plan IDs
+                        // Stripe Price IDs mapped to plan IDs
+                        // Note: For testing, you need to replace these with your own test mode price IDs
+                        // from your Stripe dashboard
                         const priceIdMap: Record<string, string> = {
-                          'basic_monthly': 'price_1OqPXdJHyZhOzXGtGRrXk1iM',
-                          'premium_monthly': 'price_1OqPY7JHyZhOzXGtvh7i5lp8',
-                          'annual_plan': 'price_1OqPYdJHyZhOzXGtXTg8jGXa'
+                          // Example format of price IDs: price_1234567890abcdef
+                          'basic_monthly': 'price_1234567890abcdef',  // Replace with your price ID
+                          'premium_monthly': 'price_1234567890abcdef', // Replace with your price ID
+                          'annual_plan': 'price_1234567890abcdef'     // Replace with your price ID
                         };
                         const priceId = priceIdMap[plan.id] || `price_${plan.id}`;
                         createSubscriptionMutation.mutate({ 
