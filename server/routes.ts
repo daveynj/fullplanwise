@@ -296,6 +296,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: error.message });
     }
   });
+  
+  // Assign a lesson to a student
+  app.put("/api/lessons/:id/assign", ensureAuthenticated, async (req, res) => {
+    try {
+      const lessonId = parseInt(req.params.id);
+      const { studentId } = z.object({ studentId: z.number().int() }).parse(req.body);
+      
+      // Check if lesson exists
+      const lesson = await storage.getLesson(lessonId);
+      if (!lesson) {
+        return res.status(404).json({ message: "Lesson not found" });
+      }
+      
+      // Check authorization
+      if (lesson.teacherId !== req.user!.id) {
+        return res.status(403).json({ message: "Unauthorized access to lesson" });
+      }
+      
+      // Check if student exists and belongs to this teacher
+      const student = await storage.getStudent(studentId);
+      if (!student) {
+        return res.status(404).json({ message: "Student not found" });
+      }
+      
+      if (student.teacherId !== req.user!.id) {
+        return res.status(403).json({ message: "Unauthorized access to student" });
+      }
+      
+      // Update the lesson with the studentId
+      const updatedLesson = await storage.updateLesson(lessonId, { studentId });
+      res.json(updatedLesson);
+    } catch (error: any) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid assignment data", errors: error.errors });
+      }
+      res.status(500).json({ message: error.message });
+    }
+  });
 
   // Credits and Payment Routes
   app.post("/api/create-payment-intent", ensureAuthenticated, async (req, res) => {

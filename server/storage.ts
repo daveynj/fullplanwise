@@ -30,6 +30,7 @@ export interface IStorage {
   getLessonsByStudent(studentId: number): Promise<Lesson[]>;
   getLesson(id: number): Promise<Lesson | undefined>;
   createLesson(lesson: InsertLesson): Promise<Lesson>;
+  updateLesson(id: number, lessonUpdate: Partial<Lesson>): Promise<Lesson>;
   deleteLesson(id: number): Promise<boolean>;
   
   // Session store
@@ -274,6 +275,25 @@ export class DatabaseStorage implements IStorage {
       return lesson;
     } catch (error) {
       console.error('Error creating lesson:', error);
+      throw error;
+    }
+  }
+
+  async updateLesson(id: number, lessonUpdate: Partial<Lesson>): Promise<Lesson> {
+    try {
+      const [updatedLesson] = await db
+        .update(lessons)
+        .set(lessonUpdate)
+        .where(eq(lessons.id, id))
+        .returning();
+      
+      if (!updatedLesson) {
+        throw new Error("Lesson not found");
+      }
+      
+      return updatedLesson;
+    } catch (error) {
+      console.error('Error updating lesson:', error);
       throw error;
     }
   }

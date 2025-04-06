@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Lesson } from "@shared/schema";
+import { Lesson, Student } from "@shared/schema";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
 import { Button } from "@/components/ui/button";
@@ -18,7 +18,8 @@ import {
   Calendar, 
   Loader2,
   Trash2,
-  AlertTriangle 
+  AlertTriangle,
+  UserPlus
 } from "lucide-react";
 import {
   AlertDialog,
@@ -30,6 +31,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
@@ -39,11 +48,20 @@ export default function LessonHistoryPage() {
   const [dateFilter, setDateFilter] = useState<string>("all");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [lessonToDelete, setLessonToDelete] = useState<Lesson | null>(null);
+  const [assignDialogOpen, setAssignDialogOpen] = useState(false);
+  const [lessonToAssign, setLessonToAssign] = useState<Lesson | null>(null);
+  const [selectedStudentId, setSelectedStudentId] = useState<number | null>(null);
   const { toast } = useToast();
   
   // Fetch all lessons
   const { data: lessons = [], isLoading } = useQuery<Lesson[]>({
     queryKey: ["/api/lessons"],
+    retry: false,
+  });
+  
+  // Fetch all students for assignment dropdown
+  const { data: students = [] } = useQuery<Student[]>({
+    queryKey: ["/api/students"],
     retry: false,
   });
   
@@ -73,6 +91,39 @@ export default function LessonHistoryPage() {
     }
   });
   
+  // Assign lesson to student mutation
+  const assignLessonMutation = useMutation({
+    mutationFn: async ({ lessonId, studentId }: { lessonId: number, studentId: number }) => {
+      const response = await apiRequest("PUT", `/api/lessons/${lessonId}/assign`, { studentId });
+      return await response.json();
+    },
+    onSuccess: (data) => {
+      // Invalidate lessons and student lessons queries to refresh the lists
+      queryClient.invalidateQueries({ queryKey: ["/api/lessons"] });
+      
+      if (selectedStudentId) {
+        queryClient.invalidateQueries({ queryKey: [`/api/lessons/student/${selectedStudentId}`] });
+      }
+      
+      toast({
+        title: "Lesson assigned",
+        description: `The lesson has been assigned to the student successfully.`,
+      });
+      
+      // Reset state
+      setAssignDialogOpen(false);
+      setLessonToAssign(null);
+      setSelectedStudentId(null);
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Failed to assign lesson",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  });
+  
   // Handle delete confirmation
   const handleDeleteLesson = (lesson: Lesson) => {
     setLessonToDelete(lesson);
@@ -85,6 +136,29 @@ export default function LessonHistoryPage() {
       deleteLessonMutation.mutate(lessonToDelete.id);
     }
     setDeleteDialogOpen(false);
+  };
+  
+  // Handle assign to student
+  const handleAssignLesson = (lesson: Lesson) => {
+    setLessonToAssign(lesson);
+    setSelectedStudentId(lesson.studentId || null);
+    setAssignDialogOpen(true);
+  };
+  
+  // Confirm assignment
+  const confirmAssign = () => {
+    if (lessonToAssign && selectedStudentId) {
+      assignLessonMutation.mutate({ 
+        lessonId: lessonToAssign.id, 
+        studentId: selectedStudentId 
+      });
+    } else {
+      toast({
+        title: "Please select a student",
+        description: "You must select a student to assign this lesson to.",
+        variant: "destructive",
+      });
+    }
   };
   
   // Filter lessons based on search and filters
@@ -248,7 +322,7 @@ export default function LessonHistoryPage() {
                             </div>
                           </div>
                           
-                          <div className="mt-4 md:mt-0 flex space-x-2">
+                          <div className="mt-4 md:mt-0 flex flex-wrap gap-2">
                             <Button variant="outline" size="sm">
                               <Download className="mr-2 h-4 w-4" /> Export
                             </Button>
@@ -262,6 +336,14 @@ export default function LessonHistoryPage() {
                                 Fullscreen View
                               </Button>
                             </Link>
+                            <Button 
+                              size="sm" 
+                              variant="outline" 
+                              className="bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100 hover:text-blue-700"
+                              onClick={() => handleAssignLesson(lesson)}
+                            >
+                              <UserPlus className="mr-2 h-4 w-4" /> {lesson.studentId ? "Reassign" : "Assign to Student"}
+                            </Button>
                             <Button 
                               size="sm" 
                               variant="outline" 
@@ -357,6 +439,92 @@ export default function LessonHistoryPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Assign to Student Dialog */}
+      <Dialog open={assignDialogOpen} onOpenChange={setAssignDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center">
+              <UserPlus className="h-5 w-5 text-blue-500 mr-2" />
+              Assign Lesson to Student
+            </DialogTitle>
+            <p className="text-sm text-gray-500 mt-2">
+              {lessonToAssign ? (
+                <>
+                  Assign the lesson <span className="font-semibold">"{lessonToAssign.title}"</span> to a student.
+                  {lessonToAssign.studentId && " This will reassign the lesson from its current student."}
+                </>
+              ) : (
+                <>Select a student to assign this lesson to.</>
+              )}
+            </p>
+          </DialogHeader>
+          
+          <div className="py-4">
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <label htmlFor="student-select" className="text-sm font-medium">
+                  Select Student
+                </label>
+                
+                {students.length > 0 ? (
+                  <Select
+                    value={selectedStudentId?.toString() || ""}
+                    onValueChange={(value) => setSelectedStudentId(Number(value))}
+                  >
+                    <SelectTrigger id="student-select" className="w-full">
+                      <SelectValue placeholder="Select a student" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {students.map((student) => (
+                        <SelectItem key={student.id} value={student.id.toString()}>
+                          {student.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <div className="p-4 border rounded-md border-gray-200 bg-gray-50 text-center">
+                    <p className="text-sm text-gray-500">No students found. Create a student first.</p>
+                    <Link href="/students/new">
+                      <Button size="sm" variant="outline" className="mt-2">
+                        <Plus className="h-4 w-4 mr-1" /> Create Student
+                      </Button>
+                    </Link>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+          
+          <DialogFooter className="sm:justify-between">
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                setAssignDialogOpen(false);
+                setLessonToAssign(null);
+                setSelectedStudentId(null);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={confirmAssign}
+              className="bg-primary hover:bg-primary/90"
+              disabled={!selectedStudentId || assignLessonMutation.isPending}
+            >
+              {assignLessonMutation.isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Assigning...
+                </>
+              ) : (
+                <>Assign Lesson</>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
