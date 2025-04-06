@@ -1,4 +1,4 @@
-import type { Express } from "express";
+import express, { type Express } from "express";
 import { createServer, type Server } from "http";
 import { setupAuth } from "./auth";
 import { storage } from "./storage";
@@ -446,6 +446,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
           userId: userId.toString(),
           planId: planId
         },
+        // Add subscription_data to ensure metadata is transferred to the subscription
+        subscription_data: {
+          metadata: {
+            userId: userId.toString(),
+            planId: planId
+          }
+        }
       });
       
       console.log(`Subscription checkout session created: ${session.id}`);
@@ -542,7 +549,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Stripe webhook handler
   app.post("/api/webhooks/stripe", async (req, res) => {
     // Stripe webhook requires raw body
-    const payload = req.body;
+    const payload = JSON.stringify(req.body);
     const sig = req.headers['stripe-signature'] as string;
     
     console.log("Received Stripe webhook event");
@@ -630,28 +637,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
         case 'invoice.payment_succeeded': {
           const invoice = event.data.object as Stripe.Invoice;
           
-          // If this is a recurring payment (not the first one)
-          if (invoice.billing_reason === 'subscription_cycle' && invoice.metadata?.userId) {
-            const userId = parseInt(invoice.metadata.userId);
-            const user = await storage.getUser(userId);
+          // If this is a recurring payment (not the first one) and has a subscription
+          if (invoice.billing_reason === 'subscription_cycle' && invoice.subscription) {
+            console.log('Processing recurring payment for subscription:', invoice.subscription);
             
-            if (user) {
-              let creditsToAdd = 0;
+            try {
+              // Get the subscription to access its metadata
+              const subscription = await stripe.subscriptions.retrieve(invoice.subscription as string);
               
-              // Add credits based on the subscription tier
-              if (user.subscriptionTier === 'basic') {
-                creditsToAdd = 20;
-              } else if (user.subscriptionTier === 'premium') {
-                creditsToAdd = 60;
-              } else if (user.subscriptionTier === 'annual') {
-                // Annual plan is billed yearly, so we credit the full 250 credits
-                creditsToAdd = 250;
+              // Check if subscription has userId in metadata
+              if (subscription.metadata?.userId) {
+                const userId = parseInt(subscription.metadata.userId);
+                const planId = subscription.metadata.planId;
+                
+                console.log(`Found subscription metadata. userId=${userId}, planId=${planId}`);
+                
+                const user = await storage.getUser(userId);
+                
+                if (user) {
+                  let creditsToAdd = 0;
+                  
+                  // Add credits based on the plan ID in metadata or fallback to user's subscription tier
+                  if (planId === 'basic_monthly' || user.subscriptionTier === 'basic') {
+                    creditsToAdd = 20;
+                  } else if (planId === 'premium_monthly' || user.subscriptionTier === 'premium') {
+                    creditsToAdd = 60;
+                  } else if (planId === 'annual_plan' || user.subscriptionTier === 'annual') {
+                    // Annual plan is billed yearly, so we credit the full 250 credits
+                    creditsToAdd = 250;
+                  }
+                  
+                  if (creditsToAdd > 0) {
+                    await storage.updateUserCredits(userId, user.credits + creditsToAdd);
+                    console.log(`Added ${creditsToAdd} credits to user ${userId} for recurring subscription payment.`);
+                  }
+                } else {
+                  console.error(`User not found for subscription: userId=${userId}`);
+                }
+              } else {
+                console.log('No userId found in subscription metadata');
               }
-              
-              if (creditsToAdd > 0) {
-                await storage.updateUserCredits(userId, user.credits + creditsToAdd);
-                console.log(`Added ${creditsToAdd} credits to user ${userId} for recurring subscription payment.`);
-              }
+            } catch (err) {
+              console.error('Error retrieving subscription details:', err);
             }
           }
           break;
@@ -660,19 +687,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         case 'customer.subscription.deleted': {
           const subscription = event.data.object as Stripe.Subscription;
           
-          // Find user with this subscription ID
-          // Note: In a production system, we would store a mapping of subscription IDs to users
-          const customers = await stripe.customers.list({
-            limit: 1,
-            email: subscription.customer.toString()
-          });
+          console.log('Processing subscription deletion:', subscription.id);
           
-          if (customers.data.length > 0) {
-            const customerId = customers.data[0].id;
+          // First try to use metadata for a more direct approach
+          if (subscription.metadata?.userId) {
+            const userId = parseInt(subscription.metadata.userId);
+            console.log(`Found userId ${userId} in subscription metadata`);
             
-            // Find user with this customer ID
-            // TODO: This should be optimized with an index in a production system
-            const user = await storage.getUserByStripeCustomerId(customerId);
+            const user = await storage.getUser(userId);
             
             if (user) {
               // Reset subscription status
@@ -681,9 +703,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 stripeSubscriptionId: null
               });
               
-              console.log(`User ${user.id} subscription has been canceled.`);
+              console.log(`User ${user.id} subscription has been canceled using metadata.`);
+              break;
             }
           }
+          
+          // Fallback: Find user with this subscription's customer ID
+          console.log('No userId in metadata, trying to find by customer ID:', subscription.customer);
+          
+          // Find user with this customer ID
+          const user = await storage.getUserByStripeCustomerId(subscription.customer as string);
+          
+          if (user) {
+            // Reset subscription status
+            await storage.updateUser(user.id, {
+              subscriptionTier: 'free',
+              stripeSubscriptionId: null
+            });
+            
+            console.log(`User ${user.id} subscription has been canceled using customer ID.`);
+          } else {
+            console.log('No user found with this customer ID');
+          }
+          
           break;
         }
         
