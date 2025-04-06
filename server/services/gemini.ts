@@ -197,7 +197,7 @@ CRITICAL: Your output must be properly formatted JSON with NO ERRORS!
 
 3. CRITICAL: ALL CONTENT MUST BE ABOUT THE SPECIFIC TOPIC PROVIDED BY THE USER.
 
-4. CRITICAL: FOR EACH VOCABULARY WORD, YOU MUST INCLUDE THE 'pronunciation' OBJECT WITH 'syllables', 'stressIndex', AND 'phoneticGuide' FIELDS. This is mandatory.
+4. CRITICAL: FOR EACH VOCABULARY WORD, YOU MUST INCLUDE THE 'pronunciation' OBJECT WITH 'syllables', 'stressIndex', AND 'phoneticGuide' FIELDS. The 'phoneticGuide' MUST use ONLY regular English characters and hyphens (like "AS-tro-naut" or "eks-PLOR-ay-shun"), NOT International Phonetic Alphabet (IPA) symbols.
 
 5. TONE & STYLE: Apply the following writing style to ALL generated text (reading, questions, definitions, notes, etc.):
    - Use a warm, accessible, and conversational tone
@@ -373,7 +373,7 @@ For each vocabulary item, you MUST include:
 11. Pronunciation information with:
    - syllables: The word broken down into syllables as an array of strings
    - stressIndex: Which syllable receives primary stress (zero-based index)
-   - phoneticGuide: A simplified pronunciation guide using regular characters
+   - phoneticGuide: A simplified pronunciation guide using ONLY regular English characters and hyphens (like "AS-tro-naut" or "eks-PLOR-ay-shun"). DO NOT use IPA symbols.
 12. An image prompt (NEW!) - A detailed description (2-3 sentences) of what an image for this word should look like. The image prompt should:
    - Clearly illustrate the meaning of the word in a visual way
    - Include specific visual elements that relate to the example sentence
@@ -397,13 +397,15 @@ CEFR LEVEL-APPROPRIATE DEFINITIONS GUIDELINES:
 - C1: Advanced vocabulary (about 5000+ words). Complex sentences and academic/specialized terms acceptable.
 - C2: Proficient vocabulary with nuanced explanations. Full range of language structures. Can include specialized terminology.
 
-EXAMPLES OF PROPER SYLLABLE BREAKDOWNS:
-- "vocabulary" → syllables: ["vo", "cab", "u", "lar", "y"], stressIndex: 1
-- "dissolution" → syllables: ["dis", "so", "lu", "tion"], stressIndex: 2
+EXAMPLES OF PROPER SYLLABLE BREAKDOWNS AND PRONUNCIATION:
+- "vocabulary" → syllables: ["vo", "cab", "u", "lar", "y"], stressIndex: 1, phoneticGuide: "voh-KAB-yuh-lair-ee"
+- "dissolution" → syllables: ["dis", "so", "lu", "tion"], stressIndex: 2, phoneticGuide: "dis-suh-LOO-shun"
 
 For multi-word phrases, break down EACH WORD into syllables and list them sequentially:
-- "industrial revolution" → syllables: ["in", "dus", "tri", "al", "rev", "o", "lu", "tion"], stressIndex: 6
-- "climate change" → syllables: ["cli", "mate", "change"], stressIndex: 0
+- "industrial revolution" → syllables: ["in", "dus", "tri", "al", "rev", "o", "lu", "tion"], stressIndex: 6, phoneticGuide: "in-DUS-tree-ul REV-uh-LOO-shun"
+- "climate change" → syllables: ["cli", "mate", "change"], stressIndex: 0, phoneticGuide: "CLY-mit chaynj"
+
+CRITICALLY IMPORTANT: Always use ONLY regular English characters and hyphens for phoneticGuide. NEVER use IPA phonetic symbols like "ə", "ɪ", or "ʃ". Use simple English spelling to approximate sounds.
 
 I will count the total number of vocabulary items. If you don't include EXACTLY ${minVocabCount} complete vocabulary items, your response will be rejected.
 
