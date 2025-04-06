@@ -1,245 +1,10 @@
-import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from '@google/generative-ai';
-import { LessonGenerateParams } from '@shared/schema';
-import * as fs from 'fs';
-import { stabilityService } from './stability.service';
-
-/**
- * Service for interacting with the Google Gemini AI API
- */
-export class GeminiService {
-  private apiKey: string;
-  private genAI: GoogleGenerativeAI;
-  
-  constructor(apiKey: string) {
-    if (!apiKey) {
-      console.warn('Gemini API key is not provided or is empty');
-    }
-    this.apiKey = apiKey;
-    this.genAI = new GoogleGenerativeAI(apiKey);
-  }
-  
-  /**
-   * Generate a complete ESL lesson based on the provided parameters
-   * @param params Lesson generation parameters
-   * @returns Generated lesson content
-   */
-  async generateLesson(params: LessonGenerateParams): Promise<any> {
-    try {
-      if (!this.apiKey) {
-        throw new Error('Gemini API key is not configured');
-      }
-
-      console.log('Starting Gemini AI lesson generation...');
-      
-      // Create logs directory if it doesn't exist
-      if (!fs.existsSync('./logs')) {
-        fs.mkdirSync('./logs', { recursive: true });
-      }
-      
-      // Create unique identifiers for this request
-      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-      const topicSafe = params.topic.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 20);
-      const requestId = `${topicSafe}_${timestamp}`;
-      
-      // Construct the prompt
-      const prompt = this.constructLessonPrompt(params);
-      
-      // Save the raw prompt as plain text
-      const rawPromptPath = `./logs/RAW_prompt_gemini_${requestId}.txt`;
-      fs.writeFileSync(rawPromptPath, prompt);
-      console.log(`Raw prompt saved to ${rawPromptPath}`);
-      
-      // Configure the model and features
-      // Using Gemini 1.5 Flash model per the latest API documentation
-      const model = this.genAI.getGenerativeModel({ 
-        model: 'gemini-1.5-pro',
-        generationConfig: {
-          temperature: 0.3,
-          topP: 0.9,
-          maxOutputTokens: 16384, // Increased token count from 8192 to 16384 for more detailed lessons
-        },
-      });
-      
-      console.log('Sending request to Gemini API...');
-      
-      try {
-        // Make the request to the Gemini API
-        const result = await model.generateContent(prompt);
-        const response = result.response;
-        const text = response.text();
-        
-        console.log('Received response from Gemini API');
-        
-        // Save the raw response
-        const fullResponsePath = `./logs/FULL_response_gemini_${requestId}.json`;
-        fs.writeFileSync(
-          fullResponsePath,
-          JSON.stringify(result, null, 2)
-        );
-        console.log(`Response saved to ${fullResponsePath}`);
-        
-        // Save raw content
-        const contentPath = `./logs/RAW_message_content_gemini_${requestId}.txt`;
-        fs.writeFileSync(contentPath, text);
-        console.log(`Raw message content saved to ${contentPath}`);
-        
-        try {
-          // First, attempt to clean up the content and remove markdown code block markers
-          let cleanedContent = text;
-          
-          // Check if content starts with ```json and ends with ``` which is common in Gemini responses
-          if (text.trim().startsWith('```json') && text.trim().endsWith('```')) {
-            console.log('Detected markdown code block, cleaning content');
-            cleanedContent = text.replace(/```json\s*/g, '').replace(/```\s*$/g, '').trim();
-          }
-          
-          // Now try to parse the cleaned content
-          try {
-            const jsonContent = JSON.parse(cleanedContent);
-            console.log('Successfully parsed JSON content');
-            
-            // Check if jsonContent has required structure
-            if (jsonContent.title && jsonContent.sections && Array.isArray(jsonContent.sections)) {
-              console.log('Lesson content has valid structure, returning formatted content');
-              return await this.formatLessonContent(jsonContent);
-            } else {
-              console.warn('Parsed JSON is missing required structure');
-              return {
-                title: `Lesson on ${params.topic}`,
-                content: "The generated lesson is missing required structure",
-                error: 'Invalid lesson structure',
-                provider: 'gemini',
-                sections: [
-                  {
-                    type: "error",
-                    title: "Content Error",
-                    content: "The lesson structure is incomplete. Please try regenerating the lesson."
-                  }
-                ]
-              };
-            }
-          } catch (jsonError) {
-            // If we fail to parse as JSON, try to handle it as best we can
-            console.error('Error parsing Gemini response as JSON:', jsonError);
-            
-            return {
-              title: `Lesson on ${params.topic}`,
-              provider: 'gemini',
-              sections: [
-                {
-                  type: "error",
-                  title: "Content Error",
-                  content: "The lesson could not be properly formatted. Please try regenerating the lesson."
-                }
-              ]
-            };
-          }
-        } catch (error) {
-          console.error('Unexpected error processing Gemini response:', error);
-          return {
-            title: `Lesson on ${params.topic}`,
-            provider: 'gemini',
-            sections: [
-              {
-                type: "error",
-                title: "Processing Error",
-                content: "An unexpected error occurred. Please try regenerating the lesson."
-              }
-            ]
-          };
-        }
-      } catch (error: any) {
-        console.error('Error during Gemini API request:', error.message);
-        return {
-          title: `Lesson on ${params.topic}`,
-          error: error.message,
-          provider: 'gemini',
-          sections: [
-            {
-              type: "error",
-              title: "API Error",
-              content: `The lesson could not be generated due to an API error: ${error.message}`
-            }
-          ]
-        };
-      }
-    } catch (error: any) {
-      console.error('Error in GeminiService.generateLesson:', error.message);
-      throw error;
-    }
-  }
-  
-  /**
-   * Constructs a structured prompt for the Gemini AI model
-   */
-  private constructLessonPrompt(params: LessonGenerateParams): string {
-    const { cefrLevel, topic, focus, lessonLength, additionalNotes } = params;
-    
-    // We'll set some variables to match what the system prompt expects
-    const targetLevel = cefrLevel;
-    const text = topic;
-    const minVocabCount = 5;
-    const maxVocabCount = 5;
-    
-    // System instruction part
-    const systemInstruction = `You are an expert ESL teacher. 
-Follow these EXACT requirements:
-
-CRITICAL: Your output must be properly formatted JSON with NO ERRORS!
-
-1. EXTREMELY CRITICAL: ALL ARRAYS MUST CONTAIN FULL CONTENT, NOT NUMBERS OR COUNTS
-   CORRECT: "paragraphs": ["Paragraph 1 text here...", "Paragraph 2 text here...", "Paragraph 3 text here..."]
-   WRONG: "paragraphs": 5
-   
-2. ARRAYS MUST USE PROPER ARRAY FORMAT
-   CORRECT: "questions": ["Question 1", "Question 2", "Question 3", "Question 4", "Question 5"]
-   WRONG: "questions": ["Question 1"], "Question 2": "Question 3"
-
-3. CRITICAL: ALL CONTENT MUST BE ABOUT THE SPECIFIC TOPIC PROVIDED BY THE USER.
-
-4. CRITICAL: FOR EACH VOCABULARY WORD, YOU MUST INCLUDE THE 'pronunciation' OBJECT WITH:
-   - 'syllables': An array of syllables (e.g., ["vo", "cab", "u", "lar", "y"] for "vocabulary")
-   - 'stressIndex': The index of the stressed syllable (0-based, e.g., 1 for "vocabulary" where "cab" is stressed)
-   - 'phoneticGuide': A NATURAL pronunciation guide that shows how to pronounce the word as would be found in a dictionary. 
-      GOOD EXAMPLE: /vəˈkæbjələri/ or /voh-KAB-yuh-lair-ee/
-      BAD EXAMPLE: "v as in victory, o as in orange, cab as in cabinet..."
-
-For multi-word phrases, break down EACH WORD into syllables and list them sequentially as shown here:
-- "industrial revolution" → syllables: ["in", "dus", "tri", "al", "rev", "o", "lu", "tion"], stressIndex: 6
-- "climate change" → syllables: ["cli", "mate", "change"], stressIndex: 0
-
-5. TONE & STYLE: Apply the following writing style to ALL generated text (reading, questions, definitions, notes, etc.):
-   - Use a warm, accessible, and conversational tone
-   - Include interesting facts and observations woven naturally into the narrative
-   - Use vivid, descriptive language that brings topics to life
-   - Make complex information approachable through clear explanations and engaging examples
-   - Use a mix of sentence lengths for good flow
-   - Occasionally address the reader directly with rhetorical questions or observations
-
-6. CEFR LEVEL ADAPTATION: ALL content must be STRICTLY appropriate for the specified CEFR level:
-   - Vocabulary choices must match the CEFR level (A1=beginner, C2=advanced)
-   - Sentence complexity must be appropriate (simple for A1-A2, more complex for B2-C2)
-   - Grammar structures must align with the CEFR level (present simple for A1, conditionals for B1+, etc.)
-   - Reading text difficulty must match the specified level
-   - Discussion paragraph contexts must be level-appropriate with vocabulary and grammar matching the CEFR level
-
-7. DISCUSSION SECTION REQUIREMENTS:
-   - CRITICAL: Each discussion question MUST have its own unique paragraph context (paragraphContext field)
-   - These paragraph contexts must be 3-5 sentences that provide background information
-   - The paragraph contexts must use vocabulary and sentence structures appropriate for the specified CEFR level
-   - The paragraphs should include interesting information that helps students engage with the topic
-   - The paragraph contexts should lead naturally into the discussion question that follows
-`;
-    
-    // Use the more detailed Qwen prompt structure as the main prompt for Gemini
-    const mainPrompt = `
 You are an expert ESL (English as a Second Language) teacher and curriculum designer with over 20 years of experience.
 
 TASK OVERVIEW:
-You will create a complete ESL lesson for ${targetLevel} level students on the topic "${text}".
+You will create a complete ESL lesson for B1 level students on a given topic.
 
 STEP 1: WRITE A READING TEXT
-- First, write an original reading text about the topic "${text}"
+- First, write an original reading text about the topic ":space: the Chinese space program"
 - Use a warm, accessible, and conversational tone
 - Include interesting facts and observations woven naturally into the narrative
 - Use vivid, descriptive language that brings topics to life
@@ -247,34 +12,34 @@ STEP 1: WRITE A READING TEXT
 - Use a mix of sentence lengths for good flow
 - Occasionally address the reader directly with rhetorical questions or observations
 
-- CRITICAL REQUIREMENT: For ${targetLevel} level, your text MUST be AT LEAST ${targetLevel === "B1" ? "200" : targetLevel === "C2" ? "500" : targetLevel === "C3" ? "600" : targetLevel === "A1" || targetLevel === "A2" ? "100" : "300"} words
-- Your text will be REJECTED if it's shorter than ${targetLevel === "B1" ? "200" : targetLevel === "C2" ? "500" : targetLevel === "C3" ? "600" : targetLevel === "A1" || targetLevel === "A2" ? "100" : "300"} words
+- CRITICAL REQUIREMENT: For B1 level, your text MUST be AT LEAST 200 words
+- Your text will be REJECTED if it's shorter than 200 words
 - The system counts words by splitting on whitespace - make sure you have enough actual words
 - Divide your text into 3-5 paragraphs with clear paragraph breaks (use double line breaks between paragraphs)
 - Focus on creating a substantial, informative text before moving on to other components
-- Make sure the vocabulary and sentence structures remain appropriate for ${targetLevel} level students
+- Make sure the vocabulary and sentence structures remain appropriate for B1 level students
 - For lower levels (A1, A2), simplify the language while maintaining a friendly, engaging tone
 - For higher levels (B2, C1, C2), use richer vocabulary and more complex sentences
 
 STEP 2: CREATE LESSON COMPONENTS
 After writing the reading text, create:
-- CRITICAL REQUIREMENT: You MUST include EXACTLY ${minVocabCount} vocabulary items from your text. The system requires a minimum of ${minVocabCount} vocabulary items and will REJECT the lesson if fewer are provided.
+- CRITICAL REQUIREMENT: You MUST include EXACTLY 5 vocabulary items from your text. The system requires a minimum of 5 vocabulary items and will REJECT the lesson if fewer are provided.
 - ABSOLUTELY CRITICAL: Each semantic group MUST contain at least 2-3 vocabulary words. DO NOT create groups with only one word.
 - DO NOT include basic words like "hi", "hello", "goodbye", or other extremely common words as vocabulary items.
-- Only choose words that are appropriate for the CEFR level ${targetLevel} and would be genuinely useful for students to learn.
+- Only choose words that are appropriate for the CEFR level B1 and would be genuinely useful for students to learn.
 - EXTREMELY IMPORTANT: Choose ONLY English words for vocabulary. DO NOT include foreign words (like "la bise," "sayonara," "wai," etc.) even if they appear in your text when discussing other cultures. ONLY ENGLISH VOCABULARY should be selected.
 - EXACTLY 3-5 reading comprehension activities - YOU MUST INCLUDE AT LEAST 3
 - 1-2 pre-reading discussion questions
 - EXACTLY 5-7 post-reading discussion questions - YOU MUST INCLUDE AT LEAST 5, and each question MUST directly reference specific content from your reading text
 - A brief warm-up activity that MUST incorporate all vocabulary items from your vocabulary list, not just one word
-- NEW REQUIREMENT: 2-4 sentence frames and templates appropriate for the ${targetLevel} level to help students with sentence structure and grammar
+- NEW REQUIREMENT: 2-4 sentence frames and templates appropriate for the B1 level to help students with sentence structure and grammar
 
 SENTENCE FRAMES REQUIREMENTS:
-For each sentence frame, create practical, meaningful templates that students can use in real communication about "${text}".
+For each sentence frame, create practical, meaningful templates that students can use in real communication about ":space: the Chinese space program".
 
 KEY REQUIREMENTS FOR SENTENCE FRAMES:
 
-1. AUTHENTIC COMMUNICATION: Create frames that students will actually use in real-world conversations about "${text}". They should sound natural, not contrived or overly academic.
+1. AUTHENTIC COMMUNICATION: Create frames that students will actually use in real-world conversations about ":space: the Chinese space program". They should sound natural, not contrived or overly academic.
 
 2. VOCABULARY INTEGRATION: Each frame MUST incorporate at least one of the vocabulary words from your lesson's vocabulary list to reinforce learning.
 
@@ -282,15 +47,15 @@ KEY REQUIREMENTS FOR SENTENCE FRAMES:
 
 4. CLEAR FORMATTING: Use "_____" (exactly 5 underscores) consistently for blanks. No parentheses, variables, or other formats.
 
-5. PURPOSEFUL DESIGN: Each frame should serve a specific communicative function that's useful for discussing "${text}" (e.g., expressing opinions, making comparisons, describing processes).
+5. PURPOSEFUL DESIGN: Each frame should serve a specific communicative function that's useful for discussing ":space: the Chinese space program" (e.g., expressing opinions, making comparisons, describing processes).
 
-6. SCAFFOLDED COMPLEXITY: Provide a mix of complexity levels appropriate for ${targetLevel} students - from simpler to more advanced structures within the target CEFR level.
+6. SCAFFOLDED COMPLEXITY: Provide a mix of complexity levels appropriate for B1 students - from simpler to more advanced structures within the target CEFR level.
 
 7. REALISTIC EXAMPLES: Include 2-3 example sentences that:
    - Use the frame pattern naturally
    - Incorporate vocabulary from your lesson
    - Relate directly to the reading text content
-   - Model authentic language use at the ${targetLevel} level
+   - Model authentic language use at the B1 level
    - Sound like something a student would actually say in conversation
 
 For each sentence frame, include ALL of the following properties in a structured JSON format:
@@ -305,7 +70,7 @@ For each sentence frame, include ALL of the following properties in a structured
 - teachingTips: Practical advice for teachers on how to present and practice this pattern (3-4 sentences)
 
 CEFR-SPECIFIC GUIDELINES:
-For ${targetLevel} level students, create frames with appropriate complexity:
+For B1 level students, create frames with appropriate complexity:
 
 - A1 LEVEL FRAMES: 3-4 very simple frames using:
   • Basic subject-verb-object structures
@@ -346,8 +111,8 @@ CRITICAL ISSUES TO AVOID:
 1. DO NOT create frames that are too theoretical or academic for real conversation
 2. DO NOT use blanks for every other word - be strategic with blank placement
 3. DO NOT include confusing grammar terminology in the pattern
-4. DO NOT create frames with vocabulary beyond the ${targetLevel} level
-5. DO NOT create frames unrelated to "${text}" - they must be topic-specific
+4. DO NOT create frames with vocabulary beyond the B1 level
+5. DO NOT create frames unrelated to ":space: the Chinese space program" - they must be topic-specific
 6. DO NOT create patterns that are so specific they can only be used in one particular scenario
 
 IMPLEMENTATION REQUIREMENT: Each frame must be a complete JSON object with ALL the required fields populated.
@@ -356,28 +121,21 @@ For teacher instructions:
 1. Focus on practical classroom activities related to the specific topic
 2. Suggest conversation prompts that use the frame and topic vocabulary
 3. Provide ideas that will work in screen-sharing scenarios where students interact verbally
-4. Keep instructions concise and action-orientedies for common mistakes
-5. Suggest ways to adapt the frame for different proficiency levels within the class
-
-AVOID:
-1. Creating frames that are too artificial or overly complex for the level
-2. Using vocabulary beyond the target CEFR level
-3. Making frames too topic-specific (they should be adaptable)
-4. Creating frames with too many blanks or complex structures for lower levels
+4. Keep instructions concise and action-oriented
 
 VOCABULARY REQUIREMENTS:
 For each vocabulary item, you MUST include:
 1. The word itself (ENGLISH ONLY - NO FOREIGN WORDS)
-2. A clear definition using language appropriate for ${targetLevel} level students
+2. A clear definition using language appropriate for B1 level students
 3. The part of speech (noun, verb, adjective, etc.)
-4. An example sentence using language appropriate for ${targetLevel} level
+4. An example sentence using language appropriate for B1 level
 5. ENHANCED (REQUIRED): semanticGroup - Words must be grouped thematically. Each semantic group MUST have 2-3 related vocabulary words (e.g., "Weather Terms", "Food Vocabulary", "Travel Expressions")
 6. ENHANCED (REQUIRED): additionalExamples - 2-3 additional example sentences showing the word in different contexts
 7. ENHANCED (REQUIRED): wordFamily - An object containing:
    - words: An array of 2-5 related words from the same word family (e.g., "happy, happiness, happily, unhappy")
    - description: A brief explanation of how these words are related
 8. Common collocations (phrases that often include this word) as an array of strings
-9. Usage notes written with ${targetLevel} level appropriate language
+9. Usage notes written with B1 level appropriate language
 10. Teaching tips
 11. Pronunciation information with:
    - syllables: The word broken down into syllables as an array of strings
@@ -414,12 +172,12 @@ For multi-word phrases, break down EACH WORD into syllables and list them sequen
 - "industrial revolution" → syllables: ["in", "dus", "tri", "al", "rev", "o", "lu", "tion"], stressIndex: 6
 - "climate change" → syllables: ["cli", "mate", "change"], stressIndex: 0
 
-I will count the total number of vocabulary items. If you don't include EXACTLY ${minVocabCount} complete vocabulary items, your response will be rejected.
+I will count the total number of vocabulary items. If you don't include EXACTLY 5 complete vocabulary items, your response will be rejected.
 
 CEFR LEVEL ALIGNMENT:
-Ensure all content is appropriate for ${targetLevel} level students:
-- CRITICAL: Use vocabulary appropriate for ${targetLevel} level in ALL questions and instructions
-- For post-reading discussion questions, ensure the language complexity matches ${targetLevel} level
+Ensure all content is appropriate for B1 level students:
+- CRITICAL: Use vocabulary appropriate for B1 level in ALL questions and instructions
+- For post-reading discussion questions, ensure the language complexity matches B1 level
 - Adjust question complexity based on the CEFR level (simpler for A1/A2, more complex for C1/C2)
 
 WARM-UP ACTIVITY REQUIREMENTS:
@@ -431,10 +189,10 @@ WARM-UP ACTIVITY REQUIREMENTS:
 - The system will check that each vocabulary word appears in the warm-up - if any are missing, the lesson will be rejected
 
 PRIOR KNOWLEDGE ACTIVATION FOR WARM-UPS:
-Design your warm-up activity to explicitly connect the lesson topic "${params.topic}" to students' existing knowledge and real-life experiences:
+Design your warm-up activity to explicitly connect the lesson topic ":space: the Chinese space program" to students' existing knowledge and real-life experiences:
 
 1. START WITH PERSONAL CONNECTION: Begin with 2-3 personalized questions that students can answer from their own experience, regardless of their knowledge about the topic
-   - Make these questions appropriate for ${params.cefrLevel} level students
+   - Make these questions appropriate for B1 level students
 
 2. BRIDGE TO NEW VOCABULARY: Create activities that naturally incorporate the target vocabulary while still relating to students' experiences
 
@@ -456,13 +214,25 @@ DISCUSSION QUESTION REQUIREMENTS:
 - IMPORTANT NEW FORMAT: Each discussion question MUST be preceded by its own unique, CEFR-level appropriate paragraph (3-5 sentences) that provides context or an interesting angle related to the question. The question should directly relate to this paragraph.
 - You MUST provide EXACTLY 5 such paragraph-question pairs.
 - The paragraph should:
-  - Be written at the appropriate CEFR level (${targetLevel})
+  - Be written at the appropriate CEFR level (B1)
   - Focus on something interesting and thought-provoking related to the question topic
   - Create a foundation for meaningful discussion
   - Relate directly to the vocabulary being learned
   - Avoid simply summarizing the main reading
-  - CRITICAL: The language complexity MUST match exactly the ${targetLevel} level
+  - CRITICAL: The language complexity MUST match exactly the B1 level
   - Be designed to stand out visually when displayed in the UI
+  
+CEFR LEVEL PARAGRAPH GUIDELINES:
+- A1: 3 simple sentences, present tense, basic vocabulary only. No complex structures.
+  Example: "Many people have pets. Cats and dogs are common pets. Some people like fish or birds."
+- A2: 3-4 sentences, simple present and past tense, everyday vocabulary.
+  Example: "Last week, I visited a zoo. I saw many animals there. The elephants were very big. Some monkeys played with toys."
+- B1: 4 sentences of moderate complexity, wider vocabulary range, some conjunctions.
+  Example: "Many cities have problems with traffic congestion. Cars and buses often get stuck in traffic jams during rush hours. Some cities are building new subway lines to help people travel faster. Public transportation can reduce pollution and save time."
+- B2: 4-5 sentences with varied structures, more sophisticated vocabulary, and some complex clauses.
+  Example: "The rapid development of artificial intelligence has transformed many industries in recent years. While some experts believe AI will create new job opportunities, others worry about potential job losses. Universities are now offering specialized courses to help students adapt to this changing landscape. Despite concerns, many businesses are investing heavily in AI solutions to remain competitive."
+- C1/C2: 5 sophisticated sentences with advanced vocabulary, complex clauses, and nuanced expression.
+  Example: "The intersection of technology and privacy rights presents one of the most formidable challenges of the digital era. As corporations amass unprecedented quantities of personal data, legislators worldwide struggle to establish regulatory frameworks that adequately protect citizens while fostering innovation. The concept of informed consent has become increasingly problematic in an environment where terms of service agreements are seldom read, let alone comprehended. Furthermore, the transnational nature of data flows complicates enforcement efforts, as information routinely traverses jurisdictional boundaries. These complexities necessitate a multifaceted approach involving stakeholders from various sectors of society."
 - The discussion question should:
   - Directly follow its context paragraph.
   - Be phrased as an interesting prompt that encourages different viewpoints
@@ -510,16 +280,16 @@ Your reading comprehension questions MUST cover a balanced range of cognitive ab
    - Example for B1-B2: "What would most likely happen next in this situation?"
    - Example for C1-C2: "How effective is the author's approach to presenting this topic?"
 
-IMPORTANT: Adjust question complexity based on the CEFR level (${targetLevel}):
+IMPORTANT: Adjust question complexity based on the CEFR level (B1):
 - A1-A2: Simple vocabulary, direct questions about explicitly stated information
 
 FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure all fields contain complete content. Do not use placeholders.
 
 {
-  "title": "Descriptive lesson title about ${text}",
-  "level": "${cefrLevel}",
-  "focus": "${focus}",
-  "estimatedTime": ${lessonLength},
+  "title": "Descriptive lesson title about :space: the Chinese space program",
+  "level": "B1",
+  "focus": "general",
+  "estimatedTime": 60,
   "sections": [
     // WARMUP SECTION (Complete)
     {
@@ -621,14 +391,14 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
     },
     // SENTENCE FRAMES SECTION (Complete - 2-5 frames)
     {
-      "type": "sentenceFrames", // Renamed from 'sentences' to match Qwen
+      "type": "sentenceFrames",
       "title": "Sentence Practice",
       "frames": [
         {
           "pattern": "Complete pattern like _____ because ____.", "examples": ["Complete example 1...", "Complete example 2..."],
           "usageNotes": "Complete usage notes...", "teachingTips": "Complete tips...", "difficultyLevel": "intermediate",
           "grammarFocus": "Complete grammar focus...", "communicativeFunction": "Complete function..."
-        }
+        },
         // (Include 1-4 more complete frames)
       ]
     },
@@ -679,92 +449,4 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
   ]
 }
 
-Ensure the entire output is a single, valid JSON object starting with { and ending with }.`;
-
-    return systemInstruction + mainPrompt;
-  }
-  
-  /**
-   * Format and process the lesson content, adding image data
-   */
-  private async formatLessonContent(content: any): Promise<any> {
-    // Add provider identifier to the content
-    const lessonContent = {
-      ...content,
-      provider: 'gemini'
-    };
-    
-    // Generate images if sections exist
-    if (lessonContent.sections && Array.isArray(lessonContent.sections)) {
-      console.log('Starting image generation loop for Gemini lesson...');
-      for (const section of lessonContent.sections) {
-        if (section.type === 'vocabulary' && section.words && Array.isArray(section.words)) {
-          console.log(`Found ${section.words.length} vocabulary words, generating images...`);
-          for (const word of section.words) {
-            if (word.imagePrompt) {
-               try {
-                 // Generate unique ID for logging
-                 const requestId = `vocab_${word.term ? word.term.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 15) : 'word'}`;
-                 word.imageBase64 = await stabilityService.generateImage(word.imagePrompt, requestId);
-               } catch (imgError) {
-                 console.error(`Error generating image for vocab word ${word.term}:`, imgError);
-                 word.imageBase64 = null; // Ensure field exists even on error
-               }
-            }
-          }
-        }
-        if (section.type === 'discussion' && section.questions && Array.isArray(section.questions)) {
-            console.log(`Found ${section.questions.length} discussion questions, generating images...`);
-          for (const question of section.questions) {
-            // Ensure each question has its own paragraphContext
-            // This field is already provided in the template - just make sure it's intact
-            if (!question.paragraphContext && section.paragraphContext) {
-              // If a question is missing individual context but section has a shared one,
-              // copy it to the question (happens in some Gemini responses)
-              question.paragraphContext = section.paragraphContext;
-              console.log("Added section-level paragraphContext to discussion question");
-            }
-            
-            // If still no paragraphContext, look for other fields that might contain it
-            if (!question.paragraphContext) {
-              if (question.introduction && typeof question.introduction === 'string') {
-                // If the introduction field looks like a paragraph (multiple sentences, no question marks)
-                // then we store it as paragraphContext for the UI to render properly
-                if (question.introduction.includes('.') && !question.introduction.includes('?')) {
-                  question.paragraphContext = question.introduction;
-                  console.log("Setting paragraphContext from introduction field");
-                }
-              } else if (question.context && typeof question.context === 'string') {
-                question.paragraphContext = question.context;
-                console.log("Setting paragraphContext from context field");
-              } else if (question.paragraph && typeof question.paragraph === 'string') {
-                question.paragraphContext = question.paragraph;
-                console.log("Setting paragraphContext from paragraph field");
-              }
-            }
-            
-            // Generate image if prompt exists
-            if (question.imagePrompt) {
-               try {
-                 // Generate unique ID for logging - use part of question text
-                 const requestId = `disc_${question.question ? question.question.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 15) : 'question'}`;
-                 question.imageBase64 = await stabilityService.generateImage(question.imagePrompt, requestId);
-               } catch (imgError) {
-                  console.error(`Error generating image for discussion question:`, imgError);
-                  question.imageBase64 = null; // Ensure field exists even on error
-               }
-            }
-          }
-        }
-        // Add loops for other sections needing images if necessary (e.g., warmup)
-      }
-      console.log('Finished image generation loop for Gemini lesson.');
-    } else {
-        console.log('No sections found or sections is not an array, skipping image generation.');
-    }
-    
-    return lessonContent;
-  }
-}
-
-export const geminiService = new GeminiService(process.env.GEMINI_API_KEY || '');
+Ensure the entire output is a single, valid JSON object starting with { and ending with }.

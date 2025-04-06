@@ -1,0 +1,210 @@
+{
+  "title": "Exploring Space: The Chinese Space Program",
+  "level": "B1",
+  "focus": "general",
+  "estimatedTime": 60,
+  "sections": [
+    {
+      "type": "warmup",
+      "title": "Warm-up Activity",
+      "content": "In this warm-up, we will explore key vocabulary related to space exploration and the Chinese space program. You'll learn words like 'satellite,' 'orbit,' 'mission,' 'astronaut,' and 'launch.' These words are essential for understanding how China has become a major player in space exploration.",
+      "questions": [
+        "What do you think a 'satellite' is used for?",
+        "Have you ever seen a rocket 'launch' on TV or online?",
+        "What does it mean when something is in 'orbit' around Earth?",
+        "Can you guess what an 'astronaut' does during a space 'mission'?",
+        "Why do countries invest in space programs?"
+      ],
+      "targetVocabulary": ["satellite", "orbit", "mission", "astronaut", "launch"],
+      "procedure": "Begin by showing images of satellites, rockets launching, astronauts in space, and objects in orbit. Ask students to describe what they see using simple language. Introduce each target word with its definition and example sentence. For instance, explain that a 'satellite' is an object sent into space to collect information. Then, ask students to match the vocabulary words with their meanings. Finally, discuss the questions as a group, ensuring all vocabulary items are used at least once.",
+      "teacherNotes": "Encourage students to share personal experiences or knowledge about space exploration. Use visuals to make abstract concepts more concrete."
+    },
+    {
+      "type": "reading",
+      "title": "Reading Text: China's Journey to the Stars",
+      "introduction": "China’s space program has grown rapidly over the past few decades. From sending its first satellite into space to planning future missions to Mars, China is now one of the leading nations in space exploration. Let’s take a closer look at some exciting milestones and achievements!",
+      "paragraphs": [
+        "Did you know that China launched its first satellite, called Dong Fang Hong 1, back in 1970? This was a huge step forward for the country. Since then, China has developed advanced technology to send not only satellites but also humans into space. Imagine being able to watch a live broadcast of a rocket launch—it’s truly amazing! Today, China operates many satellites that help with weather forecasting, communication, and even navigation systems like GPS.",
+        "One of the most impressive achievements came in 2003 when Yang Liwei became the first Chinese astronaut to travel to space. His mission lasted just over 21 hours, but it marked the beginning of China’s human spaceflight program. Astronauts undergo years of training before they can go on such important missions. They must be physically fit, mentally strong, and ready to face challenges in space.",
+        "In recent years, China has focused on exploring the Moon. In 2019, the Chang’e 4 spacecraft made history by landing on the far side of the Moon—a place no other country had reached before. Scientists hope to learn more about the Moon’s surface and possibly find resources that could benefit life on Earth. What do you think they might discover?",
+        "Looking ahead, China plans to build a permanent space station called Tiangong, which means 'Heavenly Palace.' Construction began in 2021, and it will serve as a base for scientific experiments and international cooperation. Wouldn’t it be cool to visit a space station someday? Maybe in the future, people will take vacations in space!",
+        "China’s space program shows us how much humans can achieve with determination and teamwork. While there are still many mysteries in space waiting to be solved, one thing is certain: China will continue to play a big role in uncovering them. So, what do you think the next big milestone will be?"
+      ],
+      "teacherNotes": "Pause after each paragraph to check comprehension and clarify any difficult vocabulary. Encourage students to visualize the events described in the text."
+    },
+    {
+      "type": "vocabulary",
+      "title": "Key Vocabulary",
+      "words": [
+        {
+          "term": "satellite",
+          "partOfSpeech": "noun",
+          "definition": "An object sent into space to gather information or communicate.",
+          "example": "The weather forecast uses data from a satellite.",
+          "semanticGroup": "Space Technology",
+          "additionalExamples": ["Many countries have their own satellites.", "Satellites help us stay connected through phones and internet."],
+          "wordFamily": {"words": ["satellite", "satellites", "satellite's"], "description": "These forms show singular, plural, and possessive versions of the word."},
+          "collocations": ["weather satellite", "communication satellite", "launch a satellite"],
+          "usageNotes": "Use 'satellite' when talking about devices orbiting Earth for specific purposes.",
+          "teachingTips": "Show pictures of different types of satellites and discuss their functions.",
+          "pronunciation": {"syllables": ["sat", "el", "lite"], "stressIndex": 0, "phoneticGuide": "SAT-eh-lite"},
+          "imagePrompt": "A diagram showing a satellite orbiting Earth with labels indicating its purpose, such as 'weather monitoring' or 'communication.' No text should appear in the image."
+        },
+        {
+          "term": "orbit",
+          "partOfSpeech": "noun",
+          "definition": "The path an object follows while moving around a planet or star.",
+          "example": "The Moon is in orbit around Earth.",
+          "semanticGroup": "Space Technology",
+          "additionalExamples": ["Satellites stay in orbit thanks to gravity.", "Astronauts experience weightlessness in orbit."],
+          "wordFamily": {"words": ["orbit", "orbits", "orbital"], "description": "These forms relate to the concept of movement around a celestial body."},
+          "collocations": ["in orbit", "low Earth orbit", "orbital path"],
+          "usageNotes": "Use 'orbit' when describing the circular or elliptical path of an object in space.",
+          "teachingTips": "Draw orbits on the board and explain how gravity keeps objects in place.",
+          "pronunciation": {"syllables": ["or", "bit"], "stressIndex": 0, "phoneticGuide": "OR-bit"},
+          "imagePrompt": "An illustration of Earth with dotted lines showing the paths of satellites and the Moon in orbit. Include arrows to indicate direction of movement. No text should appear in the image."
+        },
+        {
+          "term": "mission",
+          "partOfSpeech": "noun",
+          "definition": "A planned task or journey, especially in space exploration.",
+          "example": "The astronaut completed her mission successfully.",
+          "semanticGroup": "Space Exploration",
+          "additionalExamples": ["Every space mission requires careful preparation.", "Mars missions aim to search for signs of life."],
+          "wordFamily": {"words": ["mission", "missions", "missionary"], "description": "These words relate to tasks or goals, often involving travel or purpose."},
+          "collocations": ["space mission", "mission control", "complete a mission"],
+          "usageNotes": "Use 'mission' when referring to a specific goal or project in space.",
+          "teachingTips": "Discuss famous space missions like Apollo 11 and compare them to modern ones.",
+          "pronunciation": {"syllables": ["mis", "sion"], "stressIndex": 0, "phoneticGuide": "MIS-shun"},
+          "imagePrompt": "A scene inside a spacecraft with astronauts working together on a mission. Show equipment and instruments used for research. No text should appear in the image."
+        },
+        {
+          "term": "astronaut",
+          "partOfSpeech": "noun",
+          "definition": "A person trained to travel and work in space.",
+          "example": "Yang Liwei was the first Chinese astronaut to go to space.",
+          "semanticGroup": "Space Exploration",
+          "additionalExamples": ["Astronauts wear special suits to survive in space.", "Children dream of becoming astronauts."],
+          "wordFamily": {"words": ["astronaut", "astronauts", "astronautical"], "description": "These words relate to people who explore space and the science behind it."},
+          "collocations": ["train as an astronaut", "send astronauts to the Moon", "famous astronaut"],
+          "usageNotes": "Use 'astronaut' when talking about individuals involved in space missions.",
+          "teachingTips": "Ask students to imagine what qualities make a good astronaut and why.",
+          "pronunciation": {"syllables": ["as", "tro", "naut"], "stressIndex": 0, "phoneticGuide": "AS-truh-nawt"},
+          "imagePrompt": "An astronaut floating in zero gravity inside a spacecraft, wearing a helmet and holding tools. Include Earth visible through a window. No text should appear in the image."
+        },
+        {
+          "term": "launch",
+          "partOfSpeech": "verb",
+          "definition": "To send a rocket or spacecraft into space.",
+          "example": "They will launch the new satellite tomorrow morning.",
+          "semanticGroup": "Space Exploration",
+          "additionalExamples": ["The countdown begins before every launch.", "A successful launch depends on perfect timing."],
+          "wordFamily": {"words": ["launch", "launched", "launching"], "description": "These forms show the action of sending something into space."},
+          "collocations": ["rocket launch", "launch pad", "successful launch"],
+          "usageNotes": "Use 'launch' when describing the process of starting a space mission.",
+          "teachingTips": "Play videos of rocket launches and pause to highlight key moments.",
+          "pronunciation": {"syllables": ["launch"], "stressIndex": 0, "phoneticGuide": "LAWNCH"},
+          "imagePrompt": "A rocket standing tall on a launch pad with smoke billowing out as it prepares to lift off. Capture the excitement of the moment. No text should appear in the image."
+        }
+      ]
+    },
+    {
+      "type": "comprehension",
+      "title": "Reading Comprehension",
+      "questions": [
+        {"question": "What was the name of China’s first satellite?", "options": ["Chang’e 1", "Dong Fang Hong 1", "Tiangong 1"], "answer": "Dong Fang Hong 1", "correctAnswer": "Dong Fang Hong 1", "explanation": "The text mentions that Dong Fang Hong 1 was China’s first satellite, launched in 1970."},
+        {"question": "Who was the first Chinese astronaut to travel to space?", "options": ["Yang Liwei", "Neil Armstrong", "Buzz Aldrin"], "answer": "Yang Liwei", "correctAnswer": "Yang Liwei", "explanation": "According to the text, Yang Liwei became the first Chinese astronaut in 2003."},
+        {"question": "Which event made history in 2019?", "options": ["First human on Mars", "Landing on the far side of the Moon", "Building a space station"], "answer": "Landing on the far side of the Moon", "correctAnswer": "Landing on the far side of the Moon", "explanation": "The text states that Chang’e 4 landed on the far side of the Moon in 2019, making history."},
+        {"question": "Is Tiangong the name of China’s planned space station?", "options": ["True", "False"], "answer": "True", "correctAnswer": "True", "explanation": "The reading explains that Tiangong, meaning 'Heavenly Palace,' is China’s planned space station."},
+        {"question": "Does China plan to stop exploring space in the near future?", "options": ["True", "False"], "answer": "False", "correctAnswer": "False", "explanation": "The text emphasizes that China will continue playing a major role in space exploration despite remaining mysteries."}
+      ]
+    },
+    {
+      "type": "sentenceFrames",
+      "title": "Sentence Practice",
+      "frames": [
+        {
+          "pattern": "I learned that _____ is important because _____.",
+          "examples": [
+            "I learned that a satellite is important because it helps us predict the weather.",
+            "I learned that orbit is important because it allows objects to stay in space without falling."
+          ],
+          "level": "basic",
+          "title": "Expressing Importance",
+          "usage": "Use this pattern to talk about facts you’ve learned from the lesson. It works well for summarizing key points.",
+          "communicativeFunction": "Expressing importance",
+          "grammarFocus": "Simple present tense with 'because'",
+          "teachingTips": "Model the frame with examples from the text. Encourage students to create their own sentences using target vocabulary."
+        },
+        {
+          "pattern": "If I were an astronaut, I would _____ because _____.",
+          "examples": [
+            "If I were an astronaut, I would conduct experiments because I want to learn about space.",
+            "If I were an astronaut, I would take photos of Earth because it looks beautiful from space."
+          ],
+          "level": "intermediate",
+          "title": "Imagining Scenarios",
+          "usage": "This frame helps students imagine themselves in hypothetical situations related to space exploration.",
+          "communicativeFunction": "Hypothetical scenarios",
+          "grammarFocus": "Second conditional (if + past simple, would + base verb)",
+          "teachingTips": "Practice forming conditionals with the class. Discuss creative ideas based on the reading content."
+        },
+        {
+          "pattern": "China’s space program aims to _____, which could lead to _____.",
+          "examples": [
+            "China’s space program aims to explore the Moon, which could lead to discovering new resources.",
+            "China’s space program aims to build a space station, which could lead to better scientific research."
+          ],
+          "level": "advanced",
+          "title": "Discussing Goals",
+          "usage": "Use this frame to analyze the objectives of China’s space program and speculate about potential outcomes.",
+          "communicativeFunction": "Analyzing goals and consequences",
+          "grammarFocus": "Present simple tense with relative clauses",
+          "teachingTips": "Highlight cause-and-effect relationships in the text. Guide students to expand on these connections."
+        }
+      ]
+    },
+    {
+      "type": "discussion",
+      "title": "Discussion Questions",
+      "questions": [
+        {
+          "paragraphContext": "China’s space program started with the launch of its first satellite in 1970. Back then, only a few countries had the technology to send objects into space. Today, China is among the top nations in space exploration. How far do you think space technology has come since the 1970s?",
+          "question": "Do you think space exploration has changed a lot since the 1970s? Why or why not?",
+          "imagePrompt": "A timeline showing key events in space exploration from the 1970s to today, including rockets, satellites, and lunar landings. No text should appear in the image."
+        },
+        {
+          "paragraphContext": "Yang Liwei’s mission in 2003 inspired millions of people in China and around the world. He showed that hard work and dedication can make dreams come true. Who inspires you to achieve your goals?",
+          "question": "Who is someone you admire for their achievements, and why?",
+          "imagePrompt": "A portrait of Yang Liwei smiling inside a spacecraft, surrounded by symbols of inspiration like stars and medals. No text should appear in the image."
+        },
+        {
+          "paragraphContext": "The Moon holds many secrets that scientists are eager to uncover. For example, studying its surface could reveal clues about the early solar system. If you could design a mission to the Moon, what would you want to study?",
+          "question": "What kind of experiment or study would you propose for a Moon mission?",
+          "imagePrompt": "A futuristic lunar rover equipped with cameras and sensors, exploring craters and collecting samples. No text should appear in the image."
+        },
+        {
+          "paragraphContext": "Tiangong, China’s planned space station, represents a new era of collaboration in space. Scientists from different countries may work together on experiments aboard the station. Do you think international cooperation is important in space exploration?",
+          "question": "Why is it important for countries to work together in space exploration?",
+          "imagePrompt": "A diverse group of astronauts from various countries working together inside a space station. Include flags from multiple nations. No text should appear in the image."
+        },
+        {
+          "paragraphContext": "While China has achieved many milestones, there are still countless mysteries in space waiting to be solved. Some believe humans will eventually colonize other planets. What do you think the future of space exploration holds?",
+          "question": "What do you think will be the next big step in space exploration?",
+          "imagePrompt": "An artist’s depiction of a futuristic colony on Mars, featuring domes, greenhouses, and rovers. No text should appear in the image."
+        }
+      ]
+    },
+    {
+      "type": "quiz",
+      "title": "Knowledge Check",
+      "questions": [
+        {"question": "What does 'orbit' refer to?", "options": ["A type of rocket", "The path an object takes around a planet", "A space station"], "answer": "The path an object takes around a planet", "correctAnswer": "The path an object takes around a planet", "explanation": "Orbit describes the curved path followed by objects like satellites or moons."},
+        {"question": "Which spacecraft landed on the far side of the Moon?", "options": ["Apollo 11", "Chang’e 4", "Voyager 1"], "answer": "Chang’e 4", "correctAnswer": "Chang’e 4", "explanation": "Chang’e 4 made history by landing on the far side of the Moon in 2019."},
+        {"question": "What is the name of China’s planned space station?", "options": ["Mir", "ISS", "Tiangong"], "answer": "Tiangong", "correctAnswer": "Tiangong", "explanation": "Tiangong, meaning 'Heavenly Palace,' is China’s planned space station."},
+        {"question": "Is Yang Liwei the first Chinese astronaut to travel to space?", "options": ["True", "False"], "answer": "True", "correctAnswer": "True", "explanation": "Yang Liwei became the first Chinese astronaut in 2003."},
+        {"question": "Are satellites used only for communication?", "options": ["True", "False"], "answer": "False", "correctAnswer": "False", "explanation": "Satellites are used for various purposes, including weather forecasting and navigation."}
+      ]
+    }
+  ]
+}
