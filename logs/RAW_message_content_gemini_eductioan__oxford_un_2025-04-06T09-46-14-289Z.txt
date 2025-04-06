@@ -1,0 +1,296 @@
+```json
+{
+  "title": "Exploring Oxford University: A Journey Through History and Academia",
+  "level": "B1",
+  "focus": "general",
+  "estimatedTime": 60,
+  "sections": [
+    {
+      "type": "warmup",
+      "title": "Warm-up Activity",
+      "content": "Let's explore the world of prestigious universities!  Think about what makes a university stand out. Is it the historic buildings, the renowned faculty, the challenging curriculum, or the diverse student body?  We'll use some key words to discuss this further: renowned, historic, curriculum, diverse, and collegiate.",
+      "questions": [
+        "What are some universities you know about?",
+        "What makes a university good or prestigious in your opinion?",
+        "Have you ever visited a university campus? What was it like?",
+        "What are some subjects you might find in a university curriculum?",
+        "What does it mean for a place to be historically significant?"
+      ],
+      "targetVocabulary": ["renowned", "historic", "curriculum", "diverse", "collegiate"],
+      "procedure": "1. Ask students the first two questions to activate prior knowledge. 2. Introduce the vocabulary words and their meanings. 3. Ask questions 3-5, encouraging students to use the new vocabulary in their answers. For example, 'Was the campus you visited historic? Did it have a diverse student body?' 4. Briefly discuss the concept of a collegiate atmosphere.",
+      "teacherNotes": "Encourage students to share their personal experiences and opinions.  Use visuals of different university campuses to spark interest.  Gently correct any pronunciation errors with the new vocabulary."
+    },
+    {
+      "type": "reading",
+      "title": "Reading Text: Oxford University: A Legacy of Learning",
+      "introduction": "Oxford University, a name synonymous with academic excellence, has a rich history spanning centuries.  But what makes it so special?  Let's delve into the world of Oxford, exploring its traditions, its impact, and its unique collegiate system.",
+      "paragraphs": [
+        "Oxford University, located in the city of Oxford, England, is one of the oldest and most prestigious universities in the world.  Its exact founding date is unknown, but teaching existed there as early as 1096.  Imagine walking through grounds where scholars have debated and learned for nearly a thousand years!  From its humble beginnings, Oxford has grown into a renowned institution, attracting students and scholars from across the globe.",
+        "The university is comprised of a collection of independent colleges, each with its own unique character and history.  This collegiate system fosters a strong sense of community and belonging.  Students live and study within their chosen college, creating close-knit bonds with their peers.  This system also encourages healthy competition between colleges, adding a vibrant dynamic to university life.",
+        "Oxford's curriculum is diverse and challenging, covering a wide range of subjects from humanities and social sciences to science and engineering.  Students are taught by leading experts in their fields, and the emphasis is on critical thinking and independent research.  The tutorial system, where students meet regularly with tutors for one-on-one instruction, is a hallmark of the Oxford experience.",
+        "The university's historic buildings and libraries add to its unique charm.  The Bodleian Library, one of the oldest libraries in Europe, holds a vast collection of books and manuscripts.  Can you picture yourself studying in such a historic place?  The architecture of the colleges, ranging from medieval to modern, creates a truly inspiring environment for learning.",
+        "Oxford's influence extends far beyond its walls.  Its graduates have gone on to become leaders in various fields, contributing to society in countless ways.  From prime ministers and Nobel laureates to writers and artists, Oxford alumni have made a lasting impact on the world."
+      ],
+      "teacherNotes": "Encourage students to visualize the scenes described in the text.  Point out the use of descriptive language and how it brings the university to life."
+    },
+    {
+      "type": "vocabulary",
+      "title": "Key Vocabulary",
+      "words": [
+        {
+          "term": "renowned",
+          "partOfSpeech": "adjective",
+          "definition": "Famous and respected for something.",
+          "example": "Oxford University is renowned for its academic excellence.",
+          "semanticGroup": "Descriptive Words",
+          "additionalExamples": ["The renowned chef created a culinary masterpiece.", "She is a renowned expert in her field."],
+          "wordFamily": {
+            "words": ["renown"],
+            "description": "'Renown' is the noun form, meaning fame and respect."
+          },
+          "collocations": ["renowned for", "renowned as", "internationally renowned"],
+          "usageNotes": "Use 'renowned' to describe someone or something that is widely known and admired for a particular skill or quality.",
+          "teachingTips": "Have students brainstorm other renowned people or institutions.",
+          "pronunciation": {
+            "syllables": ["re", "nowned"],
+            "stressIndex": 1,
+            "phoneticGuide": "ri-NOWND"
+          },
+          "imagePrompt": "A large group of people applauding a person on a stage receiving an award. The person is smiling and holding the award. No text or words should appear in the image."
+        },
+        {
+          "term": "historic",
+          "partOfSpeech": "adjective",
+          "definition": "Important or famous in history.",
+          "example": "Oxford has many historic buildings.",
+          "semanticGroup": "Descriptive Words",
+          "additionalExamples": ["The historic agreement brought peace to the region.", "We visited the historic site of the battle."],
+          "wordFamily": {
+            "words": ["history", "historical"],
+            "description": "'History' is the noun form, and 'historical' is another adjective related to history."
+          },
+          "collocations": ["historic event", "historic site", "historic moment"],
+          "usageNotes": "Use 'historic' to describe something that is important or significant in history.",
+          "teachingTips": "Ask students to name some historic events or places in their own countries.",
+          "pronunciation": {
+            "syllables": ["his", "tor", "ic"],
+            "stressIndex": 1,
+            "phoneticGuide": "his-TOR-ik"
+          },
+          "imagePrompt": "A very old building with ivy growing on it, possibly a university building or library, with people in old-fashioned clothes walking nearby. No text or words should appear in the image."
+        },
+        {
+          "term": "curriculum",
+          "partOfSpeech": "noun",
+          "definition": "The subjects studied in a school or university.",
+          "example": "Oxford's curriculum is diverse and challenging.",
+          "semanticGroup": "Education",
+          "additionalExamples": ["The school is revising its curriculum.", "The curriculum includes a wide range of subjects."],
+          "wordFamily": {
+            "words": ["curricular"],
+            "description": "'Curricular' is the adjective form, relating to the curriculum."
+          },
+          "collocations": ["school curriculum", "national curriculum", "core curriculum"],
+          "usageNotes": "Curriculum refers to the planned program of study.",
+          "teachingTips": "Discuss the differences between curricula in different countries.",
+          "pronunciation": {
+            "syllables": ["cur", "ric", "u", "lum"],
+            "stressIndex": 1,
+            "phoneticGuide": "kuh-RIK-yuh-lum"
+          },
+          "imagePrompt": "An open book with various academic subjects represented visually on the pages, such as math equations, historical timelines, scientific diagrams, and literary quotes. No text or words should appear in the image."
+        },
+        {
+          "term": "diverse",
+          "partOfSpeech": "adjective",
+          "definition": "Showing a great deal of variety; very different.",
+          "example": "Oxford has a diverse student body.",
+          "semanticGroup": "Descriptive Words",
+          "additionalExamples": ["The city has a diverse population.", "The company offers a diverse range of products."],
+          "wordFamily": {
+            "words": ["diversity", "diversify"],
+            "description": "'Diversity' is the noun form, and 'diversify' is the verb form."
+          },
+          "collocations": ["diverse range", "diverse group", "culturally diverse"],
+          "usageNotes": "Use 'diverse' to describe something that includes many different types of people or things.",
+          "teachingTips": "Have students discuss the benefits of diversity in a university setting.",
+          "pronunciation": {
+            "syllables": ["di", "verse"],
+            "stressIndex": 1,
+            "phoneticGuide": "di-VURS"
+          },
+          "imagePrompt": "A group of people of different ages, ethnicities, and genders standing together, smiling.  They are wearing a variety of clothing styles. No text or words should appear in the image."
+        },
+        {
+          "term": "collegiate",
+          "partOfSpeech": "adjective",
+          "definition": "Relating to or resembling a college or its students.",
+          "example": "Oxford has a strong collegiate atmosphere.",
+          "semanticGroup": "Education",
+          "additionalExamples": ["The collegiate system fosters a sense of community.", "She lived in a collegiate environment for four years."],
+          "wordFamily": {
+            "words": ["college"],
+            "description": "'College' is the noun form, referring to an educational institution."
+          },
+          "collocations": ["collegiate sports", "collegiate life", "collegiate system"],
+          "usageNotes": "Use 'collegiate' to describe things related to the experience and environment of college life.",
+          "teachingTips": "Ask students to describe what they imagine a collegiate atmosphere to be like.",
+          "pronunciation": {
+            "syllables": ["col", "le", "gi", "ate"],
+            "stressIndex": 2,
+            "phoneticGuide": "kuh-LEE-jee-it"
+          },
+          "imagePrompt": "A group of students studying together in a library, some reading books, others discussing ideas, with a general atmosphere of focused learning. No text or words should appear in the image."
+        }
+      ]
+    },
+    {
+      "type": "comprehension",
+      "title": "Reading Comprehension",
+      "questions": [
+        {
+          "question": "Where is Oxford University located?",
+          "options": ["London", "Oxford", "Cambridge"],
+          "answer": "Oxford",
+          "correctAnswer": "Oxford",
+          "explanation": "The text clearly states that Oxford University is located in the city of Oxford, England."
+        },
+        {
+          "question": "What is a key feature of Oxford's educational system?",
+          "options": ["Large lecture halls", "Online courses", "Tutorial system"],
+          "answer": "Tutorial system",
+          "correctAnswer": "Tutorial system",
+          "explanation": "The text mentions the tutorial system as a hallmark of the Oxford experience."
+        },
+        {
+          "question": "What is the Bodleian Library known for?",
+          "options": ["Modern architecture", "Vast collection of books", "Science labs"],
+          "answer": "Vast collection of books",
+          "correctAnswer": "Vast collection of books",
+          "explanation": "The text describes the Bodleian Library as holding a vast collection of books and manuscripts."
+        },
+        {
+          "question": "Is the exact founding date of Oxford University known?",
+          "options": ["True", "False"],
+          "answer": "False",
+          "correctAnswer": "False",
+          "explanation": "The text states that the exact founding date is unknown, but teaching existed there as early as 1096."
+        },
+        {
+          "question": "Does Oxford University have a collegiate system?",
+          "options": ["True", "False"],
+          "answer": "True",
+          "correctAnswer": "True",
+          "explanation": "The text explains that Oxford is comprised of a collection of independent colleges."
+        }
+      ]
+    },
+    {
+      "type": "sentenceFrames",
+      "title": "Sentence Practice",
+      "frames": [
+        {
+          "pattern": "Oxford is _____ for its _____ _____.",
+          "examples": [
+            "Oxford is renowned for its historic buildings.",
+            "Oxford is famous for its diverse student body.",
+            "Oxford is known for its challenging curriculum."
+          ],
+          "level": "intermediate",
+          "title": "Describing Oxford's Strengths",
+          "usage": "Use this frame to highlight specific aspects of Oxford that make it stand out.  You can focus on academics, history, or student life.",
+          "communicativeFunction": "Describing attributes",
+          "grammarFocus": "Subject-Verb-Preposition-Object",
+          "teachingTips": "Encourage students to use different adjectives and noun phrases to describe Oxford.  Provide a list of adjectives and nouns related to education and history."
+        },
+        {
+          "pattern": "If I studied at Oxford, I would _____ because _____.",
+          "examples": [
+            "If I studied at Oxford, I would explore the historic libraries because I love old books.",
+            "If I studied at Oxford, I would join a diverse student club because I enjoy meeting new people.",
+            "If I studied at Oxford, I would focus on the challenging curriculum because I want to learn as much as possible."
+          ],
+          "level": "intermediate",
+          "title": "Expressing Hypothetical Scenarios",
+          "usage": "Use this frame to express what you would do if you had the opportunity to study at Oxford.  It allows you to connect your personal interests to the university's offerings.",
+          "communicativeFunction": "Expressing hypothetical desires and reasons",
+          "grammarFocus": "Conditional sentences (second conditional)",
+          "teachingTips": "Guide students to use the second conditional correctly.  Encourage them to think about their own academic interests and how they align with Oxford's programs."
+        }
+      ]
+    },
+    {
+      "type": "discussion",
+      "title": "Discussion Questions",
+      "questions": [
+        {
+          "paragraphContext": "Many universities have a specific focus, like science or arts.  However, Oxford offers a wide range of subjects, allowing students to explore different fields.  This diverse curriculum can lead to unexpected discoveries and interdisciplinary collaborations.  It also prepares students for a variety of career paths.  What are the advantages and disadvantages of such a broad educational approach?",
+          "question": "Do you think a diverse curriculum like Oxford's is beneficial for students, or is it better to specialize early on?  Relate your answer to your own career aspirations.",
+          "imagePrompt": "A student looking thoughtfully at a wide array of books representing different academic subjects, with a slightly confused but intrigued expression. No text or words should appear in the image."
+        },
+        {
+          "paragraphContext": "Oxford's collegiate system is a defining feature of the university.  It creates smaller communities within the larger university setting.  This can provide a sense of belonging and support for students.  However, it can also lead to competition and rivalry between colleges.  How do you think this system impacts the student experience?",
+          "question": "Would you prefer to study in a university with a collegiate system like Oxford's, or in a more traditional university structure? Why?",
+          "imagePrompt": "A group of students wearing different colored scarves representing different college affiliations, cheering enthusiastically at a sporting event. No text or words should appear in the image."
+        },
+        {
+          "paragraphContext": "Oxford is known for its rigorous academic standards.  Students are expected to work independently and engage in critical thinking.  The tutorial system, with its one-on-one instruction, is designed to challenge students intellectually.  This can be a rewarding but also demanding experience. How do you think this academic rigor shapes the students who graduate from Oxford?",
+          "question": "Do you think the pressure to excel at a university like Oxford is motivating or overwhelming?  How do you handle academic pressure in your own studies?",
+          "imagePrompt": "A student sitting at a desk in a library, surrounded by books, with a focused but slightly stressed expression on their face. No text or words should appear in the image."
+        },
+        {
+          "paragraphContext": "Oxford University has a long and rich history, dating back almost a thousand years.  Its buildings, libraries, and traditions reflect this history.  Being surrounded by such a legacy can be inspiring, but it can also feel intimidating.  How do you think this historical context influences the learning environment at Oxford?",
+          "question": "Does studying in a historically significant place like Oxford appeal to you? Why or why not?",
+          "imagePrompt": "A student walking through a grand, historic university courtyard, looking up in awe at the architecture. No text or words should appear in the image."
+        },
+        {
+          "paragraphContext": "Oxford graduates have made significant contributions to various fields, from science and politics to literature and the arts.  This global impact reflects the university's commitment to academic excellence and its ability to nurture talented individuals.  What factors do you think contribute to the success of Oxford alumni?",
+          "question": "Does the reputation of a university's alumni influence your perception of the university?  Why or why not?",
+          "imagePrompt": "A graduation ceremony at a prestigious university, with graduates in academic gowns throwing their caps in the air. No text or words should appear in the image."
+        }
+      ]
+    },
+    {
+      "type": "quiz",
+      "title": "Knowledge Check",
+      "questions": [
+        {
+          "question": "What is Oxford renowned for?",
+          "options": ["Academic excellence", "Sports programs", "Art exhibitions"],
+          "answer": "Academic excellence",
+          "correctAnswer": "Academic excellence",
+          "explanation": "The text emphasizes Oxford's reputation for academic achievement."
+        },
+        {
+          "question": "What type of system does Oxford have?",
+          "options": ["Collegiate", "Semester", "Trimester"],
+          "answer": "Collegiate",
+          "correctAnswer": "Collegiate",
+          "explanation": "The reading explains Oxford's unique collegiate structure."
+        },
+        {
+          "question": "Is Oxford's curriculum diverse?",
+          "options": ["True", "False"],
+          "answer": "True",
+          "correctAnswer": "True",
+          "explanation": "The text highlights the diversity of Oxford's curriculum."
+        },
+        {
+          "question": "Is Oxford a modern university?",
+          "options": ["True", "False"],
+          "answer": "False",
+          "correctAnswer": "False",
+          "explanation": "Oxford is described as one of the oldest universities in the world."
+        },
+        {
+          "question": "Does Oxford have a historic library?",
+          "options": ["True", "False"],
+          "answer": "True",
+          "correctAnswer": "True",
+          "explanation": "The Bodleian Library is mentioned as a historic library at Oxford."
+        }
+      ]
+    }
+  ]
+}
+```

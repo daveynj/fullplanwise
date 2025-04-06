@@ -187,6 +187,70 @@ ALL content must be STRICTLY appropriate for the specified CEFR level ${cefrLeve
 - Reading text difficulty must match the specified level
 - Discussion paragraph contexts must be level-appropriate with vocabulary and grammar matching the CEFR level
 
+CEFR LEVEL-SPECIFIC TEXT COMPLEXITY GUIDELINES:
+Follow these precise metrics for creating text at the appropriate ${cefrLevel} level:
+
+A1 LEVEL TEXT (BEGINNER):
+- 100-150 words total, 2-3 short paragraphs
+- Average sentence length: 5-7 words
+- Vocabulary: Limited to 500 most common words plus topic-specific terms
+- Grammar: Present simple, present continuous only
+- Sentence types: 80% simple sentences, 20% compound with 'and', 'but', 'or'
+- No passive voice, no conditionals
+- Readability: Flesch-Kincaid Grade 1-2 (very easy)
+- Content: Concrete topics only, no abstract concepts
+
+A2 LEVEL TEXT (ELEMENTARY):
+- 150-200 words total, 3 short paragraphs
+- Average sentence length: 7-10 words
+- Vocabulary: Limited to 1000 most common words plus topic-specific terms
+- Grammar: Present, past, and future simple tenses, basic modals (can, should)
+- Sentence types: 70% simple sentences, 30% compound with common conjunctions
+- Limited passive voice (1-2 instances max)
+- No conditionals above first conditional
+- Readability: Flesch-Kincaid Grade 3-4 (easy)
+- Content: Mostly concrete with simple abstract concepts
+
+B1 LEVEL TEXT (INTERMEDIATE):
+- 200-250 words total, 3-4 paragraphs
+- Average sentence length: 10-12 words
+- Vocabulary: Up to 2500 common words plus topic-specific terms
+- Grammar: All basic tenses, present perfect, conditionals (first and second)
+- Sentence types: 60% simple, 30% compound, 10% complex with common subordinators
+- Some passive voice is acceptable (3-4 instances)
+- Readability: Flesch-Kincaid Grade 5-6 (fairly easy)
+- Content: Mix of concrete and abstract concepts
+
+B2 LEVEL TEXT (UPPER INTERMEDIATE):
+- 300-350 words total, 4 paragraphs
+- Average sentence length: 12-15 words
+- Vocabulary: Up to 3500 words, including some academic terms
+- Grammar: Full range of tenses, conditionals, modals, gerunds and infinitives
+- Sentence types: 40% simple, 40% compound, 20% complex with varied connectors
+- Passive voice used naturally throughout (5-7 instances)
+- Readability: Flesch-Kincaid Grade 7-9 (standard)
+- Content: Equal mix of concrete and abstract concepts
+
+C1 LEVEL TEXT (ADVANCED):
+- 400-450 words total, 4-5 paragraphs
+- Average sentence length: 15-20 words
+- Vocabulary: Up to 5000 words, including academic and specialized terms
+- Grammar: Full range of structures, including complex passives, perfect modals
+- Sentence types: 20% simple, 40% compound, 40% complex with sophisticated connectors
+- Natural use of passive voice, inverted structures, cleft sentences
+- Readability: Flesch-Kincaid Grade 10-12 (fairly difficult)
+- Content: Sophisticated abstract concepts, nuanced arguments
+
+C2 LEVEL TEXT (PROFICIENCY):
+- 500-600 words total, 5 paragraphs
+- Average sentence length: 20-25 words
+- Vocabulary: 6000+ words, including specialized academic/technical vocabulary
+- Grammar: Mastery of all structures, including complex conditionals, subjunctive
+- Sentence types: 10% simple, 30% compound, 60% complex with advanced subordination
+- Sophisticated use of all structures, including rare forms
+- Readability: Flesch-Kincaid Grade 13+ (difficult)
+- Content: Highly abstract, sophisticated concepts and arguments
+
 DISCUSSION PARAGRAPH CONTEXT GUIDELINES:
 Each discussion question MUST have its own unique paragraph context (3-5 sentences) that must follow these CEFR level requirements:
 
@@ -221,7 +285,11 @@ CRITICAL LESSON DEVELOPMENT PROCESS:
    - Appropriate for the ${cefrLevel} level
    - Highly relevant to the "${topic}" subject
    - Useful for students to know and discuss the topic
-   - For each word, consider: part of speech, definition, syllable breakdown, example sentences, collocations, and usage notes
+   - For each word, create a pronunciation object with THREE fields:
+     a. "syllables": Array of syllables (e.g., ["vo", "cab", "u", "lar", "y"])
+     b. "stressIndex": Index of the stressed syllable in the array (e.g., 1 for "vo-CAB-u-lar-y")
+     c. "phoneticGuide": Text guide showing pronunciation using CAPITALIZATION for stress (e.g., "voh-KAB-yuh-lair-ee")
+   - IMPORTANT: DO NOT use IPA symbols like "ə", "ɪ", or "ʃ" in the pronunciation guide. Use only regular English spelling to approximate sounds.
 
 2. SECOND, write a reading passage that:
    - Contains EXACTLY 5 substantial paragraphs (each with 4-6 sentences minimum)
@@ -287,7 +355,7 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
           "partOfSpeech": "noun",
           "definition": "Definition appropriate for the CEFR level",
           "example": "Example sentence using the word naturally",
-          "pronunciation": "vo-cab-u-lar-y (syllable breakdown with stress indicated)",
+          "pronunciation": {"syllables": ["vo", "cab", "u", "lar", "y"], "stressIndex": 1, "phoneticGuide": "voh-KAB-yuh-lair-ee"},
           "collocations": ["Common phrase 1", "Common phrase 2"],
           "usageNotes": "Brief notes on how and when to use this word appropriately",
           "teachingTips": "Suggestions for effectively teaching this vocabulary item",
@@ -298,7 +366,7 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
           "partOfSpeech": "verb",
           "definition": "Definition appropriate for the CEFR level",
           "example": "Example sentence using the word naturally",
-          "pronunciation": "vo-cab-u-lar-y (syllable breakdown with stress indicated)",
+          "pronunciation": {"syllables": ["vo", "cab", "u", "lar", "y"], "stressIndex": 1, "phoneticGuide": "voh-KAB-yuh-lair-ee"},
           "collocations": ["Common phrase 1", "Common phrase 2"],
           "usageNotes": "Brief notes on how and when to use this word appropriately",
           "teachingTips": "Suggestions for effectively teaching this vocabulary item",
@@ -309,7 +377,7 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
           "partOfSpeech": "adjective",
           "definition": "Definition appropriate for the CEFR level",
           "example": "Example sentence using the word naturally",
-          "pronunciation": "vo-cab-u-lar-y (syllable breakdown with stress indicated)",
+          "pronunciation": {"syllables": ["vo", "cab", "u", "lar", "y"], "stressIndex": 1, "phoneticGuide": "voh-KAB-yuh-lair-ee"},
           "collocations": ["Common phrase 1", "Common phrase 2"],
           "usageNotes": "Brief notes on how and when to use this word appropriately",
           "teachingTips": "Suggestions for effectively teaching this vocabulary item",
@@ -320,7 +388,7 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
           "partOfSpeech": "noun",
           "definition": "Definition appropriate for the CEFR level",
           "example": "Example sentence using the word naturally",
-          "pronunciation": "vo-cab-u-lar-y (syllable breakdown with stress indicated)",
+          "pronunciation": {"syllables": ["vo", "cab", "u", "lar", "y"], "stressIndex": 1, "phoneticGuide": "voh-KAB-yuh-lair-ee"},
           "collocations": ["Common phrase 1", "Common phrase 2"],
           "usageNotes": "Brief notes on how and when to use this word appropriately",
           "teachingTips": "Suggestions for effectively teaching this vocabulary item",
@@ -331,7 +399,7 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
           "partOfSpeech": "verb",
           "definition": "Definition appropriate for the CEFR level",
           "example": "Example sentence using the word naturally",
-          "pronunciation": "vo-cab-u-lar-y (syllable breakdown with stress indicated)",
+          "pronunciation": {"syllables": ["vo", "cab", "u", "lar", "y"], "stressIndex": 1, "phoneticGuide": "voh-KAB-yuh-lair-ee"},
           "collocations": ["Common phrase 1", "Common phrase 2"],
           "usageNotes": "Brief notes on how and when to use this word appropriately",
           "teachingTips": "Suggestions for effectively teaching this vocabulary item",
