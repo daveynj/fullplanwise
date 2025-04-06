@@ -144,18 +144,19 @@ export function LessonForm({ students, onSubmit, credits }: LessonFormProps) {
               )}
             />
             
-            {/* Topic */}
+            {/* Topic - Made larger and more prominent */}
             <FormField
               control={form.control}
               name="topic"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="font-semibold">Topic or Subject</FormLabel>
+                <FormItem className="py-2 bg-gray-50 rounded-lg p-4 border border-gray-200">
+                  <FormLabel className="font-semibold text-lg">Topic or Subject</FormLabel>
+                  <p className="text-sm text-gray-500 mb-2">Enter the main topic for your lesson</p>
                   <FormControl>
                     <Input 
-                      placeholder="e.g. Environmental issues, Travel, Food" 
+                      placeholder="e.g. Environmental issues, Space travel, European history" 
                       {...field} 
-                      className="h-12 text-base"
+                      className="h-16 text-lg px-4 shadow-sm border-2 border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20"
                     />
                   </FormControl>
                   <FormMessage />
