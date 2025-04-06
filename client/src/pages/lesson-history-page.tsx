@@ -69,8 +69,43 @@ export default function LessonHistoryPage() {
     return () => clearTimeout(timer);
   }, [searchInput]);
   
+  // Direct fetch without React Query for debugging production issues
+  const debugFetchLessons = useCallback(async () => {
+    try {
+      console.log('Attempting direct fetch of lessons...');
+      const response = await fetch('/api/lessons', {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      });
+      
+      console.log('Direct fetch response status:', response.status);
+      
+      if (!response.ok) {
+        console.error('Direct fetch error:', response.status, response.statusText);
+        const text = await response.text();
+        console.error('Error details:', text);
+        return null;
+      }
+      
+      const data = await response.json();
+      console.log('Direct fetch successful, got lessons:', data);
+      return data;
+    } catch (error) {
+      console.error('Direct fetch exception:', error);
+      return null;
+    }
+  }, []);
+
+  // State for fallback data
+  const [fallbackData, setFallbackData] = useState<PaginatedLessons | null>(null);
+  const [isLoadingFallback, setIsLoadingFallback] = useState(false);
+  
   // Fetch paginated lessons with server-side filtering
-  const { data: lessonData, isLoading } = useQuery<PaginatedLessons>({
+  const { data: lessonData, isLoading, isError } = useQuery<PaginatedLessons>({
     queryKey: [
       "/api/lessons", 
       { 
@@ -80,9 +115,53 @@ export default function LessonHistoryPage() {
         dateFilter: dateFilter
       }
     ],
-    retry: false,
-    staleTime: 2000 // Add 2s stale time to reduce refetches
+    retry: 1,
+    staleTime: 0, // Don't use stale data in production environment
+    refetchOnWindowFocus: false
   });
+  
+  // Fallback loading if React Query fails
+  useEffect(() => {
+    if (isError) {
+      setIsLoadingFallback(true);
+      
+      debugFetchLessons()
+        .then(result => {
+          setFallbackData(result);
+          if (result) {
+            toast({
+              title: "Fallback data loaded",
+              description: "Using direct connection to bypass cache issues.",
+            });
+          }
+        })
+        .finally(() => {
+          setIsLoadingFallback(false);
+        });
+    }
+  }, [isError, debugFetchLessons, toast]);
+  
+  // Manual refresh for debugging
+  const handleManualRefresh = useCallback(() => {
+    setFallbackData(null);
+    queryClient.invalidateQueries({ queryKey: ["/api/lessons"] });
+    setIsLoadingFallback(true);
+    debugFetchLessons()
+      .then(result => {
+        setFallbackData(result);
+        toast({
+          title: "Lessons refreshed",
+          description: "Lesson library has been manually refreshed",
+        });
+      })
+      .finally(() => {
+        setIsLoadingFallback(false);
+      });
+  }, [debugFetchLessons, toast]);
+  
+  // Use data from React Query or fallback
+  const effectiveData = lessonData || fallbackData;
+  const effectiveLoading = isLoading || isLoadingFallback;
   
   // Fetch all students for assignment dropdown
   const { data: students = [] } = useQuery<Student[]>({
@@ -313,12 +392,32 @@ export default function LessonHistoryPage() {
                 </div>
               </div>
               
+              {/* Refresh button */}
+              <div className="flex justify-end mb-4">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={handleManualRefresh}
+                  disabled={isLoadingFallback}
+                  className="flex items-center gap-2"
+                >
+                  {isLoadingFallback ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                  )}
+                  {isLoadingFallback ? "Refreshing..." : "Refresh Lessons"}
+                </Button>
+              </div>
+            
               {/* Lessons list */}
-              {isLoading ? (
+              {effectiveLoading ? (
                 <div className="flex justify-center py-12">
                   <Loader2 className="h-8 w-8 animate-spin text-primary" />
                 </div>
-              ) : lessons.length > 0 ? (
+              ) : (effectiveData?.lessons?.length || 0) > 0 ? (
                 <>
                   <div className="space-y-4">
                     {lessons.map((lesson: Lesson) => (

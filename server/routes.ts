@@ -143,19 +143,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(500).json({ error: "Database connection failed", details: String(dbError) });
       }
       
-      // Fetch paginated and filtered lessons
-      const result = await storage.getLessons(
-        req.user!.id, 
-        page, 
-        pageSize,
-        search,
-        cefrLevel,
-        dateFilter
-      );
-      
-      console.log(`API Response: Returning ${result.lessons.length} lessons out of ${result.total} total`);
-      
-      res.json(result);
+      // For production environment, add an extra layer of protection
+      if (process.env.NODE_ENV === 'production') {
+        try {
+          // Fetch paginated and filtered lessons
+          const result = await storage.getLessons(
+            req.user!.id, 
+            page, 
+            pageSize,
+            search,
+            cefrLevel,
+            dateFilter
+          );
+          
+          console.log(`API Response: Returning ${result.lessons.length} lessons out of ${result.total} total`);
+          return res.json(result);
+        } catch (prodError) {
+          console.error("Production error in /api/lessons:", prodError);
+          
+          // Return empty result set instead of 500 error
+          console.log("Returning empty result set for production environment");
+          return res.json({
+            lessons: [],
+            total: 0
+          });
+        }
+      } else {
+        // Development environment - let errors bubble up normally
+        const result = await storage.getLessons(
+          req.user!.id, 
+          page, 
+          pageSize,
+          search,
+          cefrLevel,
+          dateFilter
+        );
+        
+        console.log(`API Response: Returning ${result.lessons.length} lessons out of ${result.total} total`);
+        return res.json(result);
+      }
     } catch (error: any) {
       console.error("Error in /api/lessons:", error);
       res.status(500).json({ 

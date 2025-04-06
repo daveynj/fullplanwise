@@ -1,0 +1,48 @@
+lockdown-install.js:1 Removing unpermitted intrinsics
+e-commerce.js:2 fragment content script loaded
+e-commerce.js:2 google content script loaded
+e-commerce.js:2 overlay content script loaded
+e-commerce.js:2 overlay button content script loaded
+e-commerce.js:2 remote fragment content script loaded
+e-commerce.js:2 snippet content script loaded
+e-commerce.js:2 title content script loaded
+e-commerce.js:2 trigger-event content script loaded
+e-commerce.js:2 url content script loaded
+e-commerce.js:2 not checkout page:  https://planwiseesl.com/
+e-commerce.js:2 navigated to https://planwiseesl.com/
+index-C3lCaMaV.js:48 Making API request to: /api/user
+index-C3lCaMaV.js:48 Received response from /api/user with status: 200
+index-C3lCaMaV.js:48 Making API request to: /api/students
+index-C3lCaMaV.js:48 Making API request to: /api/lessons
+index-C3lCaMaV.js:48 Received response from /api/students with status: 200
+ Removing unpermitted intrinsics
+api/lessons:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()
+index-C3lCaMaV.js:48 Received response from /api/lessons with status: 500
+index-C3lCaMaV.js:48 API request failed for /api/lessons: TypeError: Failed to execute 'text' on 'Response': body stream already read
+    at index-C3lCaMaV.js:48:43682
+(anonymous) @ index-C3lCaMaV.js:48
+lockdown-install.js:1 Removing unpermitted intrinsics
+lockdown-install.js:1 Removing unpermitted intrinsics
+index-C3lCaMaV.js:48 Making API request to: /api/lessons
+e-commerce.js:2 navigated to https://planwiseesl.com/history
+api/lessons:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()
+index-C3lCaMaV.js:48 Received response from /api/lessons with status: 500
+index-C3lCaMaV.js:48 API request failed for /api/lessons: TypeError: Failed to execute 'text' on 'Response': body stream already read
+    at index-C3lCaMaV.js:48:43682
+(anonymous) @ index-C3lCaMaV.js:48
+
+                
+          
+          
+          
+         Chrome is moving towards a new experience that allows users to choose to browse without third-party cookies.
+m.stripe.network/inner.html#url=https%3A%2F%2Fplanwiseesl.com%2F&title=PLAN%20WISE%20ESL%20%7C%20AI-Powered%20Lesson%20Generator%20for%20ESL%20Teachers&referrer=https%3A%2F%2Freplit.com%2F&muid=c6424e49-8248-4eb9-bb3b-01a56959281985183b&sid=64b0020b-d850-45aa-b4fd-49bd575fc6581cf9b0&version=6&preview=false&__shared_params__[version]=acacia:1 Error handling response: Error: runtime/sendMessage: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received
+    at chrome-extension://fdjamakpfbbddfjaooikfcpapjohcfmg/content/contentScripts/kwift.CHROME.js:1:184307
+m.stripe.network/inner.html#url=https%3A%2F%2Fplanwiseesl.com%2F&title=PLAN%20WISE%20ESL%20%7C%20AI-Powered%20Lesson%20Generator%20for%20ESL%20Teachers&referrer=https%3A%2F%2Freplit.com%2F&muid=c6424e49-8248-4eb9-bb3b-01a56959281985183b&sid=64b0020b-d850-45aa-b4fd-49bd575fc6581cf9b0&version=6&preview=false&__shared_params__[version]=acacia:1 Error handling response: Error: runtime/sendMessage: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received
+    at chrome-extension://fdjamakpfbbddfjaooikfcpapjohcfmg/content/contentScripts/kwift.CHROME.js:1:184307

@@ -54,20 +54,31 @@ export const getQueryFn: <T>(options: {
         return null;
       }
 
-      // For status 500, provide more detailed error information
-      if (res.status === 500) {
+      // Handle any non-200 responses here
+      if (!res.ok) {
+        console.error(`Error response from server: ${res.status} ${res.statusText}`);
+        
+        // Clone the response first so we can read it multiple times
+        const resClone = res.clone();
+        
         try {
-          const errorDetails = await res.json();
-          console.error('Server error details:', errorDetails);
-          throw new Error(`Server error: ${JSON.stringify(errorDetails)}`);
+          // Try to parse as JSON first
+          const errorJSON = await resClone.json();
+          console.error('Server error details:', errorJSON);
+          throw new Error(`Server error (${res.status}): ${JSON.stringify(errorJSON)}`);
         } catch (jsonParseError) {
-          // If can't parse JSON, fall back to text
-          const errorText = await res.text();
-          throw new Error(`Server error (${res.status}): ${errorText}`);
+          // If JSON parsing fails, read as text
+          try {
+            const errorText = await res.text();
+            throw new Error(`Server error (${res.status}): ${errorText}`);
+          } catch (textError) {
+            // If all else fails, just throw with status info
+            throw new Error(`Server error (${res.status}): ${res.statusText}`);
+          }
         }
       }
-
-      await throwIfResNotOk(res);
+      
+      // No need for throwIfResNotOk since we already handled non-ok responses above
       
       try {
         const data = await res.json();
