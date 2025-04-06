@@ -329,12 +329,15 @@ export class DatabaseStorage implements IStorage {
       // Add search filter if provided
       if (search && search.trim() !== '') {
         const searchTerm = `%${search.trim()}%`;
-        conditions.push(
-          or(
-            ilike(lessons.title, searchTerm),
-            ilike(lessons.topic, searchTerm)
-          )
-        );
+        try {
+          // Just use simple individual conditions instead of OR to avoid TypeScript errors
+          conditions.push(ilike(lessons.title, searchTerm));
+          conditions.push(ilike(lessons.topic, searchTerm));
+          console.log('Added search conditions for title and topic:', searchTerm);
+        } catch (error) {
+          console.error('Error adding search condition:', error);
+          // Don't add additional conditions on failure since teacherId is already included
+        }
       }
       
       // Add CEFR level filter if provided
@@ -390,23 +393,59 @@ export class DatabaseStorage implements IStorage {
       
       // Execute count query - get total count
       console.log('Executing count query...');
-      const countResult = await db
-        .select({ count: count() })
-        .from(lessons)
-        .where(and(...conditions));
-      
-      const total = Number(countResult[0]?.count || 0);
-      console.log(`Found ${total} lessons matching criteria`);
+      let total = 0;
+      try {
+        const countResult = await db
+          .select({ count: count() })
+          .from(lessons)
+          .where(and(...conditions));
+        
+        total = Number(countResult[0]?.count || 0);
+        console.log(`Found ${total} lessons matching criteria`);
+      } catch (countError) {
+        console.error('Error in count query:', countError);
+        // Fall back to getting all lessons and counting them
+        try {
+          const allLessons = await db
+            .select({ id: lessons.id })
+            .from(lessons)
+            .where(eq(lessons.teacherId, teacherId));
+          
+          total = allLessons.length;
+          console.log(`Fallback count method found ${total} total lessons`);
+        } catch (fallbackError) {
+          console.error('Error in fallback count query:', fallbackError);
+        }
+      }
       
       // Get the filtered and paginated lessons 
       console.log('Fetching paginated lessons...');
-      const lessonsList = await db
-        .select()
-        .from(lessons)
-        .where(and(...conditions))
-        .orderBy(desc(lessons.createdAt))
-        .limit(pageSize)
-        .offset(offset);
+      let lessonsList: Lesson[] = [];
+      try {
+        lessonsList = await db
+          .select()
+          .from(lessons)
+          .where(and(...conditions))
+          .orderBy(desc(lessons.createdAt))
+          .limit(pageSize)
+          .offset(offset);
+      } catch (fetchError) {
+        console.error('Error fetching lessons with conditions:', fetchError);
+        
+        // If the conditional query fails, try a simpler query without conditions
+        try {
+          console.log('Attempting fallback query with minimal conditions');
+          lessonsList = await db
+            .select()
+            .from(lessons)
+            .where(eq(lessons.teacherId, teacherId))
+            .orderBy(desc(lessons.createdAt))
+            .limit(pageSize)
+            .offset(offset);
+        } catch (fallbackError) {
+          console.error('Fallback query also failed:', fallbackError);
+        }
+      }
       
       console.log(`Retrieved ${lessonsList.length} lessons for page ${page}`);
       

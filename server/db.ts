@@ -11,5 +11,48 @@ if (!process.env.DATABASE_URL) {
   );
 }
 
-export const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+console.log('Initializing database connection');
+
+// Add connection configuration with timeouts and error handling
+export const pool = new Pool({ 
+  connectionString: process.env.DATABASE_URL,
+  max: 20, // Maximum number of clients in the pool
+  idleTimeoutMillis: 30000, // Close idle clients after 30 seconds
+  connectionTimeoutMillis: 10000, // Return an error after 10 seconds if connection couldn't be established
+});
+
+// Handle pool errors
+pool.on('error', (err, client) => {
+  console.error('Unexpected error on idle database client', err);
+});
+
+// Add connection test function
+export async function testDatabaseConnection() {
+  let client;
+  try {
+    client = await pool.connect();
+    const result = await client.query('SELECT 1');
+    console.log('Database connection successful:', result.rows[0]);
+    return true;
+  } catch (error) {
+    console.error('Database connection failed:', error);
+    return false;
+  } finally {
+    if (client) client.release();
+  }
+}
+
+// Run the test immediately to check connection at startup
+testDatabaseConnection()
+  .then(success => {
+    if (success) {
+      console.log('Database connection validated at startup');
+    } else {
+      console.error('Database connection failed at startup, but continuing anyway');
+    }
+  })
+  .catch(error => {
+    console.error('Error during database validation:', error);
+  });
+
 export const db = drizzle({ client: pool, schema });

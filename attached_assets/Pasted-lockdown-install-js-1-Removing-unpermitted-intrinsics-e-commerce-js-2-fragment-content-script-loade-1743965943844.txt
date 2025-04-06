@@ -1,0 +1,126 @@
+lockdown-install.js:1 Removing unpermitted intrinsics
+e-commerce.js:2 fragment content script loaded
+e-commerce.js:2 google content script loaded
+e-commerce.js:2 overlay content script loaded
+e-commerce.js:2 overlay button content script loaded
+e-commerce.js:2 remote fragment content script loaded
+e-commerce.js:2 snippet content script loaded
+e-commerce.js:2 title content script loaded
+e-commerce.js:2 trigger-event content script loaded
+e-commerce.js:2 url content script loaded
+e-commerce.js:2 not checkout page:  https://planwiseesl.com/
+e-commerce.js:2 navigated to https://planwiseesl.com/
+ Removing unpermitted intrinsics
+api/lessons:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()
+e-commerce.js:2 navigated to https://planwiseesl.com/history
+lockdown-install.js:1 Removing unpermitted intrinsics
+lockdown-install.js:1 Removing unpermitted intrinsics
+
+                
+          
+          
+          
+         Chrome is moving towards a new experience that allows users to choose to browse without third-party cookies.
+m.stripe.network/inner.html#url=https%3A%2F%2Fplanwiseesl.com%2Fhistory&title=PLAN%20WISE%20ESL%20%7C%20AI-Powered%20Lesson%20Generator%20for%20ESL%20Teachers&referrer=https%3A%2F%2Freplit.com%2F&muid=c6424e49-8248-4eb9-bb3b-01a56959281985183b&sid=64b0020b-d850-45aa-b4fd-49bd575fc6581cf9b0&version=6&preview=false&__shared_params__[version]=acacia:1 Error handling response: Error: runtime/sendMessage: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received
+    at chrome-extension://fdjamakpfbbddfjaooikfcpapjohcfmg/content/contentScripts/kwift.CHROME.js:1:184307
+m.stripe.network/inner.html#url=https%3A%2F%2Fplanwiseesl.com%2Fhistory&title=PLAN%20WISE%20ESL%20%7C%20AI-Powered%20Lesson%20Generator%20for%20ESL%20Teachers&referrer=https%3A%2F%2Freplit.com%2F&muid=c6424e49-8248-4eb9-bb3b-01a56959281985183b&sid=64b0020b-d850-45aa-b4fd-49bd575fc6581cf9b0&version=6&preview=false&__shared_params__[version]=acacia:1 Error handling response: Error: runtime/sendMessage: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received
+    at chrome-extension://fdjamakpfbbddfjaooikfcpapjohcfmg/content/contentScripts/kwift.CHROME.js:1:184307
+lessons:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()
+e-commerce.js:2 navigated to https://planwiseesl.com/
+VM41:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM14755:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM4473:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM4474:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM42:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM14761:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM4484:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM4485:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+index-ClImRPQz.js:48 
+            
+            
+           GET https://planwiseesl.com/api/lessons 500 (Internal Server Error)
+(anonymous) @ index-ClImRPQz.js:48
+i @ index-ClImRPQz.js:48
+w @ index-ClImRPQz.js:48
+start @ index-ClImRPQz.js:48
+fetch @ index-ClImRPQz.js:48
+pl @ index-ClImRPQz.js:48
+onSubscribe @ index-ClImRPQz.js:48
+subscribe @ index-ClImRPQz.js:48
+(anonymous) @ index-ClImRPQz.js:48
+qT @ index-ClImRPQz.js:38
+bf @ index-ClImRPQz.js:40
+Wo @ index-ClImRPQz.js:40
+s4 @ index-ClImRPQz.js:40
+Ni @ index-ClImRPQz.js:40
+F0 @ index-ClImRPQz.js:40
+pi @ index-ClImRPQz.js:38
+(anonymous) @ index-ClImRPQz.js:40
+e-commerce.js:2 navigated to https://planwiseesl.com/history
+index-ClImRPQz.js:48 
+            
+            
+           GET https://planwiseesl.com/api/lessons 500 (Internal Server Error)
+(anonymous) @ index-ClImRPQz.js:48
+i @ index-ClImRPQz.js:48
+w @ index-ClImRPQz.js:48
+start @ index-ClImRPQz.js:48
+fetch @ index-ClImRPQz.js:48
+pl @ index-ClImRPQz.js:48
+onSubscribe @ index-ClImRPQz.js:48
+subscribe @ index-ClImRPQz.js:48
+(anonymous) @ index-ClImRPQz.js:48
+qT @ index-ClImRPQz.js:38
+bf @ index-ClImRPQz.js:40
+Wo @ index-ClImRPQz.js:40
+s4 @ index-ClImRPQz.js:40
+Ni @ index-ClImRPQz.js:40
+F0 @ index-ClImRPQz.js:40
+pi @ index-ClImRPQz.js:38
+(anonymous) @ index-ClImRPQz.js:40
