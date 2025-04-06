@@ -415,9 +415,7 @@ export default function SettingsPage() {
                             onClick={async () => {
                               if (confirm("Are you sure you want to cancel your subscription? Your subscription will remain active until the end of your current billing period.")) {
                                 try {
-                                  await apiRequest("/api/subscriptions/cancel", {
-                                    method: "POST"
-                                  });
+                                  const response = await apiRequest("POST", "/api/subscriptions/cancel");
                                   toast({
                                     title: "Subscription cancelled",
                                     description: "Your subscription has been scheduled for cancellation at the end of the current billing period.",
