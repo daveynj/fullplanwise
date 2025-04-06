@@ -386,6 +386,90 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   // Subscription Routes
+  // Endpoint to manually fetch and apply a Stripe subscription based on session ID
+  app.post("/api/subscriptions/fetch-session", ensureAuthenticated, async (req, res) => {
+    try {
+      if (!stripe) {
+        return res.status(500).json({ message: "Stripe API key not configured" });
+      }
+      
+      const sessionId = req.body.sessionId;
+      const userId = req.user!.id;
+      
+      if (!sessionId) {
+        return res.status(400).json({ message: "Session ID is required" });
+      }
+      
+      console.log(`Fetching session ${sessionId} for user ${userId}`);
+      
+      // Retrieve the checkout session from Stripe
+      const session = await stripe.checkout.sessions.retrieve(sessionId);
+      
+      if (!session) {
+        return res.status(404).json({ message: "Session not found" });
+      }
+      
+      // Check if this is a subscription session
+      if (session.mode !== 'subscription' || !session.subscription) {
+        return res.status(400).json({ message: "Not a subscription session" });
+      }
+      
+      const planId = session.metadata?.planId;
+      const subscriptionId = session.subscription as string;
+      
+      // Update user with subscription info
+      await storage.updateUserStripeInfo(userId, {
+        stripeCustomerId: session.customer as string,
+        stripeSubscriptionId: subscriptionId
+      });
+      
+      // Set the subscription tier and add credits based on the plan
+      let subscriptionTier = 'free';
+      let creditsToAdd = 0;
+      
+      // Map the plan ID to the appropriate tier and credits
+      if (planId === 'basic_monthly') {
+        subscriptionTier = 'basic';
+        creditsToAdd = 20; // Basic plan includes 20 credits per month
+      } else if (planId === 'premium_monthly') {
+        subscriptionTier = 'premium';
+        creditsToAdd = 60; // Premium plan includes 60 credits per month
+      } else if (planId === 'annual_plan') {
+        subscriptionTier = 'annual';
+        creditsToAdd = 250; // Annual plan includes 250 credits per year
+      }
+      
+      // Get the current user
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      // Update user's subscription tier and credits
+      const updatedUser = await storage.updateUser(userId, {
+        subscriptionTier,
+        credits: user.credits + creditsToAdd
+      });
+      
+      console.log(`Manual credit allocation: User ${userId} subscribed to ${subscriptionTier} plan. Added ${creditsToAdd} credits. New total: ${updatedUser.credits}`);
+      
+      // Return the updated user info
+      const { password, ...userWithoutPassword } = updatedUser;
+      res.json({
+        message: "Subscription applied successfully",
+        user: userWithoutPassword,
+        creditsAdded: creditsToAdd,
+        plan: subscriptionTier
+      });
+      
+    } catch (error: any) {
+      console.error("Error fetching subscription session:", error);
+      res.status(500).json({ 
+        message: "Error processing subscription: " + error.message
+      });
+    }
+  });
+
   app.post("/api/subscriptions/create", ensureAuthenticated, async (req, res) => {
     try {
       if (!stripe) {
@@ -457,39 +541,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       console.log(`Subscription checkout session created: ${session.id}`);
       console.log(`Session URL: ${session.url}`);
-      
-      // IMMEDIATE CREDIT ALLOCATION: Add credits directly since webhooks seem to be failing
-      if (planId === 'annual_plan') {
-        // Add 250 credits for annual plan
-        const user = await storage.getUser(userId);
-        if (user) {
-          const updatedUser = await storage.updateUser(userId, {
-            subscriptionTier: 'annual',
-            credits: user.credits + 250
-          });
-          console.log(`IMMEDIATE CREDIT ALLOCATION: Added 250 credits to user ${userId} for annual plan. New total: ${updatedUser.credits}`);
-        }
-      } else if (planId === 'premium_monthly') {
-        // Add 60 credits for premium plan
-        const user = await storage.getUser(userId);
-        if (user) {
-          const updatedUser = await storage.updateUser(userId, {
-            subscriptionTier: 'premium',
-            credits: user.credits + 60
-          });
-          console.log(`IMMEDIATE CREDIT ALLOCATION: Added 60 credits to user ${userId} for premium plan. New total: ${updatedUser.credits}`);
-        }
-      } else if (planId === 'basic_monthly') {
-        // Add 20 credits for basic plan
-        const user = await storage.getUser(userId);
-        if (user) {
-          const updatedUser = await storage.updateUser(userId, {
-            subscriptionTier: 'basic',
-            credits: user.credits + 20
-          });
-          console.log(`IMMEDIATE CREDIT ALLOCATION: Added 20 credits to user ${userId} for basic plan. New total: ${updatedUser.credits}`);
-        }
-      }
       
       res.json({ 
         sessionId: session.id,

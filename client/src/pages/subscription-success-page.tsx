@@ -37,23 +37,56 @@ export default function SubscriptionSuccessPage() {
 
   // When the component mounts, refresh the user data and fetch subscription details
   useEffect(() => {
-    // Force a refresh of user data to get updated credits
+    // First refresh user data
     queryClient.invalidateQueries({ queryKey: ["/api/user"] });
     
-    // Set a timeout to refresh user data again after a short delay
-    // This ensures we catch the updated credit count after the backend processes it
-    const refreshTimer = setTimeout(() => {
-      queryClient.invalidateQueries({ queryKey: ["/api/user"] });
-      console.log("Refreshing user data to get latest credit count");
-    }, 1000);
-    
-    // Show success toast
-    toast({
-      title: "Subscription Activated",
-      description: "Your subscription has been successfully activated.",
-    });
-    
-    return () => clearTimeout(refreshTimer);
+    // If we have a session ID, manually fetch and apply the subscription
+    if (sessionId) {
+      // Show loading toast
+      toast({
+        title: "Processing Subscription",
+        description: "Please wait while we activate your subscription...",
+      });
+      
+      // Call the fetch-session endpoint to manually apply the credits
+      fetch('/api/subscriptions/fetch-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ sessionId })
+      })
+      .then(res => res.json())
+      .then(response => {
+        console.log('Manual subscription application successful:', response);
+        
+        // Refresh user data to get updated credits
+        queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+        
+        // Show success toast
+        toast({
+          title: "Subscription Activated",
+          description: `Your subscription has been activated and ${response.creditsAdded} credits have been added to your account.`,
+          variant: "default",
+        });
+      })
+      .catch(error => {
+        console.error('Error applying subscription:', error);
+        
+        // Show error toast
+        toast({
+          title: "Subscription Processing Error",
+          description: "There was an error activating your subscription. Please contact support.",
+          variant: "destructive",
+        });
+      });
+    } else {
+      // Show success toast
+      toast({
+        title: "Subscription Activated",
+        description: "Your subscription has been successfully activated.",
+      });
+    }
 
     // If we have a session ID and user data, try to fetch subscription details
     if (sessionId && user) {
