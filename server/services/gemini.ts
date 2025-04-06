@@ -93,33 +93,10 @@ export class GeminiService {
             cleanedContent = text.replace(/```json\s*/g, '').replace(/```\s*$/g, '').trim();
           }
           
-          // Debug: Log the length of the response to diagnose if it's too large
-          console.log(`Response length: ${cleanedContent.length} characters`);
-          
           // Now try to parse the cleaned content
           try {
-            // Attempt to fix common JSON issues before parsing
-            const fixedContent = this.fixCommonJsonIssues(cleanedContent);
-            console.log('Applied JSON fixes, attempting to parse');
-            
-            let jsonContent;
-            try {
-              jsonContent = JSON.parse(fixedContent);
-              console.log('Successfully parsed JSON content');
-            } catch (parseError) {
-              // If JSON.parse fails with the entire content, try to parse it in chunks or with a more targeted approach
-              console.log('Standard parsing failed, attempting alternative parsing methods');
-              
-              // Let's try extracting the JSON with regex
-              const extractedJson = this.extractJsonFromText(cleanedContent);
-              if (extractedJson) {
-                console.log('Successfully extracted JSON structure through regex');
-                jsonContent = extractedJson;
-              } else {
-                // Rethrow the original error if extraction fails
-                throw parseError;
-              }
-            }
+            const jsonContent = JSON.parse(cleanedContent);
+            console.log('Successfully parsed JSON content');
             
             // Check if jsonContent has required structure
             if (jsonContent.title && jsonContent.sections && Array.isArray(jsonContent.sections)) {
@@ -127,49 +104,23 @@ export class GeminiService {
               return await this.formatLessonContent(jsonContent);
             } else {
               console.warn('Parsed JSON is missing required structure');
-              // Try to construct a valid structure from what we have
-              const patchedContent = {
-                title: jsonContent.title || `Lesson on ${params.topic}`,
+              return {
+                title: `Lesson on ${params.topic}`,
+                content: "The generated lesson is missing required structure",
+                error: 'Invalid lesson structure',
                 provider: 'gemini',
-                sections: jsonContent.sections || []
+                sections: [
+                  {
+                    type: "error",
+                    title: "Content Error",
+                    content: "The lesson structure is incomplete. Please try regenerating the lesson."
+                  }
+                ]
               };
-              
-              if (!Array.isArray(patchedContent.sections) || patchedContent.sections.length === 0) {
-                console.warn('No valid sections found, returning error');
-                return {
-                  title: patchedContent.title,
-                  provider: 'gemini',
-                  sections: [
-                    {
-                      type: "error",
-                      title: "Content Error",
-                      content: "The lesson structure is incomplete. Please try regenerating the lesson."
-                    }
-                  ]
-                };
-              }
-              
-              console.log('Patched structure with available content, proceeding');
-              return await this.formatLessonContent(patchedContent);
             }
-          } catch (error) {
+          } catch (jsonError) {
             // If we fail to parse as JSON, try to handle it as best we can
-            console.error('Error parsing Gemini response as JSON:', error);
-            
-            // Type-safe way to extract error details if it's a SyntaxError or similar
-            if (error instanceof Error) {
-              console.error('Error details:', error.message);
-              // Try to extract position info if available in the message
-              const positionMatch = error.message.match(/position (\d+)/);
-              if (positionMatch) {
-                console.error('Error at position:', positionMatch[1]);
-              }
-            }
-            
-            // Save the problematic content for diagnosis
-            const errorContentPath = `./logs/ERROR_content_gemini_${requestId}.txt`;
-            fs.writeFileSync(errorContentPath, cleanedContent);
-            console.log(`Problematic content saved to ${errorContentPath}`);
+            console.error('Error parsing Gemini response as JSON:', jsonError);
             
             return {
               title: `Lesson on ${params.topic}`,
@@ -249,10 +200,9 @@ CRITICAL: Your output must be properly formatted JSON with NO ERRORS!
 4. CRITICAL: FOR EACH VOCABULARY WORD, YOU MUST INCLUDE THE 'pronunciation' OBJECT WITH:
    - 'syllables': An array of syllables (e.g., ["vo", "cab", "u", "lar", "y"] for "vocabulary")
    - 'stressIndex': The index of the stressed syllable (0-based, e.g., 1 for "vocabulary" where "cab" is stressed)
-   - 'phoneticGuide': A NATURAL syllable-by-syllable pronunciation guide with capitals for stress 
-      (e.g., "voh-KAB-yuh-lair-ee" for "vocabulary")
-      DO NOT use IPA notation like "/vəˈkæbjələri/"
-      DO NOT use the format "v as in victory, o as in orange, cab as in cabinet..."
+   - 'phoneticGuide': A NATURAL pronunciation guide that shows how to pronounce the word as would be found in a dictionary. 
+      GOOD EXAMPLE: /vəˈkæbjələri/ or /voh-KAB-yuh-lair-ee/
+      BAD EXAMPLE: "v as in victory, o as in orange, cab as in cabinet..."
 
 For multi-word phrases, break down EACH WORD into syllables and list them sequentially as shown here:
 - "industrial revolution" → syllables: ["in", "dus", "tri", "al", "rev", "o", "lu", "tion"], stressIndex: 6
@@ -432,7 +382,7 @@ For each vocabulary item, you MUST include:
 11. Pronunciation information with:
    - syllables: The word broken down into syllables as an array of strings
    - stressIndex: Which syllable receives primary stress (zero-based index)
-   - phoneticGuide: A natural syllable-by-syllable pronunciation guide with capitals for stress (e.g., "voh-KAB-yuh-lair-ee" for "vocabulary"). DO NOT use IPA notation. DO NOT use the format "v as in victory, o as in orange" etc.
+   - phoneticGuide: A simplified pronunciation guide using regular characters
 12. An image prompt (NEW!) - A detailed description (2-3 sentences) of what an image for this word should look like. The image prompt should:
    - Clearly illustrate the meaning of the word in a visual way
    - Include specific visual elements that relate to the example sentence
@@ -814,129 +764,6 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
     }
     
     return lessonContent;
-  }
-
-  /**
-   * Try to fix common JSON issues that might cause parsing to fail
-   * @param content The potentially broken JSON string
-   * @returns Fixed JSON string
-   */
-  private fixCommonJsonIssues(content: string): string {
-    let fixed = content;
-
-    // Step 1: Fix trailing commas in arrays and objects which are invalid in JSON
-    fixed = fixed.replace(/,(\s*[\]}])/g, '$1');
-    
-    // Step 2: Fix missing quotes around property names
-    fixed = fixed.replace(/([{,]\s*)([a-zA-Z0-9_]+)(\s*:)/g, '$1"$2"$3');
-    
-    // Step 3: Fix single quotes used instead of double quotes
-    // This is more complex as we need to avoid replacing single quotes in text
-    // For a simple approach, we'll just replace all single quotes that appear to be around properties
-    fixed = fixed.replace(/([{,]\s*)'([^']+)'(\s*:)/g, '$1"$2"$3');
-    
-    // Step 4: Fix unescaped quotes in strings
-    // This is the most challenging part of JSON fixing
-    
-    // 4.1: Fix unescaped quotes in specific patterns we've seen in image prompts
-    // The pattern is like: concept like "justice" on 
-    fixed = fixed.replace(/(like\s+)"([^"]+)"(\s+on)/g, '$1\\"$2\\"$3');
-    
-    // 4.2: More general fix for unescaped quotes in known contexts
-    // Look for patterns like: "imagePrompt": "A person with "air quotes" standing"
-    fixed = fixed.replace(/("imagePrompt":\s*"[^"]*)"([^"]+)"([^"]*")/g, '$1\\"$2\\"$3');
-    fixed = fixed.replace(/("paragraphContext":\s*"[^"]*)"([^"]+)"([^"]*")/g, '$1\\"$2\\"$3');
-    fixed = fixed.replace(/("question":\s*"[^"]*)"([^"]+)"([^"]*")/g, '$1\\"$2\\"$3');
-    fixed = fixed.replace(/("examples":\s*\[\s*"[^"]*)"([^"]+)"([^"]*")/g, '$1\\"$2\\"$3');
-    fixed = fixed.replace(/("description":\s*"[^"]*)"([^"]+)"([^"]*")/g, '$1\\"$2\\"$3');
-    fixed = fixed.replace(/("definition":\s*"[^"]*)"([^"]+)"([^"]*")/g, '$1\\"$2\\"$3');
-    fixed = fixed.replace(/("usageNotes":\s*"[^"]*)"([^"]+)"([^"]*")/g, '$1\\"$2\\"$3');
-    fixed = fixed.replace(/("teachingTips":\s*"[^"]*)"([^"]+)"([^"]*")/g, '$1\\"$2\\"$3');
-    fixed = fixed.replace(/("usage":\s*"[^"]*)"([^"]+)"([^"]*")/g, '$1\\"$2\\"$3');
-    
-    // Step 5: Fix common formatting issues
-    fixed = fixed.replace(/\r\n|\r|\n/g, ' '); // Replace newlines with spaces
-    fixed = fixed.replace(/\t/g, ' '); // Replace tabs with spaces
-    fixed = fixed.replace(/\s+/g, ' '); // Replace multiple spaces with a single space
-    
-    console.log('Applied JSON formatting fixes');
-    return fixed;
-  }
-
-  /**
-   * Try to extract JSON from text using a more lenient approach
-   * @param text The text possibly containing JSON
-   * @returns Parsed JSON object or null if extraction fails
-   */
-  private extractJsonFromText(text: string): any | null {
-    try {
-      console.log('Attempting to extract JSON from text...');
-      
-      // First attempt: Find content between braces { ... } that looks like JSON
-      const braceMatch = text.match(/{[\s\S]*}/);
-      if (braceMatch) {
-        // Try to parse the extracted content
-        try {
-          const extracted = this.fixCommonJsonIssues(braceMatch[0]);
-          console.log('Applying fixes and attempting to parse extracted JSON...');
-          return JSON.parse(extracted);
-        } catch (e) {
-          console.log('Brace extraction failed:', e);
-          
-          // Try a more aggressive approach with additional fixes
-          try {
-            // Try to recover just the object structure with basic properties
-            const titleMatch = text.match(/"title"\s*:\s*"([^"]+)"/);
-            const sectionsStart = text.indexOf('"sections"');
-            
-            if (titleMatch && sectionsStart > -1) {
-              console.log('Attempting to reconstruct basic lesson structure...');
-              // Construct a minimal valid JSON object
-              const basicStructure = {
-                title: titleMatch[1],
-                provider: 'gemini',
-                sections: []
-              };
-              
-              return basicStructure;
-            }
-          } catch (recoveryError) {
-            console.log('Failed to recover basic structure:', recoveryError);
-          }
-        }
-      }
-      
-      // Second attempt: Try to extract JSON section by section
-      console.log('Attempting to extract sections individually...');
-      const vocabMatch = text.match(/"vocabulary"\s*:\s*\[[\s\S]*?\]/);
-      const readingMatch = text.match(/"reading"\s*:\s*\{[\s\S]*?\}/);
-      const discussionMatch = text.match(/"discussion"\s*:\s*\{[\s\S]*?\}/);
-      
-      if (vocabMatch || readingMatch || discussionMatch) {
-        // Build partial content
-        const partialContent: any = {
-          title: "Recovered Lesson",
-          provider: 'gemini',
-          sections: []
-        };
-        
-        // Try to extract title
-        const titleMatch = text.match(/"title"\s*:\s*"([^"]+)"/);
-        if (titleMatch) {
-          partialContent.title = titleMatch[1];
-        }
-        
-        console.log('Successfully created partial content from sections');
-        return partialContent;
-      }
-      
-      // If we reached here, no extraction method worked
-      console.log('All JSON extraction methods failed');
-      return null;
-    } catch (error) {
-      console.error('Error in JSON extraction:', error);
-      return null;
-    }
   }
 }
 
