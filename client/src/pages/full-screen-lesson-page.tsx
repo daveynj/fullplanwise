@@ -7,6 +7,7 @@ import { ArrowLeft, X, ExpandIcon, MinimizeIcon, Download, Printer } from "lucid
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Lesson } from "@shared/schema";
+import { queryClient } from "@/lib/queryClient";
 
 export default function FullScreenLessonPage() {
   const [location] = useLocation();
@@ -112,6 +113,8 @@ export default function FullScreenLessonPage() {
       if (document.exitFullscreen) {
         document.exitFullscreen().then(() => {
           setIsFullScreen(false);
+          // Manually refresh lessons cache to ensure data is available
+          queryClient.invalidateQueries({ queryKey: ["/api/lessons"] });
         });
       }
     }
@@ -159,7 +162,7 @@ export default function FullScreenLessonPage() {
           <Button 
             variant="default" 
             className="bg-primary text-white font-medium"
-            onClick={() => window.location.href = "/history"}
+            onClick={() => window.location.replace("/history")}
           >
             <ArrowLeft className="mr-2 h-4 w-4" /> Back to Lessons
           </Button>
@@ -177,7 +180,7 @@ export default function FullScreenLessonPage() {
             <Button
               variant="ghost"
               className="flex items-center text-gray-600 hover:text-primary mr-3 p-2"
-              onClick={() => window.location.href = "/history"}
+              onClick={() => window.location.replace("/history")}
             >
               <ArrowLeft className="h-5 w-5 mr-1" />
               <span className="font-medium">Exit</span>
