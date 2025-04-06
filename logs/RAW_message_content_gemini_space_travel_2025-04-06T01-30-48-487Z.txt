@@ -1,0 +1,252 @@
+```json
+{
+  "title": "A Journey Through the Cosmos: Exploring Space Travel",
+  "level": "B1",
+  "focus": "general",
+  "estimatedTime": 60,
+  "sections": [
+    {
+      "type": "warmup",
+      "title": "Warm-up Activity: Space Travel Vocabulary Brainstorm",
+      "content": "Let's get ready to explore the universe! We'll start by brainstorming words and ideas related to space travel.  Think about what comes to mind when you hear the phrase 'space travel,' including objects, actions, and concepts.",
+      "questions": [
+        "What words or phrases do you associate with space travel?",
+        "If you could travel to any planet, which one would you choose and why?",
+        "What are some of the challenges of traveling through space?",
+        "What technological advancements have made space travel possible?",
+        "What do you think the future of space travel holds?"
+      ],
+      "targetVocabulary": ["orbit", "astronaut", "launch", "exploration", "technology"],
+      "procedure": "1. Begin by asking students the brainstorming questions.  2. Write student responses on the board, grouping them into categories like 'objects,' 'actions,' and 'challenges.' 3. Introduce the target vocabulary words: orbit, astronaut, launch, exploration, and technology.  4. Ask students to use each word in a sentence related to space travel. 5. Briefly discuss the meaning of each word and its relevance to the topic.",
+      "teacherNotes": "Encourage active participation and a variety of ideas.  Guide the discussion towards the target vocabulary words to ensure they are understood before the reading."
+    },
+    {
+      "type": "reading",
+      "title": "Reading Text: Reaching for the Stars - The History and Future of Space Travel",
+      "introduction": "Have you ever looked up at the night sky and wondered what's out there?  Humans have been fascinated by space for centuries, and the dream of traveling beyond Earth has driven incredible innovation.  This reading explores the history of space travel, from early rocketry to modern missions, and considers the exciting possibilities that lie ahead.",
+      "paragraphs": [
+        "The journey into space began with dreams and theories, but it truly took flight in the 20th century.  Early pioneers like Konstantin Tsiolkovsky and Robert Goddard laid the groundwork for rocket technology, paving the way for the first artificial satellite, Sputnik 1, to orbit Earth in 1957. This event marked the beginning of the 'Space Race' between the United States and the Soviet Union, a period of intense competition and rapid advancements in space exploration.",
+        "The 1960s witnessed a giant leap for mankind when Neil Armstrong became the first human to walk on the Moon in 1969.  This monumental achievement captured the world's imagination and inspired a generation of scientists and engineers.  The Apollo missions that followed continued to gather valuable data about the Moon and pushed the boundaries of human spaceflight.",
+        "Since the Apollo era, space exploration has evolved to include robotic missions to other planets, the development of reusable spacecraft like the Space Shuttle, and the construction of the International Space Station, a collaborative effort involving multiple countries.  These advancements have expanded our understanding of the solar system and beyond.",
+        "Today, space travel is no longer limited to government agencies. Private companies are now playing a significant role, developing new technologies and offering commercial spaceflights.  The dream of space tourism is becoming a reality, opening up opportunities for ordinary people to experience the wonder of space firsthand.",
+        "The future of space travel holds incredible potential.  Scientists are exploring the possibility of establishing permanent bases on the Moon and Mars, developing advanced propulsion systems for interstellar travel, and searching for signs of life beyond Earth.  As technology continues to advance, the possibilities seem limitless. Who knows what amazing discoveries await us in the vast expanse of the cosmos?"
+      ],
+      "teacherNotes": "Encourage students to visualize the events described in the text and to consider the challenges and triumphs of space exploration."
+    },
+    {
+      "type": "vocabulary",
+      "title": "Key Vocabulary",
+      "words": [
+        {
+          "term": "orbit",
+          "partOfSpeech": "noun",
+          "definition": "The curved path that an object in space follows around a star, planet, or moon.",
+          "example": "The satellite is in orbit around the Earth.",
+          "collocations": ["in orbit", "Earth orbit", "low orbit"],
+          "notes": "Orbit can also be used as a verb, meaning 'to travel around a celestial object in a curved path.'",
+          "teachingTips": "Use visuals to illustrate the concept of an orbit.  Have students draw diagrams of planets orbiting a star.",
+          "pronunciation": {
+            "syllables": ["or", "bit"],
+            "stressIndex": 0,
+            "phoneticGuide": "OR-bit"
+          },
+          "imagePrompt": "A satellite circling Earth, following a curved path. The Earth should be depicted as a blue and green sphere, and the satellite as a smaller, metallic object. No text or words should appear in the image."
+        },
+        {
+          "term": "astronaut",
+          "partOfSpeech": "noun",
+          "definition": "A person who travels in space.",
+          "example": "The astronaut floated in zero gravity.",
+          "collocations": ["astronaut training", "former astronaut", "spacewalking astronaut"],
+          "notes": "Astronauts undergo rigorous training to prepare for the challenges of space travel.",
+          "teachingTips": "Show pictures or videos of astronauts in space. Discuss the qualities and skills needed to be an astronaut.",
+          "pronunciation": {
+            "syllables": ["as", "tro", "naut"],
+            "stressIndex": 1,
+            "phoneticGuide": "AS-tro-naut"
+          },
+          "imagePrompt": "An astronaut in a spacesuit floating in the blackness of space, with the Earth visible in the background. The astronaut should be tethered to a spacecraft. No text or words should appear in the image."
+        },
+        {
+          "term": "launch",
+          "partOfSpeech": "verb",
+          "definition": "To send something, such as a spacecraft or rocket, into the air or into space.",
+          "example": "They launched the rocket into space.",
+          "collocations": ["rocket launch", "launch site", "launch date"],
+          "notes": "Launch can also be used as a noun, referring to the act of sending something into space.",
+          "teachingTips": "Show a video of a rocket launch. Discuss the complex process involved in launching a spacecraft.",
+          "pronunciation": {
+            "syllables": ["launch"],
+            "stressIndex": 0,
+            "phoneticGuide": "lawnch"
+          },
+          "imagePrompt": "A rocket lifting off from a launchpad, with flames and smoke billowing beneath it. The rocket should be ascending into the sky. No text or words should appear in the image."
+        },
+        {
+          "term": "exploration",
+          "partOfSpeech": "noun",
+          "definition": "The act of traveling through an unfamiliar area in order to learn about it.",
+          "example": "Space exploration has led to many discoveries.",
+          "collocations": ["space exploration", "deep-sea exploration", "scientific exploration"],
+          "notes": "Exploration often involves taking risks and facing unknown challenges.",
+          "teachingTips": "Discuss the benefits and risks of space exploration.  Have students research different space exploration missions.",
+          "pronunciation": {
+            "syllables": ["ex", "plo", "ra", "tion"],
+            "stressIndex": 2,
+            "phoneticGuide": "ex-plo-RAY-shun"
+          },
+          "imagePrompt": "A rover exploring the surface of Mars, with red rocks and canyons in the background. The rover should be collecting samples or taking pictures. No text or words should appear in the image."
+        },
+        {
+          "term": "technology",
+          "partOfSpeech": "noun",
+          "definition": "The application of scientific knowledge for practical purposes, especially in industry.",
+          "example": "Advances in technology have made space travel possible.",
+          "collocations": ["new technology", "advanced technology", "space technology"],
+          "notes": "Technology plays a crucial role in many aspects of modern life.",
+          "teachingTips": "Brainstorm different technologies used in space travel. Discuss the impact of technology on our lives.",
+          "pronunciation": {
+            "syllables": ["tech", "nol", "o", "gy"],
+            "stressIndex": 1,
+            "phoneticGuide": "tek-NOL-o-jee"
+          },
+          "imagePrompt": "A close-up of a computer screen displaying complex data and diagrams related to space travel, with a person's hand interacting with the screen using a stylus. No text or words should appear in the image."
+        }
+      ]
+    },
+    {
+      "type": "comprehension",
+      "title": "Reading Comprehension",
+      "questions": [
+        {
+          "question": "What marked the beginning of the 'Space Race'?",
+          "options": ["The moon landing", "The launch of Sputnik 1", "The development of the Space Shuttle", "The construction of the International Space Station"],
+          "answer": "B",
+          "explanation": "The launch of Sputnik 1 by the Soviet Union in 1957 triggered the 'Space Race' with the United States."
+        },
+        {
+          "question": "Who was the first human to walk on the Moon?",
+          "options": ["Yuri Gagarin", "Buzz Aldrin", "Neil Armstrong", "John Glenn"],
+          "answer": "C",
+          "explanation": "Neil Armstrong took the first steps on the Moon in 1969."
+        },
+        {
+          "question": "What is the International Space Station?",
+          "options": ["A rocket launch site", "A private space tourism company", "A collaborative space station involving multiple countries", "A telescope orbiting Earth"],
+          "answer": "C",
+          "explanation": "The International Space Station is a joint project involving several nations, serving as a research laboratory and observation platform in space."
+        },
+        {
+          "question": "Are private companies involved in space travel today?",
+          "options": ["True", "False"],
+          "answer": "True",
+          "explanation": "Private companies are now playing a significant role in developing space technology and offering commercial spaceflights."
+        },
+        {
+          "question": "Has a permanent base been established on Mars?",
+          "options": ["True", "False"],
+          "answer": "False",
+          "explanation": "While scientists are exploring the possibility of establishing bases on Mars, no permanent base currently exists."
+        }
+      ]
+    },
+    {
+      "type": "sentenceFrames",
+      "title": "Sentence Practice",
+      "frames": [
+        {
+          "pattern": "I think that _____ is important because _____.",
+          "examples": [
+            "I think that space exploration is important because it expands our knowledge of the universe.",
+            "I think that technology is important because it makes space travel possible."
+          ],
+          "usageNotes": "Use this pattern to express your opinion about the importance of something.  Provide a reason to support your opinion.",
+          "teachingTips": "Have students practice this pattern with different vocabulary words related to space travel. Encourage them to elaborate on their reasons.",
+          "difficultyLevel": "intermediate",
+          "grammarFocus": "Expressing opinions, using subordinate clauses",
+          "communicativeFunction": "Giving reasons"
+        },
+        {
+          "pattern": "If I were an astronaut, I would _____.",
+          "examples": [
+            "If I were an astronaut, I would explore the Moon.",
+            "If I were an astronaut, I would conduct experiments in zero gravity."
+          ],
+          "usageNotes": "Use this pattern to talk about hypothetical situations related to space travel. Use the conditional to express what you would do in a specific scenario.",
+          "teachingTips": "Encourage students to be creative and imaginative with their responses.  Ask follow-up questions to elicit more details.",
+          "difficultyLevel": "intermediate",
+          "grammarFocus": "Conditional sentences (second conditional)",
+          "communicativeFunction": "Hypothesizing"
+        }
+      ]
+    },
+    {
+      "type": "discussion",
+      "title": "Discussion Questions",
+      "questions": [
+        {
+          "paragraphContext": "Imagine a future where space travel is as common as air travel is today.  People commute to orbital hotels, take weekend trips to the Moon, and even relocate to Mars.  This seemingly fantastical scenario might be closer than we think, as private companies invest heavily in space tourism and colonization efforts.  How would this accessibility change our perception of space and our place in the universe?",
+          "question": "If space travel became commonplace, how do you think it would impact our society and culture?",
+          "imagePrompt": "A futuristic cityscape with flying cars and spaceships taking off and landing, showing a busy spaceport with people boarding and disembarking spacecraft. No text or words should appear in the image."
+        },
+        {
+          "paragraphContext": "The exploration of space has always been driven by a thirst for knowledge and a desire to push the boundaries of human capability.  From the earliest astronomical observations to the latest robotic missions, we have sought to understand our place in the cosmos.  But what are the ethical considerations of venturing further into space?  Should we prioritize exploring other planets over addressing pressing issues here on Earth?",
+          "question": "Do you think the benefits of space exploration outweigh the costs, and what are the ethical implications of exploring and potentially colonizing other planets?",
+          "imagePrompt": "A split image: one side showing a lush, green Earth, and the other side showing a barren, red Mars. No text or words should appear in the image."
+        },
+        {
+          "paragraphContext": "The challenges of space travel are immense, requiring cutting-edge technology and incredible human resilience.  From the extreme temperatures and radiation of space to the psychological effects of isolation and confinement, astronauts face numerous obstacles.  What qualities and skills do you think are essential for someone embarking on a journey into the unknown?",
+          "question": "What are the biggest challenges of space travel, and what kind of person do you think makes a good astronaut?",
+          "imagePrompt": "An astronaut inside a spacecraft, looking out a window at the Earth, with a contemplative expression on their face. No text or words should appear in the image."
+        },
+        {
+          "paragraphContext": "The discovery of extraterrestrial life would be one of the most significant events in human history, potentially reshaping our understanding of biology, philosophy, and religion.  But how would we react to such a discovery?  Would we embrace our cosmic neighbors, or would we view them with suspicion and fear?",
+          "question": "How do you think humanity would react to the discovery of alien life, and what impact would it have on our world?",
+          "imagePrompt": "A scientist in a lab looking through a microscope at a strange, otherworldly organism, with a look of surprise on their face. No text or words should appear in the image."
+        },
+        {
+          "paragraphContext": "The vastness of space is almost incomprehensible, with billions of galaxies, each containing billions of stars.  The sheer scale of the universe can be both awe-inspiring and humbling.  It makes you wonder: are we truly alone in this cosmic ocean, or are there other intelligent civilizations out there, waiting to be discovered?",
+          "question": "Do you believe there is life beyond Earth, and why or why not?",
+          "imagePrompt": "A vast, starry sky filled with galaxies and nebulae, suggesting the immensity of the universe. No text or words should appear in the image."
+        }
+      ]
+    },
+    {
+      "type": "quiz",
+      "title": "Knowledge Check",
+      "questions": [
+        {
+          "question": "What does 'orbit' mean?",
+          "options": ["To launch a rocket", "The path of an object around a celestial body", "A type of spacecraft", "A spacesuit"],
+          "answer": "B",
+          "explanation": "'Orbit' refers to the curved path an object takes around a planet, star, or moon."
+        },
+        {
+          "question": "What is an 'astronaut'?",
+          "options": ["A type of rocket", "A person who travels in space", "A planet", "A star"],
+          "answer": "B",
+          "explanation": "An 'astronaut' is a person trained to travel in space."
+        },
+        {
+          "question": "What does 'launch' mean in the context of space travel?",
+          "options": ["To land a spacecraft", "To send something into space", "To orbit a planet", "To explore a new planet"],
+          "answer": "B",
+          "explanation": "'Launch' means to send something, like a rocket or spacecraft, into space."
+        },
+        {
+          "question": "Is 'exploration' the act of discovering new places?",
+          "options": ["True", "False"],
+          "answer": "True",
+          "explanation": "'Exploration' involves traveling to and learning about unfamiliar areas."
+        },
+        {
+          "question": "Does 'technology' only refer to computers?",
+          "options": ["True", "False"],
+          "answer": "False",
+          "explanation": "'Technology' is the application of scientific knowledge for practical purposes, encompassing a wide range of tools and techniques."
+        }
+      ]
+    }
+  ]
+}
+```

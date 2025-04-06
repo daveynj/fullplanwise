@@ -212,6 +212,18 @@ DISCUSSION QUESTION REQUIREMENTS:
   - Avoid simply summarizing the main reading
   - CRITICAL: The language complexity MUST match exactly the ${params.cefrLevel} level
   - Be designed to stand out visually when displayed in the UI
+  
+CEFR LEVEL PARAGRAPH GUIDELINES:
+- A1: 3 simple sentences, present tense, basic vocabulary only. No complex structures.
+  Example: "Many people have pets. Cats and dogs are common pets. Some people like fish or birds."
+- A2: 3-4 sentences, simple present and past tense, everyday vocabulary.
+  Example: "Last week, I visited a zoo. I saw many animals there. The elephants were very big. Some monkeys played with toys."
+- B1: 4 sentences of moderate complexity, wider vocabulary range, some conjunctions.
+  Example: "Many cities have problems with traffic congestion. Cars and buses often get stuck in traffic jams during rush hours. Some cities are building new subway lines to help people travel faster. Public transportation can reduce pollution and save time."
+- B2: 4-5 sentences with varied structures, more sophisticated vocabulary, and some complex clauses.
+  Example: "The rapid development of artificial intelligence has transformed many industries in recent years. While some experts believe AI will create new job opportunities, others worry about potential job losses. Universities are now offering specialized courses to help students adapt to this changing landscape. Despite concerns, many businesses are investing heavily in AI solutions to remain competitive."
+- C1/C2: 5 sophisticated sentences with advanced vocabulary, complex clauses, and nuanced expression.
+  Example: "The intersection of technology and privacy rights presents one of the most formidable challenges of the digital era. As corporations amass unprecedented quantities of personal data, legislators worldwide struggle to establish regulatory frameworks that adequately protect citizens while fostering innovation. The concept of informed consent has become increasingly problematic in an environment where terms of service agreements are seldom read, let alone comprehended. Furthermore, the transnational nature of data flows complicates enforcement efforts, as information routinely traverses jurisdictional boundaries. These complexities necessitate a multifaceted approach involving stakeholders from various sectors of society."
 - The discussion question should:
   - Directly follow its context paragraph.
   - Be phrased as an interesting prompt that encourages different viewpoints

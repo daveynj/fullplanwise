@@ -179,6 +179,43 @@ LESSON SPECIFICATIONS:
 CLASSROOM CONTEXT AND PURPOSE:
 This lesson will be used by a teacher conducting a 1-on-1 online class via screen sharing. The content should be visually engaging, highly interactive, and optimized for student participation.
 
+CEFR LEVEL ADAPTATION:
+ALL content must be STRICTLY appropriate for the specified CEFR level ${cefrLevel}:
+- Vocabulary choices must match the CEFR level (A1=beginner, C2=advanced)
+- Sentence complexity must be appropriate (simple for A1-A2, more complex for B2-C2)
+- Grammar structures must align with the CEFR level (present simple for A1, conditionals for B1+, etc.)
+- Reading text difficulty must match the specified level
+- Discussion paragraph contexts must be level-appropriate with vocabulary and grammar matching the CEFR level
+
+DISCUSSION PARAGRAPH CONTEXT GUIDELINES:
+Each discussion question MUST have its own unique paragraph context (3-5 sentences) that must follow these CEFR level requirements:
+
+- A1 Level Paragraph Contexts: 
+  - Use only present tense and basic vocabulary (500-800 most common words)
+  - 3 very simple sentences with basic subject-verb-object structure
+  - No complex clauses or advanced vocabulary
+  - Example: "Many people have pets. Cats and dogs are common pets. Some people like fish or birds."
+
+- A2 Level Paragraph Contexts:
+  - Use present and simple past tense, basic vocabulary (1000-1500 most common words)
+  - 3-4 simple sentences with some basic conjunctions (and, but, because)
+  - Example: "Last week, I visited a zoo. I saw many animals there. The elephants were very big. Some monkeys played with toys."
+
+- B1 Level Paragraph Contexts:
+  - Use present, past, and future tenses with moderate vocabulary (2000-2500 words)
+  - 4 sentences with some compound and complex structures
+  - Example: "Many cities have problems with traffic congestion. Cars and buses often get stuck in traffic jams during rush hours. Some cities are building new subway lines to help people travel faster. Public transportation can reduce pollution and save time."
+
+- B2 Level Paragraph Contexts:
+  - Use varied tenses, conditional structures, and upper-intermediate vocabulary (3000-3500 words)
+  - 4-5 sentences with more sophisticated structures and transitions
+  - Example: "The rapid development of artificial intelligence has transformed many industries in recent years. While some experts believe AI will create new job opportunities, others worry about potential job losses. Universities are now offering specialized courses to help students adapt to this changing landscape. Despite concerns, many businesses are investing heavily in AI solutions to remain competitive."
+
+- C1/C2 Level Paragraph Contexts:
+  - Use full range of tenses, complex structures, and advanced/academic vocabulary (4000+ words)
+  - 5 sophisticated sentences with complex clauses, passive voice, and nuanced expressions
+  - Example: "The intersection of technology and privacy rights presents one of the most formidable challenges of the digital era. As corporations amass unprecedented quantities of personal data, legislators worldwide struggle to establish regulatory frameworks that adequately protect citizens while fostering innovation. The concept of informed consent has become increasingly problematic in an environment where terms of service agreements are seldom read, let alone comprehended. Furthermore, the transnational nature of data flows complicates enforcement efforts, as information routinely traverses jurisdictional boundaries. These complexities necessitate a multifaceted approach involving stakeholders from various sectors of society."
+
 CRITICAL LESSON DEVELOPMENT PROCESS:
 1. FIRST, select EXACTLY 5 vocabulary words that are:
    - Appropriate for the ${cefrLevel} level
@@ -397,23 +434,23 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
       "introduction": "Let's discuss your thoughts and opinions about this topic.",
       "questions": [
         {
-          "topic": "Brief paragraph introducing the first discussion point related to the reading.",
+          "paragraphContext": "CRITICAL: Write a unique paragraph (3-5 sentences) that is appropriate for the ${cefrLevel} level. This paragraph should provide context for the first discussion question and contain vocabulary and grammar structures appropriate for ${cefrLevel} level students.",
           "question": "What did you find most interesting about this topic in the reading?"
         },
         {
-          "topic": "Brief paragraph about how this topic relates to everyday experiences.",
+          "paragraphContext": "CRITICAL: Write a unique paragraph (3-5 sentences) that is appropriate for the ${cefrLevel} level. This paragraph should discuss how the topic relates to everyday experiences and contain vocabulary and grammar structures appropriate for ${cefrLevel} level students.",
           "question": "How does this topic affect your daily life or experiences?"
         },
         {
-          "topic": "Brief paragraph highlighting some key ideas from the reading worth discussing.",
+          "paragraphContext": "CRITICAL: Write a unique paragraph (3-5 sentences) that is appropriate for the ${cefrLevel} level. This paragraph should highlight key ideas from the reading worth discussing and contain vocabulary and grammar structures appropriate for ${cefrLevel} level students.",
           "question": "Do you agree with the main ideas presented in the reading? Why or why not?"
         },
         {
-          "topic": "Brief paragraph about potential future developments in this area.",
+          "paragraphContext": "CRITICAL: Write a unique paragraph (3-5 sentences) that is appropriate for the ${cefrLevel} level. This paragraph should explore potential future developments in this area and contain vocabulary and grammar structures appropriate for ${cefrLevel} level students.",
           "question": "How might this topic change or develop in the future?"
         },
         {
-          "topic": "Brief paragraph acknowledging the limitations of the reading's scope.",
+          "paragraphContext": "CRITICAL: Write a unique paragraph (3-5 sentences) that is appropriate for the ${cefrLevel} level. This paragraph should acknowledge the limitations of the reading's scope and contain vocabulary and grammar structures appropriate for ${cefrLevel} level students.",
           "question": "What else would you like to learn about this topic that wasn't covered in the reading?"
         }
       ],

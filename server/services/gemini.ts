@@ -206,6 +206,20 @@ CRITICAL: Your output must be properly formatted JSON with NO ERRORS!
    - Make complex information approachable through clear explanations and engaging examples
    - Use a mix of sentence lengths for good flow
    - Occasionally address the reader directly with rhetorical questions or observations
+
+6. CEFR LEVEL ADAPTATION: ALL content must be STRICTLY appropriate for the specified CEFR level:
+   - Vocabulary choices must match the CEFR level (A1=beginner, C2=advanced)
+   - Sentence complexity must be appropriate (simple for A1-A2, more complex for B2-C2)
+   - Grammar structures must align with the CEFR level (present simple for A1, conditionals for B1+, etc.)
+   - Reading text difficulty must match the specified level
+   - Discussion paragraph contexts must be level-appropriate with vocabulary and grammar matching the CEFR level
+
+7. DISCUSSION SECTION REQUIREMENTS:
+   - CRITICAL: Each discussion question MUST have its own unique paragraph context (paragraphContext field)
+   - These paragraph contexts must be 3-5 sentences that provide background information
+   - The paragraph contexts must use vocabulary and sentence structures appropriate for the specified CEFR level
+   - The paragraphs should include interesting information that helps students engage with the topic
+   - The paragraph contexts should lead naturally into the discussion question that follows
 `;
     
     // Use the more detailed Qwen prompt structure as the main prompt for Gemini
