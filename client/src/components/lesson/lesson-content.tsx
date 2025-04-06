@@ -1242,18 +1242,7 @@ export function LessonContent({ content }: LessonContentProps) {
               <h3 className="text-green-700 font-medium text-lg">Vocabulary Practice</h3>
             </div>
             
-            {/* Controls */}
-            <div className="flex gap-2">
-              <button className="p-2 rounded-full hover:bg-green-100 text-green-700">
-                <AlignJustify className="h-5 w-5" />
-              </button>
-              <button className="p-2 rounded-full hover:bg-green-100 text-green-700">
-                <MessageCircle className="h-5 w-5" />
-              </button>
-              <button className="p-2 rounded-full hover:bg-green-100 text-green-700">
-                <ExternalLink className="h-5 w-5" />
-              </button>
-            </div>
+{/* No controls needed */}
           </div>
           
           <p className="text-green-700 mb-6">
