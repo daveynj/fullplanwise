@@ -29,19 +29,27 @@ export default function SubscriptionSuccessPage() {
   const { toast } = useToast();
   const [subscriptionDetails, setSubscriptionDetails] = useState<SubscriptionDetails | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [planTier, setPlanTier] = useState<string>('');
+  const [hasProcessedSession, setHasProcessedSession] = useState<boolean>(false);
   
   // Extract session ID from URL
   const searchParams = new URLSearchParams(window.location.search);
   const sessionId = searchParams.get("session_id");
 
-  // When the component mounts, refresh the user data and fetch subscription details
+  // When the component mounts, refresh the user data
   useEffect(() => {
     // First refresh user data
     queryClient.invalidateQueries({ queryKey: ["/api/user"] });
-    
-    // If we have a session ID, manually fetch and apply the subscription
-    if (sessionId) {
+  }, []);
+  
+  // Handle subscription processing with session ID
+  useEffect(() => {
+    // Only process if we have a session ID, a user, and haven't processed already
+    if (sessionId && user && !hasProcessedSession && !isProcessing) {
+      // Set processing state to true to prevent multiple calls
+      setIsProcessing(true);
+      
       // Show loading toast
       toast({
         title: "Processing Subscription",
@@ -69,6 +77,9 @@ export default function SubscriptionSuccessPage() {
           description: `Your subscription has been activated and ${response.creditsAdded} credits have been added to your account.`,
           variant: "default",
         });
+        
+        // Mark as processed
+        setHasProcessedSession(true);
       })
       .catch(error => {
         console.error('Error applying subscription:', error);
@@ -79,15 +90,21 @@ export default function SubscriptionSuccessPage() {
           description: "There was an error activating your subscription. Please contact support.",
           variant: "destructive",
         });
+      })
+      .finally(() => {
+        setIsProcessing(false);
       });
-    } else {
-      // Show success toast
+    } else if (!sessionId) {
+      // If no session ID, just show a simple success message
       toast({
         title: "Subscription Activated",
         description: "Your subscription has been successfully activated.",
       });
     }
+  }, [sessionId, user, hasProcessedSession, isProcessing, toast]);
 
+  // Get subscription details effect
+  useEffect(() => {
     // If we have a session ID and user data, try to fetch subscription details
     if (sessionId && user) {
       setIsLoading(true);
@@ -123,7 +140,7 @@ export default function SubscriptionSuccessPage() {
       
       setIsLoading(false);
     }
-  }, [toast, sessionId, user]);
+  }, [sessionId, user]);
   
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-gray-light">
@@ -189,7 +206,7 @@ export default function SubscriptionSuccessPage() {
                 <div className="text-center pt-2">
                   <Button 
                     className="bg-primary hover:bg-primary/90 min-w-[200px]"
-                    onClick={() => setLocation("/dashboard")}
+                    onClick={() => setLocation("/")}
                   >
                     Go to Dashboard
                   </Button>
