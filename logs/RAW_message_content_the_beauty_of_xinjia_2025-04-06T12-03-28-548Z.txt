@@ -1,0 +1,210 @@
+{
+  "title": "Discovering the Beauty of Xinjiang",
+  "level": "B1",
+  "focus": "general",
+  "estimatedTime": 60,
+  "sections": [
+    {
+      "type": "warmup",
+      "title": "Warm-up Activity",
+      "content": "In this warm-up, we will explore some key words related to the beauty of Xinjiang. These include 'landscape,' 'tradition,' 'harvest,' 'mosque,' and 'market.' Let’s see how these words connect to your own experiences and what you already know about beautiful places.",
+      "questions": [
+        "Have you ever visited a place with amazing natural landscapes?",
+        "Can you think of any traditions that are celebrated in your country?",
+        "What kinds of things do people usually buy at markets?",
+        "When was the last time you saw a harvest or learned about farming?",
+        "Do you know of any famous religious buildings like mosques?"
+      ],
+      "targetVocabulary": ["landscape", "tradition", "harvest", "mosque", "market"],
+      "procedure": "Begin by asking students if they’ve ever been to a place known for its natural beauty. Introduce the word 'landscape' and ask them to describe it using simple adjectives. Next, move on to 'tradition' by discussing cultural practices or celebrations. For 'harvest,' talk about seasonal activities like collecting fruits or vegetables. Show an image of a mosque and explain its significance before introducing 'market' as a bustling hub where locals gather. Ensure each vocabulary item is used in context during the discussion.",
+      "teacherNotes": "Encourage students to share personal stories or observations. Use visuals (e.g., photos of Xinjiang) to make connections clearer."
+    },
+    {
+      "type": "reading",
+      "title": "Reading Text: The Beauty of Xinjiang",
+      "introduction": "Xinjiang is a region in northwest China that captivates visitors with its stunning landscapes, rich traditions, and vibrant culture. Let’s take a closer look at what makes this area so special.",
+      "paragraphs": [
+        "Imagine standing in front of towering snow-capped mountains, surrounded by vast deserts and lush green valleys. This is Xinjiang, a land of contrasts where nature shows off its finest work. From the famous Tian Shan mountain range to the Taklamakan Desert, Xinjiang offers breathtaking views that attract travelers from all over the world. Have you ever wondered what it feels like to walk through such diverse terrains? It’s no wonder that photographers and adventurers love this place!",
+        "But Xinjiang isn’t just about its landscapes; it’s also home to a rich tapestry of traditions. The Uyghur people, one of the largest ethnic groups in the region, celebrate their heritage through music, dance, and food. During festivals, you’ll find colorful costumes, lively performances, and delicious dishes like pilaf and naan bread. These traditions have been passed down for generations, keeping the spirit of Xinjiang alive.",
+        "Another highlight of Xinjiang is its bountiful harvest season. Farmers grow grapes, melons, and cotton, which thrive in the region’s unique climate. Grapevines stretch endlessly across vineyards, creating picturesque scenes. Markets come alive during harvest time, filled with fresh produce and handmade crafts. Visitors can taste sweet raisins and sip fragrant tea while exploring these bustling hubs.",
+        "Religion plays an important role in daily life here too. Mosques dot the cities and towns, serving as centers of community and worship. One of the most iconic is the Id Kah Mosque in Kashgar, which dates back hundreds of years. Its intricate architecture and peaceful atmosphere draw both worshippers and tourists alike.",
+        "Whether you’re marveling at the landscapes, learning about traditions, enjoying the harvest, or visiting a mosque, Xinjiang has something for everyone. So, wouldn’t you agree that this region truly embodies beauty in every sense?"
+      ],
+      "teacherNotes": "Pause after each paragraph to check comprehension and encourage predictions about what might come next."
+    },
+    {
+      "type": "vocabulary",
+      "title": "Key Vocabulary",
+      "words": [
+        {
+          "term": "landscape",
+          "partOfSpeech": "noun",
+          "definition": "An area of land with particular features, especially as seen in a picture or described in a story.",
+          "example": "The landscape of Xinjiang includes mountains, deserts, and valleys.",
+          "semanticGroup": "Nature Terms",
+          "additionalExamples": ["She painted a beautiful landscape of the countryside.", "Tourists admired the dramatic landscape of the canyon."],
+          "wordFamily": {"words": ["landscapes", "landscaping", "landscaped"], "description": "These words relate to the appearance or modification of natural scenery."},
+          "collocations": ["natural landscape", "beautiful landscape", "rugged landscape"],
+          "usageNotes": "Use 'landscape' when describing large outdoor areas with distinct visual features.",
+          "teachingTips": "Show images of different landscapes to help students understand variations.",
+          "pronunciation": {"syllables": ["land", "scape"], "stressIndex": 0, "phoneticGuide": "LAN-dskayp"},
+          "imagePrompt": "A panoramic view of Xinjiang showing snow-capped mountains, desert dunes, and green fields. No text should appear in the image."
+        },
+        {
+          "term": "tradition",
+          "partOfSpeech": "noun",
+          "definition": "A belief, custom, or way of doing something that has existed for a long time.",
+          "example": "The Uyghur people keep their traditions alive through music and dance.",
+          "semanticGroup": "Cultural Terms",
+          "additionalExamples": ["Weddings often follow family traditions.", "This festival is part of our cultural tradition."],
+          "wordFamily": {"words": ["traditional", "traditionally", "non-traditional"], "description": "These words relate to customs or established practices."},
+          "collocations": ["cultural tradition", "family tradition", "long-standing tradition"],
+          "usageNotes": "Traditions are usually passed down through generations.",
+          "teachingTips": "Ask students to share examples of traditions from their own cultures.",
+          "pronunciation": {"syllables": ["tra", "di", "tion"], "stressIndex": 2, "phoneticGuide": "truh-DISH-uhn"},
+          "imagePrompt": "A group of people wearing traditional clothing and performing a folk dance. The scene should reflect cultural celebration without any text."
+        },
+        {
+          "term": "harvest",
+          "partOfSpeech": "noun",
+          "definition": "The process of gathering crops when they are ready.",
+          "example": "Farmers in Xinjiang celebrate the grape harvest every year.",
+          "semanticGroup": "Agricultural Terms",
+          "additionalExamples": ["The apple harvest was excellent this season.", "They worked hard during the wheat harvest."],
+          "wordFamily": {"words": ["harvester", "harvesting", "harvested"], "description": "These words relate to collecting crops or yields."},
+          "collocations": ["grape harvest", "fruit harvest", "autumn harvest"],
+          "usageNotes": "Harvest is often associated with abundance and gratitude.",
+          "teachingTips": "Discuss seasonal changes and how they affect agriculture.",
+          "pronunciation": {"syllables": ["har", "vest"], "stressIndex": 0, "phoneticGuide": "HAR-vist"},
+          "imagePrompt": "Rows of grapevines heavy with ripe grapes, with farmers picking them into baskets. The setting should evoke a sense of abundance and activity."
+        },
+        {
+          "term": "mosque",
+          "partOfSpeech": "noun",
+          "definition": "A building used for Islamic prayer and worship.",
+          "example": "The Id Kah Mosque in Kashgar is a popular tourist attraction.",
+          "semanticGroup": "Religious Terms",
+          "additionalExamples": ["He visits the mosque every Friday for prayers.", "The mosque’s dome sparkled under the sunlight."],
+          "wordFamily": {"words": ["mosques", "mosque-like"], "description": "These words relate to Islamic places of worship."},
+          "collocations": ["local mosque", "historic mosque", "beautiful mosque"],
+          "usageNotes": "Mosques are central to Muslim communities worldwide.",
+          "teachingTips": "Explain the architectural features of mosques and their cultural importance.",
+          "pronunciation": {"syllables": ["mosque"], "stressIndex": 0, "phoneticGuide": "mosk"},
+          "imagePrompt": "An ornate mosque with minarets and intricate designs, surrounded by gardens. The image should convey serenity and spirituality."
+        },
+        {
+          "term": "market",
+          "partOfSpeech": "noun",
+          "definition": "A place where goods are bought and sold.",
+          "example": "Xinjiang’s markets are full of fresh fruits and handmade crafts.",
+          "semanticGroup": "Commerce Terms",
+          "additionalExamples": ["She loves shopping at the local market.", "The farmer’s market opens early in the morning."],
+          "wordFamily": {"words": ["markets", "marketer", "marketing"], "description": "These words relate to buying, selling, or promoting products."},
+          "collocations": ["busy market", "street market", "open-air market"],
+          "usageNotes": "Markets are social spaces where people interact and exchange goods.",
+          "teachingTips": "Describe different types of markets (e.g., farmer’s market, flea market).",
+          "pronunciation": {"syllables": ["mar", "ket"], "stressIndex": 0, "phoneticGuide": "MAHR-kit"},
+          "imagePrompt": "A bustling market scene with vendors selling fruits, spices, and textiles. The image should feel lively and colorful."
+        }
+      ]
+    },
+    {
+      "type": "comprehension",
+      "title": "Reading Comprehension",
+      "questions": [
+        {"question": "What kind of landscapes can you find in Xinjiang?", "options": ["Beaches and forests", "Mountains and deserts", "Plains and rivers"], "answer": "Mountains and deserts", "correctAnswer": "Mountains and deserts", "explanation": "The text mentions mountains, deserts, and valleys as part of Xinjiang’s diverse landscapes."},
+        {"question": "Which ethnic group is mentioned in the text?", "options": ["Han", "Tibetan", "Uyghur"], "answer": "Uyghur", "correctAnswer": "Uyghur", "explanation": "The Uyghur people are highlighted for their traditions and cultural contributions."},
+        {"question": "What happens during the harvest season in Xinjiang?", "options": ["People ski in the mountains", "Markets fill up with fresh produce", "Deserts turn into lakes"], "answer": "Markets fill up with fresh produce", "correctAnswer": "Markets fill up with fresh produce", "explanation": "The text describes how markets become lively with fresh fruits and handmade crafts during harvest."},
+        {"question": "Is the Id Kah Mosque located in Kashgar?", "options": ["True", "False"], "answer": "True", "correctAnswer": "True", "explanation": "The reading states that the Id Kah Mosque is in Kashgar."},
+        {"question": "Does Xinjiang only offer natural beauty, not cultural attractions?", "options": ["True", "False"], "answer": "False", "correctAnswer": "False", "explanation": "The text emphasizes both natural beauty and cultural richness, including traditions and religious sites."}
+      ]
+    },
+    {
+      "type": "sentenceFrames",
+      "title": "Sentence Practice",
+      "frames": [
+        {
+          "pattern": "One of the most impressive _____ in Xinjiang is _____.",
+          "examples": [
+            "One of the most impressive landscapes in Xinjiang is the Tian Shan mountain range.",
+            "One of the most impressive traditions in Xinjiang is the Uyghur music and dance performances."
+          ],
+          "level": "intermediate",
+          "title": "Highlighting Features",
+          "usage": "Use this pattern to emphasize notable aspects of Xinjiang's beauty. Great for sharing opinions or facts.",
+          "communicativeFunction": "Expressing admiration",
+          "grammarFocus": "Superlative structures ('most impressive')",
+          "teachingTips": "Encourage students to use descriptive adjectives and specific examples from the text."
+        },
+        {
+          "pattern": "During the harvest season, people in Xinjiang often _____, which makes the markets very _____.",
+          "examples": [
+            "During the harvest season, people in Xinjiang often sell fresh fruits, which makes the markets very colorful.",
+            "During the harvest season, people in Xinjiang often display handmade crafts, which makes the markets very lively."
+          ],
+          "level": "basic",
+          "title": "Describing Activities",
+          "usage": "Talk about seasonal events and their effects. Useful for storytelling or explaining processes.",
+          "communicativeFunction": "Narrating events",
+          "grammarFocus": "Present simple tense with relative clauses",
+          "teachingTips": "Model sentences first, then let students create their own versions."
+        },
+        {
+          "pattern": "If you visit Xinjiang, don’t miss seeing the _____ because it shows the region’s _____.",
+          "examples": [
+            "If you visit Xinjiang, don’t miss seeing the Id Kah Mosque because it shows the region’s spiritual side.",
+            "If you visit Xinjiang, don’t miss seeing the grape harvest because it shows the region’s agricultural wealth."
+          ],
+          "level": "advanced",
+          "title": "Giving Recommendations",
+          "usage": "Offer travel advice or suggest must-see attractions. Perfect for conversations about trips.",
+          "communicativeFunction": "Making suggestions",
+          "grammarFocus": "Conditional sentences ('if' clauses)",
+          "teachingTips": "Pair students to practice recommending places to each other."
+        }
+      ]
+    },
+    {
+      "type": "discussion",
+      "title": "Discussion Questions",
+      "questions": [
+        {
+          "paragraphContext": "Xinjiang’s landscapes are incredibly diverse, ranging from towering mountains to expansive deserts. Each type of terrain offers unique opportunities for exploration and adventure. Imagine hiking through these areas—what would catch your eye first?",
+          "question": "Which landscape feature in Xinjiang do you think would be the most exciting to explore, and why?",
+          "imagePrompt": "A hiker standing near a cliff overlooking a desert with distant mountains. The image should inspire thoughts of adventure and discovery."
+        },
+        {
+          "paragraphContext": "Traditions play a big role in shaping Xinjiang’s identity. Whether it’s through music, food, or festivals, the Uyghur people ensure their heritage remains vibrant. Think about how traditions influence daily life and bring communities together.",
+          "question": "How do you think traditions help preserve a region’s culture? Can you give an example from your own experience?",
+          "imagePrompt": "A family gathered around a table with traditional dishes, smiling and celebrating. The image should evoke warmth and connection."
+        },
+        {
+          "paragraphContext": "Harvest season transforms Xinjiang’s markets into lively hubs of activity. Vendors proudly display their freshest produce, while artisans showcase handmade goods. These markets aren’t just places to shop—they’re also social spaces.",
+          "question": "What do you think makes markets in Xinjiang special compared to other shopping areas?",
+          "imagePrompt": "A crowded market with vendors selling colorful fruits, spices, and textiles. The image should feel energetic and inviting."
+        },
+        {
+          "paragraphContext": "Mosques like the Id Kah Mosque serve as symbols of faith and community. Their architecture reflects centuries of history and craftsmanship, making them significant landmarks. How do such buildings contribute to a region’s charm?",
+          "question": "Why do you think religious buildings like mosques are important for tourism and cultural understanding?",
+          "imagePrompt": "An ancient mosque with intricate carvings and domes, surrounded by palm trees. The image should highlight elegance and history."
+        },
+        {
+          "paragraphContext": "From its landscapes to its traditions, Xinjiang offers countless reasons to visit. Every corner seems to tell a story, whether it’s through natural wonders or human creativity. What draws people to explore new places?",
+          "question": "What aspect of Xinjiang’s beauty would motivate you to visit, and how would you share your experience with others?",
+          "imagePrompt": "A traveler taking photos of a sunset over Xinjiang’s mountains. The image should capture awe and inspiration."
+        }
+      ]
+    },
+    {
+      "type": "quiz",
+      "title": "Knowledge Check",
+      "questions": [
+        {"question": "What is one famous mountain range in Xinjiang?", "options": ["Rocky Mountains", "Tian Shan", "Andes"], "answer": "Tian Shan", "correctAnswer": "Tian Shan", "explanation": "The Tian Shan mountain range is specifically mentioned in the text."},
+        {"question": "Which activity is common during Xinjiang’s harvest season?", "options": ["Skiing", "Fishing", "Selling grapes"], "answer": "Selling grapes", "correctAnswer": "Selling grapes", "explanation": "Grapes are a major crop in Xinjiang, and markets fill up with them during harvest."},
+        {"question": "Where is the Id Kah Mosque located?", "options": ["Urumqi", "Kashgar", "Beijing"], "answer": "Kashgar", "correctAnswer": "Kashgar", "explanation": "The text clearly states that the Id Kah Mosque is in Kashgar."},
+        {"question": "Are Xinjiang’s markets only for buying food?", "options": ["True", "False"], "answer": "False", "correctAnswer": "False", "explanation": "The text mentions that markets also sell handmade crafts and other items."},
+        {"question": "Do Xinjiang’s traditions involve music and dance?", "options": ["True", "False"], "answer": "True", "correctAnswer": "True", "explanation": "The Uyghur people celebrate their traditions through music and dance, according to the text."}
+      ]
+    }
+  ]
+}
