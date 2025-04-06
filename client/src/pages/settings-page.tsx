@@ -291,11 +291,19 @@ export default function SettingsPage() {
                         <div className="flex items-start">
                           <Calendar className="h-5 w-5 text-primary mr-2 mt-0.5 flex-shrink-0" />
                           <div>
-                            <p className="font-medium">Renewal Date</p>
+                            <p className="font-medium">
+                              {localStorage.getItem('subscriptionEndDate') ? "Subscription Ends" : "Renewal Date"}
+                            </p>
                             <p className="text-gray-600">
                               {user?.subscriptionTier !== "free" ? 
-                                // Calculate renewal date based on subscription type
                                 (() => {
+                                  // Check for a canceled subscription
+                                  const endDate = localStorage.getItem('subscriptionEndDate');
+                                  if (endDate) {
+                                    return endDate;
+                                  }
+                                  
+                                  // Otherwise calculate renewal date
                                   const now = new Date();
                                   const renewalDate = new Date();
                                   
@@ -386,6 +394,8 @@ export default function SettingsPage() {
                             </div>
                             <p className="text-sm text-gray-500 mt-2">
                               {user?.subscriptionTier !== "free" ? 
+                                localStorage.getItem('subscriptionEndDate') ? 
+                                "Your subscription has been canceled but remains active until the end date." : 
                                 `Your subscription renews credits automatically each ${user?.subscriptionTier === "annual" ? "year" : "month"}.` : 
                                 "Purchase credits or subscribe to a plan to generate more lessons."
                               }
@@ -408,7 +418,7 @@ export default function SettingsPage() {
                           {user?.subscriptionTier === "free" ? "Subscribe to a Plan" : "Change Plan"}
                         </Button>
                         
-                        {user?.subscriptionTier !== "free" && (
+                        {user?.subscriptionTier !== "free" && !localStorage.getItem('subscriptionEndDate') && (
                           <Button 
                             variant="outline" 
                             className="text-red-600 border-red-200 hover:bg-red-50"
@@ -416,10 +426,17 @@ export default function SettingsPage() {
                               if (confirm("Are you sure you want to cancel your subscription? Your subscription will remain active until the end of your current billing period.")) {
                                 try {
                                   const response = await apiRequest("POST", "/api/subscriptions/cancel");
+                                  const result = await response.json();
                                   toast({
                                     title: "Subscription cancelled",
-                                    description: "Your subscription has been scheduled for cancellation at the end of the current billing period.",
+                                    description: `Your subscription has been scheduled for cancellation and will end on ${result.endDate}.`,
                                   });
+                                  
+                                  // Store the subscription end date in localStorage for display purposes
+                                  if (result.endDate) {
+                                    localStorage.setItem('subscriptionEndDate', result.endDate);
+                                  }
+                                  
                                   queryClient.invalidateQueries({ queryKey: ["/api/user"] });
                                 } catch (error) {
                                   toast({
@@ -438,7 +455,9 @@ export default function SettingsPage() {
                       
                       {user?.subscriptionTier !== "free" && (
                         <p className="text-sm text-gray-500 mt-3">
-                          Your subscription will remain active until the current billing period ends, even if you cancel.
+                          {localStorage.getItem('subscriptionEndDate') 
+                            ? `Your subscription has been cancelled but will remain active until ${localStorage.getItem('subscriptionEndDate')}.` 
+                            : "Your subscription will remain active until the current billing period ends, even if you cancel."}
                         </p>
                       )}
                     </div>

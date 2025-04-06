@@ -575,12 +575,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "No active subscription found" });
       }
       
+      // First retrieve the subscription to get current period end
+      const subscription = await stripe.subscriptions.retrieve(user.stripeSubscriptionId);
+      
       // Cancel the subscription at the end of the current period
       await stripe.subscriptions.update(user.stripeSubscriptionId, {
         cancel_at_period_end: true
       });
       
-      res.json({ message: "Subscription scheduled for cancellation at the end of the current billing period" });
+      // Convert the Unix timestamp to a JavaScript Date
+      const endDate = new Date(subscription.current_period_end * 1000);
+      const formattedEndDate = endDate.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+      
+      res.json({ 
+        message: "Subscription scheduled for cancellation at the end of the current billing period",
+        endDate: formattedEndDate,
+        endTimestamp: subscription.current_period_end
+      });
     } catch (error: any) {
       res.status(500).json({ message: "Error cancelling subscription: " + error.message });
     }
