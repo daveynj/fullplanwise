@@ -12,6 +12,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
@@ -149,16 +150,17 @@ export function LessonForm({ students, onSubmit, credits }: LessonFormProps) {
               control={form.control}
               name="topic"
               render={({ field }) => (
-                <FormItem className="py-2 bg-gray-50 rounded-lg p-4 border border-gray-200">
-                  <FormLabel className="font-semibold text-lg">Topic or Subject</FormLabel>
-                  <p className="text-sm text-gray-500 mb-2">Enter the main topic for your lesson</p>
+                <FormItem className="py-3 bg-blue-50 rounded-lg p-5 border-2 border-blue-200 shadow-md">
+                  <FormLabel className="font-bold text-lg text-blue-800">Topic or Subject</FormLabel>
+                  <p className="text-sm text-blue-600 mb-2">Enter the main topic for your lesson</p>
                   <FormControl>
-                    <Input 
+                    <Textarea 
                       placeholder="e.g. Environmental issues, Space travel, European history" 
                       {...field} 
-                      className="h-16 text-lg px-4 shadow-sm border-2 border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20"
+                      className="min-h-32 text-lg px-4 py-3 shadow-sm border-2 border-blue-300 focus:border-primary focus:ring-2 focus:ring-primary/20 resize-none"
                     />
                   </FormControl>
+                  <p className="text-xs text-blue-600 mt-2 italic">Be specific - a good topic helps generate better lessons</p>
                   <FormMessage />
                 </FormItem>
               )}
