@@ -419,33 +419,24 @@ WARM-UP ACTIVITY REQUIREMENTS:
 PRIOR KNOWLEDGE ACTIVATION FOR WARM-UPS:
 Design your warm-up activity to explicitly connect the lesson topic "${params.topic}" to students' existing knowledge and real-life experiences:
 
-1. START WITH PERSONAL CONNECTION: Begin with 2-3 personalized questions that students can answer from their own experience, regardless of their knowledge about "${params.topic}". Examples:
-   - If teaching about "renewable energy": "What types of energy do you use in your daily life? How do you conserve energy at home?"
-   - If teaching about "cultural traditions": "What is an important celebration in your culture? How do you prepare for it?"
+1. START WITH PERSONAL CONNECTION: Begin with 2-3 personalized questions that students can answer from their own experience, regardless of their knowledge about the topic
    - Make these questions appropriate for ${params.cefrLevel} level students
 
-2. BRIDGE TO NEW VOCABULARY: Create activities that naturally incorporate the target vocabulary while still relating to students' experiences:
-   - Show how the vocabulary connects to situations in the student's daily life
-   - Compare familiar concepts from the student's experience with the new vocabulary
-   - Use the vocabulary to describe or discuss aspects of the student's life or interests
+2. BRIDGE TO NEW VOCABULARY: Create activities that naturally incorporate the target vocabulary while still relating to students' experiences
 
-3. SCAFFOLDED KNOWLEDGE MAPPING: Include a brief activity that helps students visualize and connect what they already know to what they're about to learn:
-   - For ${params.cefrLevel === "A1" || params.cefrLevel === "A2" ? "A1-A2 levels: A simple sorting or matching activity connecting familiar concepts to the new vocabulary" : 
-      params.cefrLevel === "B1" || params.cefrLevel === "B2" ? "B1-B2 levels: A 'What I Know / What I Want to Know' discussion using the target vocabulary" : 
-      "C1-C2 levels: A brief discussion challenging common assumptions about the topic using the target vocabulary"}
+3. SCAFFOLDED KNOWLEDGE MAPPING: Include a brief activity that helps students visualize and connect what they already know to what they're about to learn, appropriate for their CEFR level
 
 CULTURAL ADAPTABILITY:
 Ensure the warm-up provides flexible entry points for students from diverse backgrounds:
-
-1. OFFER UNIVERSAL EXAMPLES: Provide examples that work across cultural contexts
-2. INCLUDE ALTERNATIVE PROMPTS: Provide 2-3 alternative discussion prompts for culturally specific references
-3. AVOID ASSUMPTIONS: Phrase questions without assuming specific experiences (e.g., "If you have traveled abroad..." instead of "When you traveled abroad...")
+- Offer universal examples
+- Include alternative prompts for culturally specific references 
+- Avoid assumptions about specific experiences
 
 VISUAL CONNECTIONS:
 Create guidance for connecting vocabulary to visual elements:
-1. VOCAB IN CONTEXT: Describe familiar everyday situations where each vocabulary item naturally appears
-2. COMPARATIVE VISUALS: Compare familiar concepts with the new vocabulary being introduced
-3. RELATE TO IMAGES: Reference the vocabulary image prompts and explain how they connect to students' experiences
+- Describe everyday situations where vocabulary naturally appears
+- Compare familiar concepts with new vocabulary
+- Connect vocabulary to images that relate to students' experiences
 
 DISCUSSION QUESTION REQUIREMENTS:
 - IMPORTANT NEW FORMAT: Each discussion question MUST be preceded by its own unique, CEFR-level appropriate paragraph (3-5 sentences) that provides context or an interesting angle related to the question. The question should directly relate to this paragraph.
