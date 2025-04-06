@@ -71,7 +71,7 @@ const subscriptionPlans = [
     "Advanced lesson customization"
   ]},
   { id: "annual_plan", title: "Annual Plan", credits: 250, price: 199, period: "year", features: [
-    "250 credits per year (20.8 credits/month)",
+    "250 credits awarded immediately",
     "Access to all CEFR levels",
     "AI-generated images",
     "Priority support",

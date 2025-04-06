@@ -574,6 +574,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "No raw body found in webhook request" });
       }
       
+      console.log(`Webhook received with signature: ${sig.substring(0, 10)}...`);
+      console.log(`Raw payload length: ${payload.length} bytes`);
+      
       // Verify webhook signature
       event = stripe.webhooks.constructEvent(payload, sig, webhookSecret);
       console.log(`Webhook event type: ${event.type}`);
@@ -623,7 +626,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 creditsToAdd = 250; // Annual plan includes 250 credits per year
               }
               
-              console.log(`Assigning tier ${subscriptionTier} with ${creditsToAdd} credits`);
+              console.log(`Assigning tier ${subscriptionTier} with ${creditsToAdd} credits (user's current credits: ${user.credits})`);
               
               // Update user's subscription tier
               const updatedUser = await storage.updateUser(userId, {

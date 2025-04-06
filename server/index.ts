@@ -13,8 +13,14 @@ const app = express();
 // Create a raw body parser middleware for Stripe webhooks
 const rawBodyParser = async (req: Request, res: Response, next: NextFunction) => {
   if (req.path === '/api/webhooks/stripe' && req.headers['stripe-signature']) {
-    const rawBody = await buffer(req);
-    req.rawBody = rawBody;
+    try {
+      console.log(`Stripe webhook received, parsing raw body...`);
+      const rawBody = await buffer(req);
+      req.rawBody = rawBody;
+      console.log(`Raw body captured for Stripe webhook: ${rawBody.length} bytes`);
+    } catch (error) {
+      console.error(`Error capturing raw body for Stripe webhook:`, error);
+    }
   }
   next();
 };
@@ -24,6 +30,7 @@ app.use(rawBodyParser);
 app.use(express.json({
   verify: (req: Request, res: Response, buf: Buffer) => {
     if (req.path === '/api/webhooks/stripe') {
+      console.log(`Setting rawBody from JSON parser verify handler: ${buf.length} bytes`);
       req.rawBody = buf;
     }
   }

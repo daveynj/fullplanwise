@@ -114,7 +114,11 @@ export default function SubscriptionSuccessPage() {
                     </div>
                     
                     <div className="pt-2 border-t mt-3">
-                      <p className="text-gray-700">You'll receive <span className="font-semibold">{subscriptionDetails.monthlyCredits} credits</span> each billing period with this plan.</p>
+                      {user?.subscriptionTier === 'annual' ? (
+                        <p className="text-gray-700">You've received <span className="font-semibold">{subscriptionDetails.monthlyCredits} credits</span> with this annual plan.</p>
+                      ) : (
+                        <p className="text-gray-700">You'll receive <span className="font-semibold">{subscriptionDetails.monthlyCredits} credits</span> each billing period with this plan.</p>
+                      )}
                     </div>
                   </div>
                 )}
