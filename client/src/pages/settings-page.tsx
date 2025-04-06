@@ -409,7 +409,30 @@ export default function SettingsPage() {
                         </Button>
                         
                         {user?.subscriptionTier !== "free" && (
-                          <Button variant="outline" className="text-red-600 border-red-200 hover:bg-red-50">
+                          <Button 
+                            variant="outline" 
+                            className="text-red-600 border-red-200 hover:bg-red-50"
+                            onClick={async () => {
+                              if (confirm("Are you sure you want to cancel your subscription? Your subscription will remain active until the end of your current billing period.")) {
+                                try {
+                                  await apiRequest("/api/subscriptions/cancel", {
+                                    method: "POST"
+                                  });
+                                  toast({
+                                    title: "Subscription cancelled",
+                                    description: "Your subscription has been scheduled for cancellation at the end of the current billing period.",
+                                  });
+                                  queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+                                } catch (error) {
+                                  toast({
+                                    title: "Error",
+                                    description: "Failed to cancel subscription. Please try again.",
+                                    variant: "destructive"
+                                  });
+                                }
+                              }
+                            }}
+                          >
                             Cancel Subscription
                           </Button>
                         )}
