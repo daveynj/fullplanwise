@@ -7,6 +7,7 @@ import { promisify } from "util";
 import { storage } from "./storage";
 import { User as SelectUser } from "@shared/schema";
 import { v4 as uuidv4 } from "uuid";
+import { mailchimpService } from "./services/mailchimp.service";
 
 declare global {
   namespace Express {
@@ -148,6 +149,41 @@ export function setupAuth(app: Express) {
       });
       
       console.log(`User created successfully with ID: ${user.id}`);
+      
+      // Add user to email marketing list (Mailchimp)
+      if (req.body.email) {
+        try {
+          // Extract name parts if fullName is provided
+          let firstName = undefined;
+          let lastName = undefined;
+          
+          if (req.body.fullName) {
+            const nameParts = req.body.fullName.split(' ');
+            if (nameParts.length > 0) {
+              firstName = nameParts[0];
+              if (nameParts.length > 1) {
+                lastName = nameParts.slice(1).join(' ');
+              }
+            }
+          }
+          
+          // Add to Mailchimp list
+          const mailchimpResult = await mailchimpService.addMember(
+            req.body.email,
+            firstName,
+            lastName
+          );
+          
+          if (mailchimpResult.success) {
+            console.log(`User ${user.id} added to email marketing list`);
+          } else {
+            console.log(`Failed to add user ${user.id} to email marketing list: ${mailchimpResult.error}`);
+          }
+        } catch (emailError) {
+          // Log but don't fail registration if marketing list addition fails
+          console.error('Error adding user to marketing list:', emailError);
+        }
+      }
 
       req.login(user, (err) => {
         if (err) {

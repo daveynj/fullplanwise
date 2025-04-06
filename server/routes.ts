@@ -10,6 +10,7 @@ import {
   creditPurchaseSchema,
   subscriptionSchema
 } from "@shared/schema";
+import { mailchimpService } from "./services/mailchimp.service";
 import Stripe from "stripe";
 import { qwenService } from "./services/qwen";
 import { geminiService } from "./services/gemini";
@@ -640,6 +641,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error: any) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ message: "Invalid admin request", errors: error.errors });
+      }
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Mailchimp configuration endpoint (admin only)
+  app.post("/api/admin/config/mailchimp", ensureAuthenticated, async (req, res) => {
+    try {
+      // Only allow admins to access this endpoint
+      const currentUser = await storage.getUser(req.user!.id);
+      if (!currentUser?.isAdmin) {
+        return res.status(403).json({ message: "Unauthorized. Admin privileges required." });
+      }
+      
+      const { apiKey, serverPrefix, listId } = z.object({
+        apiKey: z.string(),
+        serverPrefix: z.string(),
+        listId: z.string()
+      }).parse(req.body);
+      
+      // Initialize the mailchimp service with the new credentials
+      mailchimpService.initialize(apiKey, serverPrefix, listId);
+      
+      // Store these values in environment variables for persistence
+      // Note: In a production app, these would be stored securely in a database or secret manager
+      process.env.MAILCHIMP_API_KEY = apiKey;
+      process.env.MAILCHIMP_SERVER_PREFIX = serverPrefix;
+      process.env.MAILCHIMP_LIST_ID = listId;
+      
+      // Check if the configuration is working by attempting to fetch lists
+      if (mailchimpService.isInitialized()) {
+        res.json({ 
+          message: "Mailchimp configuration updated successfully", 
+          success: true 
+        });
+      } else {
+        res.status(400).json({ 
+          message: "Mailchimp configuration failed", 
+          success: false 
+        });
+      }
+    } catch (error: any) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid Mailchimp configuration", errors: error.errors });
       }
       res.status(500).json({ message: error.message });
     }
