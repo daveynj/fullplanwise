@@ -49,9 +49,9 @@ export function Sidebar() {
       {/* Logo and brand */}
       <div className="p-5 flex items-center border-b border-primary-light">
         <div className="w-10 h-10 rounded-md bg-white flex items-center justify-center mr-3">
-          <span className="text-primary text-xl font-bold">E</span>
+          <span className="text-primary text-xl font-bold">P</span>
         </div>
-        <h1 className="font-nunito font-bold text-xl">ESL Lesson AI</h1>
+        <h1 className="font-nunito font-bold text-xl">PLAN WISE ESL</h1>
       </div>
       
       {/* Navigation */}
@@ -101,9 +101,9 @@ export function Sidebar() {
       <div className="md:hidden bg-primary text-white flex items-center justify-between p-4 border-b border-primary-light">
         <div className="flex items-center">
           <div className="w-10 h-10 rounded-md bg-white flex items-center justify-center mr-2">
-            <span className="text-primary text-xl font-bold">E</span>
+            <span className="text-primary text-xl font-bold">P</span>
           </div>
-          <h1 className="font-nunito font-bold text-xl">ESL Lesson AI</h1>
+          <h1 className="font-nunito font-bold text-xl">PLAN WISE ESL</h1>
         </div>
         <button onClick={toggleMobileMenu} className="text-white focus:outline-none">
           {isMobileMenuOpen ? (

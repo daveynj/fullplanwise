@@ -10,8 +10,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Link } from "wouter";
-import { Search, Bell, ChevronDown } from "lucide-react";
+import { Search, Bell, ChevronDown, LifeBuoy } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export function Header() {
   const { user, logoutMutation } = useAuth();
@@ -44,6 +45,13 @@ export function Header() {
         </div>
         
         <div className="flex items-center space-x-4">
+          <a href="mailto:dave@planwiseesl.com?subject=PLAN WISE ESL Support/Feedback" className="flex">
+            <Button variant="outline" size="sm" className="flex items-center gap-1 text-sm">
+              <LifeBuoy className="h-4 w-4" />
+              <span className="hidden sm:inline">Support</span>
+            </Button>
+          </a>
+          
           <CreditBadge credits={user?.credits || 0} />
           
           {user?.subscriptionTier === "premium" && (
@@ -78,6 +86,13 @@ export function Header() {
                   Buy Credits
                 </DropdownMenuItem>
               </Link>
+              <DropdownMenuSeparator />
+              <a href="mailto:dave@planwiseesl.com?subject=PLAN WISE ESL Support/Feedback">
+                <DropdownMenuItem className="cursor-pointer">
+                  <LifeBuoy className="h-4 w-4 mr-2" />
+                  Support & Feedback
+                </DropdownMenuItem>
+              </a>
               <DropdownMenuSeparator />
               <DropdownMenuItem className="cursor-pointer" onClick={handleLogout}>
                 Logout

@@ -62,7 +62,7 @@ export default function DashboardPage() {
             {/* Welcome section */}
             <div className="mb-8">
               <h1 className="text-2xl md:text-3xl font-nunito font-bold mb-2">Welcome, {user?.fullName}!</h1>
-              <p className="text-gray-600">Here's what's happening with your ESL teaching</p>
+              <p className="text-gray-600">Here's what's happening with your PLAN WISE ESL teaching</p>
             </div>
             
             {/* Stats Cards */}
