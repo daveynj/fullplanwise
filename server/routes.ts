@@ -386,18 +386,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   // Subscription Routes
-  app.post("/api/create-subscription", ensureAuthenticated, async (req, res) => {
+  app.post("/api/subscriptions/create", ensureAuthenticated, async (req, res) => {
     try {
       if (!stripe) {
+        console.error("Stripe API key not configured when attempting to create subscription");
         return res.status(500).json({ message: "Stripe API key not configured" });
       }
 
       const { planId, priceId } = subscriptionSchema.parse(req.body);
       const userId = req.user!.id;
       
+      console.log(`Creating subscription for user ${userId}, plan: ${planId}, price: ${priceId}`);
+      
       // Get the user from the database
       const user = await storage.getUser(userId);
       if (!user) {
+        console.error(`User not found for subscription creation: ${userId}`);
         return res.status(404).json({ message: "User not found" });
       }
       
@@ -423,6 +427,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
+      console.log(`Creating checkout session for customer: ${customerId}, priceId: ${priceId}`);
+      
       // Start the subscription checkout session
       const session = await stripe.checkout.sessions.create({
         customer: customerId,
@@ -441,6 +447,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           planId: planId
         },
       });
+      
+      console.log(`Subscription checkout session created: ${session.id}`);
+      console.log(`Session URL: ${session.url}`);
       
       res.json({ 
         sessionId: session.id,
@@ -535,8 +544,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     // Stripe webhook requires raw body
     const payload = req.body;
     const sig = req.headers['stripe-signature'] as string;
+    
+    console.log("Received Stripe webhook event");
 
     if (!stripe) {
+      console.error("Stripe API key not configured");
       return res.status(500).json({ message: "Stripe API key not configured" });
     }
 
@@ -546,13 +558,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
       
       if (!webhookSecret) {
+        console.error("Stripe webhook secret not configured");
         return res.status(500).json({ message: "Stripe webhook secret not configured" });
       }
       
       // Verify webhook signature
       event = stripe.webhooks.constructEvent(payload, sig, webhookSecret);
+      console.log(`Webhook event type: ${event.type}`);
     } catch (err: any) {
-      console.error(`Webhook Error: ${err.message}`);
+      console.error(`Webhook Signature Error: ${err.message}`);
       return res.status(400).send(`Webhook Error: ${err.message}`);
     }
 
@@ -568,9 +582,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
             const subscriptionId = session.subscription as string;
             const planId = session.metadata.planId;
             
+            console.log(`Processing checkout.session.completed: userId=${userId}, subscriptionId=${subscriptionId}, planId=${planId}`);
+            console.log(`Session metadata:`, JSON.stringify(session.metadata));
+            
             // Update user with subscription info
             const user = await storage.getUser(userId);
             if (user) {
+              console.log(`Found user for subscription: ${user.username} (${userId})`);
+              
               await storage.updateUserStripeInfo(userId, {
                 stripeCustomerId: session.customer as string,
                 stripeSubscriptionId: subscriptionId
@@ -592,13 +611,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 creditsToAdd = 250; // Annual plan includes 250 credits per year
               }
               
+              console.log(`Assigning tier ${subscriptionTier} with ${creditsToAdd} credits`);
+              
               // Update user's subscription tier
               const updatedUser = await storage.updateUser(userId, {
                 subscriptionTier,
                 credits: user.credits + creditsToAdd
               });
               
-              console.log(`User ${userId} subscribed to ${subscriptionTier} plan. Added ${creditsToAdd} credits.`);
+              console.log(`User ${userId} subscribed to ${subscriptionTier} plan. Added ${creditsToAdd} credits. New total: ${updatedUser.credits}`);
+            } else {
+              console.error(`User not found for subscription: userId=${userId}`);
             }
           }
           break;

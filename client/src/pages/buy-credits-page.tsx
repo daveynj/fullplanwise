@@ -194,7 +194,9 @@ export default function BuyCreditsPage() {
   // Create subscription mutation
   const createSubscriptionMutation = useMutation({
     mutationFn: async ({ planId, priceId }: { planId: string, priceId: string }) => {
-      const res = await apiRequest("POST", "/api/create-subscription", { planId, priceId });
+      console.log(`Creating subscription: planId=${planId}, priceId=${priceId}`);
+      // Using the proper endpoint to match server-side route
+      const res = await apiRequest("POST", "/api/subscriptions/create", { planId, priceId });
       return await res.json();
     },
     onSuccess: (data) => {
@@ -427,13 +429,11 @@ export default function BuyCreditsPage() {
                       const plan = subscriptionPlans.find(p => p.id === selectedSubscription);
                       if (plan) {
                         // Stripe Price IDs mapped to plan IDs
-                        // Note: For testing, you need to replace these with your own test mode price IDs
-                        // from your Stripe dashboard
                         const priceIdMap: Record<string, string> = {
-                          // Example format of price IDs: price_1234567890abcdef
-                          'basic_monthly': 'price_1234567890abcdef',  // Replace with your price ID
-                          'premium_monthly': 'price_1234567890abcdef', // Replace with your price ID
-                          'annual_plan': 'price_1234567890abcdef'     // Replace with your price ID
+                          // Using the provided price ID for all plans temporarily
+                          'basic_monthly': 'price_1RAt02Bnt8Mku7BYkWKvOK2b',
+                          'premium_monthly': 'price_1RAt02Bnt8Mku7BYkWKvOK2b', // Using same ID temporarily
+                          'annual_plan': 'price_1RAt02Bnt8Mku7BYkWKvOK2b'      // Using same ID temporarily
                         };
                         const priceId = priceIdMap[plan.id] || `price_${plan.id}`;
                         createSubscriptionMutation.mutate({ 
