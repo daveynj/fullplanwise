@@ -50,12 +50,13 @@ export class GeminiService {
       console.log(`Raw prompt saved to ${rawPromptPath}`);
       
       // Configure the model and features
+      // Using Gemini 1.5 Flash model per the latest API documentation
       const model = this.genAI.getGenerativeModel({ 
         model: 'gemini-1.5-pro',
         generationConfig: {
           temperature: 0.3,
           topP: 0.9,
-          maxOutputTokens: 16384,
+          maxOutputTokens: 16384, // Increased token count from 8192 to 16384 for more detailed lessons
         },
       });
       
@@ -101,173 +102,68 @@ export class GeminiService {
             const fixedContent = this.fixCommonJsonIssues(cleanedContent);
             console.log('Applied JSON fixes, attempting to parse');
             
-            // Attempt to parse the JSON with error handling
             let jsonContent;
             try {
               jsonContent = JSON.parse(fixedContent);
               console.log('Successfully parsed JSON content');
             } catch (parseError) {
+              // If JSON.parse fails with the entire content, try to parse it in chunks or with a more targeted approach
               console.log('Standard parsing failed, attempting alternative parsing methods');
               
-              // If we have sections in the new format, let's try to parse them
-              if (fixedContent.includes('"sections":') && fixedContent.includes('"title":')) {
-                try {
-                  // Try extracting with regex first
-                  const extractedJson = this.extractJsonFromText(cleanedContent);
-                  if (extractedJson) {
-                    console.log('Successfully extracted JSON structure through regex');
-                    jsonContent = extractedJson;
-                  } else {
-                    throw parseError;
-                  }
-                } catch (extractError) {
-                  console.error('All JSON extraction methods failed, falling back to legacy format parsing');
-                  
-                  // As a last resort, attempt to parse the old format that had reading, vocabulary, etc. 
-                  // at the top level and convert it to the new format with sections
-                  if (cleanedContent.includes('"reading":') || cleanedContent.includes('"vocabulary":')) {
-                    try {
-                      // Try to extract title
-                      const titleMatch = cleanedContent.match(/"title"\s*:\s*"([^"]+)"/);
-                      const title = titleMatch ? titleMatch[1] : `Lesson on ${params.topic}`;
-                      
-                      // Create a basic structure
-                      jsonContent = {
-                        title: title,
-                        provider: 'gemini',
-                        sections: []
-                      };
-                      
-                      console.log('Created basic structure for legacy format');
-                    } catch (legacyError) {
-                      console.error('Legacy format parsing failed:', legacyError);
-                      throw parseError;
-                    }
-                  } else {
-                    throw parseError;
-                  }
-                }
+              // Let's try extracting the JSON with regex
+              const extractedJson = this.extractJsonFromText(cleanedContent);
+              if (extractedJson) {
+                console.log('Successfully extracted JSON structure through regex');
+                jsonContent = extractedJson;
               } else {
+                // Rethrow the original error if extraction fails
                 throw parseError;
               }
             }
             
-            // Check if jsonContent has required structure and convert if needed
-            if (jsonContent) {
-              // Legacy format conversion if needed (where format is not using sections array)
-              if (!jsonContent.sections && (jsonContent.reading || jsonContent.vocabulary || jsonContent.warmup)) {
-                console.log('Converting legacy format to sections array format');
-                
-                const newSections = [];
-                
-                // Convert each top-level property to a section
-                if (jsonContent.warmup) {
-                  newSections.push({
-                    type: 'warmup',
-                    title: jsonContent.warmup.title || 'Warm-up Activity',
-                    ...jsonContent.warmup
-                  });
-                }
-                
-                if (jsonContent.reading) {
-                  newSections.push({
-                    type: 'reading',
-                    title: jsonContent.reading.title || 'Reading',
-                    ...jsonContent.reading
-                  });
-                }
-                
-                if (jsonContent.vocabulary) {
-                  newSections.push({
-                    type: 'vocabulary',
-                    title: jsonContent.vocabulary.title || 'Vocabulary',
-                    words: jsonContent.vocabulary
-                  });
-                }
-                
-                if (jsonContent.discussion) {
-                  newSections.push({
-                    type: 'discussion',
-                    title: jsonContent.discussion.title || 'Discussion',
-                    ...jsonContent.discussion
-                  });
-                }
-                
-                if (jsonContent.comprehension) {
-                  newSections.push({
-                    type: 'comprehension',
-                    title: jsonContent.comprehension.title || 'Comprehension',
-                    ...jsonContent.comprehension
-                  });
-                }
-                
-                if (jsonContent.sentenceFrames) {
-                  newSections.push({
-                    type: 'sentenceFrames',
-                    title: jsonContent.sentenceFrames.title || 'Sentence Frames',
-                    ...jsonContent.sentenceFrames
-                  });
-                }
-                
-                // Create new content structure with sections
-                jsonContent = {
-                  title: jsonContent.title || `Lesson on ${params.topic}`,
-                  provider: 'gemini',
-                  sections: newSections
-                };
-                
-                console.log('Successfully converted to sections format');
-              }
-              
-              // Ensure we have a title and sections array
-              if (!jsonContent.title) {
-                jsonContent.title = `Lesson on ${params.topic}`;
-              }
-              
-              if (!jsonContent.sections) {
-                jsonContent.sections = [];
-              }
-              
-              // If sections exists and is an array, proceed with formatting
-              if (Array.isArray(jsonContent.sections)) {
-                console.log(`Found ${jsonContent.sections.length} sections, proceeding with formatting`);
-                
-                // Even if sections is empty, we can still return a basic structure
-                if (jsonContent.sections.length === 0) {
-                  console.warn('Sections array is empty, adding error section');
-                  jsonContent.sections.push({
-                    type: "error",
-                    title: "Section Error",
-                    content: "No lesson sections were found. Please try regenerating the lesson."
-                  });
-                }
-                
-                return await this.formatLessonContent(jsonContent);
-              } else {
-                console.warn('Sections is not an array, fixing structure');
-                
-                // Handle case where sections is not an array
-                return await this.formatLessonContent({
-                  title: jsonContent.title,
-                  provider: 'gemini',
-                  sections: [{
-                    type: "error",
-                    title: "Structure Error",
-                    content: "The lesson structure is invalid. Please try regenerating the lesson."
-                  }]
-                });
-              }
+            // Check if jsonContent has required structure
+            if (jsonContent.title && jsonContent.sections && Array.isArray(jsonContent.sections)) {
+              console.log('Lesson content has valid structure, returning formatted content');
+              return await this.formatLessonContent(jsonContent);
             } else {
-              // If we couldn't create jsonContent at all
-              console.error('Failed to create any valid JSON content');
-              throw new Error('Failed to parse or create valid JSON structure');
+              console.warn('Parsed JSON is missing required structure');
+              // Try to construct a valid structure from what we have
+              const patchedContent = {
+                title: jsonContent.title || `Lesson on ${params.topic}`,
+                provider: 'gemini',
+                sections: jsonContent.sections || []
+              };
+              
+              if (!Array.isArray(patchedContent.sections) || patchedContent.sections.length === 0) {
+                console.warn('No valid sections found, returning error');
+                return {
+                  title: patchedContent.title,
+                  provider: 'gemini',
+                  sections: [
+                    {
+                      type: "error",
+                      title: "Content Error",
+                      content: "The lesson structure is incomplete. Please try regenerating the lesson."
+                    }
+                  ]
+                };
+              }
+              
+              console.log('Patched structure with available content, proceeding');
+              return await this.formatLessonContent(patchedContent);
             }
           } catch (error) {
-            // If we fail to parse as JSON after all attempts
+            // If we fail to parse as JSON, try to handle it as best we can
             console.error('Error parsing Gemini response as JSON:', error);
             
+            // Type-safe way to extract error details if it's a SyntaxError or similar
             if (error instanceof Error) {
               console.error('Error details:', error.message);
+              // Try to extract position info if available in the message
+              const positionMatch = error.message.match(/position (\d+)/);
+              if (positionMatch) {
+                console.error('Error at position:', positionMatch[1]);
+              }
             }
             
             // Save the problematic content for diagnosis
@@ -275,13 +171,8 @@ export class GeminiService {
             fs.writeFileSync(errorContentPath, cleanedContent);
             console.log(`Problematic content saved to ${errorContentPath}`);
             
-            // Try to recover usable content directly from the cleanedContent
-            // Look for readable title in the content
-            const titleMatch = cleanedContent.match(/"title"\s*:\s*"([^"]+)"/);
-            const title = titleMatch ? titleMatch[1] : `Lesson on ${params.topic}`;
-            
             return {
-              title: title,
+              title: `Lesson on ${params.topic}`,
               provider: 'gemini',
               sections: [
                 {
@@ -310,6 +201,7 @@ export class GeminiService {
         console.error('Error during Gemini API request:', error.message);
         return {
           title: `Lesson on ${params.topic}`,
+          error: error.message,
           provider: 'gemini',
           sections: [
             {
