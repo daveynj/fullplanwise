@@ -68,7 +68,7 @@ export class GeminiService {
         const response = result.response;
         const text = response.text();
         
-        console.log('Received response from Gemini API');
+        console.log(`Received response from Gemini API - length: ${text.length} characters`);
         
         // Save the raw response
         const fullResponsePath = `./logs/FULL_response_gemini_${requestId}.json`;
@@ -93,34 +93,78 @@ export class GeminiService {
             cleanedContent = text.replace(/```json\s*/g, '').replace(/```\s*$/g, '').trim();
           }
           
-          // Now try to parse the cleaned content
+          // Try to parse the cleaned content with improved error recovery
           try {
-            const jsonContent = JSON.parse(cleanedContent);
-            console.log('Successfully parsed JSON content');
-            
-            // Check if jsonContent has required structure
-            if (jsonContent.title && jsonContent.sections && Array.isArray(jsonContent.sections)) {
-              console.log('Lesson content has valid structure, returning formatted content');
-              return await this.formatLessonContent(jsonContent);
-            } else {
-              console.warn('Parsed JSON is missing required structure');
-              return {
-                title: `Lesson on ${params.topic}`,
-                content: "The generated lesson is missing required structure",
-                error: 'Invalid lesson structure',
-                provider: 'gemini',
-                sections: [
-                  {
-                    type: "error",
-                    title: "Content Error",
-                    content: "The lesson structure is incomplete. Please try regenerating the lesson."
-                  }
-                ]
-              };
+            // First try standard JSON parsing
+            let jsonContent;
+            try {
+              jsonContent = JSON.parse(cleanedContent);
+              console.log('Successfully parsed JSON content with standard JSON.parse');
+            } catch (initialParseError: any) {
+              // Log detailed error information for debugging
+              console.error('Initial JSON parsing error:', initialParseError.message);
+              
+              // Try to identify the position of the error
+              const errorMatch = initialParseError.message.match(/at position (\d+)/);
+              if (errorMatch && errorMatch[1]) {
+                const errorPos = parseInt(errorMatch[1]);
+                const errorContext = cleanedContent.substring(
+                  Math.max(0, errorPos - 30),
+                  Math.min(cleanedContent.length, errorPos + 30)
+                );
+                console.error(`Error context around position ${errorPos}: "${errorContext}"`);
+                
+                // Try to fix common JSON issues:
+                
+                // 1. Fix unescaped quotes in string values
+                const fixedContent = this.fixUnescapedQuotes(cleanedContent);
+                
+                // 2. Try to parse again with the fixed content
+                try {
+                  jsonContent = JSON.parse(fixedContent);
+                  console.log('Successfully parsed JSON content after fixing unescaped quotes');
+                } catch (fixedParseError) {
+                  // Still failed - try fallback solutions
+                  console.error('Failed to parse even after fixing quotes:', fixedParseError);
+                  
+                  // Save error information to a log file for debugging
+                  const errorLogPath = `./logs/ERROR_json_parse_${requestId}.txt`;
+                  fs.writeFileSync(errorLogPath, 
+                    `Original Error: ${initialParseError.message}\n` +
+                    `Error Position: ${errorPos}\n` +
+                    `Error Context: "${errorContext}"\n` +
+                    `Content Length: ${cleanedContent.length}\n\n` +
+                    `First 500 chars:\n${cleanedContent.substring(0, 500)}\n\n` +
+                    `Last 500 chars:\n${cleanedContent.substring(Math.max(0, cleanedContent.length - 500))}`
+                  );
+                  
+                  // Re-throw the error to be caught by the outer try/catch
+                  throw fixedParseError;
+                }
+              } else {
+                // Unable to determine error position, re-throw the error
+                throw initialParseError;
+              }
             }
+            
+            // At this point, we should have parsed JSON content
+            // Ensure the lesson has required structure with fallbacks for missing fields
+            if (!jsonContent.title) {
+              console.warn('JSON content missing title, using fallback');
+              jsonContent.title = `Lesson on ${params.topic}`;
+            }
+            
+            if (!jsonContent.sections || !Array.isArray(jsonContent.sections) || jsonContent.sections.length === 0) {
+              console.warn('JSON content has invalid or missing sections, using fallback empty array');
+              jsonContent.sections = [];
+            }
+            
+            console.log('Lesson content parsed, returning formatted content');
+            return await this.formatLessonContent(jsonContent);
+            
           } catch (jsonError) {
-            // If we fail to parse as JSON, try to handle it as best we can
-            console.error('Error parsing Gemini response as JSON:', jsonError);
+            // All JSON parsing attempts failed, log the error and return a fallback response
+            console.error('All attempts to parse Gemini response as JSON failed:', jsonError);
             
             return {
               title: `Lesson on ${params.topic}`,
@@ -167,6 +211,31 @@ export class GeminiService {
       console.error('Error in GeminiService.generateLesson:', error.message);
       throw error;
     }
+  }
+  
+  /**
+   * Fix unescaped quotes within JSON string values
+   * This is a common issue with AI-generated JSON
+   */
+  private fixUnescapedQuotes(content: string): string {
+    // This is a complex problem, but we'll implement a basic version
+    // that handles some common cases of unescaped quotes in string values
+    
+    // First replace all properly escaped quotes with a temporary marker
+    let fixed = content.replace(/\\"/g, "ESCAPED_QUOTE_MARKER");
+    
+    // Regex pattern to find strings like: "key": "value with "quotes" inside"
+    // This is a simplified approach and won't catch all cases, but handles common ones
+    const stringValuePattern = /"([^"]+)":\s*"([^"]*)"([^"]*)"([^"]*)"(?=\s*[,}])/g;
+    fixed = fixed.replace(stringValuePattern, (match, key, before, inner, after) => {
+      // Escape the inner quotes
+      return `"${key}": "${before}\\"${inner}\\"${after}"`;
+    });
+    
+    // Restore properly escaped quotes
+    fixed = fixed.replace(/ESCAPED_QUOTE_MARKER/g, '\\"');
+    
+    return fixed;
   }
   
   /**
