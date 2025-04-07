@@ -138,9 +138,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Do a direct database check to ensure connectivity
         await db.execute("SELECT 1");
         console.log("Database connection verified");
-      } catch (dbError) {
+      } catch (dbError: any) {
         console.error("Database connection error:", dbError);
-        return res.status(500).json({ error: "Database connection failed", details: String(dbError) });
+        // Temporarily return details even in production for debugging
+        return res.status(500).json({ 
+          error: "Database connection failed", 
+          details: String(dbError),
+          message: dbError?.message, // Add message if available
+          stack: dbError?.stack // Add stack if available
+        });
       }
       
       // For production environment, add an extra layer of protection
@@ -158,14 +164,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
           
           console.log(`API Response: Returning ${result.lessons.length} lessons out of ${result.total} total`);
           return res.json(result);
-        } catch (prodError) {
+        } catch (prodError: any) { // Add : any type
           console.error("Production error in /api/lessons:", prodError);
           
-          // Return empty result set instead of 500 error
-          console.log("Returning empty result set for production environment");
-          return res.json({
-            lessons: [],
-            total: 0
+          // Temporarily return error details instead of empty result set
+          console.log("Returning detailed error for production environment (DEBUGGING)");
+          return res.status(500).json({ // Change status to 500
+            error: "Failed to fetch lessons in production", 
+            message: prodError?.message, // Add message if available
+            details: String(prodError),
+            stack: prodError?.stack // Add stack if available
           });
         }
       } else {
