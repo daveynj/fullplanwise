@@ -157,8 +157,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
             dateFilter
           );
           
-          console.log(`API Response: Returning ${result.lessons.length} lessons out of ${result.total} total`);
-          return res.json(result);
+          // --- DEBUGGING: Check result structure before sending ---
+          console.log(`API Response: Retrieved ${result.lessons.length} lessons out of ${result.total} total.`);
+          console.log('Result structure:', JSON.stringify({ total: result.total, lessonCount: result.lessons.length, firstLessonKeys: result.lessons.length > 0 ? Object.keys(result.lessons[0]) : [] }, null, 2));
+          
+          // Try sending only the total count first to see if that works
+          // return res.json({ total: result.total, lessons: [] }); 
+          
+          // If the above works, try sending cleaned lessons
+          try {
+            // Explicitly select/clean data to avoid potential circular refs or unserializable types
+            const cleanedLessons = result.lessons.map(lesson => ({
+              id: lesson.id,
+              teacherId: lesson.teacherId,
+              studentId: lesson.studentId,
+              title: lesson.title,
+              topic: lesson.topic,
+              cefrLevel: lesson.cefrLevel,
+              // Omit 'content' for now, as it might be large or complex
+              // content: lesson.content, 
+              notes: lesson.notes,
+              createdAt: lesson.createdAt
+            }));
+            
+            console.log('Attempting to send cleaned lessons...');
+            return res.json({ total: result.total, lessons: cleanedLessons });
+            
+          } catch (serializationError: any) {
+            console.error("Error during manual serialization:", serializationError);
+            return res.status(500).json({ error: "Failed to serialize lesson data", message: serializationError.message });
+          }
+          // --- END DEBUGGING ---
         } catch (prodError: any) { 
           console.error("Production error in /api/lessons:", prodError);
           
@@ -180,8 +209,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
           dateFilter
         );
         
-        console.log(`API Response: Returning ${result.lessons.length} lessons out of ${result.total} total`);
-        return res.json(result);
+        // --- DEBUGGING (Dev): Apply same logic as production for consistency ---
+        console.log(`API Response (Dev): Retrieved ${result.lessons.length} lessons out of ${result.total} total.`);
+        console.log('Result structure (Dev):', JSON.stringify({ total: result.total, lessonCount: result.lessons.length, firstLessonKeys: result.lessons.length > 0 ? Object.keys(result.lessons[0]) : [] }, null, 2));
+        
+        try {
+          const cleanedLessons = result.lessons.map(lesson => ({
+            id: lesson.id,
+            teacherId: lesson.teacherId,
+            studentId: lesson.studentId,
+            title: lesson.title,
+            topic: lesson.topic,
+            cefrLevel: lesson.cefrLevel,
+            // Omit 'content' for now
+            notes: lesson.notes,
+            createdAt: lesson.createdAt
+          }));
+          
+          console.log('Attempting to send cleaned lessons (Dev)...');
+          return res.json({ total: result.total, lessons: cleanedLessons });
+          
+        } catch (serializationError: any) {
+          console.error("Error during manual serialization (Dev):", serializationError);
+          // Let the default error handler catch this in dev
+          throw serializationError; 
+        }
+        // --- END DEBUGGING (Dev) ---
       }
     } catch (error: any) {
       console.error("Error in /api/lessons:", error);
