@@ -325,15 +325,19 @@ export class DatabaseStorage implements IStorage {
       
       // Build filter conditions
       const conditions = [eq(lessons.teacherId, teacherId)];
+      console.log('Initial conditions:', JSON.stringify(conditions)); // Log initial conditions
       
       // Add search filter if provided
       if (search && search.trim() !== '') {
         const searchTerm = `%${search.trim()}%`;
         try {
-          // Just use simple individual conditions instead of OR to avoid TypeScript errors
-          conditions.push(ilike(lessons.title, searchTerm));
-          conditions.push(ilike(lessons.topic, searchTerm));
-          console.log('Added search conditions for title and topic:', searchTerm);
+          // Combine title and topic search with OR
+          const searchCondition = or(
+            ilike(lessons.title, searchTerm),
+            ilike(lessons.topic, searchTerm)
+          );
+          conditions.push(searchCondition);
+          console.log('Added search condition:', JSON.stringify(searchCondition)); // Log search condition
         } catch (error) {
           console.error('Error adding search condition:', error);
           // Don't add additional conditions on failure since teacherId is already included
@@ -342,7 +346,9 @@ export class DatabaseStorage implements IStorage {
       
       // Add CEFR level filter if provided
       if (cefrLevel && cefrLevel !== 'all') {
-        conditions.push(eq(lessons.cefrLevel, cefrLevel));
+        const cefrCondition = eq(lessons.cefrLevel, cefrLevel);
+        conditions.push(cefrCondition);
+        console.log('Added CEFR condition:', JSON.stringify(cefrCondition)); // Log CEFR condition
       }
       
       // Add date filter if provided
@@ -363,8 +369,12 @@ export class DatabaseStorage implements IStorage {
           startDate = new Date(0); // Default to epoch start if unknown filter
         }
         
-        conditions.push(gte(lessons.createdAt, startDate));
+        const dateCondition = gte(lessons.createdAt, startDate);
+        conditions.push(dateCondition);
+        console.log('Added date condition:', JSON.stringify(dateCondition)); // Log date condition
       }
+      
+      console.log('Final conditions for count/fetch:', JSON.stringify(conditions)); // Log final conditions
       
       // Try a direct query first to see if we can get any lessons at all for this teacher
       // This helps us debug if the issue is with filtering or with basic data access
