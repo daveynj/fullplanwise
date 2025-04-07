@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "wouter";
+import { useParams, Link, useLocation } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -26,7 +26,6 @@ import { Badge } from "@/components/ui/badge";
 import { Loader2, BookOpen, Edit, ArrowLeft, Plus, User, AlertTriangle, LogOut } from "lucide-react";
 import { Student, Lesson } from "@shared/schema";
 import { useAuth } from "@/hooks/use-auth";
-import { useNavigate } from "react-router-dom";
 
 export default function StudentDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -36,7 +35,7 @@ export default function StudentDetailPage() {
   const [activeTab, setActiveTab] = useState("info");
   const [isUnassignDialogOpen, setIsUnassignDialogOpen] = useState(false);
   const [lessonToUnassign, setLessonToUnassign] = useState<Lesson | null>(null);
-  const navigate = useNavigate();
+  const [, navigate] = useLocation();
   const { logout } = useAuth();
   
   // Fetch student details
