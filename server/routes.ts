@@ -174,7 +174,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
               title: lesson.title,
               topic: lesson.topic,
               cefrLevel: lesson.cefrLevel,
-              content: lesson.content, 
+              // Omit content field permanently from list response to prevent crash
+              // content: lesson.content, 
               notes: lesson.notes,
               createdAt: lesson.createdAt
             }));
@@ -225,7 +226,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
             title: lesson.title,
             topic: lesson.topic,
             cefrLevel: lesson.cefrLevel,
-            content: lesson.content,
+            // Omit content field permanently from list response (Dev)
+            // content: lesson.content,
             notes: lesson.notes,
             createdAt: lesson.createdAt
           }));
