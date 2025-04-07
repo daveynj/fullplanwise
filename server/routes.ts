@@ -725,6 +725,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log(`Creating checkout session for customer: ${customerId}, priceId: ${actualPriceId}`);
       
       // Start the subscription checkout session
+      // Get the host from the request for dynamic URLs
+      const host = req.headers.host || '';
+      const protocol = req.headers['x-forwarded-proto'] || 'http';
+      const baseUrl = `${protocol}://${host}`;
+      
+      console.log(`Using base URL for redirection: ${baseUrl}`);
+      
       const session = await stripe.checkout.sessions.create({
         customer: customerId,
         payment_method_types: ['card'],
@@ -735,8 +742,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           },
         ],
         mode: 'subscription',
-        success_url: `https://planwiseesl.com/subscription-success?session_id={CHECKOUT_SESSION_ID}&plan=${planId}`,
-        cancel_url: `https://planwiseesl.com/buy-credits`,
+        success_url: `${baseUrl}/subscription-success?session_id={CHECKOUT_SESSION_ID}&plan=${planId}`,
+        cancel_url: `${baseUrl}/buy-credits`,
         metadata: {
           userId: userId.toString(),
           planId: planId

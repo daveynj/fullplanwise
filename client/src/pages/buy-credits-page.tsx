@@ -96,10 +96,13 @@ function CheckoutForm({ amount, quantity, onSuccess }: { amount: number, quantit
 
     setIsProcessing(true);
 
+    // Use window.location to get the origin for dynamic URLs
+    const origin = window.location.origin;
+    
     const { error } = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        return_url: "https://planwiseesl.com/buy-credits?success=true",
+        return_url: `${origin}/buy-credits?success=true`,
       },
       redirect: "if_required",
     });
