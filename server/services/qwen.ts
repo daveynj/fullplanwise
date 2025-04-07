@@ -551,7 +551,6 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
         });
         
         console.log('Received response from Qwen API');
-        }
         
         // Parse the response, transform, and return
         if (response.data?.choices?.[0]?.message?.content) {
