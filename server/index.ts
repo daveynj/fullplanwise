@@ -4,37 +4,23 @@ import { setupVite, serveStatic, log } from "./vite";
 import { buffer } from "micro";
 
 // Extend Express Request type
-interface Request extends ExpressRequest {
-  rawBody?: Buffer;
-}
+// Remove the Request interface extension as req.rawBody is no longer needed here
+// interface Request extends ExpressRequest {
+//  rawBody?: Buffer;
+//}
 
 const app = express();
 
-// Create a raw body parser middleware for Stripe webhooks
-const rawBodyParser = async (req: Request, res: Response, next: NextFunction) => {
-  if (req.path === '/api/webhooks/stripe' && req.headers['stripe-signature']) {
-    try {
-      console.log(`Stripe webhook received, parsing raw body...`);
-      const rawBody = await buffer(req);
-      req.rawBody = rawBody;
-      console.log(`Raw body captured for Stripe webhook: ${rawBody.length} bytes`);
-    } catch (error) {
-      console.error(`Error capturing raw body for Stripe webhook:`, error);
-    }
-  }
-  next();
-};
+// Remove the rawBodyParser definition (lines 14-24)
+// const rawBodyParser = async (req: Request, res: Response, next: NextFunction) => {
+// ... (removed code)
+// };
 
-// Apply raw body parser before json parser for webhook endpoint
-app.use(rawBodyParser);
-app.use(express.json({
-  verify: (req: Request, res: Response, buf: Buffer) => {
-    if (req.path === '/api/webhooks/stripe') {
-      console.log(`Setting rawBody from JSON parser verify handler: ${buf.length} bytes`);
-      req.rawBody = buf;
-    }
-  }
-}));
+// Remove global application of rawBodyParser (line 27)
+// app.use(rawBodyParser);
+
+// Apply express.json globally, removing the verify option
+app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use((req, res, next) => {

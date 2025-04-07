@@ -140,13 +140,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log("Database connection verified");
       } catch (dbError: any) {
         console.error("Database connection error:", dbError);
-        // Temporarily return details even in production for debugging
-        return res.status(500).json({ 
-          error: "Database connection failed", 
-          details: String(dbError),
-          message: dbError?.message, // Add message if available
-          stack: dbError?.stack // Add stack if available
-        });
+        // Revert: Return generic error for database connection issues
+        return res.status(500).json({ error: "Database connection failed", details: String(dbError) }); 
       }
       
       // For production environment, add an extra layer of protection
@@ -164,16 +159,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
           
           console.log(`API Response: Returning ${result.lessons.length} lessons out of ${result.total} total`);
           return res.json(result);
-        } catch (prodError: any) { // Add : any type
+        } catch (prodError: any) { 
           console.error("Production error in /api/lessons:", prodError);
           
-          // Temporarily return error details instead of empty result set
-          console.log("Returning detailed error for production environment (DEBUGGING)");
-          return res.status(500).json({ // Change status to 500
-            error: "Failed to fetch lessons in production", 
-            message: prodError?.message, // Add message if available
-            details: String(prodError),
-            stack: prodError?.stack // Add stack if available
+          // Revert: Return empty result set instead of 500 error
+          console.log("Returning empty result set for production environment");
+          return res.json({ // Change status back to default (200 OK with empty data)
+            lessons: [],
+            total: 0
           });
         }
       } else {
@@ -768,9 +761,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Stripe webhook handler
-  app.post("/api/webhooks/stripe", async (req: any, res) => {
-    // Use the rawBody property set in our custom middleware
-    const payload = req.rawBody;
+  // Apply express.raw() middleware specifically for this route
+  app.post("/api/webhooks/stripe", express.raw({ type: 'application/json' }), async (req: any, res) => {
+    // Use req.body which now contains the raw buffer
+    const payload = req.body; 
     const sig = req.headers['stripe-signature'] as string;
     
     console.log("Received Stripe webhook event");
@@ -791,8 +785,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       if (!payload) {
-        console.error("No raw body found in webhook request");
-        return res.status(400).json({ message: "No raw body found in webhook request" });
+        console.error("No body found in webhook request");
+        return res.status(400).json({ message: "No body found in webhook request" });
       }
       
       console.log(`Webhook received with signature: ${sig.substring(0, 10)}...`);
