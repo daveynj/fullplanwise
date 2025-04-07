@@ -174,8 +174,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
               title: lesson.title,
               topic: lesson.topic,
               cefrLevel: lesson.cefrLevel,
-              // Omit 'content' for now, as it might be large or complex
-              // content: lesson.content, 
+              content: lesson.content, 
               notes: lesson.notes,
               createdAt: lesson.createdAt
             }));
@@ -221,7 +220,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             title: lesson.title,
             topic: lesson.topic,
             cefrLevel: lesson.cefrLevel,
-            // Omit 'content' for now
+            content: lesson.content,
             notes: lesson.notes,
             createdAt: lesson.createdAt
           }));
