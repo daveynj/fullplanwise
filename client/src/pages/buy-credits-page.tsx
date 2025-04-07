@@ -170,7 +170,14 @@ export default function BuyCreditsPage() {
   // Create payment intent mutation
   const createPaymentIntentMutation = useMutation({
     mutationFn: async ({ amount, quantity }: { amount: number, quantity: number }) => {
-      const res = await apiRequest("POST", "/api/create-payment-intent", { amount, quantity });
+      // TEMPORARY TEST MODE: Always use $0.50 for payment amount regardless of package
+      const testAmount = 0.50;
+      console.log(`TESTING MODE: Using $${testAmount} instead of $${amount} for payment`);
+      
+      const res = await apiRequest("POST", "/api/create-payment-intent", { 
+        amount: testAmount, 
+        quantity: quantity 
+      });
       return await res.json();
     },
     onSuccess: (data) => {
@@ -370,7 +377,14 @@ export default function BuyCreditsPage() {
                     <CardHeader>
                       <CardTitle className="font-nunito">Payment Details</CardTitle>
                       <CardDescription>
-                        {selectedPackageData ? `Purchasing ${selectedPackageData.credits} credits for $${selectedPackageData.price.toFixed(2)}` : 'Complete your payment'}
+                        {selectedPackageData ? (
+                          <>
+                            Purchasing {selectedPackageData.credits} credits
+                            <span className="text-green-600 font-semibold ml-1">
+                              (TESTING MODE: $0.50 test charge)
+                            </span>
+                          </>
+                        ) : 'Complete your payment'}
                       </CardDescription>
                     </CardHeader>
                     <CardContent>

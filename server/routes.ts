@@ -511,12 +511,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const { amount } = creditPurchaseSchema.parse(req.body);
       
+      // TEMPORARY TEST MODE: Check if amount is 0.50 and note it's a test payment
+      const isTestPayment = amount === 0.50;
+      const actualAmount = amount;
+      
+      if (isTestPayment) {
+        console.log(`TESTING MODE: Processing $0.50 test payment for user ${req.user!.id}`);
+      }
+      
       const paymentIntent = await stripe.paymentIntents.create({
-        amount: Math.round(amount * 100), // Convert to cents
+        amount: Math.round(actualAmount * 100), // Convert to cents
         currency: "usd",
         metadata: {
           userId: req.user!.id.toString(),
           credits: req.body.quantity.toString(),
+          testPayment: isTestPayment ? 'true' : 'false'
         },
       });
       
