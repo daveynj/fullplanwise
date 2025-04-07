@@ -537,19 +537,10 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
           fs.mkdirSync('./logs', { recursive: true });
         }
         
-        if (!fs.existsSync('./logs/debug')) {
-          fs.mkdirSync('./logs/debug', { recursive: true });
-        }
-        
-        // Create unique identifiers for this request
+        // Create unique identifiers for this request (for logging purposes only)
         const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
         const topicSafe = params.topic.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 20);
         const requestId = `${topicSafe}_${timestamp}`;
-        
-        // Save the raw prompt as plain text
-        const rawPromptPath = `./logs/RAW_prompt_${requestId}.txt`;
-        fs.writeFileSync(rawPromptPath, prompt);
-        console.log(`Raw prompt saved to ${rawPromptPath}`);
         
         console.log('Sending request to Qwen API...');
         
@@ -565,20 +556,6 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
         });
         
         console.log('Received response from Qwen API');
-        
-        // Save ABSOLUTELY EVERYTHING in the response
-        const fullResponsePath = `./logs/FULL_response_${requestId}.json`;
-        fs.writeFileSync(
-          fullResponsePath,
-          JSON.stringify(response.data, null, 2)
-        );
-        console.log(`ABSOLUTELY EVERYTHING in the response saved to ${fullResponsePath}`);
-        
-        // Save raw choices content
-        if (response.data?.choices?.[0]?.message?.content) {
-          const contentPath = `./logs/RAW_message_content_${requestId}.txt`;
-          fs.writeFileSync(contentPath, response.data.choices[0].message.content);
-          console.log(`Raw message content saved to ${contentPath}`);
         }
         
         // Parse the response, transform, and return

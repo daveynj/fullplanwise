@@ -31,23 +31,13 @@ export class GeminiService {
 
       console.log('Starting Gemini AI lesson generation...');
       
-      // Create logs directory if it doesn't exist
-      if (!fs.existsSync('./logs')) {
-        fs.mkdirSync('./logs', { recursive: true });
-      }
-      
-      // Create unique identifiers for this request
+      // Create unique identifiers for this request (for logging purposes only)
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
       const topicSafe = params.topic.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 20);
       const requestId = `${topicSafe}_${timestamp}`;
       
       // Construct the prompt
       const prompt = this.constructLessonPrompt(params);
-      
-      // Save the raw prompt as plain text
-      const rawPromptPath = `./logs/RAW_prompt_gemini_${requestId}.txt`;
-      fs.writeFileSync(rawPromptPath, prompt);
-      console.log(`Raw prompt saved to ${rawPromptPath}`);
       
       // Configure the model and features
       // Using Gemini 1.5 Flash model per the latest API documentation
@@ -69,19 +59,6 @@ export class GeminiService {
         const text = response.text();
         
         console.log('Received response from Gemini API');
-        
-        // Save the raw response
-        const fullResponsePath = `./logs/FULL_response_gemini_${requestId}.json`;
-        fs.writeFileSync(
-          fullResponsePath,
-          JSON.stringify(result, null, 2)
-        );
-        console.log(`Response saved to ${fullResponsePath}`);
-        
-        // Save raw content
-        const contentPath = `./logs/RAW_message_content_gemini_${requestId}.txt`;
-        fs.writeFileSync(contentPath, text);
-        console.log(`Raw message content saved to ${contentPath}`);
         
         try {
           // First, attempt to clean up the content and remove markdown code block markers
