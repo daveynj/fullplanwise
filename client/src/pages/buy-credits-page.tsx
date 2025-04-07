@@ -197,6 +197,24 @@ export default function BuyCreditsPage() {
       console.log(`Creating subscription: planId=${planId}, priceId=${priceId}`);
       // Using the proper endpoint to match server-side route
       const res = await apiRequest("POST", "/api/subscriptions/create", { planId, priceId });
+      
+      if (res.status === 409) {
+        // This is our custom status for "retry needed"
+        const data = await res.json();
+        
+        if (data.retryNeeded) {
+          // Wait a moment to give the server time to reset the user's customer ID
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          console.log("Customer ID reset, retrying subscription creation...");
+          
+          // Try again with the same parameters
+          const retryRes = await apiRequest("POST", "/api/subscriptions/create", { planId, priceId });
+          return await retryRes.json();
+        }
+        
+        throw new Error(data.message || "Please try again");
+      }
+      
       return await res.json();
     },
     onSuccess: (data) => {
@@ -205,10 +223,10 @@ export default function BuyCreditsPage() {
         window.location.href = data.url;
       }
     },
-    onError: (error: Error) => {
+    onError: (error: any) => {
       toast({
         title: "Error Creating Subscription",
-        description: error.message,
+        description: error.message || "Failed to create subscription. Please try again.",
         variant: "destructive",
       });
     }
@@ -429,10 +447,12 @@ export default function BuyCreditsPage() {
                       const plan = subscriptionPlans.find(p => p.id === selectedSubscription);
                       if (plan) {
                         // Stripe Price IDs mapped to plan IDs
+                        // Let's send the plan ID to the server and let it handle the price ID mapping
+                        // This helps avoid issues with mismatched price IDs between accounts
                         const priceIdMap: Record<string, string> = {
-                          'basic_monthly': 'price_1RAwzFAsWPZqDtgQDk06P5r1',  // Basic monthly plan
-                          'premium_monthly': 'price_1RAx0iAsWPZqDtgQ4wc1T8a9', // Premium monthly plan
-                          'annual_plan': 'price_1RAx2NAsWPZqDtgQl2HPLAng'      // Annual plan
+                          'basic_monthly': 'price_basic_monthly',
+                          'premium_monthly': 'price_premium_monthly',
+                          'annual_plan': 'price_annual_plan'
                         };
                         const priceId = priceIdMap[plan.id] || `price_${plan.id}`;
                         createSubscriptionMutation.mutate({ 

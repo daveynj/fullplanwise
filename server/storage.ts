@@ -332,12 +332,15 @@ export class DatabaseStorage implements IStorage {
         const searchTerm = `%${search.trim()}%`;
         try {
           // Combine title and topic search with OR
-          const searchCondition = or(
-            ilike(lessons.title, searchTerm),
-            ilike(lessons.topic, searchTerm)
-          );
-          conditions.push(searchCondition);
-          console.log('Added search condition for term:', searchTerm); // Simplified log
+          // Make sure searchCondition is not undefined before pushing
+          const titleCondition = ilike(lessons.title, searchTerm);
+          const topicCondition = ilike(lessons.topic, searchTerm);
+          
+          if (titleCondition && topicCondition) {
+            const searchCondition = or(titleCondition, topicCondition);
+            conditions.push(searchCondition);
+            console.log('Added search condition for term:', searchTerm); // Simplified log
+          }
         } catch (error) {
           console.error('Error adding search condition:', error);
           // Don't add additional conditions on failure since teacherId is already included

@@ -615,7 +615,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { planId, priceId } = subscriptionSchema.parse(req.body);
       const userId = req.user!.id;
       
-      console.log(`Creating subscription for user ${userId}, plan: ${planId}, price: ${priceId}`);
+      // Map generic price IDs to actual Stripe price IDs
+      // These should match the actual price IDs in your Stripe account
+      const stripeProductMap: Record<string, string> = {
+        'price_basic_monthly': process.env.STRIPE_PRICE_BASIC_MONTHLY || 'price_1RBPEPAsWPZqDtgQqrHDUGAR',
+        'price_premium_monthly': process.env.STRIPE_PRICE_PREMIUM_MONTHLY || 'price_1RBPFwAsWPZqDtgQiGUkN5HY',
+        'price_annual_plan': process.env.STRIPE_PRICE_ANNUAL || 'price_1RBPGzAsWPZqDtgQ5jbh1QhR'
+      };
+      
+      // Get the actual price ID from our map, or use the provided one if not found
+      const actualPriceId = stripeProductMap[priceId] || priceId;
+      
+      console.log(`Creating subscription for user ${userId}, plan: ${planId}, mapped price: ${actualPriceId} (from ${priceId})`);
       
       // Get the user from the database
       const user = await storage.getUser(userId);
@@ -627,7 +638,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Create or get Stripe customer
       let customerId = user.stripeCustomerId;
       
-      if (!customerId) {
+      // If no customer ID or empty string, create a new customer
+      if (!customerId || customerId === '') {
         // Create a new customer in Stripe
         const customer = await stripe.customers.create({
           email: user.email,
@@ -644,9 +656,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
           stripeCustomerId: customerId,
           stripeSubscriptionId: null
         });
+        
+        console.log(`Created new Stripe customer: ${customerId} for user ${userId}`);
+      } else {
+        // Verify the customer exists in Stripe
+        try {
+          await stripe.customers.retrieve(customerId);
+          console.log(`Verified existing Stripe customer: ${customerId} for user ${userId}`);
+        } catch (customerError: any) {
+          // If the customer doesn't exist in Stripe anymore, create a new one
+          if (customerError.code === 'resource_missing') {
+            console.log(`Customer ${customerId} not found in Stripe, creating new one`);
+            
+            const customer = await stripe.customers.create({
+              email: user.email,
+              name: user.fullName || user.username,
+              metadata: {
+                userId: userId.toString()
+              }
+            });
+            
+            customerId = customer.id;
+            
+            // Update the user in the database with the new Stripe customer ID
+            await storage.updateUserStripeInfo(userId, { 
+              stripeCustomerId: customerId,
+              stripeSubscriptionId: null
+            });
+            
+            console.log(`Created replacement Stripe customer: ${customerId} for user ${userId}`);
+          } else {
+            throw customerError;
+          }
+        }
       }
       
-      console.log(`Creating checkout session for customer: ${customerId}, priceId: ${priceId}`);
+      console.log(`Creating checkout session for customer: ${customerId}, priceId: ${actualPriceId}`);
       
       // Start the subscription checkout session
       const session = await stripe.checkout.sessions.create({
@@ -654,7 +699,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         payment_method_types: ['card'],
         line_items: [
           {
-            price: priceId,
+            price: actualPriceId,
             quantity: 1,
           },
         ],
@@ -685,14 +730,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ message: "Invalid subscription data", errors: error.errors });
       }
+      
       console.error("Subscription creation error:", error);
+      
+      // Handle "no such customer" error specifically
+      if (error.code === 'resource_missing' && error.param === 'customer') {
+        // The customer ID in our database doesn't exist in Stripe anymore
+        // Let's reset the user's customer ID and try again
+        try {
+          // Get user ID from the request
+          const userId = req.user!.id;
+          
+          // Get the user record
+          const userRecord = await storage.getUser(userId);
+          
+          if (userRecord) {
+            console.log(`Customer ID ${userRecord.stripeCustomerId} doesn't exist in Stripe. Resetting and retrying...`);
+            
+            // Reset the user's customer ID
+            await storage.updateUserStripeInfo(userId, {
+              stripeCustomerId: '',  // Use empty string instead of null to avoid type errors
+              stripeSubscriptionId: null
+            });
+            
+            // Redirect the user to try again
+            return res.status(409).json({ 
+              message: "Your customer record needed to be reset. Please try subscribing again.",
+              retryNeeded: true
+            });
+          }
+        } catch (retryError) {
+          console.error("Error resetting customer ID:", retryError);
+        }
+      }
+      
       res.status(500).json({ 
         message: "Error creating subscription: " + error.message,
         details: error.type || error.code || "Unknown error" 
       });
     }
   });
-  
   app.post("/api/subscriptions/cancel", ensureAuthenticated, async (req, res) => {
     try {
       if (!stripe) {
