@@ -471,6 +471,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Unassign a lesson from a student
+  app.put("/api/lessons/:id/unassign", ensureAuthenticated, async (req, res) => {
+    try {
+      const lessonId = parseInt(req.params.id);
+
+      // Check if lesson exists
+      const lesson = await storage.getLesson(lessonId);
+      if (!lesson) {
+        return res.status(404).json({ message: "Lesson not found" });
+      }
+
+      // Check authorization (user must own the lesson)
+      if (lesson.teacherId !== req.user!.id) {
+        return res.status(403).json({ message: "Unauthorized access to lesson" });
+      }
+      
+      // Check if the lesson is actually assigned to a student
+      if (!lesson.studentId) {
+         // Not strictly an error, but good to inform the client
+         return res.status(400).json({ message: "Lesson is not assigned to any student" });
+      }
+
+      // Update the lesson, setting studentId to null
+      const updatedLesson = await storage.updateLesson(lessonId, { studentId: null });
+      res.json(updatedLesson); // Return the updated lesson
+    } catch (error: any) {
+      console.error("Error unassigning lesson:", error);
+      res.status(500).json({ message: "Failed to unassign lesson", error: error.message });
+    }
+  });
+
   // Credits and Payment Routes
   app.post("/api/create-payment-intent", ensureAuthenticated, async (req, res) => {
     try {

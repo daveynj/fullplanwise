@@ -16,13 +16,17 @@ import {
   DialogContent, 
   DialogHeader, 
   DialogTitle, 
-  DialogTrigger 
+  DialogTrigger,
+  DialogDescription,
+  DialogFooter
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { StudentForm } from "@/components/student/student-form";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, BookOpen, Edit, ArrowLeft, Plus, User } from "lucide-react";
-import { Student } from "@shared/schema";
+import { Loader2, BookOpen, Edit, ArrowLeft, Plus, User, AlertTriangle, LogOut } from "lucide-react";
+import { Student, Lesson } from "@shared/schema";
+import { useAuth } from "@/hooks/use-auth";
+import { useNavigate } from "react-router-dom";
 
 export default function StudentDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -30,6 +34,10 @@ export default function StudentDetailPage() {
   const { toast } = useToast();
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("info");
+  const [isUnassignDialogOpen, setIsUnassignDialogOpen] = useState(false);
+  const [lessonToUnassign, setLessonToUnassign] = useState<Lesson | null>(null);
+  const navigate = useNavigate();
+  const { logout } = useAuth();
   
   // Fetch student details
   const { 
@@ -75,10 +83,62 @@ export default function StudentDetailPage() {
     }
   });
 
+  // Unassign lesson mutation
+  const unassignLessonMutation = useMutation({
+    mutationFn: async (lessonId: number) => {
+      await apiRequest("PUT", `/api/lessons/${lessonId}/unassign`);
+    },
+    onSuccess: (_, lessonId) => {
+      toast({
+        title: "Lesson Unassigned",
+        description: `Lesson #${lessonId} has been removed from this student's profile.`,
+      });
+      queryClient.invalidateQueries({ queryKey: [`/api/lessons/student/${studentId}`] });
+      queryClient.invalidateQueries({ queryKey: ["/api/lessons"] }); 
+      setIsUnassignDialogOpen(false);
+      setLessonToUnassign(null);
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Failed to Unassign Lesson",
+        description: error.message,
+        variant: "destructive",
+      });
+      setIsUnassignDialogOpen(false);
+      setLessonToUnassign(null);
+    }
+  });
+
   // Handle form submission for student edit
   const handleUpdateStudent = (data: Omit<Student, 'id' | 'teacherId' | 'createdAt'>) => {
     updateStudentMutation.mutate(data);
   };
+
+  // Handle opening the unassign dialog
+  const handleUnassignLesson = (lesson: Lesson) => {
+    setLessonToUnassign(lesson);
+    setIsUnassignDialogOpen(true);
+  };
+
+  // Confirm unassignment
+  const confirmUnassign = () => {
+    if (lessonToUnassign) {
+      unassignLessonMutation.mutate(lessonToUnassign.id);
+    }
+  };
+
+  // Handle potential auth errors during fetch
+  useEffect(() => {
+    if (studentError && (studentError as any).status === 401) {
+        toast({
+          title: "Authentication Error",
+          description: "Your session may have expired. Please log in again.",
+          variant: "destructive",
+        });
+        logout();
+        navigate('/login');
+      }
+  }, [studentError, logout, navigate, toast]);
 
   // If error loading student
   if (studentError) {
@@ -312,9 +372,20 @@ export default function StudentDetailPage() {
                                   </span>
                                 </div>
                               </div>
-                              <Link href={`/history/${lesson.id}`}>
-                                <Button variant="outline" size="sm">View</Button>
-                              </Link>
+                              <div className="flex items-center space-x-2">
+                                <Link href={`/history/${lesson.id}`}>
+                                  <Button variant="outline" size="sm">View</Button>
+                                </Link>
+                                <Button 
+                                  variant="outline" 
+                                  size="sm" 
+                                  className="text-orange-600 border-orange-200 hover:bg-orange-100 hover:text-orange-700"
+                                  onClick={() => handleUnassignLesson(lesson as Lesson)}
+                                  disabled={unassignLessonMutation.isPending}
+                                >
+                                  <LogOut className="mr-1 h-4 w-4" /> Unassign
+                                </Button>
+                              </div>
                             </div>
                           ))}
                         </div>
@@ -340,6 +411,47 @@ export default function StudentDetailPage() {
           </div>
         </main>
       </div>
+
+      {/* Unassign Lesson Confirmation Dialog */}
+      <Dialog open={isUnassignDialogOpen} onOpenChange={setIsUnassignDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center">
+              <AlertTriangle className="h-5 w-5 text-orange-500 mr-2" />
+              Confirm Unassignment
+            </DialogTitle>
+            <DialogDescription className="pt-2">
+              Are you sure you want to unassign the lesson 
+              <span className="font-semibold"> "{lessonToUnassign?.title}" </span> 
+              from this student? The lesson itself will not be deleted.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="sm:justify-end mt-4">
+            <Button 
+              variant="outline" 
+              onClick={() => setIsUnassignDialogOpen(false)}
+              disabled={unassignLessonMutation.isPending}
+            >
+              Cancel
+            </Button>
+            <Button 
+              variant="destructive" 
+              className="bg-orange-600 hover:bg-orange-700"
+              onClick={confirmUnassign}
+              disabled={unassignLessonMutation.isPending}
+            >
+              {unassignLessonMutation.isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Unassigning...
+                </>
+              ) : (
+                <>Unassign Lesson</>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
