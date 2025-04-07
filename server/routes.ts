@@ -184,6 +184,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
             
           } catch (serializationError: any) {
             console.error("Error during manual serialization:", serializationError);
+            // --- DEBUGGING: Log potentially problematic content --- 
+            if (result.lessons && result.lessons.length > 0) {
+              console.error("Problematic lesson content (first lesson):", result.lessons[0].content);
+            }
+            // --- END DEBUGGING ---
             return res.status(500).json({ error: "Failed to serialize lesson data", message: serializationError.message });
           }
           // --- END DEBUGGING ---
@@ -230,6 +235,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
           
         } catch (serializationError: any) {
           console.error("Error during manual serialization (Dev):", serializationError);
+          // --- DEBUGGING (Dev): Log potentially problematic content ---
+          if (result.lessons && result.lessons.length > 0) {
+            console.error("Problematic lesson content (Dev, first lesson):", result.lessons[0].content);
+          }
+          // --- END DEBUGGING (Dev) ---
           // Let the default error handler catch this in dev
           throw serializationError; 
         }
