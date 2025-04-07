@@ -198,21 +198,29 @@ export default function BuyCreditsPage() {
       // Using the proper endpoint to match server-side route
       const res = await apiRequest("POST", "/api/subscriptions/create", { planId, priceId });
       
-      if (res.status === 409) {
-        // This is our custom status for "retry needed"
+      // Handle different status codes
+      if (!res.ok) {
         const data = await res.json();
         
-        if (data.retryNeeded) {
+        if (res.status === 409 && data.retryNeeded) {
+          // This is our custom status for "retry needed"
           // Wait a moment to give the server time to reset the user's customer ID
           await new Promise(resolve => setTimeout(resolve, 1000));
           console.log("Customer ID reset, retrying subscription creation...");
           
           // Try again with the same parameters
           const retryRes = await apiRequest("POST", "/api/subscriptions/create", { planId, priceId });
+          
+          if (!retryRes.ok) {
+            const retryError = await retryRes.json();
+            throw new Error(retryError.message || "Failed on retry attempt. Please try again later.");
+          }
+          
           return await retryRes.json();
         }
         
-        throw new Error(data.message || "Please try again");
+        // For other error scenarios
+        throw new Error(data.message || `Subscription error (${res.status}): Please try again.`);
       }
       
       return await res.json();
@@ -447,8 +455,7 @@ export default function BuyCreditsPage() {
                       const plan = subscriptionPlans.find(p => p.id === selectedSubscription);
                       if (plan) {
                         // Stripe Price IDs mapped to plan IDs
-                        // Let's send the plan ID to the server and let it handle the price ID mapping
-                        // This helps avoid issues with mismatched price IDs between accounts
+                        // These IDs match what we configured on the server side
                         const priceIdMap: Record<string, string> = {
                           'basic_monthly': 'price_basic_monthly',
                           'premium_monthly': 'price_premium_monthly',

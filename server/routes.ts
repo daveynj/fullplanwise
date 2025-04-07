@@ -615,29 +615,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { planId, priceId } = subscriptionSchema.parse(req.body);
       const userId = req.user!.id;
       
-      // Map generic price IDs to actual Stripe price IDs from environment variables
-      // These should be set up in your environment with your actual Stripe price IDs
-      const stripeProductMap: Record<string, string | undefined> = {
-        'price_basic_monthly': process.env.STRIPE_PRICE_BASIC_MONTHLY,
-        'price_premium_monthly': process.env.STRIPE_PRICE_PREMIUM_MONTHLY,
-        'price_annual_plan': process.env.STRIPE_PRICE_ANNUAL
+      // Map generic price IDs to actual Stripe price IDs
+      // Using the price IDs you created in your Stripe account
+      const stripeProductMap: Record<string, string> = {
+        'price_basic_monthly': 'price_1RAwzFAsWPZqDtgQDk06P5r1',   // Basic monthly plan
+        'price_premium_monthly': 'price_1RAx0iAsWPZqDtgQ4wc1T8a9', // Premium monthly plan
+        'price_annual_plan': 'price_1RAx2NAsWPZqDtgQl2HPLAng'      // Annual plan
       };
       
       // Get the actual price ID from our map, or use the provided one if not found
       const actualPriceId = stripeProductMap[priceId] || priceId;
-      
-      // Check if environment variables are set
-      if (!actualPriceId || (
-          priceId === 'price_basic_monthly' && !process.env.STRIPE_PRICE_BASIC_MONTHLY ||
-          priceId === 'price_premium_monthly' && !process.env.STRIPE_PRICE_PREMIUM_MONTHLY ||
-          priceId === 'price_annual_plan' && !process.env.STRIPE_PRICE_ANNUAL
-      )) {
-        console.error(`Missing Stripe price ID in environment variables for ${priceId}`);
-        return res.status(500).json({ 
-          message: "Stripe price ID not configured. Please set up the STRIPE_PRICE_BASIC_MONTHLY, STRIPE_PRICE_PREMIUM_MONTHLY, and STRIPE_PRICE_ANNUAL environment variables with your actual Stripe price IDs.",
-          missingPriceIds: true
-        });
-      }
       
       console.log(`Creating subscription for user ${userId}, plan: ${planId}, mapped price: ${actualPriceId} (from ${priceId})`);
       
