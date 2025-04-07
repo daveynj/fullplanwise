@@ -532,12 +532,7 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
       
       // Make the API request
       try {
-        // Create logs directory if it doesn't exist
-        if (!fs.existsSync('./logs')) {
-          fs.mkdirSync('./logs', { recursive: true });
-        }
-        
-        // Create unique identifiers for this request (for logging purposes only)
+        // Create unique identifiers for this request
         const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
         const topicSafe = params.topic.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 20);
         const requestId = `${topicSafe}_${timestamp}`;
