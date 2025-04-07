@@ -325,7 +325,7 @@ export class DatabaseStorage implements IStorage {
       
       // Build filter conditions
       const conditions = [eq(lessons.teacherId, teacherId)];
-      console.log('Initial conditions:', JSON.stringify(conditions)); // Log initial conditions
+      console.log('Initial conditions set for teacherId:', teacherId); // Simplified log
       
       // Add search filter if provided
       if (search && search.trim() !== '') {
@@ -337,7 +337,7 @@ export class DatabaseStorage implements IStorage {
             ilike(lessons.topic, searchTerm)
           );
           conditions.push(searchCondition);
-          console.log('Added search condition:', JSON.stringify(searchCondition)); // Log search condition
+          console.log('Added search condition for term:', searchTerm); // Simplified log
         } catch (error) {
           console.error('Error adding search condition:', error);
           // Don't add additional conditions on failure since teacherId is already included
@@ -348,7 +348,7 @@ export class DatabaseStorage implements IStorage {
       if (cefrLevel && cefrLevel !== 'all') {
         const cefrCondition = eq(lessons.cefrLevel, cefrLevel);
         conditions.push(cefrCondition);
-        console.log('Added CEFR condition:', JSON.stringify(cefrCondition)); // Log CEFR condition
+        console.log('Added CEFR condition for level:', cefrLevel); // Simplified log
       }
       
       // Add date filter if provided
@@ -371,10 +371,10 @@ export class DatabaseStorage implements IStorage {
         
         const dateCondition = gte(lessons.createdAt, startDate);
         conditions.push(dateCondition);
-        console.log('Added date condition:', JSON.stringify(dateCondition)); // Log date condition
+        console.log('Added date condition for filter:', dateFilter, 'Start date:', startDate.toISOString()); // Simplified log
       }
       
-      console.log('Final conditions for count/fetch:', JSON.stringify(conditions)); // Log final conditions
+      console.log(`Final condition count for count/fetch: ${conditions.length}`); // Simplified log
       
       // Try a direct query first to see if we can get any lessons at all for this teacher
       // This helps us debug if the issue is with filtering or with basic data access
