@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, QueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { 
   Card, 
@@ -37,8 +37,26 @@ import {
   SelectValue
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Search, BookOpen, Calendar, RefreshCw } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Search, BookOpen, Calendar, RefreshCw, Plus, Minus, CreditCard, MoreVertical } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { queryClient } from "@/lib/queryClient";
 
 // Interface for user with lesson stats
 interface UserWithLessonStats {
@@ -134,6 +152,73 @@ export function AdminDashboardPage() {
     if (!dateString) return "Never";
     const date = new Date(dateString);
     return date.toLocaleDateString() + " " + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
+  // State for credit management dialog
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<UserWithLessonStats | null>(null);
+  const [creditAmount, setCreditAmount] = useState(1);
+  const [creditAction, setCreditAction] = useState<'add' | 'subtract' | 'set'>('add');
+
+  // Mutation for updating user credits
+  const updateCreditsMutation = useMutation({
+    mutationFn: async (params: { userId: number, credits: number, action: 'add' | 'subtract' | 'set' }) => {
+      const response = await fetch('/api/admin/update-user-credits', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(params),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to update credits');
+      }
+      
+      return response.json();
+    },
+    onSuccess: (data) => {
+      // Show success message
+      toast({
+        title: "Credits updated successfully",
+        description: data.message,
+      });
+      
+      // Close the dialog
+      setIsDialogOpen(false);
+      
+      // Reset form
+      setCreditAmount(1);
+      setSelectedUser(null);
+      
+      // Invalidate the users query to refetch the latest data
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/users/lesson-stats'] });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Failed to update credits",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Handle opening the credit management dialog
+  const handleOpenCreditDialog = (user: UserWithLessonStats) => {
+    setSelectedUser(user);
+    setIsDialogOpen(true);
+  };
+
+  // Handle submitting the credit update
+  const handleUpdateCredits = () => {
+    if (!selectedUser) return;
+    
+    updateCreditsMutation.mutate({
+      userId: selectedUser.id,
+      credits: creditAmount,
+      action: creditAction,
+    });
   };
 
   // Calculate total pages
@@ -239,6 +324,7 @@ export function AdminDashboardPage() {
                           <TableHead>Credits</TableHead>
                           <TableHead>Subscription</TableHead>
                           <TableHead>Admin</TableHead>
+                          <TableHead>Actions</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -268,6 +354,43 @@ export function AdminDashboardPage() {
                                   Yes
                                 </span>
                               ) : "No"}
+                            </TableCell>
+                            <TableCell>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" size="icon" className="h-8 w-8 p-0">
+                                    <span className="sr-only">Open menu</span>
+                                    <MoreVertical className="h-4 w-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                  <DropdownMenuItem onClick={() => {
+                                    setSelectedUser(user);
+                                    setCreditAction('add');
+                                    setIsDialogOpen(true);
+                                  }}>
+                                    <Plus className="mr-2 h-4 w-4" />
+                                    Add Credits
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => {
+                                    setSelectedUser(user);
+                                    setCreditAction('subtract');
+                                    setIsDialogOpen(true);
+                                  }}>
+                                    <Minus className="mr-2 h-4 w-4" />
+                                    Remove Credits
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => {
+                                    setSelectedUser(user);
+                                    setCreditAction('set');
+                                    setIsDialogOpen(true);
+                                  }}>
+                                    <CreditCard className="mr-2 h-4 w-4" />
+                                    Set Credits
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
                             </TableCell>
                           </TableRow>
                         ))}
@@ -350,6 +473,101 @@ export function AdminDashboardPage() {
           </div>
         </main>
       </div>
+      
+      {/* Credits Management Dialog */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>
+              {creditAction === 'add' 
+                ? 'Add Credits' 
+                : creditAction === 'subtract' 
+                  ? 'Remove Credits' 
+                  : 'Set Credits'
+              }
+            </DialogTitle>
+            <DialogDescription>
+              {selectedUser && (
+                <span>
+                  User: <strong>{selectedUser.username}</strong> (Current credits: {selectedUser.credits})
+                </span>
+              )}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="p-4 space-y-4">
+            <div className="space-y-2">
+              <label htmlFor="credit-action" className="text-sm font-medium">Action</label>
+              <Select value={creditAction} onValueChange={(value) => setCreditAction(value as 'add' | 'subtract' | 'set')}>
+                <SelectTrigger id="credit-action">
+                  <SelectValue placeholder="Select action" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="add">Add Credits</SelectItem>
+                  <SelectItem value="subtract">Remove Credits</SelectItem>
+                  <SelectItem value="set">Set Credits</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="space-y-2">
+              <label htmlFor="credit-amount" className="text-sm font-medium">Credit Amount</label>
+              <Input
+                id="credit-amount"
+                type="number"
+                min="1"
+                value={creditAmount}
+                onChange={(e) => setCreditAmount(Math.max(1, parseInt(e.target.value) || 1))}
+              />
+              <p className="text-xs text-gray-500">
+                {creditAction === 'add' 
+                  ? `This will add ${creditAmount} credits to the user's account.` 
+                  : creditAction === 'subtract' 
+                    ? `This will remove ${creditAmount} credits from the user's account.` 
+                    : `This will set the user's credits to exactly ${creditAmount}.`
+                }
+              </p>
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleUpdateCredits} 
+              disabled={updateCreditsMutation.isPending}
+              className={`${
+                creditAction === 'add' 
+                  ? 'bg-green-600 hover:bg-green-700' 
+                  : creditAction === 'subtract' 
+                    ? 'bg-red-600 hover:bg-red-700' 
+                    : ''
+              }`}
+            >
+              {updateCreditsMutation.isPending ? (
+                <>
+                  <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                  Processing...
+                </>
+              ) : (
+                <>
+                  {creditAction === 'add' && <Plus className="mr-2 h-4 w-4" />}
+                  {creditAction === 'subtract' && <Minus className="mr-2 h-4 w-4" />}
+                  {creditAction === 'set' && <CreditCard className="mr-2 h-4 w-4" />}
+                  
+                  {creditAction === 'add' 
+                    ? 'Add Credits' 
+                    : creditAction === 'subtract' 
+                      ? 'Remove Credits' 
+                      : 'Set Credits'
+                  }
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

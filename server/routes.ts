@@ -1170,6 +1170,60 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // Admin route - Update user credits
+  app.post("/api/admin/update-user-credits", ensureAuthenticated, async (req, res) => {
+    try {
+      // Only allow admins to access this endpoint
+      const currentUser = await storage.getUser(req.user!.id);
+      if (!currentUser?.isAdmin) {
+        return res.status(403).json({ message: "Unauthorized. Admin privileges required." });
+      }
+      
+      // Validate the request body
+      const { userId, credits, action } = z.object({
+        userId: z.number(),
+        credits: z.number().positive(),
+        action: z.enum(['add', 'subtract', 'set'])
+      }).parse(req.body);
+      
+      // Get the user to update
+      const userToUpdate = await storage.getUser(userId);
+      if (!userToUpdate) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      // Calculate new credit amount based on action
+      let newCredits: number;
+      switch (action) {
+        case 'add':
+          newCredits = userToUpdate.credits + credits;
+          break;
+        case 'subtract':
+          newCredits = Math.max(0, userToUpdate.credits - credits); // Ensure credits don't go below 0
+          break;
+        case 'set':
+          newCredits = credits;
+          break;
+      }
+      
+      // Update the user's credits
+      const updatedUser = await storage.updateUserCredits(userId, newCredits);
+      
+      // Return the updated user (without password)
+      const { password, ...userWithoutPassword } = updatedUser;
+      res.json({ 
+        user: userWithoutPassword,
+        message: `Credits ${action === 'set' ? 'set to' : action === 'add' ? 'increased by' : 'reduced by'} ${credits}. New total: ${newCredits}` 
+      });
+    } catch (error: any) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid request data", errors: error.errors });
+      }
+      console.error('Error updating user credits:', error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+  
   // Create HTTP server
   const httpServer = createServer(app);
   return httpServer;
