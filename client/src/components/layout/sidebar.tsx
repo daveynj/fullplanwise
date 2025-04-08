@@ -3,7 +3,7 @@ import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { CreditBadge } from "@/components/shared/credit-badge";
-import { LogOut, Home, Wand2, Users, Book, Settings, CreditCard } from "lucide-react";
+import { LogOut, Home, Wand2, Users, Book, Settings, CreditCard, Shield } from "lucide-react";
 
 export function Sidebar() {
   const [location, setLocation] = useLocation();
@@ -39,6 +39,11 @@ export function Sidebar() {
     { path: "/settings", label: "Settings", icon: <Settings className="mr-3 text-xl" /> },
     { path: "/buy-credits", label: "Buy Credits", icon: <CreditCard className="mr-3 text-xl" /> },
   ];
+  
+  // Admin items - only visible to admin users
+  const adminItems = [
+    { path: "/admin", label: "Admin Dashboard", icon: <Shield className="mr-3 text-xl" /> },
+  ];
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -60,6 +65,16 @@ export function Sidebar() {
         <ul>
           {navItems.map(renderNavItem)}
         </ul>
+        
+        {/* Admin Section - Only visible to admin users */}
+        {user?.isAdmin && (
+          <>
+            <div className="mb-3 mt-6 text-sm font-semibold uppercase text-blue-200 pl-3">Admin</div>
+            <ul>
+              {adminItems.map(renderNavItem)}
+            </ul>
+          </>
+        )}
         
         <div className="mb-3 mt-6 text-sm font-semibold uppercase text-blue-200 pl-3">Account</div>
         <ul>
