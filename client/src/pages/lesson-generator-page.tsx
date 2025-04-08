@@ -2,19 +2,19 @@ import { useState } from "react";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
 import { LessonForm } from "@/components/lesson/lesson-form";
-import { LessonPreview } from "@/components/lesson/lesson-preview";
 import { LoadingOverlay } from "@/components/shared/loading-overlay";
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { LessonGenerateParams, Student } from "@shared/schema";
+import { useLocation } from "wouter";
 
 export default function LessonGeneratorPage() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const [, setLocation] = useLocation();
   const [generatingLesson, setGeneratingLesson] = useState(false);
-  const [generatedLesson, setGeneratedLesson] = useState<any>(null);
   
   // Fetch students for dropdown
   const { data: students = [] } = useQuery<Student[]>({
@@ -32,14 +32,29 @@ export default function LessonGeneratorPage() {
       setGeneratingLesson(true);
     },
     onSuccess: (data) => {
-      setGeneratedLesson(data);
       // Invalidate queries to refresh data
       queryClient.invalidateQueries({ queryKey: ["/api/user"] });
       queryClient.invalidateQueries({ queryKey: ["/api/lessons"] });
+      
       toast({
         title: "Lesson generated successfully!",
-        description: "Your lesson has been created and saved automatically.",
+        description: "Opening your new lesson...",
       });
+      
+      // Redirect to the fullscreen lesson view
+      if (data && data.id) {
+        // Short delay to allow the toast to be seen
+        setTimeout(() => {
+          setLocation(`/fullscreen/${data.id}`);
+        }, 500);
+      } else {
+        // Fallback if no lesson ID is available
+        toast({
+          title: "Lesson created but couldn't be opened automatically",
+          description: "Please check your lesson history to view this lesson.",
+          variant: "default"
+        });
+      }
     },
     onError: (error: Error) => {
       toast({
@@ -92,31 +107,23 @@ export default function LessonGeneratorPage() {
               </div>
             </div>
             
-            {/* Lesson form and preview container */}
-            <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-              {/* Lesson generator form */}
-              <div className="lg:col-span-2">
-                <LessonForm 
-                  students={students} 
-                  onSubmit={handleGenerateLesson} 
-                  credits={user?.credits || 0}
-                />
-              </div>
-              
-              {/* Lesson preview */}
-              <div className="lg:col-span-3">
-                <LessonPreview 
-                  lesson={generatedLesson} 
-                  onSave={() => {}} // Empty function as saving is automatic
-                  savePending={false}
-                />
-              </div>
+            {/* Lesson form container */}
+            <div className="max-w-3xl mx-auto">
+              <LessonForm 
+                students={students} 
+                onSubmit={handleGenerateLesson} 
+                credits={user?.credits || 0}
+              />
             </div>
           </div>
         </main>
       </div>
       
-      <LoadingOverlay isLoading={generatingLesson} />
+      <LoadingOverlay 
+        isLoading={generatingLesson} 
+        message="Creating Your Lesson"
+        progressText="Your lesson will open automatically when ready..."
+      />
     </div>
   );
 }
