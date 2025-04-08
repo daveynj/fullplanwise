@@ -1209,6 +1209,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Update the user's credits
       const updatedUser = await storage.updateUserCredits(userId, newCredits);
       
+      // If updating the currently logged-in user, update their session data too
+      if (req.user && req.user.id === userId) {
+        req.user = { ...req.user, credits: newCredits };
+      }
+      
       // Return the updated user (without password)
       const { password, ...userWithoutPassword } = updatedUser;
       res.json({ 

@@ -194,6 +194,11 @@ export function AdminDashboardPage() {
       
       // Invalidate the users query to refetch the latest data
       queryClient.invalidateQueries({ queryKey: ['/api/admin/users/lesson-stats'] });
+      
+      // If we updated the current user's credits, refresh the user data
+      if (selectedUser?.id === user?.id) {
+        queryClient.invalidateQueries({ queryKey: ['/api/user'] });
+      }
     },
     onError: (error: Error) => {
       toast({
