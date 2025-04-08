@@ -1145,6 +1145,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json({ received: true });
   });
   
+  // Admin routes - Users with Lesson Statistics
+  app.get("/api/admin/users/lesson-stats", ensureAuthenticated, async (req, res) => {
+    try {
+      // Only allow admins to access this endpoint
+      const currentUser = await storage.getUser(req.user!.id);
+      if (!currentUser?.isAdmin) {
+        return res.status(403).json({ message: "Unauthorized. Admin privileges required." });
+      }
+
+      // Parse query parameters
+      const page = req.query.page ? parseInt(req.query.page as string) : 1;
+      const pageSize = req.query.pageSize ? parseInt(req.query.pageSize as string) : 10;
+      const search = req.query.search as string || undefined;
+      const dateFilter = req.query.dateFilter as string || undefined;
+
+      // Get users with lesson stats
+      const result = await storage.getUsersWithLessonStats(page, pageSize, search, dateFilter);
+      
+      res.json(result);
+    } catch (error: any) {
+      console.error('Error fetching users with lesson stats:', error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+  
   // Create HTTP server
   const httpServer = createServer(app);
   return httpServer;

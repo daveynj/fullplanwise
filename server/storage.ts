@@ -37,6 +37,9 @@ export interface IStorage {
   updateLesson(id: number, lessonUpdate: Partial<Lesson>): Promise<Lesson>;
   deleteLesson(id: number): Promise<boolean>;
   
+  // Admin methods
+  getUsersWithLessonStats(page?: number, pageSize?: number, search?: string, dateFilter?: string): Promise<{users: any[], total: number}>;
+  
   // Session store
   sessionStore: Store;
 }
@@ -333,14 +336,12 @@ export class DatabaseStorage implements IStorage {
         try {
           // Combine title and topic search with OR
           // Make sure searchCondition is not undefined before pushing
-          const titleCondition = ilike(lessons.title, searchTerm);
-          const topicCondition = ilike(lessons.topic, searchTerm);
-          
-          if (titleCondition && topicCondition) {
-            const searchCondition = or(titleCondition, topicCondition);
-            conditions.push(searchCondition);
-            console.log('Added search condition for term:', searchTerm); // Simplified log
-          }
+          const searchCondition = or(
+            ilike(lessons.title, searchTerm),
+            ilike(lessons.topic, searchTerm)
+          );
+          conditions.push(searchCondition);
+          console.log('Added search condition for term:', searchTerm); // Simplified log
         } catch (error) {
           console.error('Error adding search condition:', error);
           // Don't add additional conditions on failure since teacherId is already included
@@ -554,6 +555,160 @@ export class DatabaseStorage implements IStorage {
     } catch (error) {
       console.error('Error deleting lesson:', error);
       throw error;
+    }
+  }
+  
+  // Admin methods
+  async getUsersWithLessonStats(
+    page: number = 1,
+    pageSize: number = 10,
+    search?: string,
+    dateFilter?: string
+  ): Promise<{users: any[], total: number}> {
+    try {
+      console.log(`Getting users with lesson stats, page: ${page}, search: ${search || 'none'}, dateFilter: ${dateFilter || 'none'}`);
+      
+      // Calculate offset based on page number and page size
+      const offset = (page - 1) * pageSize;
+      
+      // Build search condition for users
+      let userConditions = [];
+      if (search && search.trim() !== '') {
+        const searchTerm = `%${search.trim()}%`;
+        userConditions.push(
+          or(
+            ilike(users.username, searchTerm),
+            ilike(users.email, searchTerm),
+            ilike(users.fullName, searchTerm)
+          )
+        );
+      }
+      
+      // Find the total number of users matching search
+      let countResult;
+      if (userConditions.length > 0) {
+        countResult = await db
+          .select({ count: count() })
+          .from(users)
+          .where(and(...userConditions));
+      } else {
+        countResult = await db
+          .select({ count: count() })
+          .from(users);
+      }
+      
+      const total = Number(countResult[0]?.count || 0);
+      
+      // Get users with pagination
+      let usersList;
+      if (userConditions.length > 0) {
+        usersList = await db
+          .select()
+          .from(users)
+          .where(and(...userConditions))
+          .orderBy(desc(users.id))
+          .limit(pageSize)
+          .offset(offset);
+      } else {
+        usersList = await db
+          .select()
+          .from(users)
+          .orderBy(desc(users.id))
+          .limit(pageSize)
+          .offset(offset);
+      }
+      
+      // Build date filter for lessons if needed
+      let startDate: Date | undefined;
+      if (dateFilter && dateFilter !== 'all') {
+        const now = new Date();
+        
+        if (dateFilter === 'today') {
+          startDate = new Date(now);
+          startDate.setHours(0, 0, 0, 0);
+        } else if (dateFilter === 'week') {
+          startDate = new Date(now);
+          startDate.setDate(now.getDate() - 7);
+        } else if (dateFilter === 'month') {
+          startDate = new Date(now);
+          startDate.setMonth(now.getMonth() - 1);
+        } else {
+          startDate = new Date(0); // Default to epoch start if unknown filter
+        }
+      }
+      
+      // For each user, get their lesson stats
+      const usersWithStats = await Promise.all(
+        usersList.map(async (user) => {
+          // Count total lessons
+          let lessonCountResult;
+          if (startDate) {
+            lessonCountResult = await db
+              .select({ count: count() })
+              .from(lessons)
+              .where(
+                and(
+                  eq(lessons.teacherId, user.id),
+                  gte(lessons.createdAt, startDate)
+                )
+              );
+          } else {
+            lessonCountResult = await db
+              .select({ count: count() })
+              .from(lessons)
+              .where(eq(lessons.teacherId, user.id));
+          }
+          
+          const lessonCount = Number(lessonCountResult[0]?.count || 0);
+          
+          // Get most recent lesson date
+          let recentLesson;
+          if (startDate) {
+            const dateFilter = and(
+              eq(lessons.teacherId, user.id),
+              gte(lessons.createdAt, startDate)
+            );
+            recentLesson = await db
+              .select({ createdAt: lessons.createdAt })
+              .from(lessons)
+              .where(dateFilter)
+              .orderBy(desc(lessons.createdAt))
+              .limit(1);
+          } else {
+            recentLesson = await db
+              .select({ createdAt: lessons.createdAt })
+              .from(lessons)
+              .where(eq(lessons.teacherId, user.id))
+              .orderBy(desc(lessons.createdAt))
+              .limit(1);
+          }
+          
+          const mostRecentDate = recentLesson[0]?.createdAt || null;
+          
+          // Create user object without password
+          const { password, ...userWithoutPassword } = user;
+          
+          // Return user with lesson stats
+          return {
+            ...userWithoutPassword,
+            lessonCount,
+            mostRecentLessonDate: mostRecentDate
+          };
+        })
+      );
+      
+      return {
+        users: usersWithStats,
+        total
+      };
+    } catch (error) {
+      console.error('Error fetching users with lesson stats:', error);
+      
+      // Return empty results instead of failing completely
+      return {
+        users: [],
+        total: 0
+      };
     }
   }
 }
