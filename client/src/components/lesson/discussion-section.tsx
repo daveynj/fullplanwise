@@ -300,22 +300,24 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
                     <div className="flex flex-col md:flex-row gap-4 items-start">
                       {/* Text content area */}
                       <div className="md:w-7/12 space-y-4">
-                         {/* Paragraph context rendered PER question */}
+                         {/* Paragraph context rendered PER question - with improved styling */}
                         {q.paragraphContext && (
-                          <div className="p-3 bg-gray-50 border border-indigo-100 rounded-md text-gray-700">
-                            <h4 className="text-sm font-medium text-indigo-700 mb-2 flex items-center gap-1">
-                               <Book className="h-4 w-4 text-indigo-500" /> Context:
+                          <div className="mb-4 p-4 bg-blue-50 border-l-4 border-blue-400 rounded-md shadow-sm">
+                            <h4 className="text-sm font-bold text-blue-700 mb-2 flex items-center gap-2 pb-2 border-b border-blue-200">
+                               <Book className="h-5 w-5 text-blue-600" /> Reading Context
                             </h4>
-                            <p className="font-medium text-gray-800">{q.paragraphContext}</p>
+                            <p className="italic text-gray-800 leading-relaxed">{q.paragraphContext}</p>
                           </div>
                         )}
 
-                        {/* Question Number and Text */}
-                        <div className="flex items-start gap-2">
-                           <span className="w-8 h-8 flex-shrink-0 flex items-center justify-center bg-indigo-100 text-indigo-800 rounded-full font-medium mt-1">
-                             {idx + 1}
-                           </span>
-                           <h3 className="text-xl font-medium">{q.question}</h3>
+                        {/* Question Number and Text - with improved styling */}
+                        <div className="p-3 bg-indigo-100 rounded-md border-l-4 border-indigo-500">
+                          <div className="flex items-start gap-3">
+                            <span className="w-8 h-8 flex-shrink-0 flex items-center justify-center bg-indigo-500 text-white rounded-full font-bold mt-1">
+                              {idx + 1}
+                            </span>
+                            <h3 className="text-xl font-medium text-indigo-900">{q.question}</h3>
+                          </div>
                         </div>
                         
                         {/* Topic introduction paragraph (if AI still provides it, display it) */}
@@ -346,13 +348,21 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
                           </div>
                         )}
                         
-                        {/* Follow-up questions */}
+                        {/* Follow-up questions - with improved styling */}
                         {q.followUp && q.followUp.length > 0 && (
-                          <div className="ml-10">
-                            <h4 className="text-sm font-medium mb-2">Follow-up Questions:</h4>
-                            <ul className="list-disc list-inside space-y-1 text-gray-700">
+                          <div className="ml-6 mt-3 p-3 bg-indigo-50 rounded-md border border-indigo-200">
+                            <h4 className="text-sm font-medium mb-2 text-indigo-700 flex items-center">
+                              <MessageCircle className="h-4 w-4 mr-2" />
+                              Follow-up Questions:
+                            </h4>
+                            <ul className="space-y-2 pl-2">
                               {q.followUp.map((follow, fIdx) => (
-                                <li key={`followup-${fIdx}`} className="font-medium text-gray-800">{follow}</li>
+                                <li key={`followup-${fIdx}`} className="flex items-start gap-2">
+                                  <span className="inline-flex items-center justify-center h-5 w-5 bg-indigo-200 text-indigo-800 rounded-full text-xs font-bold flex-shrink-0 mt-0.5">
+                                    {String.fromCharCode(97 + fIdx)}
+                                  </span>
+                                  <span className="font-medium text-gray-800">{follow}</span>
+                                </li>
                               ))}
                             </ul>
                           </div>
