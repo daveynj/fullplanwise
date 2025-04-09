@@ -3,6 +3,7 @@ import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { ProtectedRoute } from "./lib/protected-route";
+import { AuthenticatedLandingRedirect } from "./lib/authenticated-landing-redirect";
 import { AuthProvider } from "./hooks/use-auth";
 
 // Pages
@@ -25,7 +26,8 @@ import LandingPage from "@/pages/landing-page";
 function Router() {
   return (
     <Switch>
-      <ProtectedRoute path="/" component={DashboardPage} />
+      <AuthenticatedLandingRedirect path="/" component={LandingPage} />
+      <ProtectedRoute path="/dashboard" component={DashboardPage} />
       <ProtectedRoute path="/generate" component={LessonGeneratorPage} />
       <ProtectedRoute path="/students" component={StudentsPage} />
       <ProtectedRoute path="/students/:id" component={StudentDetailPage} />
@@ -37,7 +39,6 @@ function Router() {
       <ProtectedRoute path="/subscription-success" component={SubscriptionSuccessPage} />
       <ProtectedRoute path="/settings" component={SettingsPage} />
       <ProtectedRoute path="/admin" component={AdminDashboardPage} />
-      <Route path="/" component={LandingPage} />
       <Route path="/auth" component={AuthPage} />
       <Route path="/forgot-password" component={ForgotPasswordPage} />
       <Route path="/reset-password/:token" component={ResetPasswordPage} />
