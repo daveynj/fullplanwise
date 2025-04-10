@@ -265,9 +265,9 @@ export default function LessonHistoryPage() {
     }
   };
   
-  // Extract data from the paginated response
-  const lessons = lessonData?.lessons || [];
-  const totalLessons = lessonData?.total || 0;
+  // Extract data from the paginated response (use effectiveData to account for fallback)
+  const lessons = effectiveData?.lessons || [];
+  const totalLessons = effectiveData?.total || 0;
   const totalPages = Math.ceil(totalLessons / 10); // 10 items per page
   
   // Using server-side filtering now - no need for client-side filtering
