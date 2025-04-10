@@ -1136,13 +1136,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         default:
           console.log(`Unhandled event type ${event.type}`);
       }
+      
+      // Return a 200 success response to acknowledge receipt of the webhook
+      // This is required by Stripe to indicate successful processing
+      console.log('Webhook processed successfully');
+      return res.status(200).json({ received: true });
     } catch (error) {
       console.error(`Error processing webhook: ${error}`);
       return res.status(500).json({ error: 'Webhook processing failed' });
     }
-
-    // Return a 200 response to acknowledge receipt of the event
-    res.json({ received: true });
   });
   
   // Admin routes - Users with Lesson Statistics
