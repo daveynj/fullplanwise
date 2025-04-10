@@ -144,7 +144,18 @@ export default function LessonHistoryPage() {
   // Manual refresh for debugging
   const handleManualRefresh = useCallback(() => {
     setFallbackData(null);
-    queryClient.invalidateQueries({ queryKey: ["/api/lessons"] });
+    // Explicitly include all query parameters to ensure proper invalidation
+    queryClient.invalidateQueries({ 
+      queryKey: [
+        "/api/lessons", 
+        { 
+          page: currentPage,
+          search: searchQuery,
+          cefrLevel: cefrFilter,
+          dateFilter: dateFilter
+        }
+      ] 
+    });
     setIsLoadingFallback(true);
     debugFetchLessons()
       .then(result => {
@@ -157,7 +168,7 @@ export default function LessonHistoryPage() {
       .finally(() => {
         setIsLoadingFallback(false);
       });
-  }, [debugFetchLessons, toast]);
+  }, [debugFetchLessons, toast, currentPage, searchQuery, cefrFilter, dateFilter]);
   
   // Use data from React Query or fallback
   const effectiveData = lessonData || fallbackData;
@@ -175,8 +186,18 @@ export default function LessonHistoryPage() {
       await apiRequest("DELETE", `/api/lessons/${lessonId}`);
     },
     onSuccess: () => {
-      // Invalidate lessons query to refresh the list
-      queryClient.invalidateQueries({ queryKey: ["/api/lessons"] });
+      // Invalidate lessons query to refresh the list - use precise query parameters
+      queryClient.invalidateQueries({ 
+        queryKey: [
+          "/api/lessons", 
+          { 
+            page: currentPage,
+            search: searchQuery,
+            cefrLevel: cefrFilter,
+            dateFilter: dateFilter
+          }
+        ] 
+      });
       
       toast({
         title: "Lesson deleted",
@@ -202,8 +223,18 @@ export default function LessonHistoryPage() {
       return await response.json();
     },
     onSuccess: (data) => {
-      // Invalidate lessons and student lessons queries to refresh the lists
-      queryClient.invalidateQueries({ queryKey: ["/api/lessons"] });
+      // Invalidate lessons and student lessons queries to refresh the lists - use precise query parameters
+      queryClient.invalidateQueries({ 
+        queryKey: [
+          "/api/lessons", 
+          { 
+            page: currentPage,
+            search: searchQuery,
+            cefrLevel: cefrFilter,
+            dateFilter: dateFilter
+          }
+        ] 
+      });
       
       if (selectedStudentId) {
         queryClient.invalidateQueries({ queryKey: [`/api/lessons/student/${selectedStudentId}`] });
@@ -274,7 +305,23 @@ export default function LessonHistoryPage() {
   
   // Handle page change
   const goToPage = (page: number) => {
+    // Update current page state
     setCurrentPage(page);
+    
+    // Force a fresh fetch from the server for the new page
+    // This is important to ensure we get the correct data for the current page
+    queryClient.resetQueries({ 
+      queryKey: [
+        "/api/lessons", 
+        { 
+          page: page,
+          search: searchQuery,
+          cefrLevel: cefrFilter,
+          dateFilter: dateFilter
+        }
+      ],
+      exact: true  // Only reset this exact query, not all queries
+    });
   };
   
   // Format date
