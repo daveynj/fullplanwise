@@ -19,7 +19,11 @@ export default function LandingPage() {
       {/* Header/Navigation */}
       <header className="bg-white shadow-sm sticky top-0 z-10">
         <nav className="container mx-auto px-6 py-3 flex justify-between items-center">
-          <div className="text-xl font-nunito font-bold text-primary">Plan Wise ESL</div>
+          {/* Combine logo and text */}
+          <div className="flex items-center gap-2">
+            <img src="/PlanWise_ESL_logo.png" alt="Plan Wise ESL Logo" className="h-8 w-auto" /> {/* Slightly reduced height */} 
+            <span className="text-xl font-nunito font-bold text-primary">PLAN WISE ESL</span>
+          </div>
           <div>
             <Link href="/auth">
               <Button variant="outline" className="mr-2">Login</Button>
@@ -89,19 +93,19 @@ export default function LandingPage() {
             <div className="feature-item">
               <Clock className="h-12 w-12 text-primary mx-auto mb-4" />
               <h3 className="text-xl font-nunito font-semibold mb-2">3-Minute Lesson Generation</h3>
-              <p className="text-gray-600">Generate a full, ready-to-go lesson – complete with warm-up, vocabulary, activities, and more – in under 3 minutes. Reclaim your valuable time.</p>
+              <p className="text-gray-600">Generate a full, ready-to-go lesson – complete with warm-up, vocabulary, activities, and more – in under 3 minutes, freeing you to focus on student interaction and personalized feedback, not tedious prep.</p>
             </div>
             {/* Feature 2: CEFR Alignment */}
             <div className="feature-item">
               <Target className="h-12 w-12 text-primary mx-auto mb-4" />
               <h3 className="text-xl font-nunito font-semibold mb-2">CEFR Level Selection (A1-C2)</h3>
-              <p className="text-gray-600">Ensure lessons perfectly match your students' proficiency levels for optimal learning and engagement.</p>
+              <p className="text-gray-600">Ensure lessons perfectly match your students' proficiency levels, ensuring every lesson perfectly targets their level and boosts their confidence.</p>
             </div>
             {/* Feature 3: One-on-One Focus */}
             <div className="feature-item">
               <MonitorSmartphone className="h-12 w-12 text-primary mx-auto mb-4" />
               <h3 className="text-xl font-nunito font-semibold mb-2">Designed for Online Teaching</h3>
-              <p className="text-gray-600">Lessons are structured for easy screen sharing and adaptable for individual student needs in a virtual setting.</p>
+              <p className="text-gray-600">Lessons are structured for easy screen sharing, making screen sharing seamless and keeping your online students engaged from start to finish.</p>
             </div>
           </div>
         </div>
@@ -138,8 +142,8 @@ export default function LandingPage() {
             Simple, Flexible Pricing
           </h2>
           <p className="text-lg text-gray-600 text-center mb-12 max-w-3xl mx-auto">
-            Start with a <span className="font-semibold text-primary">free trial (5 credits!)</span>, then choose the plan that fits your teaching style. 
-            One credit equals one complete lesson generation. Purchased credits never expire.
+            Try Plan Wise ESL completely free with 5 credits (that's 5 full lessons!). See the time-saving power for yourself. 
+            After your trial, choose a flexible plan or buy credits as you go – purchased credits never expire.
           </p>
           
           <div className="grid md:grid-cols-1 lg:grid-cols-3 gap-8 items-start"> 

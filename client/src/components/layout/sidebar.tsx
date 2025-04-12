@@ -53,10 +53,8 @@ export function Sidebar() {
     <>
       {/* Logo and brand */}
       <div className="p-5 flex items-center border-b border-primary-light">
-        <div className="w-10 h-10 rounded-md bg-white flex items-center justify-center mr-3">
-          <span className="text-primary text-xl font-bold">P</span>
-        </div>
-        <h1 className="font-nunito font-bold text-xl">PLAN WISE ESL</h1>
+        <img src="/PlanWise_ESL_logo.png" alt="Plan Wise ESL Logo" className="h-8 w-auto mr-2" /> 
+        <span className="font-nunito font-bold text-xl text-white">PLAN WISE ESL</span>
       </div>
       
       {/* Navigation */}
