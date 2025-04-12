@@ -1,6 +1,15 @@
 import React from 'react';
 import { Link } from 'wouter';
 import { Button } from '@/components/ui/button';
+// Import Card components
+import { 
+  Card, 
+  CardContent, 
+  CardDescription, 
+  CardFooter, 
+  CardHeader, 
+  CardTitle 
+} from "@/components/ui/card"; 
 // Import icons as needed, e.g., from lucide-react
 import { Clock, Target, MonitorSmartphone } from 'lucide-react';
 
@@ -49,11 +58,11 @@ export default function LandingPage() {
                 Start Your Free Trial
               </Button>
             </Link>
-            <Link href="#features"> {/* Link to features section */}
-              <Button size="lg" variant="outline" className="text-white border-white hover:bg-white hover:text-primary px-8 py-3">
+            <a href="#features"> {/* Use standard anchor for in-page scroll */}
+              <Button size="lg" variant="outline" className="bg-transparent text-white border-white hover:bg-white/20 px-8 py-3">
                 Explore Features
               </Button>
-            </Link>
+            </a>
           </div>
         </div>
       </section>
@@ -119,6 +128,88 @@ export default function LandingPage() {
               <p className="text-gray-600">Let our AI create a complete, ready-to-teach lesson.</p>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section id="pricing" className="py-16 px-6 bg-gray-light">
+        <div className="container mx-auto max-w-5xl">
+          <h2 className="text-3xl font-nunito font-bold text-center mb-12 text-gray-800">
+            Simple, Flexible Pricing
+          </h2>
+          <p className="text-lg text-gray-600 text-center mb-12 max-w-3xl mx-auto">
+            Start with a <span className="font-semibold text-primary">free trial (5 credits!)</span>, then choose the plan that fits your teaching style. 
+            One credit equals one complete lesson generation. Purchased credits never expire.
+          </p>
+          
+          <div className="grid md:grid-cols-1 lg:grid-cols-3 gap-8 items-start"> 
+            {/* Card 1: Free Trial */}
+            <Card className="border-primary border-2 shadow-lg"> 
+              <CardHeader>
+                <CardTitle className="font-nunito text-center">Try Us For Free</CardTitle>
+                <CardDescription className="text-center">Get started without any commitment.</CardDescription>
+              </CardHeader>
+              <CardContent className="text-center space-y-4">
+                <p className="text-4xl font-bold text-primary">5 Free Credits</p>
+                <p className="text-gray-600">Generate your first few lessons on us!</p>
+                 <ul className="text-left text-sm space-y-1 text-gray-600 list-disc list-inside">
+                    <li>Access all generation features</li>
+                    <li>No credit card required</li>
+                    <li>See how much time you save</li>
+                 </ul>
+              </CardContent>
+              <CardFooter className="flex justify-center">
+                <Link href="/auth?register=true">
+                  <Button className="bg-primary hover:bg-primary/90 w-full">Start Free Trial</Button>
+                </Link>
+              </CardFooter>
+            </Card>
+
+            {/* Card 2: Pay As You Go Highlight */}
+            <Card className="shadow-sm">
+              <div className="bg-secondary text-secondary-foreground text-center py-1 text-sm font-semibold rounded-t-lg">PAY AS YOU GO</div>
+              <CardHeader>
+                <CardTitle className="font-nunito text-center">Standard Pack</CardTitle>
+                <CardDescription className="text-center">Our most popular flexible option.</CardDescription>
+              </CardHeader>
+              <CardContent className="text-center space-y-4">
+                 <p className="text-4xl font-bold">$60</p>
+                 <p className="text-xl font-semibold">50 Credits</p>
+                 <p className="text-gray-500 text-sm">($1.20 per lesson)</p>
+                 <p className="text-gray-600 text-sm">Perfect for occasional use. Credits never expire.</p>
+              </CardContent>
+              <CardFooter className="flex justify-center">
+                 <Link href="/buy-credits">
+                   <Button variant="outline" className="w-full border-primary text-primary hover:bg-primary/5">See All Packs</Button>
+                </Link>
+              </CardFooter>
+            </Card>
+
+            {/* Card 3: Subscription Highlight */}
+            <Card className="shadow-sm">
+               <div className="bg-accent text-accent-foreground text-center py-1 text-sm font-semibold rounded-t-lg">SUBSCRIPTION</div>
+              <CardHeader>
+                <CardTitle className="font-nunito text-center">Annual Plan</CardTitle>
+                <CardDescription className="text-center">Best value for regular users.</CardDescription>
+              </CardHeader>
+              <CardContent className="text-center space-y-4">
+                 <p className="text-4xl font-bold">$199<span className="text-lg font-normal text-gray-500">/year</span></p>
+                 <p className="text-xl font-semibold">250 Credits</p>
+                 <p className="text-gray-500 text-sm">(~$0.80 per lesson)</p>
+                 <p className="text-gray-600 text-sm">Save 32%! Incl. priority support & advanced features.</p>
+              </CardContent>
+              <CardFooter className="flex justify-center">
+                 <Link href="/buy-credits?tab=subscription"> 
+                   <Button variant="outline" className="w-full border-primary text-primary hover:bg-primary/5">See All Plans</Button>
+                </Link>
+              </CardFooter>
+            </Card>
+          </div>
+          
+          {/* Link to full pricing */}
+          <p className="text-center text-gray-500 mt-8 text-sm">
+             Need more options or monthly plans? <Link href="/buy-credits" className="text-primary hover:underline font-semibold">View full pricing details</Link>.
+          </p>
         </div>
       </section>
 
