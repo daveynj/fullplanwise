@@ -2,8 +2,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
-import { useQuery, useMutation, QueryClient } from "@tanstack/react-query";
-import { useLocation } from "wouter";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { 
   Card, 
   CardContent, 
@@ -79,37 +78,25 @@ interface PaginatedUsers {
 
 export function AdminDashboardPage() {
   const { user, isLoading: authLoading } = useAuth();
-  const [, setLocation] = useLocation();
   const { toast } = useToast();
 
-  // Parse URL query parameters
-  const getQueryParams = () => {
-    const params = new URLSearchParams(window.location.search);
-    return {
-      page: parseInt(params.get("page") || "1"),
-      pageSize: parseInt(params.get("pageSize") || "10"),
-      search: params.get("search") || "",
-      dateFilter: params.get("dateFilter") || "all"
-    };
-  };
+  // Use component state directly
+  const [searchInput, setSearchInput] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [dateFilter, setDateFilter] = useState<string>("all");
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [pageSize] = useState<number>(10);
 
-  const queryParams = getQueryParams();
-  const [searchInput, setSearchInput] = useState<string>(queryParams.search);
-  const [currentPage, setCurrentPage] = useState<number>(queryParams.page);
-
-  // Effect to update state when URL parameters change
+  // Debounce search input
   useEffect(() => {
-    const params = getQueryParams();
-    setSearchInput(params.search);
-    setCurrentPage(params.page);
-  }, [window.location.search]);
-
-  // Redirect non-admin users
-  useEffect(() => {
-    if (!authLoading && (!user || !user.isAdmin)) {
-      setLocation("/login");
-    }
-  }, [authLoading, user, setLocation]);
+    const timer = setTimeout(() => {
+      setSearchQuery(searchInput);
+      if (searchInput !== searchQuery) {
+        setCurrentPage(1);
+      }
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchInput, searchQuery]);
 
   // Fetch users with lesson stats
   const { 
@@ -117,34 +104,33 @@ export function AdminDashboardPage() {
     isLoading,
     refetch
   } = useQuery<PaginatedUsers>({
-    queryKey: ['/api/admin/users/lesson-stats', queryParams.page, queryParams.pageSize, queryParams.search, queryParams.dateFilter],
+    queryKey: [
+      '/api/admin/users/lesson-stats', 
+      { 
+        page: currentPage, 
+        pageSize: pageSize, 
+        search: searchQuery,
+        dateFilter: dateFilter 
+      }
+    ],
     enabled: !authLoading && !!user?.isAdmin,
   });
 
-  // Update URL with new query parameters
-  const updateUrlParams = (params: Record<string, string | number>) => {
-    const newParams = new URLSearchParams(window.location.search);
-    
-    for (const [key, value] of Object.entries(params)) {
-      newParams.set(key, value.toString());
-    }
-    
-    setLocation(`/admin?${newParams.toString()}`);
-  };
-
   // Handle search
   const handleSearch = () => {
-    updateUrlParams({ page: 1, search: searchInput });
+    setSearchQuery(searchInput);
+    setCurrentPage(1);
   };
 
   // Handle date filter change
   const handleDateFilterChange = (value: string) => {
-    updateUrlParams({ page: 1, dateFilter: value });
+    setDateFilter(value);
+    setCurrentPage(1);
   };
 
   // Handle page change
   const handlePageChange = (newPage: number) => {
-    updateUrlParams({ page: newPage });
+    setCurrentPage(newPage);
   };
 
   // Format date for display
@@ -227,7 +213,7 @@ export function AdminDashboardPage() {
   };
 
   // Calculate total pages
-  const totalPages = data ? Math.ceil(data.total / queryParams.pageSize) : 0;
+  const totalPages = data ? Math.ceil(data.total / pageSize) : 0;
 
   // If not authenticated or not admin, show a loading state
   if (authLoading || (!user || !user.isAdmin)) {
@@ -270,7 +256,7 @@ export function AdminDashboardPage() {
                     <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
                   </div>
                   <div className="w-full md:w-48">
-                    <Select value={queryParams.dateFilter} onValueChange={handleDateFilterChange}>
+                    <Select value={dateFilter} onValueChange={handleDateFilterChange}>
                       <SelectTrigger>
                         <SelectValue placeholder="Date filter" />
                       </SelectTrigger>
@@ -411,7 +397,7 @@ export function AdminDashboardPage() {
                       <PaginationContent>
                         <PaginationItem>
                           <PaginationPrevious 
-                            href="#" 
+                            href="#"
                             onClick={(e) => {
                               e.preventDefault();
                               if (currentPage > 1) handlePageChange(currentPage - 1);
@@ -422,7 +408,6 @@ export function AdminDashboardPage() {
                         
                         {[...Array(totalPages)].map((_, i) => {
                           const pageNum = i + 1;
-                          // Show current page, first, last and one page before/after current
                           if (
                             pageNum === 1 || 
                             pageNum === totalPages || 
@@ -431,7 +416,7 @@ export function AdminDashboardPage() {
                             return (
                               <PaginationItem key={pageNum}>
                                 <PaginationLink 
-                                  href="#" 
+                                  href="#"
                                   onClick={(e) => {
                                     e.preventDefault();
                                     handlePageChange(pageNum);
@@ -443,8 +428,6 @@ export function AdminDashboardPage() {
                               </PaginationItem>
                             );
                           }
-                          
-                          // Show ellipsis between page groups
                           if (
                             (pageNum === 2 && currentPage > 3) || 
                             (pageNum === totalPages - 1 && currentPage < totalPages - 2)
@@ -455,13 +438,12 @@ export function AdminDashboardPage() {
                               </PaginationItem>
                             );
                           }
-                          
                           return null;
                         })}
                         
                         <PaginationItem>
                           <PaginationNext 
-                            href="#" 
+                            href="#"
                             onClick={(e) => {
                               e.preventDefault();
                               if (currentPage < totalPages) handlePageChange(currentPage + 1);
