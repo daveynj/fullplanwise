@@ -357,7 +357,7 @@ export default function LessonHistoryPage() {
               {/* Page header */}
               <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
                 <div>
-                  <h1 className="text-2xl md:text-3xl font-nunito font-bold">Lesson History</h1>
+                  <h1 className="text-2xl md:text-3xl font-nunito font-bold">Lesson Library</h1>
                   <p className="text-gray-600">All your created lessons in one place</p>
                 </div>
                 <div className="mt-4 md:mt-0">

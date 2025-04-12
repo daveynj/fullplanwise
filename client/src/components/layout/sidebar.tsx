@@ -18,7 +18,7 @@ export function Sidebar() {
     { path: "/", label: "Dashboard", icon: <Home className="mr-3 text-xl" /> },
     { path: "/generate", label: "Generate Lesson", icon: <Wand2 className="mr-3 text-xl" /> },
     { path: "/students", label: "Students", icon: <Users className="mr-3 text-xl" /> },
-    { path: "/history", label: "Lesson History", icon: <Book className="mr-3 text-xl" /> },
+    { path: "/history", label: "Lesson Library", icon: <Book className="mr-3 text-xl" /> },
   ];
   
   // Function to render nav items without nested <a> tags
