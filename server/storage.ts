@@ -295,7 +295,6 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Lesson methods
-  // Simple caching for getLessons queries to improve performance
   private lessonsCache: Map<string, {lessons: Lesson[], total: number, timestamp: number}> = new Map();
   private CACHE_TTL = 5000; // Cache time-to-live in ms (5 seconds)
 
@@ -308,23 +307,11 @@ export class DatabaseStorage implements IStorage {
     dateFilter?: string
   ): Promise<{lessons: Lesson[], total: number}> {
     try {
-      console.log(`Getting lessons for teacherId: ${teacherId} with page: ${page}, search: ${search || 'none'}`);
-      
-      // Create a cache key from the query parameters
-      const cacheKey = JSON.stringify({teacherId, page, pageSize, search, cefrLevel, dateFilter});
-      
-      // Check cache first
-      const cachedResult = this.lessonsCache.get(cacheKey);
-      if (cachedResult && (Date.now() - cachedResult.timestamp < this.CACHE_TTL)) {
-        console.log('Returning cached lessons result');
-        return {
-          lessons: cachedResult.lessons,
-          total: cachedResult.total
-        };
-      }
+      console.log(`[Storage.getLessons] START - teacherId: ${teacherId}, page: ${page}, pageSize: ${pageSize}, search: ${search || 'none'}`);
       
       // Calculate offset based on page number and page size
       const offset = (page - 1) * pageSize;
+      console.log(`[Storage.getLessons] Calculated offset: ${offset}`);
       
       // Build filter conditions
       const conditions = [eq(lessons.teacherId, teacherId)];
@@ -432,9 +419,12 @@ export class DatabaseStorage implements IStorage {
         }
       }
       
+      console.log(`[Storage.getLessons] Total lessons matching criteria: ${total}`);
+            
       // Get the filtered and paginated lessons 
-      console.log('Fetching paginated lessons...');
+      console.log(`[Storage.getLessons] Fetching lessons with limit=${pageSize}, offset=${offset}...`);
       let lessonsList: Lesson[] = [];
+      let fetchErrorOccurred = false;
       try {
         lessonsList = await db
           .select()
@@ -443,12 +433,14 @@ export class DatabaseStorage implements IStorage {
           .orderBy(desc(lessons.createdAt))
           .limit(pageSize)
           .offset(offset);
+        console.log(`[Storage.getLessons] Main query successful. Found ${lessonsList.length} lessons.`);
       } catch (fetchError) {
-        console.error('Error fetching lessons with conditions:', fetchError);
+        fetchErrorOccurred = true;
+        console.error('[Storage.getLessons] Error fetching lessons with conditions:', fetchError);
         
         // If the conditional query fails, try a simpler query without conditions
         try {
-          console.log('Attempting fallback query with minimal conditions');
+          console.log('[Storage.getLessons] Attempting fallback query with minimal conditions...');
           lessonsList = await db
             .select()
             .from(lessons)
@@ -456,30 +448,25 @@ export class DatabaseStorage implements IStorage {
             .orderBy(desc(lessons.createdAt))
             .limit(pageSize)
             .offset(offset);
+           console.log(`[Storage.getLessons] Fallback query successful. Found ${lessonsList.length} lessons.`);
         } catch (fallbackError) {
-          console.error('Fallback query also failed:', fallbackError);
+          console.error('[Storage.getLessons] Fallback query also failed:', fallbackError);
+          lessonsList = []; // Ensure empty list on complete failure
         }
       }
       
-      console.log(`Retrieved ${lessonsList.length} lessons for page ${page}`);
+      console.log(`[Storage.getLessons] Returning ${lessonsList.length} lessons for page ${page}. Fetch error occurred: ${fetchErrorOccurred}`);
       
-      // Cache the result
-      const result = {
+      // Return result directly without caching
+      return {
         lessons: lessonsList,
         total
       };
-      
-      this.lessonsCache.set(cacheKey, {
-        ...result,
-        timestamp: Date.now()
-      });
-      
-      return result;
     } catch (error) {
-      console.error('Error fetching lessons:', error);
+      console.error('[Storage.getLessons] Outer catch block error:', error);
       
       // Return empty results instead of failing completely
-      console.log('Returning empty results due to error');
+      console.log('[Storage.getLessons] Returning empty results due to outer error');
       return {
         lessons: [],
         total: 0

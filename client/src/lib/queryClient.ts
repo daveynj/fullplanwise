@@ -35,19 +35,36 @@ export const getQueryFn: <T>(options: {
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
+    let url = queryKey[0] as string;
+    const params = queryKey[1]; // Get potential parameters object
+
+    // Check if the second element is an object and construct query string
+    if (params && typeof params === 'object' && params !== null) {
+      const queryParams = new URLSearchParams();
+      Object.entries(params).forEach(([key, value]) => {
+        // Only add parameters with non-null/non-undefined values
+        if (value !== null && value !== undefined) {
+          queryParams.append(key, String(value));
+        }
+      });
+      // Append query string to URL if there are any parameters
+      if (queryParams.toString()) {
+        url += `?${queryParams.toString()}`;
+      }
+    }
+
     try {
-      console.log(`Making API request to: ${queryKey[0]}`);
+      console.log(`Making API request to: ${url}`); // Log the full URL with params
       
-      const res = await fetch(queryKey[0] as string, {
+      const res = await fetch(url, { // Use the constructed URL
         credentials: "include",
-        // Add cache control to prevent stale responses
         headers: {
           'Cache-Control': 'no-cache',
           'Pragma': 'no-cache'
         }
       });
 
-      console.log(`Received response from ${queryKey[0]} with status: ${res.status}`);
+      console.log(`Received response from ${url} with status: ${res.status}`);
 
       if (unauthorizedBehavior === "returnNull" && res.status === 401) {
         console.log('Unauthorized access, returning null as configured');
@@ -88,7 +105,7 @@ export const getQueryFn: <T>(options: {
         throw new Error(`Failed to parse server response as JSON: ${jsonError.message || 'Unknown error'}`);
       }
     } catch (error) {
-      console.error(`API request failed for ${queryKey[0]}:`, error);
+      console.error(`API request failed for ${url}:`, error);
       // Rethrow to let React Query handle it
       throw error;
     }
