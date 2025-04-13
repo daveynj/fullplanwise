@@ -77,7 +77,7 @@ export function LessonForm({ students, onSubmit, credits }: LessonFormProps) {
       // Add required fields for the API
       components: ["warm-up", "vocabulary", "reading", "comprehension", "sentences", "discussion", "quiz"],
       generateImages: true,
-      useStudentHistory: false,
+      useStudentHistory: false
     };
     
     onSubmit(parsedValues);

@@ -197,108 +197,6 @@ CRITICAL: Your output must be properly formatted JSON with NO ERRORS!
    - The paragraph contexts must use vocabulary and sentence structures appropriate for the specified CEFR level
    - The paragraphs should include interesting information that helps students engage with the topic
    - The paragraph contexts should lead naturally into the discussion question that follows
-`;
-    
-    // Use the more detailed Qwen prompt structure as the main prompt for Gemini
-    const mainPrompt = `
-You are an expert ESL (English as a Second Language) teacher and curriculum designer with over 20 years of experience.
-
-TASK OVERVIEW:
-You will create a complete ESL lesson for ${targetLevel} level students on the topic "${text}".
-
-STEP 1: WRITE A READING TEXT
-- First, write an original reading text about the topic "${text}"
-- Use a warm, accessible, and conversational tone
-- Include interesting facts and observations woven naturally into the narrative
-- Use vivid, descriptive language that brings topics to life
-- Make complex information approachable through clear explanations and engaging examples
-- Use a mix of sentence lengths for good flow
-- Occasionally address the reader directly with rhetorical questions or observations
-
-- CRITICAL REQUIREMENT: For ${targetLevel} level, your text MUST be AT LEAST ${targetLevel === "B1" ? "200" : targetLevel === "C2" ? "500" : targetLevel === "C3" ? "600" : targetLevel === "A1" || targetLevel === "A2" ? "100" : "300"} words
-- Your text will be REJECTED if it's shorter than ${targetLevel === "B1" ? "200" : targetLevel === "C2" ? "500" : targetLevel === "C3" ? "600" : targetLevel === "A1" || targetLevel === "A2" ? "100" : "300"} words
-- The system counts words by splitting on whitespace - make sure you have enough actual words
-- Divide your text into 3-5 paragraphs with clear paragraph breaks (use double line breaks between paragraphs)
-- Focus on creating a substantial, informative text before moving on to other components
-
-CEFR LEVEL-SPECIFIC TEXT COMPLEXITY GUIDELINES:
-Follow these precise metrics for creating text at the appropriate ${targetLevel} level:
-
-A1 LEVEL TEXT (BEGINNER):
-- 100-150 words total, 2-3 short paragraphs
-- Average sentence length: 5-7 words
-- Vocabulary: Limited to 500 most common words plus topic-specific terms
-- Grammar: Present simple, present continuous only
-- Sentence types: 80% simple sentences, 20% compound with 'and', 'but', 'or'
-- No passive voice, no conditionals
-- Readability: Flesch-Kincaid Grade 1-2 (very easy)
-- Content: Concrete topics only, no abstract concepts
-
-A2 LEVEL TEXT (ELEMENTARY):
-- 150-200 words total, 3 short paragraphs
-- Average sentence length: 7-10 words
-- Vocabulary: Limited to 1000 most common words plus topic-specific terms
-- Grammar: Present, past, and future simple tenses, basic modals (can, should)
-- Sentence types: 70% simple sentences, 30% compound with common conjunctions
-- Limited passive voice (1-2 instances max)
-- No conditionals above first conditional
-- Readability: Flesch-Kincaid Grade 3-4 (easy)
-- Content: Mostly concrete with simple abstract concepts
-
-B1 LEVEL TEXT (INTERMEDIATE):
-- 200-250 words total, 3-4 paragraphs
-- Average sentence length: 10-12 words
-- Vocabulary: Up to 2500 common words plus topic-specific terms
-- Grammar: All basic tenses, present perfect, conditionals (first and second)
-- Sentence types: 60% simple, 30% compound, 10% complex with common subordinators
-- Some passive voice is acceptable (3-4 instances)
-- Readability: Flesch-Kincaid Grade 5-6 (fairly easy)
-- Content: Mix of concrete and abstract concepts
-
-B2 LEVEL TEXT (UPPER INTERMEDIATE):
-- 300-350 words total, 4 paragraphs
-- Average sentence length: 12-15 words
-- Vocabulary: Up to 3500 words, including some academic terms
-- Grammar: Full range of tenses, conditionals, modals, gerunds and infinitives
-- Sentence types: 40% simple, 40% compound, 20% complex with varied connectors
-- Passive voice used naturally throughout (5-7 instances)
-- Readability: Flesch-Kincaid Grade 7-9 (standard)
-- Content: Equal mix of concrete and abstract concepts
-
-C1 LEVEL TEXT (ADVANCED):
-- 400-450 words total, 4-5 paragraphs
-- Average sentence length: 15-20 words
-- Vocabulary: Up to 5000 words, including academic and specialized terms
-- Grammar: Full range of structures, including complex passives, perfect modals
-- Sentence types: 20% simple, 40% compound, 40% complex with sophisticated connectors
-- Natural use of passive voice, inverted structures, cleft sentences
-- Readability: Flesch-Kincaid Grade 10-12 (fairly difficult)
-- Content: Sophisticated abstract concepts, nuanced arguments
-
-C2 LEVEL TEXT (PROFICIENCY):
-- 500-600 words total, 5 paragraphs
-- Average sentence length: 20-25 words
-- Vocabulary: 6000+ words, including specialized academic/technical vocabulary
-- Grammar: Mastery of all structures, including complex conditionals, subjunctive
-- Sentence types: 10% simple, 30% compound, 60% complex with advanced subordination
-- Sophisticated use of all structures, including rare forms
-- Readability: Flesch-Kincaid Grade 13+ (difficult)
-- Content: Highly abstract, sophisticated concepts and arguments
-
-IMPORTANT: Match these metrics PRECISELY for ${targetLevel} level. Readers will struggle if text is too difficult or become bored if too simple.
-
-STEP 2: CREATE LESSON COMPONENTS
-After writing the reading text, create:
-- CRITICAL REQUIREMENT: You MUST include EXACTLY ${minVocabCount} vocabulary items from your text. The system requires a minimum of ${minVocabCount} vocabulary items and will REJECT the lesson if fewer are provided.
-- ABSOLUTELY CRITICAL: Each semantic group MUST contain at least 2-3 vocabulary words. DO NOT create groups with only one word.
-- DO NOT include basic words like "hi", "hello", "goodbye", or other extremely common words as vocabulary items.
-- Only choose words that are appropriate for the CEFR level ${targetLevel} and would be genuinely useful for students to learn.
-- EXTREMELY IMPORTANT: Choose ONLY English words for vocabulary. DO NOT include foreign words (like "la bise," "sayonara," "wai," etc.) even if they appear in your text when discussing other cultures. ONLY ENGLISH VOCABULARY should be selected.
-- EXACTLY 3-5 reading comprehension activities - YOU MUST INCLUDE AT LEAST 3
-- 1-2 pre-reading discussion questions
-- EXACTLY 5-7 post-reading discussion questions - YOU MUST INCLUDE AT LEAST 5, and each question MUST directly reference specific content from your reading text
-- A brief warm-up activity that MUST incorporate all vocabulary items from your vocabulary list, not just one word
-- NEW REQUIREMENT: 2-4 sentence frames and templates appropriate for the ${targetLevel} level to help students with sentence structure and grammar
 
 SENTENCE FRAMES REQUIREMENTS:
 For each sentence frame, create practical, meaningful templates that students can use in real communication about "${text}".
@@ -315,13 +213,13 @@ KEY REQUIREMENTS FOR SENTENCE FRAMES:
 
 5. PURPOSEFUL DESIGN: Each frame should serve a specific communicative function that's useful for discussing "${text}" (e.g., expressing opinions, making comparisons, describing processes).
 
-6. SCAFFOLDED COMPLEXITY: Provide a mix of complexity levels appropriate for ${targetLevel} students - from simpler to more advanced structures within the target CEFR level.
+6. SCAFFOLDED COMPLEXITY: Provide a mix of complexity levels appropriate for ${params.cefrLevel} students - from simpler to more advanced structures within the target CEFR level.
 
 7. REALISTIC EXAMPLES: Include 2-3 example sentences that:
    - Use the frame pattern naturally
    - Incorporate vocabulary from your lesson
    - Relate directly to the reading text content
-   - Model authentic language use at the ${targetLevel} level
+   - Model authentic language use at the ${params.cefrLevel} level
    - Sound like something a student would actually say in conversation
 
 For each sentence frame, include ALL of the following properties in a structured JSON format:
@@ -336,7 +234,7 @@ For each sentence frame, include ALL of the following properties in a structured
 - teachingTips: Practical advice for teachers on how to present and practice this pattern (3-4 sentences)
 
 CEFR-SPECIFIC GUIDELINES:
-For ${targetLevel} level students, create frames with appropriate complexity:
+For ${params.cefrLevel} level students, create frames with appropriate complexity:
 
 - A1 LEVEL FRAMES: 3-4 very simple frames using:
   • Basic subject-verb-object structures
@@ -377,11 +275,47 @@ CRITICAL ISSUES TO AVOID:
 1. DO NOT create frames that are too theoretical or academic for real conversation
 2. DO NOT use blanks for every other word - be strategic with blank placement
 3. DO NOT include confusing grammar terminology in the pattern
-4. DO NOT create frames with vocabulary beyond the ${targetLevel} level
+4. DO NOT create frames with vocabulary beyond the ${params.cefrLevel} level
 5. DO NOT create frames unrelated to "${text}" - they must be topic-specific
 6. DO NOT create patterns that are so specific they can only be used in one particular scenario
 
 IMPLEMENTATION REQUIREMENT: Each frame must be a complete JSON object with ALL the required fields populated.
+
+CLOZE EXERCISE (FILL-IN-THE-BLANKS) REQUIREMENTS:
+Create a cloze passage that reinforces vocabulary and grammar from the lesson:
+
+1. LEVEL-APPROPRIATE TEXT: Write a coherent paragraph of 4-8 sentences that's appropriate for ${params.cefrLevel} level students.
+
+2. STRATEGIC BLANKS: Create 5-8 blanks by replacing key vocabulary items or grammatical elements from your reading text.
+
+3. BLANK FORMAT: Use the format [1:word] for the first blank, [2:word] for the second blank, etc., where "word" is the correct answer.
+
+4. BALANCED CHALLENGE: Include a mix of vocabulary items and grammatical elements to test both vocabulary recall and grammatical knowledge.
+
+5. CONTEXT CLUES: Ensure each blank has sufficient context for students to determine the missing word.
+
+6. WORD BANK: Provide all the missing words in a word bank to guide students. The word bank should be an array of strings.
+
+7. TEACHER NOTES: Include brief notes on how to use this exercise effectively in class.
+
+SENTENCE UNSCRAMBLE (WORD ORDERING) REQUIREMENTS:
+Create a sentence unscrambling activity that focuses on correct English syntax:
+
+1. LEVEL-APPROPRIATE SENTENCES: Create 3-5 sentences that are appropriate for ${params.cefrLevel} level students, focusing on sentence structures taught at this level.
+
+2. SCRAMBLED FORMAT: For each sentence, provide:
+   - An array of individual words in scrambled order
+   - The correct sentence with proper capitalization and punctuation
+
+3. VOCABULARY INTEGRATION: Use vocabulary from the lesson in these sentences to reinforce learning.
+
+4. VARIED STRUCTURES: Include a variety of sentence structures appropriate for the level (simple, compound, complex).
+
+5. PROGRESSIVE DIFFICULTY: Arrange sentences from easier to more challenging.
+
+6. TEACHER NOTES: Include brief notes on how to use this exercise effectively in class.
+
+7. GRAMMAR FOCUS: Each sentence should focus on a specific grammatical structure that's important for the level.
 
 For teacher instructions:
 1. Focus on practical classroom activities related to the specific topic
@@ -399,16 +333,16 @@ AVOID:
 VOCABULARY REQUIREMENTS:
 For each vocabulary item, you MUST include:
 1. The word itself (ENGLISH ONLY - NO FOREIGN WORDS)
-2. A clear definition using language appropriate for ${targetLevel} level students
+2. A clear definition using language appropriate for ${params.cefrLevel} level students
 3. The part of speech (noun, verb, adjective, etc.)
-4. An example sentence using language appropriate for ${targetLevel} level
+4. An example sentence using language appropriate for ${params.cefrLevel} level
 5. ENHANCED (REQUIRED): semanticGroup - Words must be grouped thematically. Each semantic group MUST have 2-3 related vocabulary words (e.g., "Weather Terms", "Food Vocabulary", "Travel Expressions")
 6. ENHANCED (REQUIRED): additionalExamples - 2-3 additional example sentences showing the word in different contexts
 7. ENHANCED (REQUIRED): wordFamily - An object containing:
    - words: An array of 2-5 related words from the same word family (e.g., "happy, happiness, happily, unhappy")
    - description: A brief explanation of how these words are related
 8. Common collocations (phrases that often include this word) as an array of strings
-9. Usage notes written with ${targetLevel} level appropriate language
+9. Usage notes written with ${params.cefrLevel} level appropriate language
 10. Teaching tips
 11. Pronunciation information with:
    - syllables: The word broken down into syllables as an array of strings
@@ -450,9 +384,9 @@ CRITICALLY IMPORTANT: Always use ONLY regular English characters and hyphens for
 I will count the total number of vocabulary items. If you don't include EXACTLY ${minVocabCount} complete vocabulary items, your response will be rejected.
 
 CEFR LEVEL ALIGNMENT:
-Ensure all content is appropriate for ${targetLevel} level students:
-- CRITICAL: Use vocabulary appropriate for ${targetLevel} level in ALL questions and instructions
-- For post-reading discussion questions, ensure the language complexity matches ${targetLevel} level
+Ensure all content is appropriate for ${params.cefrLevel} level students:
+- CRITICAL: Use vocabulary appropriate for ${params.cefrLevel} level in ALL questions and instructions
+- For post-reading discussion questions, ensure the language complexity matches ${params.cefrLevel} level
 - Adjust question complexity based on the CEFR level (simpler for A1/A2, more complex for C1/C2)
 
 WARM-UP ACTIVITY REQUIREMENTS:
@@ -489,12 +423,12 @@ DISCUSSION QUESTION REQUIREMENTS:
 - IMPORTANT NEW FORMAT: Each discussion question MUST be preceded by its own unique, CEFR-level appropriate paragraph (3-5 sentences) that provides context or an interesting angle related to the question. The question should directly relate to this paragraph.
 - You MUST provide EXACTLY 5 such paragraph-question pairs.
 - The paragraph should:
-  - Be written at the appropriate CEFR level (${targetLevel})
+  - Be written at the appropriate CEFR level (${params.cefrLevel})
   - Focus on something interesting and thought-provoking related to the question topic
   - Create a foundation for meaningful discussion
   - Relate directly to the vocabulary being learned
   - Avoid simply summarizing the main reading
-  - CRITICAL: The language complexity MUST match exactly the ${targetLevel} level
+  - CRITICAL: The language complexity MUST match exactly the ${params.cefrLevel} level
   - Be designed to stand out visually when displayed in the UI
 - The discussion question should:
   - Directly follow its context paragraph.
@@ -543,7 +477,7 @@ Your reading comprehension questions MUST cover a balanced range of cognitive ab
    - Example for B1-B2: "What would most likely happen next in this situation?"
    - Example for C1-C2: "How effective is the author's approach to presenting this topic?"
 
-IMPORTANT: Adjust question complexity based on the CEFR level (${targetLevel}):
+IMPORTANT: Adjust question complexity based on the CEFR level (${params.cefrLevel}):
 - A1-A2: Simple vocabulary, direct questions about explicitly stated information
 
 FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure all fields contain complete content. Do not use placeholders.
@@ -665,6 +599,34 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
         // (Include 1-4 more complete frames)
       ]
     },
+    // CLOZE SECTION (Complete - Fill in the Blanks)
+    {
+      "type": "cloze",
+      "title": "Fill in the Blanks",
+      "text": "Complete paragraph with blanks, using [1:word] format for the first blank, [2:word] for the second, etc. Use appropriate vocabulary from the lesson...",
+      "wordBank": ["word1", "word2", "word3", "word4", "word5"],
+      "teacherNotes": "Complete notes on how to use this exercise effectively..."
+    },
+    // SENTENCE UNSCRAMBLE SECTION (Complete - Word Ordering)
+    {
+      "type": "sentenceUnscramble",
+      "title": "Sentence Unscramble",
+      "sentences": [
+        {
+          "words": ["Complete", "array", "of", "individual", "words", "in", "scrambled", "order"],
+          "correctSentence": "Complete array of individual words in correct order."
+        },
+        {
+          "words": ["Another", "set", "of", "words", "in", "scrambled", "order"],
+          "correctSentence": "Another set of words in correct order."
+        },
+        {
+          "words": ["One", "more", "sentence", "with", "words", "out", "of", "order"],
+          "correctSentence": "One more sentence with words in correct order."
+        }
+      ],
+      "teacherNotes": "Complete notes on how to use this exercise effectively..."
+    },
     // DISCUSSION SECTION (Complete - 5 pairs)
     {
       "type": "discussion",
@@ -714,7 +676,7 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
 
 Ensure the entire output is a single, valid JSON object starting with { and ending with }.`;
 
-    return systemInstruction + mainPrompt;
+    return systemInstruction;
   }
   
   /**

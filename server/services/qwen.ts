@@ -41,6 +41,11 @@ export class QwenService {
       const keyPattern = this.apiKey.substring(0, 4) + '...' + this.apiKey.substring(this.apiKey.length - 4);
       console.log(`Using API key pattern: ${keyPattern}`);
 
+      // Set targetLevel variable to match what the system prompt expects
+      const targetLevel = params.cefrLevel;
+      
+      // Build the prompt for lesson generation
+      console.log('Building prompt for lesson generation');
       const prompt = `You are an expert ESL (English as a Second Language) teacher and curriculum designer with over 20 years of experience.
 
 TASK OVERVIEW:
@@ -445,6 +450,27 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
         // (Include 1-4 more complete frames)
       ]
     },
+    // CLOZE SECTION (Complete - Fill in the Blanks)
+    {
+      "type": "cloze",
+      "title": "Fill in the Blanks",
+      "text": "Complete paragraph with blanks, using [1:word] format...", // Placeholder text
+      "wordBank": ["word1", "word2", "word3", "word4", "word5"], // Placeholder words
+      "teacherNotes": "Complete notes on how to use this exercise effectively..." // Placeholder notes
+    },
+    // SENTENCE UNSCRAMBLE SECTION (Complete - Word Ordering)
+    {
+      "type": "sentenceUnscramble",
+      "title": "Sentence Unscramble",
+      "sentences": [
+        {
+          "words": ["Complete", "array", "of", "scrambled", "words"], // Placeholder words
+          "correctSentence": "Complete correct sentence." // Placeholder sentence
+        }
+        // (Include 2-4 more complete sentences)
+      ],
+      "teacherNotes": "Complete notes on how to use this exercise effectively..." // Placeholder notes
+    },
     // DISCUSSION SECTION (Complete - 5 pairs)
     {
       "type": "discussion",
@@ -492,7 +518,38 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
   ]
 }
 
-Ensure the entire output is a single, valid JSON object starting with { and ending with }.`;
+Ensure the entire output is a single, valid JSON object starting with { and ending with }.
+
+CEFR LEVEL-SPECIFIC EXAMPLES:
+
+A1 Examples:
+
+- "I like to eat _____."
+
+- "My favorite _____ is _____."
+
+- "I can _____ very well."
+
+- "In the morning, I _____."
+
+A2 Examples:
+
+- "Last weekend, I went to _____ and I saw _____."
+
+- "I usually _____ because I think it's _____."
+
+- "I would like to _____ next _____."
+
+- "If I have time, I will _____."
+
+B1 Examples:
+
+- "I think that _____ is important because _____."
+
+- "Although many people believe _____, I think _____."
+
+- "When I was younger, I used to _____, but now I _____."
+`;
       
       // Use qwen-max model for better JSON handling ability
       const modelName = "qwen-max";
@@ -530,15 +587,14 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
         max_tokens: requestBody.max_tokens
       }, null, 2));
       
-      // Make the API request
+      console.log('Sending request to Qwen API...');
+      
+      // Create unique identifiers for this request
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+      const topicSafe = params.topic.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 20);
+      const requestId = `${topicSafe}_${timestamp}`;
+      
       try {
-        // Create unique identifiers for this request
-        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-        const topicSafe = params.topic.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 20);
-        const requestId = `${topicSafe}_${timestamp}`;
-        
-        console.log('Sending request to Qwen API...');
-        
         const response = await axios({
           method: 'post',
           url: QWEN_API_URL,
@@ -547,7 +603,7 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
             'Content-Type': 'application/json'
           },
           data: requestBody,
-          timeout: 180000 // 3 minute timeout
+          timeout: 300000 // 5 minute timeout (increased from 180000)
         });
         
         console.log('Received response from Qwen API');
@@ -556,17 +612,25 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
         if (response.data?.choices?.[0]?.message?.content) {
           const content = response.data.choices[0].message.content;
           let jsonContent: any;
+          
           try {
             jsonContent = JSON.parse(content);
-          } catch (error) {
-            console.error('Error parsing Qwen response as JSON:', error);
+            console.log('Successfully parsed JSON response');
+          } catch (parseError) {
+            console.error('Error parsing Qwen response as JSON:', parseError);
+            
+            // Try cleaning content first
             let cleanedContent = content.replace(/```json\s*/g, '').replace(/```\s*$/g, '').trim();
+            
             try {
               jsonContent = JSON.parse(cleanedContent);
               console.log('Successfully parsed JSON after cleaning content');
             } catch (cleanError) {
               console.error('Failed to parse JSON even after cleaning, trying to fix malformed JSON');
+              
+              // Try fixing malformed JSON
               const fixedContent = this.parseQwenColonFormat(cleanedContent);
+              
               try {
                 jsonContent = JSON.parse(fixedContent);
                 console.log('Successfully parsed JSON after fixing malformed content');
@@ -592,41 +656,38 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
           error: 'No content in response',
           provider: 'qwen'
         };
-      } catch (error: any) {
-        console.error('Error during API request:', error.message);
+      } catch (apiError: any) {
+        console.error('Error during API request:', apiError.message);
         
-        // Provide more detailed error information for debugging
-        if (error.response) {
+        if (apiError.response) {
           // The request was made and the server responded with a status code
           console.error('Qwen API Response Error:');
-          console.error('Status:', error.response.status);
-          console.error('Status Text:', error.response.statusText);
-          console.error('Headers:', JSON.stringify(error.response.headers, null, 2));
-          console.error('Response Data:', JSON.stringify(error.response.data, null, 2));
+          console.error('Status:', apiError.response.status);
+          console.error('Status Text:', apiError.response.statusText);
+          console.error('Headers:', JSON.stringify(apiError.response.headers, null, 2));
+          console.error('Response Data:', JSON.stringify(apiError.response.data, null, 2));
           
-          // Return a formatted error to the client
           return {
             title: `Lesson Generation Error`,
             provider: 'qwen',
-            error: `Qwen API Error: ${error.response.status} - ${error.response.statusText}`,
+            error: `Qwen API Error: ${apiError.response.status} - ${apiError.response.statusText}`,
             sections: [{
               type: "error",
               title: "API Error",
-              content: `The Qwen AI service returned an error: ${error.response.status} ${error.response.statusText}. ${
-                error.response.data && error.response.data.error && error.response.data.error.message
-                  ? `\n\nAPI error: ${error.response.data.error.message}` 
-                  : error.response.data && error.response.data.message
-                    ? `\n\nMessage: ${error.response.data.message}`
+              content: `The Qwen AI service returned an error: ${apiError.response.status} ${apiError.response.statusText}. ${
+                apiError.response.data && apiError.response.data.error && apiError.response.data.error.message
+                  ? `\n\nAPI error: ${apiError.response.data.error.message}` 
+                  : apiError.response.data && apiError.response.data.message
+                    ? `\n\nMessage: ${apiError.response.data.message}`
                     : ''
               }`
             }]
           };
-        } else if (error.request) {
+        } else if (apiError.request) {
           // The request was made but no response was received
           console.error('Qwen API No Response Error:');
-          console.error('Request:', error.request);
+          console.error('Request:', apiError.request);
           
-          // Return a formatted error to the client
           return {
             title: `Lesson Generation Error`,
             provider: 'qwen',
@@ -639,17 +700,16 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
           };
         } else {
           // Something happened in setting up the request that triggered an Error
-          console.error('Qwen API Setup Error:', error.message);
+          console.error('Qwen API Setup Error:', apiError.message);
           
-          // Return a formatted error to the client
           return {
             title: `Lesson Generation Error`,
             provider: 'qwen',
-            error: `Error setting up request: ${error.message}`,
+            error: `Error setting up request: ${apiError.message}`,
             sections: [{
               type: "error",
               title: "Request Error",
-              content: `An error occurred while preparing the request: ${error.message}`
+              content: `An error occurred while preparing the request: ${apiError.message}`
             }]
           };
         }
@@ -665,132 +725,336 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
    */
   private async formatLessonContent(content: any): Promise<any> {
     try {
-      // If content is already an object (previously parsed JSON), work with it directly
-      if (typeof content === 'object' && content !== null) {
-        const lessonContent = content;
-        
-        // Process each section if sections array exists
-        if (lessonContent.sections && Array.isArray(lessonContent.sections)) {
-          console.log('Starting image generation loop for Qwen lesson...');
-          for (const section of lessonContent.sections) {
-            // Skip if not a valid section object
-            if (!section || typeof section !== 'object') continue;
-            
-            // Generate images for Vocabulary
-            if (section.type === 'vocabulary' && section.words && Array.isArray(section.words)) {
-              console.log(`Found ${section.words.length} vocabulary words, generating images...`);
-              for (const word of section.words) {
-                if (word.imagePrompt) {
-                  try {
-                    // Generate unique ID for logging
-                    const requestId = `vocab_${word.term ? word.term.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 15) : 'word'}`;
-                    word.imageBase64 = await stabilityService.generateImage(word.imagePrompt, requestId);
-                  } catch (imgError) {
-                    console.error(`Error generating image for vocab word ${word.term}:`, imgError);
-                    word.imageBase64 = null; // Ensure field exists even on error
-                  }
-                }
-              }
-            }
-
-            // Handle discussion section specially (including image generation)
-            if (section.type === 'discussion') {
-              // Handle the introduction field possibly containing the paragraph context
-              if (section.introduction && typeof section.introduction === 'string') {
-                // If the introduction field looks like a paragraph (multiple sentences, no question marks)
-                // then we store it as paragraphContext for the UI to render properly
-                if (section.introduction.includes('.') && !section.introduction.includes('?')) {
-                  section.paragraphContext = section.introduction;
-                  console.log("Setting paragraphContext from introduction:", section.paragraphContext);
-                }
-              }
-              
-              // Process questions if they exist (including image generation)
-              if (section.questions) {
-                // If questions is an object but not an array, convert to array
-                if (typeof section.questions === 'object' && !Array.isArray(section.questions)) {
-                  console.log('Converting discussion questions from object to array format');
-                  const questionArray = [];
-                  for (const key in section.questions) {
-                    if (key.startsWith('Question') || key.match(/^\d+$/) || key.match(/^[A-Za-z]$/)) {
-                      questionArray.push(section.questions[key]);
-                    }
-                  }
-                  
-                  if (questionArray.length > 0) {
-                    section.questions = questionArray;
-                    console.log(`Converted ${questionArray.length} discussion questions to array format`);
-                  }
-                }
-                
-                // Ensure questions format is an array of objects and generate images
-                if (Array.isArray(section.questions)) {
-                  console.log(`Found ${section.questions.length} discussion questions, generating images...`);
-                  // Use Promise.all for potentially faster image generation if needed, but sequential for now
-                  for (let i = 0; i < section.questions.length; i++) {
-                    let q = section.questions[i];
-                    
-                    // Standardize question format
-                    let questionObj: any;
-                    
-                    if (typeof q === 'string') {
-                      // Convert string questions to objects
-                      questionObj = { question: q, paragraphContext: null };
-                    } else if (typeof q === 'object' && q !== null) {
-                      // Use existing object structure
-                      questionObj = { ...q };
-                      // Ensure question field exists
-                      questionObj.question = q.question || q.text || `Discussion Question ${i + 1}`;
-                    } else {
-                      // Create default object for invalid types
-                      questionObj = {
-                        question: `Discussion Question ${i + 1}`,
-                        paragraphContext: null
-                      };
-                    }
-                    
-                    // Check for paragraph context in various possible field names
-                    if (!questionObj.paragraphContext) {
-                      // Try to find paragraph context in other properties
-                      questionObj.paragraphContext = 
-                        questionObj.context || 
-                        questionObj.paragraph || 
-                        questionObj.introduction || 
-                        (section.paragraphContext ? section.paragraphContext : null);
-                    }
-                    
-                    q = questionObj;
-                    
-                    // Generate image if prompt exists
-                    if (q.imagePrompt) {
-                      try {
-                        // Generate unique ID for logging
-                        const requestId = `disc_${q.question ? q.question.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 15) : 'question'}`;
-                        q.imageBase64 = await stabilityService.generateImage(q.imagePrompt, requestId);
-                      } catch (imgError) {
-                        console.error(`Error generating image for discussion question:`, imgError);
-                        q.imageBase64 = null; // Ensure field exists even on error
-                      }
-                    }
-                    section.questions[i] = q; // Update the array with potentially added imageBase64
-                  }
-                }
-              }
-            }
-          }
-          console.log('Finished image generation loop for Qwen lesson.');
-        }
-        
-        // Add provider field to ensure consistent response structure
-        lessonContent.provider = 'qwen';
-        return lessonContent;
+      // Ensure content is a valid object
+      if (!content || typeof content !== 'object') {
+        console.log('Content is not a valid object, creating a default structure');
+        content = {
+          title: 'ESL Lesson',
+          sections: [],
+          provider: 'qwen'
+        };
       }
       
-      // Add provider field if content was not already an object
-      if (typeof content === 'object' && content !== null) {
-        content.provider = 'qwen';
+      const lessonContent = content;
+      
+      // Log the state of cloze/unscramble data BEFORE validation
+      const preValidationCloze = lessonContent.sections?.find((s: any) => s?.type === 'cloze');
+      const preValidationUnscramble = lessonContent.sections?.find((s: any) => s?.type === 'sentenceUnscramble');
+      console.log('Cloze data BEFORE validation:', JSON.stringify(preValidationCloze, null, 2));
+      console.log('Sentence Unscramble data BEFORE validation:', JSON.stringify(preValidationUnscramble, null, 2));
+      
+      // Add provider field
+      lessonContent.provider = 'qwen';
+      
+      // Ensure the content has a title
+      if (!lessonContent.title || typeof lessonContent.title !== 'string') {
+        console.log('Missing or invalid title, setting default');
+        lessonContent.title = 'ESL Lesson';
       }
-      return content;
+      
+      // Ensure sections array exists
+      if (!lessonContent.sections || !Array.isArray(lessonContent.sections)) {
+        console.log('Missing or invalid sections array, creating an empty one');
+        lessonContent.sections = [];
+      }
+      
+      // Process each section if sections array exists
+      if (lessonContent.sections && Array.isArray(lessonContent.sections)) {
+        console.log('Validating lesson sections...');
+        
+        // Initialize new array for validated sections
+        const validatedSections = [];
+        
+        // Check if required sections exist, track them
+        let hasReadingSection = false;
+        
+        // Validate all sections have the required properties
+        for (let i = 0; i < lessonContent.sections.length; i++) {
+          const section = lessonContent.sections[i];
+          let isValidSection = true; // Assume valid initially
+          
+          // Skip if not a valid section object
+          if (!section || typeof section !== 'object') {
+            console.log(`Section ${i} is not a valid object, skipping it`);
+            isValidSection = false;
+            continue; // Skip to next iteration
+          }
+          
+          // Ensure all sections have a type and title
+          if (!section.type || typeof section.type !== 'string') {
+            console.log(`Section ${i} missing type, setting to 'unknown'`);
+            section.type = 'unknown'; // Still try to keep the section if possible
+          }
+          
+          if (!section.title || typeof section.title !== 'string') {
+            console.log(`Section ${i} missing title, adding default title for ${section.type}`);
+            section.title = `${section.type.charAt(0).toUpperCase() + section.type.slice(1)} Section`;
+          }
+          
+          // Track if required reading section exists
+          if (section.type === 'reading') hasReadingSection = true;
+          
+          // Validate reading section
+          if (section.type === 'reading') {
+            if (!section.paragraphs || !Array.isArray(section.paragraphs) || section.paragraphs.length === 0) {
+              console.log('Reading section missing paragraphs, creating empty array');
+              section.paragraphs = ['No content available'];
+            }
+          }
+          
+          // Validate vocabulary section
+          if (section.type === 'vocabulary') {
+            if (!section.words || !Array.isArray(section.words) || section.words.length === 0) {
+              console.log('Vocabulary section missing words, creating empty array');
+              section.words = [];
+            } else {
+              // Validate each vocabulary word (and filter out nulls)
+              const validWords = [];
+              for (let j = 0; j < section.words.length; j++) {
+                const word = section.words[j];
+                if (!word || typeof word !== 'object') {
+                  console.log(`Vocabulary word ${j} is not a valid object, skipping it`);
+                  continue; // Skip this word
+                }
+                
+                // Add defaults for missing fields but keep the word
+                if (!word.term || typeof word.term !== 'string') word.term = 'unknown';
+                if (!word.definition || typeof word.definition !== 'string') word.definition = 'No definition available';
+                if (!word.partOfSpeech || typeof word.partOfSpeech !== 'string') word.partOfSpeech = 'noun';
+                if (!word.example || typeof word.example !== 'string') word.example = `Example with "${word.term}".`;
+                if (!word.semanticGroup || typeof word.semanticGroup !== 'string') word.semanticGroup = 'General Vocabulary';
+                if (!word.additionalExamples || !Array.isArray(word.additionalExamples)) word.additionalExamples = [];
+                if (!word.wordFamily || typeof word.wordFamily !== 'object') word.wordFamily = { words: [], description: 'No related words available' };
+                if (!word.collocations || !Array.isArray(word.collocations)) word.collocations = [];
+                if (!word.pronunciation || typeof word.pronunciation !== 'object') word.pronunciation = { syllables: [word.term], stressIndex: 0, phoneticGuide: word.term };
+                
+                validWords.push(word); // Add the potentially modified word
+              }
+              section.words = validWords; // Assign the filtered/validated words
+            }
+          }
+          
+          // Validate comprehension section
+          if (section.type === 'comprehension') {
+            if (!section.questions || !Array.isArray(section.questions) || section.questions.length === 0) {
+              console.log('Comprehension section missing questions, creating empty array');
+              section.questions = [];
+            } else {
+              // Validate each question (and filter out nulls)
+              const validQuestions = [];
+              for (let j = 0; j < section.questions.length; j++) {
+                const question = section.questions[j];
+                if (!question || typeof question !== 'object') {
+                  console.log(`Comprehension question ${j} is not a valid object, skipping it`);
+                  continue; // Skip this question
+                }
+                // Add defaults for missing fields but keep the question
+                if (!question.question || typeof question.question !== 'string') question.question = 'Question text missing';
+                if (!question.options || !Array.isArray(question.options) || question.options.length === 0) question.options = ['True', 'False'];
+                if (!question.correctAnswer) question.correctAnswer = question.options[0];
+                if (!question.explanation || typeof question.explanation !== 'string') question.explanation = 'No explanation available.';
+                
+                validQuestions.push(question);
+              }
+              section.questions = validQuestions;
+            }
+          }
+          
+          // Validate cloze section
+          if (section.type === 'cloze') {
+            if (!section.text || typeof section.text !== 'string' || !section.text.includes('[')) {
+              console.log('Cloze section has invalid text, removing section');
+              isValidSection = false;
+            } else if (!section.wordBank || !Array.isArray(section.wordBank) || section.wordBank.length === 0) {
+              console.log('Cloze section missing wordBank, trying to extract from text');
+              const wordBankMatches = section.text.match(/\[\d+:([^\]]+)\]/g) || [];
+              const wordBank = wordBankMatches.map(match => {
+                const word = match.match(/\[\d+:([^\]]+)\]/);
+                return word ? word[1] : '';
+              }).filter(Boolean);
+              
+              if (wordBank.length > 0) {
+                section.wordBank = wordBank;
+                console.log('Successfully extracted wordBank');
+              } else {
+                console.log('Could not extract wordBank from text, removing section');
+                isValidSection = false;
+              }
+            }
+            if (isValidSection && (!section.teacherNotes || typeof section.teacherNotes !== 'string')) {
+              section.teacherNotes = 'Review the vocabulary before attempting to fill in the blanks.';
+            }
+          }
+          
+          // Validate sentence unscramble section
+          if (section.type === 'sentenceUnscramble') {
+            if (!section.sentences || !Array.isArray(section.sentences) || section.sentences.length === 0) {
+              console.log('Sentence unscramble section missing sentences, removing section');
+              isValidSection = false;
+            } else {
+              // Validate each sentence (and filter out nulls)
+              const validSentences = [];
+              for (let j = 0; j < section.sentences.length; j++) {
+                const sentence = section.sentences[j];
+                if (!sentence || typeof sentence !== 'object') {
+                  console.log(`Sentence ${j} is not a valid object, skipping it`);
+                  continue; // Skip this sentence
+                }
+                if (!sentence.words || !Array.isArray(sentence.words) || sentence.words.length === 0) {
+                  console.log(`Sentence ${j} missing words array, skipping it`);
+                  continue; // Skip this sentence
+                }
+                if (!sentence.correctSentence || typeof sentence.correctSentence !== 'string') {
+                  console.log(`Sentence ${j} missing correctSentence, generating from words`);
+                  sentence.correctSentence = sentence.words.join(' ') + '.';
+                }
+                validSentences.push(sentence);
+              }
+              section.sentences = validSentences; // Assign the filtered/validated sentences
+              
+              // If all sentences were invalid after inner validation, remove the section
+              if (section.sentences.length === 0) {
+                console.log('All sentences were invalid after validation, removing section');
+                isValidSection = false;
+              }
+            }
+            if (isValidSection && (!section.teacherNotes || typeof section.teacherNotes !== 'string')) {
+              section.teacherNotes = 'This exercise helps students practice word order in English sentences.';
+            }
+          }
+          
+          // Validate discussion section
+          if (section.type === 'discussion') {
+             if (!section.questions || !Array.isArray(section.questions) || section.questions.length === 0) {
+              console.log('Discussion section missing questions, creating empty array');
+              section.questions = [];
+            } else {
+              // Validate each question (and filter out nulls)
+              const validQuestions = [];
+              for (let j = 0; j < section.questions.length; j++) {
+                let q = section.questions[j];
+                let questionObj: any = {}; 
+                
+                if (typeof q === 'string') {
+                  questionObj = { question: q, paragraphContext: null };
+                } else if (q && typeof q === 'object') {
+                   questionObj = { ...q }; 
+                } else {
+                  console.log(`Discussion question ${j} is not a valid object, creating default`);
+                  questionObj = { question: `Discussion Question ${j + 1}`, paragraphContext: null };
+                }
+                
+                // Ensure question field exists
+                if (!questionObj.question || typeof questionObj.question !== 'string') {
+                  questionObj.question = questionObj.text || `Discussion Question ${j + 1}`;
+                }
+                
+                // Check for paragraph context
+                if (!questionObj.paragraphContext) {
+                  questionObj.paragraphContext = questionObj.context || questionObj.paragraph || questionObj.introduction || null;
+                }
+                validQuestions.push(questionObj);
+              }
+               section.questions = validQuestions;
+            }
+          }
+          
+          // Validate quiz section
+          if (section.type === 'quiz') {
+            if (!section.questions || !Array.isArray(section.questions) || section.questions.length === 0) {
+              console.log('Quiz section missing questions, creating empty array');
+              section.questions = [];
+            } else {
+              // Validate each question (and filter out nulls)
+              const validQuestions = [];
+              for (let j = 0; j < section.questions.length; j++) {
+                const question = section.questions[j];
+                 if (!question || typeof question !== 'object') {
+                  console.log(`Quiz question ${j} is not a valid object, skipping it`);
+                   continue;
+                 }
+                 // Add defaults
+                 if (!question.question || typeof question.question !== 'string') question.question = 'Question text missing';
+                 if (!question.options || !Array.isArray(question.options) || question.options.length === 0) question.options = ['True', 'False'];
+                 if (!question.correctAnswer) question.correctAnswer = question.options[0];
+                 
+                 validQuestions.push(question);
+              }
+               section.questions = validQuestions;
+            }
+          }
+          
+          // Add valid section to new array
+          if (isValidSection) {
+            validatedSections.push(section);
+          } else {
+             console.log(`Section type '${section.type}' (index ${i}) was deemed invalid and removed.`);
+          }
+        }
+        
+        // Replace old sections array with validated one
+        lessonContent.sections = validatedSections;
+        
+        // Ensure there is at least one reading section
+        // Re-check hasReadingSection on the newly validated array
+        hasReadingSection = lessonContent.sections.some(s => s.type === 'reading');
+        if (!hasReadingSection) {
+          console.log('No valid reading section found after validation, adding a default one');
+          // Add to the beginning of the validated array
+          lessonContent.sections.unshift({
+            type: 'reading',
+            title: `Reading: ${lessonContent.title}`,
+            paragraphs: ['No reading content available. Please try generating the lesson again.']
+          });
+        }
+        
+        // DO NOT add default sections for cloze and sentenceUnscramble
+        // Let the UI display the message about using AI to generate custom exercises
+        
+        // Image generation loop uses validated array
+        console.log('Starting image generation loop for Qwen lesson (using validated sections)...');
+        for (const section of lessonContent.sections) { // Iterate over the validated array
+          // Skip if not a valid section object (redundant check, but safe)
+          if (!section || typeof section !== 'object') continue;
+          
+          // Generate images for Vocabulary
+          if (section.type === 'vocabulary' && section.words && Array.isArray(section.words)) {
+            console.log(`Found ${section.words.length} vocabulary words, generating images...`);
+            // Use Promise.all for potentially faster image generation
+            await Promise.all(section.words.map(async (word) => {
+              if (word.imagePrompt) {
+                try {
+                  const requestId = `vocab_${word.term ? word.term.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 15) : 'word'}`;
+                  word.imageBase64 = await stabilityService.generateImage(word.imagePrompt, requestId);
+                } catch (imgError) {
+                  console.error(`Error generating image for vocab word ${word.term}:`, imgError);
+                  word.imageBase64 = null;
+                }
+              }
+            }));
+          }
+
+          // Handle discussion section specially (including image generation)
+          if (section.type === 'discussion' && section.questions && Array.isArray(section.questions)) {
+             console.log(`Found ${section.questions.length} discussion questions, generating images...`);
+             // Use Promise.all for potentially faster image generation
+             await Promise.all(section.questions.map(async (q) => {
+                if (q.imagePrompt) {
+                    try {
+                      const requestId = `disc_${q.question ? q.question.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 15) : 'question'}`;
+                      q.imageBase64 = await stabilityService.generateImage(q.imagePrompt, requestId);
+                    } catch (imgError) {
+                      console.error(`Error generating image for discussion question:`, imgError);
+                      q.imageBase64 = null;
+                    }
+                 }
+             }));
+          }
+        }
+        console.log('Finished image generation loop for Qwen lesson.');
+      }
+      
+      return lessonContent;
     } catch (error: any) {
       console.error('Error formatting lesson content:', error);
       return content; // Return original content on formatting error

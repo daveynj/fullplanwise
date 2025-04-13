@@ -32,6 +32,8 @@ interface SentenceFrame {
 const vocabList = ['festivity', 'commemorate', 'patriotic', 'ritual', 'heritage'];
 
 export function SentenceFramesSection({ section }: SentenceFrameSectionProps) {
+  console.log("[SentenceFramesSection] Received section prop:", JSON.stringify(section, null, 2));
+  
   if (!section) return <p>No sentence frames content available</p>;
   
   console.log("SentenceFrames section received:", section);
@@ -75,7 +77,21 @@ export function SentenceFramesSection({ section }: SentenceFrameSectionProps) {
         
         if (Array.isArray(value)) {
           console.log("SentenceFrames value is an array, adding to frames");
-          frames.push(...value);
+          // --- BEGIN EDIT: Map frames to ensure 'level' property exists ---
+          const mappedFrames = value.map((frame: any) => ({
+            ...frame,
+            title: frame.title || "Sentence Frame", // Ensure title exists
+            level: (frame.level || frame.difficultyLevel || "intermediate") as "basic" | "intermediate" | "advanced",
+            examples: Array.isArray(frame.examples) ? frame.examples : [frame.examples].filter(Boolean), // Ensure examples is array
+            pattern: frame.pattern || "[Missing Pattern]", // Ensure pattern exists
+            // Map other potential field name differences if needed (e.g., usageNotes -> usage)
+            usage: frame.usage || frame.usageNotes,
+            teachingTips: frame.teachingTips,
+            grammarFocus: frame.grammarFocus || frame.focus, 
+            communicativeFunction: frame.communicativeFunction
+          }));
+          frames.push(...mappedFrames);
+          // --- END EDIT ---
         } else if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
           console.log("SentenceFrames value is an object, extracting properties");
           // The object might contain sentence frames as properties
@@ -106,16 +122,55 @@ export function SentenceFramesSection({ section }: SentenceFrameSectionProps) {
       // Check for specific sentence frames properties
       if (section.sentenceFrames && Array.isArray(section.sentenceFrames)) {
         console.log("Found sentenceFrames array property");
-        frames.push(...section.sentenceFrames);
+        // --- BEGIN EDIT: Map frames ---
+        const mappedFrames = section.sentenceFrames.map((frame: any) => ({
+          ...frame,
+          title: frame.title || "Sentence Frame",
+          level: (frame.level || frame.difficultyLevel || "intermediate") as "basic" | "intermediate" | "advanced",
+          examples: Array.isArray(frame.examples) ? frame.examples : [frame.examples].filter(Boolean),
+          pattern: frame.pattern || "[Missing Pattern]",
+          usage: frame.usage || frame.usageNotes,
+          teachingTips: frame.teachingTips,
+          grammarFocus: frame.grammarFocus || frame.focus, 
+          communicativeFunction: frame.communicativeFunction
+        }));
+        frames.push(...mappedFrames);
+        // --- END EDIT ---
       } 
       // Look for a 'patterns' or 'frames' property
       else if (section.patterns && Array.isArray(section.patterns)) {
         console.log("Found patterns array");
-        frames.push(...section.patterns);
+        // --- BEGIN EDIT: Map frames ---
+        const mappedFrames = section.patterns.map((frame: any) => ({
+          ...frame,
+          title: frame.title || "Sentence Frame",
+          level: (frame.level || frame.difficultyLevel || "intermediate") as "basic" | "intermediate" | "advanced",
+          examples: Array.isArray(frame.examples) ? frame.examples : [frame.examples].filter(Boolean),
+          pattern: frame.pattern || "[Missing Pattern]",
+          usage: frame.usage || frame.usageNotes,
+          teachingTips: frame.teachingTips,
+          grammarFocus: frame.grammarFocus || frame.focus, 
+          communicativeFunction: frame.communicativeFunction
+        }));
+        frames.push(...mappedFrames);
+        // --- END EDIT ---
       } 
       else if (section.frames && Array.isArray(section.frames)) {
         console.log("Found frames array");
-        frames.push(...section.frames);
+        // --- BEGIN EDIT: Map frames ---
+        const mappedFrames = section.frames.map((frame: any) => ({
+          ...frame,
+          title: frame.title || "Sentence Frame",
+          level: (frame.level || frame.difficultyLevel || "intermediate") as "basic" | "intermediate" | "advanced",
+          examples: Array.isArray(frame.examples) ? frame.examples : [frame.examples].filter(Boolean),
+          pattern: frame.pattern || "[Missing Pattern]",
+          usage: frame.usage || frame.usageNotes,
+          teachingTips: frame.teachingTips,
+          grammarFocus: frame.grammarFocus || frame.focus, 
+          communicativeFunction: frame.communicativeFunction
+        }));
+        frames.push(...mappedFrames);
+        // --- END EDIT ---
       }
       // Check if the response has grammatical patterns directly
       else if (section.grammaticalPatterns && Array.isArray(section.grammaticalPatterns)) {
@@ -156,6 +211,9 @@ export function SentenceFramesSection({ section }: SentenceFrameSectionProps) {
 
   // Render a different UI based on whether we found any frames
   const renderFrames = () => {
+    // --- BEGIN EDIT: Log frames array before filtering ---
+    console.log("[SentenceFramesSection renderFrames] Frames array before filtering:", JSON.stringify(frames, null, 2));
+    // --- END EDIT ---
     if (frames.length === 0) {
       return (
         <div className="bg-amber-50 p-6 rounded-lg text-center border border-amber-200">

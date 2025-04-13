@@ -24,7 +24,9 @@ import {
   Info as InfoIcon,
   Sparkles as SparklesIcon,
   BookOpen as BookOpenIcon,
-  Book as BookIcon
+  Book as BookIcon,
+  PenTool,
+  Shuffle,
 } from "lucide-react";
 import { ReadingSection } from "./reading-section";
 import { SentenceFramesSection } from "./sentence-frames-section";
@@ -33,12 +35,14 @@ import { DiscussionExtractor } from "./discussion-extractor";
 import { ComprehensionExtractor } from "./comprehension-extractor";
 import { QuizExtractor } from "./quiz-extractor";
 import { VocabularyCard, VocabularyWord } from "./warm-up/vocabulary-card";
+import { InteractiveClozeSection } from "./interactive-cloze-section";
+import { SentenceUnscrambleSection } from "./sentence-unscramble-section";
 import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn, extractDiscussionQuestions, extractQuizQuestions, extractComprehensionQuestions } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button"; // Added import for Button
+import { Button } from "@/components/ui/button";
 
 interface LessonContentProps {
   content: any;
@@ -56,7 +60,9 @@ type SectionType =
   | "discussion" 
   | "speaking" 
   | "quiz" 
-  | "assessment";
+  | "assessment"
+  | "cloze"
+  | "sentenceUnscramble";
 
 interface SectionDetails {
   icon: LucideIcon;
@@ -74,7 +80,6 @@ export function LessonContent({ content }: LessonContentProps) {
   useEffect(() => {
     if (content) {
       console.log("Content received in LessonContent component:", content);
-      console.log("FULL LESSON DATA:", JSON.stringify(content, null, 2).substring(0, 3000) + "...");
       
       // Check if this is a Gemini-formatted response (usually has different structure)
       const isGeminiResponse = content.provider === 'gemini';
@@ -288,6 +293,67 @@ export function LessonContent({ content }: LessonContentProps) {
             }
           }
           
+          // Look for cloze (fill-in-the-blanks) activities
+          if (processedContent.cloze || processedContent.fillInTheBlanks || processedContent.fillInBlanks || processedContent.clozeActivity) {
+            console.log("Found cloze activity in Gemini response");
+            const clozeContent = processedContent.cloze || processedContent.fillInTheBlanks || processedContent.fillInBlanks || processedContent.clozeActivity;
+            let clozeText = "";
+            let wordBank: string[] = [];
+            
+            if (typeof clozeContent === 'string') {
+              // If it's a string, assume it contains the cloze text with [n:word] format
+              clozeText = clozeContent;
+              
+              // Extract word bank from the text if in [n:word] format
+              const matches = clozeText.match(/\[(\d+):([^\]]+)\]/g) || [];
+              wordBank = matches.map(match => {
+                const word = match.match(/\[(\d+):([^\]]+)\]/)?.[2] || "";
+                return word;
+              });
+            } else if (typeof clozeContent === 'object') {
+              // Handle object format with text and wordBank properties
+              if (clozeContent.text) {
+                clozeText = clozeContent.text;
+              } else if (clozeContent.passage || clozeContent.content) {
+                clozeText = clozeContent.passage || clozeContent.content;
+              }
+              
+              // Get word bank from the object
+              if (Array.isArray(clozeContent.wordBank)) {
+                wordBank = clozeContent.wordBank;
+              } else if (Array.isArray(clozeContent.words)) {
+                wordBank = clozeContent.words;
+              } else if (typeof clozeContent.wordBank === 'string') {
+                wordBank = clozeContent.wordBank.split(/[,\s]+/).filter(Boolean);
+              }
+              
+              // If we have a text but no blanks in [n:word] format, try to convert
+              if (clozeText && !clozeText.includes('[') && Array.isArray(wordBank) && wordBank.length > 0) {
+                // Replace words in text with [n:word] format
+                wordBank.forEach((word, index) => {
+                  const regex = new RegExp(`\\b${word}\\b`, 'i');
+                  clozeText = clozeText.replace(regex, `[${index + 1}:${word}]`);
+                });
+              }
+            }
+            
+            if (clozeText) {
+              // Add to processedContent
+              processedContent.cloze = {
+                text: clozeText,
+                wordBank: wordBank
+              };
+              
+              // Add to sections
+              processedContent.sections.push({
+                type: 'cloze',
+                title: 'Fill in the Blanks'
+              });
+              
+              console.log("Added cloze section from top-level keys");
+            }
+          }
+          
           // Look for comprehension sections
           if (processedContent.comprehension || processedContent.comprehensionQuestions) {
             const compContent = processedContent.comprehension || processedContent.comprehensionQuestions;
@@ -424,6 +490,30 @@ export function LessonContent({ content }: LessonContentProps) {
               }
             }
             
+            // --- BEGIN EDIT: Extract data for cloze and sentenceUnscramble --- 
+            // Check if this section is the cloze or sentenceUnscramble section
+            // and extract its data to the top-level of processedContent
+            if (section.type === 'cloze') {
+              console.log("Found cloze section in array, extracting data to processedContent.cloze");
+              processedContent.cloze = {
+                 text: section.text || "",
+                 wordBank: section.wordBank || [],
+                 title: section.title || "Fill in the Blanks", // Preserve title if available
+                 teacherNotes: section.teacherNotes || "" // Preserve notes if available
+              };
+            }
+            
+            if (section.type === 'sentenceUnscramble') {
+              console.log("Found sentenceUnscramble section in array, extracting data to processedContent.sentenceUnscramble");
+              processedContent.sentenceUnscramble = {
+                sentences: section.sentences || [],
+                title: section.title || "Sentence Unscramble", // Preserve title if available
+                teacherNotes: section.teacherNotes || "" // Preserve notes if available
+              };
+            }
+            
+            // --- END EDIT: Remove Sentence Frames Data Extraction ---
+            
             // Add the processed section 
             normalizedSections.push(section);
           }
@@ -435,228 +525,36 @@ export function LessonContent({ content }: LessonContentProps) {
       
       // Set the processed content
       setParsedContent(processedContent);
-    }
-  }, [content]);
-  
-  // Set the active tab to the first available section when content is loaded
-  useEffect(() => {
-    if (parsedContent?.sections && Array.isArray(parsedContent.sections) && parsedContent.sections.length > 0) {
-      try {
-        // Check if we need to add the comprehension section
-        if (!parsedContent.sections.some((s: any) => s.type === 'comprehension')) {
-          console.log("Adding comprehension section as it doesn't exist");
-          const readingSection = parsedContent.sections.find((s: any) => s.type === 'reading');
-          
-          const comprehensionSection: any = {
-            type: 'comprehension',
-            title: 'Reading Comprehension',
-            questions: [],
-          };
-          
-          // If we have a reading section, use it to create sample comprehension questions
-          if (readingSection && readingSection.content) {
-            // Don't create sample questions, just keep the empty array
-            // We'll only show what came from the AI response
-          }
-          
-          parsedContent.sections.push(comprehensionSection);
-        }
-        
-        console.log("Parsed Content sections:", JSON.stringify(parsedContent.sections));
-        
-        // Ensure we have the other main sections in our lesson content
-        const requiredSections = ['reading', 'vocabulary', 'discussion', 'quiz'];
-        const existingSectionTypes = parsedContent.sections.map((s: any) => s.type);
-        
-        console.log("Existing section types:", existingSectionTypes);
-        
-        // We no longer add missing sections with default content
-        // Instead, we'll just display what we have from the AI response
-        
-        // Check if we need to extract sections from malformed structure
-        if (parsedContent.sections.length === 1 && parsedContent.sections[0].type === 'sentenceFrames') {
-          // Check for additional section types directly in the section object
-          const sectionObject = parsedContent.sections[0];
-          const potentialSectionTypes = ['reading', 'vocabulary', 'comprehension', 'discussion', 'quiz'];
-          
-          // Log the section keys to debug
-          console.log("Checking for embedded sections in keys:", Object.keys(sectionObject));
-          
-          let extractedSections: Array<{
-            type: string;
-            title: string;
-            content?: string;
-            paragraphs?: string[];
-            words?: Array<{word: string; definition: string}>;
-            questions?: Array<{question: string; answer: string}>;
-          }> = [];
-          
-          // Extract embedded section data, but don't add default content
-          potentialSectionTypes.forEach(sectionType => {
-            if (sectionObject[sectionType] !== undefined) {
-              console.log(`Found embedded ${sectionType} section in keys`);
-              
-              // Create a new section with the extracted data
-              const newSection: {
-                type: string;
-                title: string;
-                content?: string;
-                paragraphs?: string[];
-                words?: Array<{word: string; definition: string}>;
-                questions?: Array<{question: string; answer: string}>;
-              } = {
-                type: sectionType,
-                title: sectionType.charAt(0).toUpperCase() + sectionType.slice(1)
-              };
-              
-              // Different handling based on section type
-              if (sectionType === 'reading') {
-                // For reading, extract the text - log all possible keys
-                console.log("Reading section keys for extraction:", 
-                  Object.keys(sectionObject).filter(k => 
-                    k.toLowerCase().includes('read') || 
-                    k.toLowerCase().includes('text')
-                  )
-                );
-                
-                // Check for reading text in various properties
-                if (typeof sectionObject[sectionType] === 'string') {
-                  newSection.content = sectionObject[sectionType];
-                  console.log("Found reading content in 'reading' key");
-                } else if (sectionObject['Reading Text'] && typeof sectionObject['Reading Text'] === 'string') {
-                  newSection.content = sectionObject['Reading Text'];
-                  console.log("Found reading content in 'Reading Text' key");
-                } else if (sectionObject['reading text'] && typeof sectionObject['reading text'] === 'string') {
-                  newSection.content = sectionObject['reading text'];
-                  console.log("Found reading content in 'reading text' key");
-                } else {
-                  // Look for keys that contain the actual text
-                  const possibleTextKeys = Object.keys(sectionObject).filter(key => {
-                    // Skip keys that are likely not the reading content
-                    const skipPattern = /^(type|title|questions|targetVocabulary|procedure|content)$/i;
-                    if (skipPattern.test(key)) return false;
-                    
-                    // Check if the value is a string and might be a reading passage
-                    const value = sectionObject[key];
-                    return typeof value === 'string' && 
-                           value.length > 100 && 
-                           value.split(/\s+/).length > 50;
-                  });
-                  
-                  if (possibleTextKeys.length > 0) {
-                    console.log("Found potential reading content in key:", possibleTextKeys[0]);
-                    newSection.content = sectionObject[possibleTextKeys[0]];
-                  }
-                }
-                
-                // Only add the section if we found actual content
-                if (newSection.content) {
-                  // Try to extract paragraphs if content is available
-                  newSection.paragraphs = newSection.content
-                    .split('\n\n')
-                    .filter((p: string) => p.trim().length > 0);
-                  
-                  // If split by newlines didn't produce paragraphs, try split by periods
-                  if (newSection.paragraphs.length <= 1 && newSection.content.length > 200) {
-                    console.log("Splitting reading content by periods as it's a single paragraph");
-                    // Split by periods followed by a space, preserving the periods
-                    const sentences = newSection.content.match(/[^.!?]+[.!?]+\s/g) || [];
-                    
-                    // Group sentences into paragraphs of 3-4 sentences each
-                    const paragraphs = [];
-                    for (let i = 0; i < sentences.length; i += 3) {
-                      paragraphs.push(sentences.slice(i, i + 3).join(' ').trim());
-                    }
-                    
-                    if (paragraphs.length > 1) {
-                      newSection.paragraphs = paragraphs;
-                    }
-                  }
-                  
-                  // Only add if we have real content
-                  extractedSections.push(newSection);
-                }
-              } else if (sectionType === 'vocabulary') {
-                // For vocabulary, look for targetVocabulary or extract from the main section
-                if (sectionObject.targetVocabulary) {
-                  if (typeof sectionObject.targetVocabulary === 'object' && !Array.isArray(sectionObject.targetVocabulary)) {
-                    const words = [];
-                    for (const word in sectionObject.targetVocabulary) {
-                      if (typeof word === 'string' && word.trim()) {
-                        words.push({
-                          word: word,
-                          definition: sectionObject.targetVocabulary[word] || "No definition provided"
-                        });
-                      }
-                    }
-                    // Only add if we found actual vocabulary words
-                    if (words.length > 0) {
-                      newSection.words = words;
-                      extractedSections.push(newSection);
-                    }
-                  } else if (Array.isArray(sectionObject.targetVocabulary) && sectionObject.targetVocabulary.length > 0) {
-                    newSection.words = sectionObject.targetVocabulary.map((word: string) => ({
-                      word: word,
-                      definition: "No definition provided"
-                    }));
-                    extractedSections.push(newSection);
-                  }
-                }
-              } else if (sectionType === 'comprehension' || sectionType === 'discussion') {
-                // For question-based sections, extract questions
-                if (sectionObject.questions) {
-                  if (typeof sectionObject.questions === 'object' && !Array.isArray(sectionObject.questions)) {
-                    // Questions are in an object format
-                    const questionArray = [];
-                    for (const questionText in sectionObject.questions) {
-                      if (typeof questionText === 'string' && questionText.trim()) {
-                        questionArray.push({
-                          question: questionText,
-                          answer: sectionObject.questions[questionText] || ""
-                        });
-                      }
-                    }
-                    // Only add if we found actual questions
-                    if (questionArray.length > 0) {
-                      newSection.questions = questionArray;
-                      extractedSections.push(newSection);
-                    }
-                  } else if (typeof sectionObject.questions === 'string' && sectionObject.questions.trim()) {
-                    // Questions are in a string - try to parse
-                    newSection.questions = [{ question: sectionObject.questions, answer: "" }];
-                    extractedSections.push(newSection);
-                  }
-                }
-              }
-            }
-          });
-          
-          // If we found embedded sections, add them to the parsed content
-          if (extractedSections.length > 0) {
-            console.log("Adding extracted sections:", extractedSections);
-            parsedContent.sections = [...parsedContent.sections, ...extractedSections];
-          }
-        }
-        
-        // Find first section with a valid type
-        const validSections = parsedContent.sections.filter(
-          (s: any) => s && typeof s === 'object' && s.type && typeof s.type === 'string'
-        );
-        
-        console.log("Valid sections:", validSections.map((s: any) => s.type));
-        
-        if (validSections.length > 0) {
-          const firstType = validSections[0].type;
-          console.log("Setting active tab to:", firstType);
-          setActiveTab(firstType);
-        } else {
-          console.warn("No valid section types found in the content");
-        }
-      } catch (err) {
-        console.error("Error setting active tab:", err);
+      
+      // --- BEGIN EDIT: Log final state of sentenceFrames section ---
+      const finalSentenceFramesSection = processedContent.sections?.find((s: any) => s?.type === 'sentenceFrames' || s?.type === 'grammar');
+      console.log("SentenceFrames section in final processedContent.sections:", JSON.stringify(finalSentenceFramesSection, null, 2));
+      // --- END EDIT ---
+      
+      // --- BEGIN EDIT: Set initial active tab ---
+      // Determine available sections AFTER processing
+      const finalSectionTypes = processedContent.sections?.map((s: any) => s?.type).filter(Boolean) || [];
+      const displayOrder: string[] = ["warmup", "reading", "comprehension", "vocabulary", "sentenceFrames", "cloze", "sentenceUnscramble", "discussion", "quiz"];
+      const orderedAvailableSections = displayOrder.filter(type => finalSectionTypes.includes(type));
+      // Add any remaining types not in displayOrder (like 'notes' or custom ones)
+      finalSectionTypes.forEach(type => {
+         if (!orderedAvailableSections.includes(type)) {
+             // Ensure notes is always last if present
+             if (type === 'notes') return; 
+             orderedAvailableSections.push(type);
+         }
+      });
+      if (finalSectionTypes.includes('notes')) {
+          orderedAvailableSections.push('notes');
       }
+      
+      if (orderedAvailableSections.length > 0 && !activeTab) { // Set only if not already set
+          console.log("Setting initial active tab to:", orderedAvailableSections[0]);
+          setActiveTab(orderedAvailableSections[0]);
+      }
+      // --- END EDIT ---
     }
-  }, [parsedContent]);
+  }, [content, activeTab]);
   
   // Show loading state while parsing
   if (!parsedContent) {
@@ -761,7 +659,21 @@ export function LessonContent({ content }: LessonContentProps) {
       color: "bg-cyan-100",
       textColor: "text-cyan-700",
       description: "Evaluate understanding through questions"
-    }
+    },
+    "cloze": {
+      icon: PenTool,
+      label: "Fill in the Blanks",
+      color: "bg-pink-100",
+      textColor: "text-pink-700",
+      description: "Practice vocabulary and grammar with fill-in-the-blank exercises"
+    },
+    "sentenceUnscramble": {
+      icon: Shuffle,
+      label: "Sentence Unscramble",
+      color: "bg-cyan-100",
+      textColor: "text-cyan-700",
+      description: "Practice correct word order in English sentences"
+    },
   };
 
   // Utility function to extract discussion questions from the raw Qwen response
@@ -1440,7 +1352,9 @@ export function LessonContent({ content }: LessonContentProps) {
   const SentenceFramesSectionWrapper = () => {
     // Try both sentenceFrames and grammar as possible section types
     const section = findSection('sentenceFrames') || findSection('grammar');
-    
+    // --- BEGIN EDIT: Log found section ---
+    console.log("[SentenceFramesSectionWrapper] Found section:", JSON.stringify(section, null, 2));
+    // --- END EDIT ---
     // Use the imported SentenceFramesSection component
     return <SentenceFramesSection section={section} />;
   };
@@ -1525,7 +1439,7 @@ export function LessonContent({ content }: LessonContentProps) {
   
   // Create arrays to store the section types from the content and our desired display order
   let contentSectionTypes: string[] = [];
-  const displayOrder: string[] = ["warmup", "reading", "comprehension", "vocabulary", "sentenceFrames", "discussion", "quiz"];
+  const displayOrder: string[] = ["warmup", "reading", "comprehension", "vocabulary", "sentenceFrames", "cloze", "sentenceUnscramble", "discussion", "quiz"];
   // Note: "notes" tab is handled separately via the TeacherNotesSection component
   
   // Helper function to check if a section type exists
@@ -1709,6 +1623,37 @@ export function LessonContent({ content }: LessonContentProps) {
           
           <TabsContent value="assessment" className="m-0">
             <QuizExtractor content={parsedContent} sectionType="assessment" />
+          </TabsContent>
+          
+          <TabsContent value="cloze" className="m-0">
+            {parsedContent.cloze ? (
+              <InteractiveClozeSection
+                title="Fill in the Blanks"
+                text={parsedContent.cloze.text || ""}
+                wordBank={parsedContent.cloze.wordBank || []}
+              />
+            ) : (
+              <div className="p-6 text-center bg-gray-50 rounded-lg border border-gray-200">
+                <PenTool className="mx-auto h-12 w-12 text-gray-400 mb-3" />
+                <h3 className="text-lg font-medium text-gray-700 mb-2">No Fill-in-the-Blanks Exercise</h3>
+                <p className="text-gray-500 max-w-md mx-auto">This lesson doesn't include a cloze exercise. Use the AI to generate custom exercises for this lesson.</p>
+              </div>
+            )}
+          </TabsContent>
+          
+          <TabsContent value="sentenceUnscramble" className="m-0">
+            {parsedContent.sentenceUnscramble?.sentences?.length > 0 ? (
+              <SentenceUnscrambleSection
+                title="Sentence Unscramble"
+                sentences={parsedContent.sentenceUnscramble.sentences}
+              />
+            ) : (
+              <div className="p-6 text-center bg-gray-50 rounded-lg border border-gray-200">
+                <Shuffle className="mx-auto h-12 w-12 text-gray-400 mb-3" />
+                <h3 className="text-lg font-medium text-gray-700 mb-2">No Sentence Unscramble Exercise</h3>
+                <p className="text-gray-500 max-w-md mx-auto">This lesson doesn't include sentence unscramble activities. Use the AI to generate custom exercises for this lesson.</p>
+              </div>
+            )}
           </TabsContent>
           
           <TabsContent value="notes" className="m-0">
