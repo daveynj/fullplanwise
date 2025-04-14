@@ -7,11 +7,39 @@ import {
   MessageCircle,
   MessageSquare,
   GraduationCap,
-  Pencil
+  Pencil,
+  CheckCircle,
+  AlertCircle,
+  Info,
+  RefreshCw,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  DndContext,
+  DragEndEvent,
+  DragStartEvent,
+  DragOverlay,
+  useSensor,
+  useSensors,
+  PointerSensor,
+  closestCenter,
+  useDroppable
+} from '@dnd-kit/core';
+import { 
+  SortableContext,
+  useSortable,
+  arrayMove,
+  rectSortingStrategy
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface SentenceFrameSectionProps {
   section?: any;
@@ -31,381 +59,623 @@ interface SentenceFrame {
 // The target vocabulary words for the sentence frames
 const vocabList = ['festivity', 'commemorate', 'patriotic', 'ritual', 'heritage'];
 
-export function SentenceFramesSection({ section }: SentenceFrameSectionProps) {
-  console.log("[SentenceFramesSection] Received section prop:", JSON.stringify(section, null, 2));
-  
-  if (!section) return <p>No sentence frames content available</p>;
-  
-  console.log("SentenceFrames section received:", section);
-  
-  // Log the full section to analyze the structure
-  console.log("Complete SentenceFrames section:", JSON.stringify(section, null, 2));
-  
-  // Extract any teacher notes or additional content from the section
-  const teacherInstructions = section.procedure || section.teacherInstructions || "";
-  
-  // State to track which frames are expanded
-  const [expandedFrames, setExpandedFrames] = useState<Record<number, boolean>>({});
-  
-  // Toggle function for expanding/collapsing frames
-  const toggleFrame = (idx: number) => {
-    setExpandedFrames(prev => ({
-      ...prev,
-      [idx]: !prev[idx]
-    }));
-  };
-  
-  // Initialize the frames array
-  const frames: SentenceFrame[] = [];
-  
-  try {
-    // Look specifically for "SentenceFrames" in the response
-    // Check if there are any keys that directly contain the text "SentenceFrames"
-    const sentenceFramesKeys = Object.keys(section).filter(key => 
-      key.toLowerCase().includes("sentenceframes") || 
-      key.toLowerCase().includes("sentence frames") ||
-      key.toLowerCase() === "frames"
-    );
-    
-    console.log("Looking for SentenceFrames keys in section:", sentenceFramesKeys);
-    
-    // If we found any SentenceFrames keys, try to extract the frames from them
-    if (sentenceFramesKeys.length > 0) {
-      for (const key of sentenceFramesKeys) {
-        const value = section[key];
-        console.log(`Found SentenceFrames key: ${key}, with value type:`, typeof value);
-        
-        if (Array.isArray(value)) {
-          console.log("SentenceFrames value is an array, adding to frames");
-          // --- BEGIN EDIT: Map frames to ensure 'level' property exists ---
-          const mappedFrames = value.map((frame: any) => ({
-            ...frame,
-            title: frame.title || "Sentence Frame", // Ensure title exists
-            level: (frame.level || frame.difficultyLevel || "intermediate") as "basic" | "intermediate" | "advanced",
-            examples: Array.isArray(frame.examples) ? frame.examples : [frame.examples].filter(Boolean), // Ensure examples is array
-            pattern: frame.pattern || "[Missing Pattern]", // Ensure pattern exists
-            // Map other potential field name differences if needed (e.g., usageNotes -> usage)
-            usage: frame.usage || frame.usageNotes,
-            teachingTips: frame.teachingTips,
-            grammarFocus: frame.grammarFocus || frame.focus, 
-            communicativeFunction: frame.communicativeFunction
-          }));
-          frames.push(...mappedFrames);
-          // --- END EDIT ---
-        } else if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
-          console.log("SentenceFrames value is an object, extracting properties");
-          // The object might contain sentence frames as properties
-          // Try to extract them if they look like frames
-          for (const propKey in value) {
-            const propValue = value[propKey];
-            if (typeof propValue === 'object' && propValue !== null) {
-              if (propValue.pattern && propValue.examples) {
-                frames.push({
-                  title: propValue.title || propKey,
-                  level: (propValue.level || propValue.difficultyLevel || "intermediate") as "basic" | "intermediate" | "advanced",
-                  pattern: propValue.pattern,
-                  examples: Array.isArray(propValue.examples) ? propValue.examples : [propValue.examples],
-                  usage: propValue.usage || propValue.usageNotes,
-                  grammarFocus: propValue.grammarFocus || propValue.focus,
-                  communicativeFunction: propValue.communicativeFunction,
-                  teachingTips: propValue.teachingTips
-                });
-              }
-            }
-          }
-        }
-      }
-    }
-    
-    // If we still don't have frames, look for other sentence-frame-related properties
-    if (frames.length === 0) {
-      // Check for specific sentence frames properties
-      if (section.sentenceFrames && Array.isArray(section.sentenceFrames)) {
-        console.log("Found sentenceFrames array property");
-        // --- BEGIN EDIT: Map frames ---
-        const mappedFrames = section.sentenceFrames.map((frame: any) => ({
-          ...frame,
-          title: frame.title || "Sentence Frame",
-          level: (frame.level || frame.difficultyLevel || "intermediate") as "basic" | "intermediate" | "advanced",
-          examples: Array.isArray(frame.examples) ? frame.examples : [frame.examples].filter(Boolean),
-          pattern: frame.pattern || "[Missing Pattern]",
-          usage: frame.usage || frame.usageNotes,
-          teachingTips: frame.teachingTips,
-          grammarFocus: frame.grammarFocus || frame.focus, 
-          communicativeFunction: frame.communicativeFunction
-        }));
-        frames.push(...mappedFrames);
-        // --- END EDIT ---
-      } 
-      // Look for a 'patterns' or 'frames' property
-      else if (section.patterns && Array.isArray(section.patterns)) {
-        console.log("Found patterns array");
-        // --- BEGIN EDIT: Map frames ---
-        const mappedFrames = section.patterns.map((frame: any) => ({
-          ...frame,
-          title: frame.title || "Sentence Frame",
-          level: (frame.level || frame.difficultyLevel || "intermediate") as "basic" | "intermediate" | "advanced",
-          examples: Array.isArray(frame.examples) ? frame.examples : [frame.examples].filter(Boolean),
-          pattern: frame.pattern || "[Missing Pattern]",
-          usage: frame.usage || frame.usageNotes,
-          teachingTips: frame.teachingTips,
-          grammarFocus: frame.grammarFocus || frame.focus, 
-          communicativeFunction: frame.communicativeFunction
-        }));
-        frames.push(...mappedFrames);
-        // --- END EDIT ---
-      } 
-      else if (section.frames && Array.isArray(section.frames)) {
-        console.log("Found frames array");
-        // --- BEGIN EDIT: Map frames ---
-        const mappedFrames = section.frames.map((frame: any) => ({
-          ...frame,
-          title: frame.title || "Sentence Frame",
-          level: (frame.level || frame.difficultyLevel || "intermediate") as "basic" | "intermediate" | "advanced",
-          examples: Array.isArray(frame.examples) ? frame.examples : [frame.examples].filter(Boolean),
-          pattern: frame.pattern || "[Missing Pattern]",
-          usage: frame.usage || frame.usageNotes,
-          teachingTips: frame.teachingTips,
-          grammarFocus: frame.grammarFocus || frame.focus, 
-          communicativeFunction: frame.communicativeFunction
-        }));
-        frames.push(...mappedFrames);
-        // --- END EDIT ---
-      }
-      // Check if the response has grammatical patterns directly
-      else if (section.grammaticalPatterns && Array.isArray(section.grammaticalPatterns)) {
-        console.log("Found grammaticalPatterns array");
-        section.grammaticalPatterns.forEach((pattern: any) => {
-          frames.push({
-            title: pattern.title || "Grammatical Pattern",
-            level: (pattern.level as "basic" | "intermediate" | "advanced") || "intermediate",
-            pattern: pattern.pattern,
-            examples: pattern.examples || [],
-            grammarFocus: pattern.grammarFocus || pattern.focus
-          });
-        });
-      }
-      // If we still haven't found frames, look for structures directly in the section
-      else {
-        console.log("Looking for sentence structures in section keys");
-        
-        // Get the raw section data to analyze and log it
-        console.log("Keys in section:", Object.keys(section));
-        
-        // If we still don't have any frames, create a fallback message
-        if (frames.length === 0) {
-          console.log("No sentence frames found in the API response, notifying user");
-          
-          // We won't push any hardcoded examples anymore
-          // Let the teacher know there were no frames in this lesson
-          console.log("No sentence frames were found in this lesson content");
-        }
-      }
-    }
-    
-    // Log what we've created
-    console.log("Created sentence frames for vocabulary words:", vocabList);
-  } catch (error) {
-    console.error("Error extracting sentence frames:", error);
-  }
+// Define the structure of the data we expect for each frame
+interface InteractiveExample {
+  exampleSentence: string;
+  phraseBank: string[];
+}
 
-  // Render a different UI based on whether we found any frames
-  const renderFrames = () => {
-    // --- BEGIN EDIT: Log frames array before filtering ---
-    console.log("[SentenceFramesSection renderFrames] Frames array before filtering:", JSON.stringify(frames, null, 2));
-    // --- END EDIT ---
-    if (frames.length === 0) {
-      return (
-        <div className="bg-amber-50 p-6 rounded-lg text-center border border-amber-200">
-          <div className="text-amber-600 mb-2">No sentence frames available for this lesson</div>
-          <p className="text-gray-600 text-sm">
-            You can manually add sentence frames or select a different lesson.
-          </p>
-        </div>
-      );
-    }
+interface SentenceFrameData {
+  pattern: string;
+  level?: "basic" | "intermediate" | "advanced"; // Make level optional for flexibility
+  title?: string; // Make optional
+  usage?: string;
+  communicativeFunction?: string;
+  grammarFocus?: string;
+  teachingTips?: string;
+  interactiveExamples: InteractiveExample[]; 
+}
 
-    return (
-      <>
-        {/* Frames by Level */}
-        {['basic', 'intermediate', 'advanced'].map(level => {
-          const levelFrames = frames.filter(frame => frame.level === level);
-          if (levelFrames.length === 0) return null;
-          
-          return (
-            <React.Fragment key={level}>
-              <h3 className="text-amber-700 font-medium flex items-center gap-2">
-                <div className={`w-3 h-3 rounded-full ${
-                  level === 'basic' ? 'bg-green-500' : 
-                  level === 'intermediate' ? 'bg-yellow-500' : 'bg-red-500'
-                }`}></div>
-                {level.charAt(0).toUpperCase() + level.slice(1)} Frames
-              </h3>
-              
-              {/* Sentence Frame Cards for this level */}
-              <div className="space-y-4 mb-6">
-                {levelFrames.map((frame, idx) => {
-                  const frameKey = `${level}-frame-${idx}`;
-                  return (
-                    <div 
-                      key={frameKey} 
-                      className="bg-amber-50 rounded-lg overflow-hidden border border-amber-100"
-                    >
-                      {/* Frame header */}
-                      <div className="bg-amber-100 px-4 py-2 flex flex-col gap-2">
-                        <div className="flex items-center justify-between">
-                          <div className={`rounded px-2 py-0.5 ${
-                            frame.level === 'basic' ? 'bg-green-100 text-green-800' : 
-                            frame.level === 'intermediate' ? 'bg-amber-200 text-amber-800' : 
-                            'bg-red-100 text-red-800'
-                          }`}>
-                            <span className="font-medium text-sm">{frame.level}</span>
-                          </div>
-                          <h4 className="text-amber-800 font-medium">{frame.title}</h4>
-                          <button 
-                            className="text-amber-700 p-1 rounded hover:bg-amber-200"
-                            onClick={() => toggleFrame(idx)}
-                          >
-                            {expandedFrames[idx] ? (
-                              <ChevronUp className="h-4 w-4" />
-                            ) : (
-                              <ChevronDown className="h-4 w-4" />
-                            )}
-                          </button>
-                        </div>
-                        
-                        {/* Description section at the top with both function and usage */}
-                        <div className="text-amber-800 text-sm">
-                          {frame.communicativeFunction && (
-                            <div className="italic mb-1">{frame.communicativeFunction}</div>
-                          )}
-                          {frame.usage && (
-                            <div>{frame.usage}</div>
-                          )}
-                        </div>
-                      </div>
-                      
-                      {/* Pattern with highlighted blanks */}
-                      <div className="p-4">
-                        <div className="font-mono p-3 bg-white rounded-md border border-amber-200 text-gray-800 relative">
-                          {/* Parse and highlight blanks in the pattern */}
-                          {frame.pattern.split('_____').map((part, i, array) => (
-                            <React.Fragment key={i}>
-                              {part}
-                              {i < array.length - 1 && (
-                                <span className="bg-amber-100 text-amber-800 px-2 py-0.5 rounded border border-amber-300 whitespace-nowrap">
-                                  _____
-                                </span>
-                              )}
-                            </React.Fragment>
-                          ))}
-                          <button 
-                            className="absolute right-2 top-2 text-gray-400 hover:text-gray-600"
-                            onClick={() => {
-                              navigator.clipboard.writeText(frame.pattern);
-                              // Could add a toast notification here
-                            }}
-                          >
-                            <Copy className="h-4 w-4" />
-                          </button>
-                        </div>
-                      </div>
-                      
-                      {/* Expanded sections (Examples, Usage, Grammar Focus) */}
-                      {expandedFrames[idx] && (
-                        <div className="px-4 pb-4 space-y-4">
-                          {/* Examples */}
-                          <div>
-                            <div className="mb-2 flex items-center gap-1 text-amber-800">
-                              <MessageCircle className="h-4 w-4" />
-                              <span className="text-sm font-medium">Examples</span>
-                            </div>
-                            <div className="space-y-2">
-                              {frame.examples.map((example, eIdx) => (
-                                <div key={`example-${eIdx}`} className="bg-white p-3 rounded-md border border-amber-100 text-gray-800 font-medium">
-                                  {example}
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                          
-                          {/* Grammar Focus */}
-                          {frame.grammarFocus && (
-                            <div>
-                              <div className="mb-2 flex items-center gap-1 text-amber-800">
-                                <Lightbulb className="h-4 w-4" />
-                                <span className="text-sm font-medium">Grammar Focus</span>
-                              </div>
-                              <div className="bg-white p-3 rounded-md border border-amber-100 text-gray-800 font-medium">
-                                {frame.grammarFocus}
-                              </div>
-                            </div>
-                          )}
-                          
-                          {/* Teaching Tips */}
-                          {frame.teachingTips && (
-                            <div>
-                              <div className="mb-2 flex items-center gap-1 text-amber-800">
-                                <GraduationCap className="h-4 w-4" />
-                                <span className="text-sm font-medium">Teaching Tips</span>
-                              </div>
-                              <div className="bg-white p-3 rounded-md border border-amber-100 text-gray-800 font-medium">
-                                {frame.teachingTips}
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </React.Fragment>
-          );
-        })}
-      </>
-    );
+interface InteractiveSentenceFrameProps {
+  section: {
+    type: string;
+    title: string;
+    frames: SentenceFrameData[];
+  } | null;
+}
+
+// Draggable Phrase Component (Adapted from DraggableWord)
+function DraggablePhrase({ id, phrase, isUsed }: { 
+  id: string;
+  phrase: string;
+  isUsed: boolean;
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id,
+    disabled: isUsed,
+  });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isUsed ? 0.5 : isDragging ? 0.8 : 1,
   };
 
   return (
-    <div className="space-y-6">
-      {/* Section header with icon */}
-      <div className="bg-pink-50 rounded-lg p-4 flex items-center gap-3 border-l-4 border-pink-400">
-        <Pencil className="h-6 w-6 text-pink-600" />
-        <div>
-          <h2 className="text-pink-600 font-medium text-lg">Sentence Frames</h2>
-          <p className="text-gray-600 text-sm">Analyze sentence frames in the text</p>
+    <motion.div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      initial={{ scale: 0.9, opacity: 0 }}
+      animate={{ scale: 1, opacity: isUsed ? 0.5 : 1 }}
+      whileHover={!isUsed ? { scale: 1.05 } : {}}
+      className={`px-3 py-1.5 m-1 rounded-md border-2 shadow-sm transition-all text-center whitespace-nowrap 
+        ${isUsed 
+          ? "border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed"
+          : isDragging
+            ? "border-amber-400 bg-amber-50 text-amber-800 shadow-md"
+            : "border-amber-300 bg-white text-amber-700 hover:bg-amber-50 cursor-grab"
+        } font-medium`}
+    >
+      {phrase}
+    </motion.div>
+  );
+}
+
+// Droppable Blank Component (Adapted from Cloze)
+function DroppableBlank({ 
+  id, 
+  blankIndex, 
+  droppedPhrase, 
+  isCorrect,
+  onRemove,
+  isOver
+}: { 
+  id: string;
+  blankIndex: number;
+  droppedPhrase: string | null; 
+  isCorrect: boolean | null;
+  onRemove: (blankId: string) => void;
+  isOver: boolean;
+}) {
+  const { setNodeRef } = useDroppable({ id });
+
+  return (
+    <div 
+      ref={setNodeRef}
+      data-blank-id={id}
+      className={`inline-flex items-center justify-center min-w-[120px] h-[38px] px-2 mx-1 border-b-2 rounded-sm relative align-bottom 
+        ${isOver && !droppedPhrase ? "border-amber-500 bg-amber-100 shadow-inner" : ""}
+        ${droppedPhrase 
+          ? isCorrect === true
+            ? "border-green-400 bg-green-50"
+            : isCorrect === false
+              ? "border-red-400 bg-red-50"
+              : "border-amber-400 bg-amber-50"
+          : "border-amber-300 bg-amber-50/50"
+        }`}
+      onClick={() => droppedPhrase && onRemove(id)}
+      style={{ verticalAlign: 'bottom' }}
+    >
+      {droppedPhrase ? (
+        <div className={`py-1 px-2 rounded-sm text-center font-medium whitespace-nowrap 
+          ${isCorrect === true
+            ? "text-green-700"
+            : isCorrect === false
+              ? "text-red-700"
+            : "text-amber-700"
+          }
+          cursor-pointer hover:line-through`}
+        >
+          {droppedPhrase}
         </div>
-      </div>
-      
-      {/* Filter Pills */}
-      <div className="flex gap-2 p-3 bg-white rounded-lg border border-gray-200">
-        <div className="flex items-center gap-1.5">
-          <div className="w-2 h-2 rounded-full bg-green-500"></div>
-          <span className="text-sm">Basic</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <div className="w-2 h-2 rounded-full bg-yellow-500"></div>
-          <span className="text-sm">Intermediate</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <div className="w-2 h-2 rounded-full bg-red-500"></div>
-          <span className="text-sm">Advanced</span>
-        </div>
-      </div>
-      
-      {/* Sentence Frames Content */}
-      {renderFrames()}
-      
-      {/* Teacher notes */}
-      {section.teacherNotes && (
-        <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="font-medium text-blue-700">Teacher Notes</span>
-          </div>
-          <p className="text-sm text-gray-800 font-medium">{section.teacherNotes}</p>
+      ) : (
+        <div className="text-amber-400 text-sm font-medium">
+          {isOver ? "Drop here" : `Blank ${blankIndex + 1}`}
         </div>
       )}
     </div>
   );
 }
+
+// New Interactive Component
+function InteractiveSentenceFrameComponent({ section }: InteractiveSentenceFrameProps) {
+
+  if (!section || !Array.isArray(section.frames) || section.frames.length === 0) {
+    return (
+      <div className="p-6 text-center bg-amber-50 rounded-lg border border-amber-200">
+        <Info className="mx-auto h-12 w-12 text-amber-400 mb-3" />
+        <h3 className="text-lg font-medium text-amber-700 mb-2">No Interactive Sentence Frames Available</h3>
+        <p className="text-amber-600 text-sm max-w-md mx-auto">This lesson doesn't include data for interactive sentence frames.</p>
+      </div>
+    );
+  }
+
+  // -- State Management --
+  const [currentFrameIndex, setCurrentFrameIndex] = useState(0);
+  const [currentExampleIndex, setCurrentExampleIndex] = useState(0);
+  
+  // DND State
+  const [activeId, setActiveId] = useState<string | null>(null); // ID of the dragged phrase
+  const [overBlankId, setOverBlankId] = useState<string | null>(null); // ID of the blank being hovered over
+
+  // State for the content of the blanks for the CURRENT example
+  // Maps blankId (e.g., "frame-0-blank-0") to the dropped phrase text
+  const [droppedPhrases, setDroppedPhrases] = useState<Record<string, string | null>>({}); 
+  
+  // State for the shuffled phrase bank for the CURRENT example
+  const [shuffledPhraseBank, setShuffledPhraseBank] = useState<string[]>([]);
+  
+  // State to track which phrases from the bank have been used in blanks
+  const [usedPhrases, setUsedPhrases] = useState<string[]>([]);
+
+  // --- BEGIN EDIT: Add State for Checking --- 
+  const [isChecked, setIsChecked] = useState(false);
+  // Maps blankId (e.g., "frame-0-blank-0") to boolean or null
+  const [blankCorrectness, setBlankCorrectness] = useState<Record<string, boolean | null>>({}); 
+  const [overallScore, setOverallScore] = useState<{ correct: number; total: number } | null>(null);
+  // --- END EDIT --- 
+
+  // Get current frame
+  const currentFrame = section.frames[currentFrameIndex];
+
+  // --- BEGIN EDIT: Check if current frame has the NEW interactive data --- 
+  const hasInteractiveData = 
+       currentFrame && 
+       Array.isArray(currentFrame.interactiveExamples) && 
+       currentFrame.interactiveExamples.length > 0;
+       
+  // Get current example ONLY if data exists
+  const currentExample = hasInteractiveData ? currentFrame.interactiveExamples[currentExampleIndex] : null;
+  const numExamples = hasInteractiveData ? currentFrame.interactiveExamples.length : 0;
+  // --- END EDIT ---
+
+  // Effect to reset state and shuffle bank when example/frame changes
+  useEffect(() => {
+    console.log(`Effect triggered: Frame ${currentFrameIndex}, Example ${currentExampleIndex}`);
+    setDroppedPhrases({});
+    setUsedPhrases([]);
+    setActiveId(null);
+    setOverBlankId(null);
+    setIsChecked(false);
+    setBlankCorrectness({});
+    setOverallScore(null);
+
+    // --- BEGIN EDIT: Combine phraseBank and distractors, then shuffle --- 
+    const correctPhrases = currentFrame.interactiveExamples[currentExampleIndex]?.phraseBank || [];
+    // Get distractors, ensure it's always an array
+    const distractors = currentFrame.interactiveExamples[currentExampleIndex]?.distractorPhrases || []; 
+    const combinedPool = [...correctPhrases, ...distractors];
+    
+    console.log("Correct phrases:", correctPhrases);
+    console.log("Distractors:", distractors);
+    console.log("Shuffling combined pool:", combinedPool);
+    setShuffledPhraseBank(shuffleArray(combinedPool)); // Use the combined pool
+    // --- END EDIT --- 
+
+  }, [currentFrameIndex, currentExampleIndex, section]);
+
+  // --- EDIT: Define shuffleArray helper here --- 
+  const shuffleArray = (array: string[]) => {
+      let currentIndex = array.length, randomIndex;
+      const newArray = [...array];
+      while (currentIndex !== 0) {
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+        [newArray[currentIndex], newArray[randomIndex]] = [newArray[randomIndex], newArray[currentIndex]];
+      }
+      return newArray;
+  };
+  // --- END EDIT ---
+
+  // DND Sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 5, // Require moving 5px to start drag
+      }
+    })
+  );
+
+  // -- Helper Functions --
+  
+  const handleDragStart = (event: DragStartEvent) => {
+    console.log("Drag Start:", event.active.id);
+    setActiveId(event.active.id as string);
+  };
+
+  const handleDragOver = (event: any) => { // Use any type for simplicity here
+    const { over } = event;
+    const newOverBlankId = over ? (over.id as string) : null;
+    if (newOverBlankId !== overBlankId) {
+      console.log("Drag Over:", newOverBlankId);
+      setOverBlankId(newOverBlankId);
+    }
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    console.log("Drag End:", event);
+    const { active, over } = event;
+    setActiveId(null);
+    setOverBlankId(null);
+
+    if (over && active.id.startsWith('phrase-')) {
+      const droppedPhraseText = (active.id as string).replace('phrase-', '');
+      const targetBlankId = over.id as string;
+      
+      // Check if dropping onto a valid blank droppable
+      if (targetBlankId.startsWith(`frame-${currentFrameIndex}-blank-`)) {
+         console.log(`Dropped phrase '${droppedPhraseText}' onto blank '${targetBlankId}'`);
+
+         // Check if the phrase is already used
+         if (usedPhrases.includes(droppedPhraseText)) {
+           console.log("Phrase already used, skipping drop.");
+           return; // Or handle swapping later
+         }
+
+         // Update the state for the specific blank
+         setDroppedPhrases(prev => {
+           // If another phrase was already in this blank, mark it as unused
+           const oldPhrase = prev[targetBlankId];
+           if (oldPhrase) {
+             setUsedPhrases(up => up.filter(p => p !== oldPhrase));
+           }
+           return { ...prev, [targetBlankId]: droppedPhraseText };
+         });
+         // Mark the newly dropped phrase as used
+         setUsedPhrases(up => [...up, droppedPhraseText]);
+         
+         // Reset check state if an answer is changed
+         setIsChecked(false);
+         setBlankCorrectness({});
+         setOverallScore(null);
+      }
+    }
+  };
+  
+  // Function to remove a phrase from a blank
+  const removePhraseFromBlank = (blankId: string) => {
+    const phraseToRemove = droppedPhrases[blankId];
+    if (phraseToRemove) {
+      console.log(`Removing phrase '${phraseToRemove}' from blank '${blankId}'`);
+      setDroppedPhrases(prev => ({ ...prev, [blankId]: null }));
+      setUsedPhrases(prev => prev.filter(p => p !== phraseToRemove));
+      
+      // Reset check state if an answer is changed
+      setIsChecked(false);
+      setBlankCorrectness({});
+      setOverallScore(null);
+    }
+  };
+
+  // --- BEGIN EDIT: Add Navigation Handlers ---
+  const handlePrevFrame = () => {
+    if (currentFrameIndex > 0) {
+      setCurrentFrameIndex(prev => prev - 1);
+      setCurrentExampleIndex(0); // Reset example index when changing frames
+    }
+  };
+
+  const handleNextFrame = () => {
+    if (section && currentFrameIndex < section.frames.length - 1) {
+      setCurrentFrameIndex(prev => prev + 1);
+      setCurrentExampleIndex(0); // Reset example index when changing frames
+    }
+  };
+
+  const handlePrevExample = () => {
+    if (currentExampleIndex > 0) {
+      setCurrentExampleIndex(prev => prev - 1);
+    }
+  };
+
+  const handleNextExample = () => {
+    const numExamples = section?.frames[currentFrameIndex]?.interactiveExamples?.length || 0;
+    if (currentExampleIndex < numExamples - 1) {
+      setCurrentExampleIndex(prev => prev + 1);
+    }
+  };
+  // --- END EDIT ---
+
+  // --- BEGIN EDIT: Add Check and Reset Handlers ---
+  const handleCheckAnswers = () => {
+    console.log("Checking answers...");
+    const numBlanks = currentFrame.pattern.split('_____').length - 1;
+    const newCorrectness: Record<string, boolean | null> = {};
+    let correctCount = 0;
+
+    // Get the CORRECT phrases expected for this example
+    const expectedPhrases = currentExample?.phraseBank || []; 
+    // Get the phrases dropped by the user
+    const droppedPhraseValues = Object.values(droppedPhrases).filter(p => p !== null) as string[];
+    
+    console.log("Expected Phrases (Correct Bank):", expectedPhrases);
+    console.log("Dropped Phrases (User Input):", droppedPhraseValues);
+
+    // Basic check: Did the user fill all blanks and use the correct number of phrases?
+    const allBlanksFilled = droppedPhraseValues.length === numBlanks;
+    // CRITICAL: Compare against expectedPhrases length, NOT numBlanks if they could differ!
+    const correctNumberOfPhrases = droppedPhraseValues.length === expectedPhrases.length; 
+
+    let isOverallCorrect = false;
+    if (allBlanksFilled && correctNumberOfPhrases) {
+      // Check if the SET of dropped phrases matches the SET of expected phrases
+      // Trim whitespace for comparison robustness
+      const droppedSet = new Set(droppedPhraseValues.map(p => p.trim()));
+      const expectedSet = new Set(expectedPhrases.map(p => p.trim()));
+      
+      isOverallCorrect = droppedSet.size === expectedSet.size && 
+                         [...droppedSet].every(value => expectedSet.has(value));
+                         
+      console.log("Sets match?", isOverallCorrect);
+                         
+      // Determine individual blank correctness 
+      for (let i = 0; i < numBlanks; i++) {
+          const blankId = `frame-${currentFrameIndex}-blank-${i}`;
+          const dropped = droppedPhrases[blankId];
+          // Mark as correct if overall set matches AND the blank is filled.
+          // Mark as incorrect if overall set doesn't match OR the blank is not filled correctly 
+          // (We simplify: if overall is wrong, mark all filled as wrong for now)
+          if (dropped) {
+              newCorrectness[blankId] = isOverallCorrect; 
+          } else {
+              newCorrectness[blankId] = null; // Unfilled blanks aren't marked wrong
+          }
+      }
+      // Use the count of expected phrases for the score
+      correctCount = isOverallCorrect ? expectedPhrases.length : 0; 
+
+    } else {
+       console.log("Checking failed: Incorrect number of phrases dropped or not all blanks filled.");
+        // Mark all filled blanks as incorrect if counts don't match
+        for (let i = 0; i < numBlanks; i++) {
+            const blankId = `frame-${currentFrameIndex}-blank-${i}`;
+            newCorrectness[blankId] = droppedPhrases[blankId] ? false : null;
+        }
+        correctCount = 0;
+    }
+
+    setBlankCorrectness(newCorrectness);
+    // Use expectedPhrases length for the total score, as numBlanks might differ if pattern is complex
+    setOverallScore({ correct: correctCount, total: expectedPhrases.length }); 
+    setIsChecked(true);
+  };
+
+  const handleResetCurrentExample = () => {
+    console.log("Resetting current example...");
+    setDroppedPhrases({});
+    setUsedPhrases([]);
+    setIsChecked(false);
+    setBlankCorrectness({});
+    setOverallScore(null);
+    // Optionally re-shuffle phrase bank? Maybe not necessary.
+  };
+  // --- END EDIT ---
+
+  // -- Rendering Logic --
+  
+  // Always render the frame pattern display and navigation
+  const framePatternDisplay = (
+    <div className="font-mono p-3 bg-white rounded-md border border-amber-200 text-gray-800 relative text-center">
+       {currentFrame.pattern}
+       <button 
+         className="absolute right-2 top-2 text-gray-400 hover:text-gray-600"
+         onClick={() => navigator.clipboard.writeText(currentFrame.pattern)}
+       >
+         <Copy className="h-4 w-4" />
+       </button>
+    </div>
+  );
+  
+  let interactiveBuilderContent;
+  if (hasInteractiveData && currentExample) {
+      // Split pattern to create blanks for the interactive part
+      const patternParts = currentFrame.pattern.split('_____');
+      const sentenceElements = [];
+      let blankCounter = 0;
+      for (let i = 0; i < patternParts.length; i++) {
+        if (patternParts[i]) {
+          sentenceElements.push(<span key={`text-${i}`}>{patternParts[i]}</span>);
+        }
+        if (i < patternParts.length - 1) {
+          const blankIndex = blankCounter++;
+          const blankId = `frame-${currentFrameIndex}-blank-${blankIndex}`;
+          sentenceElements.push(
+            <DroppableBlank
+              key={blankId}
+              id={blankId}
+              blankIndex={blankIndex}
+              droppedPhrase={droppedPhrases[blankId] || null}
+              isCorrect={blankCorrectness[blankId]}
+              onRemove={removePhraseFromBlank}
+              isOver={overBlankId === blankId}
+            />
+          );
+        }
+      }
+      
+      interactiveBuilderContent = (
+         <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragStart={handleDragStart}
+            onDragOver={handleDragOver}
+            onDragEnd={handleDragEnd}
+         >
+            {/* Interactive Builder Area */}
+             <div className="p-4 border border-dashed border-amber-300 rounded min-h-[100px] bg-amber-50/30 mb-6 text-lg leading-relaxed text-center">
+               {sentenceElements}
+             </div>
+
+             {/* Draggable Phrase Bank Area */}
+             <div className="mb-4">
+                <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2">
+                  Drag Phrases to the Blanks Above:
+                </h4>
+                <div className="flex flex-wrap gap-1 p-3 bg-amber-50/30 rounded-md border border-amber-100 min-h-[60px]">
+                   <SortableContext 
+                      items={shuffledPhraseBank.map(p => `phrase-${p}`)}
+                      strategy={rectSortingStrategy}
+                   >
+                     {shuffledPhraseBank.length > 0 ? (
+                        shuffledPhraseBank.map((phrase, index) => (
+                          <DraggablePhrase
+                            key={`phrase-${phrase}-${index}`}
+                            id={`phrase-${phrase}`}
+                            phrase={phrase}
+                            isUsed={usedPhrases.includes(phrase)}
+                          />
+                        ))
+                     ) : (
+                       <div className="text-gray-500 italic">Phrase bank missing or empty.</div>
+                     )}
+                   </SortableContext>
+                </div>
+             </div>
+
+             {/* Drag Overlay */}
+             <DragOverlay adjustScale zIndex={100}>
+               {activeId && activeId.startsWith('phrase-') && (
+                 <div className="px-3 py-1.5 rounded-md border-2 border-amber-400 bg-amber-100 text-amber-800 shadow-lg font-medium">
+                   {activeId.replace('phrase-', '')}
+                 </div>
+               )}
+             </DragOverlay>
+
+             {/* Feedback Area */}
+             {isChecked && overallScore && (
+               <Alert 
+                 className={`mt-6 transition-all duration-300 ${
+                   overallScore.correct === overallScore.total 
+                     ? "bg-green-50 border-green-200 text-green-800"
+                     : overallScore.correct === 0
+                       ? "bg-red-50 border-red-200 text-red-800" 
+                       : "bg-amber-50 border-amber-200 text-amber-800"
+                 }`}
+               >
+                 <AlertDescription className="flex items-center gap-2">
+                   {overallScore.correct === overallScore.total ? (
+                     <CheckCircle className="h-5 w-5 text-green-500" />
+                   ) : (
+                     <AlertCircle className={`h-5 w-5 ${overallScore.correct === 0 ? 'text-red-500' : 'text-amber-500'}`} />
+                   )}
+                   <div>
+                     <span className="font-medium">Score: {overallScore.correct} out of {overallScore.total} correct</span>
+                     {overallScore.correct !== overallScore.total && (
+                       <span className="ml-1 text-sm">
+                         (Incorrectly filled blanks are highlighted in red)
+                       </span>
+                     )}
+                   </div>
+                 </AlertDescription>
+               </Alert>
+             )}
+         </DndContext>
+      );
+  } else {
+      // Fallback for old data format: Show non-interactive examples if available
+      const oldExamples = (currentFrame as any).examples; // Access potentially existing old examples array
+      interactiveBuilderContent = (
+        <div className="p-4 border border-amber-200 rounded min-h-[100px] bg-amber-50/50 mb-6 text-left">
+           <p className="text-sm text-amber-700 font-medium mb-2">
+             <Info className="inline h-4 w-4 mr-1"/> 
+             Interactive exercise not available for this lesson format.
+           </p>
+           {Array.isArray(oldExamples) && oldExamples.length > 0 && (
+             <div className="mt-2 space-y-1">
+               <p className="text-xs text-amber-600">Example Sentences:</p>
+               {oldExamples.map((ex: string, idx: number) => (
+                 <p key={idx} className="text-sm text-gray-700 pl-2">- {ex}</p>
+               ))}
+             </div>
+           )}
+        </div>
+      );
+  }
+
+  return (
+    <div className="interactive-sentence-frame">
+      <Card className="mb-6 border-l-4 border-l-amber-400 shadow-md">
+        <CardHeader className="pb-3 bg-gradient-to-r from-amber-50 to-white">
+          <div className="flex justify-between items-center mb-2">
+             <CardTitle>{currentFrame.title || `Sentence Frame ${currentFrameIndex + 1}`}</CardTitle>
+             <div className="flex gap-1">
+               <Button 
+                  variant="outline" size="icon" 
+                  onClick={handlePrevFrame} 
+                  disabled={currentFrameIndex === 0}
+                  aria-label="Previous Frame Pattern"
+                  className="h-7 w-7"
+                >
+                 <ChevronLeft className="h-4 w-4" />
+               </Button>
+               <span className="text-sm px-2 py-1 bg-amber-100 text-amber-700 rounded">
+                  Frame {currentFrameIndex + 1} of {section.frames.length}
+                </span>
+               <Button 
+                  variant="outline" size="icon" 
+                  onClick={handleNextFrame} 
+                  disabled={currentFrameIndex >= section.frames.length - 1}
+                  aria-label="Next Frame Pattern"
+                  className="h-7 w-7"
+                 >
+                 <ChevronRight className="h-4 w-4" />
+               </Button>
+             </div>
+          </div>
+          {framePatternDisplay}
+        </CardHeader>
+
+        <CardContent className="pt-4">
+           {hasInteractiveData && (
+               <div className="flex justify-end items-center mb-4 gap-1">
+                  <Button 
+                     variant="ghost" size="sm" 
+                     onClick={handlePrevExample} 
+                     disabled={currentExampleIndex === 0}
+                     aria-label="Previous Example Sentence"
+                   >
+                    <ChevronLeft className="h-4 w-4 mr-1" /> Prev Ex.
+                  </Button>
+                  <span className="text-sm px-2 py-1 bg-gray-100 rounded">
+                     Ex. {currentExampleIndex + 1} of {numExamples}
+                   </span>
+                  <Button 
+                     variant="ghost" size="sm" 
+                     onClick={handleNextExample} 
+                     disabled={currentExampleIndex >= numExamples - 1}
+                     aria-label="Next Example Sentence"
+                   >
+                    Next Ex. <ChevronRight className="h-4 w-4 ml-1" />
+                  </Button>
+               </div>
+           )}
+          
+           {interactiveBuilderContent}
+
+          {/* Other Info (Usage, Grammar, Tips) */} 
+           <div className="mt-6 space-y-3 text-sm">
+             {currentFrame.usage && <div><strong>Usage:</strong> {currentFrame.usage}</div>}
+             {currentFrame.communicativeFunction && <div><strong>Function:</strong> {currentFrame.communicativeFunction}</div>}
+             {currentFrame.grammarFocus && <div><strong>Grammar:</strong> {currentFrame.grammarFocus}</div>}
+             {currentFrame.teachingTips && <div><strong>Teaching Tips:</strong> {currentFrame.teachingTips}</div>}
+           </div>
+        </CardContent>
+
+        {hasInteractiveData && (
+            <CardFooter className="flex justify-between bg-gray-50 border-t p-4">
+               <Button variant="outline" onClick={handleResetCurrentExample} className="border-amber-200 text-amber-700 hover:bg-amber-50">
+                 <RefreshCw className="h-4 w-4 mr-2" /> Reset
+               </Button>
+               <Button onClick={handleCheckAnswers} className="bg-amber-600 hover:bg-amber-700">
+                 Check Answer
+               </Button>
+            </CardFooter>
+        )}
+      </Card>
+    </div>
+  );
+}
+
+export { InteractiveSentenceFrameComponent as SentenceFramesSection };

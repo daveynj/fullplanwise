@@ -743,16 +743,27 @@ export function LessonContent({ content }: LessonContentProps) {
     return null;
   };
   
-  // Function to find a section by type with error handling
+  // Helper function to find a section by type with error handling
   const findSection = (type: string) => {
     try {
       if (Array.isArray(parsedContent.sections)) {
-        return parsedContent.sections.find((section: any) => section && typeof section === 'object' && section.type === type);
+        // --- EDIT: Find sentenceFrames OR grammar --- 
+        const found = parsedContent.sections.find((section: any) => 
+          section && typeof section === 'object' && (section.type === type || (type === 'sentenceFrames' && section.type === 'grammar'))
+        );
+        // Log if found
+        if (found) {
+           console.log(`[findSection] Found section for type '${type}':`, found);
+        }
+        return found;
+        // --- END EDIT ---
+      } else {
+        console.warn('[findSection] parsedContent.sections is not an array');
+        return null;
       }
-      return undefined;
     } catch (error) {
-      console.error("Error finding section", type, error);
-      return undefined;
+      console.error(`[findSection] Error finding section type '${type}':`, error);
+      return null;
     }
   };
 
@@ -1349,18 +1360,6 @@ export function LessonContent({ content }: LessonContentProps) {
     );
   };
 
-  const SentenceFramesSectionWrapper = () => {
-    // Try both sentenceFrames and grammar as possible section types
-    const section = findSection('sentenceFrames') || findSection('grammar');
-    // --- BEGIN EDIT: Log found section ---
-    console.log("[SentenceFramesSectionWrapper] Found section:", JSON.stringify(section, null, 2));
-    // --- END EDIT ---
-    // Use the imported SentenceFramesSection component
-    return <SentenceFramesSection section={section} />;
-  };
-  
-  // We're now using our specialized QuizExtractor component for the quiz/assessment sections
-
   // Teacher Notes Section to collect all teacher notes
   const TeacherNotesSection = () => {
     // Collect all teacher notes from all sections
@@ -1597,11 +1596,11 @@ export function LessonContent({ content }: LessonContentProps) {
           </TabsContent>
           
           <TabsContent value="sentenceFrames" className="m-0">
-            <SentenceFramesSectionWrapper />
-          </TabsContent>
-          
-          <TabsContent value="grammar" className="m-0">
-            <SentenceFramesSection />
+             {/* Directly render the interactive component, finding the section data */}
+             {(() => {
+                 const sfSection = findSection('sentenceFrames') || findSection('grammar');
+                 return <SentenceFramesSection section={sfSection} />;
+             })()}
           </TabsContent>
           
           <TabsContent value="discussion" className="m-0">

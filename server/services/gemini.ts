@@ -198,7 +198,6 @@ CRITICAL: Your output must be properly formatted JSON with NO ERRORS!
    - The paragraphs should include interesting information that helps students engage with the topic
    - The paragraph contexts should lead naturally into the discussion question that follows
 
-// --- BEGIN EDIT: Add Reading Text Requirements ---
 READING TEXT REQUIREMENTS:
 1. ORIGINAL CONTENT: Write an original reading text about the topic "${text}".
 2. LENGTH REQUIREMENT (CRITICAL): For ${params.cefrLevel} level, your text MUST be AT LEAST ${params.cefrLevel === "B1" ? "200" : params.cefrLevel === "C2" ? "500" : params.cefrLevel === "A1" || params.cefrLevel === "A2" ? "100" : "300"} words long. Shorter texts may be rejected.
@@ -206,164 +205,59 @@ READING TEXT REQUIREMENTS:
 4. SUBSTANTIAL CONTENT: Focus on creating a substantial, informative text appropriate for the topic and level.
 5. CEFR ALIGNMENT: Ensure vocabulary and sentence structures match the ${params.cefrLevel} level precisely.
 6. TONE & STYLE: Apply the general tone and style requirements mentioned earlier (warm, accessible, vivid language, etc.).
-// --- END EDIT ---
 
 SENTENCE FRAMES REQUIREMENTS:
-For each sentence frame, create practical, meaningful templates that students can use in real communication about "${text}".
+**Goal:** Create sentence frames that help students practice specific academic language functions identified in the reading text, using the lesson's target vocabulary.
 
-KEY REQUIREMENTS FOR SENTENCE FRAMES:
+**Step 1: Identify Core Language Function(s)**
+- Analyze the main reading text you generated.
+- Identify 1-2 key academic language functions that are essential for understanding the text (e.g., "compare and contrast", "cause and effect", "describing a process", "expressing necessity", "sequencing events").
 
-1. AUTHENTIC COMMUNICATION: Create frames that students will actually use in real-world conversations about "${text}". They should sound natural, not contrived or overly academic.
+**Step 2: Create Focused Sentence Frames**
+- All sentence frames in this section MUST be designed to practice the specific language function(s) you identified in Step 1.
+- Create 2-4 sentence frames in total.
 
-2. VOCABULARY INTEGRATION: Each frame MUST incorporate at least one of the vocabulary words from your lesson's vocabulary list to reinforce learning.
+**Step 3: Generate Interactive Examples and Phrase Banks**
+- For each sentence frame pattern created in Step 2, you MUST generate EXACTLY TWO distinct interactive examples.
+- Each interactive example MUST include:
+    a) A complete exampleSentence string that correctly uses the frame pattern and incorporates lesson vocabulary.
+    b) A corresponding phraseBank array containing the specific word/phrase chunks needed to reconstruct *that exact example sentence* when used in a drag-and-drop interface.
+    c) A distractorPhrases array containing 2-3 plausible but contextually incorrect phrases that could grammatically fit the blanks but do not match the exampleSentence.
 
-3. CONTENT CONNECTION: The frames must connect directly to the main reading text's content, themes, or concepts.
+For each sentence frame pattern, include ALL of the following properties in a structured JSON format:
 
-4. CLEAR FORMATTING: Use "_____" (exactly 5 underscores) consistently for blanks. No parentheses, variables, or other formats.
+- **pattern:** The sentence frame pattern with blanks "_____".
+- **level:** Difficulty level ("basic", "intermediate", or "advanced").
+- **title:** Short title describing the frame's purpose.
+- **usage:** When/how to use this pattern for the target language function.
+- **communicativeFunction:** The specific academic language function being practiced.
+- **grammarFocus:** The key grammar structure being practiced.
+- **teachingTips:** Concrete student practice activities (as previously defined).
+- **interactiveExamples:** (Array) An array containing EXACTLY TWO objects, each representing an interactive example with:
+    - 'exampleSentence' (String)
+    - 'phraseBank' (Array of Strings - the correct, grammatically complete chunks)
+    - 'distractorPhrases' (Array of Strings - plausible incorrect options)
 
-5. PURPOSEFUL DESIGN: Each frame should serve a specific communicative function that's useful for discussing "${text}" (e.g., expressing opinions, making comparisons, describing processes).
+CEFR-SPECIFIC GUIDELINES (Link Complexity to Function):
+Structure frame complexity based on both the CEFR level and the demands of the target language function:
 
-6. SCAFFOLDED COMPLEXITY: Provide a mix of complexity levels appropriate for ${params.cefrLevel} students - from simpler to more advanced structures within the target CEFR level.
-
-7. REALISTIC EXAMPLES: Include 2-3 example sentences that:
-   - Use the frame pattern naturally
-   - Incorporate vocabulary from your lesson
-   - Relate directly to the reading text content
-   - Model authentic language use at the ${params.cefrLevel} level
-   - Sound like something a student would actually say in conversation
-
-For each sentence frame, include ALL of the following properties in a structured JSON format:
-
-- pattern: The sentence frame with blanks shown as "_____" (e.g., "I think _____ is important because _____.")
-- examples: Array of 2-3 complete, natural-sounding example sentences using vocabulary from the lesson
-- level: Difficulty level relative to the CEFR level ("basic", "intermediate", or "advanced")
-- title: Short, descriptive title (3-5 words) that explains the communicative purpose
-- usage: When and how to use this pattern in real-world situations (2-3 sentences)
-- communicativeFunction: The specific real-world purpose (e.g., "Expressing preferences", "Making predictions")
-- grammarFocus: The grammar structure being practiced, explained simply (e.g., "Present perfect with 'for' and 'since'")
-- teachingTips: Practical advice for teachers on how to present and practice this pattern (3-4 sentences)
-
-CEFR-SPECIFIC GUIDELINES:
-For ${params.cefrLevel} level students, create frames with appropriate complexity:
-
-- A1 LEVEL FRAMES: 3-4 very simple frames using:
-  • Basic subject-verb-object structures
-  • Present simple tense only
-  • Common everyday vocabulary
-  • 1-2 blanks maximum per frame
-  • Example: "I like _____ because it's _____."
-
-- A2 LEVEL FRAMES: 3-4 frames using:
-  • Simple conjunctions (and, but, because)
-  • Present and past simple tenses
-  • Basic modals (can, should)
-  • 1-2 blanks per frame
-  • Example: "In my country, people usually _____ when they _____."
-
-- B1 LEVEL FRAMES: 2-3 frames with:
-  • Varied tenses (present perfect, conditionals)
-  • Expressing opinions with supporting reasons
-  • Comparing and contrasting
-  • 2-3 blanks per frame
-  • Example: "Although many people believe _____, I think _____ because _____."
-
-- B2 LEVEL FRAMES: 2-3 frames with:
-  • Complex sentences with multiple clauses
-  • Expressing hypothetical situations
-  • Discussing advantages/disadvantages
-  • 2-3 blanks strategically placed
-  • Example: "One of the main advantages of _____ is _____, which can lead to _____."
-
-- C1/C2 LEVEL FRAMES: 1-2 sophisticated frames with:
-  • Nuanced language for expressing complex ideas
-  • Academic language patterns for discussing abstract concepts
-  • Critical thinking structures
-  • 2-3 blanks in meaningful positions
-  • Example: "Recent research suggests that _____, which contradicts the conventional wisdom that _____, indicating that _____."
+- **A1 LEVEL:** 2-3 very simple frames practicing the core function (e.g., simple identification for description: "This is a _____"). Use present simple, basic vocabulary from the list, 1-2 blanks.
+- **A2 LEVEL:** 2-3 frames practicing the function with simple connectors (e.g., comparison: "_____ is _____ but _____ is _____."). Use simple tenses, basic modals, vocabulary from the list, 1-2 blanks.
+- **B1 LEVEL:** 2 frames practicing the function with more complex structures (e.g., cause/effect: "_____ happened because _____."; comparison: "Although _____, _____ is different because _____."). Use varied tenses, conditionals, vocabulary from the list, 2-3 blanks.
+- **B2 LEVEL:** 2 frames practicing the function with complex sentences/clauses (e.g., cause/effect: "One reason for _____ is _____, which leads to _____."). Use hypothetical language, more nuanced vocabulary from the list, 2-3 blanks.
+- **C1/C2 LEVEL:** 1-2 sophisticated frames practicing the function with advanced structures (e.g., nuanced comparison: "While X and Y share the characteristic of _____, a key distinction lies in _____."). Use complex vocabulary from the list, abstract concepts, 2-3 blanks.
 
 CRITICAL ISSUES TO AVOID:
-1. DO NOT create frames that are too theoretical or academic for real conversation
+1. DO NOT create frames too theoretical or academic for real conversation
 2. DO NOT use blanks for every other word - be strategic with blank placement
 3. DO NOT include confusing grammar terminology in the pattern
-4. DO NOT create frames with vocabulary beyond the ${params.cefrLevel} level
+4. DO NOT create frames with vocabulary beyond the ${params.cefrLevel} level (unless it's from the explicit vocab list).
 5. DO NOT create frames unrelated to "${text}" - they must be topic-specific
 6. DO NOT create patterns that are so specific they can only be used in one particular scenario
 
-IMPLEMENTATION REQUIREMENT: Each frame must be a complete JSON object with ALL the required fields populated.
+IMPLEMENTATION REQUIREMENT: Each frame object must contain the interactiveExamples array with exactly two valid example/phraseBank/distractorPhrases sets.
 
-CLOZE EXERCISE (FILL-IN-THE-BLANKS) REQUIREMENTS:
-Create a cloze passage that reinforces vocabulary and grammar from the lesson:
-
-1. LEVEL-APPROPRIATE TEXT: Write a **new**, coherent paragraph of 4-8 sentences that's appropriate for ${params.cefrLevel} level students. **Do not simply copy sentences directly from the main reading text.** The paragraph should be original but related to the lesson topic and vocabulary.
-
-2. STRATEGIC BLANKS: Create 5-8 blanks by replacing key vocabulary items or grammatical elements **related to** the reading text and lesson vocabulary.
-
-3. BLANK FORMAT: Use the format [1:word] for the first blank, [2:word] for the second blank, etc., where "word" is the correct answer.
-
-4. BALANCED CHALLENGE: Include a mix of vocabulary items and grammatical elements to test both vocabulary recall and grammatical knowledge.
-
-5. CONTEXT CLUES: Ensure each blank has sufficient context for students to determine the missing word.
-
-6. WORD BANK: Provide all the missing words in a word bank to guide students. The word bank should be an array of strings.
-
-7. TEACHER NOTES: Include brief notes on how to use this exercise effectively in class.
-
-SENTENCE UNSCRAMBLE (WORD ORDERING) REQUIREMENTS:
-Create a sentence unscrambling activity that focuses on correct English syntax:
-
-1. LEVEL-APPROPRIATE SENTENCES: Create 3-5 sentences that are appropriate for ${params.cefrLevel} level students, focusing on sentence structures taught at this level.
-
-2. SCRAMBLED FORMAT: For each sentence, provide:
-   - An array of individual words in scrambled order
-   - The correct sentence with proper capitalization and punctuation
-
-3. VOCABULARY INTEGRATION: Use vocabulary from the lesson in these sentences to reinforce learning.
-
-4. VARIED STRUCTURES: Include a variety of sentence structures appropriate for the level (simple, compound, complex).
-
-5. PROGRESSIVE DIFFICULTY: Arrange sentences from easier to more challenging.
-
-6. TEACHER NOTES: Include brief notes on how to use this exercise effectively in class.
-
-7. GRAMMAR FOCUS: Each sentence should focus on a specific grammatical structure that's important for the level.
-
-For teacher instructions:
-1. Focus on practical classroom activities related to the specific topic
-2. Suggest conversation prompts that use the frame and topic vocabulary
-3. Provide ideas that will work in screen-sharing scenarios where students interact verbally
-4. Keep instructions concise and action-orientedies for common mistakes
-5. Suggest ways to adapt the frame for different proficiency levels within the class
-
-AVOID:
-1. Creating frames that are too artificial or overly complex for the level
-2. Using vocabulary beyond the target CEFR level
-3. Making frames too topic-specific (they should be adaptable)
-4. Creating frames with too many blanks or complex structures for lower levels
-
-VOCABULARY REQUIREMENTS:
-For each vocabulary item, you MUST include:
-1. The word itself (ENGLISH ONLY - NO FOREIGN WORDS)
-2. A clear definition using language appropriate for ${params.cefrLevel} level students
-3. The part of speech (noun, verb, adjective, etc.)
-4. An example sentence using language appropriate for ${params.cefrLevel} level
-5. ENHANCED (REQUIRED): semanticGroup - Words must be grouped thematically. Each semantic group MUST have 2-3 related vocabulary words (e.g., "Weather Terms", "Food Vocabulary", "Travel Expressions")
-6. ENHANCED (REQUIRED): additionalExamples - 2-3 additional example sentences showing the word in different contexts
-7. ENHANCED (REQUIRED): wordFamily - An object containing:
-   - words: An array of 2-5 related words from the same word family (e.g., "happy, happiness, happily, unhappy")
-   - description: A brief explanation of how these words are related
-8. Common collocations (phrases that often include this word) as an array of strings
-9. Usage notes written with ${params.cefrLevel} level appropriate language
-10. Teaching tips
-11. Pronunciation information with:
-   - syllables: The word broken down into syllables as an array of strings
-   - stressIndex: Which syllable receives primary stress (zero-based index)
-   - phoneticGuide: A simplified pronunciation guide using ONLY regular English characters and hyphens (like "AS-tro-naut" or "eks-PLOR-ay-shun"). DO NOT use IPA symbols.
-12. An image prompt (NEW!) - A detailed description (2-3 sentences) of what an image for this word should look like. The image prompt should:
-   - Clearly illustrate the meaning of the word in a visual way
-   - Include specific visual elements that relate to the example sentence
-   - Be detailed enough for an AI image generator to create a clear, relevant image
-   - Specify NO text or words should appear in the image
-   - Example: For "tradition" - "A family gathered around a Thanksgiving table with a turkey and traditional dishes, showing multiple generations celebrating this American tradition. The scene should be warm and inviting, showing the passing down of cultural practices. No text or words should appear in the image."
+CRITICAL:** Each string in the phraseBank MUST be grammatically complete for its slot. Include necessary articles (a, an, the), prepositions, or other function words if they belong with the core phrase chunk in the context of the exampleSentence. For example, if the blank requires "a masterpiece", the chunk MUST be "a masterpiece", not just "masterpiece".
 
 CEFR LEVEL-APPROPRIATE VOCABULARY SELECTION GUIDELINES:
 - A1: Choose words beyond the 500 most common words. Avoid very basic words like "hi", "hello", "yes", "no".
@@ -596,17 +490,33 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
         {"question": "Complete Question 5?", "options": ["True", "False"], "answer": "False", "correctAnswer": "False", "explanation": "Complete explanation..."}
       ]
     },
-    // SENTENCE FRAMES SECTION (Complete - 2-5 frames)
+    // SENTENCE FRAMES SECTION (Complete - 2-4 frames, each with 2 interactive examples)
     {
-      "type": "sentenceFrames", // Renamed from 'sentences' to match Qwen
+      "type": "sentenceFrames",
       "title": "Sentence Practice",
       "frames": [
         {
-          "pattern": "Complete pattern like _____ because ____.", "examples": ["Complete example 1...", "Complete example 2..."],
-          "usageNotes": "Complete usage notes...", "teachingTips": "Complete tips...", "difficultyLevel": "intermediate",
-          "grammarFocus": "Complete grammar focus...", "communicativeFunction": "Complete function..."
+          "pattern": "Complete pattern like _____ because ____.", 
+          "level": "intermediate",
+          "title": "Explaining Reasons",
+          "usage": "Use this frame to explain the reason for something.",
+          "communicativeFunction": "Explaining Cause/Reason",
+          "grammarFocus": "Using 'because' to connect clauses",
+          "teachingTips": "Pair Activity: Students take turns completing the frame orally.",
+          "interactiveExamples": [
+            {
+              "exampleSentence": "Complete example sentence 1 using the pattern.",
+              "phraseBank": ["phrase for blank 1a", "phrase for blank 2a"],
+              "distractorPhrases": ["wrong phrase 1a", "wrong phrase 2a"]
+            },
+            {
+              "exampleSentence": "Complete example sentence 2 using the pattern.",
+              "phraseBank": ["phrase for blank 1b", "phrase for blank 2b"],
+              "distractorPhrases": ["wrong phrase 1b", "wrong phrase 3b"]
+            }
+          ]
         }
-        // (Include 1-4 more complete frames)
+        // (Include 1-3 more complete frame objects following this structure)
       ]
     },
     // CLOZE SECTION (Complete - Fill in the Blanks)
