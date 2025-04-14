@@ -198,6 +198,16 @@ CRITICAL: Your output must be properly formatted JSON with NO ERRORS!
    - The paragraphs should include interesting information that helps students engage with the topic
    - The paragraph contexts should lead naturally into the discussion question that follows
 
+// --- BEGIN EDIT: Add Reading Text Requirements ---
+READING TEXT REQUIREMENTS:
+1. ORIGINAL CONTENT: Write an original reading text about the topic "${text}".
+2. LENGTH REQUIREMENT (CRITICAL): For ${params.cefrLevel} level, your text MUST be AT LEAST ${params.cefrLevel === "B1" ? "200" : params.cefrLevel === "C2" ? "500" : params.cefrLevel === "A1" || params.cefrLevel === "A2" ? "100" : "300"} words long. Shorter texts may be rejected.
+3. PARAGRAPH STRUCTURE: Divide your text into 3-5 well-structured paragraphs.
+4. SUBSTANTIAL CONTENT: Focus on creating a substantial, informative text appropriate for the topic and level.
+5. CEFR ALIGNMENT: Ensure vocabulary and sentence structures match the ${params.cefrLevel} level precisely.
+6. TONE & STYLE: Apply the general tone and style requirements mentioned earlier (warm, accessible, vivid language, etc.).
+// --- END EDIT ---
+
 SENTENCE FRAMES REQUIREMENTS:
 For each sentence frame, create practical, meaningful templates that students can use in real communication about "${text}".
 
@@ -284,9 +294,9 @@ IMPLEMENTATION REQUIREMENT: Each frame must be a complete JSON object with ALL t
 CLOZE EXERCISE (FILL-IN-THE-BLANKS) REQUIREMENTS:
 Create a cloze passage that reinforces vocabulary and grammar from the lesson:
 
-1. LEVEL-APPROPRIATE TEXT: Write a coherent paragraph of 4-8 sentences that's appropriate for ${params.cefrLevel} level students.
+1. LEVEL-APPROPRIATE TEXT: Write a **new**, coherent paragraph of 4-8 sentences that's appropriate for ${params.cefrLevel} level students. **Do not simply copy sentences directly from the main reading text.** The paragraph should be original but related to the lesson topic and vocabulary.
 
-2. STRATEGIC BLANKS: Create 5-8 blanks by replacing key vocabulary items or grammatical elements from your reading text.
+2. STRATEGIC BLANKS: Create 5-8 blanks by replacing key vocabulary items or grammatical elements **related to** the reading text and lesson vocabulary.
 
 3. BLANK FORMAT: Use the format [1:word] for the first blank, [2:word] for the second blank, etc., where "word" is the correct answer.
 

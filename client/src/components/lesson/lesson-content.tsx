@@ -1543,14 +1543,12 @@ export function LessonContent({ content }: LessonContentProps) {
       </div>
       
       {/* Tabbed interface - styled based on template images */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <div className="overflow-x-auto pb-4">
-          <TabsList className="mb-2 h-12 bg-gray-50 border-0 rounded-full p-1 w-full justify-start flex-wrap gap-1">
-            {availableSections.map((sectionType: string) => {
-              // Find the matching section definition
-              const details = sectionDetails[sectionType as SectionType] || {
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-4 relative">
+        <TabsList className="flex overflow-x-auto whitespace-nowrap justify-start p-1 h-auto rounded-lg bg-gray-100 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          {availableSections.map((section) => {
+            const details = sectionDetails[section.type as SectionType] || {
                 icon: BookOpen,
-                label: sectionType.charAt(0).toUpperCase() + sectionType.slice(1),
+              label: section.charAt(0).toUpperCase() + section.slice(1),
                 color: "bg-gray-100",
                 textColor: "text-gray-700",
                 description: "Section content"
@@ -1560,8 +1558,8 @@ export function LessonContent({ content }: LessonContentProps) {
               
               return (
                 <TabsTrigger 
-                  key={sectionType} 
-                  value={sectionType}
+                key={section} 
+                value={section}
                   className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all
                     text-gray-500 hover:text-gray-800
                     data-[state=active]:${details.color} 
@@ -1574,7 +1572,6 @@ export function LessonContent({ content }: LessonContentProps) {
               );
             })}
           </TabsList>
-        </div>
         
         {/* Section content */}
         <div className="p-1 text-xl leading-relaxed"> {/* Changed text-lg to text-xl */}

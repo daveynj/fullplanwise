@@ -322,30 +322,35 @@ export function InteractiveClozeSection({
           >
             {/* Text with blanks with proper droppable zones */}
             <div className="text-lg leading-relaxed mb-8 p-5 bg-blue-50/40 rounded-md border border-blue-100">
-              {text.split(/\[(\d+):[^\]]+\]/).map((part, index) => {
-                // Even indices are text parts, odd indices are blank IDs
-                if (index % 2 === 0) {
-                  return <span key={index}>{part}</span>;
-                } else {
-                  const blankId = parseInt(part);
-                  const blankItem = clozeItems.find(item => item.id === blankId);
-                  
-                  if (blankItem) {
-                    return (
-                      <DroppableBlank
-                        key={`blank-${blankId}`}
-                        id={blankId}
-                        index={blankId}
-                        userAnswer={blankItem.userAnswer}
-                        isCorrect={blankItem.isCorrect}
-                        onRemove={removeWordFromBlank}
-                        isOver={overBlankId === `blank-${blankId}`}
-                      />
-                    );
+              {(() => { // IIFE to allow logging within JSX
+                const regex = /\[\s*(\d+)\s*:[^\u005D]+\s*\]/; // More flexible regex
+                const parts = text.split(regex);
+                console.log("[InteractiveClozeSection] Text split parts:", parts);
+                return parts.map((part, index) => {
+                  // Even indices are text parts, odd indices are blank IDs (captured group)
+                  if (index % 2 === 0) {
+                    return <span key={index}>{part}</span>;
+                  } else {
+                    const blankId = parseInt(part);
+                    const blankItem = clozeItems.find(item => item.id === blankId);
+                    
+                    if (blankItem) {
+                      return (
+                        <DroppableBlank
+                          key={`blank-${blankId}`}
+                          id={blankId}
+                          index={blankId}
+                          userAnswer={blankItem.userAnswer}
+                          isCorrect={blankItem.isCorrect}
+                          onRemove={removeWordFromBlank}
+                          isOver={overBlankId === `blank-${blankId}`}
+                        />
+                      );
+                    }
+                    return null;
                   }
-                  return null;
-                }
-              })}
+                });
+              })()}
             </div>
             
             {/* Word bank with draggable words */}
