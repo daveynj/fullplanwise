@@ -80,59 +80,62 @@ After writing the reading text, create:
 - 1-2 pre-reading discussion questions
 - EXACTLY 5-7 post-reading discussion questions - YOU MUST INCLUDE AT LEAST 5, and each question MUST directly reference specific content from your reading text
 - A brief warm-up activity that MUST incorporate all vocabulary items from your vocabulary list, not just one word
-- NEW REQUIREMENT: 2-4 sentence frames and templates appropriate for the ${params.cefrLevel} level to help students with sentence structure and grammar
+- NEW REQUIREMENT: 1-2 sentence frames and templates appropriate for the ${params.cefrLevel} level to help students with sentence structure and grammar, following the DETAILED STRUCTURE BELOW.
 
 SENTENCE FRAMES REQUIREMENTS:
-**Goal:** Create sentence frames that help students practice specific academic language functions identified in the reading text, using the lesson's target vocabulary.
+**Goal:** Explicitly teach high-frequency, versatile sentence patterns relevant to the lesson topic and identified academic language function(s), using the specific JSON structure requested.
 
 **Step 1: Identify Core Language Function(s)**
-- Analyze the main reading text you generated.
-- Identify 1-2 key academic language functions that are essential for understanding the text (e.g., "compare and contrast", "cause and effect", "describing a process", "expressing necessity", "sequencing events").
+- Analyze the main reading text.
+- Identify 1-2 key academic language functions essential for understanding the text (e.g., "compare and contrast", "cause and effect", "describing", "sequencing", "explaining reasons").
 
-**Step 2: Create Focused Sentence Frames**
-- All sentence frames in this section MUST be designed to practice the specific language function(s) you identified in Step 1.
-- Create 2-4 sentence frames in total.
+**Step 2: Select Authentic & Versatile Sentence Patterns**
+- Choose 1-2 sentence frame **patterns** that:
+    a) Directly correspond to the identified language function(s).
+    b) Are **high-frequency and commonly used** in authentic English conversation and writing.
+    c) Are **versatile** and can be adapted to various contexts beyond just this specific lesson topic.
+    d) Are **appropriate for the target CEFR level** (${params.cefrLevel}). Use simpler, core patterns for lower levels (A1/A2) and more complex/nuanced but still genuinely useful patterns for higher levels (B1-C2). Avoid overly obscure or purely academic structures unless appropriate for C1/C2 and the topic.
 
-**Step 3: Generate Interactive Examples and Phrase Banks**
-- For each sentence frame pattern created in Step 2, you MUST generate EXACTLY TWO distinct interactive examples.
-- Each interactive example MUST include:
-    a) A complete exampleSentence string that correctly uses the frame pattern and incorporates lesson vocabulary.
-    b) A corresponding phraseBank array containing the specific word/phrase chunks needed to reconstruct *that exact example sentence* when used in a drag-and-drop interface.
-       **CRITICAL:** Each string in the phraseBank MUST be grammatically complete for its slot. Include necessary articles (a, an, the), prepositions, or other function words if they belong with the core phrase chunk in the context of the exampleSentence. For example, if the blank requires "a masterpiece", the chunk MUST be "a masterpiece", not just "masterpiece".
-    c) A distractorPhrases array containing 2-3 plausible but contextually incorrect phrases that could grammatically fit the blanks but do not match the exampleSentence.
+**Step 3: Generate Data in the SPECIFIED JSON Structure**
+- For each selected pattern, provide the following information EXACTLY as defined in the JSON structure below. Adhere STRICTLY to the field names and types:
 
-For each sentence frame pattern, include ALL of the following properties in a structured JSON format:
-
-- **pattern:** The sentence frame pattern with blanks "_____".
-- **level:** Difficulty level ("basic", "intermediate", or "advanced").
-- **title:** Short title describing the frame's purpose.
-- **usage:** When/how to use this pattern for the target language function.
-- **communicativeFunction:** The specific academic language function being practiced.
-- **grammarFocus:** The key grammar structure being practiced.
-- **teachingTips:** Concrete student practice activities (as previously defined).
-- **interactiveExamples:** (Array) An array containing EXACTLY TWO objects, each representing an interactive example with:
-    - 'exampleSentence' (String)
-    - 'phraseBank' (Array of Strings - the correct, grammatically complete chunks)
-    - 'distractorPhrases' (Array of Strings - plausible incorrect options)
-
-CEFR-SPECIFIC GUIDELINES (Link Complexity to Function):
-Structure frame complexity based on both the CEFR level and the demands of the target language function:
-
-- **A1 LEVEL:** 2-3 very simple frames practicing the core function (e.g., simple identification for description: "This is a _____"). Use present simple, basic vocabulary from the list, 1-2 blanks.
-- **A2 LEVEL:** 2-3 frames practicing the function with simple connectors (e.g., comparison: "_____ is _____ but _____ is _____."). Use simple tenses, basic modals, vocabulary from the list, 1-2 blanks.
-- **B1 LEVEL:** 2 frames practicing the function with more complex structures (e.g., cause/effect: "_____ happened because _____."; comparison: "Although _____, _____ is different because _____."). Use varied tenses, conditionals, vocabulary from the list, 2-3 blanks.
-- **B2 LEVEL:** 2 frames practicing the function with complex sentences/clauses (e.g., cause/effect: "One reason for _____ is _____, which leads to _____."). Use hypothetical language, more nuanced vocabulary from the list, 2-3 blanks.
-- **C1/C2 LEVEL:** 1-2 sophisticated frames practicing the function with advanced structures (e.g., nuanced comparison: "While X and Y share the characteristic of _____, a key distinction lies in _____."). Use complex vocabulary from the list, abstract concepts, 2-3 blanks.
+- **patternTemplate:** (String) The sentence pattern with blanks shown as "_____". Ensure blanks represent meaningful chunks (phrases/clauses).
+- **languageFunction:** (String) The specific academic language function being practiced (e.g., "Explaining reasons", "Comparing alternatives").
+- **grammarFocus:** (Array of Strings) Bullet points explaining the key grammar rules or structures exemplified, explained simply for the ${params.cefrLevel} level.
+- **structureComponents:** (Array of Objects) Detailed breakdown of each component. Each object MUST have:
+    - **label:** (String) A short, descriptive name for the component (e.g., "Adjective", "Infinitive Phrase", "Reason Clause", "Part 1"). **THIS LABEL IS CRITICAL** as it will be used to link components in other parts of the structure.
+    - **description:** (String) Brief explanation of this component's role in the pattern.
+    - **examples:** (Array of Strings) 2-4 varied examples of short phrases or clauses that could fit *this specific component slot*.
+    - **inSentenceExample:** (String) A short phrase showing how this component fits into the beginning of the pattern template (e.g., for an adjective component in "It is ___ to...", this might be "It is [adjective]...").
+- **visualStructure:** (Object) Data for a simplified visual diagram. MUST contain:
+    - **start:** (String) The static text at the beginning of the pattern (e.g., "It is").
+    - **parts:** (Array of Objects) Represents the dynamic parts and connectors. Each object MUST have:
+        - **label:** (String) The label of the component **exactly matching** one of the label values from structureComponents.
+        - **connector:** (String - Optional) The static text (like "to", "because", "than") that *connects* this part to the NEXT part.
+    - **end:** (String) The static text or punctuation at the end (e.g., ".", "?").
+- **examples:** (Array of Objects) 3-4 complete, natural-sounding example sentences demonstrating the full pattern. Each object MUST have:
+    - **completeSentence:** (String) The full example sentence.
+    - **breakdown:** (Object) Maps the component labels to the specific text used in *this* example sentence. Keys MUST **exactly match** the label values from structureComponents. Example: \`{"Adjective": "polite", "Infinitive Phrase": "chew with your mouth closed", "Reason Clause": "it shows respect"}\`.
+- **patternVariations:** (Object - Optional) Examples of variations. Include AT LEAST ONE variation if applicable. Fields:
+    - **negativeForm:** (String - Optional) Example of the pattern in negative form.
+    - **questionForm:** (String - Optional) Example in question form.
+    - **modalForm:** (String - Optional) Example using a modal verb.
+- **teachingNotes:** (Array of Strings) 3-5 concise, practical bullet points for teachers on presenting/practicing this pattern.
+- **discussionPrompts:** (Array of Strings) 3-4 relevant discussion questions related to the pattern's usage or topic, suitable for ${params.cefrLevel}.
 
 CRITICAL ISSUES TO AVOID:
-1. DO NOT create frames too theoretical or academic for real conversation
-2. DO NOT use blanks for every other word - be strategic with blank placement
-3. DO NOT include confusing grammar terminology in the pattern
-4. DO NOT create frames with vocabulary beyond the ${params.cefrLevel} level
-5. DO NOT create frames unrelated to "${params.topic}" - they must be topic-specific
-6. DO NOT create patterns that are so specific they can only be used in one particular scenario
+1.  Do NOT choose obscure, rarely used sentence patterns (unless C1/C2 level justifies it).
+2.  Ensure the structureComponents accurately break down the patternTemplate.
+3.  Ensure the examples within structureComponents correctly fit their corresponding component slot.
+4.  Ensure the final completeSentence in the main examples array correctly uses the pattern and the provided breakdown accurately maps labels to the text segments.
+5.  Ensure the label fields in visualStructure.parts and examples.breakdown **EXACTLY MATCH** the label fields defined in structureComponents.
+6.  Keep explanations concise for the target CEFR level.
+7.  AVOID phrase duplication between static parts of the pattern and component examples.
+8.  Generate 3-4 diverse examples (complete sentences with breakdowns) per pattern.
+9.  Generate 3-5 useful teachingNotes per pattern.
+10. Generate 3-4 relevant discussionPrompts per pattern.
 
-IMPLEMENTATION REQUIREMENT: Each frame object must contain the interactiveExamples array with exactly two valid example/phraseBank/distractorPhrases sets.
+IMPLEMENTATION REQUIREMENT: Provide 1-2 complete frame objects per lesson, each following the detailed JSON structure specified below.
 
 For teacher instructions:
 1. Focus on practical classroom activities related to the specific topic
@@ -406,55 +409,112 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
         {"question": "Complete Question 5?", "options": ["True", "False"], "answer": "False", "correctAnswer": "False", "explanation": "Complete explanation..."}
       ]
     },
-    // SENTENCE FRAMES SECTION (Complete - 2-4 frames, each with 2 interactive examples)
+    // SENTENCE FRAMES SECTION (NEW STRUCTURE - 1-2 frames)
     {
       "type": "sentenceFrames",
       "title": "Sentence Practice",
       "frames": [
         {
-          "pattern": "Complete pattern like _____ because ____.", 
-          "level": "intermediate",
-          "title": "Explaining Reasons",
-          "usage": "Use this frame to explain the reason for something.",
-          "communicativeFunction": "Explaining Cause/Reason",
-          "grammarFocus": "Using 'because' to connect clauses",
-          "teachingTips": "Pair Activity: Students take turns completing the frame orally.",
-          "interactiveExamples": [
+          "patternTemplate": "It is ___ to ___ because ___.", 
+          "languageFunction": "Explaining reasons",
+          "grammarFocus": [
+            "Structure: It + is + adjective + infinitive (to + verb)",
+            "'Because' introduces the reason or explanation."
+          ],
+          "structureComponents": [
             {
-              "exampleSentence": "Complete example sentence 1 using the pattern.",
-              "phraseBank": ["phrase for blank 1a", "phrase for blank 2a"],
-              "distractorPhrases": ["wrong phrase 1a", "wrong phrase 2a"]
+              "label": "Adjective",
+              "description": "Describes the quality or nature of the action.",
+              "examples": ["polite", "important", "rude", "necessary"],
+              "inSentenceExample": "It is [Adjective]..."
             },
             {
-              "exampleSentence": "Complete example sentence 2 using the pattern.",
-              "phraseBank": ["phrase for blank 1b", "phrase for blank 2b"],
-              "distractorPhrases": ["wrong phrase 1b", "wrong phrase 3b"]
+              "label": "Infinitive Phrase",
+              "description": "The action related to the main idea.",
+              "examples": ["chew with your mouth closed", "use a napkin", "wait for everyone"],
+              "inSentenceExample": "...to [Infinitive Phrase]..."
+            },
+            {
+              "label": "Reason Clause",
+              "description": "Explains why the statement is true.",
+              "examples": ["it shows respect", "it's more hygienic", "it makes others comfortable"],
+              "inSentenceExample": "...because [Reason Clause]."
             }
+          ],
+          "visualStructure": {
+            "start": "It is",
+            "parts": [
+              { "label": "Adjective" },
+              { "label": "Infinitive Phrase", "connector": "to" },
+              { "label": "Reason Clause", "connector": "because" }
+            ],
+            "end": "."
+          },
+          "examples": [
+            {
+              "completeSentence": "It is polite to chew with your mouth closed because it shows respect.",
+              "breakdown": {
+                "Adjective": "polite",
+                "Infinitive Phrase": "chew with your mouth closed",
+                "Reason Clause": "it shows respect"
+              }
+            },
+            {
+              "completeSentence": "It is important to use a napkin because it's more hygienic.",
+              "breakdown": {
+                "Adjective": "important",
+                "Infinitive Phrase": "use a napkin",
+                "Reason Clause": "it's more hygienic"
+              }
+            },
+            {
+              "completeSentence": "It is necessary to wait for everyone because it makes others comfortable.",
+              "breakdown": {
+                  "Adjective": "necessary",
+                  "Infinitive Phrase": "wait for everyone",
+                  "Reason Clause": "it makes others comfortable"
+              }
+            }
+          ],
+          "patternVariations": {
+            "negativeForm": "It is not polite to talk with your mouth full because it's difficult to understand you.",
+            "questionForm": "Why is it important to use a napkin?",
+            "modalForm": "It can be rude to reach across the table because it invades others' space."
+          },
+          "teachingNotes": [
+            "Point out how each example follows the same structure.",
+            "Ask students: \"What adjective describes this manner?\" \"Why is this manner important?\"",
+            "Elicit more examples: Ask students to suggest other table manners that could fit this pattern.",
+            "Contrast examples: Show how changing one part affects the meaning of the sentence."
+          ],
+          "discussionPrompts": [
+            "What other table manners are important in your culture?",
+            "Are there table manners that are different in different countries?",
+            "Why do you think we have rules about how to behave at the table?",
+            "What happens when someone doesn't follow good table manners?"
           ]
         }
-        // (Include 1-3 more complete frame objects following this structure)
       ]
     },
-    // CLOZE SECTION (Complete - Fill in the Blanks)
+    // CLOZE SECTION (Complete)
     {
       "type": "cloze",
       "title": "Fill in the Blanks",
-      "text": "Complete paragraph with blanks, using [1:word] format...", // Placeholder text
-      "wordBank": ["word1", "word2", "word3", "word4", "word5"], // Placeholder words
-      "teacherNotes": "Complete notes on how to use this exercise effectively..." // Placeholder notes
+      "text": "Complete paragraph with blanks, using [1:word] format...",
+      "wordBank": ["word1", "word2", "word3", "word4", "word5"],
+      "teacherNotes": "Complete notes on how to use this exercise effectively..."
     },
-    // SENTENCE UNSCRAMBLE SECTION (Complete - Word Ordering)
+    // SENTENCE UNSCRAMBLE SECTION (Complete)
     {
       "type": "sentenceUnscramble",
       "title": "Sentence Unscramble",
       "sentences": [
         {
-          "words": ["Complete", "array", "of", "scrambled", "words"], // Placeholder words
-          "correctSentence": "Complete correct sentence." // Placeholder sentence
+          "words": ["Complete", "array", "of", "scrambled", "words"],
+          "correctSentence": "Complete correct sentence."
         }
-        // (Include 2-4 more complete sentences)
       ],
-      "teacherNotes": "Complete notes on how to use this exercise effectively..." // Placeholder notes
+      "teacherNotes": "Complete notes on how to use this exercise effectively..."
     },
     // DISCUSSION SECTION (Complete - 5 pairs)
     {
@@ -463,27 +523,27 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
       "questions": [
         {
           "paragraphContext": "Complete, unique context paragraph 1 (3-5 sentences)...",
-          "question": "Complete discussion question 1 related to paragraph 1?", 
+          "question": "Complete discussion question 1 related to paragraph 1?",
           "imagePrompt": "Complete image prompt for Q1 (no text)..."
         },
         {
           "paragraphContext": "Complete, unique context paragraph 2 (3-5 sentences)...",
-          "question": "Complete discussion question 2 related to paragraph 2?", 
+          "question": "Complete discussion question 2 related to paragraph 2?",
           "imagePrompt": "Complete image prompt for Q2 (no text)..."
         },
         {
           "paragraphContext": "Complete, unique context paragraph 3 (3-5 sentences)...",
-          "question": "Complete discussion question 3 related to paragraph 3?", 
+          "question": "Complete discussion question 3 related to paragraph 3?",
           "imagePrompt": "Complete image prompt for Q3 (no text)..."
         },
         {
           "paragraphContext": "Complete, unique context paragraph 4 (3-5 sentences)...",
-          "question": "Complete discussion question 4 related to paragraph 4?", 
+          "question": "Complete discussion question 4 related to paragraph 4?",
           "imagePrompt": "Complete image prompt for Q4 (no text)..."
         },
         {
           "paragraphContext": "Complete, unique context paragraph 5 (3-5 sentences)...",
-          "question": "Complete discussion question 5 related to paragraph 5?", 
+          "question": "Complete discussion question 5 related to paragraph 5?",
           "imagePrompt": "Complete image prompt for Q5 (no text)..."
         }
       ]
@@ -509,31 +569,31 @@ CEFR LEVEL-SPECIFIC EXAMPLES:
 
 A1 Examples:
 
-- "I like to eat _____."
+- "I like to eat ___."
 
-- "My favorite _____ is _____."
+- "My favorite ___ is ___."
 
-- "I can _____ very well."
+- "I can ___ very well."
 
-- "In the morning, I _____."
+- "In the morning, I ___."
 
 A2 Examples:
 
-- "Last weekend, I went to _____ and I saw _____."
+- "Last weekend, I went to ___ and I saw ___."
 
-- "I usually _____ because I think it's _____."
+- "I usually ___ because I think it's ___."
 
-- "I would like to _____ next _____."
+- "I would like to ___ next ___."
 
-- "If I have time, I will _____."
+- "If I have time, I will ___."
 
 B1 Examples:
 
-- "I think that _____ is important because _____."
+- "I think that ___ is important because ___."
 
-- "Although many people believe _____, I think _____."
+- "Although many people believe ____, I think ___."
 
-- "When I was younger, I used to _____, but now I _____."
+- "When I was younger, I used to ____, but now I ___."
 `;
       
       // Use qwen-max model for better JSON handling ability

@@ -207,57 +207,47 @@ READING TEXT REQUIREMENTS:
 6. TONE & STYLE: Apply the general tone and style requirements mentioned earlier (warm, accessible, vivid language, etc.).
 
 SENTENCE FRAMES REQUIREMENTS:
-**Goal:** Create sentence frames that help students practice specific academic language functions identified in the reading text, using the lesson's target vocabulary.
+**Goal:** Explicitly teach high-frequency, versatile sentence patterns relevant to the lesson topic and identified academic language function(s), using an analytical format.
 
 **Step 1: Identify Core Language Function(s)**
-- Analyze the main reading text you generated.
-- Identify 1-2 key academic language functions that are essential for understanding the text (e.g., "compare and contrast", "cause and effect", "describing a process", "expressing necessity", "sequencing events").
+- Analyze the main reading text.
+- Identify 1-2 key academic language functions essential for understanding the text (e.g., "compare and contrast", "cause and effect", "describing", "sequencing").
 
-**Step 2: Create Focused Sentence Frames**
-- All sentence frames in this section MUST be designed to practice the specific language function(s) you identified in Step 1.
-- Create 2-4 sentence frames in total.
+**Step 2: Select Authentic & Versatile Sentence Patterns**
+- Choose 1-2 sentence frame **patterns** that:
+    a) Directly correspond to the identified language function(s).
+    b) Are **high-frequency and commonly used** in authentic English conversation and writing.
+    c) Are **versatile** and can be adapted to various contexts beyond just this specific lesson topic.
+    d) Are **appropriate for the target CEFR level** (${params.cefrLevel}). Use simpler, core patterns for lower levels (A1/A2) and more complex/nuanced but still genuinely useful patterns for higher levels (B1-C2). Avoid overly obscure or purely academic structures unless appropriate for C1/C2 and the topic.
 
-**Step 3: Generate Interactive Examples and Phrase Banks**
-- For each sentence frame pattern created in Step 2, you MUST generate EXACTLY TWO distinct interactive examples.
-- Each interactive example MUST include:
-    a) A complete exampleSentence string that correctly uses the frame pattern and incorporates lesson vocabulary.
-    b) A corresponding phraseBank array containing the specific word/phrase chunks needed to reconstruct *that exact example sentence* when used in a drag-and-drop interface.
-    c) A distractorPhrases array containing 2-3 plausible but contextually incorrect phrases that could grammatically fit the blanks but do not match the exampleSentence.
+**Step 3: Generate Deconstructed Explanation**
+- For each selected pattern, provide the following information in the specified JSON structure:
 
-For each sentence frame pattern, include ALL of the following properties in a structured JSON format:
-
-- **pattern:** The sentence frame pattern with blanks "_____".
-- **level:** Difficulty level ("basic", "intermediate", or "advanced").
-- **title:** Short title describing the frame's purpose.
-- **usage:** When/how to use this pattern for the target language function.
-- **communicativeFunction:** The specific academic language function being practiced.
-- **grammarFocus:** The key grammar structure being practiced.
-- **teachingTips:** Concrete student practice activities (as previously defined).
-- **interactiveExamples:** (Array) An array containing EXACTLY TWO objects, each representing an interactive example with:
-    - 'exampleSentence' (String)
-    - 'phraseBank' (Array of Strings - the correct, grammatically complete chunks)
-    - 'distractorPhrases' (Array of Strings - plausible incorrect options)
-
-CEFR-SPECIFIC GUIDELINES (Link Complexity to Function):
-Structure frame complexity based on both the CEFR level and the demands of the target language function:
-
-- **A1 LEVEL:** 2-3 very simple frames practicing the core function (e.g., simple identification for description: "This is a _____"). Use present simple, basic vocabulary from the list, 1-2 blanks.
-- **A2 LEVEL:** 2-3 frames practicing the function with simple connectors (e.g., comparison: "_____ is _____ but _____ is _____."). Use simple tenses, basic modals, vocabulary from the list, 1-2 blanks.
-- **B1 LEVEL:** 2 frames practicing the function with more complex structures (e.g., cause/effect: "_____ happened because _____."; comparison: "Although _____, _____ is different because _____."). Use varied tenses, conditionals, vocabulary from the list, 2-3 blanks.
-- **B2 LEVEL:** 2 frames practicing the function with complex sentences/clauses (e.g., cause/effect: "One reason for _____ is _____, which leads to _____."). Use hypothetical language, more nuanced vocabulary from the list, 2-3 blanks.
-- **C1/C2 LEVEL:** 1-2 sophisticated frames practicing the function with advanced structures (e.g., nuanced comparison: "While X and Y share the characteristic of _____, a key distinction lies in _____."). Use complex vocabulary from the list, abstract concepts, 2-3 blanks.
+- **pattern:** (String) The sentence frame pattern with blanks shown as "_____". Ensure blanks represent meaningful chunks (phrases/clauses).
+- **level:** (String) Difficulty level relative to the CEFR level ("basic", "intermediate", or "advanced").
+- **title:** (String) Short title describing the pattern's purpose (e.g., "Comparing X and Y", "Explaining Cause").
+- **usage:** (String) When/how this pattern is typically used in real conversation/writing.
+- **communicativeFunction:** (String) The specific academic language function being practiced.
+- **grammarFocus:** (String) The key grammar structure(s) exemplified, explained simply.
+- **structureBreakdown:** (Array of Objects) An array breaking down the pattern into its core components. Each object should have:
+    - componentName: (String) e.g., "Cause Element", "Concession Clause", "Main Point".
+    - description: (String) Brief explanation of the component's role in the pattern.
+    - examples: (Array of Strings) 2-3 varied examples of phrases or clauses that could fit *this specific component* slot.
+- **exampleSentences:** (Array of Strings) 1-2 complete, natural-sounding example sentences demonstrating the full pattern in use with lesson-relevant vocabulary.
+- **practicePrompt:** (String) A prompt encouraging students to create their own sentence using the pattern, possibly relating it to their experience or the lesson content.
+- **teachingTips:** (String) Concise, practical advice for teachers on how to present and practice this pattern and its components.
 
 CRITICAL ISSUES TO AVOID:
-1. DO NOT create frames too theoretical or academic for real conversation
-2. DO NOT use blanks for every other word - be strategic with blank placement
-3. DO NOT include confusing grammar terminology in the pattern
-4. DO NOT create frames with vocabulary beyond the ${params.cefrLevel} level (unless it's from the explicit vocab list).
-5. DO NOT create frames unrelated to "${text}" - they must be topic-specific
+1. Do NOT choose obscure, rarely used sentence patterns (unless C1/C2 level justifies it).
+2. Ensure the structureBreakdown accurately reflects the pattern.
+3. Ensure the examples within the structureBreakdown correctly fit their corresponding component slot.
+4. Ensure the final exampleSentences correctly use the pattern and make sense contextually.
+5. Keep explanations (description, usage, grammarFocus) clear and concise for the target CEFR level.
 6. DO NOT create patterns that are so specific they can only be used in one particular scenario
+7. **CRITICAL:** Ensure the generated pattern structure works grammatically and semantically with the content provided in the structureBreakdown examples and the exampleSentences. The phrases must fit naturally into the pattern's slots.
+8. **AVOID phrase duplication:** Ensure the phrases provided as examples within the structureBreakdown do not duplicate verbs or key structural words already present in the static parts of the pattern.
 
-IMPLEMENTATION REQUIREMENT: Each frame object must contain the interactiveExamples array with exactly two valid example/phraseBank/distractorPhrases sets.
-
-CRITICAL:** Each string in the phraseBank MUST be grammatically complete for its slot. Include necessary articles (a, an, the), prepositions, or other function words if they belong with the core phrase chunk in the context of the exampleSentence. For example, if the blank requires "a masterpiece", the chunk MUST be "a masterpiece", not just "masterpiece".
+IMPLEMENTATION REQUIREMENT: Provide 1-2 complete frame objects per lesson, each containing all the specified fields (pattern, level, title, usage, communicativeFunction, grammarFocus, structureBreakdown, exampleSentences, practicePrompt, teachingTips).
 
 CEFR LEVEL-APPROPRIATE VOCABULARY SELECTION GUIDELINES:
 - A1: Choose words beyond the 500 most common words. Avoid very basic words like "hi", "hello", "yes", "no".
@@ -490,33 +480,31 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
         {"question": "Complete Question 5?", "options": ["True", "False"], "answer": "False", "correctAnswer": "False", "explanation": "Complete explanation..."}
       ]
     },
-    // SENTENCE FRAMES SECTION (Complete - 2-4 frames, each with 2 interactive examples)
+    // SENTENCE FRAMES SECTION (Explanatory Format)
     {
       "type": "sentenceFrames",
-      "title": "Sentence Practice",
+      "title": "Sentence Pattern Analysis", // Or similar title
       "frames": [
         {
-          "pattern": "Complete pattern like _____ because ____.", 
+          "pattern": "[CAUSE] spurred [EFFECT] because [REASON].",
           "level": "intermediate",
-          "title": "Explaining Reasons",
-          "usage": "Use this frame to explain the reason for something.",
-          "communicativeFunction": "Explaining Cause/Reason",
-          "grammarFocus": "Using 'because' to connect clauses",
-          "teachingTips": "Pair Activity: Students take turns completing the frame orally.",
-          "interactiveExamples": [
-            {
-              "exampleSentence": "Complete example sentence 1 using the pattern.",
-              "phraseBank": ["phrase for blank 1a", "phrase for blank 2a"],
-              "distractorPhrases": ["wrong phrase 1a", "wrong phrase 2a"]
-            },
-            {
-              "exampleSentence": "Complete example sentence 2 using the pattern.",
-              "phraseBank": ["phrase for blank 1b", "phrase for blank 2b"],
-              "distractorPhrases": ["wrong phrase 1b", "wrong phrase 3b"]
-            }
-          ]
+          "title": "Explaining Reasons for Developments",
+          "usage": "Use this pattern to explain the cause, effect, and reason behind events.",
+          "communicativeFunction": "Explaining Cause/Effect/Reason",
+          "grammarFocus": "Using past tense verbs, 'because' conjunction",
+          "structureBreakdown": [
+            { "componentName": "CAUSE", "description": "What started the chain of events?", "examples": ["The discovery", "Increased funding", "Public interest"] },
+            { "componentName": "EFFECT", "description": "What was the direct result?", "examples": ["new research", "faster development", "more volunteers"] },
+            { "componentName": "REASON", "description": "Why did the cause lead to the effect?", "examples": ["it opened new possibilities", "resources were available", "people were excited"] }
+          ],
+          "exampleSentences": [
+            "The launch of Sputnik 1 spurred the US space program because it highlighted a technology gap.",
+            "Increased funding spurred faster development because more researchers could be hired."
+          ],
+          "practicePrompt": "Create your own sentence using this pattern: [CAUSE] spurred [EFFECT] because [REASON]. Try to use vocabulary from the lesson.",
+          "teachingTips": "Discuss each component with students. Elicit more examples for each component before asking students to write their own sentences."
         }
-        // (Include 1-3 more complete frame objects following this structure)
+        // (Potentially include 1 more frame object)
       ]
     },
     // CLOZE SECTION (Complete - Fill in the Blanks)
