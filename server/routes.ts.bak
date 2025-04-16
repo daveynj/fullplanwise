@@ -942,48 +942,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Stripe webhook handler
   // Apply express.raw() middleware specifically for this route
   app.post("/api/webhooks/stripe", express.raw({ type: 'application/json' }), async (req: any, res) => {
-    // Use req.body which now contains the raw buffer
-    const payload = req.body; 
-    const sig = req.headers['stripe-signature'] as string;
-    
-    console.log("Received Stripe webhook event");
-
-    if (!stripe) {
-      console.error("Stripe API key not configured");
-      return res.status(200).json({ received: true, error: "Stripe API key not configured" });
-    }
-
-    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
-    
-    if (!webhookSecret) {
-      console.error("Stripe webhook secret not configured");
-      return res.status(200).json({ received: true, error: "Stripe webhook secret not configured" });
-    }
-    
-    if (!payload) {
-      console.error("No body found in webhook request");
-      return res.status(200).json({ received: true, error: "No body found in webhook request" });
-    }
-    
-    let event: Stripe.Event | undefined;
-    
     try {
-      // Verify webhook signature
-      event = stripe.webhooks.constructEvent(payload, sig, webhookSecret);
-      console.log(`Webhook event type: ${event.type}`);
+      // Use req.body which now contains the raw buffer
+      const payload = req.body; 
+      const sig = req.headers['stripe-signature'] as string;
+      
+      console.log("Received Stripe webhook event");
+
+      if (!stripe) {
+        console.error("Stripe API key not configured");
+        // Return 200 to stop Stripe from retrying
+        return res.status(200).json({ received: true, error: "Stripe API key not configured" });
+      }
+
+      let event;
+
+      try {
+        const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+        
+        if (!webhookSecret) {
+          console.error("Stripe webhook secret not configured");
+          // Return 200 to stop Stripe from retrying
+          return res.status(200).json({ received: true, error: "Stripe webhook secret not configured" });
+        }
+        
+        if (!payload) {
+          console.error("No body found in webhook request");
+          // Return 200 to stop Stripe from retrying
+          return res.status(200).json({ received: true, error: "No body found in webhook request" });
+        }
+        
+        console.log(`Webhook received with signature: ${sig ? sig.substring(0, 10) + '...' : 'undefined'}`);
+        console.log(`Raw payload length: ${payload.length} bytes`);
+        
+        // Verify webhook signature
+        event = stripe.webhooks.constructEvent(payload, sig, webhookSecret);
+        console.log(`Webhook event type: ${event.type}`);
+      }
     } catch (err: any) {
       console.error(`Webhook Signature Error: ${err.message}`);
-      return res.status(200).json({ received: true, error: `Webhook Error: ${err.message}` });
+      return res.status(400).send(`Webhook Error: ${err.message}`);
     }
 
     // Handle the event
     try {
-      // Make sure event is defined
-      if (!event) {
-        console.error("Event is undefined after signature verification");
-        return res.status(200).json({ received: true, error: "Event is undefined" });
-      }
-      
       switch (event.type) {
         case 'checkout.session.completed': {
           const session = event.data.object as Stripe.Checkout.Session;
@@ -1144,9 +1146,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // This is required by Stripe to indicate successful processing
       console.log('Webhook processed successfully');
       return res.status(200).json({ received: true });
-    } catch (error: any) {
-      console.error(`Error processing webhook: ${error.message || error}`);
-      return res.status(200).json({ received: true, error: 'Webhook processing failed' });
+    } catch (error) {
+      console.error(`Error processing webhook: ${error}`);
+      return res.status(500).json({ error: 'Webhook processing failed' });
     }
   });
   
