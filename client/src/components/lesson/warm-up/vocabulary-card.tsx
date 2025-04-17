@@ -159,7 +159,7 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
           )}
           
           {/* Word Family - Always visible */}
-          {word.wordFamily && word.wordFamily.words.length > 0 && (
+          {word.wordFamily && word.wordFamily.words && word.wordFamily.words.length > 0 && (
             <div className="bg-white rounded border-2 border-blue-200 p-3">
               <h3 className="text-blue-800 font-bold flex items-center text-base mb-2">
                 <Heart className="mr-2 h-4 w-4" />
