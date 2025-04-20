@@ -1,0 +1,76 @@
+lockdown-install.js:1 Removing unpermitted intrinsics
+e-commerce.js:2 fragment content script loaded
+e-commerce.js:2 google content script loaded
+e-commerce.js:2 overlay content script loaded
+e-commerce.js:2 overlay button content script loaded
+e-commerce.js:2 remote fragment content script loaded
+e-commerce.js:2 snippet content script loaded
+e-commerce.js:2 title content script loaded
+e-commerce.js:2 trigger-event content script loaded
+e-commerce.js:2 url content script loaded
+e-commerce.js:2 not checkout page:  https://planwiseesl.com/students
+e-commerce.js:2 navigated to https://planwiseesl.com/students
+index-BS0e35qG.js:48 Making API request to: /api/user
+index-BS0e35qG.js:48 Received response from /api/user with status: 200
+index-BS0e35qG.js:48 Making API request to: /api/students
+ Removing unpermitted intrinsics
+index-BS0e35qG.js:48 Received response from /api/students with status: 200
+index-BS0e35qG.js:48 Making API request to: /api/lessons?page=1&search=&cefrLevel=all&dateFilter=all
+e-commerce.js:2 navigated to https://planwiseesl.com/history
+index-BS0e35qG.js:48 Received response from /api/lessons?page=1&search=&cefrLevel=all&dateFilter=all with status: 200
+lockdown-install.js:1 Removing unpermitted intrinsics
+lockdown-install.js:1 Removing unpermitted intrinsics
+index-BS0e35qG.js:48 Making API request to: /api/lessons/190
+e-commerce.js:2 navigated to https://planwiseesl.com/history/190
+index-BS0e35qG.js:48 Received response from /api/lessons/190 with status: 200
+index-BS0e35qG.js:503 LESSON CONTENT (STRING): {"title":"Lesson on Lee kuan yew: Political Leadership and Authoritarian Governance","provider":"gemini","sections":[{"type":"error","title":"Content Error","content":"The lesson could not be properly formatted. Please try regenerating the lesson."}]}...
+index-BS0e35qG.js:503 PARSED LESSON CONTENT (FIRST 100 KEYS): Array(3)
+index-BS0e35qG.js:503 SECTIONS TYPES: Array(1)
+index-BS0e35qG.js:503 COMPREHENSION SECTION: Not found
+index-BS0e35qG.js:503 DISCUSSION SECTION: Not found
+index-BS0e35qG.js:499 Content received in LessonContent component: Object
+index-BS0e35qG.js:499 Detected Gemini-formatted response - applying special processing
+index-BS0e35qG.js:499 Applying Gemini-specific processing
+index-BS0e35qG.js:499 SentenceFrames section in final processedContent.sections: undefined
+index-BS0e35qG.js:499 Setting initial active tab to: error
+index-BS0e35qG.js:499 Original sections: Array(1)
+index-BS0e35qG.js:499 ENTIRE LESSON CONTENT: {
+  "title": "Lesson on Lee kuan yew: Political Leadership and Authoritarian Governance",
+  "provider": "gemini",
+  "sections": [
+    {
+      "type": "error",
+      "title": "Content Error",
+      "content": "The lesson could not be properly formatted. Please try regenerating the lesson."
+    }
+  ]
+}
+index-BS0e35qG.js:499 Section types from content: Array(2)
+index-BS0e35qG.js:499 Adding comprehension to content sections
+index-BS0e35qG.js:499 Available sections for tabs: Array(2)
+index-BS0e35qG.js:499 Content received in LessonContent component: Object
+index-BS0e35qG.js:499 Detected Gemini-formatted response - applying special processing
+index-BS0e35qG.js:499 Original sections: Array(1)
+index-BS0e35qG.js:499 Applying Gemini-specific processing
+index-BS0e35qG.js:499 SentenceFrames section in final processedContent.sections: undefined
+index-BS0e35qG.js:499 Original sections: Array(1)
+index-BS0e35qG.js:499 ENTIRE LESSON CONTENT: {
+  "title": "Lesson on Lee kuan yew: Political Leadership and Authoritarian Governance",
+  "provider": "gemini",
+  "sections": [
+    {
+      "type": "error",
+      "title": "Content Error",
+      "content": "The lesson could not be properly formatted. Please try regenerating the lesson."
+    }
+  ]
+}
+index-BS0e35qG.js:499 Section types from content: Array(2)
+index-BS0e35qG.js:499 Adding comprehension to content sections
+index-BS0e35qG.js:499 Available sections for tabs: Array(2)
+
+                
+          
+          
+          
+         Chrome is moving towards a new experience that allows users to choose to browse without third-party cookies.

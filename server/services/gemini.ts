@@ -80,7 +80,14 @@ export class GeminiService {
               console.log('Lesson content has valid structure, returning formatted content');
               return await this.formatLessonContent(jsonContent);
             } else {
-              console.warn('Parsed JSON is missing required structure');
+              // Log more detailed diagnostic information 
+              console.warn('Parsed JSON is missing required structure', JSON.stringify({
+                hasTitle: !!jsonContent.title,
+                hasSections: !!jsonContent.sections,
+                sectionsIsArray: Array.isArray(jsonContent.sections),
+                sectionsLength: jsonContent.sections ? jsonContent.sections.length : 0
+              }));
+              
               return {
                 title: `Lesson on ${params.topic}`,
                 content: "The generated lesson is missing required structure",
@@ -90,7 +97,7 @@ export class GeminiService {
                   {
                     type: "error",
                     title: "Content Error",
-                    content: "The lesson structure is incomplete. Please try regenerating the lesson."
+                    content: "The lesson structure is incomplete. This may be because the topic contains sensitive content or is too complex. Please try with a different topic or simplify your current topic."
                   }
                 ]
               };
@@ -99,6 +106,10 @@ export class GeminiService {
             // If we fail to parse as JSON, try to handle it as best we can
             console.error('Error parsing Gemini response as JSON:', jsonError);
             
+            // Log the first part of the text to help with debugging
+            const textPreview = text.substring(0, 200) + (text.length > 200 ? '...' : '');
+            console.warn('Response text preview:', textPreview);
+            
             return {
               title: `Lesson on ${params.topic}`,
               provider: 'gemini',
@@ -106,7 +117,7 @@ export class GeminiService {
                 {
                   type: "error",
                   title: "Content Error",
-                  content: "The lesson could not be properly formatted. Please try regenerating the lesson."
+                  content: "The lesson could not be properly formatted. This may be due to the topic's complexity or content policies. Please try a different topic or simplify your current one."
                 }
               ]
             };
@@ -127,6 +138,20 @@ export class GeminiService {
         }
       } catch (error: any) {
         console.error('Error during Gemini API request:', error.message);
+        
+        // Determine if this is a content policy error
+        const isPolicyError = error.message && (
+          error.message.includes('content policy') || 
+          error.message.includes('SAFETY') || 
+          error.message.includes('blocked') ||
+          error.message.includes('not appropriate')
+        );
+        
+        // Customize message based on error type
+        const errorMessage = isPolicyError
+          ? "The topic may contain sensitive content that cannot be processed. Please try a different topic."
+          : `The lesson could not be generated. This may be due to a temporary issue with the Gemini API. Please try again later.`;
+          
         return {
           title: `Lesson on ${params.topic}`,
           error: error.message,
@@ -134,8 +159,8 @@ export class GeminiService {
           sections: [
             {
               type: "error",
-              title: "API Error",
-              content: `The lesson could not be generated due to an API error: ${error.message}`
+              title: isPolicyError ? "Content Policy Restriction" : "API Error",
+              content: errorMessage
             }
           ]
         };
