@@ -98,7 +98,7 @@ export function Sidebar() {
             <p className="text-2xl font-nunito font-bold text-white">{user?.credits || 0}</p>
           </div>
           <Button 
-            className="bg-accent text-text font-semibold px-3 py-2 rounded-lg text-sm hover:bg-amber-300 transition"
+            className="bg-yellow-400 text-gray-800 font-bold px-3 py-2 rounded-lg text-sm hover:bg-yellow-300 transition shadow-sm"
             onClick={() => setLocation('/buy-credits')}
           >
             Buy More
