@@ -10,8 +10,20 @@ import {
   CardHeader, 
   CardTitle 
 } from "@/components/ui/card"; 
-// Import icons as needed, e.g., from lucide-react
-import { Clock, Target, MonitorSmartphone } from 'lucide-react';
+// Import Tabs for lesson showcase
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
+// Import icons
+import { 
+  Clock, Target, MonitorSmartphone, BookOpen, MessageSquare, 
+  Lightbulb, CheckCircle, Sparkles, Layers, Puzzle, Database 
+} from 'lucide-react';
+
+// Screenshots are served from public directory
 
 export default function LandingPage() {
   return (
@@ -71,6 +83,150 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Lesson Showcase Section - NEW */}
+      <section className="py-16 px-6 bg-white border-b border-gray-200">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-nunito font-bold mb-4 text-gray-800">See Real AI-Generated Lessons</h2>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              Each lesson comes with a complete suite of activities - from warm-up exercises to vocabulary practice, 
+              reading comprehension, interactive activities, and assessment tools.
+            </p>
+          </div>
+          
+          <Tabs defaultValue="reading" className="w-full">
+            <div className="flex flex-col md:flex-row gap-6">
+              <div className="md:w-1/4">
+                <div className="sticky top-24">
+                  <h3 className="text-xl font-nunito font-semibold mb-4 text-gray-800">Lesson Components</h3>
+                  <p className="text-sm text-gray-600 mb-4">Click to explore each section of a complete ESL lesson</p>
+                  <TabsList className="flex flex-col space-y-1 h-auto bg-transparent">
+                    <TabsTrigger value="warmup" className="justify-start data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
+                      <Lightbulb className="h-4 w-4 mr-2" />
+                      Warm-up Activities
+                    </TabsTrigger>
+                    <TabsTrigger value="reading" className="justify-start data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
+                      <BookOpen className="h-4 w-4 mr-2" />
+                      Reading Text
+                    </TabsTrigger>
+                    <TabsTrigger value="vocabulary" className="justify-start data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
+                      <Database className="h-4 w-4 mr-2" />
+                      Vocabulary Practice
+                    </TabsTrigger>
+                    <TabsTrigger value="comprehension" className="justify-start data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
+                      <CheckCircle className="h-4 w-4 mr-2" />
+                      Comprehension Questions
+                    </TabsTrigger>
+                    <TabsTrigger value="sentence" className="justify-start data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
+                      <Layers className="h-4 w-4 mr-2" />
+                      Sentence Patterns
+                    </TabsTrigger>
+                    <TabsTrigger value="cloze" className="justify-start data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
+                      <Puzzle className="h-4 w-4 mr-2" />
+                      Fill-in-the-Blanks
+                    </TabsTrigger>
+                    <TabsTrigger value="unscramble" className="justify-start data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
+                      <Sparkles className="h-4 w-4 mr-2" />
+                      Sentence Unscramble
+                    </TabsTrigger>
+                    <TabsTrigger value="discussion" className="justify-start data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
+                      <MessageSquare className="h-4 w-4 mr-2" />
+                      Discussion Questions
+                    </TabsTrigger>
+                    <TabsTrigger value="quiz" className="justify-start data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
+                      <Target className="h-4 w-4 mr-2" />
+                      Knowledge Check Quiz
+                    </TabsTrigger>
+                  </TabsList>
+                </div>
+              </div>
+              
+              <div className="md:w-3/4">
+                <TabsContent value="warmup" className="mt-0 border rounded-lg shadow-sm p-4 bg-gray-50">
+                  <h3 className="text-xl font-semibold mb-4">Warm-up Activities</h3>
+                  <p className="mb-4">Get students engaged from the very start with vocabulary previews and discussion questions to activate prior knowledge.</p>
+                  <div className="rounded-lg overflow-hidden border shadow-md">
+                    <img src="/images/warmup.PNG" alt="Warm-up Activities" className="w-full h-auto" />
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="reading" className="mt-0 border rounded-lg shadow-sm p-4 bg-gray-50">
+                  <h3 className="text-xl font-semibold mb-4">Reading Text</h3>
+                  <p className="mb-4">Engaging, level-appropriate content on interesting topics that captures student interest while introducing key vocabulary.</p>
+                  <div className="rounded-lg overflow-hidden border shadow-md">
+                    <img src="/images/reading.PNG" alt="Reading Text" className="w-full h-auto" />
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="vocabulary" className="mt-0 border rounded-lg shadow-sm p-4 bg-gray-50">
+                  <h3 className="text-xl font-semibold mb-4">Vocabulary Practice</h3>
+                  <p className="mb-4">Comprehensive vocabulary cards with definitions, pronunciations, example sentences, and word family connections.</p>
+                  <div className="rounded-lg overflow-hidden border shadow-md">
+                    <img src="/images/vocab2.PNG" alt="Vocabulary Practice" className="w-full h-auto" />
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="comprehension" className="mt-0 border rounded-lg shadow-sm p-4 bg-gray-50">
+                  <h3 className="text-xl font-semibold mb-4">Comprehension Questions</h3>
+                  <p className="mb-4">Multiple-choice questions that check student understanding of the reading text and reinforce key concepts.</p>
+                  <div className="rounded-lg overflow-hidden border shadow-md">
+                    <img src="/images/comprehension.PNG" alt="Comprehension Questions" className="w-full h-auto" />
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="sentence" className="mt-0 border rounded-lg shadow-sm p-4 bg-gray-50">
+                  <h3 className="text-xl font-semibold mb-4">Sentence Patterns</h3>
+                  <p className="mb-4">Build grammar skills with structured sentence patterns that help students understand language functions and structure.</p>
+                  <div className="rounded-lg overflow-hidden border shadow-md">
+                    <img src="/images/sentence frames.PNG" alt="Sentence Patterns" className="w-full h-auto" />
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="cloze" className="mt-0 border rounded-lg shadow-sm p-4 bg-gray-50">
+                  <h3 className="text-xl font-semibold mb-4">Fill-in-the-Blanks</h3>
+                  <p className="mb-4">Interactive cloze exercises that reinforce vocabulary understanding and contextual word usage.</p>
+                  <div className="rounded-lg overflow-hidden border shadow-md">
+                    <img src="/images/cloze.PNG" alt="Fill-in-the-Blanks Exercise" className="w-full h-auto" />
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="unscramble" className="mt-0 border rounded-lg shadow-sm p-4 bg-gray-50">
+                  <h3 className="text-xl font-semibold mb-4">Sentence Unscramble</h3>
+                  <p className="mb-4">Drag-and-drop activities that develop sentence structure understanding through word ordering exercises.</p>
+                  <div className="rounded-lg overflow-hidden border shadow-md">
+                    <img src="/images/unscrmble.PNG" alt="Sentence Unscramble Activity" className="w-full h-auto" />
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="discussion" className="mt-0 border rounded-lg shadow-sm p-4 bg-gray-50">
+                  <h3 className="text-xl font-semibold mb-4">Discussion Questions</h3>
+                  <p className="mb-4">Thought-provoking questions with contextual prompts that encourage critical thinking and conversational practice.</p>
+                  <div className="rounded-lg overflow-hidden border shadow-md">
+                    <img src="/images/discussion questions.PNG" alt="Discussion Questions" className="w-full h-auto" />
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="quiz" className="mt-0 border rounded-lg shadow-sm p-4 bg-gray-50">
+                  <h3 className="text-xl font-semibold mb-4">Knowledge Check Quiz</h3>
+                  <p className="mb-4">End-of-lesson assessments to gauge student understanding and retention of key lesson concepts.</p>
+                  <div className="rounded-lg overflow-hidden border shadow-md">
+                    <img src="/images/quiz.PNG" alt="Knowledge Check Quiz" className="w-full h-auto" />
+                  </div>
+                </TabsContent>
+              </div>
+            </div>
+          </Tabs>
+          
+          <div className="mt-12 text-center">
+            <Link href="/auth?register=true">
+              <Button size="lg" className="bg-primary hover:bg-primary/90">
+                Try It For Free
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+      
       {/* Problem/Solution Section */}
       <section className="py-16 px-6 bg-gray-light">
         <div className="container mx-auto max-w-4xl text-center">
@@ -79,7 +235,7 @@ export default function LandingPage() {
             Online ESL teachers face the constant challenge of creating CEFR-aligned, engaging, and individualized lessons for one-on-one sessions. Finding the right materials takes time you could be spending teaching.
           </p>
           <p className="text-lg font-semibold text-primary">
-            ESL Lesson AI is your solution – generate complete, ready-to-teach lessons in minutes.
+            Plan Wise ESL is your solution – generate complete, ready-to-teach lessons in minutes.
           </p>
         </div>
       </section>
