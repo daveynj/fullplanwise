@@ -15,34 +15,34 @@ export function Sidebar() {
   };
 
   const navItems = [
-    { path: "/", label: "Dashboard", icon: <Home className="mr-3 text-xl" /> },
-    { path: "/generate", label: "Generate Lesson", icon: <Wand2 className="mr-3 text-xl" /> },
-    { path: "/students", label: "Students", icon: <Users className="mr-3 text-xl" /> },
-    { path: "/history", label: "Lesson Library", icon: <Book className="mr-3 text-xl" /> },
+    { path: "/", label: "Dashboard", icon: <Home className="mr-3 text-2xl" /> },
+    { path: "/generate", label: "Generate Lesson", icon: <Wand2 className="mr-3 text-2xl" /> },
+    { path: "/students", label: "Students", icon: <Users className="mr-3 text-2xl" /> },
+    { path: "/history", label: "Lesson Library", icon: <Book className="mr-3 text-2xl" /> },
   ];
   
   // Function to render nav items without nested <a> tags
   const renderNavItem = (item: { path: string, label: string, icon: React.ReactNode }) => (
-    <li key={item.path} className="mb-2">
+    <li key={item.path} className="mb-3">
       <Link href={item.path}>
-        <div className={`flex items-center p-3 rounded-lg hover:bg-primary-light transition cursor-pointer ${
+        <div className={`flex items-center p-4 rounded-lg hover:bg-primary-light transition cursor-pointer ${
           location === item.path ? "bg-primary-light text-white" : "text-white"
         }`}>
           {item.icon}
-          <span>{item.label}</span>
+          <span className="text-lg font-medium">{item.label}</span>
         </div>
       </Link>
     </li>
   );
 
   const accountItems = [
-    { path: "/settings", label: "Settings", icon: <Settings className="mr-3 text-xl" /> },
-    { path: "/buy-credits", label: "Buy Credits", icon: <CreditCard className="mr-3 text-xl" /> },
+    { path: "/settings", label: "Settings", icon: <Settings className="mr-3 text-2xl" /> },
+    { path: "/buy-credits", label: "Buy Credits", icon: <CreditCard className="mr-3 text-2xl" /> },
   ];
   
   // Admin items - only visible to admin users
   const adminItems = [
-    { path: "/admin", label: "Admin Dashboard", icon: <Shield className="mr-3 text-xl" /> },
+    { path: "/admin", label: "Admin Dashboard", icon: <Shield className="mr-3 text-2xl" /> },
   ];
 
   const toggleMobileMenu = () => {
@@ -53,13 +53,13 @@ export function Sidebar() {
     <>
       {/* Logo and brand */}
       <div className="p-5 flex items-center border-b border-primary-light">
-        <img src="/PlanWise_ESL_logo.png" alt="Plan Wise ESL Logo" className="h-8 w-auto mr-2" /> 
-        <span className="font-nunito font-bold text-xl text-white">PLAN WISE ESL</span>
+        <img src="/PlanWise_ESL_logo.png" alt="Plan Wise ESL Logo" className="h-10 w-auto mr-3" /> 
+        <span className="font-nunito font-bold text-2xl text-white">PLAN WISE ESL</span>
       </div>
       
       {/* Navigation */}
       <nav className="p-4">
-        <div className="mb-3 text-sm font-semibold uppercase text-blue-200 pl-3">Main</div>
+        <div className="mb-4 text-base font-semibold uppercase text-blue-200 pl-3">Main</div>
         <ul>
           {navItems.map(renderNavItem)}
         </ul>
@@ -67,38 +67,38 @@ export function Sidebar() {
         {/* Admin Section - Only visible to admin users */}
         {user?.isAdmin && (
           <>
-            <div className="mb-3 mt-6 text-sm font-semibold uppercase text-blue-200 pl-3">Admin</div>
+            <div className="mb-4 mt-6 text-base font-semibold uppercase text-blue-200 pl-3">Admin</div>
             <ul>
               {adminItems.map(renderNavItem)}
             </ul>
           </>
         )}
         
-        <div className="mb-3 mt-6 text-sm font-semibold uppercase text-blue-200 pl-3">Account</div>
+        <div className="mb-4 mt-6 text-base font-semibold uppercase text-blue-200 pl-3">Account</div>
         <ul>
           {accountItems.map(renderNavItem)}
-          <li className="mb-2">
+          <li className="mb-3">
             <Button 
               variant="link" 
-              className="w-full flex items-center p-3 rounded-lg text-white hover:bg-primary-light transition justify-start"
+              className="w-full flex items-center p-4 rounded-lg text-white hover:bg-primary-light transition justify-start"
               onClick={handleLogout}
             >
-              <LogOut className="mr-3 text-xl" />
-              <span>Logout</span>
+              <LogOut className="mr-3 text-2xl" />
+              <span className="text-lg font-medium">Logout</span>
             </Button>
           </li>
         </ul>
       </nav>
       
       {/* Credit counter */}
-      <div className="mt-auto p-4 bg-primary-light mx-4 my-4 rounded-lg">
+      <div className="mt-auto p-5 bg-primary-light mx-4 my-4 rounded-lg shadow-md">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm text-blue-200">Available Credits</p>
-            <p className="text-2xl font-nunito font-bold text-white">{user?.credits || 0}</p>
+            <p className="text-base font-medium text-blue-200">Available Credits</p>
+            <p className="text-3xl font-nunito font-bold text-white">{user?.credits || 0}</p>
           </div>
           <Button 
-            className="bg-yellow-400 text-gray-800 font-bold px-3 py-2 rounded-lg text-sm hover:bg-yellow-300 transition shadow-sm"
+            className="bg-yellow-400 text-gray-800 font-bold px-4 py-3 rounded-lg text-base hover:bg-yellow-300 transition shadow-sm"
             onClick={() => setLocation('/buy-credits')}
           >
             Buy More

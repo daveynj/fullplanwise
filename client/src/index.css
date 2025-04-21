@@ -18,6 +18,7 @@
 @layer base {
   html {
     @apply scroll-smooth;
+    font-size: 18px; /* Increase base font size from default 16px to 18px */
   }
 
   * {
@@ -25,6 +26,38 @@
   }
 
   body {
-    @apply font-sans antialiased bg-background text-foreground;
+    @apply font-sans antialiased bg-background text-foreground font-medium;
+  }
+  
+  /* Global text size enhancements */
+  p {
+    @apply text-lg font-medium leading-relaxed;
+  }
+  
+  h1 {
+    @apply text-4xl font-bold;
+  }
+  
+  h2 {
+    @apply text-3xl font-bold;
+  }
+  
+  h3 {
+    @apply text-2xl font-bold;
+  }
+  
+  /* Make all buttons and interactive elements more prominent */
+  button, a.btn, .btn, [type="button"], [type="submit"] {
+    @apply font-semibold;
+  }
+  
+  /* Ensure form labels and inputs are also larger */
+  label, input, select, textarea {
+    @apply text-lg;
+  }
+  
+  /* Make table text larger */
+  table {
+    @apply text-lg;
   }
 }
