@@ -92,7 +92,7 @@ export default function DashboardPage() {
                     <div className="flex-1">
                       <h2 className="text-xl font-nunito font-bold mb-2">Get Started with Your First Lesson</h2>
                       <p className="text-gray-600 mb-4">
-                        Create your first AI-powered ESL lesson in just a few simple steps. Our system will generate a complete lesson with warm-up activities, reading materials, vocabulary, and more!
+                        Create your first AI-powered ESL lesson in just a few simple steps. In about 2-3 minutes, our system will generate a complete lesson with warm-up activities, reading materials, vocabulary, and more!
                       </p>
                       <div className="flex flex-wrap gap-4">
                         <Link href="/generate">
@@ -137,7 +137,7 @@ export default function DashboardPage() {
                           <div className="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center shrink-0">3</div>
                           <div>
                             <h4 className="font-semibold text-gray-900">Click Generate</h4>
-                            <p className="text-gray-600">Our AI will create a complete lesson in less than a minute. You can use it immediately or make adjustments.</p>
+                            <p className="text-gray-600">Our AI will create a complete lesson in 2-3 minutes. You can use it immediately or make adjustments.</p>
                           </div>
                         </div>
                         
@@ -201,7 +201,7 @@ export default function DashboardPage() {
                         {totalLessons === 0 ? 'Create Your First Lesson' : 'Generate New Lesson'}
                       </p>
                       <p className="text-xs text-white/80 mt-1">
-                        {totalLessons === 0 ? 'Takes only 60 seconds!' : 'Create a lesson plan'}
+                        {totalLessons === 0 ? 'Ready in about 2-3 minutes' : 'Create a lesson plan'}
                       </p>
                     </div>
                   </Button>
