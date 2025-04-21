@@ -47,38 +47,61 @@ export default function LandingPage() {
         </nav>
       </header>
 
-      {/* Hero Section */}
-      <section className="bg-primary text-white py-20 px-6 text-center">
-        <div className="container mx-auto max-w-4xl">
-          <h1 className="text-4xl md:text-5xl font-nunito font-bold mb-4">
-            Instantly Create Engaging ESL Lessons with AI
-          </h1>
-          <p className="text-xl md:text-2xl mb-8 opacity-90">
-            Save Hours on Lesson Planning and Focus on Teaching Your Online ESL Students More Effectively.
-          </p>
-          {/* YouTube Video Embed */}
-          <div className="aspect-video mb-8 rounded-lg overflow-hidden shadow-lg max-w-3xl mx-auto">
-            <iframe 
-              className="w-full h-full"
-              src="https://www.youtube.com/embed/pcLlwL5sNK0" 
-              title="YouTube video player" 
-              frameBorder="0" 
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-              referrerPolicy="strict-origin-when-cross-origin" 
-              allowFullScreen
-            ></iframe>
-          </div>
-          <div>
-            <Link href="/auth?register=true">
-              <Button size="lg" className="bg-accent hover:bg-accent/90 text-primary font-semibold mr-4 px-8 py-3">
-                Start Your Free Trial
-              </Button>
-            </Link>
-            <a href="#features"> {/* Use standard anchor for in-page scroll */}
-              <Button size="lg" variant="outline" className="bg-transparent text-white border-white hover:bg-white/20 px-8 py-3">
-                Explore Features
-              </Button>
-            </a>
+      {/* Hero Section with Lesson Preview */}
+      <section className="bg-primary text-white py-16 px-6">
+        <div className="container mx-auto max-w-6xl">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
+            {/* Hero Text Column */}
+            <div className="text-center lg:text-left lg:w-1/2">
+              <h1 className="text-4xl md:text-5xl font-nunito font-bold mb-4">
+                Instantly Create Engaging ESL Lessons with AI
+              </h1>
+              <p className="text-xl md:text-2xl mb-8 opacity-90">
+                Save Hours on Lesson Planning and Focus on Teaching Your Online ESL Students More Effectively.
+              </p>
+              <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-4 mb-8">
+                <Link href="/auth?register=true">
+                  <Button size="lg" className="bg-accent hover:bg-accent/90 text-primary font-semibold px-8 py-3 w-full sm:w-auto">
+                    Start Your Free Trial
+                  </Button>
+                </Link>
+                <a href="#features"> {/* Use standard anchor for in-page scroll */}
+                  <Button size="lg" variant="outline" className="bg-transparent text-white border-white hover:bg-white/20 px-8 py-3 w-full sm:w-auto">
+                    Explore Features
+                  </Button>
+                </a>
+              </div>
+              
+              <div className="hidden lg:block">
+                {/* Smaller YouTube video for desktop only */}
+                <div className="rounded-lg overflow-hidden shadow-lg max-w-md mx-auto">
+                  <iframe 
+                    className="w-full aspect-video"
+                    src="https://www.youtube.com/embed/pcLlwL5sNK0" 
+                    title="YouTube video player" 
+                    frameBorder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                    referrerPolicy="strict-origin-when-cross-origin" 
+                    allowFullScreen
+                  ></iframe>
+                </div>
+              </div>
+            </div>
+            
+            {/* Hero Image/Preview Column */}
+            <div className="lg:w-1/2">
+              <div className="bg-white rounded-xl overflow-hidden shadow-xl">
+                <img 
+                  src="/reading.PNG" 
+                  alt="ESL Lesson Preview" 
+                  className="w-full h-auto rounded-t-xl" 
+                />
+                <div className="p-4 text-gray-800">
+                  <h3 className="text-xl font-semibold text-primary">AI-Generated Lessons in Minutes</h3>
+                  <p className="text-gray-600">Complete lessons with reading, vocabulary, activities, and assessments.</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -146,7 +169,7 @@ export default function LandingPage() {
                   <h3 className="text-xl font-semibold mb-4">Warm-up Activities</h3>
                   <p className="mb-4">Get students engaged from the very start with vocabulary previews and discussion questions to activate prior knowledge.</p>
                   <div className="rounded-lg overflow-hidden border shadow-md">
-                    <img src="/images/warmup.PNG" alt="Warm-up Activities" className="w-full h-auto" />
+                    <img src="/warmup.PNG" alt="Warm-up Activities" className="w-full h-auto" />
                   </div>
                 </TabsContent>
                 
@@ -154,7 +177,7 @@ export default function LandingPage() {
                   <h3 className="text-xl font-semibold mb-4">Reading Text</h3>
                   <p className="mb-4">Engaging, level-appropriate content on interesting topics that captures student interest while introducing key vocabulary.</p>
                   <div className="rounded-lg overflow-hidden border shadow-md">
-                    <img src="/images/reading.PNG" alt="Reading Text" className="w-full h-auto" />
+                    <img src="/reading.PNG" alt="Reading Text" className="w-full h-auto" />
                   </div>
                 </TabsContent>
                 
@@ -162,7 +185,7 @@ export default function LandingPage() {
                   <h3 className="text-xl font-semibold mb-4">Vocabulary Practice</h3>
                   <p className="mb-4">Comprehensive vocabulary cards with definitions, pronunciations, example sentences, and word family connections.</p>
                   <div className="rounded-lg overflow-hidden border shadow-md">
-                    <img src="/images/vocab2.PNG" alt="Vocabulary Practice" className="w-full h-auto" />
+                    <img src="/vocab2.PNG" alt="Vocabulary Practice" className="w-full h-auto" />
                   </div>
                 </TabsContent>
                 
@@ -170,7 +193,7 @@ export default function LandingPage() {
                   <h3 className="text-xl font-semibold mb-4">Comprehension Questions</h3>
                   <p className="mb-4">Multiple-choice questions that check student understanding of the reading text and reinforce key concepts.</p>
                   <div className="rounded-lg overflow-hidden border shadow-md">
-                    <img src="/images/comprehension.PNG" alt="Comprehension Questions" className="w-full h-auto" />
+                    <img src="/comprehension.PNG" alt="Comprehension Questions" className="w-full h-auto" />
                   </div>
                 </TabsContent>
                 
@@ -178,7 +201,7 @@ export default function LandingPage() {
                   <h3 className="text-xl font-semibold mb-4">Sentence Patterns</h3>
                   <p className="mb-4">Build grammar skills with structured sentence patterns that help students understand language functions and structure.</p>
                   <div className="rounded-lg overflow-hidden border shadow-md">
-                    <img src="/images/sentence frames.PNG" alt="Sentence Patterns" className="w-full h-auto" />
+                    <img src="/sentence frames.PNG" alt="Sentence Patterns" className="w-full h-auto" />
                   </div>
                 </TabsContent>
                 
@@ -186,7 +209,7 @@ export default function LandingPage() {
                   <h3 className="text-xl font-semibold mb-4">Fill-in-the-Blanks</h3>
                   <p className="mb-4">Interactive cloze exercises that reinforce vocabulary understanding and contextual word usage.</p>
                   <div className="rounded-lg overflow-hidden border shadow-md">
-                    <img src="/images/cloze.PNG" alt="Fill-in-the-Blanks Exercise" className="w-full h-auto" />
+                    <img src="/cloze.PNG" alt="Fill-in-the-Blanks Exercise" className="w-full h-auto" />
                   </div>
                 </TabsContent>
                 
