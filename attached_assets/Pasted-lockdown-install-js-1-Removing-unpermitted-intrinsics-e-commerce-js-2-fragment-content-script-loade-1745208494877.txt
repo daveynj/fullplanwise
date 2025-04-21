@@ -1,0 +1,138 @@
+lockdown-install.js:1 Removing unpermitted intrinsics
+e-commerce.js:2 fragment content script loaded
+e-commerce.js:2 google content script loaded
+e-commerce.js:2 overlay content script loaded
+e-commerce.js:2 overlay button content script loaded
+e-commerce.js:2 remote fragment content script loaded
+e-commerce.js:2 snippet content script loaded
+e-commerce.js:2 title content script loaded
+e-commerce.js:2 trigger-event content script loaded
+e-commerce.js:2 url content script loaded
+e-commerce.js:2 not checkout page:  https://ee7175b1-ed0f-49d8-a418-d837ab1fe6c4-00-27swo6zpbq2ba.sisko.replit.dev/history
+e-commerce.js:2 navigated to https://ee7175b1-ed0f-49d8-a418-d837ab1fe6c4-00-27swo6zpbq2ba.sisko.replit.dev/history
+chunk-RPCDYKBN.js?v=717e27dc:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+queryClient.ts:57 Making API request to: /api/user
+ Removing unpermitted intrinsics
+queryClient.ts:67 Received response from /api/user with status: 200
+queryClient.ts:57 Making API request to: /api/lessons?page=1&search=&cefrLevel=all&dateFilter=all
+queryClient.ts:57 Making API request to: /api/students
+queryClient.ts:67 Received response from /api/students with status: 200
+lockdown-install.js:1 Removing unpermitted intrinsics
+lockdown-install.js:1 Removing unpermitted intrinsics
+queryClient.ts:67 Received response from /api/lessons?page=1&search=&cefrLevel=all&dateFilter=all with status: 200
+queryClient.ts:57 Making API request to: /api/lessons?page=1&search=&cefrLevel=all&dateFilter=all
+e-commerce.js:2 navigated to https://ee7175b1-ed0f-49d8-a418-d837ab1fe6c4-00-27swo6zpbq2ba.sisko.replit.dev/generate
+content.js:2 Error: <svg> attribute viewBox: Expected number, "0 0 100% 4".
+y @ content.js:2
+queryClient.ts:67 Received response from /api/lessons?page=1&search=&cefrLevel=all&dateFilter=all with status: 200
+queryClient.ts:57 Making API request to: /api/user
+queryClient.ts:67 Received response from /api/user with status: 200
+queryClient.ts:57 Making API request to: /api/lessons/194
+e-commerce.js:2 navigated to https://ee7175b1-ed0f-49d8-a418-d837ab1fe6c4-00-27swo6zpbq2ba.sisko.replit.dev/fullscreen/194
+queryClient.ts:67 Received response from /api/lessons/194 with status: 200
+full-screen-lesson-page.tsx:37 LESSON CONTENT (STRING): {"title":"ESL Lesson","sections":[{"type":"reading","title":"Reading: ESL Lesson","paragraphs":["No reading content available. Please try generating the lesson again."]}],"provider":"qwen"}...
+full-screen-lesson-page.tsx:39 PARSED LESSON CONTENT (FIRST 100 KEYS): Array(3)
+full-screen-lesson-page.tsx:43 SECTIONS TYPES: Array(1)
+full-screen-lesson-page.tsx:48 COMPREHENSION SECTION: Not found
+full-screen-lesson-page.tsx:50 DISCUSSION SECTION: Not found
+lesson-content.tsx:82 Content received in LessonContent component: Object
+lesson-content.tsx:531 SentenceFrames section in final processedContent.sections: undefined
+lesson-content.tsx:552 Setting initial active tab to: reading
+lesson-content.tsx:1437 Original sections: Array(1)
+lesson-content.tsx:1450 ENTIRE LESSON CONTENT: {
+  "title": "ESL Lesson",
+  "sections": [
+    {
+      "type": "reading",
+      "title": "Reading: ESL Lesson",
+      "paragraphs": [
+        "No reading content available. Please try generating the lesson again."
+      ]
+    }
+  ],
+  "provider": "qwen"
+}
+lesson-content.tsx:1459 Section types from content: Array(2)
+lesson-content.tsx:1463 Adding comprehension to content sections
+lesson-content.tsx:1509 Available sections for tabs: Array(3)
+lesson-content.tsx:756 [findSection] Found section for type 'reading': Object
+reading-section.tsx:32 Reading section paragraphs: Array(1)
+lesson-content.tsx:82 Content received in LessonContent component: Object
+lesson-content.tsx:92 Original sections: Array(1)
+lesson-content.tsx:531 SentenceFrames section in final processedContent.sections: undefined
+lesson-content.tsx:1437 Original sections: Array(1)
+lesson-content.tsx:1450 ENTIRE LESSON CONTENT: {
+  "title": "ESL Lesson",
+  "sections": [
+    {
+      "type": "reading",
+      "title": "Reading: ESL Lesson",
+      "paragraphs": [
+        "No reading content available. Please try generating the lesson again."
+      ]
+    }
+  ],
+  "provider": "qwen"
+}
+lesson-content.tsx:1459 Section types from content: Array(2)
+lesson-content.tsx:1463 Adding comprehension to content sections
+lesson-content.tsx:1509 Available sections for tabs: Array(3)
+lesson-content.tsx:756 [findSection] Found section for type 'reading': Object
+reading-section.tsx:32 Reading section paragraphs: Array(1)
+lesson-content.tsx:1437 Original sections: Array(1)
+lesson-content.tsx:1450 ENTIRE LESSON CONTENT: {
+  "title": "ESL Lesson",
+  "sections": [
+    {
+      "type": "reading",
+      "title": "Reading: ESL Lesson",
+      "paragraphs": [
+        "No reading content available. Please try generating the lesson again."
+      ]
+    }
+  ],
+  "provider": "qwen"
+}
+lesson-content.tsx:1459 Section types from content: Array(2)
+lesson-content.tsx:1463 Adding comprehension to content sections
+lesson-content.tsx:1509 Available sections for tabs: Array(3)
+lesson-content.tsx:756 [findSection] Found section for type 'reading': Object
+reading-section.tsx:32 Reading section paragraphs: Array(1)
+194:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+m.stripe.network/inn…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+js.stripe.com/v3/con…ipeController3961:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+js.stripe.com/v3/m-o…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+194:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+m.stripe.network/inn…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+js.stripe.com/v3/con…ipeController3961:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+js.stripe.com/v3/m-o…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+
+                
+          
+          
+          
+         Chrome is moving towards a new experience that allows users to choose to browse without third-party cookies.

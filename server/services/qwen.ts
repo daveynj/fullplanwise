@@ -1129,16 +1129,24 @@ B1 Examples:
       cleanedContent = cleanedContent.replace(/"([^"\\]*(?:\\.[^"\\]*)*)"\s*:\s*"([^"\\]*(?:\\.[^"\\]*)*)"\s*:/g, '"$1": "$2",');
       // Convert "key" : value : (for numbers/booleans) to "key": value,
       cleanedContent = cleanedContent.replace(/"([^"\\]*(?:\\.[^"\\]*)*)"\s*:\s*([\d\.\w]+)\s*:/g, '"$1": $2,');
-       // Convert array items like , "value" : to , "value",
+      // Convert array items like , "value" : to , "value",
       cleanedContent = cleanedContent.replace(/,\s*"([^"\\]*(?:\\.[^"\\]*)*)"\s*:/g, ', "$1",');
       // Convert first array items like [ "value" : to [ "value",
       cleanedContent = cleanedContent.replace(/\[\s*"([^"\\]*(?:\\.[^"\\]*)*)"\s*:/g, '[ "$1",');
-       // Remove trailing commas before closing braces/brackets
+      // Remove trailing commas before closing braces/brackets
       cleanedContent = cleanedContent.replace(/,\s*([}\]])/g, '$1');
       // Ensure object starts correctly after a key
       cleanedContent = cleanedContent.replace(/"([^"\\]*(?:\\.[^"\\]*)*)"\s*:\s*{/g, '"$1": {');
       // Ensure array starts correctly after a key
       cleanedContent = cleanedContent.replace(/"([^"\\]*(?:\\.[^"\\]*)*)"\s*:\s*\[/g, '"$1": [');
+      // Fix quotes inside strings that break JSON parsing
+      cleanedContent = cleanedContent.replace(/(?<=": ".*?)\\?"(?=.*?")/g, '\\"');
+      // Fix missing commas between properties
+      cleanedContent = cleanedContent.replace(/}(\s*){/g, '},\n{');
+      // Fix missing commas between array items
+      cleanedContent = cleanedContent.replace(/}(\s*)\[/g, '},\n[');
+      // Fix duplicate commas
+      cleanedContent = cleanedContent.replace(/,\s*,/g, ',');
       
       // Remove potential garbage/incomplete structures at the end
       // Find the last valid closing brace or bracket
@@ -1179,16 +1187,61 @@ B1 Examples:
           cleanedContent = cleanedContent.substring(firstBrace, lastBraceIdx + 1);
           console.log("Extracted content between first and last brace.")
         } else {
-           console.log("Cannot fix start/end braces.");
-           return null;
+          console.log("Cannot fix start/end braces.");
+          return null;
         }
       }
       
-       // Try parsing the regex-fixed content
-      const parsedJson = JSON.parse(cleanedContent);
-      console.log("Successfully parsed Qwen content after regex fixing.");
-      return parsedJson;
-
+      // Try parsing the regex-fixed content
+      try {
+        const parsedJson = JSON.parse(cleanedContent);
+        console.log("Successfully parsed Qwen content after regex fixing.");
+        return parsedJson;
+      } catch (parseError) {
+        // Extra recovery attempt: try to recover partial content
+        console.log("Standard JSON parse failed, attempting to extract valid structure manually");
+        
+        // Try to reconstruct basic lesson structure from the content
+        const titleMatch = cleanedContent.match(/"title":\s*"([^"]+)"/);
+        const levelMatch = cleanedContent.match(/"level":\s*"([^"]+)"/);
+        
+        if (titleMatch) {
+          console.log("Found title in malformed content, constructing emergency fallback structure");
+          // Create a minimal valid structure with what we can extract
+          const emergencyStructure = {
+            title: titleMatch[1] || "Recovered Lesson",
+            sections: [
+              {
+                type: "reading",
+                title: "Reading: " + (titleMatch[1] || "Recovered Content"),
+                paragraphs: [
+                  "Note: This is a recovered lesson. The original content couldn't be fully parsed.",
+                  "Please try again with a different topic or contact support if this issue persists."
+                ]
+              }
+            ]
+          };
+          
+          // Try to extract any paragraphs we can find
+          const paragraphMatches = cleanedContent.match(/"paragraphs":\s*\[(.*?)\]/gs);
+          if (paragraphMatches && paragraphMatches.length > 0) {
+            try {
+              // Extract paragraphs from the first match
+              const paragraphsJson = paragraphMatches[0].replace(/"paragraphs":\s*/, '');
+              const paragraphs = JSON.parse(paragraphsJson);
+              if (Array.isArray(paragraphs) && paragraphs.length > 0) {
+                emergencyStructure.sections[0].paragraphs = paragraphs;
+              }
+            } catch (e) {
+              console.log("Could not extract paragraphs from malformed content");
+            }
+          }
+          
+          return emergencyStructure;
+        }
+        
+        return null;
+      }
     } catch (error) {
       console.error("Error during robust Qwen parsing attempt:", error);
       console.log("Failed content sample (start):", content.substring(0, 200));
