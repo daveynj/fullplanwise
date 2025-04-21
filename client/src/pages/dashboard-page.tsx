@@ -46,21 +46,21 @@ export default function DashboardPage() {
     { 
       title: "Total Lessons", 
       value: totalLessons, 
-      icon: <BookOpen className="h-8 w-8 text-primary" />, 
+      icon: <BookOpen className="h-10 w-10 text-primary" />, 
       trend: "+5% from last week",
       color: "bg-blue-50" 
     },
     { 
       title: "Students", 
       value: students.length, 
-      icon: <Users className="h-8 w-8 text-[#FFB400]" />, 
+      icon: <Users className="h-10 w-10 text-[#FFB400]" />, 
       trend: "No change",
       color: "bg-amber-50" 
     },
     { 
       title: "Credits", 
       value: user?.credits || 0, 
-      icon: <Clock className="h-8 w-8 text-[#28A745]" />, 
+      icon: <Clock className="h-10 w-10 text-[#28A745]" />, 
       trend: user?.credits ? "Available for lessons" : "Purchase credits",
       color: "bg-green-50" 
     },
@@ -77,8 +77,8 @@ export default function DashboardPage() {
           <div className="max-w-7xl mx-auto">
             {/* Welcome section */}
             <div className="mb-8">
-              <h1 className="text-2xl md:text-3xl font-nunito font-bold mb-2">Welcome, {user?.fullName}!</h1>
-              <p className="text-gray-600">Here's what's happening with your PLAN WISE ESL teaching</p>
+              <h1 className="text-3xl md:text-4xl font-nunito font-bold mb-3">Welcome, {user?.fullName}!</h1>
+              <p className="text-gray-700 text-xl font-medium">Here's what's happening with your PLAN WISE ESL teaching</p>
             </div>
             
             {/* Onboarding Widget - Only shown when user has 0 lessons */}
@@ -173,9 +173,9 @@ export default function DashboardPage() {
                         {stat.icon}
                       </div>
                       <div>
-                        <p className="text-gray-500 text-sm">{stat.title}</p>
-                        <h3 className="text-2xl font-nunito font-bold">{stat.value}</h3>
-                        <p className="text-xs text-gray-500">{stat.trend}</p>
+                        <p className="text-gray-600 text-lg font-medium">{stat.title}</p>
+                        <h3 className="text-3xl font-nunito font-bold my-1">{stat.value}</h3>
+                        <p className="text-sm text-gray-600">{stat.trend}</p>
                       </div>
                     </div>
                   </CardContent>
@@ -184,49 +184,49 @@ export default function DashboardPage() {
             </div>
             
             {/* Quick Actions */}
-            <div className="mb-8">
-              <h2 className="text-xl font-nunito font-semibold mb-4">Quick Actions</h2>
+            <div className="mb-10">
+              <h2 className="text-2xl font-nunito font-bold mb-6">Quick Actions</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <Link href="/generate">
                   <Button 
-                    className={`w-full ${totalLessons === 0 ? 'bg-green-600 hover:bg-green-700 shadow-lg' : 'bg-primary hover:bg-primary/90'} h-auto py-4 text-center relative`}
+                    className={`w-full ${totalLessons === 0 ? 'bg-green-600 hover:bg-green-700 shadow-lg' : 'bg-primary hover:bg-primary/90'} h-auto py-5 text-center relative`}
                   >
                     {totalLessons === 0 && (
-                      <div className="absolute -top-2 -right-2 bg-yellow-500 text-white text-xs px-2 py-1 rounded-full">
+                      <div className="absolute -top-2 -right-2 bg-yellow-500 text-white text-sm px-2 py-1 rounded-full font-bold">
                         Start Here!
                       </div>
                     )}
                     <div>
-                      <p className="font-semibold">
+                      <p className="font-bold text-lg">
                         {totalLessons === 0 ? 'Create Your First Lesson' : 'Generate New Lesson'}
                       </p>
-                      <p className="text-xs text-white/80 mt-1">
+                      <p className="text-sm text-white/90 mt-1">
                         {totalLessons === 0 ? 'Ready in about 2-3 minutes' : 'Create a lesson plan'}
                       </p>
                     </div>
                   </Button>
                 </Link>
                 <Link href="/students">
-                  <Button variant="outline" className="w-full h-auto py-4 text-center">
+                  <Button variant="outline" className="w-full h-auto py-5 text-center">
                     <div>
-                      <p className="font-semibold">Add Student</p>
-                      <p className="text-xs text-gray-500 mt-1">Create a student profile</p>
+                      <p className="font-bold text-lg">Add Student</p>
+                      <p className="text-sm text-gray-600 mt-1">Create a student profile</p>
                     </div>
                   </Button>
                 </Link>
                 <Link href="/buy-credits">
-                  <Button variant="outline" className="w-full h-auto py-4 text-center">
+                  <Button variant="outline" className="w-full h-auto py-5 text-center">
                     <div>
-                      <p className="font-semibold">Purchase Credits</p>
-                      <p className="text-xs text-gray-500 mt-1">Add more lesson credits</p>
+                      <p className="font-bold text-lg">Purchase Credits</p>
+                      <p className="text-sm text-gray-600 mt-1">Add more lesson credits</p>
                     </div>
                   </Button>
                 </Link>
                 <Link href="/history">
-                  <Button variant="outline" className="w-full h-auto py-4 text-center">
+                  <Button variant="outline" className="w-full h-auto py-5 text-center">
                     <div>
-                      <p className="font-semibold">Lesson History</p>
-                      <p className="text-xs text-gray-500 mt-1">View past lessons</p>
+                      <p className="font-bold text-lg">Lesson History</p>
+                      <p className="text-sm text-gray-600 mt-1">View past lessons</p>
                     </div>
                   </Button>
                 </Link>
@@ -282,19 +282,19 @@ export default function DashboardPage() {
               {/* Recent Lessons */}
               <Card className="col-span-1">
                 <CardHeader>
-                  <CardTitle className="font-nunito">Recent Lessons</CardTitle>
+                  <CardTitle className="font-nunito text-2xl font-bold">Recent Lessons</CardTitle>
                 </CardHeader>
                 <CardContent>
                   {recentLessons.length > 0 ? (
-                    <div className="space-y-4">
+                    <div className="space-y-5">
                       {recentLessons.map((lesson, idx) => (
-                        <div key={idx} className="flex items-center p-3 bg-gray-50 rounded-lg">
-                          <div className="bg-primary/10 p-2 rounded-lg mr-3">
-                            <BookOpen className="h-5 w-5 text-primary" />
+                        <div key={idx} className="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                          <div className="bg-primary/10 p-3 rounded-lg mr-4">
+                            <BookOpen className="h-6 w-6 text-primary" />
                           </div>
                           <div className="flex-1">
-                            <h4 className="font-semibold">{lesson.title}</h4>
-                            <p className="text-xs text-gray-500">
+                            <h4 className="font-bold text-lg">{lesson.title}</h4>
+                            <p className="text-sm text-gray-600 font-medium">
                               {new Date(lesson.createdAt).toLocaleDateString()}
                               {lesson.studentId && ` • Student #${lesson.studentId}`}
                             </p>
@@ -303,11 +303,11 @@ export default function DashboardPage() {
                       ))}
                     </div>
                   ) : (
-                    <div className="text-center py-8">
-                      <BookOpen className="h-10 w-10 text-gray-300 mx-auto mb-2" />
-                      <p className="text-gray-500">No lessons yet</p>
+                    <div className="text-center py-10">
+                      <BookOpen className="h-14 w-14 text-gray-300 mx-auto mb-3" />
+                      <p className="text-gray-600 text-lg font-medium mb-2">No lessons yet</p>
                       <Link href="/generate">
-                        <Button className="mt-3 bg-primary hover:bg-primary/90">
+                        <Button className="mt-4 bg-primary hover:bg-primary/90 px-6 py-3 text-lg font-bold">
                           Create Your First Lesson
                         </Button>
                       </Link>
@@ -319,19 +319,19 @@ export default function DashboardPage() {
               {/* Students */}
               <Card className="col-span-1">
                 <CardHeader>
-                  <CardTitle className="font-nunito">Your Students</CardTitle>
+                  <CardTitle className="font-nunito text-2xl font-bold">Your Students</CardTitle>
                 </CardHeader>
                 <CardContent>
                   {students.length > 0 ? (
-                    <div className="space-y-4">
+                    <div className="space-y-5">
                       {students.slice(0, 5).map((student: Student, idx: number) => (
-                        <div key={idx} className="flex items-center p-3 bg-gray-50 rounded-lg">
-                          <div className="bg-amber-100 p-2 rounded-lg mr-3">
-                            <Users className="h-5 w-5 text-amber-500" />
+                        <div key={idx} className="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                          <div className="bg-amber-100 p-3 rounded-lg mr-4">
+                            <Users className="h-6 w-6 text-amber-500" />
                           </div>
                           <div className="flex-1">
-                            <h4 className="font-semibold">{student.name}</h4>
-                            <p className="text-xs text-gray-500">
+                            <h4 className="font-bold text-lg">{student.name}</h4>
+                            <p className="text-sm text-gray-600 font-medium">
                               Level: {student.cefrLevel}
                               {student.email && ` • ${student.email}`}
                             </p>
