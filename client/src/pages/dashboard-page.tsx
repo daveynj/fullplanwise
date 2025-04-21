@@ -189,7 +189,7 @@ export default function DashboardPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <Link href="/generate">
                   <Button 
-                    className={`w-full ${totalLessons === 0 ? 'bg-green-600 hover:bg-green-700 shadow-lg' : 'bg-primary hover:bg-primary/90'} h-auto py-4 text-left flex justify-between items-center relative`}
+                    className={`w-full ${totalLessons === 0 ? 'bg-green-600 hover:bg-green-700 shadow-lg' : 'bg-primary hover:bg-primary/90'} h-auto py-4 text-center relative`}
                   >
                     {totalLessons === 0 && (
                       <div className="absolute -top-2 -right-2 bg-yellow-500 text-white text-xs px-2 py-1 rounded-full">
@@ -197,41 +197,37 @@ export default function DashboardPage() {
                       </div>
                     )}
                     <div>
-                      <p className="font-semibold text-left">
+                      <p className="font-semibold">
                         {totalLessons === 0 ? 'Create Your First Lesson' : 'Generate New Lesson'}
                       </p>
                       <p className="text-xs text-white/80 mt-1">
                         {totalLessons === 0 ? 'Takes only 60 seconds!' : 'Create a lesson plan'}
                       </p>
                     </div>
-                    <ArrowRight className="h-5 w-5" />
                   </Button>
                 </Link>
                 <Link href="/students">
-                  <Button variant="outline" className="w-full h-auto py-4 text-left flex justify-between items-center">
+                  <Button variant="outline" className="w-full h-auto py-4 text-center">
                     <div>
-                      <p className="font-semibold text-left">Add Student</p>
+                      <p className="font-semibold">Add Student</p>
                       <p className="text-xs text-gray-500 mt-1">Create a student profile</p>
                     </div>
-                    <ArrowRight className="h-5 w-5" />
                   </Button>
                 </Link>
                 <Link href="/buy-credits">
-                  <Button variant="outline" className="w-full h-auto py-4 text-left flex justify-between items-center">
+                  <Button variant="outline" className="w-full h-auto py-4 text-center">
                     <div>
-                      <p className="font-semibold text-left">Purchase Credits</p>
+                      <p className="font-semibold">Purchase Credits</p>
                       <p className="text-xs text-gray-500 mt-1">Add more lesson credits</p>
                     </div>
-                    <ArrowRight className="h-5 w-5" />
                   </Button>
                 </Link>
                 <Link href="/history">
-                  <Button variant="outline" className="w-full h-auto py-4 text-left flex justify-between items-center">
+                  <Button variant="outline" className="w-full h-auto py-4 text-center">
                     <div>
-                      <p className="font-semibold text-left">Lesson History</p>
+                      <p className="font-semibold">Lesson History</p>
                       <p className="text-xs text-gray-500 mt-1">View past lessons</p>
                     </div>
-                    <ArrowRight className="h-5 w-5" />
                   </Button>
                 </Link>
               </div>
