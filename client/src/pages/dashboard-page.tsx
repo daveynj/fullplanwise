@@ -3,10 +3,14 @@ import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { BookOpen, Users, Clock, BarChart2, ArrowRight } from "lucide-react";
+import { 
+  BookOpen, Users, Clock, BarChart2, ArrowRight, 
+  CheckCircle2, Lightbulb, PenSquare, Award
+} from "lucide-react";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Lesson, Student } from "@shared/schema";
+import { useState } from "react";
 
 // Define interface for paginated lessons
 interface PaginatedLessons {
@@ -16,6 +20,7 @@ interface PaginatedLessons {
 
 export default function DashboardPage() {
   const { user } = useAuth();
+  const [showSteps, setShowSteps] = useState(false);
   
   // Fetch students for quick access
   const { data: students = [] } = useQuery<Student[]>({
@@ -76,6 +81,88 @@ export default function DashboardPage() {
               <p className="text-gray-600">Here's what's happening with your PLAN WISE ESL teaching</p>
             </div>
             
+            {/* Onboarding Widget - Only shown when user has 0 lessons */}
+            {totalLessons === 0 && (
+              <Card className="mb-8 border-2 border-primary/30 bg-primary/5 shadow-lg">
+                <CardContent className="p-6">
+                  <div className="flex flex-col md:flex-row items-center gap-6">
+                    <div className="shrink-0 bg-primary/10 p-4 rounded-full">
+                      <BookOpen className="h-12 w-12 text-primary" />
+                    </div>
+                    <div className="flex-1">
+                      <h2 className="text-xl font-nunito font-bold mb-2">Get Started with Your First Lesson</h2>
+                      <p className="text-gray-600 mb-4">
+                        Create your first AI-powered ESL lesson in just a few simple steps. Our system will generate a complete lesson with warm-up activities, reading materials, vocabulary, and more!
+                      </p>
+                      <div className="flex flex-wrap gap-4">
+                        <Link href="/generate">
+                          <Button size="lg" className="bg-primary hover:bg-primary/90">
+                            Create My First Lesson
+                          </Button>
+                        </Link>
+                        <Button 
+                          variant="outline" 
+                          onClick={() => setShowSteps(!showSteps)}
+                          className="flex items-center"
+                        >
+                          {showSteps ? 'Hide Steps' : 'Show How It Works'} 
+                          {showSteps ? null : <ArrowRight className="ml-1 h-4 w-4" />}
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Step-by-step guide - toggleable */}
+                  {showSteps && (
+                    <div className="mt-6 pt-6 border-t border-gray-200">
+                      <h3 className="font-nunito font-bold text-lg mb-4">How to Create Your First Lesson:</h3>
+                      <div className="space-y-4">
+                        <div className="flex gap-4 items-start">
+                          <div className="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center shrink-0">1</div>
+                          <div>
+                            <h4 className="font-semibold text-gray-900">Choose a Topic</h4>
+                            <p className="text-gray-600">Enter any topic you're interested in teaching. For example: "Environmental Conservation" or "Food and Culture".</p>
+                          </div>
+                        </div>
+                        
+                        <div className="flex gap-4 items-start">
+                          <div className="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center shrink-0">2</div>
+                          <div>
+                            <h4 className="font-semibold text-gray-900">Select Proficiency Level</h4>
+                            <p className="text-gray-600">Choose the CEFR level that matches your students' ability (A1-C2).</p>
+                          </div>
+                        </div>
+                        
+                        <div className="flex gap-4 items-start">
+                          <div className="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center shrink-0">3</div>
+                          <div>
+                            <h4 className="font-semibold text-gray-900">Click Generate</h4>
+                            <p className="text-gray-600">Our AI will create a complete lesson in less than a minute. You can use it immediately or make adjustments.</p>
+                          </div>
+                        </div>
+                        
+                        <div className="flex gap-4 items-start">
+                          <div className="bg-green-600 text-white rounded-full w-8 h-8 flex items-center justify-center shrink-0"><CheckCircle2 className="h-5 w-5" /></div>
+                          <div>
+                            <h4 className="font-semibold text-gray-900">That's it! Your lesson is ready to use</h4>
+                            <p className="text-gray-600">All lessons include warm-up activities, vocabulary, reading materials, comprehension questions, and more!</p>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="mt-6 flex justify-center">
+                        <Link href="/generate">
+                          <Button className="bg-green-600 hover:bg-green-700">
+                            Start Creating Now
+                          </Button>
+                        </Link>
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+            
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
               {stats.map((stat, index) => (
@@ -101,10 +188,21 @@ export default function DashboardPage() {
               <h2 className="text-xl font-nunito font-semibold mb-4">Quick Actions</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <Link href="/generate">
-                  <Button className="w-full bg-primary hover:bg-primary/90 h-auto py-4 text-left flex justify-between items-center">
+                  <Button 
+                    className={`w-full ${totalLessons === 0 ? 'bg-green-600 hover:bg-green-700 shadow-lg' : 'bg-primary hover:bg-primary/90'} h-auto py-4 text-left flex justify-between items-center relative`}
+                  >
+                    {totalLessons === 0 && (
+                      <div className="absolute -top-2 -right-2 bg-yellow-500 text-white text-xs px-2 py-1 rounded-full">
+                        Start Here!
+                      </div>
+                    )}
                     <div>
-                      <p className="font-semibold text-left">Generate New Lesson</p>
-                      <p className="text-xs text-white/80 mt-1">Create a lesson plan</p>
+                      <p className="font-semibold text-left">
+                        {totalLessons === 0 ? 'Create Your First Lesson' : 'Generate New Lesson'}
+                      </p>
+                      <p className="text-xs text-white/80 mt-1">
+                        {totalLessons === 0 ? 'Takes only 60 seconds!' : 'Create a lesson plan'}
+                      </p>
                     </div>
                     <ArrowRight className="h-5 w-5" />
                   </Button>
@@ -138,6 +236,50 @@ export default function DashboardPage() {
                 </Link>
               </div>
             </div>
+            
+            {/* Feature Highlights - Only shown for users with 0 lessons */}
+            {totalLessons === 0 && (
+              <div className="mb-8">
+                <h2 className="text-xl font-nunito font-semibold mb-4">What You Can Do with PLAN WISE ESL</h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <Card className="bg-gradient-to-br from-blue-50 to-blue-100">
+                    <CardContent className="p-6">
+                      <div className="flex flex-col items-center text-center">
+                        <div className="bg-blue-100 p-3 rounded-full mb-4">
+                          <Lightbulb className="h-8 w-8 text-blue-600" />
+                        </div>
+                        <h3 className="font-nunito font-bold text-lg mb-2">Complete AI-Generated Lessons</h3>
+                        <p className="text-gray-700">Get full lessons including warm-up activities, vocabulary practice, reading comprehension, and discussion questions.</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card className="bg-gradient-to-br from-green-50 to-green-100">
+                    <CardContent className="p-6">
+                      <div className="flex flex-col items-center text-center">
+                        <div className="bg-green-100 p-3 rounded-full mb-4">
+                          <PenSquare className="h-8 w-8 text-green-600" />
+                        </div>
+                        <h3 className="font-nunito font-bold text-lg mb-2">Customized for Any Level</h3>
+                        <p className="text-gray-700">Choose from CEFR levels A1 to C2 to match your students' proficiency with appropriate vocabulary and grammar.</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card className="bg-gradient-to-br from-purple-50 to-purple-100">
+                    <CardContent className="p-6">
+                      <div className="flex flex-col items-center text-center">
+                        <div className="bg-purple-100 p-3 rounded-full mb-4">
+                          <Award className="h-8 w-8 text-purple-600" />
+                        </div>
+                        <h3 className="font-nunito font-bold text-lg mb-2">Ready-to-Teach Format</h3>
+                        <p className="text-gray-700">All lessons come in a clear, structured format that you can use immediately in your classroom with minimal preparation.</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+            )}
             
             {/* Recent Activity */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
