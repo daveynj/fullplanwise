@@ -217,7 +217,7 @@ export default function LandingPage() {
                   <h3 className="text-xl font-semibold mb-4">Sentence Unscramble</h3>
                   <p className="mb-4">Drag-and-drop activities that develop sentence structure understanding through word ordering exercises.</p>
                   <div className="rounded-lg overflow-hidden border shadow-md">
-                    <img src="/images/unscrmble.PNG" alt="Sentence Unscramble Activity" className="w-full h-auto" />
+                    <img src="/unscrmble.PNG" alt="Sentence Unscramble Activity" className="w-full h-auto" />
                   </div>
                 </TabsContent>
                 
@@ -225,7 +225,7 @@ export default function LandingPage() {
                   <h3 className="text-xl font-semibold mb-4">Discussion Questions</h3>
                   <p className="mb-4">Thought-provoking questions with contextual prompts that encourage critical thinking and conversational practice.</p>
                   <div className="rounded-lg overflow-hidden border shadow-md">
-                    <img src="/images/discussion questions.PNG" alt="Discussion Questions" className="w-full h-auto" />
+                    <img src="/discussion questions.PNG" alt="Discussion Questions" className="w-full h-auto" />
                   </div>
                 </TabsContent>
                 
@@ -233,7 +233,7 @@ export default function LandingPage() {
                   <h3 className="text-xl font-semibold mb-4">Knowledge Check Quiz</h3>
                   <p className="mb-4">End-of-lesson assessments to gauge student understanding and retention of key lesson concepts.</p>
                   <div className="rounded-lg overflow-hidden border shadow-md">
-                    <img src="/images/quiz.PNG" alt="Knowledge Check Quiz" className="w-full h-auto" />
+                    <img src="/quiz.PNG" alt="Knowledge Check Quiz" className="w-full h-auto" />
                   </div>
                 </TabsContent>
               </div>
