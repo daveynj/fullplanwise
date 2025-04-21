@@ -115,44 +115,46 @@ export default function DashboardPage() {
                   {/* Step-by-step guide - toggleable */}
                   {showSteps && (
                     <div className="mt-6 pt-6 border-t border-gray-200">
-                      <h3 className="font-nunito font-bold text-lg mb-4">How to Create Your First Lesson:</h3>
-                      <div className="space-y-4">
-                        <div className="flex gap-4 items-start">
-                          <div className="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center shrink-0">1</div>
+                      <h3 className="font-nunito font-bold text-2xl mb-6">How to Create Your First Lesson:</h3>
+                      <div className="space-y-6">
+                        <div className="flex gap-5 items-start">
+                          <div className="bg-primary text-white rounded-full w-10 h-10 flex items-center justify-center shrink-0 text-lg font-bold">1</div>
                           <div>
-                            <h4 className="font-semibold text-gray-900">Choose a Topic</h4>
-                            <p className="text-gray-600">Enter any topic you're interested in teaching. For example: "Environmental Conservation" or "Food and Culture".</p>
+                            <h4 className="font-bold text-xl text-gray-900 mb-1">Choose a Topic</h4>
+                            <p className="text-gray-700 text-lg">Enter any topic you're interested in teaching. For example: "Environmental Conservation" or "Food and Culture".</p>
                           </div>
                         </div>
                         
-                        <div className="flex gap-4 items-start">
-                          <div className="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center shrink-0">2</div>
+                        <div className="flex gap-5 items-start">
+                          <div className="bg-primary text-white rounded-full w-10 h-10 flex items-center justify-center shrink-0 text-lg font-bold">2</div>
                           <div>
-                            <h4 className="font-semibold text-gray-900">Select Proficiency Level</h4>
-                            <p className="text-gray-600">Choose the CEFR level that matches your students' ability (A1-C2).</p>
+                            <h4 className="font-bold text-xl text-gray-900 mb-1">Select Proficiency Level</h4>
+                            <p className="text-gray-700 text-lg">Choose the CEFR level that matches your students' ability (A1-C2).</p>
                           </div>
                         </div>
                         
-                        <div className="flex gap-4 items-start">
-                          <div className="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center shrink-0">3</div>
+                        <div className="flex gap-5 items-start">
+                          <div className="bg-primary text-white rounded-full w-10 h-10 flex items-center justify-center shrink-0 text-lg font-bold">3</div>
                           <div>
-                            <h4 className="font-semibold text-gray-900">Click Generate</h4>
-                            <p className="text-gray-600">Our AI will create a complete lesson in 2-3 minutes. You can use it immediately or make adjustments.</p>
+                            <h4 className="font-bold text-xl text-gray-900 mb-1">Click Generate</h4>
+                            <p className="text-gray-700 text-lg">Our AI will create a complete lesson in 2-3 minutes. You can use it immediately or make adjustments.</p>
                           </div>
                         </div>
                         
-                        <div className="flex gap-4 items-start">
-                          <div className="bg-green-600 text-white rounded-full w-8 h-8 flex items-center justify-center shrink-0"><CheckCircle2 className="h-5 w-5" /></div>
+                        <div className="flex gap-5 items-start">
+                          <div className="bg-green-600 text-white rounded-full w-10 h-10 flex items-center justify-center shrink-0">
+                            <CheckCircle2 className="h-6 w-6" />
+                          </div>
                           <div>
-                            <h4 className="font-semibold text-gray-900">That's it! Your lesson is ready to use</h4>
-                            <p className="text-gray-600">All lessons include warm-up activities, vocabulary, reading materials, comprehension questions, and more!</p>
+                            <h4 className="font-bold text-xl text-gray-900 mb-1">That's it! Your lesson is ready to use</h4>
+                            <p className="text-gray-700 text-lg">All lessons include warm-up activities, vocabulary, reading materials, comprehension questions, and more!</p>
                           </div>
                         </div>
                       </div>
                       
-                      <div className="mt-6 flex justify-center">
+                      <div className="mt-8 flex justify-center">
                         <Link href="/generate">
-                          <Button className="bg-green-600 hover:bg-green-700">
+                          <Button className="bg-green-600 hover:bg-green-700 px-8 py-6 text-lg font-bold">
                             Start Creating Now
                           </Button>
                         </Link>
@@ -235,41 +237,41 @@ export default function DashboardPage() {
             
             {/* Feature Highlights - Only shown for users with 0 lessons */}
             {totalLessons === 0 && (
-              <div className="mb-8">
-                <h2 className="text-xl font-nunito font-semibold mb-4">What You Can Do with PLAN WISE ESL</h2>
+              <div className="mb-10">
+                <h2 className="text-2xl font-nunito font-bold mb-6">What You Can Do with PLAN WISE ESL</h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <Card className="bg-gradient-to-br from-blue-50 to-blue-100">
-                    <CardContent className="p-6">
+                  <Card className="bg-gradient-to-br from-blue-50 to-blue-100 shadow-md">
+                    <CardContent className="p-8">
                       <div className="flex flex-col items-center text-center">
-                        <div className="bg-blue-100 p-3 rounded-full mb-4">
-                          <Lightbulb className="h-8 w-8 text-blue-600" />
+                        <div className="bg-blue-100 p-4 rounded-full mb-5">
+                          <Lightbulb className="h-10 w-10 text-blue-600" />
                         </div>
-                        <h3 className="font-nunito font-bold text-lg mb-2">Complete AI-Generated Lessons</h3>
-                        <p className="text-gray-700">Get full lessons including warm-up activities, vocabulary practice, reading comprehension, and discussion questions.</p>
+                        <h3 className="font-nunito font-bold text-xl mb-3">Complete AI-Generated Lessons</h3>
+                        <p className="text-gray-700 text-lg">Get full lessons including warm-up activities, vocabulary practice, reading comprehension, and discussion questions.</p>
                       </div>
                     </CardContent>
                   </Card>
                   
-                  <Card className="bg-gradient-to-br from-green-50 to-green-100">
-                    <CardContent className="p-6">
+                  <Card className="bg-gradient-to-br from-green-50 to-green-100 shadow-md">
+                    <CardContent className="p-8">
                       <div className="flex flex-col items-center text-center">
-                        <div className="bg-green-100 p-3 rounded-full mb-4">
-                          <PenSquare className="h-8 w-8 text-green-600" />
+                        <div className="bg-green-100 p-4 rounded-full mb-5">
+                          <PenSquare className="h-10 w-10 text-green-600" />
                         </div>
-                        <h3 className="font-nunito font-bold text-lg mb-2">Customized for Any Level</h3>
-                        <p className="text-gray-700">Choose from CEFR levels A1 to C2 to match your students' proficiency with appropriate vocabulary and grammar.</p>
+                        <h3 className="font-nunito font-bold text-xl mb-3">Customized for Any Level</h3>
+                        <p className="text-gray-700 text-lg">Choose from CEFR levels A1 to C2 to match your students' proficiency with appropriate vocabulary and grammar.</p>
                       </div>
                     </CardContent>
                   </Card>
                   
-                  <Card className="bg-gradient-to-br from-purple-50 to-purple-100">
-                    <CardContent className="p-6">
+                  <Card className="bg-gradient-to-br from-purple-50 to-purple-100 shadow-md">
+                    <CardContent className="p-8">
                       <div className="flex flex-col items-center text-center">
-                        <div className="bg-purple-100 p-3 rounded-full mb-4">
-                          <Award className="h-8 w-8 text-purple-600" />
+                        <div className="bg-purple-100 p-4 rounded-full mb-5">
+                          <Award className="h-10 w-10 text-purple-600" />
                         </div>
-                        <h3 className="font-nunito font-bold text-lg mb-2">Ready-to-Teach Format</h3>
-                        <p className="text-gray-700">All lessons come in a clear, structured format that you can use immediately in your classroom with minimal preparation.</p>
+                        <h3 className="font-nunito font-bold text-xl mb-3">Ready-to-Teach Format</h3>
+                        <p className="text-gray-700 text-lg">All lessons come in a clear, structured format that you can use immediately in your classroom with minimal preparation.</p>
                       </div>
                     </CardContent>
                   </Card>
@@ -340,11 +342,11 @@ export default function DashboardPage() {
                       ))}
                     </div>
                   ) : (
-                    <div className="text-center py-8">
-                      <Users className="h-10 w-10 text-gray-300 mx-auto mb-2" />
-                      <p className="text-gray-500">No students added yet</p>
+                    <div className="text-center py-10">
+                      <Users className="h-14 w-14 text-gray-300 mx-auto mb-3" />
+                      <p className="text-gray-600 text-lg font-medium mb-2">No students added yet</p>
                       <Link href="/students">
-                        <Button className="mt-3 bg-primary hover:bg-primary/90">
+                        <Button className="mt-4 bg-primary hover:bg-primary/90 px-6 py-3 text-lg font-bold">
                           Add Your First Student
                         </Button>
                       </Link>
