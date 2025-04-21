@@ -1524,7 +1524,7 @@ export function LessonContent({ content }: LessonContentProps) {
   };
   
   return (
-    <div className="lesson-content max-w-7xl mx-auto"> {/* Increased max-width */}
+    <div className="lesson-content w-[95%] max-w-[1800px] mx-auto"> {/* Increased width for better screen space utilization */}
       {/* Lesson header */}
       <div className="mb-8">
         <h1 className="text-2xl md:text-3xl font-bold mb-2">{parsedContent.title}</h1>
@@ -1573,7 +1573,7 @@ export function LessonContent({ content }: LessonContentProps) {
           </TabsList>
         
         {/* Section content */}
-        <div className="p-1 text-xl leading-relaxed"> {/* Changed text-lg to text-xl */}
+        <div className="p-1 text-2xl leading-relaxed"> {/* Increased text size for better readability */}
           <TabsContent value="warmup" className="m-0">
             <WarmupSection />
           </TabsContent>
