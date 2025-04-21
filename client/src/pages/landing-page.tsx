@@ -20,7 +20,8 @@ import {
 // Import icons
 import { 
   Clock, Target, MonitorSmartphone, BookOpen, MessageSquare, 
-  Lightbulb, CheckCircle, Sparkles, Layers, Puzzle, Database 
+  Lightbulb, CheckCircle, Sparkles, Layers, Puzzle, Database,
+  Lock as LockIcon
 } from 'lucide-react';
 
 // Screenshots are served from public directory
@@ -56,15 +57,37 @@ export default function LandingPage() {
               <h1 className="text-4xl md:text-5xl font-nunito font-bold mb-4">
                 Instantly Create Engaging ESL Lessons with AI
               </h1>
-              <p className="text-xl md:text-2xl mb-8 opacity-90">
+              <p className="text-xl md:text-2xl mb-6 opacity-90">
                 Save Hours on Lesson Planning and Focus on Teaching Your Online ESL Students More Effectively.
               </p>
+              
+              {/* Quick benefit list */}
+              <ul className="mb-8 text-lg space-y-2 mx-auto lg:mx-0 max-w-md">
+                <li className="flex items-center">
+                  <CheckCircle className="h-5 w-5 mr-2 text-accent" /> 
+                  <span>Create complete CEFR-aligned lessons in 3 minutes</span>
+                </li>
+                <li className="flex items-center">
+                  <CheckCircle className="h-5 w-5 mr-2 text-accent" /> 
+                  <span>Increase your teaching hours (and income)</span>
+                </li>
+                <li className="flex items-center">
+                  <CheckCircle className="h-5 w-5 mr-2 text-accent" /> 
+                  <span>No more late nights preparing materials</span>
+                </li>
+              </ul>
               <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-4 mb-8">
-                <Link href="/auth?register=true">
-                  <Button size="lg" className="bg-accent hover:bg-accent/90 text-primary font-semibold px-8 py-3 w-full sm:w-auto">
-                    Start Your Free Trial
-                  </Button>
-                </Link>
+                <div className="flex flex-col items-center lg:items-start">
+                  <Link href="/auth?register=true">
+                    <Button size="lg" className="bg-accent hover:bg-accent/90 text-primary font-semibold px-8 py-3 w-full sm:w-auto">
+                      Start Your Free Trial
+                    </Button>
+                  </Link>
+                  <div className="flex items-center mt-2 text-white/90 text-sm">
+                    <LockIcon className="h-3 w-3 mr-1" />
+                    <span>No credit card required • 5 free lessons</span>
+                  </div>
+                </div>
                 <a href="#features"> {/* Use standard anchor for in-page scroll */}
                   <Button size="lg" variant="outline" className="bg-transparent text-white border-white hover:bg-white/20 px-8 py-3 w-full sm:w-auto">
                     Explore Features
@@ -252,12 +275,64 @@ export default function LandingPage() {
       
       {/* Problem/Solution Section */}
       <section className="py-16 px-6 bg-gray-light">
-        <div className="container mx-auto max-w-4xl text-center">
-          <h2 className="text-3xl font-nunito font-bold mb-4 text-gray-800">Tired of Spending Hours on Lesson Prep?</h2>
-          <p className="text-lg text-gray-600 mb-8">
+        <div className="container mx-auto max-w-4xl">
+          <h2 className="text-3xl font-nunito font-bold mb-4 text-gray-800 text-center">Tired of Spending Hours on Lesson Prep?</h2>
+          <p className="text-lg text-gray-600 mb-8 text-center">
             Online ESL teachers face the constant challenge of creating CEFR-aligned, engaging, and individualized lessons for one-on-one sessions. Finding the right materials takes time you could be spending teaching.
           </p>
-          <p className="text-lg font-semibold text-primary">
+          
+          {/* Comparison */}
+          <div className="grid md:grid-cols-2 gap-8 mb-8">
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-red-100">
+              <h3 className="text-xl font-semibold mb-3 text-red-600 flex items-center">
+                <Clock className="h-5 w-5 mr-2" /> Traditional Lesson Planning
+              </h3>
+              <ul className="space-y-2 text-gray-600">
+                <li className="flex items-start">
+                  <span className="text-red-500 mr-2">✗</span>
+                  <span>1-2 hours of hunting for materials online</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-red-500 mr-2">✗</span>
+                  <span>Piecing together activities from multiple sources</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-red-500 mr-2">✗</span>
+                  <span>Adapting content to match your student's level</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-red-500 mr-2">✗</span>
+                  <span>Less time for actual teaching or more students</span>
+                </li>
+              </ul>
+            </div>
+            
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-green-100">
+              <h3 className="text-xl font-semibold mb-3 text-green-600 flex items-center">
+                <Sparkles className="h-5 w-5 mr-2" /> With Plan Wise ESL
+              </h3>
+              <ul className="space-y-2 text-gray-600">
+                <li className="flex items-start">
+                  <span className="text-green-500 mr-2">✓</span>
+                  <span>Complete lessons generated in just 3 minutes</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-500 mr-2">✓</span>
+                  <span>All sections perfectly integrated and cohesive</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-500 mr-2">✓</span>
+                  <span>Perfect CEFR level matching for your students</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-500 mr-2">✓</span>
+                  <span>Teach more students and increase your income</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+          
+          <p className="text-lg font-semibold text-primary text-center">
             Plan Wise ESL is your solution – generate complete, ready-to-teach lessons in minutes.
           </p>
         </div>
@@ -413,18 +488,42 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Final Call to Action Section */}
+      {/* Final Call to Action Section with Stats */}
       <section className="py-20 px-6 bg-primary text-white text-center">
         <div className="container mx-auto max-w-3xl">
           <h2 className="text-3xl md:text-4xl font-nunito font-bold mb-6">Ready to Revolutionize Your Lesson Planning?</h2>
+          
+          {/* Social proof stats */}
+          <div className="grid grid-cols-3 gap-4 mb-8 max-w-2xl mx-auto">
+            <div className="stat">
+              <p className="text-3xl md:text-4xl font-bold text-accent">500+</p>
+              <p className="text-sm md:text-base">Teachers Using Plan Wise ESL</p>
+            </div>
+            <div className="stat">
+              <p className="text-3xl md:text-4xl font-bold text-accent">5000+</p>
+              <p className="text-sm md:text-base">Lessons Generated</p>
+            </div>
+            <div className="stat">
+              <p className="text-3xl md:text-4xl font-bold text-accent">8000+</p>
+              <p className="text-sm md:text-base">Hours Saved</p>
+            </div>
+          </div>
+          
           <p className="text-xl mb-8 opacity-90">
-            Sign up today and get your first few lesson credits free! Start creating amazing ESL lessons in minutes.
+            Join hundreds of teachers already saving <span className="font-bold">6+ hours every week</span> on lesson preparation.
           </p>
-          <Link href="/auth?register=true">
-            <Button size="lg" className="bg-accent hover:bg-accent/90 text-primary font-semibold px-10 py-4">
-              Get Started for Free
-            </Button>
-          </Link>
+          
+          <div className="flex flex-col items-center">
+            <Link href="/auth?register=true">
+              <Button size="lg" className="bg-accent hover:bg-accent/90 text-primary font-semibold px-10 py-4">
+                Get Started for Free
+              </Button>
+            </Link>
+            <p className="text-sm mt-3 opacity-90 flex items-center justify-center">
+              <LockIcon className="h-3 w-3 mr-1" />
+              <span>No credit card required • 5 free lessons included</span>
+            </p>
+          </div>
         </div>
       </section>
 
