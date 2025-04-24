@@ -962,17 +962,6 @@ export function LessonContent({ content }: LessonContentProps) {
                 </button>
               </div>
             </div>
-            
-            {/* Instruction to find discussion questions in Overview tab */}
-            <div className="bg-white rounded-md border-2 border-amber-200 p-3 shadow-sm">
-              <h3 className="text-amber-800 font-bold text-base flex items-center mb-3">
-                <MessageCircle className="mr-2 h-4 w-4" />
-                Discussion Questions
-              </h3>
-              <p className="text-amber-700 text-sm italic">
-                Warm-up discussion questions can be found in the Overview tab. This section focuses on vocabulary introduction.
-              </p>
-            </div>
           </div>
           
           {/* Column 2: Vocabulary Cards Carousel */}
