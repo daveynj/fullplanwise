@@ -1186,20 +1186,13 @@ export function LessonContent({ content }: LessonContentProps) {
     if (section.words && Array.isArray(section.words)) {
       section.words.forEach((wordData: any) => {
         if (typeof wordData === 'object') {
-          // Simple extraction of pronunciation data
-          let pronunciationData = "";
-          if (typeof wordData.pronunciation === 'string') {
-            pronunciationData = wordData.pronunciation;
-          } else if (typeof wordData.phonetic === 'string') {
-            pronunciationData = wordData.phonetic;
-          }
-          
+          // Pass pronunciation data directly - it will be handled in the component
           extractedVocabWords.push({
             word: wordData.term || wordData.word || "",
             partOfSpeech: wordData.partOfSpeech || "noun",
             definition: wordData.definition || "",
             example: wordData.example || "",
-            pronunciation: pronunciationData,
+            pronunciation: wordData.pronunciation || wordData.phonetic || wordData.ipa,
             syllables: wordData.syllables,
             stressIndex: wordData.stressIndex,
             phoneticGuide: wordData.phoneticGuide,
@@ -1223,6 +1216,12 @@ export function LessonContent({ content }: LessonContentProps) {
     
     // Use the extracted vocabulary words
     const words: VocabularyWord[] = extractedVocabWords;
+    
+    // Debug the pronunciation data
+    if (extractedVocabWords.length > 0) {
+      console.log("Vocabulary words:", extractedVocabWords);
+      console.log("First word pronunciation data:", extractedVocabWords[0].pronunciation);
+    }
     
     // Animation variants for the flip card
     const cardVariants = {
