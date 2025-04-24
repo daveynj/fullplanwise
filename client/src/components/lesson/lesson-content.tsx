@@ -958,23 +958,23 @@ export function LessonContent({ content }: LessonContentProps) {
           {/* Main Word Card with Image */}
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden mb-4">
             <div className="flex flex-col md:flex-row">
-              {/* Left: Image */}
-              <div className="w-full md:w-[40%] bg-gray-100">
+              {/* Left: Image - Made smaller */}
+              <div className="w-full md:w-[30%] bg-gray-100">
                 {currentWord?.imageBase64 ? (
                   <img 
                     src={`data:image/png;base64,${currentWord.imageBase64}`}
                     alt={`Image for ${currentWord.word}`}
-                    className="w-full h-full object-cover object-center"
+                    className="w-full h-full object-cover object-center max-h-[180px]"
                   />
                 ) : (
-                  <div className="w-full h-full min-h-[200px] bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center">
-                    <Lightbulb className="h-20 w-20 text-amber-300" />
+                  <div className="w-full h-full min-h-[150px] max-h-[180px] bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center">
+                    <Lightbulb className="h-16 w-16 text-amber-300" />
                   </div>
                 )}
               </div>
               
               {/* Right: Word Info with more details */}
-              <div className="w-full md:w-[60%] p-6 flex flex-col">
+              <div className="w-full md:w-[70%] p-6 flex flex-col">
                 <div className="mb-3">
                   <h2 className="text-3xl font-bold text-gray-800">{currentWord?.word}</h2>
                   <p className="text-gray-600 italic">{currentWord?.partOfSpeech}</p>
@@ -1069,7 +1069,7 @@ export function LessonContent({ content }: LessonContentProps) {
                   <p className="text-gray-600 mb-3 text-sm">Related words in this family:</p>
                   <div className="flex flex-wrap gap-2">
                     {currentWord.wordFamily.words.map((word, idx) => (
-                      <span key={idx} className="bg-blue-50 text-blue-800 px-4 py-2 rounded-full text-base font-bold inline-block mb-2 mr-2">
+                      <span key={idx} className="bg-blue-50 text-blue-800 px-3 py-1 rounded-full text-base font-bold">
                         {word}
                       </span>
                     ))}
@@ -1246,7 +1246,7 @@ export function LessonContent({ content }: LessonContentProps) {
           {/* Flip Card */}
           <div className="flex justify-center mb-6">
             <motion.div 
-              className="w-full max-w-md h-[400px] cursor-pointer perspective-1000"
+              className="w-full max-w-md h-[320px] cursor-pointer perspective-1000"
               onClick={handleCardClick}
             >
               <motion.div 
