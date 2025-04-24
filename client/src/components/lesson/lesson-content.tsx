@@ -27,6 +27,10 @@ import {
   Book as BookIcon,
   PenTool,
   Shuffle,
+  Volume,
+  List as ListIcon,
+  FolderTree,
+  GitBranch,
 } from "lucide-react";
 import { ReadingSection } from "./reading-section";
 import { SentenceFramesSection } from "./sentence-frames-section";
@@ -893,111 +897,202 @@ export function LessonContent({ content }: LessonContentProps) {
     const currentWord = vocabWords[currentWordIndex] || vocabWords[0];
     const totalWords = vocabWords.length;
 
+    // Format the pronunciation guide
+    const formatPronunciation = (pronunciation: string) => {
+      if (!pronunciation) return "";
+      // If it's already in phonetic format with slashes, return as is
+      if (pronunciation.startsWith('/') && pronunciation.endsWith('/')) return pronunciation;
+      // Otherwise, add phonetic slashes
+      return `/${pronunciation}/`;
+    };
+    
+    // Extract the word from the example sentence and highlight it
+    const highlightWordInExample = (example: string, word: string) => {
+      if (!example || !word) return example;
+      
+      // Case-insensitive replace to highlight all instances of the word
+      const regex = new RegExp(`\\b${word}\\b`, 'gi');
+      return example.replace(regex, (match) => `<span class="font-bold text-blue-600">${match}</span>`);
+    };
+    
     return (
-      <div className="space-y-4">
-        {/* Warm-up Header Card */}
-        <Card className="border-2 border-amber-300 bg-amber-50 shadow-md">
-          <CardHeader className="py-4">
-            <div className="flex justify-between items-center">
-              <CardTitle className="flex items-center gap-2 text-amber-700 text-xl font-bold">
-                <Flame className="h-5 w-5" />
-                Warm-up
-              </CardTitle>
-              <div className="flex items-center text-sm font-medium text-amber-700">
-                <ClockIcon className="mr-1 h-4 w-4" />
-                5-10 minutes
-              </div>
-            </div>
-            <CardDescription className="text-sm text-amber-700 font-medium">
-              {section.title || "Exploring vocabulary and activating prior knowledge"}
-            </CardDescription>
-          </CardHeader>
-        </Card>
+      <div className="space-y-6">
+        {/* Section Title with Icon */}
+        <div className="flex items-center gap-3 mb-5 bg-amber-50 p-4 rounded-lg">
+          <div className="h-10 w-10 rounded-full bg-amber-500 flex items-center justify-center">
+            <Lightbulb className="h-5 w-5 text-white" />
+          </div>
+          <div>
+            <h2 className="text-amber-800 font-medium text-lg">Vocab Introduction</h2>
+            <p className="text-gray-600 text-sm">
+              Introducing key vocabulary before reading the text
+            </p>
+          </div>
+        </div>
         
-        {/* Compact Warm-up Content */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
-          {/* Column 1: Image + Discussion */}
-          <div className="space-y-4">
-            {/* Image with Pagination Controls */}
-            <div className="bg-white rounded-md border-2 border-amber-200 p-3 shadow-sm">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-amber-800 font-bold text-base flex items-center">
-                  <BookOpen className="mr-2 h-4 w-4" />
-                  Vocabulary Preview
-                </h3>
-                <div className="text-amber-800 font-bold text-base">
-                  {currentWord.word || "Vocabulary"}
-                </div>
-              </div>
-              
-              {/* Image container */}
-              <div className="relative h-48 mb-3 rounded-md overflow-hidden border-2 border-amber-200">
-                {currentWord.imageBase64 ? (
+        {/* New vocabulary card layout inspired by the image template */}
+        <div className="max-w-4xl mx-auto">
+          {/* Navigation Controls */}
+          <div className="flex justify-center items-center mb-4 bg-amber-50 rounded-full px-6 py-2 w-max mx-auto">
+            <button 
+              onClick={goToPrevWord}
+              className="p-1 text-amber-700 hover:bg-amber-100 rounded-full"
+              aria-label="Previous vocabulary word"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+            
+            <span className="text-amber-900 font-medium mx-3">
+              {vocabWords.length > 0 ? `${currentWordIndex + 1} of ${vocabWords.length}` : 'No vocabulary words'}
+            </span>
+            
+            <button 
+              onClick={goToNextWord}
+              className="p-1 text-amber-700 hover:bg-amber-100 rounded-full"
+              aria-label="Next vocabulary word"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </button>
+          </div>
+          
+          {/* Main Word Card with Image */}
+          <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden mb-4">
+            <div className="flex flex-col md:flex-row">
+              {/* Left: Image */}
+              <div className="w-full md:w-[40%] bg-gray-100">
+                {currentWord?.imageBase64 ? (
                   <img 
                     src={`data:image/png;base64,${currentWord.imageBase64}`}
-                    alt={`Illustration for ${currentWord.word}`}
-                    className="h-full w-full object-cover object-center"
+                    alt={`Image for ${currentWord.word}`}
+                    className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="h-full w-full bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center">
-                    <Image className="h-12 w-12 text-amber-300" />
+                  <div className="w-full h-full min-h-[200px] bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center">
+                    <Lightbulb className="h-20 w-20 text-amber-300" />
                   </div>
                 )}
               </div>
               
-              {/* Pagination Controls */}
-              <div className="flex items-center justify-between bg-amber-50 rounded-md p-2 border-2 border-amber-200 text-sm">
-                <button 
-                  onClick={goToPrevWord}
-                  className="p-2 text-amber-700 hover:bg-amber-100 rounded-md"
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                </button>
-                <span className="font-bold">{currentWordIndex + 1} of {totalWords}</span>
-                <button 
-                  onClick={goToNextWord}
-                  className="p-2 text-amber-700 hover:bg-amber-100 rounded-md"
-                >
-                  <ChevronRight className="h-4 w-4" />
-                </button>
+              {/* Right: Word Info */}
+              <div className="w-full md:w-[60%] p-6">
+                <h2 className="text-3xl font-bold text-gray-800">{currentWord?.word}</h2>
+                <p className="text-gray-600 italic">{currentWord?.partOfSpeech}</p>
               </div>
             </div>
           </div>
           
-          {/* Column 2: Vocabulary Cards Carousel */}
-          <div className="xl:col-span-2">
-            <div className="bg-white rounded-md border-2 border-amber-200 h-full shadow-sm">
-              <div className="p-3">
-                <div className="flex items-center justify-between border-b-2 border-amber-200 pb-2 mb-3">
-                  <h3 className="text-amber-800 font-bold text-base flex items-center">
-                    <BookIcon className="mr-2 h-4 w-4" />
-                    Target Vocabulary
-                  </h3>
-                  
-                  {vocabWords.length > 0 && (
-                    <div className="flex">
-                      {vocabWords.map((_, idx) => (
-                        <button 
-                          key={idx}
-                          onClick={() => setCurrentWordIndex(idx)}
-                          className={`w-3 h-3 rounded-full mx-1 ${
-                            idx === currentWordIndex ? 'bg-amber-500' : 'bg-amber-200'
-                          }`}
-                        />
-                      ))}
-                    </div>
-                  )}
-                </div>
-                
-                {/* Vocabulary Card */}
-                <VocabularyCard word={{
-                  ...currentWord,
-                  // Removed imageBase64 here so image only displays in left column
-                  imageBase64: null
-                }} />
+          {/* Definition Section */}
+          <div className="bg-white rounded-lg border border-gray-200 shadow-sm mb-4">
+            <div className="p-4 border-b flex items-center">
+              <BookOpen className="h-5 w-5 text-blue-600 mr-2" />
+              <h3 className="font-semibold text-blue-600">Definition</h3>
+            </div>
+            <div className="p-4">
+              <p className="text-gray-800">{currentWord?.definition}</p>
+            </div>
+          </div>
+          
+          {/* Two Column Layout for Pronunciation and Example */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            {/* Pronunciation Section */}
+            <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+              <div className="p-4 border-b flex items-center">
+                <MessageCircle className="h-5 w-5 text-blue-600 mr-2" />
+                <h3 className="font-semibold text-blue-600">Pronunciation</h3>
+              </div>
+              <div className="p-4">
+                <p className="text-gray-800 font-mono">{formatPronunciation(currentWord?.pronunciation || "")}</p>
+              </div>
+            </div>
+            
+            {/* Example Section */}
+            <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+              <div className="p-4 border-b flex items-center">
+                <MessageCircle className="h-5 w-5 text-blue-600 mr-2" />
+                <h3 className="font-semibold text-blue-600">Example</h3>
+              </div>
+              <div className="p-4">
+                <p 
+                  className="text-gray-800" 
+                  dangerouslySetInnerHTML={{ 
+                    __html: highlightWordInExample(currentWord?.example || "", currentWord?.word || "") 
+                  }}
+                ></p>
               </div>
             </div>
           </div>
+          
+          {/* More Examples Section (if available) */}
+          {currentWord?.additionalExamples && currentWord.additionalExamples.length > 0 && (
+            <div className="bg-white rounded-lg border border-gray-200 shadow-sm mb-4">
+              <div className="p-4 border-b flex items-center">
+                <ListIcon className="h-5 w-5 text-blue-600 mr-2" />
+                <h3 className="font-semibold text-blue-600">More Examples</h3>
+              </div>
+              <div className="p-4">
+                <ul className="list-disc pl-5 space-y-2">
+                  {currentWord.additionalExamples.map((example, idx) => (
+                    <li key={idx} className="text-gray-800">
+                      <span dangerouslySetInnerHTML={{ 
+                        __html: highlightWordInExample(example, currentWord.word) 
+                      }}></span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          )}
+          
+          {/* Word Family Section (if available) */}
+          {currentWord?.wordFamily && currentWord.wordFamily.words && currentWord.wordFamily.words.length > 0 && (
+            <div className="bg-white rounded-lg border border-gray-200 shadow-sm mb-4">
+              <div className="p-4 border-b flex items-center">
+                <FolderTree className="h-5 w-5 text-blue-600 mr-2" />
+                <h3 className="font-semibold text-blue-600">Word Family</h3>
+              </div>
+              <div className="p-4">
+                <div className="flex flex-wrap gap-2">
+                  {currentWord.wordFamily.words.map((word, idx) => (
+                    <span key={idx} className="text-gray-800">
+                      {word}{idx < currentWord.wordFamily!.words.length - 1 ? ", " : ""}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {/* Common Phrases Section (if available) */}
+          {currentWord?.collocations && currentWord.collocations.length > 0 && (
+            <div className="bg-white rounded-lg border border-gray-200 shadow-sm mb-4">
+              <div className="p-4 border-b flex items-center">
+                <GitBranch className="h-5 w-5 text-blue-600 mr-2" />
+                <h3 className="font-semibold text-blue-600">Common Phrases</h3>
+              </div>
+              <div className="p-4">
+                <div className="space-y-2">
+                  {currentWord.collocations.map((phrase, idx) => (
+                    <p key={idx} className="text-gray-800">
+                      {phrase}
+                    </p>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {/* Usage Notes Section (if available) */}
+          {currentWord?.usageNotes && (
+            <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+              <div className="p-4 border-b flex items-center">
+                <FileText className="h-5 w-5 text-blue-600 mr-2" />
+                <h3 className="font-semibold text-blue-600">Usage Notes</h3>
+              </div>
+              <div className="p-4">
+                <p className="text-gray-800">{currentWord.usageNotes}</p>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     );
