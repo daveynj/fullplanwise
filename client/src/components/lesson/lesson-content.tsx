@@ -1004,7 +1004,13 @@ export function LessonContent({ content }: LessonContentProps) {
                   </div>
                   <div className="text-center">
                     {currentWord?.pronunciation && (
-                      <div className="text-xl font-bold text-blue-800 mb-2">{currentWord.pronunciation}</div>
+                      <div className="text-xl font-bold text-blue-800 mb-2">
+                        {typeof currentWord.pronunciation === 'string' 
+                          ? currentWord.pronunciation 
+                          : typeof currentWord.pronunciation === 'object' && currentWord.pronunciation !== null
+                            ? (currentWord.pronunciation.ipa || currentWord.pronunciation.value || '')
+                            : ''}
+                      </div>
                     )}
                     {currentWord?.syllables && Array.isArray(currentWord.syllables) && (
                       <div className="flex justify-center space-x-1">
@@ -1343,7 +1349,13 @@ export function LessonContent({ content }: LessonContentProps) {
                         </div>
                         <div className="text-center">
                           {currentWord?.pronunciation && (
-                            <div className="text-lg font-bold text-blue-800 mb-2">{currentWord.pronunciation}</div>
+                            <div className="text-lg font-bold text-blue-800 mb-2">
+                              {typeof currentWord.pronunciation === 'string' 
+                                ? currentWord.pronunciation 
+                                : typeof currentWord.pronunciation === 'object' && currentWord.pronunciation !== null
+                                  ? (currentWord.pronunciation.ipa || currentWord.pronunciation.value || '')
+                                  : ''}
+                            </div>
                           )}
                           {currentWord?.syllables && Array.isArray(currentWord.syllables) && (
                             <div className="flex justify-center space-x-1">
