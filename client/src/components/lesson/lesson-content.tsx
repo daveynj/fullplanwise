@@ -50,6 +50,7 @@ interface LessonContentProps {
 
 type SectionType = 
   | "notes" 
+  | "overview"
   | "warmup" 
   | "warm-up" 
   | "reading" 
@@ -583,9 +584,16 @@ export function LessonContent({ content }: LessonContentProps) {
       textColor: "text-blue-700",
       description: "Teaching guidance and tips"
     },
+    "overview": {
+      icon: Lightbulb,
+      label: "Overview",
+      color: "bg-indigo-100",
+      textColor: "text-indigo-700",
+      description: "Lesson overview and warm-up questions"
+    },
     "warmup": { 
       icon: Flame, 
-      label: "Warm-up",
+      label: "Vocab Introduction",
       color: "bg-amber-100",
       textColor: "text-amber-700",
       description: "Introduce key vocabulary and topic"
@@ -1361,6 +1369,113 @@ export function LessonContent({ content }: LessonContentProps) {
   };
 
   // Teacher Notes Section to collect all teacher notes
+  // Overview component that displays the lesson title and warm-up questions in a new tab
+  const OverviewSection = () => {
+    // Try to find the warm-up section from multiple possible types/locations
+    const section = 
+      findSection("warmup") || 
+      findSection("warm-up") || 
+      findSection("sentenceFrames") || // Some Qwen responses use sentenceFrames for warm-up
+      parsedContent.sections[0]; // Last resort, use the first section
+    
+    if (!section) return <p>No warm-up content available</p>;
+    
+    // Get discussion questions from the section
+    let discussionQuestions: string[] = [];
+    
+    if (section.questions) {
+      if (Array.isArray(section.questions)) {
+        discussionQuestions = section.questions;
+      } else if (typeof section.questions === 'object') {
+        // Extract questions from object format (Qwen API format)
+        discussionQuestions = Object.keys(section.questions)
+          .filter(q => typeof q === 'string' && q.trim().length > 0);
+      }
+    }
+
+    return (
+      <div className="space-y-6">
+        {/* Overview Header */}
+        <Card className="border-2 border-indigo-300 bg-indigo-50 shadow-md">
+          <CardHeader className="py-4">
+            <div className="flex justify-between items-center">
+              <CardTitle className="flex items-center gap-2 text-indigo-700 text-xl font-bold">
+                <Lightbulb className="h-5 w-5" />
+                Lesson Overview
+              </CardTitle>
+              <div className="flex items-center text-sm font-medium text-indigo-700">
+                <ClockIcon className="mr-1 h-4 w-4" />
+                {parsedContent.estimatedTime || "45-60"} minutes
+              </div>
+            </div>
+            <CardDescription className="text-sm text-indigo-700 font-medium">
+              {parsedContent.title}
+            </CardDescription>
+          </CardHeader>
+        </Card>
+        
+        {/* Lesson Main Info Section */}
+        <div className="bg-white rounded-lg border border-gray-200 p-5 shadow-sm">
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">{parsedContent.title}</h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div className="flex items-center p-3 bg-blue-50 rounded-md border border-blue-100">
+              <BookOpenIcon className="h-5 w-5 text-blue-600 mr-2" />
+              <div>
+                <div className="text-sm font-medium text-gray-500">Level</div>
+                <div className="font-semibold text-gray-800">{parsedContent.level}</div>
+              </div>
+            </div>
+            
+            <div className="flex items-center p-3 bg-green-50 rounded-md border border-green-100">
+              <BookIcon className="h-5 w-5 text-green-600 mr-2" />
+              <div>
+                <div className="text-sm font-medium text-gray-500">Focus</div>
+                <div className="font-semibold text-gray-800">{parsedContent.focus}</div>
+              </div>
+            </div>
+            
+            <div className="flex items-center p-3 bg-purple-50 rounded-md border border-purple-100">
+              <ClockIcon className="h-5 w-5 text-purple-600 mr-2" />
+              <div>
+                <div className="text-sm font-medium text-gray-500">Time</div>
+                <div className="font-semibold text-gray-800">{parsedContent.estimatedTime} minutes</div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Warm-up Questions */}
+          <div className="mt-8">
+            <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
+              <MessageCircle className="mr-2 h-5 w-5 text-indigo-600" />
+              Warm-up Questions
+            </h3>
+            
+            <div className="bg-indigo-50 rounded-lg border border-indigo-100 p-4">
+              <div className="space-y-4">
+                {discussionQuestions.length > 0 ? (
+                  discussionQuestions.map((question, idx) => (
+                    <div 
+                      key={`overview-question-${idx}`} 
+                      className="flex gap-3 p-3 bg-white rounded-md border border-indigo-100 shadow-sm"
+                    >
+                      <div className="flex-shrink-0 w-7 h-7 rounded-full bg-indigo-600 text-white flex items-center justify-center text-sm font-bold">
+                        {idx + 1}
+                      </div>
+                      <p className="text-gray-800 text-lg">{question}</p>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-gray-500 italic">No warm-up questions available for this lesson.</p>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const TeacherNotesSection = () => {
     // Collect all teacher notes from all sections
     const allNotes: {[key: string]: string} = {};
@@ -1438,7 +1553,7 @@ export function LessonContent({ content }: LessonContentProps) {
   
   // Create arrays to store the section types from the content and our desired display order
   let contentSectionTypes: string[] = [];
-  const displayOrder: string[] = ["warmup", "reading", "comprehension", "vocabulary", "sentenceFrames", "cloze", "sentenceUnscramble", "discussion", "quiz"];
+  const displayOrder: string[] = ["overview", "warmup", "reading", "comprehension", "vocabulary", "sentenceFrames", "cloze", "sentenceUnscramble", "discussion", "quiz"];
   // Note: "notes" tab is handled separately via the TeacherNotesSection component
   
   // Helper function to check if a section type exists
@@ -1487,8 +1602,13 @@ export function LessonContent({ content }: LessonContentProps) {
     }
   });
   
+  // Always add the overview tab as the first tab
+  if (!availableSections.includes("overview")) {
+    availableSections.unshift("overview");
+  }
+  
   // If we still don't have any sections, use the original content section types as fallback
-  if (availableSections.length === 0) {
+  if (availableSections.length === 1) { // Only overview tab
     availableSections.push(...contentSectionTypes);
   }
   
@@ -1574,6 +1694,10 @@ export function LessonContent({ content }: LessonContentProps) {
         
         {/* Section content */}
         <div className="p-1 text-2xl leading-relaxed"> {/* Increased text size for better readability */}
+          <TabsContent value="overview" className="m-0">
+            <OverviewSection />
+          </TabsContent>
+          
           <TabsContent value="warmup" className="m-0">
             <WarmupSection />
           </TabsContent>
