@@ -6,7 +6,7 @@ export interface VocabularyWord {
   partOfSpeech?: string;
   definition?: string;
   example?: string;
-  pronunciation?: string | { syllables?: string[], stressIndex?: number, phoneticGuide?: string };
+  pronunciation?: string | { ipa?: string, value?: string, syllables?: string[], stressIndex?: number, phoneticGuide?: string };
   syllables?: string[];
   stressIndex?: number;
   phoneticGuide?: string;
@@ -110,32 +110,39 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
           </div>
         </div>
         
-        {/* Row 2: Pronunciation */}
-        <div className="bg-blue-100 rounded-md border-2 border-blue-300 p-3">
-          <h3 className="text-blue-800 font-bold flex items-center text-base mb-2">
-            <Radio className="mr-2 h-4 w-4" />
-            Pronunciation
-          </h3>
-          <div className="flex flex-col items-center space-y-2">
-            <p className="font-mono text-blue-900 text-lg font-bold">
-              {wordData.pronunciation}
-            </p>
+        {/* Row 2: Pronunciation - Styled to match the image exactly */}
+        <div className="bg-blue-100 p-4 rounded">
+          <div className="flex items-start mb-2 text-blue-800">
+            <Radio className="h-4 w-4 mt-1 mr-2" />
+            <span className="font-semibold">Pronunciation</span>
+          </div>
+          <div className="flex flex-col items-center">
+            {/* IPA/phonetic pronunciation with hyphens */}
+            {wordData.pronunciation && (
+              <div className="text-center mb-4">
+                <p className="text-2xl font-bold text-blue-900">
+                  {wordData.pronunciation}
+                </p>
+              </div>
+            )}
             
-            {/* Syllable breakdown */}
-            <div className="flex justify-center gap-1"> 
-              {wordData.syllables.map((syllable: string, idx: number) => (
-                <span 
-                  key={idx}
-                  className={`px-3 py-1 text-base font-bold rounded ${
-                    idx === wordData.emphasisIndex
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-white text-gray-800'
-                  }`}
-                >
-                  {syllable}
-                </span>
-              ))}
-            </div>
+            {/* Syllable boxes with highlighted stressed syllable */}
+            {wordData.syllables && wordData.syllables.length > 0 && (
+              <div className="flex justify-center gap-2"> 
+                {wordData.syllables.map((syllable: string, idx: number) => (
+                  <div 
+                    key={idx}
+                    className={`w-16 h-12 flex items-center justify-center rounded ${
+                      idx === wordData.emphasisIndex
+                        ? 'bg-blue-600 text-white font-bold'
+                        : 'bg-white text-gray-700'
+                    }`}
+                  >
+                    {syllable}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
         

@@ -1217,12 +1217,6 @@ export function LessonContent({ content }: LessonContentProps) {
     // Use the extracted vocabulary words
     const words: VocabularyWord[] = extractedVocabWords;
     
-    // Debug the pronunciation data
-    if (extractedVocabWords.length > 0) {
-      console.log("Vocabulary words:", extractedVocabWords);
-      console.log("First word pronunciation data:", extractedVocabWords[0].pronunciation);
-    }
-    
     // Animation variants for the flip card
     const cardVariants = {
       front: { rotateY: 0 },
