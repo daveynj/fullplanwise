@@ -41,15 +41,15 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
     // Handle complex pronunciation object
     if (word.pronunciation && typeof word.pronunciation === 'object') {
       return {
-        pronunciation: word.pronunciation.phoneticGuide || "Pronunciation not available",
-        syllables: word.pronunciation.syllables || [normalizedWord],
-        emphasisIndex: word.pronunciation.stressIndex !== undefined ? word.pronunciation.stressIndex : 0
+        pronunciation: word.pronunciation.ipa || word.pronunciation.value || word.pronunciation.phoneticGuide || "/pronunciation/",
+        syllables: word.pronunciation.syllables || word.syllables || [normalizedWord],
+        emphasisIndex: word.pronunciation.stressIndex !== undefined ? word.pronunciation.stressIndex : (word.stressIndex || 0)
       };
     }
     
     // Handle direct fields
     return {
-      pronunciation: word.phoneticGuide || (typeof word.pronunciation === 'string' ? word.pronunciation : "Pronunciation not available"),
+      pronunciation: typeof word.pronunciation === 'string' ? word.pronunciation : (word.phoneticGuide || "/pronunciation/"),
       syllables: word.syllables || [normalizedWord],
       emphasisIndex: word.stressIndex !== undefined ? word.stressIndex : 0
     };
