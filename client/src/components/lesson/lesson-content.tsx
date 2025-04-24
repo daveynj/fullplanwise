@@ -1304,6 +1304,14 @@ export function LessonContent({ content }: LessonContentProps) {
                     <div className="mb-4 text-center">
                       <h2 className="text-2xl font-bold text-gray-800">{(currentWord as any).term || currentWord.word}</h2>
                       <p className="text-gray-500 italic">{currentWord.partOfSpeech}</p>
+                      
+                      {/* Pronunciation */}
+                      {typeof currentWord?.pronunciation === 'string' && currentWord.pronunciation && (
+                        <div className="flex items-center justify-center mt-2 bg-amber-50 px-3 py-2 rounded-md">
+                          <Volume className="h-4 w-4 text-amber-600 mr-2" />
+                          <span className="font-mono text-amber-800">{formatPronunciation(currentWord.pronunciation)}</span>
+                        </div>
+                      )}
                     </div>
                     
                     {/* Definition */}
