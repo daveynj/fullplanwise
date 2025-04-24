@@ -988,15 +988,15 @@ export function LessonContent({ content }: LessonContentProps) {
                   </div>
                 )}
                 
-                {/* Quick definition overview */}
+                {/* Additional information can go here if needed in the future */}
                 <div className="flex-1">
-                  <p className="text-gray-800 font-medium">
-                    {currentWord?.definition ? 
-                      (currentWord.definition.length > 120 ? 
-                        currentWord.definition.substring(0, 120) + "..." : 
-                        currentWord.definition) 
-                      : "No definition available"}
-                  </p>
+                  {currentWord?.syllables && (
+                    <div className="mt-3 bg-amber-50 py-2 px-3 rounded-md">
+                      <p className="text-amber-800 text-sm">
+                        Syllables: {Array.isArray(currentWord.syllables) ? currentWord.syllables.join(' · ') : currentWord.syllables}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -1115,11 +1115,7 @@ export function LessonContent({ content }: LessonContentProps) {
                 <h3 className="font-semibold text-blue-600">Usage Notes</h3>
               </div>
               <div className="p-4">
-                <div className="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r-md">
-                  <h4 className="font-medium text-amber-800 mb-2 flex items-center">
-                    <Lightbulb className="h-4 w-4 mr-2" />
-                    Teacher's Note:
-                  </h4>
+                <div className="bg-blue-50 p-4 rounded-md">
                   <p className="text-gray-800">{currentWord.usageNotes}</p>
                 </div>
               </div>
