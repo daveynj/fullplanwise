@@ -963,33 +963,15 @@ export function LessonContent({ content }: LessonContentProps) {
               </div>
             </div>
             
-            {/* Discussion Questions - Limited to just 3 shown by default */}
+            {/* Instruction to find discussion questions in Overview tab */}
             <div className="bg-white rounded-md border-2 border-amber-200 p-3 shadow-sm">
               <h3 className="text-amber-800 font-bold text-base flex items-center mb-3">
                 <MessageCircle className="mr-2 h-4 w-4" />
                 Discussion Questions
               </h3>
-              
-              <div className="space-y-3">
-                {discussionQuestions.slice(0, 3).map((question, idx) => (
-                  <div 
-                    key={`question-${idx}`} 
-                    className="p-3 bg-amber-50 border-2 border-amber-200 rounded-md"
-                  >
-                    <div className="flex gap-3">
-                      <div className="flex-shrink-0 w-6 h-6 rounded-full bg-amber-500 text-white flex items-center justify-center text-sm font-bold">
-                        {idx + 1}
-                      </div>
-                      <p className="text-amber-900 text-base font-medium">{question}</p>
-                    </div>
-                  </div>
-                ))}
-                {discussionQuestions.length > 3 && (
-                  <div className="text-center text-sm font-bold text-amber-600">
-                    +{discussionQuestions.length - 3} more questions
-                  </div>
-                )}
-              </div>
+              <p className="text-amber-700 text-sm italic">
+                Warm-up discussion questions can be found in the Overview tab. This section focuses on vocabulary introduction.
+              </p>
             </div>
           </div>
           
@@ -1418,30 +1400,21 @@ export function LessonContent({ content }: LessonContentProps) {
         <div className="bg-white rounded-lg border border-gray-200 p-5 shadow-sm">
           <h2 className="text-2xl font-bold text-gray-800 mb-4">{parsedContent.title}</h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div className="flex items-center p-3 bg-blue-50 rounded-md border border-blue-100">
-              <BookOpenIcon className="h-5 w-5 text-blue-600 mr-2" />
-              <div>
-                <div className="text-sm font-medium text-gray-500">Level</div>
-                <div className="font-semibold text-gray-800">{parsedContent.level}</div>
-              </div>
-            </div>
+          <div className="flex flex-wrap gap-2 mb-6">
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-800 border border-blue-100">
+              <BookOpenIcon className="h-3 w-3 mr-1" />
+              Level: {parsedContent.level}
+            </span>
             
-            <div className="flex items-center p-3 bg-green-50 rounded-md border border-green-100">
-              <BookIcon className="h-5 w-5 text-green-600 mr-2" />
-              <div>
-                <div className="text-sm font-medium text-gray-500">Focus</div>
-                <div className="font-semibold text-gray-800">{parsedContent.focus}</div>
-              </div>
-            </div>
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-50 text-green-800 border border-green-100">
+              <BookIcon className="h-3 w-3 mr-1" />
+              Focus: {parsedContent.focus}
+            </span>
             
-            <div className="flex items-center p-3 bg-purple-50 rounded-md border border-purple-100">
-              <ClockIcon className="h-5 w-5 text-purple-600 mr-2" />
-              <div>
-                <div className="text-sm font-medium text-gray-500">Time</div>
-                <div className="font-semibold text-gray-800">{parsedContent.estimatedTime} minutes</div>
-              </div>
-            </div>
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-50 text-purple-800 border border-purple-100">
+              <ClockIcon className="h-3 w-3 mr-1" />
+              Time: {parsedContent.estimatedTime} minutes
+            </span>
           </div>
           
           {/* Warm-up Questions */}
