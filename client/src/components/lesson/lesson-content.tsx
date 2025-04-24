@@ -1334,35 +1334,23 @@ export function LessonContent({ content }: LessonContentProps) {
                       <h2 className="text-2xl font-bold text-gray-800">{(currentWord as any).term || currentWord.word}</h2>
                       <p className="text-gray-500 italic">{currentWord.partOfSpeech}</p>
                       
-                      {/* Pronunciation display - matching the main view */}
+                      {/* Pronunciation display - matching the reference image exactly */}
                       <div className="mt-2 bg-blue-50 px-3 py-2 rounded-md">
-                        <div className="flex items-center mb-2 justify-center">
-                          <Volume className="h-4 w-4 text-blue-600 mr-2" />
-                          <span className="text-blue-700 font-medium">Pronunciation</span>
+                        <div className="flex items-center mb-2">
+                          <Volume className="h-5 w-5 text-blue-600 mr-2" />
+                          <span className="text-blue-700 font-medium text-lg">Pronunciation</span>
                         </div>
-                        <div className="text-center">
-                          {currentWord?.pronunciation && (
-                            <div className="text-lg font-bold text-blue-800 mb-2">
+                        {currentWord?.pronunciation && (
+                          <div className="ml-7"> {/* Indented under the pronunciation heading */}
+                            <p className="font-mono text-xl">
                               {typeof currentWord.pronunciation === 'string' 
                                 ? currentWord.pronunciation 
                                 : typeof currentWord.pronunciation === 'object' && currentWord.pronunciation !== null
                                   ? (currentWord.pronunciation.ipa || currentWord.pronunciation.value || '')
                                   : ''}
-                            </div>
-                          )}
-                          {currentWord?.syllables && Array.isArray(currentWord.syllables) && (
-                            <div className="flex justify-center space-x-1">
-                              {currentWord.syllables.map((syllable, index) => (
-                                <div 
-                                  key={index}
-                                  className={`w-auto min-w-10 px-2 h-8 ${index === currentWord.stressIndex ? 'bg-blue-600 text-white font-bold' : 'bg-white text-gray-700'} rounded flex items-center justify-center text-sm`}
-                                >
-                                  {syllable}
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </div>
+                            </p>
+                          </div>
+                        )}
                       </div>
                     </div>
                     

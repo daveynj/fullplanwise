@@ -110,40 +110,19 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
           </div>
         </div>
         
-        {/* Row 2: Pronunciation - Styled to match the image exactly */}
-        <div className="bg-blue-100 p-4 rounded">
-          <div className="flex items-start mb-2 text-blue-800">
-            <Radio className="h-4 w-4 mt-1 mr-2" />
-            <span className="font-semibold">Pronunciation</span>
+        {/* Pronunciation Section - Styled to match the exact image */}
+        <div className="bg-blue-50 p-3 rounded">
+          <div className="flex items-center mb-2">
+            <Radio className="h-5 w-5 text-blue-600 mr-2" />
+            <span className="text-blue-700 font-medium text-lg">Pronunciation</span>
           </div>
-          <div className="flex flex-col items-center">
-            {/* IPA/phonetic pronunciation with hyphens */}
-            {wordData.pronunciation && (
-              <div className="text-center mb-4">
-                <p className="text-2xl font-bold text-blue-900">
-                  {wordData.pronunciation}
-                </p>
-              </div>
-            )}
-            
-            {/* Syllable boxes with highlighted stressed syllable */}
-            {wordData.syllables && wordData.syllables.length > 0 && (
-              <div className="flex justify-center gap-2"> 
-                {wordData.syllables.map((syllable: string, idx: number) => (
-                  <div 
-                    key={idx}
-                    className={`w-16 h-12 flex items-center justify-center rounded ${
-                      idx === wordData.emphasisIndex
-                        ? 'bg-blue-600 text-white font-bold'
-                        : 'bg-white text-gray-700'
-                    }`}
-                  >
-                    {syllable}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          {wordData.pronunciation && (
+            <div className="ml-7"> {/* Indented under the pronunciation heading */}
+              <p className="font-mono text-xl">
+                {wordData.pronunciation}
+              </p>
+            </div>
+          )}
         </div>
         
         {/* Row 3: Additional Content - Always visible but compact */}
