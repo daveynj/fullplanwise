@@ -1334,19 +1334,24 @@ export function LessonContent({ content }: LessonContentProps) {
                       <h2 className="text-2xl font-bold text-gray-800">{(currentWord as any).term || currentWord.word}</h2>
                       <p className="text-gray-500 italic">{currentWord.partOfSpeech}</p>
                       
-                      {/* Pronunciation display - matching the reference image exactly */}
-                      <div className="mt-2 bg-blue-50 px-3 py-2 rounded-md">
+                      {/* Pronunciation display with the actual pronunciation data */}
+                      <div className="mt-2 bg-blue-50 px-3 py-2">
                         <div className="flex items-center mb-2">
-                          <Volume className="h-5 w-5 text-blue-600 mr-2" />
-                          <span className="text-blue-700 font-medium text-lg">Pronunciation</span>
+                          <svg className="h-5 w-5 mr-2 text-blue-600" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M19.4998 7.5C19.4998 10.5376 17.5374 13 14.9998 13C14.2009 13 13.4482 12.8137 12.7664 12.492C12.607 12.8057 12.4263 13.1065 12.2251 13.3946C12.8343 13.7803 13.5448 14 14.2998 14C17.3374 14 19.9998 11.0376 19.9998 8C19.9998 4.96243 17.3374 2 14.2998 2C11.8296 2 9.61231 3.98544 8.94177 6.65429C9.48961 6.73937 10.0153 6.8922 10.5104 7.10468C11.0403 4.94321 12.7132 3.5 14.9998 3.5C16.933 3.5 18.4998 5.29086 18.4998 7.5Z" fill="currentColor"/>
+                            <path d="M4 7.5C4 10.5376 5.96243 13 8.5 13C9.29894 13 10.0516 12.8137 10.7334 12.492C10.8928 12.8057 11.0735 13.1065 11.2747 13.3946C10.6655 13.7803 9.95501 14 9.19995 14C6.16238 14 3.5 11.0376 3.5 8C3.5 4.96243 6.16238 2 9.19995 2C11.6702 2 13.8875 3.98544 14.558 6.65429C14.0102 6.73937 13.4845 6.8922 12.9894 7.10468C12.4595 4.94321 10.7866 3.5 8.5 3.5C6.56714 3.5 4.99998 5.29086 4.99998 7.5L4 7.5Z" fill="currentColor"/>
+                            <path d="M17.9216 15.1271C17.6886 14.897 17.3122 14.899 17.0821 15.1321L14.8649 17.3804L12.6477 15.1321C12.4177 14.899 12.0412 14.897 11.8082 15.1271C11.5752 15.3572 11.5732 15.7336 11.8032 15.9667L14.4407 18.6384C14.5595 18.7589 14.7122 18.8192 14.8649 18.8192C15.0177 18.8192 15.1704 18.7589 15.2891 18.6384L17.9266 15.9667C18.1567 15.7336 18.1547 15.3572 17.9216 15.1271Z" fill="currentColor"/>
+                            <path d="M7.91946 15.9667L5.68228 18.2349C5.45224 18.468 5.45423 18.8444 5.68732 19.0744C5.8023 19.1882 5.95444 19.246 6.10698 19.246C6.26132 19.246 6.41606 19.1866 6.53183 19.0689L9.19582 16.3579C9.41587 16.1348 9.42023 15.7684 9.20552 15.5383C8.9908 15.3083 8.61992 15.304 8.39781 15.5282L7.91946 15.9667Z" fill="currentColor"/>
+                          </svg>
+                          <span className="text-blue-700 font-medium">Pronunciation</span>
                         </div>
                         {currentWord?.pronunciation && (
-                          <div className="ml-7"> {/* Indented under the pronunciation heading */}
-                            <p className="font-mono text-xl">
+                          <div className="ml-7 mt-1">
+                            <p className="text-xl font-mono">
                               {typeof currentWord.pronunciation === 'string' 
                                 ? currentWord.pronunciation 
                                 : typeof currentWord.pronunciation === 'object' && currentWord.pronunciation !== null
-                                  ? (currentWord.pronunciation.ipa || currentWord.pronunciation.value || '')
+                                  ? (currentWord.pronunciation.ipa || currentWord.pronunciation.value || currentWord.pronunciation.phoneticGuide || '')
                                   : ''}
                             </p>
                           </div>
