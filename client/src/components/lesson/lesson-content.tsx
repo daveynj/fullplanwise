@@ -930,8 +930,8 @@ export function LessonContent({ content }: LessonContentProps) {
           </div>
         </div>
         
-        {/* New vocabulary card layout inspired by the image template */}
-        <div className="max-w-4xl mx-auto">
+        {/* Vocabulary card layout - full width */}
+        <div className="w-full">
           {/* Navigation Controls */}
           <div className="flex justify-center items-center mb-4 bg-amber-50 rounded-full px-6 py-2 w-max mx-auto">
             <button 
@@ -1005,8 +1005,8 @@ export function LessonContent({ content }: LessonContentProps) {
           {/* Definition Section */}
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm mb-4">
             <div className="p-4 border-b flex items-center">
-              <BookOpen className="h-5 w-5 text-blue-600 mr-2" />
-              <h3 className="font-semibold text-blue-600">Definition</h3>
+              <BookOpen className="h-6 w-6 text-blue-600 mr-2" />
+              <h3 className="font-bold text-blue-600 text-xl">Definition</h3>
             </div>
             <div className="p-4">
               <p className="text-gray-800">{currentWord?.definition}</p>
@@ -1016,8 +1016,8 @@ export function LessonContent({ content }: LessonContentProps) {
           {/* Example Section - Single Column, more prominent */}
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm mb-4">
             <div className="p-4 border-b flex items-center">
-              <MessageCircle className="h-5 w-5 text-blue-600 mr-2" />
-              <h3 className="font-semibold text-blue-600">Example Sentence</h3>
+              <MessageCircle className="h-6 w-6 text-blue-600 mr-2" />
+              <h3 className="font-bold text-blue-600 text-xl">Example Sentence</h3>
             </div>
             <div className="p-4">
               {currentWord?.example ? (
@@ -1039,8 +1039,8 @@ export function LessonContent({ content }: LessonContentProps) {
           {currentWord?.additionalExamples && currentWord.additionalExamples.length > 0 && (
             <div className="bg-white rounded-lg border border-gray-200 shadow-sm mb-4">
               <div className="p-4 border-b flex items-center">
-                <AlignJustify className="h-5 w-5 text-blue-600 mr-2" />
-                <h3 className="font-semibold text-blue-600">More Examples</h3>
+                <AlignJustify className="h-6 w-6 text-blue-600 mr-2" />
+                <h3 className="font-bold text-blue-600 text-xl">More Examples</h3>
               </div>
               <div className="p-4">
                 <ul className="list-disc pl-5 space-y-2">
@@ -1062,14 +1062,14 @@ export function LessonContent({ content }: LessonContentProps) {
             {currentWord?.wordFamily && currentWord.wordFamily.words && currentWord.wordFamily.words.length > 0 && (
               <div className="bg-white rounded-lg border border-gray-200 shadow-sm h-full">
                 <div className="p-4 border-b flex items-center">
-                  <BookOpen className="h-5 w-5 text-blue-600 mr-2" />
-                  <h3 className="font-semibold text-blue-600">Word Family</h3>
+                  <BookOpen className="h-6 w-6 text-blue-600 mr-2" />
+                  <h3 className="font-bold text-blue-600 text-xl">Word Family</h3>
                 </div>
                 <div className="p-4">
                   <p className="text-gray-600 mb-3 text-sm">Related words in this family:</p>
                   <div className="flex flex-wrap gap-2">
                     {currentWord.wordFamily.words.map((word, idx) => (
-                      <span key={idx} className="bg-blue-50 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+                      <span key={idx} className="bg-blue-50 text-blue-800 px-4 py-2 rounded-full text-base font-bold inline-block mb-2 mr-2">
                         {word}
                       </span>
                     ))}
@@ -1088,8 +1088,8 @@ export function LessonContent({ content }: LessonContentProps) {
             {currentWord?.collocations && currentWord.collocations.length > 0 && (
               <div className="bg-white rounded-lg border border-gray-200 shadow-sm h-full">
                 <div className="p-4 border-b flex items-center">
-                  <MessageCircle className="h-5 w-5 text-blue-600 mr-2" />
-                  <h3 className="font-semibold text-blue-600">Common Phrases</h3>
+                  <MessageCircle className="h-6 w-6 text-blue-600 mr-2" />
+                  <h3 className="font-bold text-blue-600 text-xl">Common Phrases</h3>
                 </div>
                 <div className="p-4">
                   <p className="text-gray-600 mb-3 text-sm">Frequently used with:</p>
@@ -1111,8 +1111,8 @@ export function LessonContent({ content }: LessonContentProps) {
           {currentWord?.usageNotes && (
             <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
               <div className="p-4 border-b flex items-center">
-                <FileText className="h-5 w-5 text-blue-600 mr-2" />
-                <h3 className="font-semibold text-blue-600">Usage Notes</h3>
+                <FileText className="h-6 w-6 text-blue-600 mr-2" />
+                <h3 className="font-bold text-blue-600 text-xl">Usage Notes</h3>
               </div>
               <div className="p-4">
                 <div className="bg-blue-50 p-4 rounded-md">
