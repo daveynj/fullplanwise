@@ -1001,7 +1001,9 @@ export function LessonContent({ content }: LessonContentProps) {
                 <h3 className="font-semibold text-blue-600">Pronunciation</h3>
               </div>
               <div className="p-4">
-                <p className="text-gray-800 font-mono">{formatPronunciation(currentWord?.pronunciation || "")}</p>
+                <p className="text-gray-800 font-mono">
+                  {typeof currentWord?.pronunciation === 'string' ? formatPronunciation(currentWord.pronunciation) : "/pronunciation/"}
+                </p>
               </div>
             </div>
             
@@ -1026,7 +1028,7 @@ export function LessonContent({ content }: LessonContentProps) {
           {currentWord?.additionalExamples && currentWord.additionalExamples.length > 0 && (
             <div className="bg-white rounded-lg border border-gray-200 shadow-sm mb-4">
               <div className="p-4 border-b flex items-center">
-                <ListIcon className="h-5 w-5 text-blue-600 mr-2" />
+                <AlignJustify className="h-5 w-5 text-blue-600 mr-2" />
                 <h3 className="font-semibold text-blue-600">More Examples</h3>
               </div>
               <div className="p-4">
@@ -1047,7 +1049,7 @@ export function LessonContent({ content }: LessonContentProps) {
           {currentWord?.wordFamily && currentWord.wordFamily.words && currentWord.wordFamily.words.length > 0 && (
             <div className="bg-white rounded-lg border border-gray-200 shadow-sm mb-4">
               <div className="p-4 border-b flex items-center">
-                <FolderTree className="h-5 w-5 text-blue-600 mr-2" />
+                <BookOpen className="h-5 w-5 text-blue-600 mr-2" />
                 <h3 className="font-semibold text-blue-600">Word Family</h3>
               </div>
               <div className="p-4">
@@ -1066,7 +1068,7 @@ export function LessonContent({ content }: LessonContentProps) {
           {currentWord?.collocations && currentWord.collocations.length > 0 && (
             <div className="bg-white rounded-lg border border-gray-200 shadow-sm mb-4">
               <div className="p-4 border-b flex items-center">
-                <GitBranch className="h-5 w-5 text-blue-600 mr-2" />
+                <MessageCircle className="h-5 w-5 text-blue-600 mr-2" />
                 <h3 className="font-semibold text-blue-600">Common Phrases</h3>
               </div>
               <div className="p-4">
