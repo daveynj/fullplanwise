@@ -1014,9 +1014,9 @@ export function LessonContent({ content }: LessonContentProps) {
                       </div>
                     )}
                     
-                    {/* Syllable breakdown in hyphenated format */}
+                    {/* Syllable breakdown in hyphenated format - exactly like in the image */}
                     {currentWord?.pronunciation && (
-                      <div className="text-xl font-medium text-blue-900 mb-4 tracking-wider">
+                      <div className="text-2xl font-semibold text-indigo-800 mb-6 tracking-wider text-center">
                         {currentWord?.syllables && Array.isArray(currentWord.syllables) 
                          ? currentWord.syllables.map((s, i) => i === currentWord.stressIndex ? s.toUpperCase() : s.toLowerCase()).join('-')
                          : currentWord.word?.split('').join('-')}
@@ -1029,7 +1029,7 @@ export function LessonContent({ content }: LessonContentProps) {
                         {currentWord.syllables.map((syllable, index) => (
                           <div 
                             key={index}
-                            className={`w-auto min-w-12 px-3 py-2 ${index === currentWord.stressIndex ? 'bg-blue-600 text-white font-bold' : 'bg-white border border-gray-300 text-gray-700'} rounded flex items-center justify-center`}
+                            className={`w-auto min-w-[60px] px-3 py-2 ${index === currentWord.stressIndex ? 'bg-blue-600 text-white font-bold' : 'bg-white border border-gray-200 text-gray-800'} rounded-md flex items-center justify-center text-lg font-medium`}
                           >
                             {syllable.toLowerCase()}
                           </div>
