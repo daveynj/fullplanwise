@@ -38,19 +38,23 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
   
   // Handle complex pronunciation object - with type safety
   const getPronunciationData = () => {
+    let pronouncedValue = "";
+    
     // Handle complex pronunciation object
     if (word.pronunciation && typeof word.pronunciation === 'object') {
       const pronounceObj = word.pronunciation as any; // Safely cast to any
+      pronouncedValue = pronounceObj.ipa || pronounceObj.value || pronounceObj.phoneticGuide || "/pronunciation/";
       return {
-        pronunciation: pronounceObj.ipa || pronounceObj.value || pronounceObj.phoneticGuide || "/pronunciation/",
+        pronunciation: pronouncedValue,
         syllables: pronounceObj.syllables || word.syllables || [normalizedWord],
         emphasisIndex: pronounceObj.stressIndex !== undefined ? pronounceObj.stressIndex : (word.stressIndex || 0)
       };
     }
     
     // Handle direct fields
+    pronouncedValue = typeof word.pronunciation === 'string' ? word.pronunciation : (word.phoneticGuide || "/pronunciation/");
     return {
-      pronunciation: typeof word.pronunciation === 'string' ? word.pronunciation : (word.phoneticGuide || "/pronunciation/"),
+      pronunciation: pronouncedValue,
       syllables: word.syllables || [normalizedWord],
       emphasisIndex: word.stressIndex !== undefined ? word.stressIndex : 0
     };
@@ -124,7 +128,7 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
           </div>
           <div className="ml-7 mt-1">
             <p className="text-xl font-mono">
-              {wordData.pronunciation}
+              {typeof wordData.pronunciation === 'string' ? wordData.pronunciation : '/pronunciation/'}
             </p>
           </div>
         </div>
