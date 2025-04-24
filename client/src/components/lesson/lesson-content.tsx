@@ -38,7 +38,23 @@ import { DiscussionSection } from "./discussion-section";
 import { DiscussionExtractor } from "./discussion-extractor";
 import { ComprehensionExtractor } from "./comprehension-extractor";
 import { QuizExtractor } from "./quiz-extractor";
-import { VocabularyCard, VocabularyWord } from "./warm-up/vocabulary-card";
+// Define a more specific pronunciation object type to handle different API formats
+interface PronunciationObject {
+  ipa?: string;
+  value?: string;
+  syllables?: string[];
+  stressIndex?: number;
+  phoneticGuide?: string;
+  [key: string]: any; // For other possible API fields
+}
+
+// Import and extend VocabularyWord to ensure correct pronunciation typing
+import { VocabularyCard, VocabularyWord as BaseVocabularyWord } from "./warm-up/vocabulary-card";
+
+// Extended version with more specific pronunciation typing
+interface VocabularyWord extends BaseVocabularyWord {
+  pronunciation?: string | PronunciationObject;
+}
 import { InteractiveClozeSection } from "./interactive-cloze-section";
 import { SentenceUnscrambleSection } from "./sentence-unscramble-section";
 import { useState, useEffect } from "react";
@@ -980,11 +996,20 @@ export function LessonContent({ content }: LessonContentProps) {
                   <p className="text-gray-600 italic">{currentWord?.partOfSpeech}</p>
                 </div>
                 
-                {/* Pronunciation directly in header card */}
-                {typeof currentWord?.pronunciation === 'string' && currentWord.pronunciation && (
+                {/* Pronunciation display - flexible to handle different data formats */}
+                {/* Log pronunciation data for debugging */}
+                {currentWord?.pronunciation && (
                   <div className="flex items-center mb-3 bg-amber-50 px-3 py-2 rounded-md">
                     <Volume className="h-4 w-4 text-amber-600 mr-2" />
-                    <span className="font-mono text-amber-800">{formatPronunciation(currentWord.pronunciation)}</span>
+                    {typeof currentWord.pronunciation === 'string' ? (
+                      <span className="font-mono text-amber-800">{currentWord.pronunciation}</span>
+                    ) : typeof currentWord.pronunciation === 'object' && currentWord.pronunciation !== null ? (
+                      <span className="font-mono text-amber-800">
+                        {currentWord.pronunciation.ipa || currentWord.pronunciation.value || JSON.stringify(currentWord.pronunciation)}
+                      </span>
+                    ) : (
+                      <span className="font-mono text-amber-800">No pronunciation available</span>
+                    )}
                   </div>
                 )}
                 
@@ -1305,11 +1330,19 @@ export function LessonContent({ content }: LessonContentProps) {
                       <h2 className="text-2xl font-bold text-gray-800">{(currentWord as any).term || currentWord.word}</h2>
                       <p className="text-gray-500 italic">{currentWord.partOfSpeech}</p>
                       
-                      {/* Pronunciation */}
-                      {typeof currentWord?.pronunciation === 'string' && currentWord.pronunciation && (
+                      {/* Pronunciation - flexible to handle different data formats */}
+                      {currentWord?.pronunciation && (
                         <div className="flex items-center justify-center mt-2 bg-amber-50 px-3 py-2 rounded-md">
                           <Volume className="h-4 w-4 text-amber-600 mr-2" />
-                          <span className="font-mono text-amber-800">{formatPronunciation(currentWord.pronunciation)}</span>
+                          {typeof currentWord.pronunciation === 'string' ? (
+                            <span className="font-mono text-amber-800">{currentWord.pronunciation}</span>
+                          ) : typeof currentWord.pronunciation === 'object' && currentWord.pronunciation !== null ? (
+                            <span className="font-mono text-amber-800">
+                              {currentWord.pronunciation.ipa || currentWord.pronunciation.value || JSON.stringify(currentWord.pronunciation)}
+                            </span>
+                          ) : (
+                            <span className="font-mono text-amber-800">No pronunciation available</span>
+                          )}
                         </div>
                       )}
                     </div>
