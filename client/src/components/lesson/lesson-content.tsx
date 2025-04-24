@@ -996,22 +996,30 @@ export function LessonContent({ content }: LessonContentProps) {
                   <p className="text-gray-600 italic">{currentWord?.partOfSpeech}</p>
                 </div>
                 
-                {/* Pronunciation display - flexible to handle different data formats */}
-                {/* Log pronunciation data for debugging */}
-                {currentWord?.pronunciation && (
-                  <div className="flex items-center mb-3 bg-amber-50 px-3 py-2 rounded-md">
-                    <Volume className="h-4 w-4 text-amber-600 mr-2" />
-                    {typeof currentWord.pronunciation === 'string' ? (
-                      <span className="font-mono text-amber-800">{currentWord.pronunciation}</span>
-                    ) : typeof currentWord.pronunciation === 'object' && currentWord.pronunciation !== null ? (
-                      <span className="font-mono text-amber-800">
-                        {currentWord.pronunciation.ipa || currentWord.pronunciation.value || JSON.stringify(currentWord.pronunciation)}
-                      </span>
-                    ) : (
-                      <span className="font-mono text-amber-800">No pronunciation available</span>
+                {/* Pronunciation display - styled like the image with dynamic data */}
+                <div className="mb-3 bg-blue-50 px-4 py-3 rounded-md">
+                  <div className="flex items-center mb-2">
+                    <Volume className="h-4 w-4 text-blue-600 mr-2" />
+                    <span className="text-blue-700 font-medium">Pronunciation</span>
+                  </div>
+                  <div className="text-center">
+                    {currentWord?.pronunciation && (
+                      <div className="text-xl font-bold text-blue-800 mb-2">{currentWord.pronunciation}</div>
+                    )}
+                    {currentWord?.syllables && Array.isArray(currentWord.syllables) && (
+                      <div className="flex justify-center space-x-1">
+                        {currentWord.syllables.map((syllable, index) => (
+                          <div 
+                            key={index}
+                            className={`w-auto min-w-12 px-2 h-10 ${index === currentWord.stressIndex ? 'bg-blue-600 text-white font-bold' : 'bg-white text-gray-700'} rounded flex items-center justify-center`}
+                          >
+                            {syllable}
+                          </div>
+                        ))}
+                      </div>
                     )}
                   </div>
-                )}
+                </div>
                 
                 {/* Additional information can go here if needed in the future */}
                 <div className="flex-1">
@@ -1163,8 +1171,7 @@ export function LessonContent({ content }: LessonContentProps) {
     const [activeCard, setActiveCard] = useState(0);
     const [isFlipped, setIsFlipped] = useState(false);
     
-    // For debugging - log the actual section structure
-    console.log("Vocabulary section structure:", section);
+    // Extract vocabulary words from the section
     
     // Extract vocabulary words from the section
     const extractedVocabWords: VocabularyWord[] = [];
@@ -1173,14 +1180,12 @@ export function LessonContent({ content }: LessonContentProps) {
     if (section.words && Array.isArray(section.words)) {
       section.words.forEach((wordData: any) => {
         if (typeof wordData === 'object') {
-          // Handle complex pronunciation object structure
-          let pronunciationData;
-          if (wordData.pronunciation && typeof wordData.pronunciation === 'object') {
-            // Keep the object structure intact
+          // Simple extraction of pronunciation data
+          let pronunciationData = "";
+          if (typeof wordData.pronunciation === 'string') {
             pronunciationData = wordData.pronunciation;
-          } else {
-            // Use the string value or extract from pronunciation field
-            pronunciationData = wordData.pronunciation || "";
+          } else if (typeof wordData.phonetic === 'string') {
+            pronunciationData = wordData.phonetic;
           }
           
           extractedVocabWords.push({
@@ -1207,7 +1212,7 @@ export function LessonContent({ content }: LessonContentProps) {
           });
         }
       });
-      console.log("Extracted vocabulary words from Gemini format:", extractedVocabWords);
+      // Use extracted vocabulary words
     }
     
     // Use the extracted vocabulary words
@@ -1330,21 +1335,30 @@ export function LessonContent({ content }: LessonContentProps) {
                       <h2 className="text-2xl font-bold text-gray-800">{(currentWord as any).term || currentWord.word}</h2>
                       <p className="text-gray-500 italic">{currentWord.partOfSpeech}</p>
                       
-                      {/* Pronunciation - flexible to handle different data formats */}
-                      {currentWord?.pronunciation && (
-                        <div className="flex items-center justify-center mt-2 bg-amber-50 px-3 py-2 rounded-md">
-                          <Volume className="h-4 w-4 text-amber-600 mr-2" />
-                          {typeof currentWord.pronunciation === 'string' ? (
-                            <span className="font-mono text-amber-800">{currentWord.pronunciation}</span>
-                          ) : typeof currentWord.pronunciation === 'object' && currentWord.pronunciation !== null ? (
-                            <span className="font-mono text-amber-800">
-                              {currentWord.pronunciation.ipa || currentWord.pronunciation.value || JSON.stringify(currentWord.pronunciation)}
-                            </span>
-                          ) : (
-                            <span className="font-mono text-amber-800">No pronunciation available</span>
+                      {/* Pronunciation display - matching the main view */}
+                      <div className="mt-2 bg-blue-50 px-3 py-2 rounded-md">
+                        <div className="flex items-center mb-2 justify-center">
+                          <Volume className="h-4 w-4 text-blue-600 mr-2" />
+                          <span className="text-blue-700 font-medium">Pronunciation</span>
+                        </div>
+                        <div className="text-center">
+                          {currentWord?.pronunciation && (
+                            <div className="text-lg font-bold text-blue-800 mb-2">{currentWord.pronunciation}</div>
+                          )}
+                          {currentWord?.syllables && Array.isArray(currentWord.syllables) && (
+                            <div className="flex justify-center space-x-1">
+                              {currentWord.syllables.map((syllable, index) => (
+                                <div 
+                                  key={index}
+                                  className={`w-auto min-w-10 px-2 h-8 ${index === currentWord.stressIndex ? 'bg-blue-600 text-white font-bold' : 'bg-white text-gray-700'} rounded flex items-center justify-center text-sm`}
+                                >
+                                  {syllable}
+                                </div>
+                              ))}
+                            </div>
                           )}
                         </div>
-                      )}
+                      </div>
                     </div>
                     
                     {/* Definition */}
