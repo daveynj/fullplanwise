@@ -964,7 +964,7 @@ export function LessonContent({ content }: LessonContentProps) {
                   <img 
                     src={`data:image/png;base64,${currentWord.imageBase64}`}
                     alt={`Image for ${currentWord.word}`}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover object-center"
                   />
                 ) : (
                   <div className="w-full h-full min-h-[200px] bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center">
@@ -973,10 +973,31 @@ export function LessonContent({ content }: LessonContentProps) {
                 )}
               </div>
               
-              {/* Right: Word Info */}
-              <div className="w-full md:w-[60%] p-6">
-                <h2 className="text-3xl font-bold text-gray-800">{currentWord?.word}</h2>
-                <p className="text-gray-600 italic">{currentWord?.partOfSpeech}</p>
+              {/* Right: Word Info with more details */}
+              <div className="w-full md:w-[60%] p-6 flex flex-col">
+                <div className="mb-3">
+                  <h2 className="text-3xl font-bold text-gray-800">{currentWord?.word}</h2>
+                  <p className="text-gray-600 italic">{currentWord?.partOfSpeech}</p>
+                </div>
+                
+                {/* Pronunciation directly in header card */}
+                {typeof currentWord?.pronunciation === 'string' && currentWord.pronunciation && (
+                  <div className="flex items-center mb-3 bg-amber-50 px-3 py-2 rounded-md">
+                    <Volume className="h-4 w-4 text-amber-600 mr-2" />
+                    <span className="font-mono text-amber-800">{formatPronunciation(currentWord.pronunciation)}</span>
+                  </div>
+                )}
+                
+                {/* Quick definition overview */}
+                <div className="flex-1">
+                  <p className="text-gray-800 font-medium">
+                    {currentWord?.definition ? 
+                      (currentWord.definition.length > 120 ? 
+                        currentWord.definition.substring(0, 120) + "..." : 
+                        currentWord.definition) 
+                      : "No definition available"}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -992,35 +1013,25 @@ export function LessonContent({ content }: LessonContentProps) {
             </div>
           </div>
           
-          {/* Two Column Layout for Pronunciation and Example */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            {/* Pronunciation Section */}
-            <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
-              <div className="p-4 border-b flex items-center">
-                <MessageCircle className="h-5 w-5 text-blue-600 mr-2" />
-                <h3 className="font-semibold text-blue-600">Pronunciation</h3>
-              </div>
-              <div className="p-4">
-                <p className="text-gray-800 font-mono">
-                  {typeof currentWord?.pronunciation === 'string' ? formatPronunciation(currentWord.pronunciation) : "/pronunciation/"}
-                </p>
-              </div>
+          {/* Example Section - Single Column, more prominent */}
+          <div className="bg-white rounded-lg border border-gray-200 shadow-sm mb-4">
+            <div className="p-4 border-b flex items-center">
+              <MessageCircle className="h-5 w-5 text-blue-600 mr-2" />
+              <h3 className="font-semibold text-blue-600">Example Sentence</h3>
             </div>
-            
-            {/* Example Section */}
-            <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
-              <div className="p-4 border-b flex items-center">
-                <MessageCircle className="h-5 w-5 text-blue-600 mr-2" />
-                <h3 className="font-semibold text-blue-600">Example</h3>
-              </div>
-              <div className="p-4">
-                <p 
-                  className="text-gray-800" 
-                  dangerouslySetInnerHTML={{ 
-                    __html: highlightWordInExample(currentWord?.example || "", currentWord?.word || "") 
-                  }}
-                ></p>
-              </div>
+            <div className="p-4">
+              {currentWord?.example ? (
+                <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                  <p 
+                    className="text-gray-800 text-lg font-medium" 
+                    dangerouslySetInnerHTML={{ 
+                      __html: highlightWordInExample(currentWord.example, currentWord.word || "") 
+                    }}
+                  ></p>
+                </div>
+              ) : (
+                <p className="text-gray-500 italic">No example available</p>
+              )}
             </div>
           </div>
           
@@ -1045,45 +1056,58 @@ export function LessonContent({ content }: LessonContentProps) {
             </div>
           )}
           
-          {/* Word Family Section (if available) */}
-          {currentWord?.wordFamily && currentWord.wordFamily.words && currentWord.wordFamily.words.length > 0 && (
-            <div className="bg-white rounded-lg border border-gray-200 shadow-sm mb-4">
-              <div className="p-4 border-b flex items-center">
-                <BookOpen className="h-5 w-5 text-blue-600 mr-2" />
-                <h3 className="font-semibold text-blue-600">Word Family</h3>
-              </div>
-              <div className="p-4">
-                <div className="flex flex-wrap gap-2">
-                  {currentWord.wordFamily.words.map((word, idx) => (
-                    <span key={idx} className="text-gray-800">
-                      {word}{idx < currentWord.wordFamily!.words.length - 1 ? ", " : ""}
-                    </span>
-                  ))}
+          {/* Two Column Layout for Word Family and Common Phrases */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            {/* Word Family Section (if available) */}
+            {currentWord?.wordFamily && currentWord.wordFamily.words && currentWord.wordFamily.words.length > 0 && (
+              <div className="bg-white rounded-lg border border-gray-200 shadow-sm h-full">
+                <div className="p-4 border-b flex items-center">
+                  <BookOpen className="h-5 w-5 text-blue-600 mr-2" />
+                  <h3 className="font-semibold text-blue-600">Word Family</h3>
+                </div>
+                <div className="p-4">
+                  <p className="text-gray-600 mb-3 text-sm">Related words in this family:</p>
+                  <div className="flex flex-wrap gap-2">
+                    {currentWord.wordFamily.words.map((word, idx) => (
+                      <span key={idx} className="bg-blue-50 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+                        {word}
+                      </span>
+                    ))}
+                  </div>
+                  
+                  {currentWord.wordFamily.description && (
+                    <div className="mt-4 p-3 bg-gray-50 rounded-md text-sm text-gray-700">
+                      <p><strong>Note:</strong> {currentWord.wordFamily.description}</p>
+                    </div>
+                  )}
                 </div>
               </div>
-            </div>
-          )}
-          
-          {/* Common Phrases Section (if available) */}
-          {currentWord?.collocations && currentWord.collocations.length > 0 && (
-            <div className="bg-white rounded-lg border border-gray-200 shadow-sm mb-4">
-              <div className="p-4 border-b flex items-center">
-                <MessageCircle className="h-5 w-5 text-blue-600 mr-2" />
-                <h3 className="font-semibold text-blue-600">Common Phrases</h3>
-              </div>
-              <div className="p-4">
-                <div className="space-y-2">
-                  {currentWord.collocations.map((phrase, idx) => (
-                    <p key={idx} className="text-gray-800">
-                      {phrase}
-                    </p>
-                  ))}
+            )}
+            
+            {/* Common Phrases Section (if available) */}
+            {currentWord?.collocations && currentWord.collocations.length > 0 && (
+              <div className="bg-white rounded-lg border border-gray-200 shadow-sm h-full">
+                <div className="p-4 border-b flex items-center">
+                  <MessageCircle className="h-5 w-5 text-blue-600 mr-2" />
+                  <h3 className="font-semibold text-blue-600">Common Phrases</h3>
+                </div>
+                <div className="p-4">
+                  <p className="text-gray-600 mb-3 text-sm">Frequently used with:</p>
+                  <ul className="space-y-2 list-disc pl-5">
+                    {currentWord.collocations.map((phrase, idx) => (
+                      <li key={idx} className="text-gray-800">
+                        <span dangerouslySetInnerHTML={{
+                          __html: highlightWordInExample(phrase, currentWord.word)
+                        }}></span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
           
-          {/* Usage Notes Section (if available) */}
+          {/* Usage Notes Section (if available) with improved formatting */}
           {currentWord?.usageNotes && (
             <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
               <div className="p-4 border-b flex items-center">
@@ -1091,7 +1115,13 @@ export function LessonContent({ content }: LessonContentProps) {
                 <h3 className="font-semibold text-blue-600">Usage Notes</h3>
               </div>
               <div className="p-4">
-                <p className="text-gray-800">{currentWord.usageNotes}</p>
+                <div className="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r-md">
+                  <h4 className="font-medium text-amber-800 mb-2 flex items-center">
+                    <Lightbulb className="h-4 w-4 mr-2" />
+                    Teacher's Note:
+                  </h4>
+                  <p className="text-gray-800">{currentWord.usageNotes}</p>
+                </div>
               </div>
             </div>
           )}
