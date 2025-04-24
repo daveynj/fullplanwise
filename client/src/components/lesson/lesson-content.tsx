@@ -1006,9 +1006,9 @@ export function LessonContent({ content }: LessonContentProps) {
                     {currentWord?.pronunciation && (
                       <div className="text-xl font-bold text-blue-800 mb-2">
                         {typeof currentWord.pronunciation === 'string' 
-                          ? currentWord.pronunciation 
+                          ? formatPronunciation(currentWord.pronunciation)
                           : typeof currentWord.pronunciation === 'object' && currentWord.pronunciation !== null
-                            ? (currentWord.pronunciation.ipa || currentWord.pronunciation.value || '')
+                            ? formatPronunciation(currentWord.pronunciation.ipa || currentWord.pronunciation.value || currentWord.pronunciation.phoneticGuide || '')
                             : ''}
                       </div>
                     )}

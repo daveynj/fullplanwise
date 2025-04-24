@@ -43,7 +43,7 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
     // Handle complex pronunciation object
     if (word.pronunciation && typeof word.pronunciation === 'object') {
       const pronounceObj = word.pronunciation as any; // Safely cast to any
-      pronouncedValue = pronounceObj.ipa || pronounceObj.value || pronounceObj.phoneticGuide || "/pronunciation/";
+      pronouncedValue = pronounceObj.ipa || pronounceObj.value || pronounceObj.phoneticGuide || "";
       return {
         pronunciation: pronouncedValue,
         syllables: pronounceObj.syllables || word.syllables || [normalizedWord],
@@ -52,7 +52,7 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
     }
     
     // Handle direct fields
-    pronouncedValue = typeof word.pronunciation === 'string' ? word.pronunciation : (word.phoneticGuide || "/pronunciation/");
+    pronouncedValue = typeof word.pronunciation === 'string' ? word.pronunciation : (word.phoneticGuide || "");
     return {
       pronunciation: pronouncedValue,
       syllables: word.syllables || [normalizedWord],
