@@ -128,7 +128,8 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
           </div>
           <div className="ml-7 mt-1">
             <p className="text-xl font-mono">
-              {typeof wordData.pronunciation === 'string' ? wordData.pronunciation : '/pronunciation/'}
+              {wordData.pronunciation ? (typeof wordData.pronunciation === 'string' ? 
+                (wordData.pronunciation.startsWith('/') ? wordData.pronunciation : `/${wordData.pronunciation}/`) : '') : ''}
             </p>
           </div>
         </div>
