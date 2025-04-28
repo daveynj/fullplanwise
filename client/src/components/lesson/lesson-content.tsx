@@ -999,13 +999,19 @@ export function LessonContent({ content }: LessonContentProps) {
                 {/* Pronunciation display - styled like the image with dynamic data */}
                 <div className="mb-3 bg-blue-50 px-4 py-3 rounded-md">
                   <div className="flex items-center mb-2">
-                    <Volume className="h-4 w-4 text-blue-600 mr-2" />
-                    <span className="text-blue-700 font-medium">Pronunciation</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" 
+                         stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
+                         className="text-blue-700 mr-2">
+                      <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"></path>
+                      <path d="M19 10v1a7 7 0 0 1-14 0v-1M12 19v4"></path>
+                      <line x1="8" y1="23" x2="16" y2="23"></line>
+                    </svg>
+                    <span className="text-blue-700 font-medium text-lg">Pronunciation</span>
                   </div>
                   <div className="text-center">
-                    {/* Phonetic pronunciation */}
+                    {/* IPA Phonetic pronunciation with slashes */}
                     {currentWord?.pronunciation && (
-                      <div className="text-xl font-bold text-blue-800 mb-3">
+                      <div className="text-xl font-bold text-blue-800 mb-3 text-center">
                         {typeof currentWord.pronunciation === 'string' 
                           ? formatPronunciation(currentWord.pronunciation)
                           : typeof currentWord.pronunciation === 'object' && currentWord.pronunciation !== null
@@ -1014,24 +1020,30 @@ export function LessonContent({ content }: LessonContentProps) {
                       </div>
                     )}
                     
-                    {/* Syllable breakdown in hyphenated format - exactly like in the image */}
-                    {currentWord?.pronunciation && (
-                      <div className="text-2xl font-semibold text-indigo-800 mb-6 tracking-wider text-center">
-                        {currentWord?.syllables && Array.isArray(currentWord.syllables) 
-                         ? currentWord.syllables.map((s, i) => i === currentWord.stressIndex ? s.toUpperCase() : s.toLowerCase()).join('-')
-                         : currentWord.word?.split('').join('-')}
+                    {/* Syllable breakdown in capital letters with hyphens - exactly like second image */}
+                    {currentWord?.syllables && Array.isArray(currentWord.syllables) && (
+                      <div className="text-2xl font-semibold text-blue-800 mb-5 tracking-wider text-center">
+                        {currentWord.syllables.map((s, i) => 
+                          i === currentWord.stressIndex 
+                            ? s.toUpperCase() 
+                            : s.toLowerCase()
+                        ).join('-')}
                       </div>
                     )}
                     
-                    {/* Syllable boxes like in the image */}
+                    {/* Syllable boxes exactly like in the reference image */}
                     {currentWord?.syllables && Array.isArray(currentWord.syllables) && (
-                      <div className="flex justify-center space-x-1">
+                      <div className="flex justify-center space-x-2">
                         {currentWord.syllables.map((syllable, index) => (
                           <div 
                             key={index}
-                            className={`w-auto min-w-[60px] px-3 py-2 ${index === currentWord.stressIndex ? 'bg-blue-600 text-white font-bold' : 'bg-white border border-gray-200 text-gray-800'} rounded-md flex items-center justify-center text-lg font-medium`}
+                            className={`w-auto min-w-[60px] px-4 py-2 ${
+                              index === currentWord.stressIndex 
+                                ? 'bg-blue-600 text-white font-bold' 
+                                : 'bg-white border border-gray-200 text-gray-800'
+                            } rounded-md flex items-center justify-center text-lg font-medium`}
                           >
-                            {syllable.toLowerCase()}
+                            {index === currentWord.stressIndex ? syllable.toLowerCase() : syllable.toLowerCase()}
                           </div>
                         ))}
                       </div>
