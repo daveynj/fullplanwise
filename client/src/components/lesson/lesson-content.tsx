@@ -1011,10 +1011,17 @@ export function LessonContent({ content }: LessonContentProps) {
                   
                   {/* Styled exactly like the reference image but with DYNAMIC data */}
                   <div className="text-center mt-4">
+                    {/* PART 1: PHONETIC PRONUNCIATION */}
                     <div className="text-2xl font-medium text-blue-800 mb-4">
-                      {currentWord?.syllables && Array.isArray(currentWord.syllables) 
-                        ? currentWord.syllables.map((s, i) => i === currentWord.stressIndex ? s.toUpperCase() : s.toLowerCase()).join('-')
-                        : currentWord.word?.toUpperCase()}
+                      {/* Pronunciation text like "KAIR-ak-ter" */}
+                      {currentWord?.pronunciation && typeof currentWord.pronunciation === 'string' 
+                        ? currentWord.pronunciation.toUpperCase()
+                        : currentWord?.phoneticGuide 
+                          ? currentWord.phoneticGuide.toUpperCase()
+                          : currentWord?.syllables && Array.isArray(currentWord.syllables)
+                            ? currentWord.syllables.map((s, i) => i === currentWord.stressIndex ? s.toUpperCase() : s.toLowerCase()).join('-')
+                            : currentWord.word?.toUpperCase()
+                      }
                     </div>
                     
                     <div className="flex justify-center gap-2">

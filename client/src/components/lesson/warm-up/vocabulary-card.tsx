@@ -131,9 +131,11 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
           {/* Styled exactly like the reference image but with DYNAMIC data */}
           <div className="text-center mt-4">
             <div className="text-2xl font-medium text-blue-800 mb-4">
-              {wordData.syllables && wordData.syllables.length > 0
-                ? wordData.syllables.map((s, i) => i === wordData.emphasisIndex ? s.toUpperCase() : s.toLowerCase()).join('-')
-                : word.word?.toUpperCase()}
+              {wordData.pronunciation 
+                ? wordData.pronunciation.toUpperCase()
+                : wordData.syllables && wordData.syllables.length > 0
+                  ? wordData.syllables.map((s, i) => i === wordData.emphasisIndex ? s.toUpperCase() : s.toLowerCase()).join('-')
+                  : word.word?.toUpperCase()}
             </div>
             
             <div className="flex justify-center gap-2">
