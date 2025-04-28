@@ -41,17 +41,9 @@ import {
   Compass,
   Library,
   CheckCircle,
-  GraduationCap,
-  Book,
-  CheckSquare,
-  Radio,
-  Info as InfoIcon,
-  Sparkles as SparklesIcon,
-  Clock as ClockIcon
 } from "lucide-react";
-// Mock imports to prevent errors
-const AudioPlayer = (props: any) => <div>Audio Player (mock)</div>;
-const handleMessageWithAPI = async (message: any) => ({ response: "This is a mock response" });
+import { AudioPlayer } from "@/components/shared/audio-player";
+import { handleMessageWithAPI } from '@/lib/api-helpers';
 import { DiscussionSection } from './discussion-section';
 import { SentenceFramesSection } from './sentence-frames-section';
 import { ReadingSection } from './reading-section';
@@ -625,7 +617,7 @@ export function LessonContent({ content }: LessonContentProps) {
   // Map of section types to their details
   const sectionDetails: Record<SectionType, SectionDetails> = {
     "notes": {
-      icon: GraduationCap,
+      icon: FileText,
       label: "Teacher Notes",
       color: "bg-blue-100",
       textColor: "text-blue-700",
@@ -660,7 +652,7 @@ export function LessonContent({ content }: LessonContentProps) {
       description: "Read and analyze the text with guided support"
     },
     "vocabulary": { 
-      icon: Book, 
+      icon: BookOpen, 
       label: "Vocabulary",
       color: "bg-green-100",
       textColor: "text-green-700",
@@ -702,14 +694,14 @@ export function LessonContent({ content }: LessonContentProps) {
       description: "Practice speaking skills related to the topic"
     },
     "quiz": { 
-      icon: CheckSquare, 
+      icon: Check, 
       label: "Quiz",
       color: "bg-cyan-100",
       textColor: "text-cyan-700",
       description: "Test knowledge and understanding of the lesson"
     },
     "assessment": { 
-      icon: CheckSquare, 
+      icon: Check, 
       label: "Assessment",
       color: "bg-cyan-100",
       textColor: "text-cyan-700",
@@ -1805,7 +1797,7 @@ export function LessonContent({ content }: LessonContentProps) {
       <div className="space-y-6">
         {/* Notes Header using SectionHeader */}
         <SectionHeader
-          icon={GraduationCap}
+          icon={FileText}
           title="Teacher Notes"
           description="Teaching guidance, suggestions, and additional resources"
           color="blue"
@@ -1836,7 +1828,7 @@ export function LessonContent({ content }: LessonContentProps) {
           <Card>
             <CardContent className="py-8">
               <div className="text-center">
-                <GraduationCap className="mx-auto h-12 w-12 text-blue-300" />
+                <FileText className="mx-auto h-12 w-12 text-blue-300" />
                 <h3 className="mt-4 text-lg font-medium">No teacher notes available</h3>
                 <p className="mt-2 text-sm text-gray-500">This lesson doesn't include specific teaching notes or guidance</p>
               </div>
@@ -2001,7 +1993,7 @@ export function LessonContent({ content }: LessonContentProps) {
       id: 'discussion',
       label: 'Discussion',
       icon: <MessageCircle className="h-5 w-5" />,
-      render: hasSectionType('discussion') ? <div className="p-4">Discussion Section</div> : null
+      render: hasSectionType('discussion') ? <DiscussionSection sectionData={findSection('discussion')} /> : null
     },
     {
       id: 'pronunciation',
