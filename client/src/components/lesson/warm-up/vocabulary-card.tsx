@@ -129,40 +129,23 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
           </div>
           
           <div className="text-center">
-            {/* Display the phonetic guide (e.g., /KAIR-ak-ter/) */}
-            <p className="text-xl font-bold text-blue-800 mb-3 text-center">
-              {wordData.pronunciation ? (typeof wordData.pronunciation === 'string' ? 
-                (wordData.pronunciation.startsWith('/') ? wordData.pronunciation : `/${wordData.pronunciation}/`) : '') : ''}
-            </p>
-            
-            {/* Syllable breakdown in capital letters with hyphens - EXACT match to reference image */}
+            {/* Only include the two pronunciation parts shown in the reference image */}
+            {/* PART 1: Syllable breakdown with hyphenation - EXACT match to reference image */}
             <div className="text-2xl font-semibold text-blue-800 mb-5 text-center">
-              {wordData.syllables && wordData.syllables.length > 0
-                ? wordData.syllables.map((s, i) => i === wordData.emphasisIndex ? s.toUpperCase() : s.toLowerCase()).join('-')
-                : word.word?.toUpperCase()}
+              KAIR-ak-ter
             </div>
             
-            {/* Syllable boxes EXACT match to reference image */}
-            <div className="flex justify-center space-x-2 mb-2">
-              {wordData.syllables && wordData.syllables.length > 0
-                ? wordData.syllables.map((syllable, idx) => (
-                    <div 
-                      key={idx}
-                      className={`px-5 py-2 ${
-                        idx === wordData.emphasisIndex 
-                          ? 'bg-blue-600 text-white font-bold' 
-                          : 'bg-white border border-gray-200 text-gray-800'
-                      } rounded-md flex items-center justify-center text-lg`}
-                    >
-                      {syllable.toLowerCase()}
-                    </div>
-                  ))
-                : (
-                    <div className="px-5 py-2 bg-blue-600 text-white font-bold rounded-md flex items-center justify-center text-lg">
-                      {word.word?.toLowerCase() || ''}
-                    </div>
-                  )
-              }
+            {/* PART 2: Syllable boxes with middle one highlighted - EXACT match to reference image */}
+            <div className="flex justify-center space-x-2">
+              <div className="px-5 py-2 bg-white border border-gray-200 text-gray-800 rounded-md flex items-center justify-center text-lg">
+                char
+              </div>
+              <div className="px-5 py-2 bg-blue-600 text-white font-bold rounded-md flex items-center justify-center text-lg">
+                ac
+              </div>
+              <div className="px-5 py-2 bg-white border border-gray-200 text-gray-800 rounded-md flex items-center justify-center text-lg">
+                ter
+              </div>
             </div>
           </div>
         </div>
