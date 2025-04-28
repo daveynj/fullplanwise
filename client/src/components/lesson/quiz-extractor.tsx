@@ -211,7 +211,7 @@ export const QuizExtractor = ({ content, sectionType = "quiz" }: QuizExtractorPr
             <div className="border rounded-lg p-5">
               <div className="mb-6">
                 <h3 className="text-lg font-medium mb-2">Question {activeQuestion + 1}</h3>
-                <p>{questions[activeQuestion].question}</p>
+                <p className="text-xl font-bold">{questions[activeQuestion].question}</p>
                 <p className="text-sm text-gray-500 mt-1">Choose the best answer.</p>
               </div>
               
@@ -257,7 +257,7 @@ export const QuizExtractor = ({ content, sectionType = "quiz" }: QuizExtractorPr
                         <div className="w-5 h-5 flex items-center justify-center border border-gray-300 rounded-full mr-3">
                           {['A', 'B', 'C', 'D'][idx]}
                         </div>
-                        <span>{optionText}</span>
+                        <span className="text-xl font-bold">{optionText}</span>
                         
                         {submitted && isCorrect && (
                           <CheckCircle2 className="ml-auto h-5 w-5 text-green-500" />
@@ -303,7 +303,7 @@ export const QuizExtractor = ({ content, sectionType = "quiz" }: QuizExtractorPr
                         <div className="w-5 h-5 flex items-center justify-center border border-gray-300 rounded-full mr-3">
                           {['A', 'B'][idx]}
                         </div>
-                        <span>{option}</span>
+                        <span className="text-xl font-bold">{option}</span>
                         
                         {submitted && isCorrect && (
                           <CheckCircle2 className="ml-auto h-5 w-5 text-green-500" />

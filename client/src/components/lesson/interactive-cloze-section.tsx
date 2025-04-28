@@ -299,6 +299,42 @@ export function InteractiveClozeSection({
     setScore(null);
   };
   
+  // Prepare the text with blanks
+  const parts = text.split(/(\[\d+:[^\]]+\])/g).filter(Boolean);
+  
+  // Function to render the cloze text with draggable blanks
+  const renderClozeText = () => {
+    let blankCounter = 0;
+    
+    return parts.map((part, index) => {
+      const match = part.match(/\[(\d+):([^\]]+)\]/);
+      
+      if (match) {
+        const id = parseInt(match[1]);
+        const item = clozeItems.find(i => i.id === id);
+        
+        if (!item) return null;
+        
+        blankCounter++;
+        
+        return (
+          <DroppableBlank
+            key={`blank-${id}`}
+            id={id}
+            index={blankCounter}
+            userAnswer={item.userAnswer}
+            isCorrect={item.isCorrect}
+            onRemove={removeWordFromBlank}
+            isOver={overBlankId === `blank-${id}`}
+          />
+        );
+      } else {
+        // Apply standard style to text parts
+        return <span key={`text-${index}`} className="text-xl font-bold leading-relaxed">{part}</span>;
+      }
+    });
+  };
+  
   return (
     <div className="interactive-cloze">
       <Card className="mb-6 border-l-4 border-l-blue-400 shadow-md">
@@ -322,35 +358,7 @@ export function InteractiveClozeSection({
           >
             {/* Text with blanks with proper droppable zones */}
             <div className="text-lg leading-relaxed mb-8 p-5 bg-blue-50/40 rounded-md border border-blue-100">
-              {(() => { // IIFE to allow logging within JSX
-                const regex = /\[\s*(\d+)\s*:[^\u005D]+\s*\]/; // More flexible regex
-                const parts = text.split(regex);
-                console.log("[InteractiveClozeSection] Text split parts:", parts);
-                return parts.map((part, index) => {
-                  // Even indices are text parts, odd indices are blank IDs (captured group)
-                  if (index % 2 === 0) {
-                    return <span key={index}>{part}</span>;
-                  } else {
-                    const blankId = parseInt(part);
-                    const blankItem = clozeItems.find(item => item.id === blankId);
-                    
-                    if (blankItem) {
-                      return (
-                        <DroppableBlank
-                          key={`blank-${blankId}`}
-                          id={blankId}
-                          index={blankId}
-                          userAnswer={blankItem.userAnswer}
-                          isCorrect={blankItem.isCorrect}
-                          onRemove={removeWordFromBlank}
-                          isOver={overBlankId === `blank-${blankId}`}
-                        />
-                      );
-                    }
-                    return null;
-                  }
-                });
-              })()}
+              {renderClozeText()}
             </div>
             
             {/* Word bank with draggable words */}

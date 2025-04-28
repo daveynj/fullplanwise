@@ -88,7 +88,7 @@ function SortableWord({ id, word, isChecked, isCorrect, isDragging }: {
             : "border-cyan-200 bg-white text-gray-700 hover:bg-cyan-50"
         } cursor-grab active:cursor-grabbing font-medium m-1`}
     >
-      {word}
+      <span className="text-xl font-bold">{word}</span>
     </motion.div>
   );
 }
@@ -108,7 +108,7 @@ function WordDisplay({ word, isChecked, isCorrect }: {
         : "border-cyan-400 bg-cyan-100 text-cyan-800"
       } font-medium`}
     >
-      {word}
+      <span className="text-xl font-bold">{word}</span>
     </div>
   );
 }

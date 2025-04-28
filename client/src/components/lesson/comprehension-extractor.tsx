@@ -174,7 +174,7 @@ export const ComprehensionExtractor = ({ content }: ComprehensionExtractorProps)
                 <>
                   <div className="mb-4">
                     <h3 className="font-semibold text-lg mb-2">Question {activeQuestion + 1}</h3>
-                    <p className="text-gray-900 font-medium">{extractedQuestions[activeQuestion].question || "No question text available"}</p>
+                    <p className="text-gray-900 text-xl font-bold">{extractedQuestions[activeQuestion].question || "No question text available"}</p>
                     
                     {/* Instructions based on question type */}
                     {'type' in extractedQuestions[activeQuestion] && extractedQuestions[activeQuestion].type === "true-false" && (
@@ -226,7 +226,7 @@ export const ComprehensionExtractor = ({ content }: ComprehensionExtractorProps)
                               <div className={`h-4 w-4 mr-3 rounded-full ${
                                 isSelected ? (submitted && !isCorrect ? 'bg-red-500' : 'bg-purple-500') : 'bg-gray-200'
                               }`} />
-                              <span className="font-medium">{option}</span>
+                              <span className="text-xl font-bold">{option}</span>
                               
                               {submitted && isCorrect && (
                                 <CheckCircle2 className="ml-auto h-5 w-5 text-green-500" />
@@ -283,7 +283,7 @@ export const ComprehensionExtractor = ({ content }: ComprehensionExtractorProps)
                               <div className={`h-4 w-4 mr-3 rounded-full ${
                                 isSelected ? (submitted && !isCorrect ? 'bg-red-500' : 'bg-purple-500') : 'bg-gray-200'
                               }`} />
-                              <span className="font-medium">{optionText}</span>
+                              <span className="text-xl font-bold">{optionText}</span>
                               
                               {submitted && isCorrect && (
                                 <CheckCircle2 className="ml-auto h-5 w-5 text-green-500" />

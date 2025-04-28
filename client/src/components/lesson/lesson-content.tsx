@@ -1459,7 +1459,8 @@ export function LessonContent({ content }: LessonContentProps) {
                         Definition:
                       </h3>
                       <div className="p-4 bg-green-50 rounded-md border border-green-100">
-                        <p className="font-medium text-gray-800">{currentWord.definition}</p>
+                        {/* Definition on flip card */}
+                        <p className="text-gray-800 text-xl font-bold">{currentWord.definition}</p> {/* Applied text-xl font-bold */} 
                       </div>
                     </div>
                     
@@ -1470,7 +1471,8 @@ export function LessonContent({ content }: LessonContentProps) {
                         Example:
                       </h3>
                       <div className="p-4 bg-blue-50 rounded-md border border-blue-100">
-                        <p className="italic font-medium text-gray-800">"{currentWord.example}"</p>
+                         {/* Example on flip card */}
+                        <p className="italic text-gray-800 text-xl font-bold">"{currentWord.example}"</p> {/* Applied text-xl font-bold */} 
                       </div>
                     </div>
                   </div>
@@ -1681,7 +1683,8 @@ export function LessonContent({ content }: LessonContentProps) {
                     <span className="flex-shrink-0 h-6 w-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold mr-3">
                       {index + 1}
                     </span>
-                    <p className="text-gray-700 leading-relaxed">{q}</p>
+                    {/* Question Text */}
+                    <p className="text-gray-700 leading-relaxed text-xl font-bold">{q}</p> {/* Applied text-xl font-bold */}
                   </li>
                 ))}
               </ul>

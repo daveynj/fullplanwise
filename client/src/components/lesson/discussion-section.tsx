@@ -316,7 +316,7 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
                             <span className="w-8 h-8 flex-shrink-0 flex items-center justify-center bg-indigo-500 text-white rounded-full font-bold mt-1">
                               {idx + 1}
                             </span>
-                            <h3 className="text-xl font-medium text-indigo-900">{q.question}</h3>
+                            <h3 className="text-xl font-medium text-indigo-900 text-xl font-bold">{q.question}</h3>
                           </div>
                         </div>
                         
@@ -357,7 +357,7 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
                             </h4>
                             <ul className="space-y-2 pl-2">
                               {q.followUp.map((follow, fIdx) => (
-                                <li key={`followup-${fIdx}`} className="flex items-start gap-2">
+                                <li key={`followup-${fIdx}`} className="flex items-start gap-2 text-xl font-bold">
                                   <span className="inline-flex items-center justify-center h-5 w-5 bg-indigo-200 text-indigo-800 rounded-full text-xs font-bold flex-shrink-0 mt-0.5">
                                     {String.fromCharCode(97 + fIdx)}
                                   </span>

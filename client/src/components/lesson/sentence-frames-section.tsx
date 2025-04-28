@@ -114,7 +114,7 @@ function NewSentenceFrameLayout({ currentFrame }: { currentFrame: SentenceFrameP
             <CardTitle className="text-lg font-semibold text-blue-800 flex items-center gap-2"><ListTree className="h-5 w-5"/>Sentence Pattern</CardTitle>
           </CardHeader>
           <CardContent className="p-5 space-y-4">
-            <div className="font-mono p-4 bg-white rounded-lg border border-blue-300 text-gray-900 relative text-xl shadow-inner">
+            <div className="font-mono p-4 bg-white rounded-lg border border-blue-300 text-gray-900 relative text-xl font-bold shadow-inner">
               {currentFrame.patternTemplate}
               <button 
                 className="absolute right-2 top-2 text-gray-400 hover:text-blue-600 p-1 rounded hover:bg-blue-100/50"
@@ -126,7 +126,7 @@ function NewSentenceFrameLayout({ currentFrame }: { currentFrame: SentenceFrameP
             </div>
             <div className="text-base text-blue-900 flex items-start gap-2">
               <Languages className="h-5 w-5 mt-0.5 flex-shrink-0 text-blue-700" /> 
-              <div>
+              <div className="text-xl font-bold">
                  <span className="font-semibold">Language Function:</span> {currentFrame.languageFunction}
               </div>
             </div>
@@ -139,7 +139,7 @@ function NewSentenceFrameLayout({ currentFrame }: { currentFrame: SentenceFrameP
                     <CardTitle className="text-base font-semibold text-gray-700 flex items-center gap-2"><Zap className="h-5 w-5 text-gray-500"/>Grammar Focus</CardTitle>
                 </CardHeader>
                 <CardContent className="p-5 text-base">
-                    <ul className="list-disc space-y-2 pl-5 text-gray-700">
+                    <ul className="list-disc space-y-2 pl-5 text-gray-700 text-xl font-bold">
                     {currentFrame.grammarFocus.map((point, index) => (
                         <li key={index}>{point}</li>
                     ))}
@@ -155,13 +155,13 @@ function NewSentenceFrameLayout({ currentFrame }: { currentFrame: SentenceFrameP
                 </CardHeader>
                 <CardContent className="p-5 text-base space-y-3">
                     {currentFrame.patternVariations.negativeForm && (
-                        <div><strong className="font-medium text-purple-700">Negative:</strong> {currentFrame.patternVariations.negativeForm}</div>
+                        <div className="text-xl font-bold"><strong className="font-medium text-purple-700">Negative:</strong> {currentFrame.patternVariations.negativeForm}</div>
                     )}
                     {currentFrame.patternVariations.questionForm && (
-                        <div><strong className="font-medium text-purple-700">Question:</strong> {currentFrame.patternVariations.questionForm}</div>
+                        <div className="text-xl font-bold"><strong className="font-medium text-purple-700">Question:</strong> {currentFrame.patternVariations.questionForm}</div>
                     )}
                     {currentFrame.patternVariations.modalForm && (
-                        <div><strong className="font-medium text-purple-700">With Modals:</strong> {currentFrame.patternVariations.modalForm}</div>
+                        <div className="text-xl font-bold"><strong className="font-medium text-purple-700">With Modals:</strong> {currentFrame.patternVariations.modalForm}</div>
                     )}
                 </CardContent>
             </Card>
@@ -188,21 +188,21 @@ function NewSentenceFrameLayout({ currentFrame }: { currentFrame: SentenceFrameP
                   <div key={index} 
                       className={`p-4 rounded-md border-l-4 ${borderColor} ${bgColor} shadow-sm border border-gray-200`}>
                     <h4 className={`font-semibold text-lg ${textColor}`}>{component.label}</h4>
-                    <p className="text-base text-gray-700 mt-1 italic">{component.description}</p>
+                    <p className="text-base text-gray-700 mt-1 italic text-xl font-bold">{component.description}</p>
                     {component.examples && component.examples.length > 0 && (
                       <div className="mt-3">
                         <p className="text-sm font-medium text-gray-500 mb-1.5">Examples:</p>
                         <div className="flex flex-wrap gap-2">
                           {component.examples.map((ex, exIndex) => (
                             <Badge key={exIndex} 
-                                  className={`text-sm font-medium ${badgeBgColor} ${badgeTextColor} ${badgeBorderColor} border shadow-sm px-2.5 py-1`}>
+                                  className={`font-medium ${badgeBgColor} ${badgeTextColor} ${badgeBorderColor} border shadow-sm px-2.5 py-1 text-xl font-bold`}>
                               {ex}
                             </Badge>
                           ))}
                         </div>
                       </div>
                     )}
-                     <p className="text-sm text-gray-600 mt-3 pt-2 border-t border-gray-200">In the sentence: "{component.inSentenceExample}"</p>
+                     <p className="text-sm text-gray-600 mt-3 pt-2 border-t border-gray-200 text-xl font-bold">In the sentence: "{component.inSentenceExample}"</p>
                   </div>
                 )
               })} 
@@ -218,7 +218,7 @@ function NewSentenceFrameLayout({ currentFrame }: { currentFrame: SentenceFrameP
                 <div className="flex flex-col space-y-2">
                     <div className="flex items-center justify-between p-2 bg-gray-100 rounded border border-gray-200">
                         <span className="text-sm font-medium text-gray-500">Start</span>
-                        <span className="font-mono text-gray-800">{currentFrame.visualStructure.start}</span>
+                        <span className="font-mono text-gray-800 text-xl font-bold">{currentFrame.visualStructure.start}</span>
                     </div>
                     {currentFrame.visualStructure.parts.map((part, index) => {
                         const color = colorMap[part.label] || 'gray';
@@ -233,7 +233,7 @@ function NewSentenceFrameLayout({ currentFrame }: { currentFrame: SentenceFrameP
                                     </div>
                                 )}
                                 <div className={`flex items-center justify-between p-2 ${bgColor} rounded border ${borderColor}`}>
-                                    <span className={`text-sm font-medium ${textColor}`}>{part.label}</span>
+                                    <span className={`text-sm font-medium ${textColor} text-xl font-bold`}>{part.label}</span>
                                     {/* Optional: Could show example text here if needed */}
                                 </div>
                             </React.Fragment>
@@ -241,7 +241,7 @@ function NewSentenceFrameLayout({ currentFrame }: { currentFrame: SentenceFrameP
                     })}
                     <div className="flex items-center justify-between p-2 bg-gray-100 rounded border border-gray-200">
                         <span className="text-sm font-medium text-gray-500">End</span>
-                        <span className="font-mono text-gray-800">{currentFrame.visualStructure.end}</span>
+                        <span className="font-mono text-gray-800 text-xl font-bold">{currentFrame.visualStructure.end}</span>
                     </div>
                 </div>
             </CardContent>
@@ -350,7 +350,7 @@ function OldSentenceFrameLayout({ currentFrame }: { currentFrame: OldSentenceFra
         {/* Section 1: Pattern and Function */} 
         <div className="p-5 bg-amber-50 border-b border-amber-200">
           <h3 className="text-base font-semibold text-amber-800 uppercase tracking-wider mb-3 flex items-center gap-1.5"><Info className="h-4 w-4"/>Sentence Pattern</h3>
-          <div className="font-mono p-4 bg-white rounded-lg border border-amber-300 text-gray-900 relative text-xl mb-4 shadow-inner">
+          <div className="font-mono p-4 bg-white rounded-lg border border-amber-300 text-gray-900 relative text-xl font-bold mb-4 shadow-inner">
             {currentFrame.pattern} 
             <button 
               className="absolute right-2 top-2 text-gray-400 hover:text-amber-600 p-1 rounded hover:bg-amber-100/50"
@@ -363,7 +363,7 @@ function OldSentenceFrameLayout({ currentFrame }: { currentFrame: OldSentenceFra
           {currentFrame.communicativeFunction && (
             <div className="text-base text-amber-900 flex items-start gap-2">
               <Languages className="h-5 w-5 mt-0.5 flex-shrink-0 text-amber-700" /> 
-              <div>
+              <div className="text-xl font-bold">
                  <span className="font-semibold">Language Function:</span> {currentFrame.communicativeFunction}
                  {currentFrame.usage && <span className="block text-sm text-gray-600 italic mt-1">{currentFrame.usage}</span>}
               </div>
@@ -382,7 +382,7 @@ function OldSentenceFrameLayout({ currentFrame }: { currentFrame: OldSentenceFra
                   <div key={index} 
                       className={`p-4 rounded-md border-l-4 border-amber-400 bg-gray-50/80 shadow-sm border border-gray-200`}>
                     <p className={`font-semibold text-lg text-gray-800`}>{component.componentName}</p>
-                    <p className="text-base text-gray-700 mt-1 italic">{component.description}</p>
+                    <p className="text-base text-gray-700 mt-1 italic text-xl font-bold">{component.description}</p>
                     {component.examples && component.examples.length > 0 && (
                       <div className="mt-3">
                         <p className="text-sm font-medium text-gray-500 mb-1.5">Examples:</p>
@@ -435,13 +435,13 @@ function OldSentenceFrameLayout({ currentFrame }: { currentFrame: OldSentenceFra
             {currentFrame.grammarFocus && 
               <div className="flex items-start gap-2.5">
                 <Lightbulb className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0"/>
-                <div><strong className="text-gray-800 font-semibold">Grammar Focus:</strong> <span className="text-gray-700">{currentFrame.grammarFocus}</span></div>
+                <div className="text-xl font-bold"><strong className="text-gray-800 font-semibold">Grammar Focus:</strong> <span className="text-gray-700">{currentFrame.grammarFocus}</span></div>
               </div>
             }
             {currentFrame.teachingTips && 
                <div className="flex items-start gap-2.5">
                   <Info className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0"/>
-                  <div><strong className="text-gray-800 font-semibold">Teaching Tips:</strong> <span className="text-gray-700">{currentFrame.teachingTips}</span></div>
+                  <div className="text-xl font-bold"><strong className="text-gray-800 font-semibold">Teaching Tips:</strong> <span className="text-gray-700">{currentFrame.teachingTips}</span></div>
                 </div>
             }
           </CardContent>
