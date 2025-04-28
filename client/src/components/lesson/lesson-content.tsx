@@ -1605,99 +1605,86 @@ export function LessonContent({ content }: LessonContentProps) {
   // Teacher Notes Section to collect all teacher notes
   // Overview component that displays the lesson title and warm-up questions in a new tab
   const OverviewSection = () => {
+    const lesson = parsedContent?.lesson || {};
+    
+    // --- Corrected Warm-up Question Fetching ---
     // Try to find the warm-up section from multiple possible types/locations
-    const section = 
+    const warmupSection = 
       findSection("warmup") || 
-      findSection("warm-up") || 
-      findSection("sentenceFrames") || // Some Qwen responses use sentenceFrames for warm-up
-      parsedContent.sections[0]; // Last resort, use the first section
-    
-    if (!section) return <p>No warm-up content available</p>;
-    
-    // Get discussion questions from the section
-    let discussionQuestions: string[] = [];
-    
-    if (section.questions) {
-      if (Array.isArray(section.questions)) {
-        discussionQuestions = section.questions;
-      } else if (typeof section.questions === 'object') {
-        // Extract questions from object format (Qwen API format)
-        discussionQuestions = Object.keys(section.questions)
+      findSection("warm-up"); 
+      // Removed sentenceFrames and first section fallback for clarity in overview
+      
+    let warmupQuestions: string[] = [];
+    if (warmupSection?.questions) {
+      if (Array.isArray(warmupSection.questions)) {
+        warmupQuestions = warmupSection.questions.filter((q: any): q is string => typeof q === 'string');
+      } else if (typeof warmupSection.questions === 'object') {
+        // Handle object format (e.g., Qwen API) - assuming keys are the questions
+        warmupQuestions = Object.keys(warmupSection.questions)
           .filter(q => typeof q === 'string' && q.trim().length > 0);
       }
     }
+    // If still no questions, check the top-level parsedContent as a fallback
+    if (warmupQuestions.length === 0 && Array.isArray(parsedContent?.warmUpQuestions)) {
+        warmupQuestions = parsedContent.warmUpQuestions.filter((q: any): q is string => typeof q === 'string');
+    }
+    // --- End Correction ---
+
+    const title = lesson.title || "Lesson Overview"; // Use a default title if none found
 
     return (
-      <div className="space-y-6">
-        {/* Overview Header */}
-        <Card className="border-2 border-indigo-300 bg-indigo-50 shadow-md">
-          <CardHeader className="py-4">
-            <div className="flex justify-between items-center">
-              <CardTitle className="flex items-center gap-2 text-indigo-700 text-xl font-bold">
-                <Lightbulb className="h-5 w-5" />
-                Lesson Overview
-              </CardTitle>
-              <div className="flex items-center text-sm font-medium text-indigo-700">
-                <ClockIcon className="mr-1 h-4 w-4" />
-                {parsedContent.estimatedTime || "45-60"} minutes
-              </div>
-            </div>
-            <CardDescription className="text-sm text-indigo-700 font-medium">
-              {parsedContent.title}
-            </CardDescription>
-          </CardHeader>
-        </Card>
-        
-        {/* Lesson Main Info Section */}
-        <div className="bg-white rounded-lg border border-gray-200 p-5 shadow-sm">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">{parsedContent.title}</h2>
-          
-          <div className="flex flex-wrap gap-2 mb-6">
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-800 border border-blue-100">
-              <BookOpenIcon className="h-3 w-3 mr-1" />
-              Level: {parsedContent.level}
-            </span>
-            
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-50 text-green-800 border border-green-100">
-              <BookIcon className="h-3 w-3 mr-1" />
-              Focus: {parsedContent.focus}
-            </span>
-            
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-50 text-purple-800 border border-purple-100">
-              <ClockIcon className="h-3 w-3 mr-1" />
-              Time: {parsedContent.estimatedTime} minutes
-            </span>
-          </div>
-          
-          {/* Warm-up Questions */}
-          <div className="mt-8">
-            <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
-              <MessageCircle className="mr-2 h-5 w-5 text-indigo-600" />
-              Warm-up Questions
-            </h3>
-            
-            <div className="bg-indigo-50 rounded-lg border border-indigo-100 p-4">
-              <div className="space-y-4">
-                {discussionQuestions.length > 0 ? (
-                  discussionQuestions.map((question, idx) => (
-                    <div 
-                      key={`overview-question-${idx}`} 
-                      className="flex gap-3 p-3 bg-white rounded-md border border-indigo-100 shadow-sm"
-                    >
-                      <div className="flex-shrink-0 w-7 h-7 rounded-full bg-indigo-600 text-white flex items-center justify-center text-sm font-bold">
-                        {idx + 1}
-                      </div>
-                      <p className="text-gray-800 text-lg">{question}</p>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-gray-500 italic">No warm-up questions available for this lesson.</p>
-                )}
-              </div>
-            </div>
-          </div>
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }} 
+        animate={{ opacity: 1, y: 0 }} 
+        transition={{ duration: 0.5 }}
+        className="p-6"
+      >
+        {/* Lesson Metadata - Keep this above the warm-up card */}
+        <div className="mb-6 flex flex-wrap items-center gap-2">
+          {lesson.level && <Badge variant="secondary" className="bg-blue-100 text-blue-800"><InfoIcon className="mr-1 h-4 w-4" /> Level: {lesson.level}</Badge>}
+          {lesson.focus && <Badge variant="secondary" className="bg-green-100 text-green-800"><SparklesIcon className="mr-1 h-4 w-4" /> Focus: {lesson.focus}</Badge>}
+          {lesson.time && <Badge variant="secondary" className="bg-purple-100 text-purple-800"><ClockIcon className="mr-1 h-4 w-4" /> Time: {lesson.time}</Badge>}
         </div>
-      </div>
+
+        {/* --- Enhanced Introductory Text --- */}
+        <div className="flex items-center gap-3 mb-2 text-gray-700"> {/* Reduced bottom margin */} 
+          <Flame className="h-6 w-6 text-orange-500" />
+          <h2 className="text-2xl font-semibold">OK, let's warm up!</h2>
+        </div>
+        {/* --- End Enhancement --- */}
+        
+        {/* --- Instructions for Learners --- */}
+        <p className="text-xl font-bold text-gray-600 mb-4 pl-9"> {/* Increased font size to xl, added bold, adjusted color */} 
+          Read each question below. Take 1-2 minutes per question to think about your answer and share it briefly.
+        </p>
+        {/* --- End Instructions --- */}
+
+        {/* Warm-up Questions Card */}
+        <Card className="bg-white shadow-sm border border-gray-200 rounded-lg overflow-hidden">
+          <CardHeader className="bg-gray-50 border-b border-gray-200 px-6 py-4">
+            <CardTitle className="text-lg font-medium text-gray-800 flex items-center">
+              <Flame className="mr-2 h-5 w-5 text-orange-500" /> 
+              Warm-up Questions
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-6">
+            {warmupQuestions.length > 0 ? (
+              <ul className="space-y-4">
+                {warmupQuestions.map((q: string, index: number) => (
+                  <li key={index} className="flex items-start p-4 bg-blue-50 border border-blue-100 rounded-md shadow-sm">
+                    <span className="flex-shrink-0 h-6 w-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold mr-3">
+                      {index + 1}
+                    </span>
+                    <p className="text-gray-700 leading-relaxed">{q}</p>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-gray-500 italic">No warm-up questions available for this lesson.</p>
+            )}
+          </CardContent>
+        </Card>
+      </motion.div>
     );
   };
 
