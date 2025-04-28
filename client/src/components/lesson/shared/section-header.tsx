@@ -108,16 +108,16 @@ export function SectionHeader({
   };
   
   return (
-    <div className={`mb-5 ${className}`}>
+    <div className={`mb-6 ${className}`}>
       {/* Main header */}
-      <div className={`${colors.bg} rounded-lg p-4 flex items-center gap-3 border ${colors.border} shadow-sm`}>
-        <div className="flex items-center justify-center w-10 h-10 rounded-full bg-white shadow-sm border border-gray-100">
+      <div className={`${colors.bg} rounded-lg p-5 flex items-center gap-4 border ${colors.border} shadow-sm`}>
+        <div className="flex items-center justify-center w-12 h-12 rounded-full bg-white shadow-sm border border-gray-100">
           {renderIcon()}
         </div>
         <div className="flex-1">
-          <h2 className={`${colors.text} font-semibold text-xl leading-tight`}>{title}</h2>
+          <h2 className={`${colors.text} font-nunito font-bold text-2xl leading-tight`}>{title}</h2>
           {description && (
-            <p className="text-gray-600 mt-1 text-base">
+            <p className="text-gray-600 mt-1.5 text-base font-medium">
               {description}
             </p>
           )}
@@ -131,8 +131,8 @@ export function SectionHeader({
 
       {/* Optional instructions box */}
       {instructions && showInstructions && (
-        <div className={`mt-2 p-3 ${colors.lightBg} border ${colors.lightBorder} rounded-md`}>
-          <div className="flex gap-2">
+        <div className={`mt-3 p-4 ${colors.lightBg} border ${colors.lightBorder} rounded-md`}>
+          <div className="flex gap-3">
             <Info className={`h-5 w-5 ${colors.icon} flex-shrink-0 mt-0.5`} />
             <div className="text-gray-700">
               {typeof instructions === 'string' ? (

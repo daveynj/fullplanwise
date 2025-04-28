@@ -40,7 +40,7 @@ export function ReadingSection({ section }: ReadingSectionProps) {
       <SectionHeader
         icon={BookOpen}
         title={section?.title || "Reading"}
-        description="Read the paragraph(s) below. Use the arrows or dots to navigate between paragraphs."
+        description="Read the text and notice the vocabulary we previously discussed. Ask any questions if you don't understand a word or phrase."
         color="blue"
       />
       

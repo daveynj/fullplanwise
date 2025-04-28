@@ -175,29 +175,29 @@ export default function FullScreenLessonPage() {
     <div className="min-h-screen flex flex-col bg-white print:bg-white">
       {/* Header - hidden when printing */}
       <header className="bg-white border-b border-gray-200 print:hidden">
-        <div className="flex justify-between items-center px-4 py-2">
+        <div className="flex justify-between items-center px-5 py-3">
           <div className="flex items-center">
             <Button
               variant="ghost"
-              className="flex items-center text-gray-600 hover:text-primary mr-3 p-2"
+              className="flex items-center text-gray-600 hover:text-primary mr-4 p-2"
               onClick={() => window.location.replace("/history")}
             >
-              <ArrowLeft className="h-5 w-5 mr-1" />
+              <ArrowLeft className="h-5 w-5 mr-2" />
               <span className="font-medium">Exit</span>
             </Button>
-            <h1 className="text-lg font-bold text-gray-800 truncate max-w-md">
+            <h1 className="text-xl font-nunito font-bold text-gray-800 truncate max-w-md">
               {lesson.title}
             </h1>
           </div>
           
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <Button
               variant="outline"
               size="sm"
               onClick={printLesson}
               className="text-gray-600"
             >
-              <Printer className="h-4 w-4 mr-1" />
+              <Printer className="h-4 w-4 mr-2" />
               <span className="hidden sm:inline">Print</span>
             </Button>
             <Button
@@ -208,17 +208,17 @@ export default function FullScreenLessonPage() {
             >
               {isFullScreen ? (
                 <>
-                  <MinimizeIcon className="h-4 w-4 mr-1" />
+                  <MinimizeIcon className="h-4 w-4 mr-2" />
                   <span className="hidden sm:inline">Exit Fullscreen</span>
                 </>
               ) : (
                 <>
-                  <ExpandIcon className="h-4 w-4 mr-1" />
+                  <ExpandIcon className="h-4 w-4 mr-2" />
                   <span className="hidden sm:inline">Fullscreen</span>
                 </>
               )}
             </Button>
-            <div className="flex items-center bg-primary/10 text-primary px-2 py-1 rounded-md text-sm font-semibold">
+            <div className="flex items-center bg-primary/10 text-primary px-3 py-1.5 rounded-md text-sm font-semibold">
               <span>CEFR {lesson.cefrLevel}</span>
             </div>
           </div>
@@ -228,16 +228,16 @@ export default function FullScreenLessonPage() {
       {/* Main content */}
       <main className="flex-1 overflow-y-auto bg-white">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col h-full">
-          <TabsList className="w-full justify-start px-2 bg-gray-50 border-b border-gray-200 rounded-none print:hidden">
+          <TabsList className="w-full justify-start px-4 py-1 bg-gray-50 border-b border-gray-200 rounded-none print:hidden">
             <TabsTrigger
               value="lesson"
-              className="px-4 py-2 data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none"
+              className="px-4 py-2 data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none font-medium"
             >
               Lesson
             </TabsTrigger>
             <TabsTrigger
               value="notes"
-              className="px-4 py-2 data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none"
+              className="px-4 py-2 data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none font-medium"
             >
               Teacher Notes
             </TabsTrigger>

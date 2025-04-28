@@ -112,7 +112,7 @@ export const ComprehensionExtractor = ({ content }: ComprehensionExtractorProps)
       <div className="space-y-6">
         <SectionHeader
           title="Comprehension"
-          description="Check understanding with targeted questions"
+          description="A short test to test your understanding of the reading."
           icon={HelpCircle}
           color="purple"
         />
@@ -130,7 +130,7 @@ export const ComprehensionExtractor = ({ content }: ComprehensionExtractorProps)
     <div className="space-y-6">
       <SectionHeader
         title="Comprehension"
-        description="Check understanding with targeted questions"
+        description="Answer these questions to check your understanding of the reading passage."
         icon={HelpCircle}
         color="purple"
       />
@@ -198,32 +198,37 @@ export const ComprehensionExtractor = ({ content }: ComprehensionExtractorProps)
                             } else if (isSelected && !isCorrect) {
                               optionClass += " border-red-500 bg-red-50";
                             } else if (isCorrect) {
-                              optionClass += " border-green-500 bg-green-50 opacity-70";
-                            } else {
-                              optionClass += " border-gray-200 hover:bg-purple-50";
+                              optionClass += " border-green-500 bg-green-50/50";
                             }
                           } else {
-                            optionClass += isSelected
-                              ? " border-purple-500 bg-purple-50"
-                              : " border-gray-200 hover:bg-purple-50";
+                            optionClass += isSelected 
+                              ? " border-purple-500 bg-purple-50" 
+                              : " hover:border-purple-200 hover:bg-purple-50/50";
                           }
-
+                          
                           return (
                             <div 
-                              key={`option-${idx}`}
-                              onClick={() => !submitted && setSelectedOption(option)}
+                              key={idx}
                               className={optionClass}
+                              onClick={() => !submitted && setSelectedOption(option)}
                             >
-                              <div className={`h-4 w-4 mr-3 rounded-full ${
-                                isSelected ? (submitted && !isCorrect ? 'bg-red-500' : 'bg-purple-500') : 'bg-gray-200'
-                              }`}></div>
-                              <span className="font-medium">{option}</span>
-                              
+                              <div className={`w-5 h-5 rounded-full mr-3 flex-shrink-0 flex items-center justify-center border 
+                                ${isSelected 
+                                  ? submitted 
+                                    ? isCorrect ? "border-green-500 bg-green-500" : "border-red-500 bg-red-500" 
+                                    : "border-purple-500 bg-purple-500" 
+                                  : "border-gray-300"}`}
+                              >
+                                {isSelected && (
+                                  <Radio className="h-3 w-3 text-white" />
+                                )}
+                              </div>
+                              <span className="font-medium text-lg text-gray-700">{option}</span>
                               {submitted && (
                                 <div className="ml-auto">
-                                  {isSelected && isCorrect && <CheckCircle2 className="h-5 w-5 text-green-500" />}
-                                  {isSelected && !isCorrect && <XCircle className="h-5 w-5 text-red-500" />}
-                                  {!isSelected && isCorrect && <CheckCircle2 className="h-5 w-5 text-green-500 opacity-70" />}
+                                  {isSelected && isCorrect && <CheckCircle2 className="text-green-500 h-5 w-5" />}
+                                  {isSelected && !isCorrect && <XCircle className="text-red-500 h-5 w-5" />}
+                                  {!isSelected && isCorrect && <CheckCircle2 className="text-green-500/60 h-5 w-5" />}
                                 </div>
                               )}
                             </div>
@@ -231,17 +236,16 @@ export const ComprehensionExtractor = ({ content }: ComprehensionExtractorProps)
                         })}
                       </div>
                     )}
-                    
-                    {'type' in extractedQuestions[activeQuestion] && extractedQuestions[activeQuestion].type !== "true-false" && (
+
+                    {'options' in extractedQuestions[activeQuestion] && extractedQuestions[activeQuestion].options && 
+                      Array.isArray(extractedQuestions[activeQuestion].options) && 
+                      extractedQuestions[activeQuestion].type !== "true-false" && (
                       <div className="space-y-2">
-                        {extractedQuestions[activeQuestion].options && extractedQuestions[activeQuestion].options.map((option, idx) => {
-                          // Handle options that might be plain strings or objects
-                          const optionText = typeof option === 'object' && option !== null ? 
-                            option.text || 'No text available' : option || 'No text available';
+                        {extractedQuestions[activeQuestion].options?.map((option, idx) => {
+                          const optionText = typeof option === 'string' ? option : option.text;
+                          const isCorrect = typeof option === 'object' ? option.correct : getCorrectAnswer(extractedQuestions[activeQuestion]) === optionText;
                           
                           const isSelected = selectedOption === optionText;
-                          const correctAnswer = getCorrectAnswer(extractedQuestions[activeQuestion]);
-                          const isCorrect = optionText === correctAnswer;
                           
                           let optionClass = "flex items-center p-3 border rounded-md cursor-pointer";
                           
@@ -251,32 +255,37 @@ export const ComprehensionExtractor = ({ content }: ComprehensionExtractorProps)
                             } else if (isSelected && !isCorrect) {
                               optionClass += " border-red-500 bg-red-50";
                             } else if (isCorrect) {
-                              optionClass += " border-green-500 bg-green-50 opacity-70";
-                            } else {
-                              optionClass += " border-gray-200 hover:bg-purple-50";
+                              optionClass += " border-green-500 bg-green-50/50";
                             }
                           } else {
-                            optionClass += isSelected
-                              ? " border-purple-500 bg-purple-50"
-                              : " border-gray-200 hover:bg-purple-50";
+                            optionClass += isSelected 
+                              ? " border-purple-500 bg-purple-50" 
+                              : " hover:border-purple-200 hover:bg-purple-50/50";
                           }
-
+                          
                           return (
                             <div 
-                              key={`option-${idx}`}
-                              onClick={() => !submitted && setSelectedOption(optionText)}
+                              key={idx}
                               className={optionClass}
+                              onClick={() => !submitted && setSelectedOption(optionText)}
                             >
-                              <div className={`h-4 w-4 mr-3 rounded-full ${
-                                isSelected ? (submitted && !isCorrect ? 'bg-red-500' : 'bg-purple-500') : 'bg-gray-200'
-                              }`}></div>
-                              <span className="font-medium">{optionText}</span>
-                              
+                              <div className={`w-5 h-5 rounded-full mr-3 flex-shrink-0 flex items-center justify-center border 
+                                ${isSelected 
+                                  ? submitted 
+                                    ? isCorrect ? "border-green-500 bg-green-500" : "border-red-500 bg-red-500" 
+                                    : "border-purple-500 bg-purple-500" 
+                                  : "border-gray-300"}`}
+                              >
+                                {isSelected && (
+                                  <Radio className="h-3 w-3 text-white" />
+                                )}
+                              </div>
+                              <span className="font-medium text-lg text-gray-700">{optionText}</span>
                               {submitted && (
                                 <div className="ml-auto">
-                                  {isSelected && isCorrect && <CheckCircle2 className="h-5 w-5 text-green-500" />}
-                                  {isSelected && !isCorrect && <XCircle className="h-5 w-5 text-red-500" />}
-                                  {!isSelected && isCorrect && <CheckCircle2 className="h-5 w-5 text-green-500 opacity-70" />}
+                                  {isSelected && isCorrect && <CheckCircle2 className="text-green-500 h-5 w-5" />}
+                                  {isSelected && !isCorrect && <XCircle className="text-red-500 h-5 w-5" />}
+                                  {!isSelected && isCorrect && <CheckCircle2 className="text-green-500/60 h-5 w-5" />}
                                 </div>
                               )}
                             </div>
@@ -285,84 +294,74 @@ export const ComprehensionExtractor = ({ content }: ComprehensionExtractorProps)
                       </div>
                     )}
                   </div>
-                  
-                  {/* Feedback area */}
-                  {submitted && (
-                    <div className={`mt-4 p-4 rounded-md ${
-                      getCorrectAnswer(extractedQuestions[activeQuestion]) === selectedOption
-                        ? "bg-green-50 border border-green-200"
-                        : "bg-red-50 border border-red-200"
-                    }`}>
-                      {getCorrectAnswer(extractedQuestions[activeQuestion]) === selectedOption ? (
-                        <div className="flex items-start gap-2">
-                          <CheckCircle2 className="h-5 w-5 text-green-500 mt-0.5" />
-                          <div>
-                            <p className="font-medium text-green-800">
-                              Correct!
-                            </p>
-                            {extractedQuestions[activeQuestion].explanation && (
-                              <p className="text-sm text-green-700 mt-1">
-                                {extractedQuestions[activeQuestion].explanation}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="flex items-start gap-2">
-                          <AlertCircle className="h-5 w-5 text-red-500 mt-0.5" />
-                          <div>
-                            <p className="font-medium text-red-800">
-                              Incorrect
-                            </p>
-                            <p className="text-sm text-red-700 mt-1">
-                              The correct answer is: <span className="font-medium">{getCorrectAnswer(extractedQuestions[activeQuestion])}</span>
-                            </p>
-                            {extractedQuestions[activeQuestion].explanation && (
-                              <p className="text-sm text-red-700 mt-1">
-                                {extractedQuestions[activeQuestion].explanation}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                  
-                  {/* Action buttons */}
-                  <div className="flex justify-between mt-6">
-                    <Button
-                      variant="outline"
-                      onClick={handlePrevious}
-                      disabled={activeQuestion === 0}
-                      className="flex items-center gap-1"
-                    >
-                      <ChevronLeft className="h-4 w-4" />
-                      Previous
-                    </Button>
-                    
-                    {!submitted ? (
-                      <Button 
-                        onClick={handleSubmit}
-                        disabled={!selectedOption}
-                        className="bg-purple-600 hover:bg-purple-700"
-                      >
-                        Submit Answer
-                      </Button>
-                    ) : (
-                      <Button
-                        onClick={handleNext}
-                        disabled={activeQuestion === extractedQuestions.length - 1}
-                        className="flex items-center gap-1 bg-purple-600 hover:bg-purple-700"
-                      >
-                        Next
-                        <ChevronRight className="h-4 w-4" />
-                      </Button>
-                    )}
-                  </div>
                 </>
               ) : (
-                <p className="text-gray-500">Question not available.</p>
+                <p className="text-gray-500">No question available</p>
               )}
+
+              {/* Feedback after submission */}
+              {submitted && (
+                <div className="mt-4 p-4 rounded-lg border-l-4 border-l-purple-500 bg-purple-50">
+                  <div className="flex items-start gap-2">
+                    {selectedOption === getCorrectAnswer(extractedQuestions[activeQuestion]) ? (
+                      <>
+                        <CheckCircle2 className="h-5 w-5 text-green-500 mt-0.5" />
+                        <div>
+                          <h4 className="font-semibold text-green-700">Correct!</h4>
+                          {extractedQuestions[activeQuestion].explanation && (
+                            <p className="text-gray-600 mt-1">{extractedQuestions[activeQuestion].explanation}</p>
+                          )}
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <AlertCircle className="h-5 w-5 text-red-500 mt-0.5" />
+                        <div>
+                          <h4 className="font-semibold text-red-700">Incorrect</h4>
+                          <p className="text-gray-600 mt-1">
+                            The correct answer is: <span className="font-semibold">{getCorrectAnswer(extractedQuestions[activeQuestion])}</span>
+                          </p>
+                          {extractedQuestions[activeQuestion].explanation && (
+                            <p className="text-gray-600 mt-1">{extractedQuestions[activeQuestion].explanation}</p>
+                          )}
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Action buttons */}
+              <div className="mt-6 flex justify-between">
+                <Button
+                  variant="outline"
+                  onClick={handlePrevious}
+                  disabled={activeQuestion === 0}
+                  className="text-gray-600"
+                >
+                  <ChevronLeft className="h-4 w-4 mr-1" />
+                  Previous
+                </Button>
+                
+                {!submitted ? (
+                  <Button
+                    onClick={handleSubmit}
+                    disabled={!selectedOption}
+                    className="bg-purple-600 text-white hover:bg-purple-700"
+                  >
+                    Check Answer
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={handleNext}
+                    disabled={activeQuestion === extractedQuestions.length - 1}
+                    className="bg-purple-600 text-white hover:bg-purple-700"
+                  >
+                    Next
+                    <ChevronRight className="h-4 w-4 ml-1" />
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
         </CardContent>

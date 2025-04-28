@@ -485,16 +485,13 @@ export function SentenceFramesSection({ section }: SentenceFramesSectionProps) {
       {/* Section Header with consistent styling */}
       <SectionHeader
         icon={AlignJustify}
-        title="Sentence Frames"
+        title={`Sentence Frames: ${frameTitle}`}
         description="Learn structural patterns for effective communication"
         color="amber"
       />
       
       {/* Pattern Navigation & Title */}
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl md:text-2xl font-semibold text-gray-800">
-           {frameTitle}
-        </h2>
+      <div className="flex justify-end items-center mb-4">
          <div className="flex gap-1">
            <Button 
               variant="outline" size="icon" 

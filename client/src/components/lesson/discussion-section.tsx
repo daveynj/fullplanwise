@@ -266,8 +266,9 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
     console.error("Error processing discussion questions:", error);
   }
   
-  const description = section.description || "Think about the discussion question(s) below and prepare your answer.";
+  const description = section.description || "Read the text and answer the discussion questions. Use key vocabulary from the lesson.";
 
+  // Render the discussion section
   return (
     <div className="space-y-4">
       {/* Main section header with consistent styling */}
@@ -279,12 +280,6 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
       />
       
       <Card>
-        <CardHeader className="bg-indigo-50">
-          <CardTitle className="flex items-center gap-2 text-indigo-700">
-            <MessageCircle className="h-5 w-5" />
-            ({questions.length} Questions)
-          </CardTitle>
-        </CardHeader>
         <CardContent className="pt-6">
           <div className="space-y-6">
             {questions.length > 0 ? (
@@ -310,14 +305,14 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
                             <p className="italic text-gray-800 leading-relaxed text-xl font-bold">{q.paragraphContext}</p>
                           </div>
                         )}
-
+                        
                         {/* Question Number and Text - with improved styling */}
                         <div className="p-3 bg-indigo-100 rounded-md border-l-4 border-indigo-500">
                           <div className="flex items-start gap-3">
                             <span className="w-8 h-8 flex-shrink-0 flex items-center justify-center bg-indigo-500 text-white rounded-full font-bold mt-1">
                               {idx + 1}
                             </span>
-                            <h3 className="text-indigo-900 text-xl font-bold">{q.question}</h3>
+                            <h3 className="text-indigo-900 text-xl font-nunito font-bold">{q.question}</h3>
                           </div>
                         </div>
                         
@@ -332,7 +327,7 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
                             <p className="italic font-medium text-gray-800">{q.introduction}</p>
                           </div>
                         )}
-                                                
+                        
                         {/* Focus vocabulary */}
                         {Array.isArray(q.focusVocabulary) && q.focusVocabulary.length > 0 && (
                           <div className="bg-green-50 p-3 rounded-md ml-10">

@@ -342,6 +342,7 @@ export function InteractiveClozeSection({
         <CardHeader className="pb-3 bg-gradient-to-r from-blue-50 to-white">
           <div className="flex items-center gap-2">
             <PenTool className="h-5 w-5 text-blue-500" />
+            <CardTitle>{title}</CardTitle>
           </div>
           <CardDescription>
             Drag and drop words to fill in the blanks in the text.

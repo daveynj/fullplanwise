@@ -35,6 +35,7 @@ import {
   Target,
   ArrowLeft,
   ArrowRight,
+  AlignLeft,
 } from "lucide-react";
 import { ReadingSection } from "./reading-section";
 import { SentenceFramesSection } from "./sentence-frames-section";
@@ -177,7 +178,7 @@ const PronunciationSection = ({ sectionData }: PronunciationSectionProps) => {
             >
               <ArrowLeft className="mr-2 h-4 w-4" /> Previous
             </Button>
-            <span className="text-sm text-gray-500">
+            <span className="text-sm text-gray-500 font-medium">
               Word {currentWordIndex + 1} of {words.length}
             </span>
             <Button
@@ -193,8 +194,8 @@ const PronunciationSection = ({ sectionData }: PronunciationSectionProps) => {
 
           {/* Word and Audio Controls */}
           <div className="text-center mb-6">
-            <h3 className="text-3xl font-bold text-green-700 mb-2">{currentWord.word}</h3>
-            {currentWord.phonetic && <p className="text-xl text-gray-500 mb-4">/{currentWord.phonetic}/</p>}
+            <h3 className="text-3xl font-bold text-green-700 mb-2 font-nunito">{currentWord.word}</h3>
+            {currentWord.phonetic && <p className="text-xl text-gray-500 mb-4 font-medium">/{currentWord.phonetic}/</p>}
             <div className="flex justify-center items-center gap-4">
               <AudioPlayer src={currentWord.audio} id={`pronunciation-${currentWord.word}`} />
               {/* Placeholder for Recording component */}
@@ -796,12 +797,12 @@ export function LessonContent({ content }: LessonContentProps) {
       textColor: "text-purple-700",
       description: "Check understanding with targeted questions"
     },
-    "sentenceFrames": { 
-      icon: AlignJustify, 
+    "sentenceFrames": {
+      icon: AlignLeft,
       label: "Sentence Frames",
-      color: "bg-yellow-100",
-      textColor: "text-yellow-700",
-      description: "Practice grammar patterns using sentence frames"
+      color: "amber",
+      textColor: "amber",
+      description: "Learn structural patterns for effective communication"
     },
     "grammar": { 
       icon: AlignJustify, 
@@ -1571,10 +1572,9 @@ export function LessonContent({ content }: LessonContentProps) {
         {/* Using the reusable SectionHeader component */}
         <SectionHeader
           title="Vocabulary"
-          description="Learn new words and understand their meaning"
+          description="Review the flashcard. Try defining the word in your own words and using it in a sentence."
           icon={Book}
           color="green"
-          instructions="Review the flashcard. Try defining the word in your own words and using it in a sentence."
         />
         
         {/* Vocabulary Practice Card */}

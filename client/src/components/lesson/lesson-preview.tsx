@@ -175,19 +175,19 @@ export function LessonPreview({ lesson }: LessonPreviewProps) {
         <TabsList className="w-full justify-start px-0 bg-transparent border-b border-gray-200 rounded-none">
           <TabsTrigger
             value="lesson"
-            className="px-6 py-4 data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none"
+            className="px-6 py-4 data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none font-medium"
           >
             Lesson Preview
           </TabsTrigger>
           <TabsTrigger
             value="notes"
-            className="px-6 py-4 data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none"
+            className="px-6 py-4 data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none font-medium"
           >
             Teacher Notes
           </TabsTrigger>
           <TabsTrigger
             value="slides"
-            className="px-6 py-4 data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none"
+            className="px-6 py-4 data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none font-medium"
           >
             Slides
           </TabsTrigger>
@@ -195,9 +195,9 @@ export function LessonPreview({ lesson }: LessonPreviewProps) {
         
         <TabsContent value="lesson" className="flex-1 overflow-y-auto p-6 m-0">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-nunito font-bold">{parsedContent.title}</h2>
-            <div className="flex items-center">
-              <span className="bg-primary text-white px-3 py-1 rounded-md text-sm">
+            <h2 className="text-2xl font-nunito font-bold text-gray-800">{parsedContent.title}</h2>
+            <div className="flex items-center gap-2">
+              <span className="bg-primary/10 text-primary px-3 py-1.5 rounded-md text-sm font-semibold">
                 CEFR {lesson.cefrLevel}
               </span>
               <button className="ml-3 text-gray-400 hover:text-primary">
