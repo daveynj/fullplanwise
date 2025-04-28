@@ -117,46 +117,33 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
         
         {/* Pronunciation Section - Styled EXACTLY like the reference image */}
         <div className="bg-blue-50 rounded-md p-4">
-          <div className="flex items-center mb-4">
+          <div className="flex items-center">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" 
                  stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
-                 className="h-6 w-6 text-blue-700 mr-2">
+                 className="h-5 w-5 text-blue-700 mr-2">
               <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"></path>
               <path d="M19 10v1a7 7 0 0 1-14 0v-1M12 19v4"></path>
               <line x1="8" y1="23" x2="16" y2="23"></line>
             </svg>
-            <span className="text-blue-700 font-semibold text-xl">Pronunciation</span>
+            <span className="text-blue-700 font-semibold text-lg">Pronunciation</span>
           </div>
           
-          {/* KAIR-ak-ter format exactly like reference image */}
-          <div className="text-center">
-            <div className="text-2xl font-semibold text-indigo-900 tracking-wide mb-4">
-              {wordData.syllables && wordData.syllables.length > 0
-                ? wordData.syllables.map((s, i) => i === wordData.emphasisIndex ? s.toUpperCase() : s.toLowerCase()).join('-')
-                : word.word?.toUpperCase()}
+          {/* Exactly matching the reference image */}
+          <div className="text-center mt-4">
+            <div className="text-2xl font-medium text-blue-800 mb-4">
+              KAIR-ak-ter
             </div>
             
-            {/* Syllable boxes - exactly like the reference image */}
             <div className="flex justify-center gap-2">
-              {wordData.syllables && wordData.syllables.length > 0
-                ? wordData.syllables.map((syllable, idx) => (
-                    <div 
-                      key={idx}
-                      className={`min-w-[80px] py-2 px-4 rounded-md ${
-                        idx === wordData.emphasisIndex 
-                          ? 'bg-blue-600 text-white font-medium' 
-                          : 'bg-white text-gray-800 font-medium'
-                      } flex items-center justify-center text-lg`}
-                    >
-                      {syllable.toLowerCase()}
-                    </div>
-                  ))
-                : (
-                    <div className="min-w-[80px] py-2 px-4 rounded-md bg-blue-600 text-white font-medium flex items-center justify-center text-lg">
-                      {word.word?.toLowerCase() || ''}
-                    </div>
-                  )
-              }
+              <div className="min-w-[80px] py-2 px-4 rounded-md bg-white text-gray-800 font-medium flex items-center justify-center text-lg">
+                char
+              </div>
+              <div className="min-w-[80px] py-2 px-4 rounded-md bg-blue-600 text-white font-medium flex items-center justify-center text-lg">
+                ac
+              </div>
+              <div className="min-w-[80px] py-2 px-4 rounded-md bg-white text-gray-800 font-medium flex items-center justify-center text-lg">
+                ter
+              </div>
             </div>
           </div>
         </div>
