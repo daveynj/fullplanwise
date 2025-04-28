@@ -1020,34 +1020,35 @@ export function LessonContent({ content }: LessonContentProps) {
                       </div>
                     )}
                     
-                    {/* Syllable breakdown in capital letters with hyphens - exactly like second image */}
-                    {currentWord?.syllables && Array.isArray(currentWord.syllables) && (
-                      <div className="text-2xl font-semibold text-blue-800 mb-5 tracking-wider text-center">
-                        {currentWord.syllables.map((s, i) => 
-                          i === currentWord.stressIndex 
-                            ? s.toUpperCase() 
-                            : s.toLowerCase()
-                        ).join('-')}
-                      </div>
-                    )}
+                    {/* Syllable breakdown in hyphenated format - EXACT match to reference image */}
+                    <div className="text-2xl font-semibold text-blue-800 mb-5 text-center">
+                      {currentWord?.syllables && Array.isArray(currentWord.syllables) 
+                        ? currentWord.syllables.map((s, i) => i === currentWord.stressIndex ? s.toUpperCase() : s.toLowerCase()).join('-')
+                        : currentWord.word?.toUpperCase()}
+                    </div>
                     
-                    {/* Syllable boxes exactly like in the reference image */}
-                    {currentWord?.syllables && Array.isArray(currentWord.syllables) && (
-                      <div className="flex justify-center space-x-2">
-                        {currentWord.syllables.map((syllable, index) => (
-                          <div 
-                            key={index}
-                            className={`w-auto min-w-[60px] px-4 py-2 ${
-                              index === currentWord.stressIndex 
-                                ? 'bg-blue-600 text-white font-bold' 
-                                : 'bg-white border border-gray-200 text-gray-800'
-                            } rounded-md flex items-center justify-center text-lg font-medium`}
-                          >
-                            {index === currentWord.stressIndex ? syllable.toLowerCase() : syllable.toLowerCase()}
-                          </div>
-                        ))}
-                      </div>
-                    )}
+                    {/* Syllable boxes EXACT match to reference image */}
+                    <div className="flex justify-center space-x-2 mb-2">
+                      {currentWord?.syllables && Array.isArray(currentWord.syllables) 
+                        ? currentWord.syllables.map((syllable, idx) => (
+                            <div 
+                              key={idx}
+                              className={`px-5 py-2 ${
+                                idx === currentWord.stressIndex 
+                                  ? 'bg-blue-600 text-white font-bold' 
+                                  : 'bg-white border border-gray-200 text-gray-800'
+                              } rounded-md flex items-center justify-center text-lg`}
+                            >
+                              {syllable.toLowerCase()}
+                            </div>
+                          ))
+                        : (
+                            <div className="px-5 py-2 bg-blue-600 text-white font-bold rounded-md flex items-center justify-center text-lg">
+                              {currentWord?.word?.toLowerCase() || ''}
+                            </div>
+                          )
+                      }
+                    </div>
                   </div>
                 </div>
                 

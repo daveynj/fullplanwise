@@ -135,31 +135,34 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
                 (wordData.pronunciation.startsWith('/') ? wordData.pronunciation : `/${wordData.pronunciation}/`) : '') : ''}
             </p>
             
-            {/* Syllable breakdown in capital letters with hyphens - exactly like reference image */}
-            {wordData.syllables && wordData.syllables.length > 0 && (
-              <div className="text-2xl font-semibold text-blue-800 mb-5 tracking-wider">
-                {wordData.syllables.map((s, i) => 
-                  i === wordData.emphasisIndex 
-                    ? s.toUpperCase() 
-                    : s.toLowerCase()
-                ).join('-')}
-              </div>
-            )}
+            {/* Syllable breakdown in capital letters with hyphens - EXACT match to reference image */}
+            <div className="text-2xl font-semibold text-blue-800 mb-5 text-center">
+              {wordData.syllables && wordData.syllables.length > 0
+                ? wordData.syllables.map((s, i) => i === wordData.emphasisIndex ? s.toUpperCase() : s.toLowerCase()).join('-')
+                : word.word?.toUpperCase()}
+            </div>
             
-            {/* Syllable boxes exactly like in the reference image */}
-            <div className="flex justify-center space-x-2">
-              {wordData.syllables && wordData.syllables.map((syllable, index) => (
-                <div 
-                  key={index}
-                  className={`w-auto min-w-[60px] px-4 py-2 ${
-                    index === wordData.emphasisIndex 
-                      ? 'bg-blue-600 text-white font-bold' 
-                      : 'bg-white border border-gray-200 text-gray-800'
-                  } rounded-md flex items-center justify-center text-lg font-medium`}
-                >
-                  {syllable.toLowerCase()}
-                </div>
-              ))}
+            {/* Syllable boxes EXACT match to reference image */}
+            <div className="flex justify-center space-x-2 mb-2">
+              {wordData.syllables && wordData.syllables.length > 0
+                ? wordData.syllables.map((syllable, idx) => (
+                    <div 
+                      key={idx}
+                      className={`px-5 py-2 ${
+                        idx === wordData.emphasisIndex 
+                          ? 'bg-blue-600 text-white font-bold' 
+                          : 'bg-white border border-gray-200 text-gray-800'
+                      } rounded-md flex items-center justify-center text-lg`}
+                    >
+                      {syllable.toLowerCase()}
+                    </div>
+                  ))
+                : (
+                    <div className="px-5 py-2 bg-blue-600 text-white font-bold rounded-md flex items-center justify-center text-lg">
+                      {word.word?.toLowerCase() || ''}
+                    </div>
+                  )
+              }
             </div>
           </div>
         </div>
