@@ -43,6 +43,7 @@ import { DiscussionExtractor } from "./discussion-extractor";
 import { ComprehensionExtractor } from "./comprehension-extractor";
 import { QuizExtractor } from "./quiz-extractor";
 import { AudioPlayer } from "@/components/audio-player";
+import { SectionHeader } from "./shared/section-header";
 // Define a more specific pronunciation object type to handle different API formats
 interface PronunciationWordData { // Define specific type for pronunciation words
   word: string;
@@ -1582,33 +1583,34 @@ export function LessonContent({ content }: LessonContentProps) {
 
     return (
       <div className="space-y-6">
-        {/* Section header with icon */}
-        <div className="bg-green-50 rounded-lg p-4 flex items-center gap-3">
-          <Book className="h-6 w-6 text-green-600" />
-          <div>
-            <h2 className="text-green-600 font-medium text-lg">Vocabulary</h2>
-            <p className="text-gray-600 text-lg font-medium mt-1">
-              Review the flashcard. Try defining the word in your own words and using it in a sentence.
-            </p>
-          </div>
-        </div>
+        {/* Using the reusable SectionHeader component */}
+        <SectionHeader
+          title="Vocabulary"
+          description="Learn new words and understand their meaning"
+          icon={Book}
+          color="green"
+          instructions="Review the flashcard. Try defining the word in your own words and using it in a sentence."
+        />
         
         {/* Vocabulary Practice Card */}
-        <div className="bg-green-50 rounded-lg p-4 border border-green-100">
-          <div className="flex items-center gap-2 mb-4 justify-between">
+        <div className="bg-green-50/30 rounded-lg p-4 border border-green-100">
+          {/* Word count and progress indicator */}
+          <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center">
-                <Book className="h-5 w-5 text-white" />
-              </div>
-              <h3 className="text-green-700 font-medium text-lg">Vocabulary Practice</h3>
+              <span className="text-sm text-green-700 font-medium">
+                Word {activeCard + 1} of {words.length}
+              </span>
             </div>
-            
-{/* No controls needed */}
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-green-700 font-medium">Progress</span>
+              <div className="w-32 bg-gray-200 rounded-full h-1.5">
+                <div 
+                  className="bg-green-600 h-1.5 rounded-full" 
+                  style={{ width: `${((activeCard + 1) / words.length) * 100}%` }}
+                ></div>
+              </div>
+            </div>
           </div>
-          
-          <p className="text-green-700 mb-6">
-            Review each vocabulary word using the flashcards. Click on a card to see more details.
-          </p>
           
           {/* Flip Card */}
           <div className="flex justify-center mb-6">
