@@ -135,20 +135,17 @@ export const ComprehensionExtractor = ({ content }: ComprehensionExtractorProps)
   
   return (
     <div className="space-y-6">
-      {/* --- NEW: Standard Section Header --- */}
-
+      {/* --- Standard Section Header --- */}
       <div className="bg-purple-50 rounded-lg p-4 flex items-center gap-3 border border-purple-200 shadow-sm">
-          <HelpCircle className="h-7 w-7 text-purple-500 flex-shrink-0" />
-          <div>
-            <h2 className="text-purple-700 font-semibold text-xl">Comprehension</h2>
-            <p className="text-gray-600 text-lg font-medium mt-1">
-              Read the question and choose the best answer based on the text.
-            </p>
-          </div>
+        <HelpCircle className="h-7 w-7 text-purple-500 flex-shrink-0" />
+        <div>
+          <h2 className="text-purple-700 font-semibold text-xl">Comprehension</h2>
+          <p className="text-gray-600 text-lg font-medium mt-1">
+            Read the question and choose the best answer based on the text.
+          </p>
         </div>
-        
-      {/* --- END Header --- */}
-
+      </div>
+      
       <Card>
         <CardHeader className="bg-purple-50">
           <CardTitle className="flex items-center gap-2 text-purple-700">
@@ -231,3 +228,156 @@ export const ComprehensionExtractor = ({ content }: ComprehensionExtractorProps)
                               <div className={`h-4 w-4 mr-3 rounded-full ${
                                 isSelected ? (submitted && !isCorrect ? 'bg-red-500' : 'bg-purple-500') : 'bg-gray-200'
                               }`}></div>
+                              <span className="font-medium">{option}</span>
+                              
+                              {submitted && (
+                                <div className="ml-auto">
+                                  {isSelected && isCorrect && <CheckCircle2 className="h-5 w-5 text-green-500" />}
+                                  {isSelected && !isCorrect && <XCircle className="h-5 w-5 text-red-500" />}
+                                  {!isSelected && isCorrect && <CheckCircle2 className="h-5 w-5 text-green-500 opacity-70" />}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                    
+                    {'type' in extractedQuestions[activeQuestion] && extractedQuestions[activeQuestion].type !== "true-false" && (
+                      <div className="space-y-2">
+                        {extractedQuestions[activeQuestion].options && extractedQuestions[activeQuestion].options.map((option, idx) => {
+                          // Handle options that might be plain strings or objects
+                          const optionText = typeof option === 'object' && option !== null ? 
+                            option.text || 'No text available' : option || 'No text available';
+                          
+                          const isSelected = selectedOption === optionText;
+                          const correctAnswer = getCorrectAnswer(extractedQuestions[activeQuestion]);
+                          const isCorrect = optionText === correctAnswer;
+                          
+                          let optionClass = "flex items-center p-3 border rounded-md cursor-pointer";
+                          
+                          if (submitted) {
+                            if (isSelected && isCorrect) {
+                              optionClass += " border-green-500 bg-green-50";
+                            } else if (isSelected && !isCorrect) {
+                              optionClass += " border-red-500 bg-red-50";
+                            } else if (isCorrect) {
+                              optionClass += " border-green-500 bg-green-50 opacity-70";
+                            } else {
+                              optionClass += " border-gray-200 hover:bg-purple-50";
+                            }
+                          } else {
+                            optionClass += isSelected
+                              ? " border-purple-500 bg-purple-50"
+                              : " border-gray-200 hover:bg-purple-50";
+                          }
+
+                          return (
+                            <div 
+                              key={`option-${idx}`}
+                              onClick={() => !submitted && setSelectedOption(optionText)}
+                              className={optionClass}
+                            >
+                              <div className={`h-4 w-4 mr-3 rounded-full ${
+                                isSelected ? (submitted && !isCorrect ? 'bg-red-500' : 'bg-purple-500') : 'bg-gray-200'
+                              }`}></div>
+                              <span className="font-medium">{optionText}</span>
+                              
+                              {submitted && (
+                                <div className="ml-auto">
+                                  {isSelected && isCorrect && <CheckCircle2 className="h-5 w-5 text-green-500" />}
+                                  {isSelected && !isCorrect && <XCircle className="h-5 w-5 text-red-500" />}
+                                  {!isSelected && isCorrect && <CheckCircle2 className="h-5 w-5 text-green-500 opacity-70" />}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Feedback area */}
+                  {submitted && (
+                    <div className={`mt-4 p-4 rounded-md ${
+                      getCorrectAnswer(extractedQuestions[activeQuestion]) === selectedOption
+                        ? "bg-green-50 border border-green-200"
+                        : "bg-red-50 border border-red-200"
+                    }`}>
+                      {getCorrectAnswer(extractedQuestions[activeQuestion]) === selectedOption ? (
+                        <div className="flex items-start gap-2">
+                          <CheckCircle2 className="h-5 w-5 text-green-500 mt-0.5" />
+                          <div>
+                            <p className="font-medium text-green-800">
+                              Correct!
+                            </p>
+                            {extractedQuestions[activeQuestion].explanation && (
+                              <p className="text-sm text-green-700 mt-1">
+                                {extractedQuestions[activeQuestion].explanation}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex items-start gap-2">
+                          <AlertCircle className="h-5 w-5 text-red-500 mt-0.5" />
+                          <div>
+                            <p className="font-medium text-red-800">
+                              Incorrect
+                            </p>
+                            <p className="text-sm text-red-700 mt-1">
+                              The correct answer is: <span className="font-medium">{getCorrectAnswer(extractedQuestions[activeQuestion])}</span>
+                            </p>
+                            {extractedQuestions[activeQuestion].explanation && (
+                              <p className="text-sm text-red-700 mt-1">
+                                {extractedQuestions[activeQuestion].explanation}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  
+                  {/* Action buttons */}
+                  <div className="flex justify-between mt-6">
+                    <Button
+                      variant="outline"
+                      onClick={handlePrevious}
+                      disabled={activeQuestion === 0}
+                      className="flex items-center gap-1"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                      Previous
+                    </Button>
+                    
+                    {!submitted ? (
+                      <Button 
+                        onClick={handleSubmit}
+                        disabled={!selectedOption}
+                        className="bg-purple-600 hover:bg-purple-700"
+                      >
+                        Submit Answer
+                      </Button>
+                    ) : (
+                      <Button
+                        onClick={handleNext}
+                        disabled={activeQuestion === extractedQuestions.length - 1}
+                        className="flex items-center gap-1 bg-purple-600 hover:bg-purple-700"
+                      >
+                        Next
+                        <ChevronRight className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <p className="text-gray-500">Question not available.</p>
+              )}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
