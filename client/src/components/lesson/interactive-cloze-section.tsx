@@ -301,7 +301,7 @@ export function InteractiveClozeSection({
   };
   
   // Prepare the text with blanks
-  const parts = text.split(/(\[\d+:[^\]]+\])/g).filter(Boolean);
+  const parts = text && typeof text === 'string' ? text.split(/(\[\d+:[^\]]+\])/g).filter(Boolean) : [];
   
   // Function to render the cloze text with draggable blanks
   const renderClozeText = () => {

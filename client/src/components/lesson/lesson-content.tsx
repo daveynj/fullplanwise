@@ -1991,13 +1991,32 @@ export function LessonContent({ content }: LessonContentProps) {
       id: 'cloze',
       label: 'Fill in the Blanks',
       icon: <Pencil className="h-5 w-5" />,
-      render: hasSectionType('cloze') ? <InteractiveClozeSection clozeData={parsedContent.cloze || findSection('cloze')} /> : null
+      render: hasSectionType('cloze') ? (
+        (() => {
+          const clozeData = parsedContent.cloze || findSection('cloze');
+          if (!clozeData) return <div>No cloze activity data found</div>;
+          return <InteractiveClozeSection 
+            title={clozeData.title || "Fill in the Blanks"} 
+            text={clozeData.text || ""} 
+            wordBank={clozeData.wordBank || []} 
+            teacherNotes={clozeData.teacherNotes || ""} 
+          />;
+        })()
+      ) : null
     },
     {
       id: 'sentenceUnscramble',
       label: 'Sentence Unscramble',
       icon: <Shuffle className="h-5 w-5" />,
-      render: hasSectionType('sentenceUnscramble') ? <SentenceUnscrambleSection data={parsedContent.sentenceUnscramble || findSection('sentenceUnscramble')} /> : null
+      render: hasSectionType('sentenceUnscramble') ? (
+        (() => {
+          const unscrambleData = parsedContent.sentenceUnscramble || findSection('sentenceUnscramble');
+          return <SentenceUnscrambleSection 
+            sentences={unscrambleData?.sentences || []}
+            title={unscrambleData?.title || "Sentence Unscramble"}
+          />;
+        })()
+      ) : null
     },
     {
       id: 'discussion',
