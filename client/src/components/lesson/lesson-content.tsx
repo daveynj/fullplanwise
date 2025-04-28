@@ -1149,15 +1149,15 @@ export function LessonContent({ content }: LessonContentProps) {
             <CardContent className="p-0"> {/* Remove padding here, handled inside */}
               <div className="flex flex-col md:flex-row">
                   {/* Left: Image */}
-                  <div className="w-full md:w-[30%] bg-gray-100">
+                  <div className="w-full md:w-[30%] bg-gray-100 flex items-center justify-center">
                     {currentWord?.imageBase64 ? (
                       <img 
                         src={`data:image/png;base64,${currentWord.imageBase64}`}
                         alt={`Image for ${currentWord.word}`}
-                        className="w-full h-full object-cover object-center max-h-[180px]"
+                        className="max-w-full max-h-[180px] object-contain"
                       />
                     ) : (
-                      <div className="w-full h-full min-h-[150px] max-h-[180px] bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center">
+                      <div className="w-full h-full bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center">
                         <Lightbulb className="h-16 w-16 text-amber-300" />
                       </div>
                     )}

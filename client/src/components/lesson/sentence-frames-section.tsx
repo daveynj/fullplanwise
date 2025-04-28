@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { ChevronLeft, ChevronRight, Lightbulb, Copy, Info, Languages, BookOpen, Pencil, AlignJustify, ListTree, Zap, MessageSquareQuote } from "lucide-react";
 import { SectionHeader } from "./shared/section-header";
 import { Badge } from "@/components/ui/badge";
@@ -42,17 +42,40 @@ interface SentenceFramesSectionProps {
   } | null;
 }
 
-// Type guard to determine if frame is in new format
-function isNewSentenceFramePattern(frame: any): frame is SentenceFramePattern {
+// Type guard to detect new enhanced format
+function isEnhancedPattern(frame: any): frame is SentenceFramePattern {
+  console.log("Checking enhanced pattern with keys:", Object.keys(frame || {}));
   return (
     typeof frame === 'object' &&
     frame !== null &&
-    'patternTemplate' in frame &&
-    'structureComponents' in frame &&
-    'examples' in frame &&
-    Array.isArray(frame.examples) &&
-    frame.examples.length > 0 &&
-    'completeSentence' in frame.examples[0]
+    // Check for basic properties that could be in either format
+    ('pattern' in frame || 'patternTemplate' in frame) &&
+    // Check for enhanced teaching content 
+    (('examples' in frame && Array.isArray(frame.examples)) ||
+     ('readingExample' in frame) ||
+     ('teachingTips' in frame))
+  );
+}
+
+// Type guard for legacy format detection
+function isLegacyPattern(frame: any): frame is OldSentenceFrameData {
+  return (
+    typeof frame === 'object' &&
+    frame !== null &&
+    ('pattern' in frame) &&
+    (('structureBreakdown' in frame && Array.isArray(frame.structureBreakdown)) || 
+     ('exampleSentences' in frame && Array.isArray(frame.exampleSentences)))
+  );
+}
+
+// Fallback check for any valid pattern
+function hasMinimumRequiredProperties(frame: any): boolean {
+  return (
+    typeof frame === 'object' &&
+    frame !== null &&
+    // At minimum we need a pattern to show
+    (('pattern' in frame && typeof frame.pattern === 'string') || 
+     ('patternTemplate' in frame && typeof frame.patternTemplate === 'string'))
   );
 }
 
@@ -70,12 +93,14 @@ function getComponentColor(name: string): string {
 }
 
 // Component for the NEW Enhanced Layout
-function NewSentenceFrameLayout({ currentFrame }: { currentFrame: SentenceFramePattern }) {
+function EnhancedFrameLayout({ frame }: { frame: SentenceFramePattern }) {
   // Map component labels to colors for consistent use
-  const colorMap = currentFrame.structureComponents.reduce((acc, comp) => {
-    acc[comp.label] = getComponentColor(comp.label);
-    return acc;
-  }, {} as Record<string, string>); 
+  // Check for structureComponents before attempting to use reduce
+  const colorMap = frame.structureComponents ? 
+    frame.structureComponents.reduce((acc, comp) => {
+      acc[comp.label] = getComponentColor(comp.label);
+      return acc;
+    }, {} as Record<string, string>) : {};
 
   // Function to highlight parts of the example sentence
   const highlightSentence = (completeSentence: string, breakdown: { [key: string]: string }): React.ReactNode => {
@@ -108,10 +133,10 @@ function NewSentenceFrameLayout({ currentFrame }: { currentFrame: SentenceFrameP
           </CardHeader>
           <CardContent className="p-5 space-y-4">
             <div className="font-mono p-4 bg-white rounded-lg border border-blue-300 text-gray-900 relative text-xl font-bold shadow-inner">
-              {currentFrame.patternTemplate}
+              {frame.patternTemplate || frame.pattern}
               <button 
                 className="absolute right-2 top-2 text-gray-400 hover:text-blue-600 p-1 rounded hover:bg-blue-100/50"
-                onClick={() => navigator.clipboard.writeText(currentFrame.patternTemplate)}
+                onClick={() => navigator.clipboard.writeText(frame.patternTemplate || frame.pattern || "")}
                 title="Copy Pattern"
               >
                 <Copy className="h-4 w-4" />
@@ -120,49 +145,53 @@ function NewSentenceFrameLayout({ currentFrame }: { currentFrame: SentenceFrameP
             <div className="text-base text-blue-900 flex items-start gap-2">
               <Languages className="h-5 w-5 mt-0.5 flex-shrink-0 text-blue-700" /> 
               <div className="text-xl font-bold">
-                 <span className="font-semibold">Language Function:</span> {currentFrame.languageFunction}
+                 <span className="font-semibold">Language Function:</span> {frame.languageFunction || frame.communicativeFunction || "Express ideas effectively"}
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {currentFrame.grammarFocus && currentFrame.grammarFocus.length > 0 && (
+        {frame.grammarFocus && (Array.isArray(frame.grammarFocus) ? frame.grammarFocus.length > 0 : frame.grammarFocus) && (
             <Card className="border-gray-200 shadow-sm">
                 <CardHeader className="bg-gray-50 p-4 border-b border-gray-200">
                     <CardTitle className="text-base font-semibold text-gray-700 flex items-center gap-2"><Zap className="h-5 w-5 text-gray-500"/>Grammar Focus</CardTitle>
                 </CardHeader>
                 <CardContent className="p-5">
-                    <ul className="list-disc space-y-2 pl-5 text-gray-700">
-                        {currentFrame.grammarFocus.map((point, index) => (
-                            <li key={index} className="text-base">{point}</li>
-                        ))}
-                    </ul>
+                    {Array.isArray(frame.grammarFocus) ? (
+                      <ul className="list-disc space-y-2 pl-5 text-gray-700">
+                          {frame.grammarFocus.map((point, index) => (
+                              <li key={index} className="text-base">{point}</li>
+                          ))}
+                      </ul>
+                    ) : (
+                      <p className="text-gray-700">{frame.grammarFocus}</p>
+                    )}
                 </CardContent>
             </Card>
         )}
 
-        {currentFrame.patternVariations && Object.keys(currentFrame.patternVariations).length > 0 && (
+        {frame.patternVariations && Object.keys(frame.patternVariations).length > 0 && (
             <Card className="border-purple-200 shadow-sm">
                 <CardHeader className="bg-purple-50 p-4 border-b border-purple-200">
                     <CardTitle className="text-base font-semibold text-purple-800 flex items-center gap-2"><MessageSquareQuote className="h-5 w-5 text-purple-600"/>Pattern Variations</CardTitle>
                 </CardHeader>
                 <CardContent className="p-5 space-y-3">
-                    {currentFrame.patternVariations.negativeForm && (
+                    {frame.patternVariations.negativeForm && (
                         <div>
                             <h4 className="text-sm font-medium text-gray-600 mb-1">Negative Form:</h4>
-                            <p className="font-mono p-2 bg-white rounded border border-gray-200 text-gray-900">{currentFrame.patternVariations.negativeForm}</p>
+                            <p className="font-mono p-2 bg-white rounded border border-gray-200 text-gray-900">{frame.patternVariations.negativeForm}</p>
                         </div>
                     )}
-                    {currentFrame.patternVariations.questionForm && (
+                    {frame.patternVariations.questionForm && (
                         <div>
                             <h4 className="text-sm font-medium text-gray-600 mb-1">Question Form:</h4>
-                            <p className="font-mono p-2 bg-white rounded border border-gray-200 text-gray-900">{currentFrame.patternVariations.questionForm}</p>
+                            <p className="font-mono p-2 bg-white rounded border border-gray-200 text-gray-900">{frame.patternVariations.questionForm}</p>
                         </div>
                     )}
-                    {currentFrame.patternVariations.modalForm && (
+                    {frame.patternVariations.modalForm && (
                         <div>
                             <h4 className="text-sm font-medium text-gray-600 mb-1">Modal Form:</h4>
-                            <p className="font-mono p-2 bg-white rounded border border-gray-200 text-gray-900">{currentFrame.patternVariations.modalForm}</p>
+                            <p className="font-mono p-2 bg-white rounded border border-gray-200 text-gray-900">{frame.patternVariations.modalForm}</p>
                         </div>
                     )}
                 </CardContent>
@@ -177,7 +206,8 @@ function NewSentenceFrameLayout({ currentFrame }: { currentFrame: SentenceFrameP
               <CardTitle className="text-lg font-semibold text-green-800 flex items-center gap-2"><ListTree className="h-5 w-5"/>Structure Breakdown</CardTitle>
             </CardHeader>
             <CardContent className="p-5 space-y-4">
-             {currentFrame.structureComponents.map((component, index) => {
+             {frame.structureComponents && Array.isArray(frame.structureComponents) ? (
+               frame.structureComponents.map((component, index) => {
                 const color = colorMap[component.label] || 'gray';
                 const borderColor = `border-${color}-400`;
                 const bgColor = `bg-${color}-50/60`;
@@ -206,21 +236,24 @@ function NewSentenceFrameLayout({ currentFrame }: { currentFrame: SentenceFrameP
                     )}
                   </div>
                 )
-              })}
+              })
+             ) : (
+              <p className="text-gray-500">No structure breakdown available for this pattern.</p>
+             )}
             </CardContent>
           </Card>
           
           {/* Visual Structure Diagram */}
-          {currentFrame.visualStructure && (
+          {frame.visualStructure && frame.visualStructure.parts && Array.isArray(frame.visualStructure.parts) && (
             <Card className="border-green-200 shadow-sm">
               <CardHeader className="bg-green-50 p-4 border-b border-green-200">
                 <CardTitle className="text-base font-semibold text-green-800 flex items-center gap-2">Visual Structure</CardTitle>
               </CardHeader>
               <CardContent className="p-5">
                 <div className="flex flex-wrap items-center justify-center space-x-2 py-6">
-                  <span className="text-gray-800 font-medium px-2">{currentFrame.visualStructure.start}</span>
+                  <span className="text-gray-800 font-medium px-2">{frame.visualStructure.start}</span>
                   
-                  {currentFrame.visualStructure.parts.map((part, index) => {
+                  {frame.visualStructure.parts.map((part, index) => {
                     const color = colorMap[part.label] || 'blue';
                     return (
                       <React.Fragment key={index}>
@@ -234,7 +267,7 @@ function NewSentenceFrameLayout({ currentFrame }: { currentFrame: SentenceFrameP
                     );
                   })}
                   
-                  <span className="text-gray-800 font-medium px-2">{currentFrame.visualStructure.end}</span>
+                  <span className="text-gray-800 font-medium px-2">{frame.visualStructure.end}</span>
                 </div>
               </CardContent>
             </Card>
@@ -248,36 +281,48 @@ function NewSentenceFrameLayout({ currentFrame }: { currentFrame: SentenceFrameP
                 <CardTitle className="text-lg font-semibold text-amber-800 flex items-center gap-2"><ListTree className="h-5 w-5"/>Example Sentences</CardTitle>
               </CardHeader>
               <CardContent className="p-5 space-y-4">
-                {currentFrame.examples.map((example, index) => (
-                  <div key={index} className="p-4 bg-white border border-gray-200 rounded-md shadow-sm">
-                    <p className="font-medium text-lg text-gray-800 mb-3">{example.completeSentence}</p>
-                    
-                    <h4 className="text-sm font-medium text-gray-500 mb-2">Breakdown:</h4>
-                    <div className="space-y-1.5 ml-2">
-                      {Object.entries(example.breakdown).map(([label, value], idx) => {
-                        const color = colorMap[label] || 'gray';
-                        return (
-                          <div key={idx} className="flex gap-2">
-                            <span className={`text-sm font-semibold text-${color}-700 min-w-20`}>{label}:</span>
-                            <span className={`text-sm bg-${color}-50 px-1.5 py-0.5 rounded text-${color}-800`}>{value}</span>
+                {frame.examples && Array.isArray(frame.examples) ? (
+                  frame.examples.map((example, index) => (
+                    <div key={index} className="p-4 bg-white border border-gray-200 rounded-md shadow-sm">
+                      <p className="font-medium text-lg text-gray-800 mb-3">
+                        {example.text || example.completeSentence || (typeof example === 'string' ? example : '')}
+                      </p>
+                      
+                      {example.breakdown && typeof example.breakdown === 'object' && (
+                        <div>
+                          <h4 className="text-sm font-medium text-gray-500 mb-2">Breakdown:</h4>
+                          <div className="space-y-1.5 ml-2">
+                            {Object.entries(example.breakdown).map(([label, value], idx) => {
+                              const color = colorMap[label] || 'gray';
+                              return (
+                                <div key={idx} className="flex gap-2">
+                                  <span className={`text-sm font-semibold text-${color}-700 min-w-20`}>{label}:</span>
+                                  <span className={`text-sm bg-${color}-50 px-1.5 py-0.5 rounded text-${color}-800`}>
+                                    {typeof value === 'string' ? value : JSON.stringify(value)}
+                                  </span>
+                                </div>
+                              );
+                            })}
                           </div>
-                        );
-                      })}
+                        </div>
+                      )}
                     </div>
-                  </div>
-                ))}
+                  ))
+                ) : (
+                  <p className="text-gray-500">No examples available for this pattern.</p>
+                )}
               </CardContent>
           </Card>
 
           {/* Discussion Prompts */}
-          {currentFrame.discussionPrompts && currentFrame.discussionPrompts.length > 0 && (
+          {frame.discussionPrompts && frame.discussionPrompts.length > 0 && (
             <Card className="border-blue-200 shadow-sm">
               <CardHeader className="bg-blue-50 p-4 border-b border-blue-200">
                 <CardTitle className="text-base font-semibold text-blue-800 flex items-center gap-2">Discussion Prompts</CardTitle>
               </CardHeader>
               <CardContent className="p-5">
                 <ul className="list-disc space-y-2 pl-5 text-gray-700">
-                  {currentFrame.discussionPrompts.map((prompt, index) => (
+                  {frame.discussionPrompts.map((prompt, index) => (
                     <li key={index} className="text-base">{prompt}</li>
                   ))}
                 </ul>
@@ -286,14 +331,14 @@ function NewSentenceFrameLayout({ currentFrame }: { currentFrame: SentenceFrameP
           )}
 
           {/* Teaching Notes */}
-          {currentFrame.teachingNotes && currentFrame.teachingNotes.length > 0 && (
+          {frame.teachingNotes && frame.teachingNotes.length > 0 && (
             <Card className="border-gray-200 shadow-sm">
               <CardHeader className="bg-gray-50 p-4 border-b border-gray-200">
                 <CardTitle className="text-base font-semibold text-gray-700 flex items-center gap-2">Teacher Notes</CardTitle>
               </CardHeader>
               <CardContent className="p-5">
                 <ul className="list-disc space-y-2 pl-5 text-gray-700">
-                  {currentFrame.teachingNotes.map((note, index) => (
+                  {frame.teachingNotes.map((note, index) => (
                     <li key={index} className="text-base">{note}</li>
                   ))}
                 </ul>
@@ -459,6 +504,9 @@ export function SentenceFramesSection({ section }: SentenceFramesSectionProps) {
   // Get the data for the current frame
   const currentFrame = section.frames[currentFrameIndex];
   
+  // Log frame data for debugging
+  console.log("Current sentence frame:", currentFrame);
+  
   // Check if currentFrame actually exists (robustness)
   if (!currentFrame) {
      console.error("Current frame data is missing or invalid at index:", currentFrameIndex);
@@ -473,11 +521,18 @@ export function SentenceFramesSection({ section }: SentenceFramesSectionProps) {
      );
   }
   
-  // Determine which layout to render using the type guard
-  const useNewLayout = isNewSentenceFramePattern(currentFrame);
-  const frameTitle = useNewLayout 
-    ? (currentFrame as SentenceFramePattern).patternTemplate
-    : (currentFrame as OldSentenceFrameData).title || `Sentence Pattern ${currentFrameIndex + 1}`;
+  // Determine which layout to render using type guards
+  const useEnhancedLayout = isEnhancedPattern(currentFrame);
+  const useLegacyLayout = isLegacyPattern(currentFrame);
+  const hasMinimumProps = hasMinimumRequiredProperties(currentFrame);
+  
+  console.log("Layout detection results:", { useEnhancedLayout, useLegacyLayout, hasMinimumProps });
+  
+  // Get title for header (supporting both formats)
+  const frameTitle = currentFrame.title || 
+                     currentFrame.pattern || 
+                     currentFrame.patternTemplate || 
+                     `Sentence Pattern ${currentFrameIndex + 1}`;
 
   // Rendering Logic
   return (
@@ -490,7 +545,7 @@ export function SentenceFramesSection({ section }: SentenceFramesSectionProps) {
         color="amber"
       />
       
-      {/* Pattern Navigation & Title */}
+      {/* Pattern Navigation */}
       <div className="flex justify-end items-center mb-4">
          <div className="flex gap-1">
            <Button 
@@ -517,11 +572,87 @@ export function SentenceFramesSection({ section }: SentenceFramesSectionProps) {
          </div>
       </div>
 
-      {/* Conditional Rendering Call */}
-      {useNewLayout ? (
-        <NewSentenceFrameLayout currentFrame={currentFrame as SentenceFramePattern} />
-      ) : (
+      {/* Render the appropriate layout based on pattern format */}
+      {useEnhancedLayout ? (
+        <EnhancedFrameLayout frame={currentFrame as SentenceFramePattern} />
+      ) : useLegacyLayout ? (
         <OldSentenceFrameLayout currentFrame={currentFrame as OldSentenceFrameData} />
+      ) : hasMinimumProps ? (
+        // Fallback for frames with minimal properties
+        <Card className="border-amber-200 shadow-sm">
+          <CardHeader className="bg-amber-50 p-5 border-b border-amber-200">
+            <CardTitle className="text-xl text-amber-800">
+              {currentFrame.title || "Sentence Pattern"}
+            </CardTitle>
+            <CardDescription className="text-amber-700 mt-1">
+              Use this pattern for effective communication
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-5 space-y-4">
+            <div className="font-mono p-4 bg-white rounded-lg border border-amber-300 text-gray-900 text-xl font-bold shadow-inner">
+              {currentFrame.pattern || currentFrame.patternTemplate}
+            </div>
+            
+            {/* Handle examples in different formats */}
+            {currentFrame.examples && Array.isArray(currentFrame.examples) && (
+              <div className="mt-4">
+                <h3 className="text-lg font-semibold text-gray-700 mb-3">Examples</h3>
+                <div className="space-y-2">
+                  {currentFrame.examples.map((example: any, idx: number) => (
+                    <div key={idx} className="p-3 bg-white rounded-md border border-gray-200">
+                      <p className="text-gray-800">
+                        {typeof example === 'string' ? example : 
+                         example.text || example.completeSentence || JSON.stringify(example)}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {/* Handle standalone readingExample if present */}
+            {currentFrame.readingExample && (
+              <div className="mt-4">
+                <h3 className="text-lg font-semibold text-blue-700 mb-3 flex items-center">
+                  <BookOpen className="h-5 w-5 mr-2" />
+                  From the Reading
+                </h3>
+                <div className="p-3 bg-blue-50 rounded-md border border-blue-200">
+                  <p className="text-gray-800 italic">{currentFrame.readingExample}</p>
+                </div>
+              </div>
+            )}
+            
+            {/* Add basic structure components if available */}
+            {currentFrame.components && Array.isArray(currentFrame.components) && currentFrame.components.length > 0 && (
+              <div className="mt-4">
+                <h3 className="text-lg font-semibold text-gray-700 mb-3">Structure</h3>
+                <div className="space-y-2">
+                  {currentFrame.components.map((component: any, idx: number) => (
+                    <div key={idx} className="p-3 border border-amber-200 rounded-md bg-amber-50/50">
+                      <h4 className="font-semibold text-amber-800">{component.name}</h4>
+                      <p className="text-gray-700 mt-1">{component.description}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="p-6 text-center bg-amber-50 rounded-lg border border-amber-200">
+          <Info className="mx-auto h-12 w-12 text-amber-400 mb-3" />
+          <h3 className="text-lg font-medium text-amber-700 mb-2">No Valid Layout Found</h3>
+          <p className="text-amber-600 text-sm max-w-md mx-auto">
+            The selected sentence frame format is not supported for this layout.
+          </p>
+          {/* Add debug information */}
+          <div className="mt-4 p-3 bg-gray-100 rounded-md text-xs text-left border border-gray-300">
+            <p className="font-mono text-gray-500 overflow-x-auto">
+              Frame keys: {typeof currentFrame === 'object' ? Object.keys(currentFrame).join(', ') : 'none'}
+            </p>
+          </div>
+        </div>
       )}
     </div>
   );

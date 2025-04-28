@@ -324,11 +324,17 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
       
       {/* Image if available */}
       {word.imageBase64 && (
-        <div className="mt-3">
+        <div className="mt-5 flex justify-center items-center">
           <img 
             src={`data:image/png;base64,${word.imageBase64}`} 
             alt={`Visual representation of ${word.word}`}
-            className="rounded-md w-full object-cover border-2 border-blue-200 max-h-36"
+            className="rounded-md border-2 border-blue-200 object-contain"
+            style={{ 
+              height: 'auto',
+              width: '100%',
+              maxHeight: '400px',
+              maxWidth: '600px'
+            }}
           />
         </div>
       )}

@@ -1,0 +1,69 @@
+// For sentence frames section, include these specific instructions:
+
+For the sentence frames section, create teaching-focused content that helps teachers present useful language patterns found in the reading. Each frame must:
+
+1. Be directly extracted from the reading passage (use actual sentences from the text)
+2. Focus on structures that help students discuss the topic effectively
+3. Include clear teaching guidance for classroom instruction
+
+For each sentence frame, follow this exact structure:
+
+```
+{
+  "pattern": "[clear pattern with placeholders in {curly braces}]",
+  "title": "Short descriptive name",
+  "description": "When/how to use this pattern functionally",
+  "readingExample": "Direct quote from the reading using this pattern",
+  "readingParagraph": "Number or brief identifier of paragraph containing example",
+  
+  "examples": [
+    {
+      "text": "Example sentence using pattern and lesson vocabulary",
+      "source": "reading", 
+      "highlightPattern": true
+    },
+    {
+      "text": "Another example sentence",
+      "source": "custom",
+      "highlightPattern": true
+    }
+  ],
+  
+  "components": [
+    {
+      "name": "Part name (Subject, Verb, etc.)",
+      "description": "Clear explanation of this component's function",
+      "examples": ["Example word/phrase for this component"]
+    }
+  ],
+  
+  "teachingTips": [
+    {
+      "tip": "Concrete teaching suggestion, error prevention, or usage note",
+      "type": "error"
+    },
+    {
+      "tip": "Additional classroom guidance",
+      "type": "usage"
+    }
+  ],
+  
+  "practiceSuggestions": [
+    "Brief, actionable classroom activity to practice this pattern",
+    "Another practice activity suggestion"
+  ],
+  
+  "discussionPrompts": [
+    "Prompt connecting this pattern to one of the discussion questions",
+    "Another prompt for classroom use"
+  ]
+}
+```
+
+Create exactly 3-5 sentence frames, prioritizing patterns that:
+1. Actually appear in the reading text
+2. Are most useful for discussing the topic
+3. Represent different grammatical structures (don't use all the same pattern)
+4. Progress from simpler to more complex structures
+
+Ensure each pattern has real examples from the reading text and uses vocabulary from the lesson vocabulary list. 

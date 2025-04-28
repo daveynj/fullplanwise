@@ -1,0 +1,49 @@
+// For sentence frames, add the following detailed instructions:
+
+When generating sentence frames for the lesson, focus on creating teaching-focused materials that directly connect to the reading passage. Each frame should have:
+
+1. A clear pattern with a descriptive title and purpose.
+2. Direct connections to the reading passage by extracting examples that use this pattern.
+3. 3-5 additional teaching examples using vocabulary from the lesson.
+4. A structure breakdown explaining each component of the pattern.
+5. 2-3 practical teaching tips (including common errors, usage notes).
+6. 2-3 classroom practice suggestions.
+7. Discussion prompts that use the pattern and connect to the discussion questions.
+
+For each sentence frame, use this structure:
+```json
+{
+  "pattern": "[pattern with placeholders like {subject} {verb} {object}]",
+  "title": "Brief descriptive title",
+  "description": "Explanation of when/how to use this pattern",
+  "readingExample": "Example sentence from the reading that uses this pattern",
+  "examples": [
+    {
+      "text": "Complete example sentence",
+      "source": "reading or custom", 
+      "highlightPattern": true
+    }
+  ],
+  "components": [
+    {
+      "name": "Component name (e.g., Subject, Verb)",
+      "description": "What this component does/means",
+      "examples": ["Example1", "Example2"]
+    }
+  ],
+  "teachingTips": [
+    {
+      "tip": "Teaching tip content",
+      "type": "error, usage, cultural, or general"
+    }
+  ],
+  "practiceSuggestions": [
+    "Classroom activity suggestion"
+  ],
+  "discussionPrompts": [
+    "Discussion prompt using this pattern"
+  ]
+}
+```
+
+Limit to 3-5 key sentence patterns that are most useful for discussing the reading topic. Each pattern should actually appear in the reading passage. 
