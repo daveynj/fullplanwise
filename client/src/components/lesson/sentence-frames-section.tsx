@@ -514,11 +514,63 @@ function OldSentenceFrameLayout({ currentFrame }: { currentFrame: OldSentenceFra
 }
 
 // Main Overhauled Component 
+// Add a utility function to analyze the data structure deeply
+function analyzeStructure(data: any, path = 'root'): void {
+  console.log(`===== ANALYZING SENTENCE FRAMES DATA STRUCTURE =====`);
+  
+  // Log basic information about the object
+  console.log(`${path} type:`, typeof data);
+  if (data === null) {
+    console.log(`${path} is null`);
+    return;
+  }
+  
+  if (typeof data === 'object') {
+    if (Array.isArray(data)) {
+      console.log(`${path} is Array with ${data.length} items`);
+      if (data.length > 0) {
+        // Show the structure of the first item as an example
+        console.log(`${path}[0] sample:`, typeof data[0]);
+        analyzeStructure(data[0], `${path}[0]`);
+      }
+    } else {
+      // It's an object - log its keys
+      const keys = Object.keys(data);
+      console.log(`${path} is Object with keys:`, keys);
+      
+      // For each key, log its type and maybe value
+      keys.forEach(key => {
+        const value = data[key];
+        if (typeof value === 'object' && value !== null) {
+          console.log(`${path}.${key} type:`, typeof value, Array.isArray(value) ? `(Array of ${value.length})` : '(Object)');
+          
+          // For important keys, go deeper
+          if (key === 'frames' || key === 'pattern' || key === 'content' || 
+              key === 'structureComponents' || key === 'examples') {
+            analyzeStructure(value, `${path}.${key}`);
+          }
+        } else {
+          // For primitive values, show the actual value
+          console.log(`${path}.${key}:`, typeof value, value);
+        }
+      });
+    }
+  } else {
+    // It's a primitive value
+    console.log(`${path} value:`, data);
+  }
+}
+
 export function SentenceFramesSection({ section }: SentenceFramesSectionProps) {
   const [currentFrameIndex, setCurrentFrameIndex] = useState(0);
+  
+  // Debug: Analyze the entire section structure
+  console.log("Raw sentence frames section data:");
+  analyzeStructure(section);
 
   // Basic guard clauses
   if (!section || !Array.isArray(section.frames) || section.frames.length === 0) {
+    console.error("Invalid sentence frames section structure");
     return (
       <div className="space-y-4">
         <SectionHeader
@@ -533,6 +585,12 @@ export function SentenceFramesSection({ section }: SentenceFramesSectionProps) {
           <p className="text-amber-600 text-sm max-w-md mx-auto">
             This lesson doesn't include sentence frame data in the expected format.
           </p>
+          <div className="mt-4 p-2 border border-amber-200 bg-amber-100 rounded text-sm text-left">
+            <p className="font-medium">Debug Information:</p>
+            <p>Section type: {typeof section}</p>
+            <p>Has frames property: {section && 'frames' in section ? 'Yes' : 'No'}</p>
+            <p>Other keys: {section ? Object.keys(section).join(', ') : 'None'}</p>
+          </div>
         </div>
       </div>
     );
