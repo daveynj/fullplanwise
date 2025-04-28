@@ -36,8 +36,71 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
   // Prepare pronunciation data from the word or use fallbacks
   const normalizedWord = word.word?.toLowerCase() || '';
   
+  // Fixed pronunciation data for common words to ensure proper display
+  const pronunciationMap: Record<string, { 
+    pronunciation: string,
+    syllables: string[],
+    emphasisIndex: number
+  }> = {
+    "character": { 
+      pronunciation: "KAIR-ak-ter", 
+      syllables: ["char", "ac", "ter"], 
+      emphasisIndex: 1 
+    },
+    "development": { 
+      pronunciation: "di-VEL-op-ment", 
+      syllables: ["di", "vel", "op", "ment"], 
+      emphasisIndex: 1 
+    },
+    "environment": { 
+      pronunciation: "en-VY-ron-ment", 
+      syllables: ["en", "vy", "ron", "ment"], 
+      emphasisIndex: 1 
+    },
+    "technology": { 
+      pronunciation: "tek-NOL-o-jee", 
+      syllables: ["tek", "nol", "o", "jee"], 
+      emphasisIndex: 1 
+    },
+    "government": { 
+      pronunciation: "GUV-ern-ment", 
+      syllables: ["guv", "ern", "ment"], 
+      emphasisIndex: 0 
+    },
+    "education": { 
+      pronunciation: "ej-oo-KAY-shun", 
+      syllables: ["ej", "oo", "kay", "shun"], 
+      emphasisIndex: 2 
+    },
+    "experience": { 
+      pronunciation: "ik-SPEER-ee-ens", 
+      syllables: ["ik", "speer", "ee", "ens"], 
+      emphasisIndex: 1 
+    },
+    "information": { 
+      pronunciation: "in-for-MAY-shun", 
+      syllables: ["in", "for", "may", "shun"], 
+      emphasisIndex: 2 
+    },
+    "knowledge": { 
+      pronunciation: "NOL-ij", 
+      syllables: ["nol", "ij"], 
+      emphasisIndex: 0 
+    },
+    "management": { 
+      pronunciation: "MAN-ij-ment", 
+      syllables: ["man", "ij", "ment"], 
+      emphasisIndex: 0 
+    }
+  };
+
   // Handle complex pronunciation object - with type safety
   const getPronunciationData = () => {
+    // First check our fixed pronunciation data for common words
+    if (normalizedWord && pronunciationMap[normalizedWord]) {
+      return pronunciationMap[normalizedWord];
+    }
+    
     let pronouncedValue = "";
     
     // Handle complex pronunciation object
@@ -53,8 +116,16 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
     
     // Handle direct fields
     pronouncedValue = typeof word.pronunciation === 'string' ? word.pronunciation : (word.phoneticGuide || "");
+    
+    // If we have known syllables but no pronunciation string, create one from syllables
+    if (!pronouncedValue && word.syllables && word.syllables.length > 0) {
+      pronouncedValue = word.syllables.map((s, i) => 
+        i === (word.stressIndex || 0) ? s.toUpperCase() : s.toLowerCase()
+      ).join('-');
+    }
+    
     return {
-      pronunciation: pronouncedValue,
+      pronunciation: pronouncedValue || normalizedWord.toUpperCase(),
       syllables: word.syllables || [normalizedWord],
       emphasisIndex: word.stressIndex !== undefined ? word.stressIndex : 0
     };
@@ -132,28 +203,8 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
           <div className="text-center mt-4">
             {/* PART 1: The phonetic pronunciation like KAIR-ak-ter */}
             <div className="text-2xl font-medium text-blue-800 mb-4">
-              {/* Force proper phonetic pronunciation display */}
-              {word && 
-                (word.word === "character" ? "KAIR-ak-ter" :
-                 word.word === "development" ? "di-VEL-op-ment" :
-                 word.word === "environment" ? "en-VY-ron-ment" :
-                 word.word === "technology" ? "tek-NOL-o-jee" :
-                 word.word === "government" ? "GUV-ern-ment" :
-                 word.word === "education" ? "ej-oo-KAY-shun" :
-                 word.word === "experience" ? "ik-SPEER-ee-ens" :
-                 word.word === "information" ? "in-for-MAY-shun" :
-                 word.word === "knowledge" ? "NOL-ij" :
-                 word.word === "management" ? "MAN-ij-ment" :
-                 // Then try API-provided data
-                 (word.pronunciation && typeof word.pronunciation === 'string')
-                   ? word.pronunciation.toUpperCase()
-                   : word.phoneticGuide 
-                     ? word.phoneticGuide.toUpperCase()
-                     : wordData.syllables && wordData.syllables.length > 0
-                       ? wordData.syllables.map((s, i) => i === wordData.emphasisIndex ? s.toUpperCase() : s.toLowerCase()).join('-')
-                       : word.word.split('').join('-').toUpperCase()
-                )
-              }
+              {/* Use the processed pronunciation data from getPronunciationData() */}
+              {wordData.pronunciation.toUpperCase()}
             </div>
             
             {/* PART 2: Syllable boxes with appropriate emphasis */}

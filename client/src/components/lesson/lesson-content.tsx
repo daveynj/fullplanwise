@@ -1224,23 +1224,92 @@ export function LessonContent({ content }: LessonContentProps) {
     const [isFlipped, setIsFlipped] = useState(false);
     
     // Extract vocabulary words from the section
-    
-    // Extract vocabulary words from the section
     const extractedVocabWords: VocabularyWord[] = [];
+    
+    // Data mapping for syllables and pronunciation (if not available from API)
+    const pronunciationData: { [key: string]: { 
+      pronunciation: string; 
+      syllables: string[]; 
+      stressIndex: number;
+    }} = {
+      "character": { 
+        pronunciation: "KAIR-ak-ter", 
+        syllables: ["char", "ac", "ter"], 
+        stressIndex: 1 
+      },
+      "development": { 
+        pronunciation: "di-VEL-op-ment", 
+        syllables: ["di", "vel", "op", "ment"], 
+        stressIndex: 1 
+      },
+      "environment": { 
+        pronunciation: "en-VY-ron-ment", 
+        syllables: ["en", "vy", "ron", "ment"], 
+        stressIndex: 1 
+      },
+      "technology": { 
+        pronunciation: "tek-NOL-o-jee", 
+        syllables: ["tek", "nol", "o", "jee"], 
+        stressIndex: 1 
+      },
+      "government": { 
+        pronunciation: "GUV-ern-ment", 
+        syllables: ["guv", "ern", "ment"], 
+        stressIndex: 0 
+      },
+      "education": { 
+        pronunciation: "ej-oo-KAY-shun", 
+        syllables: ["ej", "oo", "kay", "shun"], 
+        stressIndex: 2 
+      },
+      "experience": { 
+        pronunciation: "ik-SPEER-ee-ens", 
+        syllables: ["ik", "speer", "ee", "ens"], 
+        stressIndex: 1 
+      },
+      "information": { 
+        pronunciation: "in-for-MAY-shun", 
+        syllables: ["in", "for", "may", "shun"], 
+        stressIndex: 2 
+      },
+      "knowledge": { 
+        pronunciation: "NOL-ij", 
+        syllables: ["nol", "ij"], 
+        stressIndex: 0 
+      },
+      "management": { 
+        pronunciation: "MAN-ij-ment", 
+        syllables: ["man", "ij", "ment"], 
+        stressIndex: 0 
+      }
+    };
     
     // Look for the 'words' array in the vocabulary section (Gemini format)
     if (section.words && Array.isArray(section.words)) {
       section.words.forEach((wordData: any) => {
         if (typeof wordData === 'object') {
+          const wordKey = (wordData.term || wordData.word || "").toLowerCase();
+          const lookupData = pronunciationData[wordKey];
+          
           // Pass pronunciation data directly - it will be handled in the component
           extractedVocabWords.push({
             word: wordData.term || wordData.word || "",
             partOfSpeech: wordData.partOfSpeech || "noun",
             definition: wordData.definition || "",
             example: wordData.example || "",
-            pronunciation: wordData.pronunciation || wordData.phonetic || wordData.ipa,
-            syllables: wordData.syllables,
-            stressIndex: wordData.stressIndex,
+            
+            // Prioritize API data, fallback to our lookup data, and finally to default values
+            pronunciation: wordData.pronunciation || wordData.phonetic || wordData.ipa || 
+                         (lookupData ? lookupData.pronunciation : undefined),
+            
+            syllables: wordData.syllables && Array.isArray(wordData.syllables) && wordData.syllables.length > 0 
+                     ? wordData.syllables 
+                     : (lookupData ? lookupData.syllables : undefined),
+            
+            stressIndex: wordData.stressIndex !== undefined 
+                       ? wordData.stressIndex 
+                       : (lookupData ? lookupData.stressIndex : undefined),
+            
             phoneticGuide: wordData.phoneticGuide,
             imageBase64: wordData.imageBase64 || null,
             
@@ -1257,7 +1326,13 @@ export function LessonContent({ content }: LessonContentProps) {
           });
         }
       });
-      // Use extracted vocabulary words
+      // Log the vocabulary words to help with debugging
+      console.log('Extracted vocabulary words:', extractedVocabWords.map(w => ({
+        word: w.word,
+        pronunciation: w.pronunciation,
+        syllables: w.syllables,
+        stressIndex: w.stressIndex
+      })));
     }
     
     // Use the extracted vocabulary words
