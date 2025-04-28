@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 export default function TwitterCardPreview() {
   const title = "Instant ESL Lessons. Smarter, Faster.";
   const description = "Planwise generates full ESL lessons with AI — in seconds.";
-  const imageUrl = "/twitter-card-perfect.png";
+  const imageUrl = "/twitter-card-perfect-v3.png";
   
   return (
     <div className="container mx-auto py-10">
@@ -13,11 +13,11 @@ export default function TwitterCardPreview() {
         <div>
           <h2 className="text-xl font-semibold mb-4">Card Preview</h2>
           <Card className="overflow-hidden">
-            <div className="aspect-[1200/628] relative">
+            <div className="aspect-[1200/628] relative bg-[#F7FAFC] flex items-center justify-center">
               <img 
                 src={imageUrl} 
                 alt="Twitter Card Preview" 
-                className="w-full h-full object-cover border-b"
+                className="max-w-full max-h-full object-contain p-2 border-b"
               />
             </div>
             <CardContent className="p-4 bg-gray-50">
