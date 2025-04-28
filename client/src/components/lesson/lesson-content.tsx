@@ -1955,44 +1955,77 @@ export function LessonContent({ content }: LessonContentProps) {
       id: 'warmup',
       label: 'Warm-up',
       icon: <Flame className="h-5 w-5" />,
-      render: (hasSectionType('warmup') || hasSectionType('warm-up')) ? <WarmupSection /> : null
+      render: (
+        (() => {
+          if (!(hasSectionType('warmup') || hasSectionType('warm-up'))) return null;
+          return <WarmupSection />;
+        })()
+      )
     },
     {
       id: 'reading',
       label: 'Reading',
       icon: <BookOpen className="h-5 w-5" />,
-      render: hasSectionType('reading') ? <ReadingTabSection /> : null
+      render: (
+        (() => {
+          if (!hasSectionType('reading')) return null;
+          return <ReadingTabSection />;
+        })()
+      )
     },
     {
       id: 'vocabulary',
       label: 'Vocabulary',
       icon: <Library className="h-5 w-5" />,
-      render: hasSectionType('vocabulary') ? <VocabularySection /> : null
+      render: (
+        (() => {
+          if (!hasSectionType('vocabulary')) return null;
+          return <VocabularySection />;
+        })()
+      )
     },
     {
       id: 'comprehension',
       label: 'Comprehension',
       icon: <CheckCircle className="h-5 w-5" />,
-      render: hasSectionType('comprehension') ? <ComprehensionExtractor content={parsedContent} /> : null
+      render: (
+        (() => {
+          if (!hasSectionType('comprehension')) return null;
+          return <ComprehensionExtractor content={parsedContent} />;
+        })()
+      )
     },
     {
       id: 'sentenceFrames',
       label: 'Sentence Frames',
       icon: <AlignJustify className="h-5 w-5" />,
-      render: hasSectionType('sentenceFrames') ? <SentenceFramesSection section={findSection('sentenceFrames')} /> : null
+      render: (
+        (() => {
+          const sentenceFramesData = findSection('sentenceFrames');
+          if (!sentenceFramesData) return null;
+          return <SentenceFramesSection section={sentenceFramesData} />;
+        })()
+      )
     },
     {
       id: 'grammar',
       label: 'Grammar',
       icon: <AlignLeft className="h-5 w-5" />,
-      render: hasSectionType('grammar') ? <SentenceFramesSection section={findSection('grammar')} /> : null
+      render: (
+        (() => {
+          const grammarData = findSection('grammar');
+          if (!grammarData) return null;
+          return <SentenceFramesSection section={grammarData} />;
+        })()
+      )
     },
     {
       id: 'cloze',
       label: 'Fill in the Blanks',
       icon: <Pencil className="h-5 w-5" />,
-      render: hasSectionType('cloze') ? (
+      render: (
         (() => {
+          if (!hasSectionType('cloze')) return null;
           const clozeData = parsedContent.cloze || findSection('cloze');
           if (!clozeData) return <div>No cloze activity data found</div>;
           return <InteractiveClozeSection 
@@ -2002,45 +2035,67 @@ export function LessonContent({ content }: LessonContentProps) {
             teacherNotes={clozeData.teacherNotes || ""} 
           />;
         })()
-      ) : null
+      )
     },
     {
       id: 'sentenceUnscramble',
       label: 'Sentence Unscramble',
       icon: <Shuffle className="h-5 w-5" />,
-      render: hasSectionType('sentenceUnscramble') ? (
+      render: (
         (() => {
+          if (!hasSectionType('sentenceUnscramble')) return null;
           const unscrambleData = parsedContent.sentenceUnscramble || findSection('sentenceUnscramble');
           return <SentenceUnscrambleSection 
             sentences={unscrambleData?.sentences || []}
             title={unscrambleData?.title || "Sentence Unscramble"}
           />;
         })()
-      ) : null
+      )
     },
     {
       id: 'discussion',
       label: 'Discussion',
       icon: <MessageSquare className="h-5 w-5" />,
-      render: hasSectionType('discussion') ? <DiscussionSection section={findSection('discussion')} /> : null
+      render: (
+        (() => {
+          const discussionData = findSection('discussion');
+          if (!discussionData) return null;
+          return <DiscussionSection section={discussionData} />;
+        })()
+      )
     },
     {
       id: 'pronunciation',
       label: 'Pronunciation',
       icon: <Volume2 className="h-5 w-5" />,
-      render: hasSectionType('pronunciation') ? <div className="p-4">Pronunciation practice integrated in vocabulary warm-up</div> : null
+      render: (
+        (() => {
+          if (!hasSectionType('pronunciation')) return null;
+          return <div className="p-4">Pronunciation practice integrated in vocabulary warm-up</div>;
+        })()
+      )
     },
     {
       id: 'quiz',
       label: 'Quiz',
       icon: <HelpCircle className="h-5 w-5" />,
-      render: hasSectionType('quiz') ? <QuizExtractor content={parsedContent} /> : null
+      render: (
+        (() => {
+          if (!hasSectionType('quiz')) return null;
+          return <QuizExtractor content={parsedContent} />;
+        })()
+      )
     },
     {
       id: 'notes',
       label: 'Teacher Notes',
       icon: <FileText className="h-5 w-5" />,
-      render: hasSectionType('notes') ? <TeacherNotesSection /> : null
+      render: (
+        (() => {
+          if (!hasSectionType('notes')) return null;
+          return <TeacherNotesSection />;
+        })()
+      )
     }
   ];
   
