@@ -1136,7 +1136,8 @@ export function LessonContent({ content }: LessonContentProps) {
                         <h3 className="font-semibold text-blue-600 text-lg">Definition</h3> {/* Adjusted font size/weight */} 
                       </div>
                       <div className="p-4">
-                        <p className="text-gray-800 text-base">{currentWord?.definition}</p> {/* Adjusted font size */} 
+                        {/* Definition: Adjusted font size and weight */}
+                        <p className="text-gray-800 text-xl font-bold">{currentWord?.definition}</p> 
                       </div>
                     </div>
                   </div>
@@ -1170,11 +1171,12 @@ export function LessonContent({ content }: LessonContentProps) {
                   <div className="p-4">
                     <div className="bg-blue-50 p-4 rounded-lg border border-blue-100 space-y-3"> {/* Added space-y-3 */} 
                       {allExamples.map((example, idx) => (
-                        <p 
+                        // Example Sentences: Use standard size/weight
+                        <p
                           key={idx}
-                          className="text-gray-800 text-lg font-medium" // Use styling from old "More Examples"
-                          dangerouslySetInnerHTML={{ 
-                            __html: highlightWordInExample(example, currentWord.word || "") 
+                          className="text-gray-800 text-xl font-bold"
+                          dangerouslySetInnerHTML={{
+                            __html: highlightWordInExample(example, currentWord.word || "")
                           }}
                         ></p>
                       ))}
@@ -1203,15 +1205,18 @@ export function LessonContent({ content }: LessonContentProps) {
                   <p className="text-gray-600 mb-3 text-sm">Related words in this family:</p>
                   <div className="flex flex-wrap gap-2">
                     {currentWord.wordFamily.words.map((word, idx) => (
-                      <span key={idx} className="bg-blue-50 text-blue-800 px-3 py-1 rounded-full text-base font-bold">
+                      // Word Family Tags: Use standard size/weight
+                      <span key={idx} className="bg-blue-50 text-blue-800 px-3 py-1 rounded-full text-xl font-bold">
                         {word}
                       </span>
                     ))}
                   </div>
                   
                   {currentWord.wordFamily.description && (
-                    <div className="mt-4 p-3 bg-gray-50 rounded-md text-sm text-gray-700">
-                      <p><strong>Note:</strong> {currentWord.wordFamily.description}</p>
+                    // Removed text-sm from container below
+                    <div className="mt-4 p-3 bg-gray-50 rounded-md text-gray-700">
+                      {/* Word Family Description: Use standard size/weight, kept Note: medium */}
+                      <p className="text-xl font-bold"><span className="font-medium">Note:</span> {currentWord.wordFamily.description}</p>
                     </div>
                   )}
                 </div>
@@ -1229,7 +1234,8 @@ export function LessonContent({ content }: LessonContentProps) {
                   <p className="text-gray-600 mb-3 text-sm">Frequently used with:</p>
                   <ul className="space-y-2 list-disc pl-5">
                     {currentWord.collocations.map((phrase, idx) => (
-                      <li key={idx} className="text-gray-800">
+                      // Common Phrases: Use standard size/weight
+                      <li key={idx} className="text-gray-800 text-xl font-bold">
                         <span dangerouslySetInnerHTML={{
                           __html: highlightWordInExample(phrase, currentWord.word)
                         }}></span>
@@ -1250,7 +1256,8 @@ export function LessonContent({ content }: LessonContentProps) {
               </div>
               <div className="p-4">
                 <div className="bg-blue-50 p-4 rounded-md">
-                  <p className="text-gray-800">{currentWord.usageNotes}</p>
+                  {/* Usage Notes: Use standard size/weight */}
+                  <p className="text-gray-800 text-xl font-bold">{currentWord.usageNotes}</p>
                 </div>
               </div>
             </div>
