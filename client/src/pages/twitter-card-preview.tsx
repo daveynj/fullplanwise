@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 export default function TwitterCardPreview() {
   const title = "Instant ESL Lessons. Smarter, Faster.";
   const description = "Planwise generates full ESL lessons with AI — in seconds.";
-  const imageUrl = "/twitter-card-final.png";
+  const imageUrl = "/twitter-card-perfect-final.png";
   
   return (
     <div className="container mx-auto py-10">
