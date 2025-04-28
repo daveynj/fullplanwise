@@ -38,16 +38,13 @@ export function ReadingSection({ section }: ReadingSectionProps) {
   
   return (
     <div className="space-y-6">
-      {/* Section header with icon */}
-      <div className="bg-blue-50 rounded-lg p-6 flex items-center gap-4">
-        <BookOpen className="h-8 w-8 text-blue-600" />
-        <div>
-          <h2 className="text-blue-600 font-semibold text-xl">Reading</h2>
-          <p className="text-gray-600 text-lg font-medium mt-1">
-            Read the paragraph(s) below. Use the arrows or dots to navigate between paragraphs.
-          </p>
-        </div>
-      </div>
+      {/* Section header with SectionHeader component */}
+      <SectionHeader
+        icon={BookOpen}
+        title="Reading"
+        description="Read the paragraph(s) below. Use the arrows or dots to navigate between paragraphs."
+        color="blue"
+      />
       
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
         {/* Inner Reading header */}

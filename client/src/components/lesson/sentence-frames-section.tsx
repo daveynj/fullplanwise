@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'; // Keep motion if needed for transitions
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChevronLeft, ChevronRight, Lightbulb, Copy, Info, Languages, BookOpen, Pencil, AlignJustify } from "lucide-react"; // Keep/add necessary icons
+import { SectionHeader } from "./shared/section-header";
 import { Badge } from "@/components/ui/badge";
 // Import the NEW data structure types
 import { 
@@ -460,12 +461,20 @@ export function SentenceFramesSection({ section }: SentenceFramesSectionProps) {
   // Basic guard clauses
   if (!section || !Array.isArray(section.frames) || section.frames.length === 0) {
     return (
-      <div className="p-6 text-center bg-amber-50 rounded-lg border border-amber-200">
-        <Info className="mx-auto h-12 w-12 text-amber-400 mb-3" />
-        <h3 className="text-lg font-medium text-amber-700 mb-2">No Sentence Frames Available</h3>
-        <p className="text-amber-600 text-sm max-w-md mx-auto">
-          This lesson doesn't include sentence frame data in the expected format.
-        </p>
+      <div className="space-y-6">
+        <SectionHeader
+          icon={AlignJustify}
+          title="Sentence Frames"
+          description="Learn structural patterns for effective communication"
+          color="amber"
+        />
+        <div className="p-6 text-center bg-amber-50 rounded-lg border border-amber-200">
+          <Info className="mx-auto h-12 w-12 text-amber-400 mb-3" />
+          <h3 className="text-lg font-medium text-amber-700 mb-2">No Sentence Frames Available</h3>
+          <p className="text-amber-600 text-sm max-w-md mx-auto">
+            This lesson doesn't include sentence frame data in the expected format.
+          </p>
+        </div>
       </div>
     );
   }
@@ -505,10 +514,18 @@ export function SentenceFramesSection({ section }: SentenceFramesSectionProps) {
   // --- Rendering Logic --- 
   return (
     <div className="sentence-frames-section space-y-6">
-       {/* --- Top Navigation & Title (Common to both layouts) --- */}
+      {/* Section Header */}
+      <SectionHeader
+        icon={AlignJustify}
+        title="Sentence Frames"
+        description="Learn structural patterns for effective communication"
+        color="amber"
+      />
+      
+      {/* --- Pattern Navigation & Title --- */}
       <div className="flex justify-between items-center">
         <h2 className="text-xl md:text-2xl font-semibold text-gray-800">
-           {/* Determine title based on layout? Or add title to new structure? */}
+           {/* Pattern-specific title */}
            {frameTitle} 
         </h2>
          <div className="flex gap-1">
