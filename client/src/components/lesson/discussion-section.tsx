@@ -300,7 +300,7 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
                         {q.paragraphContext && (
                           <div className="mb-4 p-4 bg-blue-50 border-l-4 border-blue-400 rounded-md shadow-sm">
                             <h4 className="text-sm font-bold text-blue-700 mb-2 flex items-center gap-2 pb-2 border-b border-blue-200">
-                               <Book className="h-5 w-5 text-blue-600" /> Reading Context
+                               <BookOpen className="h-5 w-5 text-blue-600" /> Reading Context
                             </h4>
                             <p className="italic text-gray-800 leading-relaxed text-xl font-bold">{q.paragraphContext}</p>
                           </div>
@@ -332,7 +332,7 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
                         {Array.isArray(q.focusVocabulary) && q.focusVocabulary.length > 0 && (
                           <div className="bg-green-50 p-3 rounded-md ml-10">
                             <h4 className="text-sm font-medium flex items-center gap-1 mb-2">
-                              <Book className="h-4 w-4 text-green-600" /> Focus Vocabulary
+                              <BookOpen className="h-4 w-4 text-green-600" /> Focus Vocabulary
                             </h4>
                             <div className="flex flex-wrap gap-2">
                               {q.focusVocabulary.map((word, wIdx) => (
@@ -397,7 +397,7 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
         <Card className="border-blue-100">
           <CardHeader className="pb-3">
             <CardTitle className="text-sm flex items-center gap-2 text-blue-600">
-              <GraduationCap className="h-4 w-4" />
+              <FileText className="h-4 w-4" />
               Teacher Notes
             </CardTitle>
           </CardHeader>
