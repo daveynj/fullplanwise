@@ -15,6 +15,7 @@ import {
   XCircle,
   AlertCircle
 } from "lucide-react";
+import { SectionHeader } from "./shared/section-header";
 import { extractQuizQuestions } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -150,16 +151,13 @@ export const QuizExtractor = ({ content, sectionType = "quiz" }: QuizExtractorPr
   if (questions.length === 0) {
     return (
       <div className="space-y-6">
+        <SectionHeader
+          icon={CheckSquare}
+          title={title}
+          description={introduction}
+          color="cyan"
+        />
         <Card>
-          <CardHeader className="bg-cyan-50">
-            <CardTitle className="flex items-center gap-2 text-cyan-700">
-              <CheckSquare className="h-5 w-5" />
-              {title}
-            </CardTitle>
-            <CardDescription>
-              {introduction}
-            </CardDescription>
-          </CardHeader>
           <CardContent className="pt-6">
             <p className="text-gray-500">No quiz questions available for this lesson.</p>
           </CardContent>
@@ -170,15 +168,21 @@ export const QuizExtractor = ({ content, sectionType = "quiz" }: QuizExtractorPr
   
   return (
     <div className="space-y-6">
-       {/* --- REMOVED Separate Section Header --- */}
+      <SectionHeader
+        icon={CheckSquare}
+        title={title}
+        description={introduction}
+        color="cyan"
+      />
 
       <Card>
         <CardHeader className="bg-cyan-50">
           <CardTitle className="flex items-center gap-2 text-cyan-700">
             <CheckSquare className="h-5 w-5" />
+            Progress
           </CardTitle>
           <CardDescription>
-            {introduction}
+            Track your quiz progress
           </CardDescription>
         </CardHeader>
         <CardContent className="pt-6">

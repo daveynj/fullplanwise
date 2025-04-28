@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { AlertCircle, CheckCircle, RefreshCw, Shuffle, Info } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
+import { SectionHeader } from "./shared/section-header";
 import { motion } from "framer-motion";
 import {
   DndContext,
@@ -245,12 +246,19 @@ export function SentenceUnscrambleSection({
   
   return (
     <div className="sentence-unscramble space-y-6">
+      <SectionHeader
+        icon={Shuffle}
+        title={title}
+        description="Drag and drop the words to rearrange them into a grammatically correct sentence."
+        color="cyan"
+      />
+      
       <Card className="mb-6 border-l-4 border-l-cyan-400 shadow-md overflow-hidden">
         <CardHeader className="pb-3 bg-gradient-to-r from-cyan-50 to-white">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Shuffle className="h-5 w-5 text-cyan-500" />
-              <CardTitle>{title}</CardTitle>
+              <span className="font-semibold">Progress</span>
             </div>
             <Badge 
               variant="outline" 
@@ -259,9 +267,6 @@ export function SentenceUnscrambleSection({
               {currentIndex + 1} of {sentenceItems.length}
             </Badge>
           </div>
-          <CardDescription>
-            Drag and drop the words to rearrange them into a grammatically correct sentence.
-          </CardDescription>
           
           {/* Progress bar */}
           <div className="w-full h-2 bg-gray-100 rounded-full mt-2 overflow-hidden">

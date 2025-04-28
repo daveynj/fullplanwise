@@ -10,6 +10,7 @@ import {
   GraduationCap
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { SectionHeader } from "./shared/section-header";
 
 interface ReadingSectionProps {
   section?: any;
