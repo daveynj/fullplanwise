@@ -1,12 +1,12 @@
-import { ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 import { LucideIcon, Info } from 'lucide-react';
 
 interface SectionHeaderProps {
   title: string;
   description?: string;
   instructions?: string | ReactNode;
-  icon: LucideIcon;
-  color: 'blue' | 'purple' | 'cyan' | 'green' | 'amber' | 'red' | 'pink';
+  icon: LucideIcon | ReactNode;
+  color: 'blue' | 'purple' | 'cyan' | 'green' | 'amber' | 'red' | 'pink' | 'indigo';
   className?: string;
   rightContent?: ReactNode;
   showInstructions?: boolean; // Controls whether to show instructions initially
@@ -21,6 +21,14 @@ const colorMap = {
     icon: 'text-blue-500',
     lightBg: 'bg-blue-50/50',
     lightBorder: 'border-blue-100',
+  },
+  indigo: {
+    bg: 'bg-indigo-50',
+    border: 'border-indigo-200',
+    text: 'text-indigo-700',
+    icon: 'text-indigo-500',
+    lightBg: 'bg-indigo-50/50',
+    lightBorder: 'border-indigo-100',
   },
   purple: {
     bg: 'bg-purple-50',
@@ -76,7 +84,7 @@ export function SectionHeader({
   title, 
   description, 
   instructions,
-  icon: Icon, 
+  icon, 
   color,
   className = '',
   rightContent,
@@ -84,11 +92,24 @@ export function SectionHeader({
 }: SectionHeaderProps) {
   const colors = colorMap[color];
   
+  // Render icon based on its type
+  const renderIcon = () => {
+    if (React.isValidElement(icon)) {
+      // If it's already a React element, return it
+      return icon;
+    } else if (typeof icon === 'function') {
+      // If it's a Lucide icon component
+      const IconComponent = icon as LucideIcon;
+      return <IconComponent className={`h-7 w-7 ${colors.icon} flex-shrink-0`} />;
+    }
+    return null;
+  };
+  
   return (
     <div className={`${className}`}>
       {/* Main header */}
       <div className={`${colors.bg} rounded-lg p-4 flex items-center gap-3 border ${colors.border} shadow-sm`}>
-        <Icon className={`h-7 w-7 ${colors.icon} flex-shrink-0`} />
+        {renderIcon()}
         <div className="flex-1">
           <h2 className={`${colors.text} font-semibold text-xl`}>{title}</h2>
           {description && (

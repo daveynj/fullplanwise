@@ -271,7 +271,7 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
     <div className="space-y-6">
       {/* Main section header */}
       <SectionHeader
-        icon={<MessageCircle className="h-6 w-6" />}
+        icon={MessageCircle}
         title={sectionTitle}
         description="Think about the discussion question(s) below and prepare your answer."
         color="indigo"
