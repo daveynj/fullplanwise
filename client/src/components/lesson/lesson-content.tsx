@@ -996,157 +996,160 @@ export function LessonContent({ content }: LessonContentProps) {
                   <p className="text-gray-600 italic">{currentWord?.partOfSpeech}</p>
                 </div>
                 
-                {/* Pronunciation display - styled EXACTLY like the reference image with dynamic data */}
-                <div className="bg-blue-50 rounded-md p-4">
-                  <div className="flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" 
-                         stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
-                         className="h-5 w-5 text-blue-700 mr-2">
-                      <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"></path>
-                      <path d="M19 10v1a7 7 0 0 1-14 0v-1M12 19v4"></path>
-                      <line x1="8" y1="23" x2="16" y2="23"></line>
-                    </svg>
-                    <span className="text-blue-700 font-semibold text-lg">Pronunciation</span>
+                {/* --- NEW: Flex container for Pronunciation and Definition --- */}
+                <div className="flex flex-col md:flex-row gap-4 flex-grow"> {/* Use flex-grow to fill space */} 
+                  {/* Left Side: Pronunciation */}
+                  <div className="w-full md:w-1/2">
+                    {/* Pronunciation display - styled EXACTLY like the reference image with dynamic data */}
+                    <div className="bg-blue-50 rounded-md p-4 h-full"> {/* Added h-full */} 
+                      <div className="flex items-center mb-4"> {/* Added margin-bottom */} 
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" 
+                             stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
+                             className="h-5 w-5 text-blue-700 mr-2">
+                          <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"></path>
+                          <path d="M19 10v1a7 7 0 0 1-14 0v-1M12 19v4"></path>
+                          <line x1="8" y1="23" x2="16" y2="23"></line>
+                        </svg>
+                        <span className="text-blue-700 font-semibold text-lg">Pronunciation</span>
+                      </div>
+                      
+                      {/* Styled EXACTLY like the reference image with dynamic data */}
+                      <div className="text-center mt-4">
+                        {/* PART 1: Phonetic pronunciation in format like "KAIR-ak-ter" */}
+                        <div className="text-2xl font-medium text-blue-800 mb-4">
+                          {(() => {
+                            // Get phonetic pronunciation data - should be in format like "KAIR-ak-ter"
+                            
+                            // First check if we have a direct pronunciation string
+                            if (typeof currentWord?.pronunciation === 'string' && currentWord.pronunciation) {
+                              return currentWord.pronunciation.toUpperCase();
+                            }
+                            
+                            // Check for pronunciation object with value or ipa field
+                            if (currentWord?.pronunciation && typeof currentWord.pronunciation === 'object') {
+                              const pronounceObj = currentWord.pronunciation as any;
+                              
+                              // If we have a direct value/ipa field, use that
+                              if (pronounceObj.value) {
+                                return pronounceObj.value.toUpperCase();
+                              }
+                              
+                              if (pronounceObj.ipa) {
+                                return pronounceObj.ipa.toUpperCase();
+                              }
+                              
+                              if (pronounceObj.phoneticGuide) {
+                                return pronounceObj.phoneticGuide.toUpperCase();
+                              }
+                              
+                              // If we have syllables, create a phonetic guide
+                              const syllables = pronounceObj.syllables || [];
+                              const emphasisIdx = pronounceObj.stressIndex !== undefined ? pronounceObj.stressIndex : 0;
+                              
+                              if (syllables.length > 0) {
+                                return syllables.map((s: string, i: number) => 
+                                  i === emphasisIdx ? s.toUpperCase() : s.toLowerCase()
+                                ).join('-');
+                              }
+                            }
+                            
+                            // Check for direct phoneticGuide field
+                            if (currentWord?.phoneticGuide) {
+                              return currentWord.phoneticGuide.toUpperCase();
+                            }
+                            
+                            // Use syllables to create a phonetic guide as fallback
+                            if (currentWord?.syllables && Array.isArray(currentWord.syllables) && currentWord.syllables.length > 0) {
+                              const emphasisIdx = currentWord.stressIndex !== undefined ? currentWord.stressIndex : 0;
+                              
+                              // Format exactly like "KAIR-ak-ter" with the emphasized syllable in UPPERCASE
+                              return currentWord.syllables.map((s, i) => 
+                                i === emphasisIdx ? s.toUpperCase() : s.toLowerCase()
+                              ).join('-');
+                            }
+                            
+                            // Absolute fallback, just use the word
+                            return currentWord?.word?.toUpperCase() || "";
+                          })()}
+                        </div>
+                        
+                        {/* PART 2: Syllable boxes with appropriate emphasis - EXACTLY as in reference image */}
+                        <div className="flex justify-center gap-2 flex-wrap"> {/* Added flex-wrap */} 
+                          {(() => {
+                            // Get syllables and emphasis index
+                            let syllables: string[] = [];
+                            let emphasisIdx = 0;
+                            
+                            // Handle complex pronunciation object
+                            if (currentWord?.pronunciation && typeof currentWord.pronunciation === 'object') {
+                              const pronounceObj = currentWord.pronunciation as any;
+                              
+                              // Get syllables from pronunciation object or fall back
+                              syllables = pronounceObj.syllables && Array.isArray(pronounceObj.syllables) && pronounceObj.syllables.length > 0
+                                ? pronounceObj.syllables
+                                : currentWord.syllables && Array.isArray(currentWord.syllables) && currentWord.syllables.length > 0
+                                  ? currentWord.syllables
+                                  : currentWord?.word?.match(/[bcdfghjklmnpqrstvwxz]*[aeiouy]+[bcdfghjklmnpqrstvwxz]*/gi) || [currentWord?.word || ""];
+                                  
+                              // Get emphasis index
+                              emphasisIdx = pronounceObj.stressIndex !== undefined 
+                                ? pronounceObj.stressIndex 
+                                : currentWord.stressIndex !== undefined 
+                                  ? currentWord.stressIndex 
+                                  : 0;
+                            } 
+                            // Handle direct fields
+                            else {
+                              // Get syllables from direct field
+                              syllables = currentWord?.syllables && Array.isArray(currentWord.syllables) && currentWord.syllables.length > 0
+                                ? currentWord.syllables
+                                : currentWord?.word?.match(/[bcdfghjklmnpqrstvwxz]*[aeiouy]+[bcdfghjklmnpqrstvwxz]*/gi) || [currentWord?.word || ""];
+                                
+                              // Get emphasis index
+                              emphasisIdx = currentWord?.stressIndex !== undefined ? currentWord.stressIndex : 0;
+                            }
+                            
+                            // Return the syllable boxes
+                            return syllables.map((syllable, idx) => (
+                              <div 
+                                key={idx}
+                                className={`min-w-[60px] py-1 px-2 rounded-md text-base ${
+                                  idx === emphasisIdx
+                                    ? 'bg-blue-600 text-white font-medium' 
+                                    : 'bg-white text-gray-800 font-medium'
+                                } flex items-center justify-center`}
+                              >
+                                {syllable.toLowerCase()}
+                              </div>
+                            ));
+                          })()}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                   
-                  {/* Styled EXACTLY like the reference image with dynamic data */}
-                  <div className="text-center mt-4">
-                    {/* PART 1: Phonetic pronunciation in format like "KAIR-ak-ter" */}
-                    <div className="text-2xl font-medium text-blue-800 mb-4">
-                      {(() => {
-                        // Get phonetic pronunciation data - should be in format like "KAIR-ak-ter"
-                        
-                        // First check if we have a direct pronunciation string
-                        if (typeof currentWord?.pronunciation === 'string' && currentWord.pronunciation) {
-                          return currentWord.pronunciation.toUpperCase();
-                        }
-                        
-                        // Check for pronunciation object with value or ipa field
-                        if (currentWord?.pronunciation && typeof currentWord.pronunciation === 'object') {
-                          const pronounceObj = currentWord.pronunciation as any;
-                          
-                          // If we have a direct value/ipa field, use that
-                          if (pronounceObj.value) {
-                            return pronounceObj.value.toUpperCase();
-                          }
-                          
-                          if (pronounceObj.ipa) {
-                            return pronounceObj.ipa.toUpperCase();
-                          }
-                          
-                          if (pronounceObj.phoneticGuide) {
-                            return pronounceObj.phoneticGuide.toUpperCase();
-                          }
-                          
-                          // If we have syllables, create a phonetic guide
-                          const syllables = pronounceObj.syllables || [];
-                          const emphasisIdx = pronounceObj.stressIndex !== undefined ? pronounceObj.stressIndex : 0;
-                          
-                          if (syllables.length > 0) {
-                            return syllables.map((s: string, i: number) => 
-                              i === emphasisIdx ? s.toUpperCase() : s.toLowerCase()
-                            ).join('-');
-                          }
-                        }
-                        
-                        // Check for direct phoneticGuide field
-                        if (currentWord?.phoneticGuide) {
-                          return currentWord.phoneticGuide.toUpperCase();
-                        }
-                        
-                        // Use syllables to create a phonetic guide as fallback
-                        if (currentWord?.syllables && Array.isArray(currentWord.syllables) && currentWord.syllables.length > 0) {
-                          const emphasisIdx = currentWord.stressIndex !== undefined ? currentWord.stressIndex : 0;
-                          
-                          // Format exactly like "KAIR-ak-ter" with the emphasized syllable in UPPERCASE
-                          return currentWord.syllables.map((s, i) => 
-                            i === emphasisIdx ? s.toUpperCase() : s.toLowerCase()
-                          ).join('-');
-                        }
-                        
-                        // Absolute fallback, just use the word
-                        return currentWord?.word?.toUpperCase() || "";
-                      })()}
-                    </div>
-                    
-                    {/* PART 2: Syllable boxes with appropriate emphasis - EXACTLY as in reference image */}
-                    <div className="flex justify-center gap-2">
-                      {(() => {
-                        // Get syllables and emphasis index
-                        let syllables: string[] = [];
-                        let emphasisIdx = 0;
-                        
-                        // Handle complex pronunciation object
-                        if (currentWord?.pronunciation && typeof currentWord.pronunciation === 'object') {
-                          const pronounceObj = currentWord.pronunciation as any;
-                          
-                          // Get syllables from pronunciation object or fall back
-                          syllables = pronounceObj.syllables && Array.isArray(pronounceObj.syllables) && pronounceObj.syllables.length > 0
-                            ? pronounceObj.syllables
-                            : currentWord.syllables && Array.isArray(currentWord.syllables) && currentWord.syllables.length > 0
-                              ? currentWord.syllables
-                              : currentWord?.word?.match(/[bcdfghjklmnpqrstvwxz]*[aeiouy]+[bcdfghjklmnpqrstvwxz]*/gi) || [currentWord?.word || ""];
-                              
-                          // Get emphasis index
-                          emphasisIdx = pronounceObj.stressIndex !== undefined 
-                            ? pronounceObj.stressIndex 
-                            : currentWord.stressIndex !== undefined 
-                              ? currentWord.stressIndex 
-                              : 0;
-                        } 
-                        // Handle direct fields
-                        else {
-                          // Get syllables from direct field
-                          syllables = currentWord?.syllables && Array.isArray(currentWord.syllables) && currentWord.syllables.length > 0
-                            ? currentWord.syllables
-                            : currentWord?.word?.match(/[bcdfghjklmnpqrstvwxz]*[aeiouy]+[bcdfghjklmnpqrstvwxz]*/gi) || [currentWord?.word || ""];
-                            
-                          // Get emphasis index
-                          emphasisIdx = currentWord?.stressIndex !== undefined ? currentWord.stressIndex : 0;
-                        }
-                        
-                        // Return the syllable boxes
-                        return syllables.map((syllable, idx) => (
-                          <div 
-                            key={idx}
-                            className={`min-w-[80px] py-2 px-4 rounded-md ${
-                              idx === emphasisIdx
-                                ? 'bg-blue-600 text-white font-medium' 
-                                : 'bg-white text-gray-800 font-medium'
-                            } flex items-center justify-center text-lg`}
-                          >
-                            {syllable.toLowerCase()}
-                          </div>
-                        ));
-                      })()}
+                  {/* Right Side: Definition */}
+                  <div className="w-full md:w-1/2">
+                    <div className="bg-white rounded-lg border border-gray-200 shadow-sm h-full"> {/* Added h-full */} 
+                      <div className="p-4 border-b flex items-center">
+                        <BookOpen className="h-5 w-5 text-blue-600 mr-2" /> {/* Adjusted icon size */} 
+                        <h3 className="font-semibold text-blue-600 text-lg">Definition</h3> {/* Adjusted font size/weight */} 
+                      </div>
+                      <div className="p-4">
+                        <p className="text-gray-800 text-base">{currentWord?.definition}</p> {/* Adjusted font size */} 
+                      </div>
                     </div>
                   </div>
                 </div>
+                {/* --- END NEW Flex container --- */}
                 
-                {/* Additional information can go here if needed in the future */}
-                <div className="flex-1">
-                  {currentWord?.syllables && (
-                    <div className="mt-3 bg-amber-50 py-2 px-3 rounded-md">
-                      <p className="text-amber-800 text-sm">
-                        Syllables: {Array.isArray(currentWord.syllables) ? currentWord.syllables.join(' · ') : currentWord.syllables}
-                      </p>
-                    </div>
-                  )}
-                </div>
+                {/* Additional information can go here if needed in the future */} 
+                {/* Removed the syllable display div from here as it's now in pronunciation */}
               </div>
             </div>
           </div>
           
-          {/* Definition Section */}
-          <div className="bg-white rounded-lg border border-gray-200 shadow-sm mb-4">
-            <div className="p-4 border-b flex items-center">
-              <BookOpen className="h-6 w-6 text-blue-600 mr-2" />
-              <h3 className="font-bold text-blue-600 text-xl">Definition</h3>
-            </div>
-            <div className="p-4">
-              <p className="text-gray-800">{currentWord?.definition}</p>
-            </div>
-          </div>
+          {/* Definition Section - REMOVED FROM HERE */}
           
           {/* Example Section - Single Column, more prominent */}
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm mb-4">
