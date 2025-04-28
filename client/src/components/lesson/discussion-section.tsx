@@ -7,9 +7,9 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
-  Book,
+  BookOpen,
   MessageCircle,
-  GraduationCap,
+  FileText,
   Image as ImageIcon
 } from "lucide-react";
 import { SectionHeader } from "./shared/section-header";

@@ -27,9 +27,9 @@ import {
   ArrowLeft, 
   ArrowRight, 
   Pencil, 
-  PenTool, 
+  PenTool,
+  Clock,
   Shuffle, 
-  Target, 
   Volume, 
   Mic, 
   Volume2, 
@@ -41,6 +41,7 @@ import {
   Compass,
   Library,
   CheckCircle,
+  Target,
 } from "lucide-react";
 import { AudioPlayer } from "@/components/shared/audio-player";
 import { handleMessageWithAPI } from '@/lib/api-helpers';
@@ -1993,7 +1994,7 @@ export function LessonContent({ content }: LessonContentProps) {
       id: 'discussion',
       label: 'Discussion',
       icon: <MessageCircle className="h-5 w-5" />,
-      render: hasSectionType('discussion') ? <DiscussionSection sectionData={findSection('discussion')} /> : null
+      render: hasSectionType('discussion') ? <DiscussionSection section={findSection('discussion')} /> : null
     },
     {
       id: 'pronunciation',

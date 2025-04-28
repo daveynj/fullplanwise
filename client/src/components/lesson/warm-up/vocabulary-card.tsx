@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Book, BookOpen, Radio, Lightbulb, MessageSquare, Heart, Users, ChevronDown, ChevronUp, Tag } from 'lucide-react';
+import { BookOpen, Mic, Lightbulb, MessageSquare, Heart, Users, ChevronDown, ChevronUp, Tag } from 'lucide-react';
 
 export interface VocabularyWord {
   word: string;
@@ -172,7 +172,7 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
           {/* Definition */}
           <div className="bg-white rounded border-2 border-blue-200 p-3">
             <h3 className="text-blue-800 font-bold flex items-center text-base mb-2">
-              <Book className="mr-2 h-4 w-4" />
+              <BookOpen className="mr-2 h-4 w-4" />
               Definition
             </h3>
             <p className="text-base font-medium">
