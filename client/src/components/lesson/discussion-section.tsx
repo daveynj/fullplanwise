@@ -272,8 +272,10 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
       <div className="bg-indigo-50 rounded-lg p-4 flex items-center gap-3">
         <MessageCircle className="h-6 w-6 text-indigo-600" />
         <div>
-          <h2 className="text-indigo-600 font-medium text-lg">{sectionTitle}</h2>
-          <p className="text-gray-600 text-sm">Reflect on the reading through guided discussion</p>
+          <h2 className="text-indigo-600 font-medium text-xl">{sectionTitle}</h2>
+          <p className="text-gray-600 text-lg font-medium mt-1">
+            Think about the discussion question(s) below and prepare your answer.
+          </p>
         </div>
       </div>
       

@@ -244,7 +244,21 @@ export function SentenceUnscrambleSection({
   const progressPercentage = ((currentIndex + 1) / sentenceItems.length) * 100;
   
   return (
-    <div className="sentence-unscramble">
+    <div className="sentence-unscramble space-y-6">
+      {/* --- NEW: Standard Section Header --- */}
+
+      <div className="bg-cyan-50 rounded-lg p-4 flex items-center gap-3 border border-cyan-200 shadow-sm">
+        <Shuffle className="h-7 w-7 text-cyan-500 flex-shrink-0" />
+        <div>
+          <h2 className="text-cyan-700 font-semibold text-xl">{title}</h2>
+          <p className="text-gray-600 text-lg font-medium mt-1">
+            Drag the words into the correct order to form a complete sentence.
+          </p>
+        </div>
+      </div>
+      
+      {/* --- END Header --- */}
+
       <Card className="mb-6 border-l-4 border-l-cyan-400 shadow-md overflow-hidden">
         <CardHeader className="pb-3 bg-gradient-to-r from-cyan-50 to-white">
           <div className="flex items-center justify-between">
@@ -260,7 +274,7 @@ export function SentenceUnscrambleSection({
             </Badge>
           </div>
           <CardDescription>
-            Drag and drop the words to form a correct sentence.
+            Drag and drop the words to rearrange them into a grammatically correct sentence.
           </CardDescription>
           
           {/* Progress bar */}

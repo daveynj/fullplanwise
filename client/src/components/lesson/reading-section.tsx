@@ -42,8 +42,10 @@ export function ReadingSection({ section }: ReadingSectionProps) {
       <div className="bg-blue-50 rounded-lg p-6 flex items-center gap-4">
         <BookOpen className="h-8 w-8 text-blue-600" />
         <div>
-          <h2 className="text-blue-600 font-semibold text-2xl">Reading</h2>
-          <p className="text-gray-600 text-base">Read and analyze the text with guided support</p>
+          <h2 className="text-blue-600 font-semibold text-xl">Reading</h2>
+          <p className="text-gray-600 text-lg font-medium mt-1">
+            Read the paragraph(s) below. Use the arrows or dots to navigate between paragraphs.
+          </p>
         </div>
       </div>
       

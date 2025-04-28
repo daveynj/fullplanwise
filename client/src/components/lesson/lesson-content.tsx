@@ -940,8 +940,8 @@ export function LessonContent({ content }: LessonContentProps) {
           </div>
           <div>
             <h2 className="text-amber-800 font-medium text-lg">Vocab Introduction</h2>
-            <p className="text-gray-600 text-sm">
-              Introducing key vocabulary before reading the text
+            <p className="text-gray-600 text-lg font-medium mt-1">
+              Review the vocabulary word: check pronunciation, definition, and examples. Ask questions if needed.
             </p>
           </div>
         </div>
@@ -1368,7 +1368,9 @@ export function LessonContent({ content }: LessonContentProps) {
           <Book className="h-6 w-6 text-green-600" />
           <div>
             <h2 className="text-green-600 font-medium text-lg">Vocabulary</h2>
-            <p className="text-gray-600 text-sm">Learn and practice key vocabulary from the text</p>
+            <p className="text-gray-600 text-lg font-medium mt-1">
+              Review the flashcard. Try defining the word in your own words and using it in a sentence.
+            </p>
           </div>
         </div>
         
@@ -1645,8 +1647,21 @@ export function LessonContent({ content }: LessonContentProps) {
         initial={{ opacity: 0, y: 20 }} 
         animate={{ opacity: 1, y: 0 }} 
         transition={{ duration: 0.5 }}
-        className="p-6"
+        className="space-y-6 p-6" // Added space-y-6
       >
+        {/* --- NEW: Standard Section Header --- */}
+        <div className="bg-gray-50 rounded-lg p-4 flex items-center gap-3 border border-gray-200 shadow-sm">
+          <Lightbulb className="h-7 w-7 text-gray-500 flex-shrink-0" />
+          <div>
+            <h2 className="text-gray-700 font-semibold text-xl">Overview</h2>
+            {/* Moved instructions here, adjusted styling */}
+            <p className="text-gray-600 text-lg font-medium mt-1"> 
+              Read each question below. Take 1-2 minutes per question to think about your answer and share it briefly.
+            </p>
+          </div>
+        </div>
+        {/* --- END Header --- */}
+
         {/* Lesson Metadata - Keep this above the warm-up card */}
         <div className="mb-6 flex flex-wrap items-center gap-2">
           {lesson.level && <Badge variant="secondary" className="bg-blue-100 text-blue-800"><InfoIcon className="mr-1 h-4 w-4" /> Level: {lesson.level}</Badge>}
@@ -1654,18 +1669,10 @@ export function LessonContent({ content }: LessonContentProps) {
           {lesson.time && <Badge variant="secondary" className="bg-purple-100 text-purple-800"><ClockIcon className="mr-1 h-4 w-4" /> Time: {lesson.time}</Badge>}
         </div>
 
-        {/* --- Enhanced Introductory Text --- */}
-        <div className="flex items-center gap-3 mb-2 text-gray-700"> {/* Reduced bottom margin */} 
-          <Flame className="h-6 w-6 text-orange-500" />
-          <h2 className="text-2xl font-semibold">OK, let's warm up!</h2>
-        </div>
-        {/* --- End Enhancement --- */}
+        {/* --- REMOVED OLD Introductory Text & Instructions --- */}
+        {/* <div className="flex items-center gap-3 mb-2 text-gray-700"> ... </div> */}
+        {/* <p className="text-xl font-bold text-gray-600 mb-4 pl-9"> ... </p> */}
         
-        {/* --- Instructions for Learners --- */}
-        <p className="text-xl font-bold text-gray-600 mb-4 pl-9"> {/* Increased font size to xl, added bold, adjusted color */} 
-          Read each question below. Take 1-2 minutes per question to think about your answer and share it briefly.
-        </p>
-        {/* --- End Instructions --- */}
 
         {/* Warm-up Questions Card */}
         <Card className="bg-white shadow-sm border border-gray-200 rounded-lg overflow-hidden">

@@ -336,7 +336,21 @@ export function InteractiveClozeSection({
   };
   
   return (
-    <div className="interactive-cloze">
+    <div className="interactive-cloze space-y-6">
+      {/* --- NEW: Standard Section Header --- */}
+
+      <div className="bg-pink-50 rounded-lg p-4 flex items-center gap-3 border border-pink-200 shadow-sm">
+        <PenTool className="h-7 w-7 text-pink-500 flex-shrink-0" />
+        <div>
+          <h2 className="text-pink-700 font-semibold text-xl">{title}</h2>
+          <p className="text-gray-600 text-lg font-medium mt-1">
+            Drag words from the word bank below to complete the text.
+          </p>
+        </div>
+      </div>
+      
+      {/* --- END Header --- */}
+
       <Card className="mb-6 border-l-4 border-l-blue-400 shadow-md">
         <CardHeader className="pb-3 bg-gradient-to-r from-blue-50 to-white">
           <div className="flex items-center gap-2">

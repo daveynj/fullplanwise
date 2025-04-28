@@ -135,15 +135,20 @@ export const ComprehensionExtractor = ({ content }: ComprehensionExtractorProps)
   
   return (
     <div className="space-y-6">
-      {/* Header for the comprehension section */}
-      <div className="bg-purple-50 rounded-lg p-4 flex items-center gap-3">
-        <HelpCircle className="h-6 w-6 text-purple-600" />
-        <div>
-          <h2 className="text-purple-600 font-medium text-lg">Comprehension</h2>
-          <p className="text-gray-600 text-sm">Check understanding with targeted questions</p>
+      {/* --- NEW: Standard Section Header --- */}
+
+      <div className="bg-purple-50 rounded-lg p-4 flex items-center gap-3 border border-purple-200 shadow-sm">
+          <HelpCircle className="h-7 w-7 text-purple-500 flex-shrink-0" />
+          <div>
+            <h2 className="text-purple-700 font-semibold text-xl">Comprehension</h2>
+            <p className="text-gray-600 text-lg font-medium mt-1">
+              Read the question and choose the best answer based on the text.
+            </p>
+          </div>
         </div>
-      </div>
-      
+        
+      {/* --- END Header --- */}
+
       <Card>
         <CardHeader className="bg-purple-50">
           <CardTitle className="flex items-center gap-2 text-purple-700">
@@ -225,168 +230,4 @@ export const ComprehensionExtractor = ({ content }: ComprehensionExtractorProps)
                             >
                               <div className={`h-4 w-4 mr-3 rounded-full ${
                                 isSelected ? (submitted && !isCorrect ? 'bg-red-500' : 'bg-purple-500') : 'bg-gray-200'
-                              }`} />
-                              <span className="text-xl font-bold">{option}</span>
-                              
-                              {submitted && isCorrect && (
-                                <CheckCircle2 className="ml-auto h-5 w-5 text-green-500" />
-                              )}
-                              
-                              {submitted && isSelected && !isCorrect && (
-                                <XCircle className="ml-auto h-5 w-5 text-red-500" />
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                    
-                    {'options' in extractedQuestions[activeQuestion] && 
-                     Array.isArray(extractedQuestions[activeQuestion].options) && 
-                     extractedQuestions[activeQuestion].options.length > 0 && 
-                     extractedQuestions[activeQuestion].type !== "true-false" && (
-                      <div className="space-y-2">
-                        {extractedQuestions[activeQuestion].options.map((option: string | ComprehensionOptionObject, idx: number) => {
-                          // Handle both string and object options
-                          const optionText = typeof option === 'string' 
-                            ? option 
-                            : (option as ComprehensionOptionObject).text || '';
-                            
-                          const isSelected = selectedOption === optionText;
-                          const correctAnswer = getCorrectAnswer(extractedQuestions[activeQuestion]);
-                          const isCorrect = optionText === correctAnswer;
-                          
-                          let optionClass = "flex items-center p-3 border rounded-md cursor-pointer";
-                          
-                          if (submitted) {
-                            if (isSelected && isCorrect) {
-                              optionClass += " border-green-500 bg-green-50";
-                            } else if (isSelected && !isCorrect) {
-                              optionClass += " border-red-500 bg-red-50";
-                            } else if (isCorrect) {
-                              optionClass += " border-green-500 bg-green-50 opacity-70";
-                            } else {
-                              optionClass += " border-gray-200 hover:bg-purple-50";
-                            }
-                          } else {
-                            optionClass += isSelected
-                              ? " border-purple-500 bg-purple-50"
-                              : " border-gray-200 hover:bg-purple-50";
-                          }
-
-                          return (
-                            <div 
-                              key={`option-${idx}`}
-                              onClick={() => !submitted && setSelectedOption(optionText)}
-                              className={optionClass}
-                            >
-                              <div className={`h-4 w-4 mr-3 rounded-full ${
-                                isSelected ? (submitted && !isCorrect ? 'bg-red-500' : 'bg-purple-500') : 'bg-gray-200'
-                              }`} />
-                              <span className="text-xl font-bold">{optionText}</span>
-                              
-                              {submitted && isCorrect && (
-                                <CheckCircle2 className="ml-auto h-5 w-5 text-green-500" />
-                              )}
-                              
-                              {submitted && isSelected && !isCorrect && (
-                                <XCircle className="ml-auto h-5 w-5 text-red-500" />
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                    
-                    {/* Explanation after submission */}
-                    {submitted && extractedQuestions[activeQuestion].explanation && (
-                      <div className="mt-4 p-3 bg-indigo-50 border border-indigo-200 rounded-md">
-                        <div className="flex items-start gap-2">
-                          <AlertCircle className="h-5 w-5 text-indigo-500 mt-0.5 flex-shrink-0" />
-                          <div>
-                            <p className="font-medium text-indigo-700">Explanation</p>
-                            <p className="text-sm text-indigo-800 font-medium">{extractedQuestions[activeQuestion].explanation}</p>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                    
-                    {/* Submit or Continue Button */}
-                    <div className="mt-6 flex justify-center">
-                      {!submitted ? (
-                        <Button
-                          onClick={handleSubmit}
-                          disabled={!selectedOption}
-                          className="px-6 py-2 bg-purple-600 text-white rounded-md disabled:opacity-50"
-                        >
-                          Submit Answer
-                        </Button>
-                      ) : (
-                        <Button
-                          onClick={handleNext}
-                          disabled={activeQuestion === extractedQuestions.length - 1}
-                          className="px-6 py-2 bg-green-600 text-white rounded-md disabled:opacity-50"
-                        >
-                          Continue
-                        </Button>
-                      )}
-                    </div>
-                    
-                    {/* Navigation */}
-                    <div className="flex justify-between mt-4">
-                      <button 
-                        onClick={handlePrevious}
-                        disabled={activeQuestion === 0}
-                        className="px-4 py-2 border rounded-md disabled:opacity-50 flex items-center gap-1"
-                        aria-label="Previous question"
-                      >
-                        <ChevronLeft className="h-4 w-4" /> Previous
-                      </button>
-                      <button 
-                        onClick={handleNext}
-                        disabled={activeQuestion === extractedQuestions.length - 1}
-                        className="px-4 py-2 border rounded-md disabled:opacity-50 flex items-center gap-1"
-                        aria-label="Next question"
-                      >
-                        Next <ChevronRight className="h-4 w-4" />
-                      </button>
-                    </div>
-                    
-                    {/* Progress indicator dots */}
-                    <div className="flex justify-center space-x-2 mt-4">
-                      {extractedQuestions.map((_, index) => (
-                        <div
-                          key={`dot-${index}`}
-                          className={`h-2 w-2 rounded-full ${
-                            activeQuestion === index ? 'bg-purple-500' : 'bg-gray-300'
-                          }`}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                </>
-              ) : (
-                <p className="text-gray-500">Question details not available</p>
-              )}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-      
-      {/* Teacher notes */}
-      {content.comprehension?.teacherNotes && (
-        <Card className="border-purple-100">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm flex items-center gap-2 text-purple-600">
-              <HelpCircle className="h-4 w-4" />
-              Teacher Notes
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-0 text-sm text-gray-700">
-            <p className="font-medium text-gray-800">{content.comprehension.teacherNotes}</p>
-          </CardContent>
-        </Card>
-      )}
-    </div>
-  );
-};
+                              }`}></div>

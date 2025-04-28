@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion'; // Keep motion if needed for transitions
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ChevronLeft, ChevronRight, Lightbulb, Copy, Info, Languages, BookOpen, Pencil } from "lucide-react"; // Keep/add necessary icons
+import { ChevronLeft, ChevronRight, Lightbulb, Copy, Info, Languages, BookOpen, Pencil, AlignJustify } from "lucide-react"; // Keep/add necessary icons
 import { Badge } from "@/components/ui/badge";
 // Import the NEW data structure types
 import { 
@@ -505,6 +505,19 @@ export function SentenceFramesSection({ section }: SentenceFramesSectionProps) {
   // --- Rendering Logic --- 
   return (
     <div className="sentence-frames-section space-y-6">
+       {/* --- NEW: Standard Section Header --- */}
+        <div className="bg-yellow-50 rounded-lg p-4 flex items-center gap-3 border border-yellow-200 shadow-sm">
+          <AlignJustify className="h-7 w-7 text-yellow-500 flex-shrink-0" />
+          <div>
+            <h2 className="text-yellow-700 font-semibold text-xl">Sentence Frames</h2>
+            <p className="text-gray-600 text-lg font-medium mt-1">
+              Study the sentence pattern and examples below. Try creating your own sentence.
+            </p>
+          </div>
+        </div>
+        
+       {/* --- END Header --- */}
+
       {/* --- Top Navigation & Title (Common to both layouts) --- */}
       <div className="flex justify-between items-center">
         <h2 className="text-xl md:text-2xl font-semibold text-gray-800">
