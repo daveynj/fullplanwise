@@ -1949,7 +1949,7 @@ export function LessonContent({ content }: LessonContentProps) {
       id: 'overview',
       label: 'Overview',
       icon: <Compass className="h-5 w-5" />,
-      render: hasSectionType('overview') ? <OverviewSection /> : null
+      render: <OverviewSection />
     },
     {
       id: 'warmup',
