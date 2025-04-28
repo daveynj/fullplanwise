@@ -1149,12 +1149,12 @@ export function LessonContent({ content }: LessonContentProps) {
             <CardContent className="p-0"> {/* Remove padding here, handled inside */}
               <div className="flex flex-col md:flex-row">
                   {/* Left: Image */}
-                  <div className="w-full md:w-1/3 bg-gray-100 flex items-center justify-center">
+                  <div className="w-full md:w-1/4 bg-gray-100 flex items-center justify-center">
                     {currentWord?.imageBase64 ? (
                       <img 
                         src={`data:image/png;base64,${currentWord.imageBase64}`}
                         alt={`Image for ${currentWord.word}`}
-                        className="w-full h-full object-cover"
+                        className="w-full h-[200px] object-contain"
                       />
                     ) : (
                       <div className="w-full h-full bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center">
@@ -1165,7 +1165,7 @@ export function LessonContent({ content }: LessonContentProps) {
                   
                   {/* Right: Word Info + Pronunciation/Definition */}
                   {/* Added padding back here */}
-                  <div className="w-full md:w-2/3 p-6 flex flex-col">
+                  <div className="w-full md:w-3/4 p-6 flex flex-col">
                     <div className="mb-3">
                       <h2 className="text-3xl font-bold text-gray-800">{currentWord?.word}</h2>
                       <p className="text-gray-600 italic">{currentWord?.partOfSpeech}</p>
