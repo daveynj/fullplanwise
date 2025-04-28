@@ -151,14 +151,12 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
     <div className="flex flex-col md:flex-row bg-gray-50 rounded-md p-0 border-2 border-blue-200 shadow-md overflow-hidden">
       {/* Left Side: Image (similar to reference) */}
       {word.imageBase64 ? (
-        <div className="w-full md:w-1/3 bg-gray-100 flex items-center justify-center">
-          <img 
-            src={`data:image/png;base64,${word.imageBase64}`} 
-            alt={`Visual representation of ${word.word}`}
-            className="w-full h-full object-cover"
-            style={{ width: "100%", height: "100%", minHeight: "280px", objectFit: "cover" }}
-          />
-        </div>
+        <img 
+          src={`data:image/png;base64,${word.imageBase64}`} 
+          alt={`Visual representation of ${word.word}`}
+          className="w-full md:w-1/3 object-cover"
+          style={{ minHeight: "280px" }}
+        />
       ) : (
         <div className="hidden md:flex w-full md:w-1/3 bg-gray-100 items-center justify-center">
           <div className="text-gray-400 text-center p-6">
