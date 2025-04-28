@@ -1154,7 +1154,7 @@ export function LessonContent({ content }: LessonContentProps) {
                       <img 
                         src={`data:image/png;base64,${currentWord.imageBase64}`}
                         alt={`Image for ${currentWord.word}`}
-                        className="w-full h-full object-cover"
+                        className="w-full h-[190px] object-contain"
                       />
                     ) : (
                       <div className="w-full h-full bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center">
