@@ -1973,7 +1973,7 @@ export function LessonContent({ content }: LessonContentProps) {
       id: 'comprehension',
       label: 'Comprehension',
       icon: <CheckCircle className="h-5 w-5" />,
-      render: hasSectionType('comprehension') ? <ComprehensionExtractor content={parsedContent} /> : null
+      render: hasSectionType('comprehension') ? <ComprehensionSection /> : null
     },
     {
       id: 'sentenceFrames',
