@@ -149,14 +149,22 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
 
   return (
     <div className="flex flex-col md:flex-row bg-gray-50 rounded-md p-0 border-2 border-blue-200 shadow-md overflow-hidden">
-      {/* Left Side: Image (similar to reference) */}
+      {/* Left Side: Image (completely fills its container) */}
       {word.imageBase64 ? (
-        <img 
-          src={`data:image/png;base64,${word.imageBase64}`} 
-          alt={`Visual representation of ${word.word}`}
-          className="w-full md:w-1/3 object-cover"
-          style={{ minHeight: "280px" }}
-        />
+        <div className="md:w-1/3 h-full p-0 m-0" style={{ height: "100%", overflow: "hidden" }}>
+          <img 
+            src={`data:image/png;base64,${word.imageBase64}`} 
+            alt={`Visual representation of ${word.word}`}
+            className="w-full h-full object-cover"
+            style={{ 
+              minHeight: "400px",
+              height: "100%",
+              display: "block",
+              width: "100%",
+              objectFit: "cover"
+            }}
+          />
+        </div>
       ) : (
         <div className="hidden md:flex w-full md:w-1/3 bg-gray-100 items-center justify-center">
           <div className="text-gray-400 text-center p-6">
