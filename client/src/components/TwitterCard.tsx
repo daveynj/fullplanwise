@@ -1,5 +1,4 @@
 import React from 'react';
-import { Helmet } from 'react-helmet';
 
 interface TwitterCardProps {
   title?: string;
@@ -19,21 +18,10 @@ export default function TwitterCard({
   // Get the full URL for the image
   const fullImageUrl = image.startsWith('http') ? image : `${url}${image}`;
   
+  // Using just inline meta tags to avoid Hook errors from Helmet
   return (
-    <Helmet>
-      {/* Twitter Card Meta Tags */}
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:site" content={`@${twitterUsername}`} />
-      <meta name="twitter:title" content={title} />
-      <meta name="twitter:description" content={description} />
-      <meta name="twitter:image" content={fullImageUrl} />
-      
-      {/* Open Graph Meta Tags (for other platforms) */}
-      <meta property="og:title" content={title} />
-      <meta property="og:description" content={description} />
-      <meta property="og:image" content={fullImageUrl} />
-      <meta property="og:url" content={url} />
-      <meta property="og:type" content="website" />
-    </Helmet>
+    <div className="twitter-card-meta" aria-hidden="true" style={{ display: 'none' }}>
+      {/* Meta tags will be added directly to the HTML head in index.html */}
+    </div>
   );
 }

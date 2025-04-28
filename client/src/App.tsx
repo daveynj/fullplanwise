@@ -23,6 +23,7 @@ import ForgotPasswordPage from "@/pages/forgot-password-page";
 import ResetPasswordPage from "@/pages/reset-password-page";
 import { AdminDashboardPage } from "@/pages/admin-dashboard-page";
 import LandingPage from "@/pages/landing-page";
+import TwitterCardPreview from "@/pages/twitter-card-preview";
 
 function Router() {
   return (
@@ -43,6 +44,7 @@ function Router() {
       <Route path="/auth" component={AuthPage} />
       <Route path="/forgot-password" component={ForgotPasswordPage} />
       <Route path="/reset-password/:token" component={ResetPasswordPage} />
+      <Route path="/twitter-card" component={TwitterCardPreview} />
       <Route component={NotFound} />
     </Switch>
   );
@@ -52,6 +54,12 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
+        {/* Twitter Card for social sharing */}
+        <TwitterCard 
+          title="PLAN WISE ESL | Advanced AI-Powered Teaching Platform"
+          description="Create personalized ESL lessons with interactive vocabulary, adaptive pronunciation guidance, and multi-provider AI technology."
+          image="/twitter-card-image.svg"
+        />
         <Router />
         <Toaster />
       </AuthProvider>
