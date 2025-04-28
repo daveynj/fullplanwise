@@ -38,6 +38,15 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
   
   // No hardcoded data - we'll use the AI-generated data entirely
 
+  // Log the raw word data to see what we're working with
+  console.log(`WORD DATA FOR "${normalizedWord}":`, {
+    wordObj: word,
+    pronunciation: word.pronunciation,
+    syllables: word.syllables,
+    stressIndex: word.stressIndex,
+    phoneticGuide: word.phoneticGuide
+  });
+  
   // Handle complex pronunciation object - with type safety
   const getPronunciationData = () => {
     let pronouncedValue = "";
@@ -45,6 +54,8 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
     // Handle complex pronunciation object
     if (word.pronunciation && typeof word.pronunciation === 'object') {
       const pronounceObj = word.pronunciation as any; // Safely cast to any
+      console.log(`OBJECT PRONUNCIATION FOR "${normalizedWord}":`, pronounceObj);
+      
       pronouncedValue = pronounceObj.ipa || pronounceObj.value || pronounceObj.phoneticGuide || "";
       return {
         pronunciation: pronouncedValue,
@@ -55,6 +66,7 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
     
     // Handle direct fields
     pronouncedValue = typeof word.pronunciation === 'string' ? word.pronunciation : (word.phoneticGuide || "");
+    console.log(`STRING PRONUNCIATION FOR "${normalizedWord}":`, pronouncedValue);
     
     // If we have known syllables but no pronunciation string, create one from syllables
     if (!pronouncedValue && word.syllables && word.syllables.length > 0) {

@@ -1210,6 +1210,9 @@ export function LessonContent({ content }: LessonContentProps) {
   const VocabularySection = () => {
     const section = findSection('vocabulary');
     
+    // Log raw vocabulary section data to examine its structure
+    console.log("RAW VOCABULARY SECTION:", section);
+    
     const [activeCard, setActiveCard] = useState(0);
     const [isFlipped, setIsFlipped] = useState(false);
     
