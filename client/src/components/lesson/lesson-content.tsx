@@ -1222,27 +1222,20 @@ export function LessonContent({ content }: LessonContentProps) {
     if (section.words && Array.isArray(section.words)) {
       section.words.forEach((wordData: any) => {
         if (typeof wordData === 'object') {
-          const wordKey = (wordData.term || wordData.word || "").toLowerCase();
-          const lookupData = pronunciationData[wordKey];
-          
-          // Pass pronunciation data directly - it will be handled in the component
+          // Use only the AI-generated data
           extractedVocabWords.push({
             word: wordData.term || wordData.word || "",
             partOfSpeech: wordData.partOfSpeech || "noun",
             definition: wordData.definition || "",
             example: wordData.example || "",
             
-            // Prioritize API data, fallback to our lookup data, and finally to default values
-            pronunciation: wordData.pronunciation || wordData.phonetic || wordData.ipa || 
-                         (lookupData ? lookupData.pronunciation : undefined),
+            // Use only the AI-generated data
+            pronunciation: wordData.pronunciation || wordData.phonetic || wordData.ipa,
             
             syllables: wordData.syllables && Array.isArray(wordData.syllables) && wordData.syllables.length > 0 
-                     ? wordData.syllables 
-                     : (lookupData ? lookupData.syllables : undefined),
+                     ? wordData.syllables : undefined,
             
-            stressIndex: wordData.stressIndex !== undefined 
-                       ? wordData.stressIndex 
-                       : (lookupData ? lookupData.stressIndex : undefined),
+            stressIndex: wordData.stressIndex !== undefined ? wordData.stressIndex : undefined,
             
             phoneticGuide: wordData.phoneticGuide,
             imageBase64: wordData.imageBase64 || null,
