@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Book, BookOpen, Radio, Lightbulb, MessageSquare, Heart, Users, ChevronDown, ChevronUp, Tag } from 'lucide-react';
+import React from 'react';
+import { Book, BookOpen, Lightbulb, MessageSquare, Heart, Users, Tag } from 'lucide-react';
 
 export interface VocabularyWord {
   word: string;
@@ -134,10 +134,11 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
   const wordData = getPronunciationData();
 
   return (
-    <div className="flex flex-col md:flex-row bg-gray-50 rounded-md border-2 border-blue-200 shadow-md overflow-hidden">
+    <div className="flex flex-col md:flex-row rounded-md border-2 border-blue-200 shadow-md overflow-hidden">
       {/* Left Side: Image */}
       {word.imageBase64 ? (
-        <div className="w-full md:w-1/3 bg-gray-50 relative" style={{ minHeight: "350px" }}>
+        // Critical fix: Direct absolute positioning container for image with no bg color
+        <div className="w-full md:w-1/3 relative" style={{ minHeight: "350px", padding: 0 }}>
           <img 
             src={`data:image/png;base64,${word.imageBase64}`} 
             alt={`Visual representation of ${word.word}`}
@@ -160,7 +161,7 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
       )}
       
       {/* Right Side: Content */}
-      <div className="w-full md:w-2/3 p-4">
+      <div className="w-full md:w-2/3 p-4 bg-gray-50">
         {/* Header with Word and Part of Speech */}
         <div className="flex justify-between items-center border-b-2 border-blue-200 pb-3 mb-3">
           <div>
