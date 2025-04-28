@@ -28,16 +28,9 @@ interface VocabularyCardProps {
 }
 
 export function VocabularyCard({ word }: VocabularyCardProps) {
-  // State for expandable sections
-  const [showAdditionalExamples, setShowAdditionalExamples] = useState(false);
-  const [showWordFamily, setShowWordFamily] = useState(false);
-  const [showCollocations, setShowCollocations] = useState(false);
-  
   // Prepare pronunciation data from the word or use fallbacks
   const normalizedWord = word.word?.toLowerCase() || '';
   
-  // No hardcoded data - we'll use the AI-generated data entirely
-
   // Log the raw word data to see what we're working with
   console.log(`WORD DATA FOR "${normalizedWord}":`, {
     wordObj: word,
@@ -140,33 +133,26 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
   // Define pronunciation data structure with API data or fallbacks
   const wordData = getPronunciationData();
 
-  // Check if we have any expanded content
-  const hasExpandedContent = 
-    (word.additionalExamples && word.additionalExamples.length > 0) || 
-    (word.wordFamily && word.wordFamily.words.length > 0) || 
-    (word.collocations && word.collocations.length > 0) ||
-    word.usageNotes;
-
   return (
-    <div className="flex flex-col md:flex-row bg-gray-50 rounded-md p-0 border-2 border-blue-200 shadow-md overflow-hidden">
-      {/* Left Side: Image (completely fills its container) */}
+    <div className="flex flex-col md:flex-row bg-gray-50 rounded-md border-2 border-blue-200 shadow-md overflow-hidden">
+      {/* Left Side: Image */}
       {word.imageBase64 ? (
-        <div className="md:w-1/3 h-full p-0 m-0" style={{ height: "100%", overflow: "hidden" }}>
+        <div className="w-full md:w-1/3 bg-gray-50 relative" style={{ minHeight: "350px" }}>
           <img 
             src={`data:image/png;base64,${word.imageBase64}`} 
             alt={`Visual representation of ${word.word}`}
-            className="w-full h-full object-cover"
             style={{ 
-              minHeight: "400px",
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%", 
               height: "100%",
-              display: "block",
-              width: "100%",
-              objectFit: "cover"
+              objectFit: "cover" 
             }}
           />
         </div>
       ) : (
-        <div className="hidden md:flex w-full md:w-1/3 bg-gray-100 items-center justify-center">
+        <div className="hidden md:flex w-full md:w-1/3 bg-gray-100 items-center justify-center" style={{ minHeight: "350px" }}>
           <div className="text-gray-400 text-center p-6">
             <p>No image available</p>
           </div>
@@ -175,7 +161,7 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
       
       {/* Right Side: Content */}
       <div className="w-full md:w-2/3 p-4">
-        {/* Header with Word and Part of Speech - Larger and bolder */}
+        {/* Header with Word and Part of Speech */}
         <div className="flex justify-between items-center border-b-2 border-blue-200 pb-3 mb-3">
           <div>
             <h2 className="text-2xl font-extrabold text-blue-900">{word.word}</h2>
@@ -274,7 +260,7 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
             </div>
           </div>
           
-          {/* Row 3: Additional Content - Always visible but compact */}
+          {/* Row 3: Additional Content */}
           <div className="grid grid-cols-1 gap-3">
             {/* Additional Examples */}
             {word.additionalExamples && word.additionalExamples.length > 0 && (
@@ -293,7 +279,7 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
               </div>
             )}
             
-            {/* Word Family - Always visible */}
+            {/* Word Family */}
             {word.wordFamily && word.wordFamily.words && word.wordFamily.words.length > 0 && (
               <div className="bg-white rounded border-2 border-blue-200 p-3">
                 <h3 className="text-blue-800 font-bold flex items-center text-base mb-2">
@@ -313,7 +299,7 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
               </div>
             )}
             
-            {/* Common Phrases - Always visible */}
+            {/* Common Phrases */}
             {word.collocations && Array.isArray(word.collocations) && word.collocations.length > 0 && (
               <div className="bg-white rounded border-2 border-blue-200 p-3">
                 <h3 className="text-blue-800 font-bold flex items-center text-base mb-2">
