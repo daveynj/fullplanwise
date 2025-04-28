@@ -36,71 +36,10 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
   // Prepare pronunciation data from the word or use fallbacks
   const normalizedWord = word.word?.toLowerCase() || '';
   
-  // Fixed pronunciation data for common words to ensure proper display
-  const pronunciationMap: Record<string, { 
-    pronunciation: string,
-    syllables: string[],
-    emphasisIndex: number
-  }> = {
-    "character": { 
-      pronunciation: "KAIR-ak-ter", 
-      syllables: ["char", "ac", "ter"], 
-      emphasisIndex: 1 
-    },
-    "development": { 
-      pronunciation: "di-VEL-op-ment", 
-      syllables: ["di", "vel", "op", "ment"], 
-      emphasisIndex: 1 
-    },
-    "environment": { 
-      pronunciation: "en-VY-ron-ment", 
-      syllables: ["en", "vy", "ron", "ment"], 
-      emphasisIndex: 1 
-    },
-    "technology": { 
-      pronunciation: "tek-NOL-o-jee", 
-      syllables: ["tek", "nol", "o", "jee"], 
-      emphasisIndex: 1 
-    },
-    "government": { 
-      pronunciation: "GUV-ern-ment", 
-      syllables: ["guv", "ern", "ment"], 
-      emphasisIndex: 0 
-    },
-    "education": { 
-      pronunciation: "ej-oo-KAY-shun", 
-      syllables: ["ej", "oo", "kay", "shun"], 
-      emphasisIndex: 2 
-    },
-    "experience": { 
-      pronunciation: "ik-SPEER-ee-ens", 
-      syllables: ["ik", "speer", "ee", "ens"], 
-      emphasisIndex: 1 
-    },
-    "information": { 
-      pronunciation: "in-for-MAY-shun", 
-      syllables: ["in", "for", "may", "shun"], 
-      emphasisIndex: 2 
-    },
-    "knowledge": { 
-      pronunciation: "NOL-ij", 
-      syllables: ["nol", "ij"], 
-      emphasisIndex: 0 
-    },
-    "management": { 
-      pronunciation: "MAN-ij-ment", 
-      syllables: ["man", "ij", "ment"], 
-      emphasisIndex: 0 
-    }
-  };
+  // No hardcoded data - we'll use the AI-generated data entirely
 
   // Handle complex pronunciation object - with type safety
   const getPronunciationData = () => {
-    // First check our fixed pronunciation data for common words
-    if (normalizedWord && pronunciationMap[normalizedWord]) {
-      return pronunciationMap[normalizedWord];
-    }
-    
     let pronouncedValue = "";
     
     // Handle complex pronunciation object
@@ -209,34 +148,8 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
             
             {/* PART 2: Syllable boxes with appropriate emphasis */}
             <div className="flex justify-center gap-2">
-              {word && word.word === "character" ? (
-                <>
-                  <div className="min-w-[80px] py-2 px-4 rounded-md bg-white text-gray-800 font-medium flex items-center justify-center text-lg">
-                    char
-                  </div>
-                  <div className="min-w-[80px] py-2 px-4 rounded-md bg-blue-600 text-white font-medium flex items-center justify-center text-lg">
-                    ac
-                  </div>
-                  <div className="min-w-[80px] py-2 px-4 rounded-md bg-white text-gray-800 font-medium flex items-center justify-center text-lg">
-                    ter
-                  </div>
-                </>
-              ) : word.word === "development" ? (
-                <>
-                  <div className="min-w-[80px] py-2 px-4 rounded-md bg-white text-gray-800 font-medium flex items-center justify-center text-lg">
-                    di
-                  </div>
-                  <div className="min-w-[80px] py-2 px-4 rounded-md bg-blue-600 text-white font-medium flex items-center justify-center text-lg">
-                    vel
-                  </div>
-                  <div className="min-w-[80px] py-2 px-4 rounded-md bg-white text-gray-800 font-medium flex items-center justify-center text-lg">
-                    op
-                  </div>
-                  <div className="min-w-[80px] py-2 px-4 rounded-md bg-white text-gray-800 font-medium flex items-center justify-center text-lg">
-                    ment
-                  </div>
-                </>
-              ) : wordData.syllables && wordData.syllables.length > 0 ? (
+              {/* Always use the same wordData that we have in the pronunciation display */}
+              {wordData.syllables && wordData.syllables.length > 0 ? (
                 wordData.syllables.map((syllable, idx) => (
                   <div 
                     key={idx}

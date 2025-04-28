@@ -1013,50 +1013,30 @@ export function LessonContent({ content }: LessonContentProps) {
                   <div className="text-center mt-4">
                     {/* PART 1: PHONETIC PRONUNCIATION */}
                     <div className="text-2xl font-medium text-blue-800 mb-4">
-                      {/* Force phonetic pronunciation to be displayed - e.g. "KAIR-ak-ter" for "character" */}
-                      {currentWord && 
-                        (currentWord.word === "character" ? "KAIR-ak-ter" :
-                         currentWord.word === "development" ? "di-VEL-op-ment" :
-                         currentWord.word === "environment" ? "en-VY-ron-ment" :
-                         currentWord.word === "technology" ? "tek-NOL-o-jee" :
-                         currentWord.word === "government" ? "GUV-ern-ment" :
-                         currentWord.word === "education" ? "ej-oo-KAY-shun" :
-                         currentWord.word === "experience" ? "ik-SPEER-ee-ens" :
-                         currentWord.word === "information" ? "in-for-MAY-shun" :
-                         currentWord.word === "knowledge" ? "NOL-ij" :
-                         currentWord.word === "management" ? "MAN-ij-ment" :
-                         // Then try API-provided data if available
-                         (currentWord.pronunciation && typeof currentWord.pronunciation === 'string') 
-                           ? currentWord.pronunciation.toUpperCase()
-                           : currentWord.phoneticGuide 
-                             ? currentWord.phoneticGuide.toUpperCase()
-                             : currentWord.syllables && Array.isArray(currentWord.syllables)
-                               ? currentWord.syllables.map((s, i) => i === currentWord.stressIndex ? s.toUpperCase() : s.toLowerCase()).join('-')
-                               : currentWord.word.split('').join('-').toUpperCase()
-                        )
-                      }
+                      {/* Use AI-generated pronunciation data */}
+                      {currentWord ? (typeof currentWord.pronunciation === 'string' 
+                        ? currentWord.pronunciation.toUpperCase()
+                        : typeof currentWord.pronunciation === 'object' && currentWord.pronunciation
+                          ? (currentWord.pronunciation.ipa || currentWord.pronunciation.value || "").toUpperCase()
+                          : currentWord.phoneticGuide 
+                            ? currentWord.phoneticGuide.toUpperCase()
+                            : currentWord.syllables && Array.isArray(currentWord.syllables)
+                              ? currentWord.syllables.map((s, i) => 
+                                i === (currentWord.stressIndex || 0) ? s.toUpperCase() : s.toLowerCase()
+                              ).join('-')
+                              : currentWord.word?.toUpperCase()
+                      ) : ""}
                     </div>
                     
                     {/* PART 2: Syllable boxes with appropriate emphasis */}
                     <div className="flex justify-center gap-2">
-                      {currentWord && currentWord.word === "character" ? (
-                        <>
-                          <div className="min-w-[80px] py-2 px-4 rounded-md bg-white text-gray-800 font-medium flex items-center justify-center text-lg">
-                            char
-                          </div>
-                          <div className="min-w-[80px] py-2 px-4 rounded-md bg-blue-600 text-white font-medium flex items-center justify-center text-lg">
-                            ac
-                          </div>
-                          <div className="min-w-[80px] py-2 px-4 rounded-md bg-white text-gray-800 font-medium flex items-center justify-center text-lg">
-                            ter
-                          </div>
-                        </>
-                      ) : currentWord?.syllables && Array.isArray(currentWord.syllables) ? (
+                      {/* Always use the dynamic AI-generated syllable data */}
+                      {currentWord?.syllables && Array.isArray(currentWord.syllables) && currentWord.syllables.length > 0 ? (
                         currentWord.syllables.map((syllable, idx) => (
                           <div 
                             key={idx}
                             className={`min-w-[80px] py-2 px-4 rounded-md ${
-                              idx === currentWord.stressIndex 
+                              idx === (currentWord.stressIndex || 0)
                                 ? 'bg-blue-600 text-white font-medium' 
                                 : 'bg-white text-gray-800 font-medium'
                             } flex items-center justify-center text-lg`}
@@ -1065,9 +1045,19 @@ export function LessonContent({ content }: LessonContentProps) {
                           </div>
                         ))
                       ) : (
-                        <div className="min-w-[80px] py-2 px-4 rounded-md bg-blue-600 text-white font-medium flex items-center justify-center text-lg">
-                          {currentWord?.word?.toLowerCase() || ''}
-                        </div>
+                        // If no syllables data available, break the word into individual letters
+                        currentWord?.word?.split('').map((letter, idx) => (
+                          <div 
+                            key={idx}
+                            className={`min-w-[40px] py-2 px-3 rounded-md ${
+                              idx === 1 // Arbitrarily highlight the second letter for visual example
+                                ? 'bg-blue-600 text-white font-medium' 
+                                : 'bg-white text-gray-800 font-medium'
+                            } flex items-center justify-center text-lg`}
+                          >
+                            {letter.toLowerCase()}
+                          </div>
+                        )) || <div></div>
                       )}
                     </div>
                   </div>
@@ -1226,63 +1216,7 @@ export function LessonContent({ content }: LessonContentProps) {
     // Extract vocabulary words from the section
     const extractedVocabWords: VocabularyWord[] = [];
     
-    // Data mapping for syllables and pronunciation (if not available from API)
-    const pronunciationData: { [key: string]: { 
-      pronunciation: string; 
-      syllables: string[]; 
-      stressIndex: number;
-    }} = {
-      "character": { 
-        pronunciation: "KAIR-ak-ter", 
-        syllables: ["char", "ac", "ter"], 
-        stressIndex: 1 
-      },
-      "development": { 
-        pronunciation: "di-VEL-op-ment", 
-        syllables: ["di", "vel", "op", "ment"], 
-        stressIndex: 1 
-      },
-      "environment": { 
-        pronunciation: "en-VY-ron-ment", 
-        syllables: ["en", "vy", "ron", "ment"], 
-        stressIndex: 1 
-      },
-      "technology": { 
-        pronunciation: "tek-NOL-o-jee", 
-        syllables: ["tek", "nol", "o", "jee"], 
-        stressIndex: 1 
-      },
-      "government": { 
-        pronunciation: "GUV-ern-ment", 
-        syllables: ["guv", "ern", "ment"], 
-        stressIndex: 0 
-      },
-      "education": { 
-        pronunciation: "ej-oo-KAY-shun", 
-        syllables: ["ej", "oo", "kay", "shun"], 
-        stressIndex: 2 
-      },
-      "experience": { 
-        pronunciation: "ik-SPEER-ee-ens", 
-        syllables: ["ik", "speer", "ee", "ens"], 
-        stressIndex: 1 
-      },
-      "information": { 
-        pronunciation: "in-for-MAY-shun", 
-        syllables: ["in", "for", "may", "shun"], 
-        stressIndex: 2 
-      },
-      "knowledge": { 
-        pronunciation: "NOL-ij", 
-        syllables: ["nol", "ij"], 
-        stressIndex: 0 
-      },
-      "management": { 
-        pronunciation: "MAN-ij-ment", 
-        syllables: ["man", "ij", "ment"], 
-        stressIndex: 0 
-      }
-    };
+    // No hardcoded pronunciation data - we'll use the AI-generated data directly
     
     // Look for the 'words' array in the vocabulary section (Gemini format)
     if (section.words && Array.isArray(section.words)) {
