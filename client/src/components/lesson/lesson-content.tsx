@@ -1342,7 +1342,18 @@ export function LessonContent({ content }: LessonContentProps) {
 
           {/* Combined Example Sentences Card */}
           {(() => {
-             // ... (keep existing example logic) ... 
+            // Collect all example sentences
+            const allExamples = [];
+            
+            // Add the main example if it exists
+            if (currentWord?.example) {
+              allExamples.push(currentWord.example);
+            }
+            
+            // Add additional examples if they exist
+            if (currentWord?.additionalExamples && Array.isArray(currentWord.additionalExamples)) {
+              allExamples.push(...currentWord.additionalExamples);
+            }
 
             if (allExamples.length > 0) {
               return (
@@ -1358,8 +1369,6 @@ export function LessonContent({ content }: LessonContentProps) {
                       </div>
                     </div>
                   </CardHeader>
-                  {/* Remove old header */}
-                  {/* <div className="p-4 border-b flex items-center"> ... </div> */}
                   
                   <CardContent className="p-5">
                     <div className="bg-blue-50 p-4 rounded-lg border border-blue-100 space-y-3">
