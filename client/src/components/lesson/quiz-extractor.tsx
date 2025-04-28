@@ -170,25 +170,12 @@ export const QuizExtractor = ({ content, sectionType = "quiz" }: QuizExtractorPr
   
   return (
     <div className="space-y-6">
-      {/* --- NEW: Standard Section Header --- */}
-
-      <div className="bg-cyan-50 rounded-lg p-4 flex items-center gap-3 border border-cyan-200 shadow-sm">
-          <CheckSquare className="h-7 w-7 text-cyan-500 flex-shrink-0" />
-          <div>
-            <h2 className="text-cyan-700 font-semibold text-xl">{title}</h2>
-            <p className="text-gray-600 text-lg font-medium mt-1">
-              Read the question and select the best answer.
-            </p>
-          </div>
-        </div>
-        
-      {/* --- END Header --- */}
+       {/* --- REMOVED Separate Section Header --- */}
 
       <Card>
         <CardHeader className="bg-cyan-50">
           <CardTitle className="flex items-center gap-2 text-cyan-700">
             <CheckSquare className="h-5 w-5" />
-            {title}
           </CardTitle>
           <CardDescription>
             {introduction}

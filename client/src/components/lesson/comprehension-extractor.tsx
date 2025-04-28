@@ -128,20 +128,15 @@ export const ComprehensionExtractor = ({ content }: ComprehensionExtractorProps)
   
   return (
     <div className="space-y-6">
-      <SectionHeader
-        title="Comprehension"
-        description="Read the question and choose the best answer based on the text."
-        icon={HelpCircle}
-        color="purple"
-        instructions="These questions check your understanding of the passage. Select the best answer for each question."
-      />
-      
       <Card>
-        {content.comprehension?.introduction && (
-          <CardHeader className="bg-purple-50/30 border-b">
+        <CardHeader className="bg-purple-50">
+          <CardTitle className="flex items-center gap-2 text-purple-700">
+            <HelpCircle className="h-5 w-5" />
+          </CardTitle>
+          {content.comprehension?.introduction && (
             <CardDescription>{content.comprehension.introduction}</CardDescription>
-          </CardHeader>
-        )}
+          )}
+        </CardHeader>
         <CardContent className="pt-6">
           <div>
             {/* Progress indicator */}

@@ -31,6 +31,10 @@ import {
   List as ListIcon,
   FolderTree,
   GitBranch,
+  Mic,
+  Target,
+  ArrowLeft,
+  ArrowRight,
 } from "lucide-react";
 import { ReadingSection } from "./reading-section";
 import { SentenceFramesSection } from "./sentence-frames-section";
@@ -38,7 +42,16 @@ import { DiscussionSection } from "./discussion-section";
 import { DiscussionExtractor } from "./discussion-extractor";
 import { ComprehensionExtractor } from "./comprehension-extractor";
 import { QuizExtractor } from "./quiz-extractor";
+import { AudioPlayer } from "@/components/audio-player";
 // Define a more specific pronunciation object type to handle different API formats
+interface PronunciationWordData { // Define specific type for pronunciation words
+  word: string;
+  phonetic?: string;
+  audio: string;
+  focusSounds?: string[];
+  guidance?: string;
+}
+
 interface PronunciationObject {
   ipa?: string;
   value?: string;
@@ -83,7 +96,8 @@ type SectionType =
   | "quiz" 
   | "assessment"
   | "cloze"
-  | "sentenceUnscramble";
+  | "sentenceUnscramble"
+  | "pronunciation"; // Added pronunciation type
 
 interface SectionDetails {
   icon: LucideIcon;
@@ -92,6 +106,138 @@ interface SectionDetails {
   textColor: string;
   description: string;
 }
+
+// --- BEGIN PronunciationSection Component ---
+interface PronunciationSectionProps {
+  sectionData: {
+    words?: PronunciationWordData[];
+    // Add other potential fields if needed
+  } | null;
+}
+
+const PronunciationSection = ({ sectionData }: PronunciationSectionProps) => {
+  // *** ADD LOGGING HERE ***
+  console.log("[PronunciationSection] Received sectionData:", JSON.stringify(sectionData, null, 2));
+
+  const words = sectionData?.words || [];
+  // *** ADD LOGGING HERE ***
+  console.log("[PronunciationSection] Derived words array:", JSON.stringify(words, null, 2));
+
+  const [currentWordIndex, setCurrentWordIndex] = useState(0);
+  const currentWord = words.length > 0 ? words[currentWordIndex] : null;
+
+  if (!currentWord) {
+    return (
+      <div className="space-y-6">
+        <Card className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+           <CardHeader className="bg-green-50 border-b border-green-200 p-4">
+             <div className="flex items-center gap-3">
+               <Mic className="h-6 w-6 text-green-600 flex-shrink-0" />
+               <div>
+                 <CardTitle className="text-xl font-semibold text-green-800">Pronunciation Practice</CardTitle>
+                 <p className="text-gray-600 text-lg font-medium mt-1">
+                   Listen, record yourself, and compare. Focus on the sounds.
+                 </p>
+               </div>
+             </div>
+           </CardHeader>
+           <CardContent className="p-6">
+            <div className="text-gray-500">No pronunciation words available for this lesson.</div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  const handleNext = () => {
+    setCurrentWordIndex((prevIndex) => Math.min(prevIndex + 1, words.length - 1));
+  };
+
+  const handlePrevious = () => {
+    setCurrentWordIndex((prevIndex) => Math.max(prevIndex - 1, 0));
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Main Pronunciation Practice Card */}
+      <Card className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+        {/* Standardized CardHeader */}
+        <CardHeader className="bg-green-50 border-b border-green-200 p-4">
+          <div className="flex items-center gap-3">
+            <Mic className="h-6 w-6 text-green-600 flex-shrink-0" />
+            <div>
+              <CardTitle className="text-xl font-semibold text-green-800">Pronunciation Practice</CardTitle>
+              <p className="text-gray-600 text-lg font-medium mt-1">
+                Listen, record yourself, and compare. Focus on the sounds.
+              </p>
+            </div>
+          </div>
+        </CardHeader>
+
+        <CardContent className="p-6">
+          {/* Word Navigation */}
+          <div className="flex justify-between items-center mb-6">
+            <Button
+              onClick={handlePrevious}
+              disabled={currentWordIndex === 0}
+              variant="outline"
+              size="sm"
+              className="text-gray-600"
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" /> Previous
+            </Button>
+            <span className="text-sm text-gray-500">
+              Word {currentWordIndex + 1} of {words.length}
+            </span>
+            <Button
+              onClick={handleNext}
+              disabled={currentWordIndex === words.length - 1}
+              variant="outline"
+              size="sm"
+              className="text-gray-600"
+            >
+              Next <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
+
+          {/* Word and Audio Controls */}
+          <div className="text-center mb-6">
+            <h3 className="text-3xl font-bold text-green-700 mb-2">{currentWord.word}</h3>
+            {currentWord.phonetic && <p className="text-xl text-gray-500 mb-4">/{currentWord.phonetic}/</p>}
+            <div className="flex justify-center items-center gap-4">
+              <AudioPlayer src={currentWord.audio} id={`pronunciation-${currentWord.word}`} />
+              {/* Placeholder for Recording component */}
+              <Button variant="outline" size="icon" className="text-red-500 border-red-300 hover:bg-red-50">
+                <Mic className="h-5 w-5" />
+                <span className="sr-only">Record your pronunciation</span>
+              </Button>
+            </div>
+          </div>
+
+          {/* Focus Sounds */}
+          {currentWord.focusSounds && currentWord.focusSounds.length > 0 && (
+            <div className="bg-green-50 p-4 rounded-lg border border-green-100">
+              <h4 className="text-lg font-semibold text-green-800 mb-3 flex items-center">
+                <Target className="mr-2 h-5 w-5" /> Focus Sounds
+              </h4>
+              <div className="flex flex-wrap gap-2">
+                {currentWord.focusSounds.map((sound, idx) => (
+                  <span key={idx} className="bg-green-200 text-green-900 px-3 py-1 rounded-full text-sm font-medium">
+                    {sound}
+                  </span>
+                ))}
+              </div>
+              {currentWord.guidance && (
+                 <p className="text-gray-600 mt-3 text-sm">{currentWord.guidance}</p>
+              )}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+// --- END PronunciationSection Component ---
 
 export function LessonContent({ content }: LessonContentProps) {
   const [parsedContent, setParsedContent] = useState<any>(null);
@@ -555,8 +701,21 @@ export function LessonContent({ content }: LessonContentProps) {
       // --- BEGIN EDIT: Set initial active tab ---
       // Determine available sections AFTER processing
       const finalSectionTypes = processedContent.sections?.map((s: any) => s?.type).filter(Boolean) || [];
-      const displayOrder: string[] = ["warmup", "reading", "comprehension", "vocabulary", "sentenceFrames", "cloze", "sentenceUnscramble", "discussion", "quiz"];
-      const orderedAvailableSections = displayOrder.filter(type => finalSectionTypes.includes(type));
+      // Add pronunciation to displayOrder
+      const displayOrder: string[] = ["overview", "warmup", "reading", "comprehension", "vocabulary", "pronunciation", "sentenceFrames", "cloze", "sentenceUnscramble", "discussion", "quiz"];
+      const orderedAvailableSections = displayOrder.filter(type => {
+         // Check for primary type or alternatives
+         if (type === 'warmup') return finalSectionTypes.includes('warmup') || finalSectionTypes.includes('warm-up');
+         if (type === 'sentenceFrames') return finalSectionTypes.includes('sentenceFrames') || finalSectionTypes.includes('grammar');
+         if (type === 'discussion') return finalSectionTypes.includes('discussion') || finalSectionTypes.includes('speaking');
+         if (type === 'quiz') return finalSectionTypes.includes('quiz') || finalSectionTypes.includes('assessment');
+         // Check for specific types like 'cloze', 'sentenceUnscramble', 'pronunciation' which might be top-level or in sections
+         if (type === 'cloze') return !!processedContent.cloze || finalSectionTypes.includes('cloze');
+         if (type === 'sentenceUnscramble') return !!processedContent.sentenceUnscramble || finalSectionTypes.includes('sentenceUnscramble');
+         if (type === 'pronunciation') return !!processedContent.pronunciation || finalSectionTypes.includes('pronunciation'); // Check for pronunciation data
+         // Default check
+         return finalSectionTypes.includes(type);
+      });
       // Add any remaining types not in displayOrder (like 'notes' or custom ones)
       finalSectionTypes.forEach(type => {
          if (!orderedAvailableSections.includes(type)) {
@@ -702,6 +861,13 @@ export function LessonContent({ content }: LessonContentProps) {
       textColor: "text-cyan-700",
       description: "Practice correct word order in English sentences"
     },
+    "pronunciation": { // Added pronunciation details
+      icon: Mic,
+      label: "Pronunciation",
+      color: "bg-green-100",
+      textColor: "text-green-700",
+      description: "Practice pronunciation of key words"
+    },
   };
 
   // Utility function to extract discussion questions from the raw Qwen response
@@ -775,18 +941,34 @@ export function LessonContent({ content }: LessonContentProps) {
   const findSection = (type: string) => {
     try {
       if (Array.isArray(parsedContent.sections)) {
-        // --- EDIT: Find sentenceFrames OR grammar --- 
-        const found = parsedContent.sections.find((section: any) => 
-          section && typeof section === 'object' && (section.type === type || (type === 'sentenceFrames' && section.type === 'grammar'))
-        );
+        // Find based on type, allowing for alternatives
+        const found = parsedContent.sections.find((section: any) => {
+          if (!section || typeof section !== 'object') return false;
+          if (type === 'warmup') return section.type === 'warmup' || section.type === 'warm-up';
+          if (type === 'sentenceFrames') return section.type === 'sentenceFrames' || section.type === 'grammar';
+          if (type === 'discussion') return section.type === 'discussion' || section.type === 'speaking';
+          if (type === 'quiz') return section.type === 'quiz' || section.type === 'assessment';
+          if (type === 'pronunciation') return section.type === 'pronunciation'; // Specifically check for pronunciation type
+          return section.type === type;
+        });
+
         // Log if found
         if (found) {
            console.log(`[findSection] Found section for type '${type}':`, found);
+        } else {
+           console.log(`[findSection] No section found for type '${type}' in sections array.`);
+           // Check top-level for specific types if not found in array
+           if (type === 'cloze' && parsedContent.cloze) return { type: 'cloze', ...parsedContent.cloze };
+           if (type === 'sentenceUnscramble' && parsedContent.sentenceUnscramble) return { type: 'sentenceUnscramble', ...parsedContent.sentenceUnscramble };
+           if (type === 'pronunciation' && parsedContent.pronunciation) return { type: 'pronunciation', ...parsedContent.pronunciation }; // Check top-level pronunciation
         }
         return found;
-        // --- END EDIT ---
       } else {
         console.warn('[findSection] parsedContent.sections is not an array');
+        // Check top-level for specific types if sections array is missing/invalid
+        if (type === 'cloze' && parsedContent.cloze) return { type: 'cloze', ...parsedContent.cloze };
+        if (type === 'sentenceUnscramble' && parsedContent.sentenceUnscramble) return { type: 'sentenceUnscramble', ...parsedContent.sentenceUnscramble };
+        if (type === 'pronunciation' && parsedContent.pronunciation) return { type: 'pronunciation', ...parsedContent.pronunciation }; // Check top-level pronunciation
         return null;
       }
     } catch (error) {
@@ -933,18 +1115,8 @@ export function LessonContent({ content }: LessonContentProps) {
     
     return (
       <div className="space-y-6">
-        {/* Section Title with Icon */}
-        <div className="flex items-center gap-3 mb-5 bg-amber-50 p-4 rounded-lg">
-          <div className="h-10 w-10 rounded-full bg-amber-500 flex items-center justify-center">
-            <Lightbulb className="h-5 w-5 text-white" />
-          </div>
-          <div>
-            <h2 className="text-amber-800 font-medium text-lg">Vocab Introduction</h2>
-            <p className="text-gray-600 text-lg font-medium mt-1">
-              Review the vocabulary word: check pronunciation, definition, and examples. Ask questions if needed.
-            </p>
-          </div>
-        </div>
+        {/* --- REMOVED Separate Section Title --- */}
+        {/* <div className="flex items-center gap-3 mb-5 bg-amber-50 p-4 rounded-lg"> ... </div> */}
         
         {/* Vocabulary card layout - full width */}
         <div className="w-full">
@@ -971,241 +1143,267 @@ export function LessonContent({ content }: LessonContentProps) {
             </button>
           </div>
           
-          {/* Main Word Card with Image */}
-          <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden mb-4">
-            <div className="flex flex-col md:flex-row">
-              {/* Left: Image - Made smaller */}
-              <div className="w-full md:w-[30%] bg-gray-100">
-                {currentWord?.imageBase64 ? (
-                  <img 
-                    src={`data:image/png;base64,${currentWord.imageBase64}`}
-                    alt={`Image for ${currentWord.word}`}
-                    className="w-full h-full object-cover object-center max-h-[180px]"
-                  />
-                ) : (
-                  <div className="w-full h-full min-h-[150px] max-h-[180px] bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center">
-                    <Lightbulb className="h-16 w-16 text-amber-300" />
-                  </div>
-                )}
-              </div>
-              
-              {/* Right: Word Info with more details */}
-              <div className="w-full md:w-[70%] p-6 flex flex-col">
-                <div className="mb-3">
-                  <h2 className="text-3xl font-bold text-gray-800">{currentWord?.word}</h2>
-                  <p className="text-gray-600 italic">{currentWord?.partOfSpeech}</p>
+          {/* Main Word Card */}
+          <Card className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden mb-4">
+             {/* Standardized CardHeader */}
+            <CardHeader className="bg-amber-50 border-b border-amber-200 p-4">
+              <div className="flex items-center gap-3">
+                <Flame className="h-6 w-6 text-amber-600 flex-shrink-0" />
+                <div>
+                  <CardTitle className="text-xl font-semibold text-amber-800">Vocab Introduction</CardTitle>
+                  <p className="text-gray-600 text-lg font-medium mt-1">
+                    Review the vocabulary word: check pronunciation, definition, and examples. Ask questions if needed.
+                  </p>
                 </div>
-                
-                {/* --- NEW: Flex container for Pronunciation and Definition --- */}
-                <div className="flex flex-col md:flex-row gap-4 flex-grow"> {/* Use flex-grow to fill space */} 
-                  {/* Left Side: Pronunciation */}
-                  <div className="w-full md:w-1/2">
-                    {/* Pronunciation display - styled EXACTLY like the reference image with dynamic data */}
-                    <div className="bg-blue-50 rounded-md p-4 h-full"> {/* Added h-full */} 
-                      <div className="flex items-center mb-4"> {/* Added margin-bottom */} 
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" 
-                             stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
-                             className="h-5 w-5 text-blue-700 mr-2">
-                          <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"></path>
-                          <path d="M19 10v1a7 7 0 0 1-14 0v-1M12 19v4"></path>
-                          <line x1="8" y1="23" x2="16" y2="23"></line>
-                        </svg>
-                        <span className="text-blue-700 font-semibold text-lg">Pronunciation</span>
+              </div>
+            </CardHeader>
+            
+            {/* CardContent now contains the flex row for image + details */}
+            <CardContent className="p-0"> {/* Remove padding here, handled inside */}
+              <div className="flex flex-col md:flex-row">
+                  {/* Left: Image */}
+                  <div className="w-full md:w-[30%] bg-gray-100">
+                    {currentWord?.imageBase64 ? (
+                      <img 
+                        src={`data:image/png;base64,${currentWord.imageBase64}`}
+                        alt={`Image for ${currentWord.word}`}
+                        className="w-full h-full object-cover object-center max-h-[180px]"
+                      />
+                    ) : (
+                      <div className="w-full h-full min-h-[150px] max-h-[180px] bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center">
+                        <Lightbulb className="h-16 w-16 text-amber-300" />
                       </div>
-                      
-                      {/* Styled EXACTLY like the reference image with dynamic data */}
-                      <div className="text-center mt-4">
-                        {/* PART 1: Phonetic pronunciation in format like "KAIR-ak-ter" */}
-                        <div className="text-2xl font-medium text-blue-800 mb-4">
-                          {(() => {
-                            // Get phonetic pronunciation data - should be in format like "KAIR-ak-ter"
-                            
-                            // First check if we have a direct pronunciation string
-                            if (typeof currentWord?.pronunciation === 'string' && currentWord.pronunciation) {
-                              return currentWord.pronunciation.toUpperCase();
-                            }
-                            
-                            // Check for pronunciation object with value or ipa field
-                            if (currentWord?.pronunciation && typeof currentWord.pronunciation === 'object') {
-                              const pronounceObj = currentWord.pronunciation as any;
-                              
-                              // If we have a direct value/ipa field, use that
-                              if (pronounceObj.value) {
-                                return pronounceObj.value.toUpperCase();
-                              }
-                              
-                              if (pronounceObj.ipa) {
-                                return pronounceObj.ipa.toUpperCase();
-                              }
-                              
-                              if (pronounceObj.phoneticGuide) {
-                                return pronounceObj.phoneticGuide.toUpperCase();
-                              }
-                              
-                              // If we have syllables, create a phonetic guide
-                              const syllables = pronounceObj.syllables || [];
-                              const emphasisIdx = pronounceObj.stressIndex !== undefined ? pronounceObj.stressIndex : 0;
-                              
-                              if (syllables.length > 0) {
-                                return syllables.map((s: string, i: number) => 
-                                  i === emphasisIdx ? s.toUpperCase() : s.toLowerCase()
-                                ).join('-');
-                              }
-                            }
-                            
-                            // Check for direct phoneticGuide field
-                            if (currentWord?.phoneticGuide) {
-                              return currentWord.phoneticGuide.toUpperCase();
-                            }
-                            
-                            // Use syllables to create a phonetic guide as fallback
-                            if (currentWord?.syllables && Array.isArray(currentWord.syllables) && currentWord.syllables.length > 0) {
-                              const emphasisIdx = currentWord.stressIndex !== undefined ? currentWord.stressIndex : 0;
-                              
-                              // Format exactly like "KAIR-ak-ter" with the emphasized syllable in UPPERCASE
-                              return currentWord.syllables.map((s, i) => 
-                                i === emphasisIdx ? s.toUpperCase() : s.toLowerCase()
-                              ).join('-');
-                            }
-                            
-                            // Absolute fallback, just use the word
-                            return currentWord?.word?.toUpperCase() || "";
-                          })()}
-                        </div>
-                        
-                        {/* PART 2: Syllable boxes with appropriate emphasis - EXACTLY as in reference image */}
-                        <div className="flex justify-center gap-2 flex-wrap"> {/* Added flex-wrap */} 
-                          {(() => {
-                            // Get syllables and emphasis index
-                            let syllables: string[] = [];
-                            let emphasisIdx = 0;
-                            
-                            // Handle complex pronunciation object
-                            if (currentWord?.pronunciation && typeof currentWord.pronunciation === 'object') {
-                              const pronounceObj = currentWord.pronunciation as any;
-                              
-                              // Get syllables from pronunciation object or fall back
-                              syllables = pronounceObj.syllables && Array.isArray(pronounceObj.syllables) && pronounceObj.syllables.length > 0
-                                ? pronounceObj.syllables
-                                : currentWord.syllables && Array.isArray(currentWord.syllables) && currentWord.syllables.length > 0
-                                  ? currentWord.syllables
-                                  : currentWord?.word?.match(/[bcdfghjklmnpqrstvwxz]*[aeiouy]+[bcdfghjklmnpqrstvwxz]*/gi) || [currentWord?.word || ""];
-                                  
-                              // Get emphasis index
-                              emphasisIdx = pronounceObj.stressIndex !== undefined 
-                                ? pronounceObj.stressIndex 
-                                : currentWord.stressIndex !== undefined 
-                                  ? currentWord.stressIndex 
-                                  : 0;
-                            } 
-                            // Handle direct fields
-                            else {
-                              // Get syllables from direct field
-                              syllables = currentWord?.syllables && Array.isArray(currentWord.syllables) && currentWord.syllables.length > 0
-                                ? currentWord.syllables
-                                : currentWord?.word?.match(/[bcdfghjklmnpqrstvwxz]*[aeiouy]+[bcdfghjklmnpqrstvwxz]*/gi) || [currentWord?.word || ""];
-                                
-                              // Get emphasis index
-                              emphasisIdx = currentWord?.stressIndex !== undefined ? currentWord.stressIndex : 0;
-                            }
-                            
-                            // Return the syllable boxes
-                            return syllables.map((syllable, idx) => (
-                              <div 
-                                key={idx}
-                                className={`min-w-[60px] py-1 px-2 rounded-md text-base ${
-                                  idx === emphasisIdx
-                                    ? 'bg-blue-600 text-white font-medium' 
-                                    : 'bg-white text-gray-800 font-medium'
-                                } flex items-center justify-center`}
-                              >
-                                {syllable.toLowerCase()}
-                              </div>
-                            ));
-                          })()}
-                        </div>
-                      </div>
-                    </div>
+                    )}
                   </div>
                   
-                  {/* Right Side: Definition */}
-                  <div className="w-full md:w-1/2">
-                    <div className="bg-white rounded-lg border border-gray-200 shadow-sm h-full"> {/* Added h-full */} 
-                      <div className="p-4 border-b flex items-center">
-                        <BookOpen className="h-5 w-5 text-blue-600 mr-2" /> {/* Adjusted icon size */} 
-                        <h3 className="font-semibold text-blue-600 text-lg">Definition</h3> {/* Adjusted font size/weight */} 
+                  {/* Right: Word Info + Pronunciation/Definition */}
+                  {/* Added padding back here */}
+                  <div className="w-full md:w-[70%] p-6 flex flex-col">
+                    <div className="mb-3">
+                      <h2 className="text-3xl font-bold text-gray-800">{currentWord?.word}</h2>
+                      <p className="text-gray-600 italic">{currentWord?.partOfSpeech}</p>
+                    </div>
+                    
+                    {/* --- NEW: Flex container for Pronunciation and Definition --- */}
+                    <div className="flex flex-col md:flex-row gap-4 flex-grow"> {/* Use flex-grow to fill space */} 
+                      {/* Left Side: Pronunciation */}
+                      <div className="w-full md:w-1/2">
+                        {/* Pronunciation display - styled EXACTLY like the reference image with dynamic data */}
+                        <div className="bg-blue-50 rounded-md p-4 h-full"> {/* Added h-full */} 
+                          <div className="flex items-center mb-4"> {/* Added margin-bottom */} 
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" 
+                                 stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
+                                 className="h-5 w-5 text-blue-700 mr-2">
+                              <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"></path>
+                              <path d="M19 10v1a7 7 0 0 1-14 0v-1M12 19v4"></path>
+                              <line x1="8" y1="23" x2="16" y2="23"></line>
+                            </svg>
+                            <span className="text-blue-700 font-semibold text-lg">Pronunciation</span>
+                          </div>
+                          
+                          {/* Styled EXACTLY like the reference image with dynamic data */}
+                          <div className="text-center mt-4">
+                            {/* PART 1: Phonetic pronunciation in format like "KAIR-ak-ter" */}
+                            <div className="text-2xl font-medium text-blue-800 mb-4">
+                              {(() => {
+                                // Get phonetic pronunciation data - should be in format like "KAIR-ak-ter"
+                                
+                                // First check if we have a direct pronunciation string
+                                if (typeof currentWord?.pronunciation === 'string' && currentWord.pronunciation) {
+                                  return currentWord.pronunciation.toUpperCase();
+                                }
+                                
+                                // Check for pronunciation object with value or ipa field
+                                if (currentWord?.pronunciation && typeof currentWord.pronunciation === 'object') {
+                                  const pronounceObj = currentWord.pronunciation as any;
+                                  
+                                  // If we have a direct value/ipa field, use that
+                                  if (pronounceObj.value) {
+                                    return pronounceObj.value.toUpperCase();
+                                  }
+                                  
+                                  if (pronounceObj.ipa) {
+                                    return pronounceObj.ipa.toUpperCase();
+                                  }
+                                  
+                                  if (pronounceObj.phoneticGuide) {
+                                    return pronounceObj.phoneticGuide.toUpperCase();
+                                  }
+                                  
+                                  // If we have syllables, create a phonetic guide
+                                  const syllables = pronounceObj.syllables || [];
+                                  const emphasisIdx = pronounceObj.stressIndex !== undefined ? pronounceObj.stressIndex : 0;
+                                  
+                                  if (syllables.length > 0) {
+                                    return syllables.map((s: string, i: number) => 
+                                      i === emphasisIdx ? s.toUpperCase() : s.toLowerCase()
+                                    ).join('-');
+                                  }
+                                }
+                                
+                                // Check for direct phoneticGuide field
+                                if (currentWord?.phoneticGuide) {
+                                  return currentWord.phoneticGuide.toUpperCase();
+                                }
+                                
+                                // Use syllables to create a phonetic guide as fallback
+                                if (currentWord?.syllables && Array.isArray(currentWord.syllables) && currentWord.syllables.length > 0) {
+                                  const emphasisIdx = currentWord.stressIndex !== undefined ? currentWord.stressIndex : 0;
+                                  
+                                  // Format exactly like "KAIR-ak-ter" with the emphasized syllable in UPPERCASE
+                                  return currentWord.syllables.map((s, i) => 
+                                    i === emphasisIdx ? s.toUpperCase() : s.toLowerCase()
+                                  ).join('-');
+                                }
+                                
+                                // Absolute fallback, just use the word
+                                return currentWord?.word?.toUpperCase() || "";
+                              })()}
+                            </div>
+                            
+                            {/* PART 2: Syllable boxes with appropriate emphasis - EXACTLY as in reference image */}
+                            <div className="flex justify-center gap-2 flex-wrap"> {/* Added flex-wrap */} 
+                              {(() => {
+                                // Get syllables and emphasis index
+                                let syllables: string[] = [];
+                                let emphasisIdx = 0;
+                                
+                                // Handle complex pronunciation object
+                                if (currentWord?.pronunciation && typeof currentWord.pronunciation === 'object') {
+                                  const pronounceObj = currentWord.pronunciation as any;
+                                  
+                                  // Get syllables from pronunciation object or fall back
+                                  syllables = pronounceObj.syllables && Array.isArray(pronounceObj.syllables) && pronounceObj.syllables.length > 0
+                                    ? pronounceObj.syllables
+                                    : currentWord.syllables && Array.isArray(currentWord.syllables) && currentWord.syllables.length > 0
+                                      ? currentWord.syllables
+                                      : currentWord?.word?.match(/[bcdfghjklmnpqrstvwxz]*[aeiouy]+[bcdfghjklmnpqrstvwxz]*/gi) || [currentWord?.word || ""];
+                                      
+                                  // Get emphasis index
+                                  emphasisIdx = pronounceObj.stressIndex !== undefined 
+                                    ? pronounceObj.stressIndex 
+                                    : currentWord.stressIndex !== undefined 
+                                      ? currentWord.stressIndex 
+                                      : 0;
+                                } 
+                                // Handle direct fields
+                                else {
+                                  // Get syllables from direct field
+                                  syllables = currentWord?.syllables && Array.isArray(currentWord.syllables) && currentWord.syllables.length > 0
+                                    ? currentWord.syllables
+                                    : currentWord?.word?.match(/[bcdfghjklmnpqrstvwxz]*[aeiouy]+[bcdfghjklmnpqrstvwxz]*/gi) || [currentWord?.word || ""];
+                                    
+                                  // Get emphasis index
+                                  emphasisIdx = currentWord?.stressIndex !== undefined ? currentWord.stressIndex : 0;
+                                }
+                                
+                                // Return the syllable boxes
+                                return syllables.map((syllable, idx) => (
+                                  <div 
+                                    key={idx}
+                                    className={`min-w-[60px] py-1 px-2 rounded-md text-base ${
+                                      idx === emphasisIdx
+                                        ? 'bg-blue-600 text-white font-medium' 
+                                        : 'bg-white text-gray-800 font-medium'
+                                    } flex items-center justify-center`}
+                                  >
+                                    {syllable.toLowerCase()}
+                                  </div>
+                                ));
+                              })()}
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                      <div className="p-4">
-                        {/* Definition: Adjusted font size and weight */}
-                        <p className="text-gray-800 text-xl font-bold">{currentWord?.definition}</p> 
+                      
+                      {/* Right Side: Definition */}
+                      <div className="w-full md:w-1/2">
+                        <div className="bg-white rounded-lg border border-gray-200 shadow-sm h-full"> {/* Added h-full */} 
+                          <div className="p-4 border-b flex items-center">
+                            <BookOpen className="h-5 w-5 text-blue-600 mr-2" /> {/* Adjusted icon size */} 
+                            <h3 className="font-semibold text-blue-600 text-lg">Definition</h3> {/* Adjusted font size/weight */} 
+                          </div>
+                          <div className="p-4">
+                            {/* Definition: Adjusted font size and weight */}
+                            <p className="text-gray-800 text-xl font-bold">{currentWord?.definition}</p> 
+                          </div>
+                        </div>
                       </div>
                     </div>
+                    {/* --- END NEW Flex container --- */}
+                    
+                    {/* Additional information can go here if needed in the future */} 
+                    {/* Removed the syllable display div from here as it's now in pronunciation */}
                   </div>
                 </div>
-                {/* --- END NEW Flex container --- */}
-                
-                {/* Additional information can go here if needed in the future */} 
-                {/* Removed the syllable display div from here as it's now in pronunciation */}
-              </div>
-            </div>
-          </div>
-          
-          {/* Definition Section - REMOVED FROM HERE */}
-          
-          {/* --- MODIFIED: Combined Example Sentences Section --- */}
-          {(() => {
-            // Combine the main example and additional examples into one list
-            const allExamples = [
-              currentWord?.example,
-              ...(currentWord?.additionalExamples || [])
-            ].filter(Boolean) as string[]; // Filter out null/undefined and assert as string array
+            </CardContent>
+          </Card>
+          {/* END Main Word Card */}
 
-            // Only render the section if there are examples
+          {/* Combined Example Sentences Card */}
+          {(() => {
+             // ... (keep existing example logic) ... 
+
             if (allExamples.length > 0) {
               return (
-                <div className="bg-white rounded-lg border border-gray-200 shadow-sm mb-4">
-                  <div className="p-4 border-b flex items-center">
-                    <MessageCircle className="h-6 w-6 text-blue-600 mr-2" />
-                    <h3 className="font-bold text-blue-600 text-xl">Example Sentences</h3>
-                  </div>
-                  <div className="p-4">
-                    <div className="bg-blue-50 p-4 rounded-lg border border-blue-100 space-y-3"> {/* Added space-y-3 */} 
+                // Make this the main card for examples
+                <Card className="bg-white rounded-lg border border-gray-200 shadow-sm mb-4">
+                  {/* Standardized CardHeader for Examples */}
+                  <CardHeader className="bg-blue-50 border-b border-blue-200 p-4">
+                    <div className="flex items-center gap-3">
+                      <MessageCircle className="h-6 w-6 text-blue-600 flex-shrink-0" />
+                      <div>
+                        <CardTitle className="text-xl font-semibold text-blue-700">Example Sentences</CardTitle>
+                        {/* No instruction needed here as it's self-explanatory */} 
+                      </div>
+                    </div>
+                  </CardHeader>
+                  {/* Remove old header */}
+                  {/* <div className="p-4 border-b flex items-center"> ... </div> */}
+                  
+                  <CardContent className="p-5">
+                    <div className="bg-blue-50 p-4 rounded-lg border border-blue-100 space-y-3">
                       {allExamples.map((example, idx) => (
-                        // Example Sentences: Use standard size/weight
-                        <p
+                        <p 
                           key={idx}
                           className="text-gray-800 text-xl font-bold"
-                          dangerouslySetInnerHTML={{
-                            __html: highlightWordInExample(example, currentWord.word || "")
+                          dangerouslySetInnerHTML={{ 
+                            __html: highlightWordInExample(example, currentWord.word || "") 
                           }}
                         ></p>
                       ))}
                     </div>
-                  </div>
-                </div>
+                  </CardContent>
+                </Card>
               );
             }
-            return null; // Return null if no examples exist
+            return null;
           })()}
-          {/* --- END MODIFIED Section --- */}
-          
-          {/* Example Section - REMOVED FROM HERE */}
-          {/* More Examples Section - REMOVED FROM HERE */}
-          
+          {/* END Example Sentences Card */}
+
+          {/* Other cards (Word Family, Common Phrases, Usage Notes) - Add standardized headers */}
+
           {/* Two Column Layout for Word Family and Common Phrases */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            {/* Word Family Section (if available) */}
+            {/* Word Family Card */}
             {currentWord?.wordFamily && currentWord.wordFamily.words && currentWord.wordFamily.words.length > 0 && (
-              <div className="bg-white rounded-lg border border-gray-200 shadow-sm h-full">
-                <div className="p-4 border-b flex items-center">
-                  <BookOpen className="h-6 w-6 text-blue-600 mr-2" />
-                  <h3 className="font-bold text-blue-600 text-xl">Word Family</h3>
-                </div>
-                <div className="p-4">
+              <Card className="bg-white rounded-lg border border-gray-200 shadow-sm h-full">
+                 {/* Standardized Header */}
+                 <CardHeader className="bg-blue-50 border-b border-blue-200 p-4">
+                    <div className="flex items-center gap-3">
+                      <BookOpen className="h-6 w-6 text-blue-600 flex-shrink-0" />
+                      <div>
+                         <CardTitle className="text-xl font-semibold text-blue-700">Word Family</CardTitle>
+                      </div>
+                    </div>
+                 </CardHeader>
+                 {/* Remove old header */}
+                 {/* <div className="p-4 border-b flex items-center"> ... </div> */}
+                
+                 <CardContent className="p-5">
                   <p className="text-gray-600 mb-3 text-sm">Related words in this family:</p>
                   <div className="flex flex-wrap gap-2">
                     {currentWord.wordFamily.words.map((word, idx) => (
-                      // Word Family Tags: Use standard size/weight
                       <span key={idx} className="bg-blue-50 text-blue-800 px-3 py-1 rounded-full text-xl font-bold">
                         {word}
                       </span>
@@ -1213,28 +1411,33 @@ export function LessonContent({ content }: LessonContentProps) {
                   </div>
                   
                   {currentWord.wordFamily.description && (
-                    // Removed text-sm from container below
                     <div className="mt-4 p-3 bg-gray-50 rounded-md text-gray-700">
-                      {/* Word Family Description: Use standard size/weight, kept Note: medium */}
                       <p className="text-xl font-bold"><span className="font-medium">Note:</span> {currentWord.wordFamily.description}</p>
                     </div>
                   )}
-                </div>
-              </div>
+                </CardContent>
+              </Card>
             )}
             
-            {/* Common Phrases Section (if available) */}
+            {/* Common Phrases Card */}
             {currentWord?.collocations && currentWord.collocations.length > 0 && (
-              <div className="bg-white rounded-lg border border-gray-200 shadow-sm h-full">
-                <div className="p-4 border-b flex items-center">
-                  <MessageCircle className="h-6 w-6 text-blue-600 mr-2" />
-                  <h3 className="font-bold text-blue-600 text-xl">Common Phrases</h3>
-                </div>
-                <div className="p-4">
+              <Card className="bg-white rounded-lg border border-gray-200 shadow-sm h-full">
+                 {/* Standardized Header */}
+                 <CardHeader className="bg-blue-50 border-b border-blue-200 p-4">
+                    <div className="flex items-center gap-3">
+                      <MessageCircle className="h-6 w-6 text-blue-600 flex-shrink-0" />
+                      <div>
+                         <CardTitle className="text-xl font-semibold text-blue-700">Common Phrases</CardTitle>
+                      </div>
+                    </div>
+                 </CardHeader>
+                 {/* Remove old header */}
+                 {/* <div className="p-4 border-b flex items-center"> ... </div> */}
+
+                 <CardContent className="p-5">
                   <p className="text-gray-600 mb-3 text-sm">Frequently used with:</p>
                   <ul className="space-y-2 list-disc pl-5">
                     {currentWord.collocations.map((phrase, idx) => (
-                      // Common Phrases: Use standard size/weight
                       <li key={idx} className="text-gray-800 text-xl font-bold">
                         <span dangerouslySetInnerHTML={{
                           __html: highlightWordInExample(phrase, currentWord.word)
@@ -1242,25 +1445,32 @@ export function LessonContent({ content }: LessonContentProps) {
                       </li>
                     ))}
                   </ul>
-                </div>
-              </div>
+                </CardContent>
+              </Card>
             )}
           </div>
           
-          {/* Usage Notes Section (if available) with improved formatting */}
+          {/* Usage Notes Card */}
           {currentWord?.usageNotes && (
-            <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
-              <div className="p-4 border-b flex items-center">
-                <FileText className="h-6 w-6 text-blue-600 mr-2" />
-                <h3 className="font-bold text-blue-600 text-xl">Usage Notes</h3>
-              </div>
-              <div className="p-4">
+            <Card className="bg-white rounded-lg border border-gray-200 shadow-sm">
+              {/* Standardized Header */}
+              <CardHeader className="bg-blue-50 border-b border-blue-200 p-4">
+                 <div className="flex items-center gap-3">
+                    <FileText className="h-6 w-6 text-blue-600 flex-shrink-0" />
+                    <div>
+                       <CardTitle className="text-xl font-semibold text-blue-700">Usage Notes</CardTitle>
+                    </div>
+                 </div>
+              </CardHeader>
+              {/* Remove old header */}
+              {/* <div className="p-4 border-b flex items-center"> ... </div> */}
+
+              <CardContent className="p-5">
                 <div className="bg-blue-50 p-4 rounded-md">
-                  {/* Usage Notes: Use standard size/weight */}
                   <p className="text-gray-800 text-xl font-bold">{currentWord.usageNotes}</p>
                 </div>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
           )}
         </div>
       </div>
@@ -1647,20 +1857,9 @@ export function LessonContent({ content }: LessonContentProps) {
         initial={{ opacity: 0, y: 20 }} 
         animate={{ opacity: 1, y: 0 }} 
         transition={{ duration: 0.5 }}
-        className="space-y-6 p-6" // Added space-y-6
+        className="space-y-6 p-6"
       >
-        {/* --- NEW: Standard Section Header --- */}
-        <div className="bg-gray-50 rounded-lg p-4 flex items-center gap-3 border border-gray-200 shadow-sm">
-          <Lightbulb className="h-7 w-7 text-gray-500 flex-shrink-0" />
-          <div>
-            <h2 className="text-gray-700 font-semibold text-xl">Overview</h2>
-            {/* Moved instructions here, adjusted styling */}
-            <p className="text-gray-600 text-lg font-medium mt-1"> 
-              Read each question below. Take 1-2 minutes per question to think about your answer and share it briefly.
-            </p>
-          </div>
-        </div>
-        {/* --- END Header --- */}
+        {/* --- REMOVED Separate Section Header --- */}
 
         {/* Lesson Metadata - Keep this above the warm-up card */}
         <div className="mb-6 flex flex-wrap items-center gap-2">
@@ -1676,12 +1875,21 @@ export function LessonContent({ content }: LessonContentProps) {
 
         {/* Warm-up Questions Card */}
         <Card className="bg-white shadow-sm border border-gray-200 rounded-lg overflow-hidden">
-          <CardHeader className="bg-gray-50 border-b border-gray-200 px-6 py-4">
-            <CardTitle className="text-lg font-medium text-gray-800 flex items-center">
-              <Flame className="mr-2 h-5 w-5 text-orange-500" /> 
-              Warm-up Questions
-            </CardTitle>
+          {/* Standardized CardHeader */}
+          <CardHeader className="bg-gray-50 border-b border-gray-200 p-4">
+            <div className="flex items-center gap-3">
+              <Lightbulb className="h-6 w-6 text-gray-500 flex-shrink-0" />
+              <div>
+                <CardTitle className="text-xl font-semibold text-gray-700">Overview & Warm-up</CardTitle>
+                <p className="text-gray-600 text-lg font-medium mt-1">
+                   Read each question below. Take 1-2 minutes per question to think about your answer and share it briefly.
+                </p>
+              </div>
+            </div>
           </CardHeader>
+          {/* Remove old CardHeader content if any */}
+          {/* <CardHeader className="bg-gray-50 border-b border-gray-200 px-6 py-4"> ... </CardHeader> */}
+          
           <CardContent className="p-6">
             {warmupQuestions.length > 0 ? (
               <ul className="space-y-4">
@@ -1781,7 +1989,7 @@ export function LessonContent({ content }: LessonContentProps) {
   
   // Create arrays to store the section types from the content and our desired display order
   let contentSectionTypes: string[] = [];
-  const displayOrder: string[] = ["overview", "warmup", "reading", "comprehension", "vocabulary", "sentenceFrames", "cloze", "sentenceUnscramble", "discussion", "quiz"];
+  const displayOrder: string[] = ["overview", "warmup", "reading", "comprehension", "vocabulary", "pronunciation", "sentenceFrames", "cloze", "sentenceUnscramble", "discussion", "quiz"];
   // Note: "notes" tab is handled separately via the TeacherNotesSection component
   
   // Helper function to check if a section type exists
@@ -1805,6 +2013,12 @@ export function LessonContent({ content }: LessonContentProps) {
   if (!contentSectionTypes.includes("comprehension")) {
     console.log("Adding comprehension to content sections");
     contentSectionTypes.push("comprehension");
+  }
+  
+  // Add pronunciation section if it doesn't exist in sections array but data exists top-level
+  if (!contentSectionTypes.includes("pronunciation") && parsedContent.pronunciation) {
+    console.log("Adding pronunciation to content sections from top-level data");
+    contentSectionTypes.push("pronunciation");
   }
   
   // Create the final available sections array using our display order
@@ -1842,8 +2056,13 @@ export function LessonContent({ content }: LessonContentProps) {
   
   // Always add the notes tab regardless of whether we have teacher notes or not
   if (!availableSections.includes("notes")) {
-    availableSections.push("notes");
+    // Check if 'notes' type actually exists in the data before adding
+    if (contentSectionTypes.includes("notes")) {
+       availableSections.push("notes");
+    }
   }
+  
+  // If no standard sections found, fall back to filtering and mapping
   
   // If no standard sections found, fall back to filtering and mapping
   if (availableSections.length === 0) {

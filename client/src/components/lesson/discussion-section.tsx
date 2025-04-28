@@ -283,7 +283,7 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
         <CardHeader className="bg-indigo-50">
           <CardTitle className="flex items-center gap-2 text-indigo-700">
             <MessageCircle className="h-5 w-5" />
-            {sectionTitle} ({questions.length} questions)
+            ({questions.length} Questions)
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-6">

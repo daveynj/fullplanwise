@@ -50,36 +50,13 @@ export function ReadingSection({ section }: ReadingSectionProps) {
       </div>
       
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-        {/* Reading header */}
+        {/* Inner Reading header */}
         <div className="bg-blue-50 p-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <BookOpen className="h-5 w-5 text-blue-600" />
-            <span className="font-medium text-blue-600">Reading</span>
           </div>
           <span className="text-sm text-gray-500">Estimated time: 15-20 minutes</span>
         </div>
-        
-        {/* Reading title */}
-        <div className="p-6 border-b flex items-center gap-4">
-          <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-            <BookmarkIcon className="h-5 w-5 text-blue-600" />
-          </div>
-          <div>
-            <h3 className="font-semibold text-2xl">{section?.title || "Reading Text"}</h3>
-            <div className="flex items-center gap-4 text-base text-gray-500 mt-2">
-              <div className="flex items-center">
-                <ClockIcon className="h-5 w-5 mr-2" />
-                <span>15-20 minutes</span>
-              </div>
-              <div className="flex items-center">
-                <InfoIcon className="h-5 w-5 mr-2" />
-                <span>Adapted for clarity</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        {/* Removed fixed introduction - first paragraph will serve as introduction */}
         
         {/* Progress indicator */}
         {sectionParagraphs.length > 0 && (
