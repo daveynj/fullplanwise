@@ -1441,7 +1441,7 @@ export function LessonContent({ content }: LessonContentProps) {
         <SectionHeader
           title="Vocabulary"
           description="Review the flashcard. Try defining the word in your own words and using it in a sentence."
-          icon={Book}
+          icon={BookOpen}
           color="green"
         />
         
@@ -1663,7 +1663,7 @@ export function LessonContent({ content }: LessonContentProps) {
                         {questions[activeQuestion].options && Array.isArray(questions[activeQuestion].options) && 
                           questions[activeQuestion].options.map((option: string, idx: number) => (
                             <div key={`option-${idx}`} className="flex items-center p-3 border border-gray-200 rounded hover:bg-gray-50">
-                              <Radio className="h-4 w-4 mr-3 text-gray-400" />
+                              <Mic className="h-4 w-4 mr-3 text-gray-400" />
                               <span className="font-medium text-gray-800">{option}</span>
                             </div>
                           ))
@@ -1727,9 +1727,9 @@ export function LessonContent({ content }: LessonContentProps) {
 
         {/* Lesson Metadata - Keep this above the warm-up card */}
         <div className="mb-6 flex flex-wrap items-center gap-2">
-          {lesson.level && <Badge variant="secondary" className="bg-blue-100 text-blue-800"><InfoIcon className="mr-1 h-4 w-4" /> Level: {lesson.level}</Badge>}
-          {lesson.focus && <Badge variant="secondary" className="bg-green-100 text-green-800"><SparklesIcon className="mr-1 h-4 w-4" /> Focus: {lesson.focus}</Badge>}
-          {lesson.time && <Badge variant="secondary" className="bg-purple-100 text-purple-800"><ClockIcon className="mr-1 h-4 w-4" /> Time: {lesson.time}</Badge>}
+          {lesson.level && <Badge variant="secondary" className="bg-blue-100 text-blue-800"><FileText className="mr-1 h-4 w-4" /> Level: {lesson.level}</Badge>}
+          {lesson.focus && <Badge variant="secondary" className="bg-green-100 text-green-800"><Target className="mr-1 h-4 w-4" /> Focus: {lesson.focus}</Badge>}
+          {lesson.time && <Badge variant="secondary" className="bg-purple-100 text-purple-800"><Clock className="mr-1 h-4 w-4" /> Time: {lesson.time}</Badge>}
         </div>
 
         {/* --- REMOVED OLD Introductory Text & Instructions --- */}
