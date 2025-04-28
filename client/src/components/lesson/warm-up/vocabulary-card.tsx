@@ -193,57 +193,82 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
         </div>
         
         {/* Pronunciation Section - Styled EXACTLY like the reference image but with DYNAMIC data */}
-        <div className="bg-blue-50 rounded-md p-4">
-          <div className="flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" 
-                 stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
-                 className="h-5 w-5 text-blue-700 mr-2">
-              <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"></path>
-              <path d="M19 10v1a7 7 0 0 1-14 0v-1M12 19v4"></path>
-              <line x1="8" y1="23" x2="16" y2="23"></line>
-            </svg>
-            <span className="text-blue-700 font-semibold text-lg">Pronunciation</span>
-          </div>
+        <div className="grid grid-cols-2 gap-3">
+          {/* Left side: Image or Example */}
+          {word.imageBase64 ? (
+            <div className="bg-white rounded-md overflow-hidden h-[170px] border-2 border-blue-200">
+              <img 
+                src={`data:image/png;base64,${word.imageBase64}`} 
+                alt={`Visual representation of ${word.word}`}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          ) : (
+            <div className="bg-white rounded-md p-4 h-[170px] border-2 border-blue-200 flex flex-col">
+              <div className="flex items-center">
+                <MessageSquare className="h-5 w-5 text-blue-700 mr-2" />
+                <span className="text-blue-700 font-semibold">Example</span>
+              </div>
+              <p className="text-sm font-medium mt-2 flex-1 flex items-center italic">
+                "{word.example || `This is an example sentence using the word ${word.word}.`}"
+              </p>
+            </div>
+          )}
           
-          {/* Styled exactly like the reference image but with DYNAMIC data */}
-          <div className="text-center mt-4">
-            {/* PART 1: The phonetic pronunciation like KAIR-ak-ter */}
-            <div className="text-2xl font-medium text-blue-800 mb-4">
-              {/* Use the processed pronunciation data from getPronunciationData() */}
-              {wordData.pronunciation.toUpperCase()}
+          {/* Right side: Pronunciation and Definition - split into two sections */}
+          <div className="flex flex-col gap-3">
+            {/* Pronunciation Section - Styled EXACTLY like the reference image */}
+            <div className="bg-blue-50 rounded-md p-4 h-[85px] flex-1 border-2 border-blue-200">
+              <div className="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" 
+                     stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
+                     className="h-5 w-5 text-blue-700 mr-2">
+                  <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"></path>
+                  <path d="M19 10v1a7 7 0 0 1-14 0v-1M12 19v4"></path>
+                  <line x1="8" y1="23" x2="16" y2="23"></line>
+                </svg>
+                <span className="text-blue-700 font-semibold">Pronunciation</span>
+              </div>
+              
+              {/* PART 1: The phonetic pronunciation like BLAHK */}
+              <div className="text-center mt-2">
+                <div className="text-xl font-medium text-blue-800">
+                  {wordData.pronunciation.toUpperCase()}
+                </div>
+                
+                {/* PART 2: Syllable boxes with appropriate emphasis */}
+                <div className="flex justify-center gap-2 mt-2">
+                  {wordData.syllables && wordData.syllables.length > 0 ? (
+                    wordData.syllables.map((syllable, idx) => (
+                      <div 
+                        key={idx}
+                        className={`py-1 px-2 rounded-md ${
+                          idx === wordData.emphasisIndex 
+                            ? 'bg-blue-600 text-white' 
+                            : 'bg-white text-gray-800 border border-blue-200'
+                        } flex items-center justify-center text-xs font-medium`}
+                      >
+                        {syllable.toUpperCase()}
+                      </div>
+                    ))
+                  ) : (
+                    <div className="py-1 px-2 rounded-md bg-blue-600 text-white flex items-center justify-center text-xs font-medium">
+                      {word.word.toUpperCase()}
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
             
-            {/* PART 2: Syllable boxes with appropriate emphasis */}
-            <div className="flex justify-center gap-2">
-              {/* Always use the same wordData that we have in the pronunciation display */}
-              {wordData.syllables && wordData.syllables.length > 0 ? (
-                wordData.syllables.map((syllable, idx) => (
-                  <div 
-                    key={idx}
-                    className={`min-w-[80px] py-2 px-4 rounded-md ${
-                      idx === wordData.emphasisIndex 
-                        ? 'bg-blue-600 text-white font-medium' 
-                        : 'bg-white text-gray-800 font-medium'
-                    } flex items-center justify-center text-lg`}
-                  >
-                    {syllable.toLowerCase()}
-                  </div>
-                ))
-              ) : (
-                // If no syllables data available, break the word into syllables manually
-                word.word.split('').map((letter, idx) => (
-                  <div 
-                    key={idx}
-                    className={`min-w-[40px] py-2 px-3 rounded-md ${
-                      idx === 1 // Arbitrarily highlight the second letter for visual example
-                        ? 'bg-blue-600 text-white font-medium' 
-                        : 'bg-white text-gray-800 font-medium'
-                    } flex items-center justify-center text-lg`}
-                  >
-                    {letter.toLowerCase()}
-                  </div>
-                ))
-              )}
+            {/* Definition Section - Matches the reference image */}
+            <div className="bg-white rounded-md p-4 h-[85px] flex-1 border-2 border-blue-200">
+              <div className="flex items-center">
+                <BookOpen className="h-5 w-5 text-blue-700 mr-2" />
+                <span className="text-blue-700 font-semibold">Definition</span>
+              </div>
+              <p className="text-sm font-medium mt-2 line-clamp-2">
+                {word.definition || `A definition for ${word.word}`}
+              </p>
             </div>
           </div>
         </div>
@@ -321,17 +346,6 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
           )}
         </div>
       </div>
-      
-      {/* Image if available */}
-      {word.imageBase64 && (
-        <div className="mt-3">
-          <img 
-            src={`data:image/png;base64,${word.imageBase64}`} 
-            alt={`Visual representation of ${word.word}`}
-            className="rounded-md w-full object-cover border-2 border-blue-200 max-h-36"
-          />
-        </div>
-      )}
     </div>
   );
 }
