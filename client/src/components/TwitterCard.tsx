@@ -9,9 +9,9 @@ interface TwitterCardProps {
 }
 
 export default function TwitterCard({
-  title = 'PLAN WISE ESL | Advanced AI-Powered Teaching Platform',
-  description = 'Personalized language learning with interactive vocabulary, adaptive pronunciation guidance, and multi-provider AI technology.',
-  image = '/twitter-card-image.svg',
+  title = 'PLAN WISE ESL | AI-Powered Lesson Generator for ESL Teachers',
+  description = 'Create complete CEFR-aligned ESL lessons in just 3 minutes. Save hours on lesson planning and focus on teaching your online ESL students effectively.',
+  image = '/twitter-card-image-accurate.svg',
   url = 'https://planwiseesl.com',
   twitterUsername = 'planwiseesl'
 }: TwitterCardProps) {

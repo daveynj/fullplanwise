@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="1200" height="628" viewBox="0 0 1200 628" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background gradient -->
+  <rect width="1200" height="628" fill="url(#paint0_linear)" />
+  
+  <!-- Main content area -->
+  <rect x="40" y="40" width="1120" height="548" rx="16" fill="white" opacity="0.95" />
+  
+  <!-- Logo and title section -->
+  <g transform="translate(80, 80)">
+    <text x="0" y="0" font-family="Arial" font-weight="800" font-size="54" fill="#1E40AF">PLAN WISE ESL</text>
+    <text x="0" y="75" font-family="Arial" font-weight="600" font-size="32" fill="#334155">
+      AI-Powered Lesson Generator for ESL Teachers
+    </text>
+  </g>
+  
+  <!-- Timeline illustration showing 3-minute lesson generation -->
+  <g transform="translate(80, 230)">
+    <rect x="0" y="0" width="540" height="80" rx="40" fill="#F1F5F9" />
+    
+    <!-- Timeline dots -->
+    <circle cx="70" cy="40" r="30" fill="#1E40AF" />
+    <text x="70" y="48" font-family="Arial" font-weight="bold" font-size="22" fill="white" text-anchor="middle">1</text>
+    <text x="70" y="100" font-family="Arial" font-weight="bold" font-size="18" fill="#334155" text-anchor="middle">Select CEFR Level</text>
+    
+    <circle cx="270" cy="40" r="30" fill="#1E40AF" />
+    <text x="270" y="48" font-family="Arial" font-weight="bold" font-size="22" fill="white" text-anchor="middle">2</text>
+    <text x="270" y="100" font-family="Arial" font-weight="bold" font-size="18" fill="#334155" text-anchor="middle">Enter Topic</text>
+    
+    <circle cx="470" cy="40" r="30" fill="#1E40AF" />
+    <text x="470" y="48" font-family="Arial" font-weight="bold" font-size="22" fill="white" text-anchor="middle">3</text>
+    <text x="470" y="100" font-family="Arial" font-weight="bold" font-size="18" fill="#334155" text-anchor="middle">Generate in 3 Minutes</text>
+    
+    <!-- Timeline connectors -->
+    <line x1="100" y1="40" x2="240" y2="40" stroke="#94A3B8" stroke-width="4" />
+    <line x1="300" y1="40" x2="440" y2="40" stroke="#94A3B8" stroke-width="4" />
+  </g>
+  
+  <!-- Feature highlights -->
+  <g transform="translate(80, 360)">
+    <g transform="translate(0, 0)">
+      <circle cx="15" cy="15" r="15" fill="#4ADE80" />
+      <text x="15" y="21" font-family="Arial" font-weight="bold" font-size="20" fill="white" text-anchor="middle">✓</text>
+      <text x="45" y="22" font-family="Arial" font-size="20" fill="#334155">CEFR-aligned lessons (A1-C2)</text>
+    </g>
+    
+    <g transform="translate(0, 50)">
+      <circle cx="15" cy="15" r="15" fill="#4ADE80" />
+      <text x="15" y="21" font-family="Arial" font-weight="bold" font-size="20" fill="white" text-anchor="middle">✓</text>
+      <text x="45" y="22" font-family="Arial" font-size="20" fill="#334155">Interactive vocabulary &amp; reading activities</text>
+    </g>
+    
+    <g transform="translate(0, 100)">
+      <circle cx="15" cy="15" r="15" fill="#4ADE80" />
+      <text x="15" y="21" font-family="Arial" font-weight="bold" font-size="20" fill="white" text-anchor="middle">✓</text>
+      <text x="45" y="22" font-family="Arial" font-size="20" fill="#334155">Complete lesson structure in minutes</text>
+    </g>
+  </g>
+  
+  <!-- Lesson mockup -->
+  <g transform="translate(700, 180)">
+    <!-- Lesson preview window -->
+    <rect x="0" y="0" width="420" height="340" rx="12" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="2" />
+    
+    <!-- Lesson header -->
+    <rect x="0" y="0" width="420" height="50" rx="12 12 0 0" fill="#1E40AF" />
+    <text x="20" y="32" font-family="Arial" font-weight="bold" font-size="18" fill="white">Vacation Planning - B1 Lesson</text>
+    
+    <!-- Lesson tabs -->
+    <rect x="20" y="60" width="100" height="30" rx="4" fill="#1E40AF" />
+    <text x="70" y="80" font-family="Arial" font-weight="bold" font-size="14" fill="white" text-anchor="middle">Warm-up</text>
+    
+    <rect x="130" y="60" width="100" height="30" rx="4" fill="#E2E8F0" />
+    <text x="180" y="80" font-family="Arial" font-size="14" fill="#334155" text-anchor="middle">Vocabulary</text>
+    
+    <rect x="240" y="60" width="100" height="30" rx="4" fill="#E2E8F0" />
+    <text x="290" y="80" font-family="Arial" font-size="14" fill="#334155" text-anchor="middle">Reading</text>
+    
+    <!-- Lesson content -->
+    <rect x="20" y="110" width="380" height="200" rx="8" fill="white" stroke="#E2E8F0" stroke-width="1" />
+    
+    <!-- Vocabulary card example -->
+    <g transform="translate(40, 130)">
+      <rect x="0" y="0" width="150" height="160" rx="8" fill="white" stroke="#E2E8F0" stroke-width="2" />
+      <text x="75" y="30" font-family="Arial" font-weight="bold" font-size="16" fill="#1E40AF" text-anchor="middle">destination</text>
+      <rect x="15" y="45" width="120" height="80" rx="4" fill="#F1F5F9" />
+      <text x="75" y="150" font-family="Arial" font-size="12" fill="#64748B" text-anchor="middle">Click to view definition</text>
+    </g>
+    
+    <!-- Reading preview -->
+    <g transform="translate(210, 130)">
+      <rect x="0" y="0" width="150" height="160" rx="8" fill="#F1F5F9" />
+      <rect x="10" y="15" width="130" height="8" rx="4" fill="#CBD5E1" />
+      <rect x="10" y="35" width="130" height="8" rx="4" fill="#CBD5E1" />
+      <rect x="10" y="55" width="130" height="8" rx="4" fill="#CBD5E1" />
+      <rect x="10" y="75" width="100" height="8" rx="4" fill="#CBD5E1" />
+      <rect x="10" y="95" width="130" height="8" rx="4" fill="#CBD5E1" />
+      <rect x="10" y="115" width="130" height="8" rx="4" fill="#CBD5E1" />
+      <rect x="10" y="135" width="70" height="8" rx="4" fill="#CBD5E1" />
+    </g>
+  </g>
+  
+  <!-- Tag line at bottom -->
+  <g transform="translate(600, 570)">
+    <text x="0" y="0" font-family="Arial" font-weight="600" font-size="18" fill="#334155" text-anchor="middle">
+      Save hours on lesson planning for your online ESL students
+    </text>
+  </g>
+  
+  <!-- Gradient definition -->
+  <defs>
+    <linearGradient id="paint0_linear" x1="0" y1="0" x2="1200" y2="628" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#2563EB" />
+      <stop offset="100%" stop-color="#1E40AF" />
+    </linearGradient>
+  </defs>
+</svg>
