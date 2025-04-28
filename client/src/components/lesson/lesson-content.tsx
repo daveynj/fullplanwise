@@ -1014,58 +1014,58 @@ export function LessonContent({ content }: LessonContentProps) {
                     {/* PART 1: Phonetic pronunciation in format like "KAIR-ak-ter" */}
                     <div className="text-2xl font-medium text-blue-800 mb-4">
                       {(() => {
-                        // Get pronunciation data from the current word
-                        let pronouncedValue = "";
-                        let syllables: string[] = [];
-                        let emphasisIdx = 0;
+                        // Get phonetic pronunciation data - should be in format like "KAIR-ak-ter"
                         
-                        // Handle complex pronunciation object
+                        // First check if we have a direct pronunciation string
+                        if (typeof currentWord?.pronunciation === 'string' && currentWord.pronunciation) {
+                          return currentWord.pronunciation.toUpperCase();
+                        }
+                        
+                        // Check for pronunciation object with value or ipa field
                         if (currentWord?.pronunciation && typeof currentWord.pronunciation === 'object') {
                           const pronounceObj = currentWord.pronunciation as any;
                           
-                          // Get syllables from pronunciation object or fall back
-                          syllables = pronounceObj.syllables && Array.isArray(pronounceObj.syllables) && pronounceObj.syllables.length > 0
-                            ? pronounceObj.syllables
-                            : currentWord.syllables && Array.isArray(currentWord.syllables) && currentWord.syllables.length > 0
-                              ? currentWord.syllables
-                              : currentWord?.word?.match(/[bcdfghjklmnpqrstvwxz]*[aeiouy]+[bcdfghjklmnpqrstvwxz]*/gi) || [currentWord?.word || ""];
-                              
-                          // Get emphasis index
-                          emphasisIdx = pronounceObj.stressIndex !== undefined 
-                            ? pronounceObj.stressIndex 
-                            : currentWord.stressIndex !== undefined 
-                              ? currentWord.stressIndex 
-                              : 0;
-                              
-                          // Create the pronunciation string
-                          pronouncedValue = syllables.map((s, i) => 
-                            i === emphasisIdx ? s.toUpperCase() : s.toLowerCase()
-                          ).join('-');
-                        }
-                        // Handle string pronunciation
-                        else if (typeof currentWord?.pronunciation === 'string' && currentWord.pronunciation) {
-                          pronouncedValue = currentWord.pronunciation;
-                        }
-                        // Handle direct fields
-                        else {
-                          // Get syllables from direct field
-                          syllables = currentWord?.syllables && Array.isArray(currentWord.syllables) && currentWord.syllables.length > 0
-                            ? currentWord.syllables
-                            : currentWord?.word?.match(/[bcdfghjklmnpqrstvwxz]*[aeiouy]+[bcdfghjklmnpqrstvwxz]*/gi) || [currentWord?.word || ""];
-                            
-                          // Get emphasis index
-                          emphasisIdx = currentWord?.stressIndex !== undefined ? currentWord.stressIndex : 0;
+                          // If we have a direct value/ipa field, use that
+                          if (pronounceObj.value) {
+                            return pronounceObj.value.toUpperCase();
+                          }
                           
-                          // Create the pronunciation string from syllables if we don't have one
-                          if (!pronouncedValue && syllables.length > 0) {
-                            pronouncedValue = syllables.map((s, i) => 
+                          if (pronounceObj.ipa) {
+                            return pronounceObj.ipa.toUpperCase();
+                          }
+                          
+                          if (pronounceObj.phoneticGuide) {
+                            return pronounceObj.phoneticGuide.toUpperCase();
+                          }
+                          
+                          // If we have syllables, create a phonetic guide
+                          const syllables = pronounceObj.syllables || [];
+                          const emphasisIdx = pronounceObj.stressIndex !== undefined ? pronounceObj.stressIndex : 0;
+                          
+                          if (syllables.length > 0) {
+                            return syllables.map((s: string, i: number) => 
                               i === emphasisIdx ? s.toUpperCase() : s.toLowerCase()
                             ).join('-');
                           }
                         }
                         
-                        // Return the final pronunciation string
-                        return pronouncedValue || (currentWord?.word?.toUpperCase() || "");
+                        // Check for direct phoneticGuide field
+                        if (currentWord?.phoneticGuide) {
+                          return currentWord.phoneticGuide.toUpperCase();
+                        }
+                        
+                        // Use syllables to create a phonetic guide as fallback
+                        if (currentWord?.syllables && Array.isArray(currentWord.syllables) && currentWord.syllables.length > 0) {
+                          const emphasisIdx = currentWord.stressIndex !== undefined ? currentWord.stressIndex : 0;
+                          
+                          // Format exactly like "KAIR-ak-ter" with the emphasized syllable in UPPERCASE
+                          return currentWord.syllables.map((s, i) => 
+                            i === emphasisIdx ? s.toUpperCase() : s.toLowerCase()
+                          ).join('-');
+                        }
+                        
+                        // Absolute fallback, just use the word
+                        return currentWord?.word?.toUpperCase() || "";
                       })()}
                     </div>
                     

@@ -53,17 +53,53 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
     let syllablesArray: string[] = [];
     let emphasisIdx = 0;
     
+    // First get the PHONETIC PRONUNCIATION
+    // First check if we have a direct pronunciation string
+    if (typeof word.pronunciation === 'string' && word.pronunciation) {
+      pronouncedValue = word.pronunciation;
+      console.log(`STRING PRONUNCIATION FOR "${normalizedWord}":`, pronouncedValue);
+    }
+    // Check for pronunciation object with value or ipa field
+    else if (word.pronunciation && typeof word.pronunciation === 'object') {
+      const pronounceObj = word.pronunciation as any;
+      console.log(`OBJECT PRONUNCIATION FOR "${normalizedWord}":`, pronounceObj);
+      
+      // If we have a direct value/ipa field, use that
+      if (pronounceObj.value) {
+        pronouncedValue = pronounceObj.value;
+      }
+      else if (pronounceObj.ipa) {
+        pronouncedValue = pronounceObj.ipa;
+      }
+      else if (pronounceObj.phoneticGuide) {
+        pronouncedValue = pronounceObj.phoneticGuide;
+      }
+      // If no direct pronunciation field but we have syllables, create a phonetic guide
+      else if (pronounceObj.syllables && Array.isArray(pronounceObj.syllables) && pronounceObj.syllables.length > 0) {
+        const syllables = pronounceObj.syllables;
+        const emphIndex = pronounceObj.stressIndex !== undefined ? pronounceObj.stressIndex : 0;
+        
+        pronouncedValue = syllables.map((s: string, i: number) => 
+          i === emphIndex ? s.toUpperCase() : s.toLowerCase()
+        ).join('-');
+      }
+    }
+    // Check for direct phoneticGuide field
+    else if (word.phoneticGuide) {
+      pronouncedValue = word.phoneticGuide;
+    }
+    
+    // Now get the SYLLABLES for the boxes
     // Handle complex pronunciation object
     if (word.pronunciation && typeof word.pronunciation === 'object') {
-      const pronounceObj = word.pronunciation as any; // Safely cast to any
-      console.log(`OBJECT PRONUNCIATION FOR "${normalizedWord}":`, pronounceObj);
+      const pronounceObj = word.pronunciation as any;
       
       // Get the syllables from the pronunciation object or fall back to word syllables
       syllablesArray = pronounceObj.syllables && Array.isArray(pronounceObj.syllables) && pronounceObj.syllables.length > 0
         ? pronounceObj.syllables
         : word.syllables && Array.isArray(word.syllables) && word.syllables.length > 0
           ? word.syllables
-          : [normalizedWord];
+          : word.word?.match(/[bcdfghjklmnpqrstvwxz]*[aeiouy]+[bcdfghjklmnpqrstvwxz]*/gi) || [normalizedWord];
           
       // Get the stress index
       emphasisIdx = pronounceObj.stressIndex !== undefined 
@@ -71,45 +107,31 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
         : word.stressIndex !== undefined 
           ? word.stressIndex 
           : 0;
-          
-      // Create the pronunciation string from syllables (like "KAIR-ak-ter")
-      // This follows the exact format from the reference image
-      pronouncedValue = syllablesArray.map((s, i) => 
-        i === emphasisIdx ? s.toUpperCase() : s.toLowerCase()
-      ).join('-');
-      
-      return {
-        pronunciation: pronouncedValue,
-        syllables: syllablesArray,
-        emphasisIndex: emphasisIdx
-      };
+    }
+    else {
+      // Get syllables from direct field
+      syllablesArray = word.syllables && Array.isArray(word.syllables) && word.syllables.length > 0
+        ? word.syllables
+        : word.word?.match(/[bcdfghjklmnpqrstvwxz]*[aeiouy]+[bcdfghjklmnpqrstvwxz]*/gi) || [normalizedWord];
+        
+      // Get emphasis index from direct field
+      emphasisIdx = word.stressIndex !== undefined ? word.stressIndex : 0;
     }
     
-    // Handle string pronunciation or direct fields
-    if (typeof word.pronunciation === 'string' && word.pronunciation) {
-      pronouncedValue = word.pronunciation;
-      console.log(`STRING PRONUNCIATION FOR "${normalizedWord}":`, pronouncedValue);
-    } else if (word.phoneticGuide) {
-      pronouncedValue = word.phoneticGuide;
-    }
-    
-    // Get syllables from direct field
-    syllablesArray = word.syllables && Array.isArray(word.syllables) && word.syllables.length > 0
-      ? word.syllables
-      : [normalizedWord];
-      
-    // Get emphasis index from direct field
-    emphasisIdx = word.stressIndex !== undefined ? word.stressIndex : 0;
-    
-    // If we have syllables but no pronunciation string, create one from syllables
+    // If we STILL don't have a pronunciation value, create one from syllables
     if ((!pronouncedValue || pronouncedValue.trim() === "") && syllablesArray.length > 0) {
       pronouncedValue = syllablesArray.map((s, i) => 
         i === emphasisIdx ? s.toUpperCase() : s.toLowerCase()
       ).join('-');
     }
     
+    // If all else fails, use the word itself
+    if (!pronouncedValue || pronouncedValue.trim() === "") {
+      pronouncedValue = normalizedWord.toUpperCase();
+    }
+    
     return {
-      pronunciation: pronouncedValue || normalizedWord.toUpperCase(),
+      pronunciation: pronouncedValue,
       syllables: syllablesArray,
       emphasisIndex: emphasisIdx
     };
