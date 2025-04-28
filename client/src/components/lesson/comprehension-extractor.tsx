@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { extractComprehensionQuestions } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { SectionHeader } from "./shared/section-header";
 
 // Interface for object-format options (for consistency with quiz-extractor)
 interface ComprehensionOptionObject {
@@ -109,22 +110,14 @@ export const ComprehensionExtractor = ({ content }: ComprehensionExtractorProps)
   if (extractedQuestions.length === 0) {
     return (
       <div className="space-y-6">
-        {/* Header for the comprehension section */}
-        <div className="bg-purple-50 rounded-lg p-4 flex items-center gap-3">
-          <HelpCircle className="h-6 w-6 text-purple-600" />
-          <div>
-            <h2 className="text-purple-600 font-medium text-lg">Comprehension</h2>
-            <p className="text-gray-600 text-sm">Check understanding with targeted questions</p>
-          </div>
-        </div>
+        <SectionHeader
+          title="Comprehension"
+          description="Check understanding with targeted questions"
+          icon={HelpCircle}
+          color="purple"
+        />
         
         <Card>
-          <CardHeader className="bg-purple-50">
-            <CardTitle className="flex items-center gap-2 text-purple-700">
-              <HelpCircle className="h-5 w-5" />
-              Reading Comprehension Questions
-            </CardTitle>
-          </CardHeader>
           <CardContent className="pt-6">
             <p className="text-gray-500">No comprehension questions available for this lesson.</p>
           </CardContent>
@@ -135,27 +128,20 @@ export const ComprehensionExtractor = ({ content }: ComprehensionExtractorProps)
   
   return (
     <div className="space-y-6">
-      {/* --- Standard Section Header --- */}
-      <div className="bg-purple-50 rounded-lg p-4 flex items-center gap-3 border border-purple-200 shadow-sm">
-        <HelpCircle className="h-7 w-7 text-purple-500 flex-shrink-0" />
-        <div>
-          <h2 className="text-purple-700 font-semibold text-xl">Comprehension</h2>
-          <p className="text-gray-600 text-lg font-medium mt-1">
-            Read the question and choose the best answer based on the text.
-          </p>
-        </div>
-      </div>
+      <SectionHeader
+        title="Comprehension"
+        description="Read the question and choose the best answer based on the text."
+        icon={HelpCircle}
+        color="purple"
+        instructions="These questions check your understanding of the passage. Select the best answer for each question."
+      />
       
       <Card>
-        <CardHeader className="bg-purple-50">
-          <CardTitle className="flex items-center gap-2 text-purple-700">
-            <HelpCircle className="h-5 w-5" />
-            Reading Comprehension Questions
-          </CardTitle>
-          {content.comprehension?.introduction && (
+        {content.comprehension?.introduction && (
+          <CardHeader className="bg-purple-50/30 border-b">
             <CardDescription>{content.comprehension.introduction}</CardDescription>
-          )}
-        </CardHeader>
+          </CardHeader>
+        )}
         <CardContent className="pt-6">
           <div>
             {/* Progress indicator */}
