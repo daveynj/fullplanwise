@@ -1151,48 +1151,44 @@ export function LessonContent({ content }: LessonContentProps) {
           
           {/* Definition Section - REMOVED FROM HERE */}
           
-          {/* Example Section - Single Column, more prominent */}
-          <div className="bg-white rounded-lg border border-gray-200 shadow-sm mb-4">
-            <div className="p-4 border-b flex items-center">
-              <MessageCircle className="h-6 w-6 text-blue-600 mr-2" />
-              <h3 className="font-bold text-blue-600 text-xl">Example Sentence</h3>
-            </div>
-            <div className="p-4">
-              {currentWord?.example ? (
-                <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
-                  <p 
-                    className="text-gray-800 text-lg font-medium" 
-                    dangerouslySetInnerHTML={{ 
-                      __html: highlightWordInExample(currentWord.example, currentWord.word || "") 
-                    }}
-                  ></p>
+          {/* --- MODIFIED: Combined Example Sentences Section --- */}
+          {(() => {
+            // Combine the main example and additional examples into one list
+            const allExamples = [
+              currentWord?.example,
+              ...(currentWord?.additionalExamples || [])
+            ].filter(Boolean) as string[]; // Filter out null/undefined and assert as string array
+
+            // Only render the section if there are examples
+            if (allExamples.length > 0) {
+              return (
+                <div className="bg-white rounded-lg border border-gray-200 shadow-sm mb-4">
+                  <div className="p-4 border-b flex items-center">
+                    <MessageCircle className="h-6 w-6 text-blue-600 mr-2" />
+                    <h3 className="font-bold text-blue-600 text-xl">Example Sentences</h3>
+                  </div>
+                  <div className="p-4">
+                    <div className="bg-blue-50 p-4 rounded-lg border border-blue-100 space-y-3"> {/* Added space-y-3 */} 
+                      {allExamples.map((example, idx) => (
+                        <p 
+                          key={idx}
+                          className="text-gray-800 text-lg font-medium" // Use styling from old "More Examples"
+                          dangerouslySetInnerHTML={{ 
+                            __html: highlightWordInExample(example, currentWord.word || "") 
+                          }}
+                        ></p>
+                      ))}
+                    </div>
+                  </div>
                 </div>
-              ) : (
-                <p className="text-gray-500 italic">No example available</p>
-              )}
-            </div>
-          </div>
+              );
+            }
+            return null; // Return null if no examples exist
+          })()}
+          {/* --- END MODIFIED Section --- */}
           
-          {/* More Examples Section (if available) */}
-          {currentWord?.additionalExamples && currentWord.additionalExamples.length > 0 && (
-            <div className="bg-white rounded-lg border border-gray-200 shadow-sm mb-4">
-              <div className="p-4 border-b flex items-center">
-                <AlignJustify className="h-6 w-6 text-blue-600 mr-2" />
-                <h3 className="font-bold text-blue-600 text-xl">More Examples</h3>
-              </div>
-              <div className="p-4">
-                <ul className="list-disc pl-5 space-y-2">
-                  {currentWord.additionalExamples.map((example, idx) => (
-                    <li key={idx} className="text-gray-800">
-                      <span dangerouslySetInnerHTML={{ 
-                        __html: highlightWordInExample(example, currentWord.word) 
-                      }}></span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          )}
+          {/* Example Section - REMOVED FROM HERE */}
+          {/* More Examples Section - REMOVED FROM HERE */}
           
           {/* Two Column Layout for Word Family and Common Phrases */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
