@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { ProtectedRoute } from "./lib/protected-route";
 import { AuthenticatedLandingRedirect } from "./lib/authenticated-landing-redirect";
 import { AuthProvider } from "./hooks/use-auth";
+import TwitterCard from "@/components/TwitterCard";
 
 // Pages
 import NotFound from "@/pages/not-found";

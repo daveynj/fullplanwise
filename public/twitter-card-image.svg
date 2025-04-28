@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="1200" height="628" viewBox="0 0 1200 628" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background gradient -->
+  <rect width="1200" height="628" fill="url(#paint0_linear)" />
+  
+  <!-- App screenshot frame -->
+  <rect x="600" y="114" width="500" height="400" rx="12" fill="#FFFFFF" filter="drop-shadow(0px 8px 24px rgba(0, 0, 0, 0.2))" />
+  
+  <!-- App screenshot content (stylized mock) -->
+  <rect x="620" y="134" width="460" height="360" rx="8" fill="#F8FAFC" />
+  <rect x="620" y="134" width="460" height="60" rx="8 8 0 0" fill="#3B82F6" />
+  <rect x="640" y="154" width="200" height="20" rx="4" fill="white" opacity="0.8" />
+  <rect x="640" y="214" width="150" height="30" rx="4" fill="#3B82F6" opacity="0.2" />
+  <rect x="640" y="254" width="420" height="1" fill="#E2E8F0" />
+  
+  <!-- Vocabulary card mock -->
+  <rect x="640" y="274" width="180" height="180" rx="8" fill="#FFFFFF" filter="drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.1))" />
+  <rect x="660" y="294" width="140" height="20" rx="4" fill="#3B82F6" opacity="0.3" />
+  <rect x="660" y="324" width="140" height="110" rx="4" fill="#F1F5F9" />
+  
+  <!-- Pronunciation boxes illustration -->
+  <rect x="850" y="274" width="60" height="40" rx="4" fill="#3B82F6" />
+  <rect x="920" y="274" width="60" height="40" rx="4" fill="#F8FAFC" stroke="#3B82F6" stroke-width="2" />
+  <rect x="990" y="274" width="60" height="40" rx="4" fill="#F8FAFC" stroke="#3B82F6" stroke-width="2" />
+  <text x="880" y="300" fill="white" font-family="Arial" font-weight="bold" font-size="16" text-anchor="middle">SYL</text>
+  <text x="950" y="300" fill="#3B82F6" font-family="Arial" font-weight="bold" font-size="16" text-anchor="middle">LA</text>
+  <text x="1020" y="300" fill="#3B82F6" font-family="Arial" font-weight="bold" font-size="16" text-anchor="middle">BLE</text>
+  
+  <!-- Platform heading and tagline -->
+  <text x="100" y="214" fill="white" font-family="Arial" font-weight="bold" font-size="48">ESL AI Teacher</text>
+  <text x="100" y="274" fill="white" font-family="Arial" font-size="24" opacity="0.9">Personalized language learning</text>
+  <text x="100" y="310" fill="white" font-family="Arial" font-size="24" opacity="0.9">powered by advanced AI</text>
+  
+  <!-- Features -->
+  <circle cx="120" y="350" r="10" fill="#4ADE80" />
+  <text x="150" y="358" fill="white" font-family="Arial" font-size="20">Interactive vocabulary training</text>
+  
+  <circle cx="120" y="390" r="10" fill="#4ADE80" />
+  <text x="150" y="398" fill="white" font-family="Arial" font-size="20">Adaptive pronunciation guidance</text>
+  
+  <circle cx="120" y="430" r="10" fill="#4ADE80" />
+  <text x="150" y="438" fill="white" font-family="Arial" font-size="20">Multi-provider AI technology</text>
+  
+  <circle cx="120" y="470" r="10" fill="#4ADE80" />
+  <text x="150" y="478" fill="white" font-family="Arial" font-size="20">Personalized learning paths</text>
+  
+  <!-- CTA Button -->
+  <rect x="100" y="510" width="300" height="60" rx="30" fill="#4ADE80" />
+  <text x="250" y="548" fill="white" font-family="Arial" font-weight="bold" font-size="24" text-anchor="middle">Try it now</text>
+  
+  <!-- Gradient definition -->
+  <defs>
+    <linearGradient id="paint0_linear" x1="0" y1="0" x2="1200" y2="628" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1E40AF" />
+      <stop offset="100%" stop-color="#3B82F6" />
+    </linearGradient>
+  </defs>
+</svg>
