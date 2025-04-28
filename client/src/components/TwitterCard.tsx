@@ -11,7 +11,7 @@ interface TwitterCardProps {
 export default function TwitterCard({
   title = 'Instant ESL Lessons. Smarter, Faster.',
   description = 'Planwise generates full ESL lessons with AI — in seconds.',
-  image = '/twitter-card-perfect-v3.png',
+  image = '/twitter-card-final.png',
   url = 'https://planwiseesl.com',
   twitterUsername = 'planwiseesl'
 }: TwitterCardProps) {
