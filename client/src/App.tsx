@@ -58,7 +58,7 @@ function App() {
         <TwitterCard 
           title="Instant ESL Lessons. Smarter, Faster."
           description="Planwise generates full ESL lessons with AI — in seconds."
-          image="/twitter-card-image-final.png"
+          image="/twitter-card-perfect.png"
         />
         <Router />
         <Toaster />
