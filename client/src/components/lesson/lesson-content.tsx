@@ -2002,13 +2002,45 @@ export function LessonContent({ content }: LessonContentProps) {
       render: (
         (() => {
           const sentenceFramesData = findSection('sentenceFrames');
-          console.log("SentenceFrames data found:", sentenceFramesData);
+          
+          // DEBUG: Examine the actual data
+          console.log("=========== EXAMINING SENTENCE FRAMES DATA ===========");
+          console.log("1. Direct section data:", sentenceFramesData);
+          console.log("2. Available section types:", 
+            JSON.stringify(parsedContent.sections?.map((s: any) => s.type))
+          );
+          
+          // Just log the sentence frames to understand what we're dealing with
           if (!sentenceFramesData) {
             console.log("No sentenceFrames data found");
-            return <div className="p-4">Sentence frames data not available</div>;
+            return <div className="p-4">Sentence frames data not available or could not be found. 
+              <div className="mt-2 text-sm text-gray-500">Examining data structure for future fixes.</div>
+            </div>;
           }
           
-          // Create a properly formatted section object if needed
+          console.log("3. Structure of sentenceFramesData:", 
+            JSON.stringify({
+              keys: Object.keys(sentenceFramesData),
+              hasFrames: Array.isArray(sentenceFramesData.frames),
+              framesCount: Array.isArray(sentenceFramesData.frames) ? sentenceFramesData.frames.length : 0,
+              hasContent: sentenceFramesData.content !== undefined,
+              contentType: sentenceFramesData.content ? typeof sentenceFramesData.content : "n/a",
+              hasPattern: sentenceFramesData.pattern !== undefined,
+              hasPatterns: sentenceFramesData.patterns !== undefined
+            })
+          );
+          
+          if (Array.isArray(sentenceFramesData.frames) && sentenceFramesData.frames.length > 0) {
+            console.log("4. First frame structure:", 
+              JSON.stringify({
+                keys: Object.keys(sentenceFramesData.frames[0]),
+                hasTemplate: sentenceFramesData.frames[0].patternTemplate !== undefined,
+                hasComponents: Array.isArray(sentenceFramesData.frames[0].structureComponents)
+              })
+            );
+          }
+          
+          // Create a properly formatted section for rendering
           const formattedSection = {
             type: 'sentenceFrames',
             title: sentenceFramesData.title || 'Sentence Frames',
@@ -2019,7 +2051,6 @@ export function LessonContent({ content }: LessonContentProps) {
                 : []
           };
           
-          console.log("Formatted sentence frames section:", formattedSection);
           return <SentenceFramesSection section={formattedSection} />;
         })()
       )
