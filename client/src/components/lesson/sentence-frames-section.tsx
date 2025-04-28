@@ -45,36 +45,79 @@ interface SentenceFramesSectionProps {
 // Type guard to detect new enhanced format
 function isEnhancedPattern(frame: any): frame is SentenceFramePattern {
   console.log("Checking enhanced pattern with keys:", Object.keys(frame || {}));
-  return (
+  
+  // First, check for legacy format markers - if present, it's NOT an enhanced pattern
+  if (frame && (
+    ('structureBreakdown' in frame && Array.isArray(frame.structureBreakdown)) ||
+    ('exampleSentences' in frame && Array.isArray(frame.exampleSentences))
+  )) {
+    console.log("Not enhanced format - legacy format detected");
+    return false;
+  }
+  
+  // Next, check for the patternTemplate which is the definitive signal of enhanced format
+  if (frame && 'patternTemplate' in frame) {
+    console.log("Enhanced pattern detected via patternTemplate");
+    return true;
+  }
+  
+  // Then check if the data has all the required keys for the OldSentenceFrameData format
+  const hasOldFormatKeys = frame && (
+    ('pattern' in frame) &&
+    ('level' in frame) &&
+    ('title' in frame) &&
+    ('usage' in frame) &&
+    ('communicativeFunction' in frame)
+  );
+  
+  if (hasOldFormatKeys) {
+    console.log("Legacy pattern detected by checking required keys");
+    return false;
+  }
+  
+  // Otherwise, use the combination of properties to detect enhanced format
+  const isEnhanced = (
     typeof frame === 'object' &&
     frame !== null &&
-    // Check for basic properties that could be in either format
-    ('pattern' in frame) &&
-    // Check for enhanced teaching content 
+    // Check for enhanced pattern properties - ANY of these indicate new format
     (
-      // Gemini format has 'examples' as an array of strings
-      ('examples' in frame && Array.isArray(frame.examples)) ||
+      // patternTemplate is the most reliable indicator (already checked above)
+      ('patternTemplate' in frame) ||
+      // structureComponents is also a reliable indicator of enhanced format
+      ('structureComponents' in frame && Array.isArray(frame.structureComponents)) ||
+      // Gemini format has 'examples' as complex objects with completeSentence and breakdown
+      ('examples' in frame && Array.isArray(frame.examples) && 
+       frame.examples.length > 0 && typeof frame.examples[0] === 'object') ||
       // Check for other enhanced format properties
-      ('readingExample' in frame) ||
-      ('teachingTips' in frame) ||
-      ('communicativeFunction' in frame) ||
-      ('grammarFocus' in frame)
-    ) &&
-    // Explicitly check that it's NOT the legacy format
-    !('structureBreakdown' in frame && Array.isArray(frame.structureBreakdown)) &&
-    !('exampleSentences' in frame && Array.isArray(frame.exampleSentences))
+      ('visualStructure' in frame) ||
+      ('languageFunction' in frame) ||
+      ('teachingNotes' in frame && Array.isArray(frame.teachingNotes)) ||
+      ('discussionPrompts' in frame)
+    )
   );
+  
+  if (isEnhanced) {
+    console.log("Enhanced pattern detected via format properties");
+  }
+  
+  return isEnhanced;
 }
 
 // Type guard for legacy format detection
 function isLegacyPattern(frame: any): frame is OldSentenceFrameData {
-  return (
+  const result = (
     typeof frame === 'object' &&
     frame !== null &&
     ('pattern' in frame) &&
     (('structureBreakdown' in frame && Array.isArray(frame.structureBreakdown)) || 
      ('exampleSentences' in frame && Array.isArray(frame.exampleSentences)))
   );
+  
+  if (result) {
+    console.log("Legacy pattern detected via structureBreakdown/exampleSentences");
+  }
+  
+  return result;
 }
 
 // Helper function to get a consistent color based on component name
@@ -352,8 +395,10 @@ function EnhancedFrameLayout({ frame }: { frame: SentenceFramePattern }) {
                           </button>
                         </div>
                         <div className="text-gray-800 text-lg">
-                          {example.componentBreakdown
-                            ? highlightSentence(example.completeSentence, example.componentBreakdown)
+                          {example.breakdown
+                            ? highlightSentence(example.completeSentence, example.breakdown)
+                            : (example as any).componentBreakdown
+                            ? highlightSentence(example.completeSentence, (example as any).componentBreakdown)
                             : example.completeSentence
                           }
                         </div>

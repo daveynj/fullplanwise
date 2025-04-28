@@ -1,0 +1,86 @@
+www.google-analytics.com/g/collect?v=2&tid=G-ZEF2MFWWF6&gtm=45je54n0v9218192852za200&_p=1745841554070&gcd=13l3l3l3l1l1&npa=0&dma=0&tag_exp=102887800~103051953~103077950~103106314~103106316~103116025~103130360~103130362~103200001&cid=62089059.1745490787&ul=en-gb&sr=1920x1080&uaa=x86&uab=64&uafvl=Google%2520Chrome%3B135.0.7049.115%7CNot-A.Brand%3B8.0.0.0%7CChromium%3B135.0.7049.115&uamb=0&uam=&uap=Windows&uapv=10.0.0&uaw=0&are=1&frm=0&pscdl=noapi&_eu=AAAAAAI&_s=1&sid=1745828811&sct=3&seg=1&dl=https%3A%2F%2Fee7175b1-ed0f-49d8-a418-d837ab1fe6c4-00-27swo6zpbq2ba.sisko.replit.dev%2Fhistory&dr=https%3A%2F%2Fee7175b1-ed0f-49d8-a418-d837ab1fe6c4-00-27swo6zpbq2ba.sisko.replit.dev%2Fhistory%2F235&dt=PLAN%20WISE%20ESL%20%7C%20AI-Powered%20Lesson%20Generator%20for%20ESL%20Teachers&en=page_view&_ee=1&tfd=4414:1 
+            
+            
+           Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+www.google-analytics.com/g/collect?v=2&tid=G-ZEF2MFWWF6&gtm=45je54n0v9218192852za200&_p=1745841554070&gcd=13l3l3l3l1l1&npa=0&dma=0&tag_exp=102887800~103051953~103077950~103106314~103106316~103116025~103130360~103130362~103200001&cid=62089059.1745490787&ul=en-gb&sr=1920x1080&uaa=x86&uab=64&uafvl=Google%2520Chrome%3B135.0.7049.115%7CNot-A.Brand%3B8.0.0.0%7CChromium%3B135.0.7049.115&uamb=0&uam=&uap=Windows&uapv=10.0.0&uaw=0&are=1&frm=0&pscdl=noapi&_eu=AEAAAAI&_s=2&sid=1745828811&sct=3&seg=1&dl=https%3A%2F%2Fee7175b1-ed0f-49d8-a418-d837ab1fe6c4-00-27swo6zpbq2ba.sisko.replit.dev%2Fhistory&dr=https%3A%2F%2Fee7175b1-ed0f-49d8-a418-d837ab1fe6c4-00-27swo6zpbq2ba.sisko.replit.dev%2Fhistory%2F235&dt=PLAN%20WISE%20ESL%20%7C%20AI-Powered%20Lesson%20Generator%20for%20ESL%20Teachers&en=scroll&epn.percent_scrolled=90&tfd=9420:1 
+            
+            
+           Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+lockdown-install.js:1 Removing unpermitted intrinsics
+lockdown-install.js:1 Removing unpermitted intrinsics
+lockdown-install.js:1 Removing unpermitted intrinsics
+www.google-analytics.com/g/collect?v=2&tid=G-ZEF2MFWWF6&gtm=45je54n0v9218192852za200&_p=1745841554070&gcd=13l3l3l3l1l1&npa=0&dma=0&tag_exp=102887800~103051953~103077950~103106314~103106316~103116025~103130360~103130362~103200001&cid=62089059.1745490787&ul=en-gb&sr=1920x1080&uaa=x86&uab=64&uafvl=Google%2520Chrome%3B135.0.7049.115%7CNot-A.Brand%3B8.0.0.0%7CChromium%3B135.0.7049.115&uamb=0&uam=&uap=Windows&uapv=10.0.0&uaw=0&are=1&frm=0&pscdl=noapi&_eu=AEAAAAI&_s=3&dl=https%3A%2F%2Fee7175b1-ed0f-49d8-a418-d837ab1fe6c4-00-27swo6zpbq2ba.sisko.replit.dev%2Fhistory%2F233&dr=https%3A%2F%2Fee7175b1-ed0f-49d8-a418-d837ab1fe6c4-00-27swo6zpbq2ba.sisko.replit.dev%2Fhistory&sid=1745828811&sct=3&seg=1&dt=PLAN%20WISE%20ESL%20%7C%20AI-Powered%20Lesson%20Generator%20for%20ESL%20Teachers&en=page_view&_et=14143&tfd=35654:1 
+            
+            
+           Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+lesson-content.tsx:1863 Section types from content: Array(9)
+lesson-content.tsx:1929 Available sections for tabs: Array(10)
+lesson-content.tsx:815 [findSection] Found section for type 'sentenceFrames': Object
+lesson-content.tsx:2007 =========== EXAMINING SENTENCE FRAMES DATA ===========
+lesson-content.tsx:2008 1. Direct section data: Object
+lesson-content.tsx:2009 2. Available section types: ["warmup","reading","vocabulary","comprehension","sentenceFrames","cloze","sentenceUnscramble","discussion","quiz"]
+lesson-content.tsx:2021 3. Structure of sentenceFramesData: {"keys":["type","title","frames"],"hasFrames":true,"framesCount":1,"hasContent":false,"contentType":"n/a","hasPattern":false,"hasPatterns":false}
+lesson-content.tsx:2034 4. First frame structure: {"keys":["patternTemplate","languageFunction","grammarFocus","structureComponents","visualStructure","examples","patternVariations","teachingNotes","discussionPrompts"],"hasTemplate":true,"hasComponents":true}
+lesson-content.tsx:817 [findSection] No section found for type 'grammar' in sections array.
+lesson-content.tsx:2065 Grammar data found: undefined
+lesson-content.tsx:2067 No grammar data found
+lesson-content.tsx:815 [findSection] Found section for type 'discussion': Object
+sentence-frames-section.tsx:568 Raw sentence frames section data:
+sentence-frames-section.tsx:519 ===== ANALYZING SENTENCE FRAMES DATA STRUCTURE =====
+sentence-frames-section.tsx:522 root type: object
+sentence-frames-section.tsx:539 root is Object with keys: Array(3)
+sentence-frames-section.tsx:554 root.type: string sentenceFrames
+sentence-frames-section.tsx:554 root.title: string Sentence Practice
+sentence-frames-section.tsx:545 root.frames type: object (Array of 1)
+sentence-frames-section.tsx:519 ===== ANALYZING SENTENCE FRAMES DATA STRUCTURE =====
+sentence-frames-section.tsx:522 root.frames type: object
+sentence-frames-section.tsx:530 root.frames is Array with 1 items
+sentence-frames-section.tsx:533 root.frames[0] sample: object
+sentence-frames-section.tsx:519 ===== ANALYZING SENTENCE FRAMES DATA STRUCTURE =====
+sentence-frames-section.tsx:522 root.frames[0] type: object
+sentence-frames-section.tsx:539 root.frames[0] is Object with keys: Array(9)
+sentence-frames-section.tsx:554 root.frames[0].patternTemplate: string In Minecraft, you can ___ by using ___.
+sentence-frames-section.tsx:554 root.frames[0].languageFunction: string Describing actions
+sentence-frames-section.tsx:545 root.frames[0].grammarFocus type: object (Array of 2)
+sentence-frames-section.tsx:545 root.frames[0].structureComponents type: object (Array of 2)
+sentence-frames-section.tsx:519 ===== ANALYZING SENTENCE FRAMES DATA STRUCTURE =====
+sentence-frames-section.tsx:522 root.frames[0].structureComponents type: object
+sentence-frames-section.tsx:530 root.frames[0].structureComponents is Array with 2 items
+sentence-frames-section.tsx:533 root.frames[0].structureComponents[0] sample: object
+sentence-frames-section.tsx:519 ===== ANALYZING SENTENCE FRAMES DATA STRUCTURE =====
+sentence-frames-section.tsx:522 root.frames[0].structureComponents[0] type: object
+sentence-frames-section.tsx:539 root.frames[0].structureComponents[0] is Object with keys: Array(4)
+sentence-frames-section.tsx:554 root.frames[0].structureComponents[0].label: string Action
+sentence-frames-section.tsx:554 root.frames[0].structureComponents[0].description: string Describes what the player does in the game.
+sentence-frames-section.tsx:545 root.frames[0].structureComponents[0].examples type: object (Array of 3)
+sentence-frames-section.tsx:519 ===== ANALYZING SENTENCE FRAMES DATA STRUCTURE =====
+sentence-frames-section.tsx:522 root.frames[0].structureComponents[0].examples type: object
+sentence-frames-section.tsx:530 root.frames[0].structureComponents[0].examples is Array with 3 items
+sentence-frames-section.tsx:533 root.frames[0].structureComponents[0].examples[0] sample: string
+sentence-frames-section.tsx:519 ===== ANALYZING SENTENCE FRAMES DATA STRUCTURE =====
+sentence-frames-section.tsx:522 root.frames[0].structureComponents[0].examples[0] type: string
+sentence-frames-section.tsx:560 root.frames[0].structureComponents[0].examples[0] value: build a house
+sentence-frames-section.tsx:554 root.frames[0].structureComponents[0].inSentenceExample: string In Minecraft, you can [Action]...
+sentence-frames-section.tsx:545 root.frames[0].visualStructure type: object (Object)
+sentence-frames-section.tsx:545 root.frames[0].examples type: object (Array of 3)
+sentence-frames-section.tsx:519 ===== ANALYZING SENTENCE FRAMES DATA STRUCTURE =====
+sentence-frames-section.tsx:522 root.frames[0].examples type: object
+sentence-frames-section.tsx:530 root.frames[0].examples is Array with 3 items
+sentence-frames-section.tsx:533 root.frames[0].examples[0] sample: object
+sentence-frames-section.tsx:519 ===== ANALYZING SENTENCE FRAMES DATA STRUCTURE =====
+sentence-frames-section.tsx:522 root.frames[0].examples[0] type: object
+sentence-frames-section.tsx:539 root.frames[0].examples[0] is Object with keys: Array(2)
+sentence-frames-section.tsx:554 root.frames[0].examples[0].completeSentence: string In Minecraft, you can build a house by using wooden blocks.
+sentence-frames-section.tsx:545 root.frames[0].examples[0].breakdown type: object (Object)
+sentence-frames-section.tsx:545 root.frames[0].patternVariations type: object (Object)
+sentence-frames-section.tsx:545 root.frames[0].teachingNotes type: object (Array of 3)
+sentence-frames-section.tsx:545 root.frames[0].discussionPrompts type: object (Array of 3)
+sentence-frames-section.tsx:626 Current sentence frame data: Object
+sentence-frames-section.tsx:47 Checking enhanced pattern with keys: Array(9)
+sentence-frames-section.tsx:630 Using enhanced layout: false
+
+                
+          
+          
+          
+         Chrome is moving towards a new experience that allows users to choose to browse without third-party cookies.

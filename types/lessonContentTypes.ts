@@ -24,6 +24,10 @@ export interface SentenceFrameExample {
   breakdown: {
     [componentLabel: string]: string;
   };
+  /** Alternative format used by some AI providers */
+  componentBreakdown?: {
+    [componentLabel: string]: string;
+  };
 }
 
 /**
@@ -33,8 +37,16 @@ export interface SentenceFrameExample {
 export interface SentenceFramePattern {
   /** The sentence pattern with blanks (e.g., "It is ___ to ___ because ___."). */
   patternTemplate: string;
+  /** Alternative property name for patternTemplate (used by some AI providers) */
+  pattern?: string;
   /** The communicative function of this pattern (e.g., "Explaining reasons"). */
   languageFunction: string;
+  /** Alternative property name for languageFunction (used by some AI providers) */
+  communicativeFunction?: string;
+  /** Title of the sentence pattern (optional) */
+  title?: string;
+  /** Difficulty level of the pattern */
+  level?: "basic" | "intermediate" | "advanced" | string;
   /** Bullet points explaining the grammar rules. */
   grammarFocus: string[];
 
@@ -65,6 +77,10 @@ export interface SentenceFramePattern {
   };
   /** Notes specifically for the teacher on presenting this pattern. */
   teachingNotes: string[];
+  /** Alternative property name for teachingNotes */
+  teachingTips?: string[];
+  /** Usage notes for the pattern */
+  usageNotes?: string | string[];
   /** Questions to prompt discussion related to the pattern/topic. */
   discussionPrompts: string[];
 } 

@@ -1,0 +1,91 @@
+www.google-analytics.com/g/collect?v=2&tid=G-ZEF2MFWWF6&gtm=45je54n0v9218192852za200&_p=1745841609371&gcd=13l3l3l3l1l1&npa=0&dma=0&tag_exp=102887800~103051953~103077950~103106314~103106316~103116025~103130360~103130362~103200001&cid=62089059.1745490787&ul=en-gb&sr=1920x1080&uaa=x86&uab=64&uafvl=Google%2520Chrome%3B135.0.7049.115%7CNot-A.Brand%3B8.0.0.0%7CChromium%3B135.0.7049.115&uamb=0&uam=&uap=Windows&uapv=10.0.0&uaw=0&are=1&frm=0&pscdl=noapi&_eu=AAAAAAI&_s=1&sid=1745828811&sct=3&seg=1&dl=https%3A%2F%2Fee7175b1-ed0f-49d8-a418-d837ab1fe6c4-00-27swo6zpbq2ba.sisko.replit.dev%2Fhistory&dr=https%3A%2F%2Fee7175b1-ed0f-49d8-a418-d837ab1fe6c4-00-27swo6zpbq2ba.sisko.replit.dev%2Fhistory%2F233&dt=PLAN%20WISE%20ESL%20%7C%20AI-Powered%20Lesson%20Generator%20for%20ESL%20Teachers&en=page_view&_ee=1&tfd=1010:1 
+            
+            
+           Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+www.google-analytics.com/g/collect?v=2&tid=G-ZEF2MFWWF6&gtm=45je54n0v9218192852za200&_p=1745841609371&gcd=13l3l3l3l1l1&npa=0&dma=0&tag_exp=102887800~103051953~103077950~103106314~103106316~103116025~103130360~103130362~103200001&cid=62089059.1745490787&ul=en-gb&sr=1920x1080&uaa=x86&uab=64&uafvl=Google%2520Chrome%3B135.0.7049.115%7CNot-A.Brand%3B8.0.0.0%7CChromium%3B135.0.7049.115&uamb=0&uam=&uap=Windows&uapv=10.0.0&uaw=0&are=1&frm=0&pscdl=noapi&_eu=AEAAAAI&_s=2&sid=1745828811&sct=3&seg=1&dl=https%3A%2F%2Fee7175b1-ed0f-49d8-a418-d837ab1fe6c4-00-27swo6zpbq2ba.sisko.replit.dev%2Fhistory&dr=https%3A%2F%2Fee7175b1-ed0f-49d8-a418-d837ab1fe6c4-00-27swo6zpbq2ba.sisko.replit.dev%2Fhistory%2F233&dt=PLAN%20WISE%20ESL%20%7C%20AI-Powered%20Lesson%20Generator%20for%20ESL%20Teachers&en=scroll&epn.percent_scrolled=90&_et=3&tfd=6011:1 
+            
+            
+           Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ Removing unpermitted intrinsics
+lockdown-install.js:1 Removing unpermitted intrinsics
+lockdown-install.js:1 Removing unpermitted intrinsics
+www.google-analytics.com/g/collect?v=2&tid=G-ZEF2MFWWF6&gtm=45je54n0v9218192852za200&_p=1745841609371&gcd=13l3l3l3l1l1&npa=0&dma=0&tag_exp=102887800~103051953~103077950~103106314~103106316~103116025~103130360~103130362~103200001&cid=62089059.1745490787&ul=en-gb&sr=1920x1080&uaa=x86&uab=64&uafvl=Google%2520Chrome%3B135.0.7049.115%7CNot-A.Brand%3B8.0.0.0%7CChromium%3B135.0.7049.115&uamb=0&uam=&uap=Windows&uapv=10.0.0&uaw=0&are=1&frm=0&pscdl=noapi&_eu=AEAAAAI&_s=3&dl=https%3A%2F%2Fee7175b1-ed0f-49d8-a418-d837ab1fe6c4-00-27swo6zpbq2ba.sisko.replit.dev%2Fhistory%2F235&dr=https%3A%2F%2Fee7175b1-ed0f-49d8-a418-d837ab1fe6c4-00-27swo6zpbq2ba.sisko.replit.dev%2Fhistory&sid=1745828811&sct=3&seg=1&dt=PLAN%20WISE%20ESL%20%7C%20AI-Powered%20Lesson%20Generator%20for%20ESL%20Teachers&en=page_view&_et=18813&tfd=30316:1 
+            
+            
+           Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+lesson-content.tsx:1863 Section types from content: Array(9)
+lesson-content.tsx:1929 Available sections for tabs: Array(10)
+lesson-content.tsx:815 [findSection] Found section for type 'sentenceFrames': Object
+lesson-content.tsx:2007 =========== EXAMINING SENTENCE FRAMES DATA ===========
+lesson-content.tsx:2008 1. Direct section data: Object
+lesson-content.tsx:2009 2. Available section types: ["warmup","reading","vocabulary","comprehension","sentenceFrames","cloze","sentenceUnscramble","discussion","quiz"]
+lesson-content.tsx:2021 3. Structure of sentenceFramesData: {"keys":["type","title","frames"],"hasFrames":true,"framesCount":1,"hasContent":false,"contentType":"n/a","hasPattern":false,"hasPatterns":false}
+lesson-content.tsx:2034 4. First frame structure: {"keys":["pattern","level","title","usage","communicativeFunction","grammarFocus","structureBreakdown","exampleSentences","practicePrompt","teachingTips"],"hasTemplate":false,"hasComponents":false}
+lesson-content.tsx:817 [findSection] No section found for type 'grammar' in sections array.
+lesson-content.tsx:2065 Grammar data found: undefined
+lesson-content.tsx:2067 No grammar data found
+lesson-content.tsx:815 [findSection] Found section for type 'discussion': Object
+sentence-frames-section.tsx:1048 Raw sentence frames section data:
+sentence-frames-section.tsx:1013 ===== ANALYZING SENTENCE FRAMES DATA STRUCTURE =====
+sentence-frames-section.tsx:1014 root type: object
+sentence-frames-section.tsx:1028 root is Object with keys: Array(3)
+sentence-frames-section.tsx:1037 root.type: string sentenceFrames
+sentence-frames-section.tsx:1037 root.title: string Sentence Pattern Analysis
+sentence-frames-section.tsx:1032 root.frames type: object (Array of 1)
+sentence-frames-section.tsx:1013 ===== ANALYZING SENTENCE FRAMES DATA STRUCTURE =====
+sentence-frames-section.tsx:1014 root.frames type: object
+sentence-frames-section.tsx:1021 root.frames is Array with 1 items
+sentence-frames-section.tsx:1023 root.frames[0] sample: object
+sentence-frames-section.tsx:1013 ===== ANALYZING SENTENCE FRAMES DATA STRUCTURE =====
+sentence-frames-section.tsx:1014 root.frames[0] type: object
+sentence-frames-section.tsx:1028 root.frames[0] is Object with keys: Array(10)
+sentence-frames-section.tsx:1037 root.frames[0].pattern: string Minecraft allows players to _____ , which helps them to _____.
+sentence-frames-section.tsx:1037 root.frames[0].level: string intermediate
+sentence-frames-section.tsx:1037 root.frames[0].title: string Describing Actions and Their Benefits
+sentence-frames-section.tsx:1037 root.frames[0].usage: string Use this pattern to describe what actions are possible in Minecraft and how these actions benefit the players.
+sentence-frames-section.tsx:1037 root.frames[0].communicativeFunction: string Describing Actions and Consequences
+sentence-frames-section.tsx:1037 root.frames[0].grammarFocus: string Infinitive verb form (to + verb), present simple tense
+sentence-frames-section.tsx:1032 root.frames[0].structureBreakdown type: object (Array of 2)
+sentence-frames-section.tsx:1032 root.frames[0].exampleSentences type: object (Array of 2)
+sentence-frames-section.tsx:1037 root.frames[0].practicePrompt: string Create your own sentence using this pattern, focusing on a different action and its benefit in Minecraft.
+sentence-frames-section.tsx:1037 root.frames[0].teachingTips: string Encourage students to use vocabulary from the reading text and vocabulary list.
+sentence-frames-section.tsx:1165 Current sentence frame data: Object
+sentence-frames-section.tsx:26 Checking enhanced pattern with keys: Array(10)
+sentence-frames-section.tsx:1167 Using enhanced layout: false
+
+                
+          
+          
+          
+         Chrome is moving towards a new experience that allows users to choose to browse without third-party cookies.
+sentence-frames-section.tsx:579 Raw sentence frames section data:
+sentence-frames-section.tsx:530 ===== ANALYZING SENTENCE FRAMES DATA STRUCTURE =====
+sentence-frames-section.tsx:533 root type: object
+sentence-frames-section.tsx:550 root is Object with keys: (3) ['type', 'title', 'frames']
+sentence-frames-section.tsx:565 root.type: string sentenceFrames
+sentence-frames-section.tsx:565 root.title: string Sentence Pattern Analysis
+sentence-frames-section.tsx:556 root.frames type: object (Array of 1)
+sentence-frames-section.tsx:530 ===== ANALYZING SENTENCE FRAMES DATA STRUCTURE =====
+sentence-frames-section.tsx:533 root.frames type: object
+sentence-frames-section.tsx:541 root.frames is Array with 1 items
+sentence-frames-section.tsx:544 root.frames[0] sample: object
+sentence-frames-section.tsx:530 ===== ANALYZING SENTENCE FRAMES DATA STRUCTURE =====
+sentence-frames-section.tsx:533 root.frames[0] type: object
+sentence-frames-section.tsx:550 root.frames[0] is Object with keys: (10) ['pattern', 'level', 'title', 'usage', 'communicativeFunction', 'grammarFocus', 'structureBreakdown', 'exampleSentences', 'practicePrompt', 'teachingTips']
+sentence-frames-section.tsx:565 root.frames[0].pattern: string Minecraft allows players to _____ , which helps them to _____.
+sentence-frames-section.tsx:565 root.frames[0].level: string intermediate
+sentence-frames-section.tsx:565 root.frames[0].title: string Describing Actions and Their Benefits
+sentence-frames-section.tsx:565 root.frames[0].usage: string Use this pattern to describe what actions are possible in Minecraft and how these actions benefit the players.
+sentence-frames-section.tsx:565 root.frames[0].communicativeFunction: string Describing Actions and Consequences
+sentence-frames-section.tsx:565 root.frames[0].grammarFocus: string Infinitive verb form (to + verb), present simple tense
+sentence-frames-section.tsx:556 root.frames[0].structureBreakdown type: object (Array of 2)
+sentence-frames-section.tsx:556 root.frames[0].exampleSentences type: object (Array of 2)
+sentence-frames-section.tsx:565 root.frames[0].practicePrompt: string Create your own sentence using this pattern, focusing on a different action and its benefit in Minecraft.
+sentence-frames-section.tsx:565 root.frames[0].teachingTips: string Encourage students to use vocabulary from the reading text and vocabulary list.
+sentence-frames-section.tsx:637 Current sentence frame data: {pattern: 'Minecraft allows players to _____ , which helps them to _____.', level: 'intermediate', title: 'Describing Actions and Their Benefits', usage: 'Use this pattern to describe what actions are poss…ecraft and how these actions benefit the players.', communicativeFunction: 'Describing Actions and Consequences', …}
+sentence-frames-section.tsx:47 Checking enhanced pattern with keys: (10) ['pattern', 'level', 'title', 'usage', 'communicativeFunction', 'grammarFocus', 'structureBreakdown', 'exampleSentences', 'practicePrompt', 'teachingTips']
+sentence-frames-section.tsx:641 Using enhanced layout: false
+m.stripe.network/inner.html#url=https%3A%2F%2Fee7175b1-ed0f-49d8-a418-d837ab1fe6c4-00-27swo6zpbq2ba.sisko.replit.dev%2Fhistory&title=PLAN%20WISE%20ESL%20%7C%20AI-Powered%20Lesson%20Generator%20for%20ESL%20Teachers&referrer=https%3A%2F%2Fee7175b1-ed0f-49d8-a418-d837ab1fe6c4-00-27swo6zpbq2ba.sisko.replit.dev%2Fhistory%2F233&muid=1448e43f-2065-453f-8821-6ae4bada7f8cdc8946&sid=c8741cdf-4759-4eb7-b487-a5d22ad75e96fe9d61&version=6&preview=false&__shared_params__[version]=acacia:1 Error handling response: Error: runtime/sendMessage: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received
+    at chrome-extension://fdjamakpfbbddfjaooikfcpapjohcfmg/content/contentScripts/kwift.CHROME.js:1:184307
+m.stripe.network/inner.html#url=https%3A%2F%2Fee7175b1-ed0f-49d8-a418-d837ab1fe6c4-00-27swo6zpbq2ba.sisko.replit.dev%2Fhistory&title=PLAN%20WISE%20ESL%20%7C%20AI-Powered%20Lesson%20Generator%20for%20ESL%20Teachers&referrer=https%3A%2F%2Fee7175b1-ed0f-49d8-a418-d837ab1fe6c4-00-27swo6zpbq2ba.sisko.replit.dev%2Fhistory%2F233&muid=1448e43f-2065-453f-8821-6ae4bada7f8cdc8946&sid=c8741cdf-4759-4eb7-b487-a5d22ad75e96fe9d61&version=6&preview=false&__shared_params__[version]=acacia:1 Error handling response: Error: runtime/sendMessage: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received
+    at chrome-extension://fdjamakpfbbddfjaooikfcpapjohcfmg/content/contentScripts/kwift.CHROME.js:1:184307
