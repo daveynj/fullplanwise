@@ -1,83 +1,69 @@
-import { motion } from "framer-motion";
+import React, { useState, useEffect } from 'react';
+import { AnimatePresence, motion } from "framer-motion";
+import { 
+  Tabs, 
+  TabsContent, 
+  TabsList, 
+  TabsTrigger 
+} from "@/components/ui/tabs";
+import { 
+  Card, 
+  CardContent 
+} from "@/components/ui/card";
+import { 
+  Button 
+} from "@/components/ui/button";
 import { 
   Flame, 
   BookOpen, 
-  FileText, 
-  HelpCircle, 
-  AlignJustify, 
   MessageCircle, 
-  CheckSquare,
-  Book,
-  Radio,
-  CircleCheck,
-  CircleX,
-  Lightbulb,
-  GraduationCap,
-  Copy,
-  Image,
-  ExternalLink,
-  LucideIcon,
-  ChevronLeft,
-  ChevronRight,
-  Bookmark as BookmarkIcon,
-  Clock as ClockIcon,
-  Info as InfoIcon,
-  Sparkles as SparklesIcon,
-  BookOpen as BookOpenIcon,
-  Book as BookIcon,
-  PenTool,
-  Shuffle,
-  Volume,
-  List as ListIcon,
-  FolderTree,
-  GitBranch,
-  Mic,
-  Target,
-  ArrowLeft,
-  ArrowRight,
+  HelpCircle, 
+  FileText, 
+  Check, 
+  CheckCircle2, 
+  ChevronLeft, 
+  ChevronRight, 
+  X, 
+  ArrowLeft, 
+  ArrowRight, 
+  Pencil, 
+  PenTool, 
+  Shuffle, 
+  Target, 
+  Volume, 
+  Mic, 
+  Volume2, 
+  Image, 
+  Lightbulb, 
+  MessageSquare,
+  AlignJustify,
   AlignLeft,
+  Compass,
+  Library,
+  CheckCircle,
 } from "lucide-react";
-import { ReadingSection } from "./reading-section";
-import { SentenceFramesSection } from "./sentence-frames-section";
-import { DiscussionSection } from "./discussion-section";
-import { DiscussionExtractor } from "./discussion-extractor";
-import { ComprehensionExtractor } from "./comprehension-extractor";
-import { QuizExtractor } from "./quiz-extractor";
-import { AudioPlayer } from "../audio-player";
-import { SectionHeader } from "./shared/section-header";
-// Define a more specific pronunciation object type to handle different API formats
-interface PronunciationWordData { // Define specific type for pronunciation words
-  word: string;
-  phonetic?: string;
-  audio: string;
-  focusSounds?: string[];
-  guidance?: string;
-}
-
-interface PronunciationObject {
-  ipa?: string;
-  value?: string;
-  syllables?: string[];
-  stressIndex?: number;
-  phoneticGuide?: string;
-  [key: string]: any; // For other possible API fields
-}
-
-// Import and extend VocabularyWord to ensure correct pronunciation typing
-import { VocabularyCard, VocabularyWord as BaseVocabularyWord } from "./warm-up/vocabulary-card";
-
-// Extended version with more specific pronunciation typing
-interface VocabularyWord extends BaseVocabularyWord {
-  pronunciation?: string | PronunciationObject;
-}
-import { InteractiveClozeSection } from "./interactive-cloze-section";
-import { SentenceUnscrambleSection } from "./sentence-unscramble-section";
-import { useState, useEffect } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { cn, extractDiscussionQuestions, extractQuizQuestions, extractComprehensionQuestions } from "@/lib/utils";
+import { AudioPlayer } from "@/components/shared/audio-player";
+import { handleMessageWithAPI } from '@/lib/api-helpers';
+import { DiscussionSection } from './discussion-section';
+import { SentenceFramesSection } from './sentence-frames-section';
+import { ReadingSection } from './reading-section';
+import { SectionHeader } from './shared/section-header';
+import { InteractiveClozeSection } from './interactive-cloze-section';
+import { SentenceUnscrambleSection } from './sentence-unscramble-section';
+import { VocabularyCard, VocabularyWord } from "./warm-up/vocabulary-card";
+// Pronunciation section functionality moved to warm-up
+// import { PronunciationSection } from "./pronunciation-section";
+// These sections would need to be implemented if required
+// For now using placeholder components
+const ComprehensionSection = (props: any) => <div className="p-4">Comprehension Section</div>;
+const QuizSection = (props: any) => <div className="p-4">Quiz Section</div>;
+const TeacherNotesSection = (props: any) => <div className="p-4">Teacher Notes</div>;
+const OverviewSection = (props: any) => <div className="p-4">Overview Section</div>;
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { cn, extractDiscussionQuestions, extractQuizQuestions, extractComprehensionQuestions } from "@/lib/utils";
+// Using wouter instead of next/navigation
+import { useLocation } from "wouter";
 
 interface LessonContentProps {
   content: any;
@@ -101,6 +87,9 @@ type SectionType =
   | "sentenceUnscramble"
   | "pronunciation"; // Added pronunciation type
 
+// Define a type for Lucide icons since we don't have the actual type
+type LucideIcon = React.ElementType;
+
 interface SectionDetails {
   icon: LucideIcon;
   label: string;
@@ -109,131 +98,10 @@ interface SectionDetails {
   description: string;
 }
 
-// --- BEGIN PronunciationSection Component ---
-interface PronunciationSectionProps {
-  sectionData: {
-    words?: PronunciationWordData[];
-    // Add other potential fields if needed
-  } | null;
-}
-
-const PronunciationSection = ({ sectionData }: PronunciationSectionProps) => {
-  // *** ADD LOGGING HERE ***
-  console.log("[PronunciationSection] Received sectionData:", JSON.stringify(sectionData, null, 2));
-
-  const words = sectionData?.words || [];
-  // *** ADD LOGGING HERE ***
-  console.log("[PronunciationSection] Derived words array:", JSON.stringify(words, null, 2));
-
-  const [currentWordIndex, setCurrentWordIndex] = useState(0);
-  const currentWord = words.length > 0 ? words[currentWordIndex] : null;
-
-  if (!currentWord) {
-    return (
-      <div className="space-y-6">
-        <SectionHeader
-          icon={Mic}
-          title="Pronunciation Practice"
-          description="Listen, record yourself, and compare. Focus on the sounds."
-          color="green"
-        />
-        <Card>
-          <CardContent className="p-6">
-            <div className="text-gray-500">No pronunciation words available for this lesson.</div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  const handleNext = () => {
-    setCurrentWordIndex((prevIndex) => Math.min(prevIndex + 1, words.length - 1));
-  };
-
-  const handlePrevious = () => {
-    setCurrentWordIndex((prevIndex) => Math.max(prevIndex - 1, 0));
-  };
-
-  return (
-    <div className="space-y-6">
-      <SectionHeader
-        icon={Mic}
-        title="Pronunciation Practice"
-        description="Listen, record yourself, and compare. Focus on the sounds."
-        color="green"
-      />
-      
-      {/* Main Pronunciation Practice Card */}
-      <Card className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
-
-        <CardContent className="p-6">
-          {/* Word Navigation */}
-          <div className="flex justify-between items-center mb-6">
-            <Button
-              onClick={handlePrevious}
-              disabled={currentWordIndex === 0}
-              variant="outline"
-              size="sm"
-              className="text-gray-600"
-            >
-              <ArrowLeft className="mr-2 h-4 w-4" /> Previous
-            </Button>
-            <span className="text-sm text-gray-500 font-medium">
-              Word {currentWordIndex + 1} of {words.length}
-            </span>
-            <Button
-              onClick={handleNext}
-              disabled={currentWordIndex === words.length - 1}
-              variant="outline"
-              size="sm"
-              className="text-gray-600"
-            >
-              Next <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </div>
-
-          {/* Word and Audio Controls */}
-          <div className="text-center mb-6">
-            <h3 className="text-3xl font-bold text-green-700 mb-2 font-nunito">{currentWord.word}</h3>
-            {currentWord.phonetic && <p className="text-xl text-gray-500 mb-4 font-medium">/{currentWord.phonetic}/</p>}
-            <div className="flex justify-center items-center gap-4">
-              <AudioPlayer src={currentWord.audio} id={`pronunciation-${currentWord.word}`} />
-              {/* Placeholder for Recording component */}
-              <Button variant="outline" size="icon" className="text-red-500 border-red-300 hover:bg-red-50">
-                <Mic className="h-5 w-5" />
-                <span className="sr-only">Record your pronunciation</span>
-              </Button>
-            </div>
-          </div>
-
-          {/* Focus Sounds */}
-          {currentWord.focusSounds && currentWord.focusSounds.length > 0 && (
-            <div className="bg-green-50 p-4 rounded-lg border border-green-100">
-              <h4 className="text-lg font-semibold text-green-800 mb-3 flex items-center">
-                <Target className="mr-2 h-5 w-5" /> Focus Sounds
-              </h4>
-              <div className="flex flex-wrap gap-2">
-                {currentWord.focusSounds.map((sound, idx) => (
-                  <span key={idx} className="bg-green-200 text-green-900 px-3 py-1 rounded-full text-sm font-medium">
-                    {sound}
-                  </span>
-                ))}
-              </div>
-              {currentWord.guidance && (
-                 <p className="text-gray-600 mt-3 text-sm">{currentWord.guidance}</p>
-              )}
-            </div>
-          )}
-        </CardContent>
-      </Card>
-    </div>
-  );
-};
-// --- END PronunciationSection Component ---
-
 export function LessonContent({ content }: LessonContentProps) {
   const [parsedContent, setParsedContent] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<string>(""); 
+  const [location, setLocation] = useLocation();
   
   // Handle content object (already parsed by lesson-preview)
   useEffect(() => {
@@ -1149,15 +1017,15 @@ export function LessonContent({ content }: LessonContentProps) {
             <CardContent className="p-0"> {/* Remove padding here, handled inside */}
               <div className="flex flex-col md:flex-row">
                   {/* Left: Image */}
-                  <div className="w-full md:w-1/4 flex items-center justify-center">
+                  <div className="w-full md:w-[30%] bg-gray-100">
                     {currentWord?.imageBase64 ? (
                       <img 
                         src={`data:image/png;base64,${currentWord.imageBase64}`}
                         alt={`Image for ${currentWord.word}`}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover object-center max-h-[180px]"
                       />
                     ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center">
+                      <div className="w-full h-full min-h-[150px] max-h-[180px] bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center">
                         <Lightbulb className="h-16 w-16 text-amber-300" />
                       </div>
                     )}
@@ -1165,7 +1033,7 @@ export function LessonContent({ content }: LessonContentProps) {
                   
                   {/* Right: Word Info + Pronunciation/Definition */}
                   {/* Added padding back here */}
-                  <div className="w-full md:w-3/4 p-6 flex flex-col">
+                  <div className="w-full md:w-[70%] p-6 flex flex-col">
                     <div className="mb-3">
                       <h2 className="text-3xl font-bold text-gray-800">{currentWord?.word}</h2>
                       <p className="text-gray-600 italic">{currentWord?.partOfSpeech}</p>
@@ -2077,6 +1945,70 @@ export function LessonContent({ content }: LessonContentProps) {
     }
   };
   
+  // Creating the main render tree for the lesson
+  const renderTree = [
+    {
+      id: 'overview',
+      label: 'Overview',
+      icon: <Compass className="h-5 w-5" />,
+      render: hasSectionType('overview') ? <OverviewSection /> : null
+    },
+    {
+      id: 'warmup',
+      label: 'Warm-up',
+      icon: <Flame className="h-5 w-5" />,
+      render: (hasSectionType('warmup') || hasSectionType('warm-up')) ? <WarmupSection /> : null
+    },
+    {
+      id: 'reading',
+      label: 'Reading',
+      icon: <BookOpen className="h-5 w-5" />,
+      render: hasSectionType('reading') ? <ReadingTabSection /> : null
+    },
+    {
+      id: 'vocabulary',
+      label: 'Vocabulary',
+      icon: <Library className="h-5 w-5" />,
+      render: hasSectionType('vocabulary') ? <VocabularySection /> : null
+    },
+    {
+      id: 'comprehension',
+      label: 'Comprehension',
+      icon: <CheckCircle className="h-5 w-5" />,
+      render: hasSectionType('comprehension') ? <ComprehensionSection /> : null
+    },
+    {
+      id: 'sentenceFrames',
+      label: 'Sentence Frames',
+      icon: <AlignJustify className="h-5 w-5" />,
+      render: hasSectionType('sentenceFrames') ? <SentenceFramesSection section={findSection('sentenceFrames')} /> : null
+    },
+    {
+      id: 'grammar',
+      label: 'Grammar',
+      icon: <AlignLeft className="h-5 w-5" />,
+      render: hasSectionType('grammar') ? <SentenceFramesSection section={findSection('grammar')} /> : null
+    },
+    {
+      id: 'discussion',
+      label: 'Discussion',
+      icon: <MessageCircle className="h-5 w-5" />,
+      render: hasSectionType('discussion') ? <DiscussionSection sectionData={findSection('discussion')} /> : null
+    },
+    {
+      id: 'pronunciation',
+      label: 'Pronunciation',
+      icon: <Volume2 className="h-5 w-5" />,
+      render: hasSectionType('pronunciation') ? <div className="p-4">Pronunciation practice integrated in vocabulary warm-up</div> : null
+    },
+    {
+      id: 'notes',
+      label: 'Teacher Notes',
+      icon: <FileText className="h-5 w-5" />,
+      render: hasSectionType('notes') ? <TeacherNotesSection /> : null
+    }
+  ];
+  
   return (
     <div className="lesson-content w-[95%] max-w-[1800px] mx-auto"> {/* Increased width for better screen space utilization */}
       {/* Lesson header */}
@@ -2130,91 +2062,11 @@ export function LessonContent({ content }: LessonContentProps) {
         
         {/* Section content */}
         <div className="p-1 text-2xl leading-relaxed"> {/* Increased text size for better readability */}
-          <TabsContent value="overview" className="m-0">
-            <OverviewSection />
-          </TabsContent>
-          
-          <TabsContent value="warmup" className="m-0">
-            <WarmupSection />
-          </TabsContent>
-          
-          <TabsContent value="warm-up" className="m-0">
-            <WarmupSection />
-          </TabsContent>
-          
-          <TabsContent value="reading" className="m-0">
-            <ReadingTabSection />
-          </TabsContent>
-          
-          <TabsContent value="vocabulary" className="m-0">
-            <VocabularySection />
-          </TabsContent>
-          
-          <TabsContent value="comprehension" className="m-0">
-            {/* Use our specialized ComprehensionExtractor component */}
-            <ComprehensionExtractor content={parsedContent} />
-          </TabsContent>
-          
-          <TabsContent value="sentenceFrames" className="m-0">
-             {/* Directly render the interactive component, finding the section data */}
-             {(() => {
-                 const sfSection = findSection('sentenceFrames') || findSection('grammar');
-                 return <SentenceFramesSection section={sfSection} />;
-             })()}
-          </TabsContent>
-          
-          <TabsContent value="discussion" className="m-0">
-            {/* Use our specialized DiscussionExtractor component */}
-            <DiscussionExtractor content={parsedContent} />
-          </TabsContent>
-          
-          <TabsContent value="speaking" className="m-0">
-            {/* Use our specialized DiscussionExtractor component with sectionType="speaking" */}
-            <DiscussionExtractor content={parsedContent} sectionType="speaking" />
-          </TabsContent>
-          
-          <TabsContent value="quiz" className="m-0">
-            <QuizExtractor content={parsedContent} />
-          </TabsContent>
-          
-          <TabsContent value="assessment" className="m-0">
-            <QuizExtractor content={parsedContent} sectionType="assessment" />
-          </TabsContent>
-          
-          <TabsContent value="cloze" className="m-0">
-            {parsedContent.cloze ? (
-              <InteractiveClozeSection
-                title="Fill in the Blanks"
-                text={parsedContent.cloze.text || ""}
-                wordBank={parsedContent.cloze.wordBank || []}
-              />
-            ) : (
-              <div className="p-6 text-center bg-gray-50 rounded-lg border border-gray-200">
-                <PenTool className="mx-auto h-12 w-12 text-gray-400 mb-3" />
-                <h3 className="text-lg font-medium text-gray-700 mb-2">No Fill-in-the-Blanks Exercise</h3>
-                <p className="text-gray-500 max-w-md mx-auto">This lesson doesn't include a cloze exercise. Use the AI to generate custom exercises for this lesson.</p>
-              </div>
-            )}
-          </TabsContent>
-          
-          <TabsContent value="sentenceUnscramble" className="m-0">
-            {parsedContent.sentenceUnscramble?.sentences?.length > 0 ? (
-              <SentenceUnscrambleSection
-                title="Sentence Unscramble"
-                sentences={parsedContent.sentenceUnscramble.sentences}
-              />
-            ) : (
-              <div className="p-6 text-center bg-gray-50 rounded-lg border border-gray-200">
-                <Shuffle className="mx-auto h-12 w-12 text-gray-400 mb-3" />
-                <h3 className="text-lg font-medium text-gray-700 mb-2">No Sentence Unscramble Exercise</h3>
-                <p className="text-gray-500 max-w-md mx-auto">This lesson doesn't include sentence unscramble activities. Use the AI to generate custom exercises for this lesson.</p>
-              </div>
-            )}
-          </TabsContent>
-          
-          <TabsContent value="notes" className="m-0">
-            <TeacherNotesSection />
-          </TabsContent>
+          {renderTree.map((item) => (
+            <TabsContent key={item.id} value={item.id} className="m-0">
+              {item.render}
+            </TabsContent>
+          ))}
         </div>
       </Tabs>
       
