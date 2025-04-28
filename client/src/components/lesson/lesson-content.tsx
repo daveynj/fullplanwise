@@ -1973,7 +1973,7 @@ export function LessonContent({ content }: LessonContentProps) {
       id: 'comprehension',
       label: 'Comprehension',
       icon: <CheckCircle className="h-5 w-5" />,
-      render: hasSectionType('comprehension') ? <ComprehensionSection /> : null
+      render: hasSectionType('comprehension') ? <ComprehensionExtractor content={parsedContent} /> : null
     },
     {
       id: 'sentenceFrames',
@@ -1986,6 +1986,18 @@ export function LessonContent({ content }: LessonContentProps) {
       label: 'Grammar',
       icon: <AlignLeft className="h-5 w-5" />,
       render: hasSectionType('grammar') ? <SentenceFramesSection section={findSection('grammar')} /> : null
+    },
+    {
+      id: 'cloze',
+      label: 'Fill in the Blanks',
+      icon: <Pencil className="h-5 w-5" />,
+      render: hasSectionType('cloze') ? <InteractiveClozeSection clozeData={parsedContent.cloze || findSection('cloze')} /> : null
+    },
+    {
+      id: 'sentenceUnscramble',
+      label: 'Sentence Unscramble',
+      icon: <Shuffle className="h-5 w-5" />,
+      render: hasSectionType('sentenceUnscramble') ? <SentenceUnscrambleSection data={parsedContent.sentenceUnscramble || findSection('sentenceUnscramble')} /> : null
     },
     {
       id: 'discussion',
