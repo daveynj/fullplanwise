@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Twitter, Share2 } from "lucide-react";
+import { Twitter, Share2, ArrowLeft } from "lucide-react";
+import { Link } from "wouter";
 
 export default function TwitterCardPreview() {
   const [url, setUrl] = useState(window.location.origin);
@@ -49,7 +50,14 @@ export default function TwitterCardPreview() {
 
   return (
     <div className="container mx-auto py-10 max-w-5xl">
-      <h1 className="text-3xl font-bold mb-6 text-center">Twitter Card Preview</h1>
+      <div className="flex items-center justify-between mb-6">
+        <Link href="/" className="flex items-center text-blue-600 hover:text-blue-800">
+          <ArrowLeft className="h-4 w-4 mr-1" />
+          Back to Home
+        </Link>
+        <h1 className="text-3xl font-bold text-center">Twitter Card Preview</h1>
+        <div className="w-24"></div> {/* For balance */}
+      </div>
       
       <Tabs defaultValue="preview">
         <TabsList className="grid grid-cols-2 w-[400px] mx-auto mb-6">
