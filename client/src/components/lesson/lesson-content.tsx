@@ -708,7 +708,7 @@ export function LessonContent({ content }: LessonContentProps) {
          return finalSectionTypes.includes(type);
       });
       // Add any remaining types not in displayOrder (like 'notes' or custom ones)
-      finalSectionTypes.forEach(type => {
+      finalSectionTypes.forEach((type: string) => {
          if (!orderedAvailableSections.includes(type)) {
              // Ensure notes is always last if present
              if (type === 'notes') return; 
@@ -929,7 +929,7 @@ export function LessonContent({ content }: LessonContentProps) {
   };
   
   // Helper function to find a section by type with error handling
-  const findSection = (type: string) => {
+  const findSection = (type: SectionType | string) => {
     try {
       if (Array.isArray(parsedContent.sections)) {
         // Find based on type, allowing for alternatives
@@ -1869,20 +1869,16 @@ export function LessonContent({ content }: LessonContentProps) {
         {/* <p className="text-xl font-bold text-gray-600 mb-4 pl-9"> ... </p> */}
         
 
+        {/* Section Header with SectionHeader component */}
+        <SectionHeader
+          icon={Lightbulb}
+          title="Overview & Warm-up"
+          description="Read each question below. Take 1-2 minutes per question to think about your answer and share it briefly."
+          color="blue"
+        />
+        
         {/* Warm-up Questions Card */}
         <Card className="bg-white shadow-sm border border-gray-200 rounded-lg overflow-hidden">
-          {/* Standardized CardHeader */}
-          <CardHeader className="bg-gray-50 border-b border-gray-200 p-4">
-            <div className="flex items-center gap-3">
-              <Lightbulb className="h-6 w-6 text-gray-500 flex-shrink-0" />
-              <div>
-                <CardTitle className="text-xl font-semibold text-gray-700">Overview & Warm-up</CardTitle>
-                <p className="text-gray-600 text-lg font-medium mt-1">
-                   Read each question below. Take 1-2 minutes per question to think about your answer and share it briefly.
-                </p>
-              </div>
-            </div>
-          </CardHeader>
           {/* Remove old CardHeader content if any */}
           {/* <CardHeader className="bg-gray-50 border-b border-gray-200 px-6 py-4"> ... </CardHeader> */}
           
@@ -1931,18 +1927,13 @@ export function LessonContent({ content }: LessonContentProps) {
     
     return (
       <div className="space-y-6">
-        {/* Notes Header Card */}
-        <Card className="border-blue-200 bg-blue-50">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-blue-700">
-              <GraduationCap className="h-5 w-5" />
-              Teacher Notes
-            </CardTitle>
-            <CardDescription>
-              Teaching guidance, suggestions, and additional resources
-            </CardDescription>
-          </CardHeader>
-        </Card>
+        {/* Notes Header using SectionHeader */}
+        <SectionHeader
+          icon={GraduationCap}
+          title="Teacher Notes"
+          description="Teaching guidance, suggestions, and additional resources"
+          color="blue"
+        />
         
         {noteKeys.length > 0 ? (
           <Card>
@@ -2108,9 +2099,11 @@ export function LessonContent({ content }: LessonContentProps) {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-4 relative">
         <TabsList className="flex overflow-x-auto whitespace-nowrap justify-start p-1 h-auto rounded-lg bg-gray-100 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           {availableSections.map((section) => {
-            const details = sectionDetails[section.type as SectionType] || {
+            // Handle sections as strings and provide fallback details
+            const sectionType = section as string;
+            const details = sectionDetails[sectionType as SectionType] || {
                 icon: BookOpen,
-              label: section.charAt(0).toUpperCase() + section.slice(1),
+                label: sectionType.charAt(0).toUpperCase() + sectionType.slice(1),
                 color: "bg-gray-100",
                 textColor: "text-gray-700",
                 description: "Section content"
