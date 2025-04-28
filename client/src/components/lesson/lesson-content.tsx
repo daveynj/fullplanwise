@@ -54,12 +54,9 @@ import { SentenceUnscrambleSection } from './sentence-unscramble-section';
 import { VocabularyCard, VocabularyWord } from "./warm-up/vocabulary-card";
 // Pronunciation section functionality moved to warm-up
 // import { PronunciationSection } from "./pronunciation-section";
-// These sections would need to be implemented if required
-// For now using placeholder components
-const ComprehensionSection = (props: any) => <div className="p-4">Comprehension Section</div>;
-const QuizSection = (props: any) => <div className="p-4">Quiz Section</div>;
-const TeacherNotesSection = (props: any) => <div className="p-4">Teacher Notes</div>;
-const OverviewSection = (props: any) => <div className="p-4">Overview Section</div>;
+// Import the extractors
+import { ComprehensionExtractor } from './comprehension-extractor';
+import { QuizExtractor } from './quiz-extractor';
 import { Badge } from "@/components/ui/badge";
 import { CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { cn, extractDiscussionQuestions, extractQuizQuestions, extractComprehensionQuestions } from "@/lib/utils";
@@ -1976,7 +1973,7 @@ export function LessonContent({ content }: LessonContentProps) {
       id: 'comprehension',
       label: 'Comprehension',
       icon: <CheckCircle className="h-5 w-5" />,
-      render: hasSectionType('comprehension') ? <ComprehensionSection /> : null
+      render: hasSectionType('comprehension') ? <ComprehensionExtractor content={parsedContent} /> : null
     },
     {
       id: 'sentenceFrames',
@@ -1993,7 +1990,7 @@ export function LessonContent({ content }: LessonContentProps) {
     {
       id: 'discussion',
       label: 'Discussion',
-      icon: <MessageCircle className="h-5 w-5" />,
+      icon: <MessageSquare className="h-5 w-5" />,
       render: hasSectionType('discussion') ? <DiscussionSection section={findSection('discussion')} /> : null
     },
     {
@@ -2001,6 +1998,12 @@ export function LessonContent({ content }: LessonContentProps) {
       label: 'Pronunciation',
       icon: <Volume2 className="h-5 w-5" />,
       render: hasSectionType('pronunciation') ? <div className="p-4">Pronunciation practice integrated in vocabulary warm-up</div> : null
+    },
+    {
+      id: 'quiz',
+      label: 'Quiz',
+      icon: <HelpCircle className="h-5 w-5" />,
+      render: hasSectionType('quiz') ? <QuizExtractor content={parsedContent} /> : null
     },
     {
       id: 'notes',
