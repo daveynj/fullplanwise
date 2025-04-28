@@ -1135,19 +1135,14 @@ export function LessonContent({ content }: LessonContentProps) {
           </div>
           
           {/* Main Word Card */}
+          <SectionHeader
+            icon={Flame}
+            title="Vocab Introduction"
+            description="Review the vocabulary word: check pronunciation, definition, and examples. Ask questions if needed."
+            color="amber"
+          />
+          
           <Card className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden mb-4">
-             {/* Standardized CardHeader */}
-            <CardHeader className="bg-amber-50 border-b border-amber-200 p-4">
-              <div className="flex items-center gap-3">
-                <Flame className="h-6 w-6 text-amber-600 flex-shrink-0" />
-                <div>
-                  <CardTitle className="text-xl font-semibold text-amber-800">Vocab Introduction</CardTitle>
-                  <p className="text-gray-600 text-lg font-medium mt-1">
-                    Review the vocabulary word: check pronunciation, definition, and examples. Ask questions if needed.
-                  </p>
-                </div>
-              </div>
-            </CardHeader>
             
             {/* CardContent now contains the flex row for image + details */}
             <CardContent className="p-0"> {/* Remove padding here, handled inside */}
