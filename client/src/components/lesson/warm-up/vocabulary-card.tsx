@@ -215,58 +215,15 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
             </div>
           )}
           
-          {/* Right side: Pronunciation and Definition - split into two sections */}
+          {/* Right side: Definition only (pronunciation removed) */}
           <div className="flex flex-col gap-3">
-            {/* Pronunciation Section - Styled EXACTLY like the reference image */}
-            <div className="bg-blue-50 rounded-md p-4 h-[85px] flex-1 border-2 border-blue-200">
-              <div className="flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" 
-                     stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
-                     className="h-5 w-5 text-blue-700 mr-2">
-                  <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"></path>
-                  <path d="M19 10v1a7 7 0 0 1-14 0v-1M12 19v4"></path>
-                  <line x1="8" y1="23" x2="16" y2="23"></line>
-                </svg>
-                <span className="text-blue-700 font-semibold">Pronunciation</span>
-              </div>
-              
-              {/* PART 1: The phonetic pronunciation like BLAHK */}
-              <div className="text-center mt-2">
-                <div className="text-xl font-medium text-blue-800">
-                  {wordData.pronunciation.toUpperCase()}
-                </div>
-                
-                {/* PART 2: Syllable boxes with appropriate emphasis */}
-                <div className="flex justify-center gap-2 mt-2">
-                  {wordData.syllables && wordData.syllables.length > 0 ? (
-                    wordData.syllables.map((syllable, idx) => (
-                      <div 
-                        key={idx}
-                        className={`py-1 px-2 rounded-md ${
-                          idx === wordData.emphasisIndex 
-                            ? 'bg-blue-600 text-white' 
-                            : 'bg-white text-gray-800 border border-blue-200'
-                        } flex items-center justify-center text-xs font-medium`}
-                      >
-                        {syllable.toUpperCase()}
-                      </div>
-                    ))
-                  ) : (
-                    <div className="py-1 px-2 rounded-md bg-blue-600 text-white flex items-center justify-center text-xs font-medium">
-                      {word.word.toUpperCase()}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-            
-            {/* Definition Section - Matches the reference image */}
-            <div className="bg-white rounded-md p-4 h-[85px] flex-1 border-2 border-blue-200">
-              <div className="flex items-center">
+            {/* Definition Section - Full height */}
+            <div className="bg-white rounded-md p-4 border-2 border-blue-200 h-full">
+              <div className="flex items-center mb-2">
                 <BookOpen className="h-5 w-5 text-blue-700 mr-2" />
                 <span className="text-blue-700 font-semibold">Definition</span>
               </div>
-              <p className="text-sm font-medium mt-2 line-clamp-2">
+              <p className="text-base font-medium mt-2">
                 {word.definition || `A definition for ${word.word}`}
               </p>
             </div>
