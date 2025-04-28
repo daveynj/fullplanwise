@@ -13,6 +13,7 @@ import {
   GraduationCap,
   Image as ImageIcon
 } from "lucide-react";
+import { SectionHeader } from "./shared/section-header";
 
 interface DiscussionQuestion {
   question: string;
@@ -269,15 +270,12 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
   return (
     <div className="space-y-6">
       {/* Main section header */}
-      <div className="bg-indigo-50 rounded-lg p-4 flex items-center gap-3">
-        <MessageCircle className="h-6 w-6 text-indigo-600" />
-        <div>
-          <h2 className="text-indigo-600 font-medium text-xl">{sectionTitle}</h2>
-          <p className="text-gray-600 text-lg font-medium mt-1">
-            Think about the discussion question(s) below and prepare your answer.
-          </p>
-        </div>
-      </div>
+      <SectionHeader
+        icon={<MessageCircle className="h-6 w-6" />}
+        title={sectionTitle}
+        description="Think about the discussion question(s) below and prepare your answer."
+        color="indigo"
+      />
       
       <Card>
         <CardHeader className="bg-indigo-50">
