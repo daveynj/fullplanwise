@@ -96,24 +96,28 @@ export function SectionHeader({
   const renderIcon = () => {
     if (React.isValidElement(icon)) {
       // If it's already a React element, return it
-      return icon;
+      return React.cloneElement(icon as React.ReactElement, {
+        className: `h-6 w-6 ${colors.icon} flex-shrink-0`
+      });
     } else if (typeof icon === 'function') {
       // If it's a Lucide icon component
       const IconComponent = icon as LucideIcon;
-      return <IconComponent className={`h-7 w-7 ${colors.icon} flex-shrink-0`} />;
+      return <IconComponent className={`h-6 w-6 ${colors.icon} flex-shrink-0`} />;
     }
     return null;
   };
   
   return (
-    <div className={`${className}`}>
+    <div className={`mb-5 ${className}`}>
       {/* Main header */}
       <div className={`${colors.bg} rounded-lg p-4 flex items-center gap-3 border ${colors.border} shadow-sm`}>
-        {renderIcon()}
+        <div className="flex items-center justify-center w-10 h-10 rounded-full bg-white shadow-sm border border-gray-100">
+          {renderIcon()}
+        </div>
         <div className="flex-1">
-          <h2 className={`${colors.text} font-semibold text-xl`}>{title}</h2>
+          <h2 className={`${colors.text} font-semibold text-xl leading-tight`}>{title}</h2>
           {description && (
-            <p className="text-gray-600 text-lg font-medium mt-1">
+            <p className="text-gray-600 mt-1 text-base">
               {description}
             </p>
           )}
@@ -132,7 +136,7 @@ export function SectionHeader({
             <Info className={`h-5 w-5 ${colors.icon} flex-shrink-0 mt-0.5`} />
             <div className="text-gray-700">
               {typeof instructions === 'string' ? (
-                <p>{instructions}</p>
+                <p className="text-base">{instructions}</p>
               ) : (
                 instructions
               )}

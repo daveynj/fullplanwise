@@ -3,14 +3,11 @@ import {
   BookOpen,
   ChevronLeft,
   ChevronRight,
-  Bookmark as BookmarkIcon,
-  Clock as ClockIcon,
-  Info as InfoIcon,
-  Sparkles as SparklesIcon,
-  GraduationCap
+  Clock,
+  SparklesIcon,
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SectionHeader } from "./shared/section-header";
+import { SectionCard } from "./shared/section-card";
 
 interface ReadingSectionProps {
   section?: any;
@@ -38,27 +35,28 @@ export function ReadingSection({ section }: ReadingSectionProps) {
     : 0;
   
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Section header with SectionHeader component */}
       <SectionHeader
         icon={BookOpen}
-        title="Reading"
+        title={section?.title || "Reading"}
         description="Read the paragraph(s) below. Use the arrows or dots to navigate between paragraphs."
         color="blue"
       />
       
-      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-        {/* Inner Reading header */}
-        <div className="bg-blue-50 p-4 flex items-center justify-between">
+      <SectionCard
+        color="blue"
+        noPadding
+        headerRight={
           <div className="flex items-center gap-2">
-            <BookOpen className="h-5 w-5 text-blue-600" />
+            <Clock className="h-4 w-4 text-blue-500" />
+            <span className="text-sm text-gray-500">15-20 minutes</span>
           </div>
-          <span className="text-sm text-gray-500">Estimated time: 15-20 minutes</span>
-        </div>
-        
+        }
+      >
         {/* Progress indicator */}
         {sectionParagraphs.length > 0 && (
-          <div className="px-6 py-4 flex items-center justify-between bg-blue-50">
+          <div className="px-6 py-4 flex items-center justify-between bg-blue-50 border-t border-blue-100">
             <div className="flex items-center text-blue-600">
               <SparklesIcon className="h-5 w-5 mr-2" />
               <span className="text-base font-medium">Paragraph {activeParagraph + 1} of {sectionParagraphs.length}</span>
@@ -76,7 +74,7 @@ export function ReadingSection({ section }: ReadingSectionProps) {
         )}
         
         {/* Reading content */}
-        <div className="p-8 border-t">
+        <div className="p-8 border-t border-blue-100">
           {sectionParagraphs.length > 0 ? (
             <div className="leading-relaxed text-xl font-bold text-gray-900 tracking-wide max-w-[1600px] mx-auto">
               {sectionParagraphs[activeParagraph]}
@@ -90,7 +88,7 @@ export function ReadingSection({ section }: ReadingSectionProps) {
         
         {/* Navigation */}
         {sectionParagraphs.length > 1 && (
-          <div className="p-6 flex justify-between border-t">
+          <div className="p-6 flex justify-between border-t border-blue-100">
             <button
               onClick={() => setActiveParagraph(prev => Math.max(0, prev - 1))}
               disabled={activeParagraph === 0}
@@ -124,9 +122,7 @@ export function ReadingSection({ section }: ReadingSectionProps) {
             </button>
           </div>
         )}
-      </div>
-      
-      {/* Teacher notes have been moved to the notes tab */}
+      </SectionCard>
     </div>
   );
 }

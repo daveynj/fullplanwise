@@ -2,7 +2,6 @@ import React from "react";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -258,22 +257,24 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
         questions = extractedQuestions;
       }
     }
+ 
+    // Update section title if it's the speaking section
+    if (section.type === 'speaking') {
+        sectionTitle = section.title || "Speaking Activity";
+    }
   } catch (error) {
     console.error("Error processing discussion questions:", error);
   }
-
-  // Update section title if it's the speaking section
-  if (section.type === 'speaking') {
-      sectionTitle = section.title || "Speaking Activity";
-  }
+  
+  const description = section.description || "Think about the discussion question(s) below and prepare your answer.";
 
   return (
-    <div className="space-y-6">
-      {/* Main section header */}
+    <div className="space-y-4">
+      {/* Main section header with consistent styling */}
       <SectionHeader
         icon={MessageCircle}
         title={sectionTitle}
-        description="Think about the discussion question(s) below and prepare your answer."
+        description={description}
         color="indigo"
       />
       

@@ -240,72 +240,61 @@ export function SentenceUnscrambleSection({
       setIsChecked(false);
     }
   };
-  
-  // Calculate progress percentage
-  const progressPercentage = ((currentIndex + 1) / sentenceItems.length) * 100;
-  
+
   return (
-    <div className="sentence-unscramble space-y-6">
+    <div className="space-y-4">
       <SectionHeader
         icon={Shuffle}
         title={title}
-        description="Drag and drop the words to rearrange them into a grammatically correct sentence."
+        description="Drag and drop the words to form a correct sentence."
         color="cyan"
       />
       
-      <Card className="mb-6 border-l-4 border-l-cyan-400 shadow-md overflow-hidden">
-        <CardHeader className="pb-3 bg-gradient-to-r from-cyan-50 to-white">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Shuffle className="h-5 w-5 text-cyan-500" />
-              <span className="font-semibold">Progress</span>
+      <Card className="overflow-hidden border-cyan-200">
+        <CardHeader className="bg-cyan-50 border-b border-cyan-100 pb-3">
+          <div className="flex justify-between items-center">
+            <CardTitle className="text-lg font-medium text-cyan-700 flex items-center gap-2">
+              <Badge variant="outline" className="bg-cyan-100 border-cyan-200">
+                {currentIndex + 1} / {sentenceItems.length}
+              </Badge>
+              <span>Sentence {currentIndex + 1}</span>
+            </CardTitle>
+            <div className="flex gap-1">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={prevSentence} 
+                disabled={currentIndex === 0}
+                className="text-cyan-700 hover:text-cyan-800 hover:bg-cyan-100"
+              >
+                Previous
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={nextSentence} 
+                disabled={currentIndex === sentenceItems.length - 1}
+                className="text-cyan-700 hover:text-cyan-800 hover:bg-cyan-100"
+              >
+                Next
+              </Button>
             </div>
-            <Badge 
-              variant="outline" 
-              className="bg-cyan-100 text-cyan-600 border-cyan-200"
-            >
-              {currentIndex + 1} of {sentenceItems.length}
-            </Badge>
-          </div>
-          
-          {/* Progress bar */}
-          <div className="w-full h-2 bg-gray-100 rounded-full mt-2 overflow-hidden">
-            <div 
-              className="h-full bg-cyan-400 transition-all duration-300 ease-in-out"
-              style={{ width: `${progressPercentage}%` }}
-            />
           </div>
         </CardHeader>
-        
-        <CardContent className="pt-6">
-          {/* Instructions */}
-          <div className="mb-6 p-4 bg-cyan-50 border border-cyan-100 rounded-md text-cyan-800">
-            <div className="flex gap-2">
-              <Info className="h-5 w-5 text-cyan-600 flex-shrink-0 mt-0.5" />
-              <p className="text-sm">
-                Drag and drop the words to rearrange them into a grammatically correct sentence.
-              </p>
-            </div>
-          </div>
-          
-          {/* Word tiles with drag and drop */}
-          <div className="mb-6 p-4 bg-white rounded-md border border-cyan-100">
-            <DndContext 
+        <CardContent className="p-6">
+          <div className="flex flex-col items-center space-y-8">
+            {/* Draggable words area */}
+            <DndContext
               sensors={sensors}
               collisionDetection={closestCenter}
               onDragStart={handleDragStart}
               onDragEnd={handleDragEnd}
             >
-              <SortableContext 
-                items={currentItem.currentOrder.map((_, index) => index)}
-                strategy={horizontalListSortingStrategy}
-              >
-                <div className="flex flex-wrap justify-center gap-2 min-h-[60px] relative">
-                  {/* Drop indicator line */}
-                  {activeId !== null && (
-                    <div className="absolute inset-0 border-2 border-dashed border-cyan-300 rounded-md pointer-events-none" />
-                  )}
-                  
+              <div className="flex flex-wrap justify-center items-center min-h-[100px] p-4 rounded-lg border-2 border-dashed border-cyan-200 bg-cyan-50/50 w-full">
+                <SortableContext 
+                  items={Array.from({ length: currentItem.currentOrder.length }, (_, index) => index)}
+                  strategy={horizontalListSortingStrategy}
+                >
                   {currentItem.currentOrder.map((wordIndex, index) => (
                     <SortableWord
                       key={index}
@@ -315,107 +304,104 @@ export function SentenceUnscrambleSection({
                       isCorrect={currentItem.isCorrect}
                     />
                   ))}
-                </div>
-              </SortableContext>
-              
-              {/* Drag overlay */}
-              <DragOverlay adjustScale={true} zIndex={100}>
-                {activeId !== null && (
-                  <WordDisplay 
-                    word={currentItem.words[currentItem.currentOrder[activeId]]}
-                    isChecked={isChecked}
-                    isCorrect={currentItem.isCorrect}
-                  />
-                )}
-              </DragOverlay>
+                </SortableContext>
+                
+                {/* Drag overlay */}
+                <DragOverlay adjustScale={true} zIndex={100}>
+                  {activeId !== null && (
+                    <WordDisplay 
+                      word={currentItem.words[currentItem.currentOrder[activeId as number]]}
+                      isChecked={isChecked}
+                      isCorrect={currentItem.isCorrect}
+                    />
+                  )}
+                </DragOverlay>
+              </div>
             </DndContext>
-          </div>
-          
-          {/* Current sentence preview */}
-          <div className="mb-6 p-4 bg-white rounded-md border border-cyan-200 text-lg text-center font-medium">
-            {currentItem.currentOrder.map(idx => currentItem.words[idx]).join(' ')}
-          </div>
-          
-          {/* Feedback */}
-          {isChecked && (
-            <Alert 
-              className={`mb-6 transition-all duration-300 ${
-                currentItem.isCorrect 
-                  ? "bg-green-50 border-green-200 text-green-800"
-                  : "bg-red-50 border-red-200 text-red-800"
-              }`}
-            >
-              <AlertDescription className="flex items-center gap-3">
-                {currentItem.isCorrect ? (
-                  <>
-                    <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
-                    <span>Correct! Your sentence is properly formed.</span>
-                  </>
-                ) : (
-                  <>
-                    <AlertCircle className="h-5 w-5 text-red-500 flex-shrink-0" />
-                    <div>
-                      <p className="font-medium">Not quite right.</p> 
-                      <p className="text-sm mt-1">The correct sentence should be:</p>
-                      <p className="mt-1 p-2 bg-white/50 rounded border border-red-100 text-gray-700">
-                        "{currentItem.correctSentence}"
-                      </p>
-                    </div>
-                  </>
-                )}
-              </AlertDescription>
-            </Alert>
-          )}
-          
-          {/* Teacher notes if provided */}
-          {teacherNotes && (
-            <div className="mt-6 p-4 border-l-4 border-l-cyan-200 bg-cyan-50/30">
-              <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2">
-                Teacher Notes:
-              </h4>
-              <p className="text-gray-700 text-sm">{teacherNotes}</p>
+            
+            {/* Feedback area */}
+            {isChecked && (
+              <Alert
+                className={`${
+                  currentItem.isCorrect
+                    ? "bg-green-50 border-green-200 text-green-800"
+                    : "bg-red-50 border-red-200 text-red-800"
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  {currentItem.isCorrect ? (
+                    <CheckCircle className="h-5 w-5 text-green-500" />
+                  ) : (
+                    <AlertCircle className="h-5 w-5 text-red-500" />
+                  )}
+                  <AlertDescription className="font-medium">
+                    {currentItem.isCorrect
+                      ? "Correct! Well done."
+                      : "Not quite right. Try again."}
+                  </AlertDescription>
+                </div>
+              </Alert>
+            )}
+            
+            {/* Correct answer display (when wrong) */}
+            {isChecked && !currentItem.isCorrect && (
+              <div className="w-full p-4 bg-green-50 border border-green-200 rounded-md">
+                <p className="text-green-700 font-medium mb-2 flex items-center gap-2">
+                  <Info className="h-4 w-4" />
+                  Correct sentence:
+                </p>
+                <p className="text-gray-800 text-xl font-bold">
+                  {currentItem.correctSentence}
+                </p>
+              </div>
+            )}
+            
+            {/* Action buttons */}
+            <div className="flex flex-wrap justify-center gap-3 w-full">
+              <Button
+                onClick={shuffleSentence}
+                variant="outline"
+                className="border-cyan-200 text-cyan-700 hover:bg-cyan-50"
+              >
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Shuffle
+              </Button>
+              
+              <Button
+                onClick={checkSentence}
+                variant="default"
+                className="bg-cyan-600 hover:bg-cyan-700"
+              >
+                <CheckCircle className="h-4 w-4 mr-2" />
+                Check Answer
+              </Button>
             </div>
-          )}
+          </div>
         </CardContent>
         
-        <CardFooter className="flex justify-between bg-gray-50 border-t p-4">
-          <div className="flex gap-2">
-            <Button 
-              variant="outline" 
-              onClick={shuffleSentence}
-              className="border-cyan-200 text-cyan-700 hover:bg-cyan-50"
-            >
-              <RefreshCw className="h-4 w-4 mr-2" />
-              Shuffle
-            </Button>
-            <Button 
-              onClick={checkSentence}
-              className="bg-cyan-600 hover:bg-cyan-700"
-            >
-              Check Sentence
-            </Button>
-          </div>
-          
-          <div className="flex gap-2">
-            <Button 
-              variant="outline" 
-              onClick={prevSentence}
-              disabled={currentIndex === 0}
-              className={currentIndex === 0 ? "opacity-50" : "border-gray-200 text-gray-700"}
-            >
-              Previous
-            </Button>
-            <Button 
-              variant="outline" 
-              onClick={nextSentence}
-              disabled={currentIndex === sentenceItems.length - 1}
-              className={currentIndex === sentenceItems.length - 1 ? "opacity-50" : "border-gray-200 text-gray-700"}
-            >
-              Next
-            </Button>
-          </div>
-        </CardFooter>
+        {currentIndex === sentenceItems.length - 1 && (
+          <CardFooter className="bg-cyan-50/50 border-t border-cyan-100 p-4">
+            <p className="text-green-700 font-medium w-full text-center">
+              Great job! You've completed all the sentences.
+            </p>
+          </CardFooter>
+        )}
       </Card>
+      
+      {/* Teacher notes */}
+      {teacherNotes && (
+        <Card className="border-gray-200">
+          <CardHeader className="bg-gray-50 border-b border-gray-200 py-3">
+            <CardTitle className="text-sm font-medium text-gray-700 flex items-center gap-2">
+              <Info className="h-4 w-4" />
+              Teacher Notes
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-4">
+            <p className="text-gray-700">{teacherNotes}</p>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 } 
