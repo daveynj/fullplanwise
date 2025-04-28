@@ -2002,8 +2002,25 @@ export function LessonContent({ content }: LessonContentProps) {
       render: (
         (() => {
           const sentenceFramesData = findSection('sentenceFrames');
-          if (!sentenceFramesData) return null;
-          return <SentenceFramesSection section={sentenceFramesData} />;
+          console.log("SentenceFrames data found:", sentenceFramesData);
+          if (!sentenceFramesData) {
+            console.log("No sentenceFrames data found");
+            return <div className="p-4">Sentence frames data not available</div>;
+          }
+          
+          // Create a properly formatted section object if needed
+          const formattedSection = {
+            type: 'sentenceFrames',
+            title: sentenceFramesData.title || 'Sentence Frames',
+            frames: Array.isArray(sentenceFramesData.frames) 
+              ? sentenceFramesData.frames 
+              : sentenceFramesData.content && typeof sentenceFramesData.content === 'object'
+                ? [sentenceFramesData.content]
+                : []
+          };
+          
+          console.log("Formatted sentence frames section:", formattedSection);
+          return <SentenceFramesSection section={formattedSection} />;
         })()
       )
     },
@@ -2014,8 +2031,25 @@ export function LessonContent({ content }: LessonContentProps) {
       render: (
         (() => {
           const grammarData = findSection('grammar');
-          if (!grammarData) return null;
-          return <SentenceFramesSection section={grammarData} />;
+          console.log("Grammar data found:", grammarData);
+          if (!grammarData) {
+            console.log("No grammar data found");
+            return <div className="p-4">Grammar data not available</div>;
+          }
+          
+          // Create a properly formatted section object if needed
+          const formattedSection = {
+            type: 'grammar',
+            title: grammarData.title || 'Grammar',
+            frames: Array.isArray(grammarData.frames) 
+              ? grammarData.frames 
+              : grammarData.content && typeof grammarData.content === 'object'
+                ? [grammarData.content]
+                : []
+          };
+          
+          console.log("Formatted grammar section:", formattedSection);
+          return <SentenceFramesSection section={formattedSection} />;
         })()
       )
     },
