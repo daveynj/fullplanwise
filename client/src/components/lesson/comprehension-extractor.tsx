@@ -131,7 +131,7 @@ export const ComprehensionExtractor = ({ content }: ComprehensionExtractorProps)
       <SectionHeader
         title="Comprehension"
         description="Check understanding with targeted questions"
-        icon={<HelpCircle className="h-6 w-6" />}
+        icon={HelpCircle}
         color="purple"
       />
       

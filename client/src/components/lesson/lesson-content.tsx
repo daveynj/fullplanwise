@@ -42,7 +42,7 @@ import { DiscussionSection } from "./discussion-section";
 import { DiscussionExtractor } from "./discussion-extractor";
 import { ComprehensionExtractor } from "./comprehension-extractor";
 import { QuizExtractor } from "./quiz-extractor";
-import { AudioPlayer } from "@/components/audio-player";
+import { AudioPlayer } from "../audio-player";
 import { SectionHeader } from "./shared/section-header";
 // Define a more specific pronunciation object type to handle different API formats
 interface PronunciationWordData { // Define specific type for pronunciation words
@@ -130,19 +130,14 @@ const PronunciationSection = ({ sectionData }: PronunciationSectionProps) => {
   if (!currentWord) {
     return (
       <div className="space-y-6">
-        <Card className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
-           <CardHeader className="bg-green-50 border-b border-green-200 p-4">
-             <div className="flex items-center gap-3">
-               <Mic className="h-6 w-6 text-green-600 flex-shrink-0" />
-               <div>
-                 <CardTitle className="text-xl font-semibold text-green-800">Pronunciation Practice</CardTitle>
-                 <p className="text-gray-600 text-lg font-medium mt-1">
-                   Listen, record yourself, and compare. Focus on the sounds.
-                 </p>
-               </div>
-             </div>
-           </CardHeader>
-           <CardContent className="p-6">
+        <SectionHeader
+          icon={Mic}
+          title="Pronunciation Practice"
+          description="Listen, record yourself, and compare. Focus on the sounds."
+          color="green"
+        />
+        <Card>
+          <CardContent className="p-6">
             <div className="text-gray-500">No pronunciation words available for this lesson.</div>
           </CardContent>
         </Card>
@@ -160,20 +155,15 @@ const PronunciationSection = ({ sectionData }: PronunciationSectionProps) => {
 
   return (
     <div className="space-y-6">
+      <SectionHeader
+        icon={Mic}
+        title="Pronunciation Practice"
+        description="Listen, record yourself, and compare. Focus on the sounds."
+        color="green"
+      />
+      
       {/* Main Pronunciation Practice Card */}
       <Card className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
-        {/* Standardized CardHeader */}
-        <CardHeader className="bg-green-50 border-b border-green-200 p-4">
-          <div className="flex items-center gap-3">
-            <Mic className="h-6 w-6 text-green-600 flex-shrink-0" />
-            <div>
-              <CardTitle className="text-xl font-semibold text-green-800">Pronunciation Practice</CardTitle>
-              <p className="text-gray-600 text-lg font-medium mt-1">
-                Listen, record yourself, and compare. Focus on the sounds.
-              </p>
-            </div>
-          </div>
-        </CardHeader>
 
         <CardContent className="p-6">
           {/* Word Navigation */}
