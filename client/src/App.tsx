@@ -56,9 +56,9 @@ function App() {
       <AuthProvider>
         {/* Twitter Card for social sharing */}
         <TwitterCard 
-          title="PLAN WISE ESL | AI-Powered Lesson Generator for ESL Teachers"
-          description="Create complete CEFR-aligned ESL lessons in just 3 minutes. Save hours on lesson planning and focus on teaching your online ESL students effectively."
-          image="/twitter-card-image-accurate.svg"
+          title="Instant ESL Lessons. Smarter, Faster."
+          description="Planwise generates full ESL lessons with AI — in seconds."
+          image="/twitter-card-image-final.png"
         />
         <Router />
         <Toaster />
