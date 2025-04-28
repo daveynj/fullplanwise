@@ -430,15 +430,7 @@ export function InteractiveClozeSection({
             </Alert>
           )}
           
-          {/* Teacher notes if provided */}
-          {teacherNotes && (
-            <div className="mt-6 p-4 border-l-4 border-l-blue-200 bg-blue-50/30">
-              <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2">
-                Teacher Notes:
-              </h4>
-              <p className="text-gray-700 text-sm">{teacherNotes}</p>
-            </div>
-          )}
+          {/* Teacher notes removed as requested */}
         </CardContent>
         
         <CardFooter className="flex justify-between bg-gray-50 border-t p-4">

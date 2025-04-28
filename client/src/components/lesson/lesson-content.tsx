@@ -2100,7 +2100,6 @@ export function LessonContent({ content }: LessonContentProps) {
             title={clozeData.title || "Fill in the Blanks"} 
             text={clozeData.text || ""} 
             wordBank={clozeData.wordBank || []} 
-            teacherNotes={clozeData.teacherNotes || ""} 
           />;
         })()
       )
