@@ -1009,22 +1009,34 @@ export function LessonContent({ content }: LessonContentProps) {
                     <span className="text-blue-700 font-medium text-lg">Pronunciation</span>
                   </div>
                   <div className="text-center">
-                    {/* PART 1: Syllable breakdown with hyphenation - EXACT match to reference image */}
+                    {/* PART 1: Syllable breakdown with hyphenation - exactly like reference image */}
                     <div className="text-2xl font-semibold text-blue-800 mb-5 text-center">
-                      KAIR-ak-ter
+                      {currentWord?.syllables && Array.isArray(currentWord.syllables) 
+                        ? currentWord.syllables.map((s, i) => i === currentWord.stressIndex ? s.toUpperCase() : s.toLowerCase()).join('-')
+                        : currentWord.word?.toUpperCase()}
                     </div>
                     
-                    {/* PART 2: Syllable boxes with middle one highlighted - EXACT match to reference image */}
+                    {/* PART 2: Syllable boxes with stressed one highlighted - exactly like reference image */}
                     <div className="flex justify-center space-x-2">
-                      <div className="px-5 py-2 bg-white border border-gray-200 text-gray-800 rounded-md flex items-center justify-center text-lg">
-                        char
-                      </div>
-                      <div className="px-5 py-2 bg-blue-600 text-white font-bold rounded-md flex items-center justify-center text-lg">
-                        ac
-                      </div>
-                      <div className="px-5 py-2 bg-white border border-gray-200 text-gray-800 rounded-md flex items-center justify-center text-lg">
-                        ter
-                      </div>
+                      {currentWord?.syllables && Array.isArray(currentWord.syllables) 
+                        ? currentWord.syllables.map((syllable, idx) => (
+                            <div 
+                              key={idx}
+                              className={`px-5 py-2 ${
+                                idx === currentWord.stressIndex 
+                                  ? 'bg-blue-600 text-white font-bold' 
+                                  : 'bg-white border border-gray-200 text-gray-800'
+                              } rounded-md flex items-center justify-center text-lg`}
+                            >
+                              {syllable.toLowerCase()}
+                            </div>
+                          ))
+                        : (
+                            <div className="px-5 py-2 bg-blue-600 text-white font-bold rounded-md flex items-center justify-center text-lg">
+                              {currentWord?.word?.toLowerCase() || ''}
+                            </div>
+                          )
+                      }
                     </div>
                   </div>
                 </div>
