@@ -115,44 +115,44 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
           </div>
         </div>
         
-        {/* Pronunciation Section - Just like the reference image */}
-        <div className="bg-blue-50 p-3">
-          <div className="flex items-center mb-2">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" 
+        {/* Pronunciation Section - Styled EXACTLY like the reference image */}
+        <div className="bg-blue-50 rounded-md p-4">
+          <div className="flex items-center mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" 
                  stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
-                 className="text-blue-700 mr-2">
+                 className="h-6 w-6 text-blue-700 mr-2">
               <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"></path>
               <path d="M19 10v1a7 7 0 0 1-14 0v-1M12 19v4"></path>
               <line x1="8" y1="23" x2="16" y2="23"></line>
             </svg>
-            <span className="text-blue-700 font-medium text-lg">Pronunciation</span>
+            <span className="text-blue-700 font-semibold text-xl">Pronunciation</span>
           </div>
           
+          {/* KAIR-ak-ter format exactly like reference image */}
           <div className="text-center">
-            {/* PART 1: Syllable breakdown with hyphenation - dynamic data */}
-            <div className="text-2xl font-semibold text-blue-800 mb-5 text-center">
+            <div className="text-2xl font-semibold text-indigo-900 tracking-wide mb-4">
               {wordData.syllables && wordData.syllables.length > 0
                 ? wordData.syllables.map((s, i) => i === wordData.emphasisIndex ? s.toUpperCase() : s.toLowerCase()).join('-')
                 : word.word?.toUpperCase()}
             </div>
             
-            {/* PART 2: Syllable boxes with stressed one highlighted - dynamic data */}
-            <div className="flex justify-center space-x-2">
+            {/* Syllable boxes - exactly like the reference image */}
+            <div className="flex justify-center gap-2">
               {wordData.syllables && wordData.syllables.length > 0
                 ? wordData.syllables.map((syllable, idx) => (
                     <div 
                       key={idx}
-                      className={`px-5 py-2 ${
+                      className={`min-w-[80px] py-2 px-4 rounded-md ${
                         idx === wordData.emphasisIndex 
-                          ? 'bg-blue-600 text-white font-bold' 
-                          : 'bg-white border border-gray-200 text-gray-800'
-                      } rounded-md flex items-center justify-center text-lg`}
+                          ? 'bg-blue-600 text-white font-medium' 
+                          : 'bg-white text-gray-800 font-medium'
+                      } flex items-center justify-center text-lg`}
                     >
                       {syllable.toLowerCase()}
                     </div>
                   ))
                 : (
-                    <div className="px-5 py-2 bg-blue-600 text-white font-bold rounded-md flex items-center justify-center text-lg">
+                    <div className="min-w-[80px] py-2 px-4 rounded-md bg-blue-600 text-white font-medium flex items-center justify-center text-lg">
                       {word.word?.toLowerCase() || ''}
                     </div>
                   )
