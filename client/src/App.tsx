@@ -56,9 +56,9 @@ function App() {
       <AuthProvider>
         {/* Twitter Card for social sharing */}
         <TwitterCard 
-          title="Instant ESL Lessons. Smarter, Faster."
-          description="Planwise generates full ESL lessons with AI — in seconds."
-          image="/twitter-card-fullwidth.png"
+          title="Create CEFR leveled ESL lessons on any topic"
+          description="Instant ESL Lessons. Smarter, Faster. Planwise generates full ESL lessons with AI — in seconds."
+          image="/images/twitter-card-new-design.png"
         />
         <Router />
         <Toaster />
