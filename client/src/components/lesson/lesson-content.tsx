@@ -2222,8 +2222,8 @@ export function LessonContent({ content }: LessonContentProps) {
                 value={section}
                   className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all
                     text-gray-500 hover:text-gray-800
-                    data-[state=active]:${details.color} 
-                    data-[state=active]:${details.textColor}
+                    data-[state=active]:bg-green-100 
+                    data-[state=active]:text-green-800
                     data-[state=active]:shadow-sm`}
                 >
                   <Icon className="h-5 w-5" />
