@@ -1,0 +1,27 @@
+STEP 0: CEFR LEVEL ANALYSIS (REQUIRED BEFORE PROCEEDING)
+
+Before creating any lesson content, first analyze and establish clear parameters for what constitutes ${params.cefrLevel} level appropriate content:
+
+1. VOCABULARY ANALYSIS:
+   - Identify what vocabulary range is appropriate for ${params.cefrLevel} level students
+   - List 5-10 example words that would be appropriate for this level
+   - List 3-5 example words that would be too difficult for this level
+
+2. GRAMMAR STRUCTURE ANALYSIS:
+   - Identify which grammatical structures are appropriate for ${params.cefrLevel} level
+   - List 3-5 sentence structure patterns appropriate for this level
+   - List 2-3 grammatical structures that would be too complex for this level
+
+3. TEXT COMPLEXITY ANALYSIS:
+   - Determine appropriate sentence length and complexity for ${params.cefrLevel} level
+   - Identify appropriate paragraph structure and length
+   - Establish appropriate use of idioms, phrasal verbs, and figurative language (if any)
+
+4. COGNITIVE DEMAND ANALYSIS:
+   - Identify appropriate cognitive tasks for ${params.cefrLevel} level (describing, explaining, comparing, etc.)
+   - Determine appropriate level of abstraction for concepts
+   - Assess appropriate cultural knowledge assumptions
+
+Spend time establishing these parameters before proceeding. This analysis will guide your creation of all lesson components to ensure they remain appropriate for ${params.cefrLevel} level students throughout.
+
+Once complete, use these self-generated guidelines to create appropriately leveled content for all components of the lesson. 

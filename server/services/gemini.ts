@@ -201,13 +201,29 @@ CRITICAL: Your output must be properly formatted JSON with NO ERRORS!
 
 4. CRITICAL: FOR EACH VOCABULARY WORD, YOU MUST INCLUDE THE 'pronunciation' OBJECT WITH 'syllables', 'stressIndex', AND 'phoneticGuide' FIELDS. The 'phoneticGuide' MUST use ONLY regular English characters and hyphens (like "AS-tro-naut" or "eks-PLOR-ay-shun"), NOT International Phonetic Alphabet (IPA) symbols.
 
-5. TONE & STYLE: Apply the following writing style to ALL generated text (reading, questions, definitions, notes, etc.):
-   - Use a warm, accessible, and conversational tone
-   - Include interesting facts and observations woven naturally into the narrative
-   - Use vivid, descriptive language that brings topics to life
-   - Make complex information approachable through clear explanations and engaging examples
-   - Use a mix of sentence lengths for good flow
-   - Occasionally address the reader directly with rhetorical questions or observations
+5. TONE & STYLE APPROACH:
+First, analyze appropriate tone and style considerations for ${params.cefrLevel} level:
+- Research how tone and register should be adjusted for ${params.cefrLevel} level learners
+- Identify appropriate language complexity, sentence structure, and vocabulary choices for this level
+- Determine the optimal balance between authenticity and accessibility
+- Consider how the topic "${params.topic}" influences appropriate tone and style
+- Analyze engagement strategies that work best for this proficiency level and topic
+
+Based on your analysis, develop a tone and style that:
+- Is most effective for ${params.cefrLevel} level language comprehension
+- Creates appropriate engagement for the specific topic "${params.topic}"
+- Balances authenticity with accessibility
+- Models natural language use appropriate to the context
+- Demonstrates appropriate register for both the topic and level
+- Provides appropriate linguistic scaffolding through style choices
+- Creates interest and motivation for continued reading/learning
+
+Apply your determined tone and style consistently across all lesson components:
+- Reading text
+- Vocabulary definitions and examples
+- Activity instructions
+- Discussion questions and contexts
+- Teacher guidance sections
 
 6. CEFR LEVEL ADAPTATION: ALL content must be STRICTLY appropriate for the specified CEFR level:
    - Vocabulary choices must match the CEFR level (A1=beginner, C2=advanced)
@@ -223,64 +239,77 @@ CRITICAL: Your output must be properly formatted JSON with NO ERRORS!
    - The paragraphs should include interesting information that helps students engage with the topic
    - The paragraph contexts should lead naturally into the discussion question that follows
 
+STEP 0: CEFR LEVEL ANALYSIS (REQUIRED BEFORE PROCEEDING)
+
+Before creating any lesson content, first analyze and establish clear parameters for what constitutes ${params.cefrLevel} level appropriate content:
+
+1. VOCABULARY ANALYSIS:
+   - Identify what vocabulary range is appropriate for ${params.cefrLevel} level students
+   - List 5-10 example words that would be appropriate for this level
+   - List 3-5 example words that would be too difficult for this level
+
+2. GRAMMAR STRUCTURE ANALYSIS:
+   - Identify which grammatical structures are appropriate for ${params.cefrLevel} level
+   - List 3-5 sentence structure patterns appropriate for this level
+   - List 2-3 grammatical structures that would be too complex for this level
+
+3. TEXT COMPLEXITY ANALYSIS:
+   - Determine appropriate sentence length and complexity for ${params.cefrLevel} level
+   - Identify appropriate paragraph structure and length
+   - Establish appropriate use of idioms, phrasal verbs, and figurative language (if any)
+
+4. COGNITIVE DEMAND ANALYSIS:
+   - Identify appropriate cognitive tasks for ${params.cefrLevel} level (describing, explaining, comparing, etc.)
+   - Determine appropriate level of abstraction for concepts
+   - Assess appropriate cultural knowledge assumptions
+
+Spend time establishing these parameters before proceeding. This analysis will guide your creation of all lesson components to ensure they remain appropriate for ${params.cefrLevel} level students throughout.
+
+Once complete, use these self-generated guidelines to create appropriately leveled content for all components of the lesson.
+
 READING TEXT REQUIREMENTS:
 1. ORIGINAL CONTENT: Write an original reading text about the topic "${text}".
 2. LENGTH REQUIREMENT (CRITICAL): For ${params.cefrLevel} level, your text MUST be AT LEAST ${params.cefrLevel === "B1" ? "200" : params.cefrLevel === "C2" ? "500" : params.cefrLevel === "A1" || params.cefrLevel === "A2" ? "100" : "300"} words long. Shorter texts may be rejected.
 3. PARAGRAPH STRUCTURE: Divide your text into 3-5 well-structured paragraphs.
 4. SUBSTANTIAL CONTENT: Focus on creating a substantial, informative text appropriate for the topic and level.
 5. CEFR ALIGNMENT: Ensure vocabulary and sentence structures match the ${params.cefrLevel} level precisely.
-6. TONE & STYLE: Apply the general tone and style requirements mentioned earlier (warm, accessible, vivid language, etc.).
 
-SENTENCE FRAMES REQUIREMENTS:
-**Goal:** Explicitly teach high-frequency, versatile sentence patterns relevant to the lesson topic and identified academic language function(s), using an analytical format.
+SENTENCE FRAMES APPROACH:
+**Goal:** Develop high-frequency, versatile sentence patterns that support key language functions in the lesson.
 
-**Step 1: Identify Core Language Function(s)**
-- Analyze the main reading text.
-- Identify 1-2 key academic language functions essential for understanding the text (e.g., "compare and contrast", "cause and effect", "describing", "sequencing").
+First, analyze what sentence patterns are appropriate for ${params.cefrLevel} level:
+- Research the syntactic structures typically taught at ${params.cefrLevel} level
+- Identify high-frequency, versatile sentence patterns used in authentic contexts
+- Determine appropriate complexity of explanations for this level
+- Consider how the patterns should be presented and practiced
 
-**Step 2: Select Authentic & Versatile Sentence Patterns**
-- Choose 1-2 sentence frame **patterns** that:
-    a) Directly correspond to the identified language function(s).
-    b) Are **high-frequency and commonly used** in authentic English conversation and writing.
-    c) Are **versatile** and can be adapted to various contexts beyond just this specific lesson topic.
-    d) Are **appropriate for the target CEFR level** (${params.cefrLevel}). Use simpler, core patterns for lower levels (A1/A2) and more complex/nuanced but still genuinely useful patterns for higher levels (B1-C2). Avoid overly obscure or purely academic structures unless appropriate for C1/C2 and the topic.
+Then, based on your analysis:
+- Design 1-2 sentence patterns that are:
+  a) Appropriate for ${params.cefrLevel} level complexity
+  b) Genuinely useful in everyday communication
+  c) Relevant to the lesson topic
+  d) Structured in a way students can easily understand and practice
 
-**Step 3: Generate Deconstructed Explanation**
-- For each selected pattern, provide the following information in the specified JSON structure:
-
-- **pattern:** (String) The sentence frame pattern with blanks shown as "_____". Ensure blanks represent meaningful chunks (phrases/clauses).
-- **level:** (String) Difficulty level relative to the CEFR level ("basic", "intermediate", or "advanced").
-- **title:** (String) Short title describing the pattern's purpose (e.g., "Comparing X and Y", "Explaining Cause").
-- **usage:** (String) When/how this pattern is typically used in real conversation/writing.
-- **communicativeFunction:** (String) The specific academic language function being practiced.
-- **grammarFocus:** (String) The key grammar structure(s) exemplified, explained simply.
-- **structureBreakdown:** (Array of Objects) An array breaking down the pattern into its core components. Each object should have:
-    - componentName: (String) e.g., "Cause Element", "Concession Clause", "Main Point".
-    - description: (String) Brief explanation of the component's role in the pattern.
-    - examples: (Array of Strings) 2-3 varied examples of phrases or clauses that could fit *this specific component* slot.
-- **exampleSentences:** (Array of Strings) 1-2 complete, natural-sounding example sentences demonstrating the full pattern in use with lesson-relevant vocabulary.
-- **practicePrompt:** (String) A prompt encouraging students to create their own sentence using the pattern, possibly relating it to their experience or the lesson content.
-- **teachingTips:** (String) Concise, practical advice for teachers on how to present and practice this pattern and its components.
-
-CRITICAL ISSUES TO AVOID:
-1. Do NOT choose obscure, rarely used sentence patterns (unless C1/C2 level justifies it).
-2. Ensure the structureBreakdown accurately reflects the pattern.
-3. Ensure the examples within the structureBreakdown correctly fit their corresponding component slot.
-4. Ensure the final exampleSentences correctly use the pattern and make sense contextually.
-5. Keep explanations (description, usage, grammarFocus) clear and concise for the target CEFR level.
-6. DO NOT create patterns that are so specific they can only be used in one particular scenario
-7. **CRITICAL:** Ensure the generated pattern structure works grammatically and semantically with the content provided in the structureBreakdown examples and the exampleSentences. The phrases must fit naturally into the pattern's slots.
-8. **AVOID phrase duplication:** Ensure the phrases provided as examples within the structureBreakdown do not duplicate verbs or key structural words already present in the static parts of the pattern.
-
-IMPLEMENTATION REQUIREMENT: Provide 1-2 complete frame objects per lesson, each containing all the specified fields (pattern, level, title, usage, communicativeFunction, grammarFocus, structureBreakdown, exampleSentences, practicePrompt, teachingTips).
+For each pattern, determine the most appropriate way to:
+- Present the pattern visually
+- Break it down into comprehensible components
+- Provide level-appropriate examples
+- Create practice opportunities
+- Guide teachers in presenting it effectively
 
 CEFR LEVEL-APPROPRIATE VOCABULARY SELECTION GUIDELINES:
-- A1: Choose words beyond the 500 most common words. Avoid very basic words like "hi", "hello", "yes", "no".
-- A2: Choose words beyond the 1000 most common words.
-- B1: Choose intermediate-level vocabulary (beyond the 2000 most common words).
-- B2: Choose upper-intermediate vocabulary (beyond the 3000 most common words).
-- C1: Choose advanced vocabulary (beyond the 4000 most common words).
-- C2: Choose sophisticated vocabulary that would challenge even advanced learners.
+First, analyze what vocabulary is appropriate for ${params.cefrLevel} level:
+- Research the vocabulary range typical for ${params.cefrLevel} level students
+- Consider both receptive and productive vocabulary expectations
+- Determine which semantic fields are appropriate at this level
+- Identify vocabulary selection criteria specific to this level (frequency, complexity, abstractness)
+
+Based on your analysis, establish guidelines for:
+- Appropriate vocabulary difficulty/complexity 
+- How to define words at this level (simple definitions for A1/A2, more nuanced for B2+)
+- Appropriate example sentence complexity
+- Word family relationships appropriate to introduce
+- Collocation complexity appropriate for this level
 
 CEFR LEVEL-APPROPRIATE DEFINITIONS GUIDELINES:
 - A1: Use only the most basic and frequent vocabulary (500-800 words). Very simple sentence structures. Definitions should be 1-5 words where possible.
@@ -308,96 +337,68 @@ Ensure all content is appropriate for ${params.cefrLevel} level students:
 - For post-reading discussion questions, ensure the language complexity matches ${params.cefrLevel} level
 - Adjust question complexity based on the CEFR level (simpler for A1/A2, more complex for C1/C2)
 
-WARM-UP ACTIVITY REQUIREMENTS:
-- CRITICALLY IMPORTANT: Your warm-up activity MUST incorporate ALL vocabulary items from your vocabulary list. Check this carefully!
-- Each vocabulary word MUST be explicitly mentioned and used in the warm-up activity
-- Ensure students are introduced to all vocabulary before the reading
-- Design an engaging activity that gets students familiar with these words
-- In your procedure section, make sure EVERY vocabulary word is used at least once
-- The system will check that each vocabulary word appears in the warm-up - if any are missing, the lesson will be rejected
+WARM-UP ACTIVITIES APPROACH:
+First, analyze effective warm-up approaches for ${params.cefrLevel} level:
+- Research developmentally appropriate activation strategies for this level
+- Identify how vocabulary is best introduced at ${params.cefrLevel} level
+- Determine the optimal balance between familiar and new content
+- Consider appropriate complexity of instructions and activities
+- Analyze how prior knowledge is best activated at this level
 
-PRIOR KNOWLEDGE ACTIVATION FOR WARM-UPS:
-Design your warm-up activity to explicitly connect the lesson topic "${params.topic}" to students' existing knowledge and real-life experiences:
+Based on your analysis, design a warm-up activity that:
+- Is appropriate for ${params.cefrLevel} cognitive and linguistic abilities
+- Introduces key vocabulary in a contextually appropriate manner
+- Builds confidence through accessible starting points
+- Creates engagement through relevant, interesting content
+- Provides appropriate scaffolding for the upcoming reading text
+- Promotes active participation with level-appropriate challenge
 
-1. START WITH PERSONAL CONNECTION: Begin with 2-3 personalized questions that students can answer from their own experience, regardless of their knowledge about the topic
-   - Make these questions appropriate for ${params.cefrLevel} level students
+CULTURAL ADAPTABILITY APPROACH:
+First, analyze cultural learning considerations for ${params.cefrLevel} level:
+- Research how cultural awareness is developed at different language proficiency levels
+- Identify appropriate cultural content complexity for ${params.cefrLevel} level
+- Determine how to present culturally diverse perspectives at this level
+- Consider potential cultural sensitivities related to the lesson topic "${params.topic}"
+- Analyze how to balance cultural specificity with universal accessibility
 
-2. BRIDGE TO NEW VOCABULARY: Create activities that naturally incorporate the target vocabulary while still relating to students' experiences
+Based on your analysis, ensure your lesson content:
+- Presents cultural information at an appropriate complexity level
+- Provides necessary cultural context for ${params.cefrLevel} learners
+- Offers multiple cultural perspectives when relevant
+- Avoids culturally inappropriate content for global classroom use
+- Creates authentic but accessible cultural learning opportunities
+- Respects diverse backgrounds while expanding cultural awareness
 
-3. SCAFFOLDED KNOWLEDGE MAPPING: Include a brief activity that helps students visualize and connect what they already know to what they're about to learn, appropriate for their CEFR level
+DISCUSSION QUESTIONS APPROACH:
+First, analyze effective discussion questions for ${params.cefrLevel} level students:
+- Research effective questioning techniques for ${params.cefrLevel} level language learners
+- Identify appropriate cognitive challenge levels for discussions at this level
+- Determine the balance between scaffolding and open-ended questioning
+- Consider how background/context should be provided at this level
+- Analyze how to encourage extended responses from students at this proficiency level
 
-CULTURAL ADAPTABILITY:
-Ensure the warm-up provides flexible entry points for students from diverse backgrounds:
-- Offer universal examples
-- Include alternative prompts for culturally specific references 
-- Avoid assumptions about specific experiences
+Based on your analysis, create discussion questions that:
+- Match the cognitive abilities of ${params.cefrLevel} level students
+- Provide appropriate contextual support based on level needs
+- Encourage critical thinking appropriate to this level
+- Are designed for optimal language production at this level
+- Connect to both the lesson content and students' experiences
+- Progress from more supported to more independent thinking
 
-VISUAL CONNECTIONS:
-Create guidance for connecting vocabulary to visual elements:
-- Describe everyday situations where vocabulary naturally appears
-- Compare familiar concepts with new vocabulary
-- Connect vocabulary to images that relate to students' experiences
+READING COMPREHENSION APPROACH:
+First, analyze appropriate comprehension skills for ${params.cefrLevel} level:
+- Research reading comprehension expectations at ${params.cefrLevel} level
+- Identify appropriate question types for this level (literal, inferential, evaluative)
+- Determine text-dependent question strategies suited to this level
+- Consider appropriate cognitive challenges that remain accessible
 
-DISCUSSION QUESTION REQUIREMENTS:
-- IMPORTANT NEW FORMAT: Each discussion question MUST be preceded by its own unique, CEFR-level appropriate paragraph (3-5 sentences) that provides context or an interesting angle related to the question. The question should directly relate to this paragraph.
-- You MUST provide EXACTLY 5 such paragraph-question pairs.
-- The paragraph should:
-  - Be written at the appropriate CEFR level (${params.cefrLevel})
-  - Focus on something interesting and thought-provoking related to the question topic
-  - Create a foundation for meaningful discussion
-  - Relate directly to the vocabulary being learned
-  - Avoid simply summarizing the main reading
-  - CRITICAL: The language complexity MUST match exactly the ${params.cefrLevel} level
-  - Be designed to stand out visually when displayed in the UI
-- The discussion question should:
-  - Directly follow its context paragraph.
-  - Be phrased as an interesting prompt that encourages different viewpoints
-  - Include topics that could generate healthy debate between teacher and student
-  - Range from simpler questions to more thought-provoking debates
-  - Be appropriate for one-on-one teaching via screen sharing
-  - Encourage use of the target vocabulary
-  - Be designed for in-depth conversation, not just short answers
-  - Reference specific content from both its context paragraph and the main reading
-
-⚠️ CRITICAL REQUIREMENT: You MUST provide EXACTLY 5 paragraph-question pairs. Failure to provide 5 pairs, each with a paragraph and a question, will cause your response to be rejected.
-
-- Avoid generic questions - make them specific to the content and culturally relevant
-- Adjust topic complexity appropriately for the target CEFR level
-- Structure topics to build genuine discussion in a one-on-one context
-- For each discussion question, include an image prompt (NEW!) - A detailed description (2-3 sentences) of what an image for this discussion topic should look like.
-
-!!! EXTREMELY IMPORTANT - READING COMPREHENSION FORMAT !!!
-You MUST ONLY create reading comprehension questions in these two formats:
-1. Multiple-choice questions with 3-4 options and one correct answer
-2. True-false questions with exactly ["True", "False"] options
-
-CRITICAL: You MUST mark the correct answer in the "correctAnswer" field for each question, not just in the "answer" field.
-For example: {"question": "What is the capital of France?", "options": ["London", "Paris", "Berlin"], "answer": "Paris", "correctAnswer": "Paris", "explanation": "Paris is the capital city of France."}
-
-DO NOT create any short-answer questions or questions that ask students to "explain" or "write."
-ALL questions must have selectable options. This includes ALL questions in the reading comprehension section, especially the third question.
-
-This is a screen-sharing environment where students CANNOT type responses. They can ONLY select from options you provide.
-
-!!! READING COMPREHENSION COGNITIVE LEVELS REQUIREMENT !!!
-Your reading comprehension questions MUST cover a balanced range of cognitive abilities:
-1. REMEMBER/UNDERSTAND (1-2 questions): Test basic comprehension and recall of explicit information from the text.
-   - Example for A1-A2: "What is the main character's name?"
-   - Example for B1-B2: "What happened after the main event in the story?"
-   - Example for C1-C2: "Which statement accurately summarizes the author's position?"
-
-2. APPLY/ANALYZE (1-2 questions): Test ability to use information or break it into parts to explore relationships.
-   - Example for A1-A2: "Why did the character make that choice?"
-   - Example for B1-B2: "How does the second paragraph relate to the main idea?"
-   - Example for C1-C2: "What evidence supports the author's argument about X?"
-
-3. EVALUATE/CREATE (1-2 questions): Test ability to make judgments or create new perspectives.
-   - Example for A1-A2: "Which title is best for this story?"
-   - Example for B1-B2: "What would most likely happen next in this situation?"
-   - Example for C1-C2: "How effective is the author's approach to presenting this topic?"
-
-IMPORTANT: Adjust question complexity based on the CEFR level (${params.cefrLevel}):
-- A1-A2: Simple vocabulary, direct questions about explicitly stated information
+Then, based on your analysis:
+- Create 3-5 comprehension questions that:
+  a) Assess understanding at appropriate depths for ${params.cefrLevel}
+  b) Use question formats appropriate for this level
+  c) Progress from more straightforward to more challenging
+  d) Require different reading skills (locating information, making connections, drawing conclusions)
+  e) Provide appropriate scaffolding for students at this level
 
 FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure all fields contain complete content. Do not use placeholders.
 

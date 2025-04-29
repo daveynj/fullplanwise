@@ -1,0 +1,53 @@
+1. DISCUSSION QUESTIONS APPROACH (Replace current discussion question requirements):
+
+DISCUSSION QUESTIONS APPROACH:
+First, analyze effective discussion questions for ${params.cefrLevel} level students:
+- Research effective questioning techniques for ${params.cefrLevel} level language learners
+- Identify appropriate cognitive challenge levels for discussions at this level
+- Determine the balance between scaffolding and open-ended questioning
+- Consider how background/context should be provided at this level
+- Analyze how to encourage extended responses from students at this proficiency level
+
+Based on your analysis, create discussion questions that:
+- Match the cognitive abilities of ${params.cefrLevel} level students
+- Provide appropriate contextual support based on level needs
+- Encourage critical thinking appropriate to this level
+- Are designed for optimal language production at this level
+- Connect to both the lesson content and students' experiences
+- Progress from more supported to more independent thinking
+
+2. WARM-UP ACTIVITIES APPROACH (Replace current warm-up activity requirements):
+
+WARM-UP ACTIVITIES APPROACH:
+First, analyze effective warm-up approaches for ${params.cefrLevel} level:
+- Research developmentally appropriate activation strategies for this level
+- Identify how vocabulary is best introduced at ${params.cefrLevel} level
+- Determine the optimal balance between familiar and new content
+- Consider appropriate complexity of instructions and activities
+- Analyze how prior knowledge is best activated at this level
+
+Based on your analysis, design a warm-up activity that:
+- Is appropriate for ${params.cefrLevel} cognitive and linguistic abilities
+- Introduces key vocabulary in a contextually appropriate manner
+- Builds confidence through accessible starting points
+- Creates engagement through relevant, interesting content
+- Provides appropriate scaffolding for the upcoming reading text
+- Promotes active participation with level-appropriate challenge
+
+3. CULTURAL ADAPTABILITY APPROACH (Replace current cultural adaptability section):
+
+CULTURAL ADAPTABILITY APPROACH:
+First, analyze cultural learning considerations for ${params.cefrLevel} level:
+- Research how cultural awareness is developed at different language proficiency levels
+- Identify appropriate cultural content complexity for ${params.cefrLevel} level
+- Determine how to present culturally diverse perspectives at this level
+- Consider potential cultural sensitivities related to the lesson topic "${params.topic}"
+- Analyze how to balance cultural specificity with universal accessibility
+
+Based on your analysis, ensure your lesson content:
+- Presents cultural information at an appropriate complexity level
+- Provides necessary cultural context for ${params.cefrLevel} learners
+- Offers multiple cultural perspectives when relevant
+- Avoids culturally inappropriate content for global classroom use
+- Creates authentic but accessible cultural learning opportunities
+- Respects diverse backgrounds while expanding cultural awareness 

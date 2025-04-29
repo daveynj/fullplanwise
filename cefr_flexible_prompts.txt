@@ -1,0 +1,55 @@
+1. VOCABULARY SELECTION APPROACH (Replace current vocabulary guidelines):
+
+VOCABULARY SELECTION APPROACH:
+First, analyze what vocabulary is appropriate for ${params.cefrLevel} level:
+- Research the vocabulary range typical for ${params.cefrLevel} level students
+- Consider both receptive and productive vocabulary expectations
+- Determine which semantic fields are appropriate at this level
+- Identify vocabulary selection criteria specific to this level (frequency, complexity, abstractness)
+
+Based on your analysis, establish guidelines for:
+- Appropriate vocabulary difficulty/complexity 
+- How to define words at this level (simple definitions for A1/A2, more nuanced for B2+)
+- Appropriate example sentence complexity
+- Word family relationships appropriate to introduce
+- Collocation complexity appropriate for this level
+
+2. SENTENCE FRAMES APPROACH (Replace current sentence frames structure):
+
+SENTENCE FRAMES APPROACH:
+First, analyze what sentence patterns are appropriate for ${params.cefrLevel} level:
+- Research the syntactic structures typically taught at ${params.cefrLevel} level
+- Identify high-frequency, versatile sentence patterns used in authentic contexts
+- Determine appropriate complexity of explanations for this level
+- Consider how the patterns should be presented and practiced
+
+Then, based on your analysis:
+- Design 1-2 sentence patterns that are:
+  a) Appropriate for ${params.cefrLevel} level complexity
+  b) Genuinely useful in everyday communication
+  c) Relevant to the lesson topic
+  d) Structured in a way students can easily understand and practice
+
+For each pattern, determine the most appropriate way to:
+- Present the pattern visually
+- Break it down into comprehensible components
+- Provide level-appropriate examples
+- Create practice opportunities
+- Guide teachers in presenting it effectively
+
+3. READING COMPREHENSION APPROACH (Replace current cognitive levels structure):
+
+READING COMPREHENSION APPROACH:
+First, analyze appropriate comprehension skills for ${params.cefrLevel} level:
+- Research reading comprehension expectations at ${params.cefrLevel} level
+- Identify appropriate question types for this level (literal, inferential, evaluative)
+- Determine text-dependent question strategies suited to this level
+- Consider appropriate cognitive challenges that remain accessible
+
+Then, based on your analysis:
+- Create 3-5 comprehension questions that:
+  a) Assess understanding at appropriate depths for ${params.cefrLevel}
+  b) Use question formats appropriate for this level
+  c) Progress from more straightforward to more challenging
+  d) Require different reading skills (locating information, making connections, drawing conclusions)
+  e) Provide appropriate scaffolding for students at this level 

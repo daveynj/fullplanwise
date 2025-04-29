@@ -1,0 +1,23 @@
+TONE & STYLE APPROACH:
+First, analyze appropriate tone and style considerations for ${params.cefrLevel} level:
+- Research how tone and register should be adjusted for ${params.cefrLevel} level learners
+- Identify appropriate language complexity, sentence structure, and vocabulary choices for this level
+- Determine the optimal balance between authenticity and accessibility
+- Consider how the topic "${params.topic}" influences appropriate tone and style
+- Analyze engagement strategies that work best for this proficiency level and topic
+
+Based on your analysis, develop a tone and style that:
+- Is most effective for ${params.cefrLevel} level language comprehension
+- Creates appropriate engagement for the specific topic "${params.topic}"
+- Balances authenticity with accessibility
+- Models natural language use appropriate to the context
+- Demonstrates appropriate register for both the topic and level
+- Provides appropriate linguistic scaffolding through style choices
+- Creates interest and motivation for continued reading/learning
+
+Apply your determined tone and style consistently across all lesson components:
+- Reading text
+- Vocabulary definitions and examples
+- Activity instructions
+- Discussion questions and contexts
+- Teacher guidance sections 
