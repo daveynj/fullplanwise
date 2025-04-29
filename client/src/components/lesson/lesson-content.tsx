@@ -559,6 +559,22 @@ export function LessonContent({ content }: LessonContentProps) {
       // --- BEGIN EDIT: Set initial active tab ---
       // Determine available sections AFTER processing
       const finalSectionTypes = processedContent.sections?.map((s: any) => s?.type).filter(Boolean) || [];
+      
+      // Make sure we have an overview section for all lessons
+      if (!finalSectionTypes.includes('overview')) {
+        console.log("Adding overview section as it doesn't exist");
+        // Create an overview section if it doesn't exist
+        processedContent.sections.unshift({
+          type: 'overview',
+          title: 'Lesson Overview',
+          content: processedContent.description || 
+                  (processedContent.title ? `Overview of ${processedContent.title}` : 'Lesson Overview'),
+          objectives: processedContent.objectives || []
+        });
+        // Add to finalSectionTypes
+        finalSectionTypes.unshift('overview');
+      }
+      
       // Add pronunciation to displayOrder
       const displayOrder: string[] = ["overview", "warmup", "reading", "comprehension", "vocabulary", "pronunciation", "sentenceFrames", "cloze", "sentenceUnscramble", "discussion", "quiz"];
       const orderedAvailableSections = displayOrder.filter(type => {
