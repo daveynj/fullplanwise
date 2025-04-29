@@ -1,0 +1,30 @@
+QUESTION QUALITY IMPROVEMENT APPROACH:
+First, analyze what constitutes high-quality questions for ${params.cefrLevel} level:
+- Research question taxonomies (Bloom's, DOK) appropriate for this level
+- Identify question types that stimulate meaningful language production
+- Determine markers of high-quality vs. low-quality questions
+- Study question formulation techniques used by expert language teachers
+
+For discussion questions, ensure each question:
+- Has clear purpose and language learning objectives
+- Elicits more than one-word or yes/no responses
+- Connects to students' experiences while remaining culturally inclusive
+- Builds on vocabulary/concepts from the lesson
+- Avoids vague, obvious, or simplistic formulations ("What did it look like?")
+- Encourages critical thinking appropriate to the level
+- Is genuinely interesting to discuss
+
+For comprehension questions, ensure each question:
+- Tests specific comprehension skills appropriate for ${params.cefrLevel}
+- Requires genuine understanding rather than just recognizing words
+- Progresses from literal to interpretive to applied understanding
+- Focuses on meaningful content rather than trivial details
+- Uses question stems appropriate for the cognitive level
+- Avoids ambiguity or multiple possible correct answers
+
+Apply these quality standards to generate questions that:
+- Engage students intellectually at their appropriate level
+- Provide meaningful language practice opportunities
+- Demonstrate careful thought and authentic curiosity
+- Serve clear pedagogical purposes
+- Would be asked by experienced language educators 

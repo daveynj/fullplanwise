@@ -1,0 +1,24 @@
+TOPIC DIFFERENTIATION APPROACH:
+First, analyze how the topic "${params.topic}" should be treated differently across CEFR levels:
+- Research how the complexity and focus of topic treatment evolves from A1 to C2
+- Identify specific aspects of the topic appropriate for ${params.cefrLevel} level
+- Determine which vocabulary domains within this topic are level-appropriate
+- Consider how conceptual complexity should increase with higher levels
+
+For "${params.topic}" at ${params.cefrLevel} level specifically:
+- Identify 3-5 unique aspects or sub-topics that are specifically appropriate for this level
+- Determine which vocabulary domains are appropriate for THIS level but NOT lower levels
+- Consider which cognitive approaches to the topic match this specific level
+- Identify conceptual complexity appropriate specifically for ${params.cefrLevel}
+
+Based on your analysis, create a unique approach to "${params.topic}" for ${params.cefrLevel} level by:
+- Focusing on the sub-aspects most appropriate for this specific level
+- Selecting vocabulary that would NOT be taught at lower levels
+- Approaching the topic from a cognitive perspective matching this level
+- Ensuring clear differentiation from how this topic would be taught at other levels
+
+This approach should ensure that lessons on the same topic at different CEFR levels are substantially different in:
+- Vocabulary selection
+- Question complexity and type
+- Conceptual approach
+- Content focus and examples 
