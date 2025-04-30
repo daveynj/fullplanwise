@@ -36,9 +36,17 @@ export default function AuthPage() {
   // Redirect if already logged in
   useEffect(() => {
     if (user) {
-      navigate("/");
+      navigate("/dashboard");
     }
   }, [user, navigate]);
+
+  // Set active tab from URL query param
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("register") === "true") {
+      setActiveTab("register");
+    }
+  }, []);
 
   // Login form
   const loginForm = useForm<LoginFormValues>({
@@ -70,24 +78,37 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-light">
+    <div className="flex min-h-screen bg-brand-light">
       {/* Left side - Auth forms */}
       <div className="flex flex-col justify-center w-full lg:w-1/2 px-4 sm:px-6 lg:px-8 py-12">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <h2 className="text-center text-3xl font-nunito font-bold text-primary mb-6">
-            ESL Lesson AI
-          </h2>
+          <div className="flex justify-center mb-6">
+            <img src="/PlanWise_ESL_logo.png" alt="Plan Wise ESL Logo" className="h-12 w-auto" />
+            <h2 className="text-center text-3xl font-nunito font-bold text-brand-navy ml-3">
+              PLAN WISE ESL
+            </h2>
+          </div>
           
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-6">
-              <TabsTrigger value="login">Login</TabsTrigger>
-              <TabsTrigger value="register">Register</TabsTrigger>
+              <TabsTrigger 
+                value="login" 
+                className="data-[state=active]:bg-brand-yellow data-[state=active]:text-brand-navy"
+              >
+                Login
+              </TabsTrigger>
+              <TabsTrigger 
+                value="register" 
+                className="data-[state=active]:bg-brand-yellow data-[state=active]:text-brand-navy"
+              >
+                Register
+              </TabsTrigger>
             </TabsList>
             
             <TabsContent value="login">
               <Card>
                 <CardHeader>
-                  <CardTitle className="font-nunito">Login to your account</CardTitle>
+                  <CardTitle className="font-nunito text-brand-navy">Login to your account</CardTitle>
                   <CardDescription>
                     Enter your credentials to access your dashboard
                   </CardDescription>
@@ -100,7 +121,7 @@ export default function AuthPage() {
                         name="username"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Username</FormLabel>
+                            <FormLabel className="text-brand-navy">Username</FormLabel>
                             <FormControl>
                               <Input placeholder="your-username" {...field} />
                             </FormControl>
@@ -113,7 +134,7 @@ export default function AuthPage() {
                         name="password"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Password</FormLabel>
+                            <FormLabel className="text-brand-navy">Password</FormLabel>
                             <FormControl>
                               <Input type="password" placeholder="••••••••" {...field} />
                             </FormControl>
@@ -123,7 +144,8 @@ export default function AuthPage() {
                       />
                       <Button 
                         type="submit" 
-                        className="w-full bg-primary hover:bg-primary/90"
+                        variant="brand"
+                        className="w-full"
                         disabled={loginMutation.isPending}
                       >
                         {loginMutation.isPending ? (
@@ -135,7 +157,7 @@ export default function AuthPage() {
                       </Button>
                       
                       <div className="mt-4 text-center">
-                        <Link to="/forgot-password" className="text-sm text-primary hover:underline">
+                        <Link to="/forgot-password" className="text-sm text-brand-navy hover:text-brand-yellow hover:underline">
                           Forgot password?
                         </Link>
                       </div>
@@ -148,9 +170,9 @@ export default function AuthPage() {
             <TabsContent value="register">
               <Card>
                 <CardHeader>
-                  <CardTitle className="font-nunito">Create a new account</CardTitle>
+                  <CardTitle className="font-nunito text-brand-navy">Create a new account</CardTitle>
                   <CardDescription>
-                    Fill in your details to get started with ESL Lesson AI
+                    Fill in your details to get started with Plan Wise ESL
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -161,7 +183,7 @@ export default function AuthPage() {
                         name="username"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Username</FormLabel>
+                            <FormLabel className="text-brand-navy">Username</FormLabel>
                             <FormControl>
                               <Input placeholder="your-username" {...field} />
                             </FormControl>
@@ -174,7 +196,7 @@ export default function AuthPage() {
                         name="fullName"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Full Name</FormLabel>
+                            <FormLabel className="text-brand-navy">Full Name</FormLabel>
                             <FormControl>
                               <Input placeholder="Your Name" {...field} />
                             </FormControl>
@@ -187,7 +209,7 @@ export default function AuthPage() {
                         name="email"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Email</FormLabel>
+                            <FormLabel className="text-brand-navy">Email</FormLabel>
                             <FormControl>
                               <Input type="email" placeholder="you@example.com" {...field} />
                             </FormControl>
@@ -200,7 +222,7 @@ export default function AuthPage() {
                         name="password"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Password</FormLabel>
+                            <FormLabel className="text-brand-navy">Password</FormLabel>
                             <FormControl>
                               <Input type="password" placeholder="••••••••" {...field} />
                             </FormControl>
@@ -213,7 +235,7 @@ export default function AuthPage() {
                         name="confirmPassword"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Confirm Password</FormLabel>
+                            <FormLabel className="text-brand-navy">Confirm Password</FormLabel>
                             <FormControl>
                               <Input type="password" placeholder="••••••••" {...field} />
                             </FormControl>
@@ -223,7 +245,8 @@ export default function AuthPage() {
                       />
                       <Button 
                         type="submit" 
-                        className="w-full bg-primary hover:bg-primary/90"
+                        variant="brand"
+                        className="w-full"
                         disabled={registerMutation.isPending}
                       >
                         {registerMutation.isPending ? (
@@ -243,8 +266,8 @@ export default function AuthPage() {
       </div>
       
       {/* Right side - Hero section */}
-      <div className="hidden lg:flex lg:w-1/2 bg-primary items-center justify-center">
-        <div className="max-w-lg px-8 text-white">
+      <div className="hidden lg:flex lg:w-1/2 bg-brand-navy items-center justify-center">
+        <div className="max-w-lg px-8 text-brand-light">
           <h1 className="text-4xl font-nunito font-bold mb-6">
             AI-Powered ESL Teaching Platform
           </h1>
@@ -253,19 +276,19 @@ export default function AuthPage() {
           </p>
           <div className="space-y-6">
             <div className="flex items-start">
-              <div className="flex-shrink-0 h-8 w-8 flex items-center justify-center rounded-full bg-white bg-opacity-20 mr-3">
+              <div className="flex-shrink-0 h-8 w-8 flex items-center justify-center rounded-full bg-brand-yellow text-brand-navy font-bold mr-3">
                 ✓
               </div>
               <p>Create complete lesson plans with warm-up activities, vocabulary, and more</p>
             </div>
             <div className="flex items-start">
-              <div className="flex-shrink-0 h-8 w-8 flex items-center justify-center rounded-full bg-white bg-opacity-20 mr-3">
+              <div className="flex-shrink-0 h-8 w-8 flex items-center justify-center rounded-full bg-brand-yellow text-brand-navy font-bold mr-3">
                 ✓
               </div>
               <p>Manage student profiles with lesson history and progress notes</p>
             </div>
             <div className="flex items-start">
-              <div className="flex-shrink-0 h-8 w-8 flex items-center justify-center rounded-full bg-white bg-opacity-20 mr-3">
+              <div className="flex-shrink-0 h-8 w-8 flex items-center justify-center rounded-full bg-brand-yellow text-brand-navy font-bold mr-3">
                 ✓
               </div>
               <p>Generate content tailored to each student's CEFR level</p>

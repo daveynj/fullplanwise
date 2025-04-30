@@ -63,10 +63,17 @@ const ForgotPasswordPage: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto flex flex-col items-center justify-center min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+    <div className="container mx-auto flex flex-col items-center justify-center min-h-screen py-12 px-4 sm:px-6 lg:px-8 bg-brand-light">
+      <div className="flex justify-center items-center mb-8">
+        <img src="/PlanWise_ESL_logo.png" alt="Plan Wise ESL Logo" className="h-12 w-auto" />
+        <h2 className="text-center text-3xl font-nunito font-bold text-brand-navy ml-3">
+          PLAN WISE ESL
+        </h2>
+      </div>
+      
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold text-center">Forgot Password</CardTitle>
+          <CardTitle className="text-2xl font-bold text-center text-brand-navy">Forgot Password</CardTitle>
           <CardDescription className="text-center">
             Enter your email address and we'll send you a link to reset your password.
           </CardDescription>
@@ -79,9 +86,13 @@ const ForgotPasswordPage: React.FC = () => {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel className="text-brand-navy">Email</FormLabel>
                     <FormControl>
-                      <Input placeholder="your@email.com" {...field} />
+                      <Input 
+                        placeholder="your@email.com" 
+                        {...field} 
+                        className="focus-visible:ring-brand-yellow"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -90,6 +101,7 @@ const ForgotPasswordPage: React.FC = () => {
 
               <Button 
                 type="submit" 
+                variant="brand"
                 className="w-full" 
                 disabled={forgotPasswordMutation.isPending}
               >
@@ -104,7 +116,7 @@ const ForgotPasswordPage: React.FC = () => {
                 Development Mode: Use the link below to reset your password
               </p>
               <Link to={`/reset-password/${resetToken}`}>
-                <Button variant="outline" size="sm" className="w-full">
+                <Button variant="outline" size="sm" className="w-full border-brand-navy text-brand-navy">
                   Reset Password
                 </Button>
               </Link>
@@ -112,7 +124,7 @@ const ForgotPasswordPage: React.FC = () => {
           )}
         </CardContent>
         <CardFooter className="flex justify-center">
-          <Button variant="link" asChild>
+          <Button variant="link" asChild className="text-brand-navy hover:text-brand-yellow">
             <Link to="/auth">Back to Login</Link>
           </Button>
         </CardFooter>
