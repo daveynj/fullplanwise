@@ -23,15 +23,15 @@ export function Sidebar() {
   
   // Function to render nav items without nested <a> tags
   const renderNavItem = (item: { path: string, label: string, icon: React.ReactNode }) => (
-    <li key={item.path} className="mb-3">
+    <li key={item.path}>
       <Link href={item.path}>
-        <div className={`flex items-center p-4 rounded-lg transition cursor-pointer ${
+        <div className={`flex items-center p-3 rounded-lg transition cursor-pointer ${
           location === item.path 
           ? "bg-brand-yellow/20 text-brand-yellow" 
           : "text-brand-light hover:bg-brand-navy-light"
         }`}>
           {item.icon}
-          <span className="text-lg font-medium">{item.label}</span>
+          <span className="text-base font-medium">{item.label}</span>
         </div>
       </Link>
     </li>
@@ -52,63 +52,67 @@ export function Sidebar() {
   };
 
   const sidebarContent = (
-    <>
+    <div className="flex flex-col h-full">
       {/* Logo and brand */}
-      <div className="p-5 flex items-center border-b border-brand-navy-light">
-        <img src="/PlanWise_ESL_logo.png" alt="Plan Wise ESL Logo" className="h-10 w-auto mr-3" /> 
-        <span className="font-nunito font-bold text-2xl text-brand-yellow">PLAN WISE ESL</span>
+      <div className="p-4 flex items-center border-b border-brand-navy-light">
+        <img src="/PlanWise_ESL_logo.png" alt="Plan Wise ESL Logo" className="h-8 w-auto mr-2" /> 
+        <span className="font-nunito font-bold text-xl text-brand-yellow">PLAN WISE ESL</span>
       </div>
       
-      {/* Navigation */}
-      <nav className="p-4">
-        <div className="mb-4 text-base font-semibold uppercase text-brand-light/70 pl-3">Main</div>
-        <ul>
-          {navItems.map(renderNavItem)}
-        </ul>
-        
-        {/* Admin Section - Only visible to admin users */}
-        {user?.isAdmin && (
-          <>
-            <div className="mb-4 mt-6 text-base font-semibold uppercase text-brand-light/70 pl-3">Admin</div>
-            <ul>
-              {adminItems.map(renderNavItem)}
-            </ul>
-          </>
-        )}
-        
-        <div className="mb-4 mt-6 text-base font-semibold uppercase text-brand-light/70 pl-3">Account</div>
-        <ul>
-          {accountItems.map(renderNavItem)}
-          <li className="mb-3">
-            <Button 
-              variant="link" 
-              className="w-full flex items-center p-4 rounded-lg text-brand-light hover:bg-brand-navy-light transition justify-start"
-              onClick={handleLogout}
-            >
-              <LogOut className="mr-3 text-2xl" />
-              <span className="text-lg font-medium">Logout</span>
-            </Button>
-          </li>
-        </ul>
+      {/* Navigation - Now with overflow handling */}
+      <nav className="flex-1 overflow-y-auto py-2">
+        <div className="px-4">
+          <div className="mb-2 text-sm font-semibold uppercase text-brand-light/70 pl-2">Main</div>
+          <ul className="space-y-1 mb-4">
+            {navItems.map(renderNavItem)}
+          </ul>
+          
+          {/* Admin Section - Only visible to admin users */}
+          {user?.isAdmin && (
+            <>
+              <div className="mb-2 mt-4 text-sm font-semibold uppercase text-brand-light/70 pl-2">Admin</div>
+              <ul className="space-y-1 mb-4">
+                {adminItems.map(renderNavItem)}
+              </ul>
+            </>
+          )}
+          
+          <div className="mb-2 mt-4 text-sm font-semibold uppercase text-brand-light/70 pl-2">Account</div>
+          <ul className="space-y-1 mb-4">
+            {accountItems.map(renderNavItem)}
+            <li>
+              <Button 
+                variant="link" 
+                className="w-full flex items-center p-3 rounded-lg text-brand-light hover:bg-brand-navy-light transition justify-start"
+                onClick={handleLogout}
+              >
+                <LogOut className="mr-3 text-2xl" />
+                <span className="text-base font-medium">Logout</span>
+              </Button>
+            </li>
+          </ul>
+        </div>
       </nav>
       
-      {/* Credit counter */}
-      <div className="mt-auto p-5 bg-brand-navy-light mx-4 my-4 rounded-lg shadow-md">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-base font-medium text-brand-light/80">Available Credits</p>
-            <p className="text-3xl font-nunito font-bold text-brand-light">{user?.credits || 0}</p>
+      {/* Credit counter - fixed at bottom */}
+      <div className="p-4 mt-auto">
+        <div className="bg-brand-navy-light p-4 rounded-lg shadow-md">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-brand-light/80">Available Credits</p>
+              <p className="text-2xl font-nunito font-bold text-brand-light">{user?.credits || 0}</p>
+            </div>
+            <Button 
+              variant="brand"
+              className="font-bold px-3 py-2 rounded-lg text-sm shadow-sm"
+              onClick={() => setLocation('/buy-credits')}
+            >
+              Buy More
+            </Button>
           </div>
-          <Button 
-            variant="brand"
-            className="font-bold px-4 py-3 rounded-lg text-base shadow-sm"
-            onClick={() => setLocation('/buy-credits')}
-          >
-            Buy More
-          </Button>
         </div>
       </div>
-    </>
+    </div>
   );
 
   return (
@@ -116,10 +120,10 @@ export function Sidebar() {
       {/* Mobile nav toggle */}
       <div className="md:hidden bg-brand-navy text-brand-light flex items-center justify-between p-4 border-b border-brand-navy-light">
         <div className="flex items-center">
-          <div className="w-10 h-10 rounded-md bg-brand-light flex items-center justify-center mr-2">
-            <span className="text-brand-navy text-xl font-bold">P</span>
+          <div className="w-8 h-8 rounded-md bg-brand-light flex items-center justify-center mr-2">
+            <span className="text-brand-navy text-lg font-bold">P</span>
           </div>
-          <h1 className="font-nunito font-bold text-xl">PLAN WISE ESL</h1>
+          <h1 className="font-nunito font-bold text-lg">PLAN WISE ESL</h1>
         </div>
         <button onClick={toggleMobileMenu} className="text-brand-light focus:outline-none">
           {isMobileMenuOpen ? (
@@ -131,7 +135,7 @@ export function Sidebar() {
       </div>
       
       {/* Sidebar for mobile (collapsible) */}
-      <div className={`md:hidden bg-brand-navy text-brand-light absolute z-30 w-full transform ${
+      <div className={`md:hidden bg-brand-navy text-brand-light fixed top-0 left-0 z-30 w-full h-full transform ${
         isMobileMenuOpen ? "translate-y-0" : "-translate-y-full"
       } transition-transform duration-300 ease-in-out`}>
         {sidebarContent}
