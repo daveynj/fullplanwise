@@ -16,6 +16,13 @@ export default {
       },
       colors: {
         'gray-light': '#f9fafb', // Light gray background for sections
+        'brand': {
+          'yellow': '#edc437',
+          'navy': '#051d40',
+          'light': '#fdfdfd',
+          'yellow-light': '#f3d87a',  // Lighter shade for hover states
+          'navy-light': '#1e3a66',    // Lighter navy for hover states
+        },
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {

@@ -31,14 +31,14 @@ export function Header() {
   };
 
   return (
-    <header className="bg-white shadow-sm z-10">
+    <header className="bg-brand-light shadow-sm z-10">
       <div className="flex items-center justify-between px-6 py-3">
         <div className="flex items-center space-x-3">
           <div className="relative">
             <Input 
               type="text" 
               placeholder="Search..." 
-              className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+              className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-yellow focus:border-brand-yellow"
             />
             <Search className="absolute left-3 top-2.5 text-gray-400 h-5 w-5" />
           </div>
@@ -46,7 +46,7 @@ export function Header() {
         
         <div className="flex items-center space-x-4">
           <a href="mailto:dave@planwiseesl.com?subject=PLAN WISE ESL Support/Feedback" className="flex">
-            <Button variant="outline" size="sm" className="flex items-center gap-1 text-sm">
+            <Button variant="outline" size="sm" className="flex items-center gap-1 text-sm border-brand-navy text-brand-navy">
               <LifeBuoy className="h-4 w-4" />
               <span className="hidden sm:inline">Support</span>
             </Button>
@@ -64,14 +64,14 @@ export function Header() {
           <DropdownMenu>
             <DropdownMenuTrigger className="flex items-center focus:outline-none">
               <Avatar className="w-8 h-8 rounded-full">
-                <AvatarFallback className="bg-primary text-white">
+                <AvatarFallback className="bg-brand-navy text-brand-light">
                   {getInitials(user?.fullName || "")}
                 </AvatarFallback>
               </Avatar>
-              <span className="ml-2 font-semibold hidden md:block">
+              <span className="ml-2 font-semibold hidden md:block text-brand-navy">
                 {user?.fullName}
               </span>
-              <ChevronDown className="ml-1 h-4 w-4" />
+              <ChevronDown className="ml-1 h-4 w-4 text-brand-navy" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>

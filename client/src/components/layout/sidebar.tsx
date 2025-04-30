@@ -15,7 +15,7 @@ export function Sidebar() {
   };
 
   const navItems = [
-    { path: "/", label: "Dashboard", icon: <Home className="mr-3 text-2xl" /> },
+    { path: "/dashboard", label: "Dashboard", icon: <Home className="mr-3 text-2xl" /> },
     { path: "/generate", label: "Generate Lesson", icon: <Wand2 className="mr-3 text-2xl" /> },
     { path: "/students", label: "Students", icon: <Users className="mr-3 text-2xl" /> },
     { path: "/history", label: "Lesson Library", icon: <Book className="mr-3 text-2xl" /> },
@@ -25,8 +25,10 @@ export function Sidebar() {
   const renderNavItem = (item: { path: string, label: string, icon: React.ReactNode }) => (
     <li key={item.path} className="mb-3">
       <Link href={item.path}>
-        <div className={`flex items-center p-4 rounded-lg hover:bg-primary-light transition cursor-pointer ${
-          location === item.path ? "bg-primary-light text-white" : "text-white"
+        <div className={`flex items-center p-4 rounded-lg transition cursor-pointer ${
+          location === item.path 
+          ? "bg-brand-yellow/20 text-brand-yellow" 
+          : "text-brand-light hover:bg-brand-navy-light"
         }`}>
           {item.icon}
           <span className="text-lg font-medium">{item.label}</span>
@@ -52,14 +54,14 @@ export function Sidebar() {
   const sidebarContent = (
     <>
       {/* Logo and brand */}
-      <div className="p-5 flex items-center border-b border-primary-light">
+      <div className="p-5 flex items-center border-b border-brand-navy-light">
         <img src="/PlanWise_ESL_logo.png" alt="Plan Wise ESL Logo" className="h-10 w-auto mr-3" /> 
-        <span className="font-nunito font-bold text-2xl text-white">PLAN WISE ESL</span>
+        <span className="font-nunito font-bold text-2xl text-brand-yellow">PLAN WISE ESL</span>
       </div>
       
       {/* Navigation */}
       <nav className="p-4">
-        <div className="mb-4 text-base font-semibold uppercase text-blue-200 pl-3">Main</div>
+        <div className="mb-4 text-base font-semibold uppercase text-brand-light/70 pl-3">Main</div>
         <ul>
           {navItems.map(renderNavItem)}
         </ul>
@@ -67,20 +69,20 @@ export function Sidebar() {
         {/* Admin Section - Only visible to admin users */}
         {user?.isAdmin && (
           <>
-            <div className="mb-4 mt-6 text-base font-semibold uppercase text-blue-200 pl-3">Admin</div>
+            <div className="mb-4 mt-6 text-base font-semibold uppercase text-brand-light/70 pl-3">Admin</div>
             <ul>
               {adminItems.map(renderNavItem)}
             </ul>
           </>
         )}
         
-        <div className="mb-4 mt-6 text-base font-semibold uppercase text-blue-200 pl-3">Account</div>
+        <div className="mb-4 mt-6 text-base font-semibold uppercase text-brand-light/70 pl-3">Account</div>
         <ul>
           {accountItems.map(renderNavItem)}
           <li className="mb-3">
             <Button 
               variant="link" 
-              className="w-full flex items-center p-4 rounded-lg text-white hover:bg-primary-light transition justify-start"
+              className="w-full flex items-center p-4 rounded-lg text-brand-light hover:bg-brand-navy-light transition justify-start"
               onClick={handleLogout}
             >
               <LogOut className="mr-3 text-2xl" />
@@ -91,14 +93,15 @@ export function Sidebar() {
       </nav>
       
       {/* Credit counter */}
-      <div className="mt-auto p-5 bg-primary-light mx-4 my-4 rounded-lg shadow-md">
+      <div className="mt-auto p-5 bg-brand-navy-light mx-4 my-4 rounded-lg shadow-md">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-base font-medium text-blue-200">Available Credits</p>
-            <p className="text-3xl font-nunito font-bold text-white">{user?.credits || 0}</p>
+            <p className="text-base font-medium text-brand-light/80">Available Credits</p>
+            <p className="text-3xl font-nunito font-bold text-brand-light">{user?.credits || 0}</p>
           </div>
           <Button 
-            className="bg-yellow-400 text-gray-800 font-bold px-4 py-3 rounded-lg text-base hover:bg-yellow-300 transition shadow-sm"
+            variant="brand"
+            className="font-bold px-4 py-3 rounded-lg text-base shadow-sm"
             onClick={() => setLocation('/buy-credits')}
           >
             Buy More
@@ -111,14 +114,14 @@ export function Sidebar() {
   return (
     <>
       {/* Mobile nav toggle */}
-      <div className="md:hidden bg-primary text-white flex items-center justify-between p-4 border-b border-primary-light">
+      <div className="md:hidden bg-brand-navy text-brand-light flex items-center justify-between p-4 border-b border-brand-navy-light">
         <div className="flex items-center">
-          <div className="w-10 h-10 rounded-md bg-white flex items-center justify-center mr-2">
-            <span className="text-primary text-xl font-bold">P</span>
+          <div className="w-10 h-10 rounded-md bg-brand-light flex items-center justify-center mr-2">
+            <span className="text-brand-navy text-xl font-bold">P</span>
           </div>
           <h1 className="font-nunito font-bold text-xl">PLAN WISE ESL</h1>
         </div>
-        <button onClick={toggleMobileMenu} className="text-white focus:outline-none">
+        <button onClick={toggleMobileMenu} className="text-brand-light focus:outline-none">
           {isMobileMenuOpen ? (
             <span className="text-2xl">×</span>
           ) : (
@@ -128,14 +131,14 @@ export function Sidebar() {
       </div>
       
       {/* Sidebar for mobile (collapsible) */}
-      <div className={`md:hidden bg-primary text-white absolute z-30 w-full transform ${
+      <div className={`md:hidden bg-brand-navy text-brand-light absolute z-30 w-full transform ${
         isMobileMenuOpen ? "translate-y-0" : "-translate-y-full"
       } transition-transform duration-300 ease-in-out`}>
         {sidebarContent}
       </div>
       
       {/* Sidebar for desktop */}
-      <div className="hidden md:block md:w-64 bg-primary text-white flex-shrink-0 h-screen sticky top-0">
+      <div className="hidden md:block md:w-64 bg-brand-navy text-brand-light flex-shrink-0 h-screen sticky top-0">
         {sidebarContent}
       </div>
     </>

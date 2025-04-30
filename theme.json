@@ -1,6 +1,8 @@
 {
   "variant": "professional",
-  "primary": "#4A6FA5",
+  "primary": "#edc437",
+  "secondary": "#051d40",
+  "background": "#fdfdfd",
   "appearance": "light",
   "radius": 0.5
 }

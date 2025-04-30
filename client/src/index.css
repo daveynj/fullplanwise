@@ -15,7 +15,69 @@
   backface-visibility: hidden;
 }
 
+/* Custom utility classes for backward compatibility */
+.bg-primary-light {
+  background-color: #1e3a66; /* brand-navy-light */
+}
+
+.hover\:bg-primary-light:hover {
+  background-color: #1e3a66; /* brand-navy-light */
+}
+
+.border-primary-light {
+  border-color: #1e3a66; /* brand-navy-light */
+}
+
 @layer base {
+  :root {
+    --background: 0 0% 99%;  /* #fdfdfd */
+    --foreground: 220 80% 14%;  /* #051d40 */
+    
+    --primary: 47 83% 57%;  /* #edc437 */
+    --primary-foreground: 220 80% 14%;  /* #051d40 */
+    
+    --secondary: 220 80% 14%;  /* #051d40 */
+    --secondary-foreground: 0 0% 99%;  /* #fdfdfd */
+    
+    --accent: 47 83% 57%;  /* #edc437 */
+    --accent-foreground: 220 80% 14%;  /* #051d40 */
+    
+    --card: 0 0% 99%;  /* #fdfdfd */
+    --card-foreground: 220 80% 14%;  /* #051d40 */
+    
+    --popover: 0 0% 99%;  /* #fdfdfd */
+    --popover-foreground: 220 80% 14%;  /* #051d40 */
+    
+    --muted: 220 20% 90%;
+    --muted-foreground: 220 40% 40%;
+    
+    --destructive: 0 85% 60%;
+    --destructive-foreground: 0 0% 99%;  /* #fdfdfd */
+    
+    --border: 220 20% 85%;
+    --input: 220 20% 80%;
+    --ring: 47 83% 57%;  /* #edc437 */
+    
+    /* Sidebar colors */
+    --sidebar-background: 220 80% 14%;  /* #051d40 - navy */
+    --sidebar-foreground: 0 0% 99%;  /* #fdfdfd - white */
+    --sidebar-primary: 220 80% 14%;  /* #051d40 - navy */
+    --sidebar-primary-foreground: 0 0% 99%;  /* #fdfdfd - white */
+    --sidebar-accent: 47 83% 57%;  /* #edc437 - yellow */
+    --sidebar-accent-foreground: 220 80% 14%;  /* #051d40 - navy */
+    --sidebar-border: 220 40% 25%;  /* darker navy for borders */
+    --sidebar-ring: 47 83% 57%;  /* #edc437 - yellow for focus rings */
+    
+    /* Chart colors using our brand palette */
+    --chart-1: 47 83% 57%;  /* #edc437 - yellow */
+    --chart-2: 220 80% 14%;  /* #051d40 - navy */
+    --chart-3: 220 50% 30%;  /* lighter navy */
+    --chart-4: 47 70% 70%;  /* lighter yellow */
+    --chart-5: 220 30% 60%;  /* very light navy */
+    
+    --radius: 0.5rem;
+  }
+  
   html {
     @apply scroll-smooth;
     font-size: 18px; /* Increase base font size from default 16px to 18px */
