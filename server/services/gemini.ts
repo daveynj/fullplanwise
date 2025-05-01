@@ -103,38 +103,84 @@ export class GeminiService {
               };
             }
           } catch (jsonError) {
-            // If we fail to parse as JSON, try to handle it as best we can
+            // If we fail to parse as JSON, try to fix common JSON errors first
             console.error('Error parsing Gemini response as JSON:', jsonError);
             
-            // Log the first part of the text to help with debugging
-            const textPreview = text.substring(0, 200) + (text.length > 200 ? '...' : '');
-            console.warn('Response text preview:', textPreview);
+            // Log the first part of the text and position of error to help with debugging
+            const errorMessage = jsonError instanceof Error ? jsonError.message : 'Unknown JSON error';
+            const errorPosition = errorMessage.match(/position (\d+)/)?.[1];
             
-            return {
-              title: `Lesson on ${params.topic}`,
-              provider: 'gemini',
-              sections: [
-                {
-                  type: "error",
-                  title: "Content Error",
-                  content: "The lesson could not be properly formatted. This may be due to the topic's complexity or content policies. Please try a different topic or simplify your current one."
+            const textPreview = errorPosition 
+              ? `${cleanedContent.substring(Math.max(0, parseInt(errorPosition) - 50), parseInt(errorPosition))}[ERROR HERE]${cleanedContent.substring(parseInt(errorPosition), parseInt(errorPosition) + 50)}`
+              : cleanedContent.substring(0, 200) + (cleanedContent.length > 200 ? '...' : '');
+            
+            console.warn('Response text around error:', textPreview);
+            
+            // Attempt to fix common JSON errors
+            console.log('Attempting to fix common JSON formatting errors...');
+            
+            try {
+              // Common JSON fixes
+              let fixedContent = cleanedContent
+                .replace(/,\s*}/g, '}')           // Remove trailing commas in objects
+                .replace(/,\s*\]/g, ']')          // Remove trailing commas in arrays
+                .replace(/([^\\])(\\)([^"\\\/bfnrtu])/g, '$1\\\\$3')  // Fix unescaped backslashes
+                .replace(/([^\\])\\'/g, "$1'")    // Remove escaping from single quotes
+                .replace(/\r?\n|\r/g, ' ')        // Replace newlines with spaces
+                .replace(/"\s+([^"]*)\s+"/g, '"$1"') // Fix spaces in JSON keys
+                .replace(/(['"])([\w]+)(['"]):/g, '"$2":'); // Ensure property names use double quotes
+                
+              // Handle other common errors
+              let inString = false;
+              let escaped = false;
+              let fixedChars = [];
+              
+              for (let i = 0; i < fixedContent.length; i++) {
+                const char = fixedContent[i];
+                
+                if (escaped) {
+                  // Handle escaped characters
+                  escaped = false;
+                  fixedChars.push(char);
+                } else if (char === '\\') {
+                  escaped = true;
+                  fixedChars.push(char);
+                } else if (char === '"') {
+                  inString = !inString;
+                  fixedChars.push(char);
+                } else if (!inString && (char === ' ' || char === '\t' || char === '\n' || char === '\r')) {
+                  // Skip extra whitespace outside strings
+                  continue;
+                } else {
+                  fixedChars.push(char);
                 }
-              ]
-            };
+              }
+              
+              // Create final fixed content
+              const finalFixedContent = fixedChars.join('');
+              
+              // Try parsing again with fixed content
+              const jsonContent = JSON.parse(finalFixedContent);
+              console.log('Successfully parsed JSON after applying fixes!');
+              
+              // Validate structure after fixing
+              if (jsonContent.title && jsonContent.sections && Array.isArray(jsonContent.sections)) {
+                console.log('Fixed content has valid structure, returning formatted content');
+                return await this.formatLessonContent(jsonContent);
+              } else {
+                throw new Error('Fixed JSON still missing required structure');
+              }
+            } catch (fixError) {
+              console.error('Error parsing even after fixes:', fixError);
+              
+              // If still failing, throw error to trigger fallback
+              throw new Error(`JSON parsing failed even after attempted fixes: ${errorMessage}`);
+            }
           }
         } catch (error) {
           console.error('Unexpected error processing Gemini response:', error);
-          return {
-            title: `Lesson on ${params.topic}`,
-            provider: 'gemini',
-            sections: [
-              {
-                type: "error",
-                title: "Processing Error",
-                content: "An unexpected error occurred. Please try regenerating the lesson."
-              }
-            ]
-          };
+          // Propagate the error to trigger fallback
+          throw new Error(`Error processing Gemini response: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
       } catch (error: any) {
         console.error('Error during Gemini API request:', error.message);
@@ -147,23 +193,24 @@ export class GeminiService {
           error.message.includes('not appropriate')
         );
         
-        // Customize message based on error type
-        const errorMessage = isPolicyError
-          ? "The topic may contain sensitive content that cannot be processed. Please try a different topic."
-          : `The lesson could not be generated. This may be due to a temporary issue with the Gemini API. Please try again later.`;
-          
-        return {
-          title: `Lesson on ${params.topic}`,
-          error: error.message,
-          provider: 'gemini',
-          sections: [
-            {
-              type: "error",
-              title: isPolicyError ? "Content Policy Restriction" : "API Error",
-              content: errorMessage
-            }
-          ]
-        };
+        // For policy errors, return error object; otherwise propagate to trigger fallback
+        if (isPolicyError) {
+          return {
+            title: `Lesson on ${params.topic}`,
+            error: error.message,
+            provider: 'gemini',
+            sections: [
+              {
+                type: "error",
+                title: "Content Policy Restriction",
+                content: "The topic may contain sensitive content that cannot be processed. Please try a different topic."
+              }
+            ]
+          };
+        } else {
+          // For technical errors, throw to trigger fallback
+          throw error;
+        }
       }
     } catch (error: any) {
       console.error('Error in GeminiService.generateLesson:', error.message);
