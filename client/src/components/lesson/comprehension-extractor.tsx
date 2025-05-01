@@ -13,6 +13,19 @@ import { extractComprehensionQuestions } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { SectionHeader } from "./shared/section-header";
 
+// Utility function to normalize text for more flexible matching
+const normalizeText = (text: string): string => {
+  if (!text) return '';
+  
+  return text
+    .toLowerCase()
+    .trim()
+    // Remove punctuation
+    .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "")
+    // Replace multiple spaces with single space
+    .replace(/\s{2,}/g, " ");
+};
+
 // Interface for object-format options (for consistency with quiz-extractor)
 interface ComprehensionOptionObject {
   text: string;
@@ -74,6 +87,19 @@ export const ComprehensionExtractor = ({ content }: ComprehensionExtractorProps)
     }
     
     return '';
+  };
+
+  // Check if the selected answer is correct
+  const isAnswerCorrect = (selected: string | null, correctAnswer: string): boolean => {
+    if (!selected) return false;
+    console.log("Comparing answers:", {
+      selected,
+      correct: correctAnswer,
+      normalizedSelected: normalizeText(selected),
+      normalizedCorrect: normalizeText(correctAnswer),
+      isMatch: normalizeText(selected) === normalizeText(correctAnswer)
+    });
+    return normalizeText(selected) === normalizeText(correctAnswer);
   };
   
   // Handle submitting an answer
@@ -188,7 +214,7 @@ export const ComprehensionExtractor = ({ content }: ComprehensionExtractorProps)
                         {['True', 'False'].map((option, idx) => {
                           const isSelected = selectedOption === option;
                           const correctAnswer = getCorrectAnswer(extractedQuestions[activeQuestion]);
-                          const isCorrect = option === correctAnswer;
+                          const isCorrect = isAnswerCorrect(option, correctAnswer);
                           
                           let optionClass = "flex items-center p-3 border rounded-md cursor-pointer";
                           
@@ -243,7 +269,7 @@ export const ComprehensionExtractor = ({ content }: ComprehensionExtractorProps)
                       <div className="space-y-2">
                         {extractedQuestions[activeQuestion].options?.map((option, idx) => {
                           const optionText = typeof option === 'string' ? option : option.text;
-                          const isCorrect = typeof option === 'object' ? option.correct : getCorrectAnswer(extractedQuestions[activeQuestion]) === optionText;
+                          const isCorrect = typeof option === 'object' ? option.correct : isAnswerCorrect(optionText, getCorrectAnswer(extractedQuestions[activeQuestion]));
                           
                           const isSelected = selectedOption === optionText;
                           
@@ -303,7 +329,7 @@ export const ComprehensionExtractor = ({ content }: ComprehensionExtractorProps)
               {submitted && (
                 <div className="mt-4 p-4 rounded-lg border-l-4 border-l-purple-500 bg-purple-50">
                   <div className="flex items-start gap-2">
-                    {selectedOption === getCorrectAnswer(extractedQuestions[activeQuestion]) ? (
+                    {isAnswerCorrect(selectedOption, getCorrectAnswer(extractedQuestions[activeQuestion])) ? (
                       <>
                         <CheckCircle2 className="h-5 w-5 text-green-500 mt-0.5" />
                         <div>
