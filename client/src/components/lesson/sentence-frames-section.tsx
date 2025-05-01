@@ -290,7 +290,7 @@ function EnhancedFrameLayout({ frame }: { frame: SentenceFramePattern }) {
                   const color = getComponentColor(component.label);
                   return (
                     <div key={idx} className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4 pb-3 border-b border-gray-100">
-                      <div className={`inline-flex items-center px-2.5 py-1 rounded-full text-sm font-medium bg-${color}-100 text-${color}-800 md:w-1/4`}>
+                      <div className={`inline-flex items-center px-2.5 py-1 rounded-full text-sm font-medium bg-white border border-${color}-200 text-${color}-800 md:w-1/4`}>
                         {component.label}
                       </div>
                       <div className="md:w-3/4">
@@ -490,8 +490,8 @@ function OldSentenceFrameLayout({ currentFrame }: { currentFrame: OldSentenceFra
             <div className="space-y-4">
               {currentFrame.structureBreakdown.map((component, index) => (
                 <div key={index} 
-                    className="p-4 rounded-md border-l-4 border-amber-400 bg-gray-50/80 shadow-sm border border-gray-200">
-                  <p className="font-semibold text-lg text-gray-800">{component.componentName}</p>
+                    className="p-4 rounded-md border-l-4 border-amber-400 bg-white shadow-sm border border-gray-200">
+                  <p className="font-semibold text-lg text-amber-800">{component.componentName}</p>
                   <p className="text-base text-gray-700 mt-1 italic text-xl font-bold">{component.description}</p>
                   {component.examples && component.examples.length > 0 && (
                     <div className="mt-3">
@@ -499,7 +499,7 @@ function OldSentenceFrameLayout({ currentFrame }: { currentFrame: OldSentenceFra
                       <div className="flex flex-wrap gap-2">
                         {component.examples.map((ex, exIndex) => (
                           <Badge key={exIndex} variant="secondary" 
-                                className="text-sm font-medium border-gray-300 text-gray-800 shadow-sm px-2.5 py-1">
+                                className="text-sm font-medium bg-white border-amber-200 text-amber-800 shadow-sm px-2.5 py-1">
                             {ex}
                           </Badge>
                         ))}
