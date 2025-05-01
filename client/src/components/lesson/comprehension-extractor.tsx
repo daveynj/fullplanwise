@@ -17,6 +17,11 @@ import { SectionHeader } from "./shared/section-header";
 const normalizeText = (text: string): string => {
   if (!text) return '';
   
+  // First extract just the letter for multiple choice answers (A, B, C, D)
+  if (/^[A-D]\.\s+/.test(text)) {
+    return text.substring(0, 1).toLowerCase();
+  }
+  
   return text
     .toLowerCase()
     .trim()
@@ -84,6 +89,19 @@ export const ComprehensionExtractor = ({ content }: ComprehensionExtractorProps)
           'text' in (correctOption as ComprehensionOptionObject)) {
         return (correctOption as ComprehensionOptionObject).text || '';
       }
+      
+      // If options are like ["A. Option 1", "B. Option 2"] and answer is just "A"
+      // Map the single letter answer to the full option text
+      if (question.correctAnswer || question.answer) {
+        const letter = (question.correctAnswer || question.answer || '').trim();
+        if (/^[A-D]$/.test(letter)) {
+          const index = letter.charCodeAt(0) - 65; // Convert A,B,C,D to 0,1,2,3
+          if (index >= 0 && index < question.options.length) {
+            const option = question.options[index];
+            return typeof option === 'string' ? option : option.text || '';
+          }
+        }
+      }
     }
     
     return '';
@@ -92,14 +110,21 @@ export const ComprehensionExtractor = ({ content }: ComprehensionExtractorProps)
   // Check if the selected answer is correct
   const isAnswerCorrect = (selected: string | null, correctAnswer: string): boolean => {
     if (!selected) return false;
+    
+    // For multiple choice options, first check if correctAnswer is just a letter
+    const normalizedSelected = normalizeText(selected);
+    const normalizedCorrect = normalizeText(correctAnswer);
+    
     console.log("Comparing answers:", {
       selected,
       correct: correctAnswer,
-      normalizedSelected: normalizeText(selected),
-      normalizedCorrect: normalizeText(correctAnswer),
-      isMatch: normalizeText(selected) === normalizeText(correctAnswer)
+      normalizedSelected,
+      normalizedCorrect,
+      isMatch: normalizedSelected === normalizedCorrect,
+      mcOption: /^[A-D]$/.test(correctAnswer.trim())
     });
-    return normalizeText(selected) === normalizeText(correctAnswer);
+    
+    return normalizedSelected === normalizedCorrect;
   };
   
   // Handle submitting an answer
