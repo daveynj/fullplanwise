@@ -318,6 +318,14 @@ Based on your analysis, design a warm-up activity that:
 - Provides appropriate scaffolding for the upcoming reading text
 - Promotes active participation with level-appropriate challenge
 
+CRITICAL: WARM-UP REQUIREMENTS 
+- All warm-up questions MUST be DIRECTLY RELATED to the lesson topic "${params.topic}"
+- Each question MUST include clear context so it can be understood without reading the lesson text
+- Questions MUST NOT be generic or applicable to any topic - they must be specifically about ${params.topic}
+- AVOID questions like "What do you think about X?" without providing context about X
+- DO NOT create questions about using "force" or other generic concepts unless they are directly related to ${params.topic}
+- Each question should be self-contained with enough context to be answered without external information
+
 CULTURAL ADAPTABILITY APPROACH:
 First, analyze cultural learning considerations for ${params.cefrLevel} level:
 - Research how cultural awareness is developed at different language proficiency levels
