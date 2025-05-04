@@ -1,0 +1,160 @@
+2025-05-04 05:53:11.59
+1ac1b654
+User
+_emitMessage: false,
+2025-05-04 05:53:11.59
+1ac1b654
+User
+_connecting: true
+2025-05-04 05:53:11.59
+1ac1b654
+User
+},
+2025-05-04 05:53:11.59
+1ac1b654
+User
+queryQueue: [],
+2025-05-04 05:53:11.59
+1ac1b654
+User
+binary: false,
+2025-05-04 05:53:11.59
+1ac1b654
+User
+processID: 405824595,
+2025-05-04 05:53:11.59
+1ac1b654
+User
+secretKey: -942734909,
+2025-05-04 05:53:11.59
+1ac1b654
+User
+ssl: false,
+2025-05-04 05:53:11.59
+1ac1b654
+User
+_connectionTimeoutMillis: 10000,
+2025-05-04 05:53:11.59
+1ac1b654
+User
+config: {
+2025-05-04 05:53:11.59
+1ac1b654
+User
+connectionString: 'postgresql://neondb_owner:npg_HEWqTfYDg93U@ep-empty-sea-a5wub6p8.us-east-2.aws.neon.tech/neondb?sslmode=require',
+2025-05-04 05:53:11.59
+1ac1b654
+User
+max: 20,
+2025-05-04 05:53:11.59
+1ac1b654
+User
+idleTimeoutMillis: 30000,
+2025-05-04 05:53:11.59
+1ac1b654
+User
+connectionTimeoutMillis: 10000,
+2025-05-04 05:53:11.59
+1ac1b654
+User
+maxUses: Infinity,
+2025-05-04 05:53:11.59
+1ac1b654
+User
+allowExitOnIdle: false,
+2025-05-04 05:53:11.59
+1ac1b654
+User
+maxLifetimeSeconds: 0
+2025-05-04 05:53:11.59
+1ac1b654
+User
+},
+2025-05-04 05:53:11.59
+1ac1b654
+User
+_connectionCallback: null,
+2025-05-04 05:53:11.59
+1ac1b654
+User
+connectionTimeoutHandle: Timeout {
+2025-05-04 05:53:11.59
+1ac1b654
+User
+_idleTimeout: -1,
+2025-05-04 05:53:11.59
+1ac1b654
+User
+_idlePrev: null,
+2025-05-04 05:53:11.59
+1ac1b654
+User
+_idleNext: null,
+2025-05-04 05:53:11.59
+1ac1b654
+User
+_idleStart: 233944345,
+2025-05-04 05:53:11.59
+1ac1b654
+User
+_onTimeout: null,
+2025-05-04 05:53:11.59
+1ac1b654
+User
+_timerArgs: undefined,
+2025-05-04 05:53:11.59
+1ac1b654
+User
+_repeat: null,
+2025-05-04 05:53:11.59
+1ac1b654
+User
+_destroyed: true,
+2025-05-04 05:53:11.59
+1ac1b654
+User
+[Symbol(refed)]: true,
+2025-05-04 05:53:11.59
+1ac1b654
+User
+[Symbol(kHasPrimitive)]: false,
+2025-05-04 05:53:11.59
+1ac1b654
+User
+[Symbol(asyncId)]: 712508,
+2025-05-04 05:53:11.59
+1ac1b654
+User
+[Symbol(triggerId)]: 0
+2025-05-04 05:53:11.59
+1ac1b654
+User
+},
+2025-05-04 05:53:11.59
+1ac1b654
+User
+release: [Function (anonymous)],
+2025-05-04 05:53:11.59
+1ac1b654
+User
+activeQuery: null,
+2025-05-04 05:53:11.59
+1ac1b654
+User
+readyForQuery: true,
+2025-05-04 05:53:11.59
+1ac1b654
+User
+hasExecuted: true,
+2025-05-04 05:53:11.59
+1ac1b654
+User
+_poolUseCount: 3
+2025-05-04 05:53:11.59
+1ac1b654
+User
+}
+2025-05-04 05:53:11.59
+1ac1b654
+User
+}
