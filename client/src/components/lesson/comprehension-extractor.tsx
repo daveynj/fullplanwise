@@ -113,18 +113,23 @@ export const ComprehensionExtractor = ({ content }: ComprehensionExtractorProps)
     
     // Normalize both strings for comparison
     const normalizeText = (text: string): string => {
+      if (!text) return '';
       return text.toLowerCase().trim().replace(/\s+/g, ' ');
     };
     
     const normalizedSelected = normalizeText(selected);
     const normalizedCorrect = normalizeText(correctAnswer);
     
-    console.log("Comparing answers:", {
+    console.log("Detailed answer comparison:", {
       selected,
-      correct: correctAnswer,
+      correctAnswer,
       normalizedSelected,
       normalizedCorrect,
-      isMatch: normalizedSelected === normalizedCorrect
+      isMatch: normalizedSelected === normalizedCorrect,
+      selectedLength: normalizedSelected.length,
+      correctLength: normalizedCorrect.length,
+      selectedChars: [...normalizedSelected].map(c => c.charCodeAt(0)),
+      correctChars: [...normalizedCorrect].map(c => c.charCodeAt(0))
     });
     
     // For multiple choice options, first check if correctAnswer is just a letter
@@ -135,11 +140,37 @@ export const ComprehensionExtractor = ({ content }: ComprehensionExtractorProps)
       if (options && Array.isArray(options) && index >= 0 && index < options.length) {
         const correctOption = options[index];
         const correctText = typeof correctOption === 'string' ? correctOption : correctOption.text || '';
-        return normalizeText(selected) === normalizeText(correctText);
+        const normalizedCorrectText = normalizeText(correctText);
+        
+        console.log("Multiple choice comparison:", {
+          letter,
+          index,
+          correctText,
+          normalizedCorrectText,
+          normalizedSelected,
+          isMatch: normalizedSelected === normalizedCorrectText
+        });
+        
+        return normalizedSelected === normalizedCorrectText;
       }
     }
     
-    return normalizedSelected === normalizedCorrect;
+    // Try exact match first
+    if (normalizedSelected === normalizedCorrect) {
+      return true;
+    }
+    
+    // Try removing all non-alphanumeric characters and compare
+    const cleanSelected = normalizedSelected.replace(/[^a-z0-9]/g, '');
+    const cleanCorrect = normalizedCorrect.replace(/[^a-z0-9]/g, '');
+    
+    console.log("Cleaned comparison:", {
+      cleanSelected,
+      cleanCorrect,
+      isMatch: cleanSelected === cleanCorrect
+    });
+    
+    return cleanSelected === cleanCorrect;
   };
   
   // Handle submitting an answer
