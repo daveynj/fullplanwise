@@ -111,7 +111,11 @@ export const ComprehensionExtractor = ({ content }: ComprehensionExtractorProps)
   const isAnswerCorrect = (selected: string | null, correctAnswer: string): boolean => {
     if (!selected) return false;
     
-    // For multiple choice options, first check if correctAnswer is just a letter
+    // Normalize both strings for comparison
+    const normalizeText = (text: string): string => {
+      return text.toLowerCase().trim().replace(/\s+/g, ' ');
+    };
+    
     const normalizedSelected = normalizeText(selected);
     const normalizedCorrect = normalizeText(correctAnswer);
     
@@ -120,9 +124,20 @@ export const ComprehensionExtractor = ({ content }: ComprehensionExtractorProps)
       correct: correctAnswer,
       normalizedSelected,
       normalizedCorrect,
-      isMatch: normalizedSelected === normalizedCorrect,
-      mcOption: /^[A-D]$/.test(correctAnswer.trim())
+      isMatch: normalizedSelected === normalizedCorrect
     });
+    
+    // For multiple choice options, first check if correctAnswer is just a letter
+    if (/^[A-D]$/.test(correctAnswer.trim())) {
+      const letter = correctAnswer.trim();
+      const index = letter.charCodeAt(0) - 65; // Convert A,B,C,D to 0,1,2,3
+      const options = extractedQuestions[activeQuestion].options;
+      if (options && Array.isArray(options) && index >= 0 && index < options.length) {
+        const correctOption = options[index];
+        const correctText = typeof correctOption === 'string' ? correctOption : correctOption.text || '';
+        return normalizeText(selected) === normalizeText(correctText);
+      }
+    }
     
     return normalizedSelected === normalizedCorrect;
   };
