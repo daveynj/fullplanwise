@@ -57,6 +57,7 @@ Before creating any lesson content, first analyze and establish clear parameters
 
 1. VOCABULARY ANALYSIS:
    - Identify what vocabulary range is appropriate for ${params.cefrLevel} level students
+   ${params.targetVocabulary ? `   - IMPORTANT: You MUST include the following words in your lesson: ${params.targetVocabulary}` : ''}
    - List 5-10 example words that would be appropriate for this level
    - List 3-5 example words that would be too difficult for this level
 
