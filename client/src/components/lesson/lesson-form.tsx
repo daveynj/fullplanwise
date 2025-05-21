@@ -39,6 +39,7 @@ const formSchema = z.object({
   studentId: z.string().optional(),
   cefrLevel: z.string(),
   topic: z.string().min(3, "Topic must be at least 3 characters"),
+  targetVocabulary: z.string().optional(),
   aiProvider: AIProviderEnum.default("qwen"),
   focus: z.string().default("general"),
   lessonLength: z.number().default(60),
@@ -61,6 +62,7 @@ export function LessonForm({ students, onSubmit, credits }: LessonFormProps) {
       studentId: "none",
       cefrLevel: "B1",
       topic: "",
+      targetVocabulary: "",
       aiProvider: "qwen",
       focus: "general",
       lessonLength: 60,
@@ -73,6 +75,10 @@ export function LessonForm({ students, onSubmit, credits }: LessonFormProps) {
       ...values,
       studentId: values.studentId && values.studentId !== 'none' 
         ? parseInt(values.studentId) 
+        : undefined,
+      // Only include target vocabulary if it's not empty
+      targetVocabulary: values.targetVocabulary && values.targetVocabulary.trim() !== '' 
+        ? values.targetVocabulary.trim() 
         : undefined,
       // Add required fields for the API
       components: ["warm-up", "vocabulary", "reading", "comprehension", "sentences", "discussion", "quiz"],
@@ -161,6 +167,27 @@ export function LessonForm({ students, onSubmit, credits }: LessonFormProps) {
                     />
                   </FormControl>
                   <p className="text-xs text-blue-600 mt-2 italic">Be specific - a good topic helps generate better lessons</p>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            {/* Target Vocabulary Field */}
+            <FormField
+              control={form.control}
+              name="targetVocabulary"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="font-semibold">Target Vocabulary (Optional)</FormLabel>
+                  <p className="text-sm text-gray-600 mb-2">Add specific words you want included in the lesson</p>
+                  <FormControl>
+                    <Textarea 
+                      placeholder="e.g. sustainable, recycle, ecosystem, conservation" 
+                      {...field} 
+                      className="min-h-20 text-md px-4 py-2 border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 resize-none"
+                    />
+                  </FormControl>
+                  <p className="text-xs text-gray-600 mt-2 italic">Separate multiple words with commas</p>
                   <FormMessage />
                 </FormItem>
               )}
