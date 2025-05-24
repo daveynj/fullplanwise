@@ -31,6 +31,74 @@ export interface SentenceFrameExample {
 }
 
 /**
+ * Interactive practice activity for sentence frames
+ */
+export interface PracticeActivity {
+  /** Type of practice activity */
+  type: "controlled" | "guided" | "free";
+  /** Name of the activity */
+  name: string;
+  /** Instructions for the activity */
+  instruction: string;
+  /** Difficulty level */
+  difficulty: "easy" | "medium" | "challenging";
+}
+
+/**
+ * Error correction information for common mistakes
+ */
+export interface ErrorCorrection {
+  /** Common mistakes students make with this pattern */
+  commonMistakes: Array<{
+    /** The incorrect usage */
+    error: string;
+    /** The correct version */
+    correction: string;
+    /** Explanation of why it's wrong */
+    explanation: string;
+  }>;
+}
+
+/**
+ * Cultural adaptation information for sentence frames
+ */
+export interface CulturalAdaptation {
+  /** How this pattern applies across cultures */
+  universalApplication: string;
+  /** Notes about cultural variations */
+  culturalNotes?: string;
+  /** Questions to start cultural discussions */
+  discussionStarters?: string[];
+}
+
+/**
+ * Interactive features for enhanced learning
+ */
+export interface InteractiveFeatures {
+  /** Fill-in-the-blank exercises */
+  fillInTheBlanks?: Array<{
+    template: string;
+    prompts: string[];
+  }>;
+  /** Substitution drill exercises */
+  substitutionDrill?: {
+    basePattern: string;
+    substitutions: Array<{
+      target: string;
+      options: string[];
+    }>;
+  };
+  /** Step-by-step sentence building */
+  buildingSentences?: {
+    stepByStep: Array<{
+      step: number;
+      instruction: string;
+      examples: string[];
+    }>;
+  };
+}
+
+/**
  * Represents the complete data structure for the enhanced
  * Sentence Frame section within a lesson.
  */
@@ -48,13 +116,13 @@ export interface SentenceFramePattern {
   /** Difficulty level of the pattern */
   level?: "basic" | "intermediate" | "advanced" | string;
   /** Bullet points explaining the grammar rules. */
-  grammarFocus: string[];
+  grammarFocus: string[] | string;
 
   // --- Structure Breakdown Tab Data ---
   /** Detailed breakdown of each component of the sentence pattern. */
-  structureComponents: SentenceFrameComponent[];
+  structureComponents?: SentenceFrameComponent[];
   /** Data for the simplified visual structure diagram. */
-  visualStructure: {
+  visualStructure?: {
     start: string; // e.g., "It is"
     // Represents parts and connectors, mapping labels to the structureComponents
     parts: Array<{ 
@@ -66,21 +134,32 @@ export interface SentenceFramePattern {
 
   // --- Examples Tab Data ---
   /** An array of complete sentence examples with their breakdowns. */
-  examples: SentenceFrameExample[];
+  examples: (SentenceFrameExample | string)[];
 
   // --- Additional Content ---
   /** Examples of variations of the main pattern. */
-  patternVariations: {
+  patternVariations?: {
     negativeForm?: string;
     questionForm?: string;
     modalForm?: string;
+    pastForm?: string;
   };
   /** Notes specifically for the teacher on presenting this pattern. */
-  teachingNotes: string[];
+  teachingNotes?: string[];
   /** Alternative property name for teachingNotes */
-  teachingTips?: string[];
+  teachingTips?: string;
   /** Usage notes for the pattern */
   usageNotes?: string | string[];
   /** Questions to prompt discussion related to the pattern/topic. */
-  discussionPrompts: string[];
+  discussionPrompts?: string[];
+
+  // --- Enhanced Features ---
+  /** Interactive practice activities */
+  practiceActivities?: PracticeActivity[];
+  /** Error correction information */
+  errorCorrection?: ErrorCorrection;
+  /** Cultural adaptation information */
+  culturalAdaptation?: CulturalAdaptation;
+  /** Interactive learning features */
+  interactiveFeatures?: InteractiveFeatures;
 } 

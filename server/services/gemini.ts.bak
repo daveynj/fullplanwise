@@ -64,10 +64,10 @@ export class GeminiService {
           // First, attempt to clean up the content and remove markdown code block markers
           let cleanedContent = text;
           
-          // Check if content starts with ` and ends with ` which is common in Gemini responses
-          if (text.trim().startsWith('`') && text.trim().endsWith('`')) {
+          // Check if content starts with ```json and ends with ``` which is common in Gemini responses
+          if (text.trim().startsWith('```json') && text.trim().endsWith('```')) {
             console.log('Detected markdown code block, cleaning content');
-            cleanedContent = text.replace(/`\s*/g, '').replace(/`\s*$/g, '').trim();
+            cleanedContent = text.replace(/```json\s*/g, '').replace(/```\s*$/g, '').trim();
           }
           
           // Now try to parse the cleaned content

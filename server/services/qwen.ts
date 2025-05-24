@@ -526,92 +526,180 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
         {"question": "Complete Question 5?", "options": ["True", "False"], "answer": "False", "correctAnswer": "False", "explanation": "Complete explanation..."}
       ]
     },
-    // SENTENCE FRAMES SECTION (NEW STRUCTURE - 1-2 frames)
+    // SENTENCE FRAMES SECTION (Complete - 1-2 frames)
     {
       "type": "sentenceFrames",
       "title": "Sentence Practice",
+      "introduction": "Master key sentence patterns to express your ideas clearly and naturally.",
       "frames": [
         {
-          "patternTemplate": "It is ___ to ___ because ___.", 
-          "languageFunction": "Explaining reasons",
+          "patternTemplate": "It is ___ to ___ because ___.",
+          "languageFunction": "Explaining reasons and justification",
+          "title": "Expressing Reasoned Opinions",
+          "level": "intermediate",
           "grammarFocus": [
-            "Structure: It + is + adjective + infinitive (to + verb)",
-            "'Because' introduces the reason or explanation."
+            "Structure: It + is + adjective + infinitive (to + verb) + reason clause",
+            "Use of 'because' to introduce explanations",
+            "Infinitive forms after adjectives"
           ],
           "structureComponents": [
             {
-              "label": "Adjective",
-              "description": "Describes the quality or nature of the action.",
-              "examples": ["polite", "important", "rude", "necessary"],
-              "inSentenceExample": "It is [Adjective]..."
+              "label": "Evaluative Adjective",
+              "description": "An adjective that expresses judgment or evaluation about the action",
+              "examples": ["important", "essential", "polite", "rude", "necessary", "helpful"],
+              "inSentenceExample": "It is [Evaluative Adjective] to..."
             },
             {
-              "label": "Infinitive Phrase",
-              "description": "The action related to the main idea.",
-              "examples": ["chew with your mouth closed", "use a napkin", "wait for everyone"],
-              "inSentenceExample": "...to [Infinitive Phrase]..."
+              "label": "Infinitive Action",
+              "description": "The main action or behavior being evaluated, in infinitive form",
+              "examples": ["learn new languages", "respect cultural differences", "ask permission first"],
+              "inSentenceExample": "...to [Infinitive Action] because..."
             },
             {
               "label": "Reason Clause",
-              "description": "Explains why the statement is true.",
-              "examples": ["it shows respect", "it's more hygienic", "it makes others comfortable"],
+              "description": "The explanation or justification for why the evaluation is true",
+              "examples": ["it shows respect for others", "it helps us communicate better", "it prevents misunderstandings"],
               "inSentenceExample": "...because [Reason Clause]."
             }
           ],
           "visualStructure": {
             "start": "It is",
             "parts": [
-              { "label": "Adjective" },
-              { "label": "Infinitive Phrase", "connector": "to" },
+              { "label": "Evaluative Adjective" },
+              { "label": "Infinitive Action", "connector": "to" },
               { "label": "Reason Clause", "connector": "because" }
             ],
             "end": "."
           },
           "examples": [
             {
-              "completeSentence": "It is polite to chew with your mouth closed because it shows respect.",
+              "completeSentence": "It is important to learn cultural customs because it shows respect for local traditions.",
               "breakdown": {
-                "Adjective": "polite",
-                "Infinitive Phrase": "chew with your mouth closed",
-                "Reason Clause": "it shows respect"
+                "Evaluative Adjective": "important",
+                "Infinitive Action": "learn cultural customs",
+                "Reason Clause": "it shows respect for local traditions"
               }
             },
             {
-              "completeSentence": "It is important to use a napkin because it's more hygienic.",
+              "completeSentence": "It is polite to remove your shoes because it keeps the house clean.",
               "breakdown": {
-                "Adjective": "important",
-                "Infinitive Phrase": "use a napkin",
-                "Reason Clause": "it's more hygienic"
+                "Evaluative Adjective": "polite",
+                "Infinitive Action": "remove your shoes", 
+                "Reason Clause": "it keeps the house clean"
               }
             },
             {
-              "completeSentence": "It is necessary to wait for everyone because it makes others comfortable.",
+              "completeSentence": "It is essential to understand local etiquette because it helps avoid embarrassing situations.",
               "breakdown": {
-                  "Adjective": "necessary",
-                  "Infinitive Phrase": "wait for everyone",
-                  "Reason Clause": "it makes others comfortable"
+                "Evaluative Adjective": "essential",
+                "Infinitive Action": "understand local etiquette",
+                "Reason Clause": "it helps avoid embarrassing situations"
+              }
+            },
+            {
+              "completeSentence": "It is rude to interrupt others because it shows disrespect for their opinions.",
+              "breakdown": {
+                "Evaluative Adjective": "rude",
+                "Infinitive Action": "interrupt others",
+                "Reason Clause": "it shows disrespect for their opinions"
               }
             }
           ],
           "patternVariations": {
-            "negativeForm": "It is not polite to talk with your mouth full because it's difficult to understand you.",
-            "questionForm": "Why is it important to use a napkin?",
-            "modalForm": "It can be rude to reach across the table because it invades others' space."
+            "negativeForm": "It is not polite to use your phone during meals because it shows disrespect.",
+            "questionForm": "Why is it important to learn about different cultures?",
+            "modalForm": "It can be difficult to understand all customs because every culture is different.",
+            "pastForm": "It was essential to follow the rules because the ceremony was very formal."
+          },
+          "interactiveFeatures": {
+            "fillInTheBlanks": [
+              {
+                "template": "It is ___ to ___ because ___.",
+                "prompts": [
+                  "Think of something important in your culture",
+                  "What action shows good manners?", 
+                  "Why is this behavior valued?"
+                ]
+              }
+            ],
+            "substitutionDrill": {
+              "basePattern": "It is important to respect others because it creates harmony.",
+              "substitutions": [
+                {"target": "important", "options": ["essential", "necessary", "polite"]},
+                {"target": "respect others", "options": ["listen carefully", "show courtesy", "be patient"]},
+                {"target": "creates harmony", "options": ["builds trust", "shows maturity", "prevents conflicts"]}
+              ]
+            },
+            "buildingSentences": {
+              "stepByStep": [
+                {"step": 1, "instruction": "Choose an evaluative adjective", "examples": ["important", "polite", "necessary"]},
+                {"step": 2, "instruction": "Add an infinitive action", "examples": ["to listen", "to wait", "to ask"]},
+                {"step": 3, "instruction": "Complete with a reason", "examples": ["it shows respect", "it's more polite", "it prevents problems"]}
+              ]
+            }
+          },
+          "culturalAdaptation": {
+            "universalApplication": "This pattern works across cultures for expressing values and social norms",
+            "culturalNotes": "Different cultures may emphasize different adjectives - adapt examples to student backgrounds",
+            "discussionStarters": [
+              "What behaviors are considered 'important' in your culture?",
+              "Are there actions that are 'polite' in one culture but not in another?"
+            ]
           },
           "teachingNotes": [
-            "Point out how each example follows the same structure.",
-            "Ask students: \"What adjective describes this manner?\" \"Why is this manner important?\"",
-            "Elicit more examples: Ask students to suggest other table manners that could fit this pattern.",
-            "Contrast examples: Show how changing one part affects the meaning of the sentence."
+            "Start with familiar concepts before introducing new vocabulary",
+            "Use gestures and visual aids to reinforce the three-part structure",
+            "Encourage students to personalize examples with their own cultural experiences",
+            "Practice rhythm: IT is im-POR-tant to LEARN be-CAUSE it HELPS",
+            "Connect to the lesson vocabulary by using target words in the infinitive action slot"
           ],
+          "practiceActivities": [
+            {
+              "type": "controlled",
+              "name": "Pattern Completion", 
+              "instruction": "Complete the sentence with appropriate words from the lesson",
+              "difficulty": "easy"
+            },
+            {
+              "type": "guided",
+              "name": "Cultural Comparison",
+              "instruction": "Use this pattern to compare customs from different cultures",
+              "difficulty": "medium"
+            },
+            {
+              "type": "free",
+              "name": "Personal Values",
+              "instruction": "Express your own opinions about social behaviors using this pattern",
+              "difficulty": "challenging"
+            }
+          ],
+          "errorCorrection": {
+            "commonMistakes": [
+              {"error": "*It is important learn...", "correction": "It is important TO learn...", "explanation": "Don't forget the infinitive 'to'"},
+              {"error": "*It is important to learn for...", "correction": "It is important to learn BECAUSE...", "explanation": "Use 'because' not 'for' to give reasons"},
+              {"error": "*It is importantly to...", "correction": "It is IMPORTANT to...", "explanation": "Use the adjective 'important', not the adverb"}
+            ]
+          },
           "discussionPrompts": [
-            "What other table manners are important in your culture?",
-            "Are there table manners that are different in different countries?",
-            "Why do you think we have rules about how to behave at the table?",
-            "What happens when someone doesn't follow good table manners?"
+            "What customs from your culture would you explain using this pattern?",
+            "Can you think of a time when understanding cultural differences was important?",
+            "How would you teach someone from another culture about politeness in your country?",
+            "What behaviors are considered essential in professional settings?"
           ]
         }
-      ]
+      ],
+      "aiGeneratedSupport": {
+        "adaptiveExamples": "AI can generate personalized examples based on student's cultural background and interests",
+        "levelAdjustment": "Pattern complexity and vocabulary automatically adjust to student's demonstrated proficiency",
+        "realTimeCorrection": "AI provides immediate feedback on student-generated sentences using this pattern",
+        "progressiveChallenge": "Difficulty increases as student masters basic pattern usage"
+      },
+      "visualLearningSupport": {
+        "colorCoding": "Each sentence component uses consistent colors across all examples",
+        "structureDiagrams": "Visual representation of sentence building blocks", 
+        "animatedConstruction": "Step-by-step sentence building animation suggestions",
+        "patternRecognition": "Highlighting recurring structures across different examples"
+      }
     },
     // CLOZE SECTION (Complete)
     {
