@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowRight, Circle, FileText, Eye, EyeOff, RotateCcw } from 'lucide-react';
+import { ArrowRight, Circle, FileText } from 'lucide-react';
 
 interface VocabularyWord {
   word: string;
@@ -27,8 +27,16 @@ export function VocabularySemanticMap({ word }: SemanticMapProps) {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [showAllConnections, setShowAllConnections] = useState(true);
 
+  // DEBUG: Log what data we're receiving
+  console.log('VocabularySemanticMap received word data:', {
+    word: word.word,
+    hasSemanticMap: !!word.semanticMap,
+    semanticMapData: word.semanticMap
+  });
+
   // Skip if no semantic map data
   if (!word.semanticMap) {
+    console.log('No semantic map data found for word:', word.word);
     return null;
   }
 
@@ -58,7 +66,7 @@ export function VocabularySemanticMap({ word }: SemanticMapProps) {
       category: 'Contexts',
       words: semanticMap.contexts || [],
       color: 'bg-purple-100 border-purple-300 text-purple-800',
-      icon: <Eye className="h-4 w-4 text-purple-600" />
+      icon: <Circle className="h-4 w-4 text-purple-600" />
     },
     {
       category: 'Associated Words',
@@ -74,7 +82,16 @@ export function VocabularySemanticMap({ word }: SemanticMapProps) {
   }
 
   const toggleCategory = (category: string) => {
-    setSelectedCategory(selectedCategory === category ? null : category);
+    console.log('Clicked category:', category, 'Current selected:', selectedCategory);
+    if (selectedCategory === category) {
+      // If clicking the same category, deselect it
+      setSelectedCategory(null);
+      setShowAllConnections(true);
+    } else {
+      // Select the new category and hide others
+      setSelectedCategory(category);
+      setShowAllConnections(false);
+    }
   };
 
   const resetView = () => {
@@ -91,27 +108,9 @@ export function VocabularySemanticMap({ word }: SemanticMapProps) {
             <FileText className="h-4 w-4 text-white" />
           </div>
           <div>
-            <h3 className="text-xl font-bold text-gray-900">Semantic Map</h3>
-            <p className="text-sm text-gray-600">Explore connections for "{word.word}"</p>
+            <h3 className="text-2xl font-bold text-gray-900">Semantic Map</h3>
+            <p className="text-lg font-medium text-gray-600 leading-relaxed">Explore connections for "{word.word}"</p>
           </div>
-        </div>
-        
-        {/* Controls */}
-        <div className="flex items-center space-x-2">
-          <button
-            onClick={() => setShowAllConnections(!showAllConnections)}
-            className="p-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
-            title={showAllConnections ? "Hide connections" : "Show all connections"}
-          >
-            {showAllConnections ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-          </button>
-          <button
-            onClick={resetView}
-            className="p-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
-            title="Reset view"
-          >
-            <RotateCcw className="h-4 w-4" />
-          </button>
         </div>
       </div>
 
@@ -120,7 +119,7 @@ export function VocabularySemanticMap({ word }: SemanticMapProps) {
         {/* Central Word */}
         <div className="flex justify-center mb-8">
           <div className="bg-gradient-to-r from-blue-600 to-purple-700 text-white px-8 py-4 rounded-xl shadow-lg transform transition-transform hover:scale-105">
-            <h2 className="text-2xl font-bold text-center">{word.word}</h2>
+            <h2 className="text-3xl font-bold text-center">{word.word}</h2>
           </div>
         </div>
 
@@ -144,9 +143,9 @@ export function VocabularySemanticMap({ word }: SemanticMapProps) {
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center space-x-2">
                     {connection.icon}
-                    <h4 className="font-bold text-lg">{connection.category}</h4>
+                    <h4 className="font-bold text-xl">{connection.category}</h4>
                   </div>
-                  <div className="text-xs font-medium bg-white bg-opacity-70 px-2 py-1 rounded-full">
+                  <div className="text-sm font-semibold bg-white bg-opacity-70 px-2 py-1 rounded-full">
                     {connection.words.length}
                   </div>
                 </div>
@@ -156,7 +155,7 @@ export function VocabularySemanticMap({ word }: SemanticMapProps) {
                   {connection.words.slice(0, isSelected ? connection.words.length : 3).map((wordItem, wordIndex) => (
                     <div
                       key={wordIndex}
-                      className="bg-white bg-opacity-80 px-3 py-2 rounded-lg text-sm font-medium border border-gray-200 hover:bg-opacity-100 transition-all"
+                      className="bg-white bg-opacity-80 px-3 py-2 rounded-lg text-lg font-medium leading-relaxed border border-gray-200 hover:bg-opacity-100 transition-all"
                     >
                       {wordItem}
                     </div>
@@ -164,7 +163,7 @@ export function VocabularySemanticMap({ word }: SemanticMapProps) {
                   
                   {/* Show more indicator */}
                   {!isSelected && connection.words.length > 3 && (
-                    <div className="text-center text-xs font-medium opacity-70 pt-1">
+                    <div className="text-center text-lg font-medium opacity-70 pt-1">
                       +{connection.words.length - 3} more...
                     </div>
                   )}
@@ -178,7 +177,7 @@ export function VocabularySemanticMap({ word }: SemanticMapProps) {
         </div>
 
         {/* Instructions */}
-        <div className="mt-6 text-center text-sm text-gray-600">
+        <div className="mt-6 text-center text-lg font-medium text-gray-600 leading-relaxed">
           <p>Click on any category to focus on that connection type</p>
         </div>
       </div>

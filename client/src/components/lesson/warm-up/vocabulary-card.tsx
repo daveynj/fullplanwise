@@ -38,6 +38,15 @@ interface VocabularyCardProps {
 }
 
 export function VocabularyCard({ word }: VocabularyCardProps) {
+  // DEBUG: Log the entire word object structure
+  console.log('🎯 VOCABULARY CARD WORD DATA:', {
+    word: word.word,
+    fullWordObject: word,
+    hasSemanticMap: !!word.semanticMap,
+    semanticMapData: word.semanticMap,
+    wordKeys: Object.keys(word)
+  });
+
   // State for expandable sections
   const [showAdditionalExamples, setShowAdditionalExamples] = useState(false);
   const [showWordFamily, setShowWordFamily] = useState(false);
@@ -314,6 +323,13 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
         </div>
         
         {/* Semantic Map Section */}
+        {/* DEBUG: Check semantic map data */}
+        {console.log('🔍 SEMANTIC MAP CHECK:', {
+          word: word.word,
+          hasSemanticMap: !!word.semanticMap,
+          semanticMapKeys: word.semanticMap ? Object.keys(word.semanticMap) : 'NO_DATA',
+          fullSemanticMapData: word.semanticMap
+        })}
         {word.semanticMap && (
           <div className="mt-4">
             <VocabularySemanticMap word={word} />

@@ -62,6 +62,7 @@ import { CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { cn, extractDiscussionQuestions, extractQuizQuestions, extractComprehensionQuestions } from "@/lib/utils";
 // Using wouter instead of next/navigation
 import { useLocation } from "wouter";
+import { VocabularySemanticMap } from './vocabulary-semantic-map';
 
 interface LessonContentProps {
   content: any;
@@ -909,7 +910,10 @@ export function LessonContent({ content }: LessonContentProps) {
                 description: typeof wordData.wordFamilyDescription === 'string' ? wordData.wordFamilyDescription : undefined
               } : undefined),
               collocations: Array.isArray(wordData.collocations) ? wordData.collocations : undefined,
-              usageNotes: wordData.usageNotes || wordData.usage || undefined
+              usageNotes: wordData.usageNotes || wordData.usage || undefined,
+              
+              // CRITICAL: Include semantic map data
+              semanticMap: wordData.semanticMap
             });
           }
         });
@@ -1409,7 +1413,10 @@ export function LessonContent({ content }: LessonContentProps) {
               description: typeof wordData.wordFamilyDescription === 'string' ? wordData.wordFamilyDescription : undefined
             } : undefined),
             collocations: Array.isArray(wordData.collocations) ? wordData.collocations : undefined,
-            usageNotes: wordData.usageNotes || wordData.usage || undefined
+            usageNotes: wordData.usageNotes || wordData.usage || undefined,
+            
+            // CRITICAL: Include semantic map data
+            semanticMap: wordData.semanticMap
           });
         }
       });
@@ -1418,7 +1425,9 @@ export function LessonContent({ content }: LessonContentProps) {
         word: w.word,
         pronunciation: w.pronunciation,
         syllables: w.syllables,
-        stressIndex: w.stressIndex
+        stressIndex: w.stressIndex,
+        hasSemanticMap: !!w.semanticMap,
+        semanticMapCategories: w.semanticMap ? Object.keys(w.semanticMap) : []
       })));
     }
     
@@ -1457,12 +1466,12 @@ export function LessonContent({ content }: LessonContentProps) {
         {/* Using the reusable SectionHeader component */}
         <SectionHeader
           title="Vocabulary"
-          description="Review the flashcard. Try defining the word in your own words and using it in a sentence."
+          description="Review the vocabulary words and explore their semantic relationships."
           icon={BookOpen}
           color="green"
         />
         
-        {/* Vocabulary Practice Card */}
+        {/* Vocabulary Cards */}
         <div className="bg-green-50/30 rounded-lg p-4 border border-green-100">
           {/* Word count and progress indicator */}
           <div className="flex items-center justify-between mb-4">
@@ -1599,6 +1608,13 @@ export function LessonContent({ content }: LessonContentProps) {
         </div>
         
         {/* Teacher notes have been moved to the notes tab */}
+        
+        {/* NEW: Semantic Map Section - BELOW the flip cards */}
+        {currentWord && currentWord.semanticMap && (
+          <div className="bg-white rounded-lg border border-gray-200 p-6 mt-6">
+            <VocabularySemanticMap word={currentWord} />
+          </div>
+        )}
       </div>
     );
   };
