@@ -77,8 +77,9 @@ export class GeminiService {
             
             // Check if jsonContent has required structure
             if (jsonContent.title && jsonContent.sections && Array.isArray(jsonContent.sections)) {
-              console.log('Lesson content has valid structure, returning formatted content');
-              return await this.formatLessonContent(jsonContent);
+              console.log('Lesson content has valid structure, applying quality control...');
+              const validatedContent = await this.validateAndImproveContent(jsonContent, params);
+              return await this.formatLessonContent(validatedContent);
             } else {
               // Log more detailed diagnostic information 
               console.warn('Parsed JSON is missing required structure', JSON.stringify({
@@ -165,8 +166,9 @@ export class GeminiService {
               
               // Validate structure after fixing
               if (jsonContent.title && jsonContent.sections && Array.isArray(jsonContent.sections)) {
-                console.log('Fixed content has valid structure, returning formatted content');
-                return await this.formatLessonContent(jsonContent);
+                console.log('Fixed content has valid structure, applying quality control...');
+                const validatedContent = await this.validateAndImproveContent(jsonContent, params);
+                return await this.formatLessonContent(validatedContent);
               } else {
                 throw new Error('Fixed JSON still missing required structure');
               }
@@ -986,6 +988,121 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
     return systemInstruction;
   }
   
+  /**
+   * Validate and improve the generated content for quality control
+   */
+  private async validateAndImproveContent(content: any, params: LessonGenerateParams): Promise<any> {
+    try {
+      console.log('Starting quality control validation for Gemini content...');
+      
+      // Check if we have sentence frames that need validation
+      if (content.sections) {
+        for (let section of content.sections) {
+          if (section.type === 'sentenceFrames') {
+            // Handle both old and new formats
+            if (section.frames && Array.isArray(section.frames)) {
+              // New format with frames array
+              for (let frame of section.frames) {
+                if (frame.examples && Array.isArray(frame.examples)) {
+                  const validatedExamples = await this.validateSentenceFrameExamples(
+                    frame.examples,
+                    frame.pattern || frame.patternTemplate,
+                    params.topic
+                  );
+                  frame.examples = validatedExamples;
+                }
+              }
+            } else if (section.examples && Array.isArray(section.examples)) {
+              // Legacy format with examples directly in section
+              const validatedExamples = await this.validateSentenceFrameExamples(
+                section.examples,
+                section.pattern || 'sentence pattern',
+                params.topic
+              );
+              section.examples = validatedExamples;
+            }
+          }
+        }
+      }
+      
+      console.log('Quality control validation completed for Gemini content');
+      return content;
+    } catch (error) {
+      console.error('Error in quality control validation for Gemini:', error);
+      return content; // Return original content if validation fails
+    }
+  }
+
+  /**
+   * Validate sentence frame examples for logical coherence using Gemini
+   */
+  private async validateSentenceFrameExamples(examples: any[], pattern: string, topic: string): Promise<any[]> {
+    try {
+      const validationPrompt = `You are a quality control expert for ESL lesson content specializing in sentence pattern validation.
+
+CRITICAL TASK: Review these sentence examples and ensure they CORRECTLY DEMONSTRATE the target sentence pattern while being logical and grammatically correct.
+
+TARGET SENTENCE PATTERN: ${pattern}
+LESSON TOPIC: ${topic}
+CURRENT EXAMPLES: ${JSON.stringify(examples)}
+
+VALIDATION CRITERIA (ALL must be met):
+1. **PATTERN ADHERENCE**: The sentence MUST follow the exact structure of the target pattern
+2. **LOGICAL MEANING**: The content must make logical sense
+3. **GRAMMAR CORRECTNESS**: Perfect grammar and syntax
+4. **TOPIC RELEVANCE**: Appropriate for the lesson topic
+
+COMMON PATTERN ISSUES TO FIX:
+- If pattern is "It is ___ to ___ because ___" but example is "Mars is difficult because...", fix to "It is difficult to travel to Mars because..."
+- If pattern uses specific connectors (like "because", "when", "although"), ensure they're present
+- If pattern requires infinitives ("to + verb"), ensure they're used correctly
+- If pattern has placeholders, ensure each placeholder is properly filled
+
+EXAMPLE FIXES FOR PATTERN "It is ___ to ___ because ___":
+❌ WRONG: "Mars is difficult because it is far away" (doesn't follow pattern)
+✅ CORRECT: "It is difficult to travel to Mars because it is far away"
+
+❌ WRONG: "Space exploration expensive because rockets cost money" (missing pattern structure)
+✅ CORRECT: "It is expensive to explore space because rockets cost a lot of money"
+
+Return ONLY a JSON array of corrected examples. Each example must perfectly demonstrate the target sentence pattern while being logical and appropriate for the topic.
+
+If an example is a simple string, return a string. If it's an object with "completeSentence" and "breakdown" properties, maintain that structure and ensure the breakdown correctly maps to the pattern components.`;
+
+      const model = this.genAI.getGenerativeModel({ 
+        model: 'gemini-1.5-flash',
+        generationConfig: {
+          temperature: 0.1, // Low temperature for consistency
+          maxOutputTokens: 2000
+        }
+      });
+
+      const result = await model.generateContent(validationPrompt);
+      const response = result.response;
+      const text = response.text();
+
+      try {
+        // Clean up the response and parse as JSON
+        let cleanedContent = text.trim();
+        if (cleanedContent.startsWith('```json')) {
+          cleanedContent = cleanedContent.replace(/```json\s*/g, '').replace(/```\s*$/g, '').trim();
+        } else if (cleanedContent.startsWith('```')) {
+          cleanedContent = cleanedContent.replace(/```\s*/g, '').replace(/```\s*$/g, '').trim();
+        }
+
+        const validatedExamples = JSON.parse(cleanedContent);
+        console.log('Successfully validated sentence frame examples using Gemini');
+        return Array.isArray(validatedExamples) ? validatedExamples : examples;
+      } catch (parseError) {
+        console.error('Error parsing Gemini validation response, using original examples');
+        return examples;
+      }
+    } catch (error) {
+      console.error('Error validating sentence frame examples with Gemini:', error);
+      return examples; // Return original examples if validation fails
+    }
+  }
+
   /**
    * Format and process the lesson content, adding image data
    */

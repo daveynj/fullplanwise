@@ -896,8 +896,11 @@ B1 Examples:
             }
           }
           
+          // Quality control check before formatting
+          const validatedContent = await this.validateAndImproveContent(jsonContent, params);
+          
           // Format content AND generate images
-          return await this.formatLessonContent(jsonContent);
+          return await this.formatLessonContent(validatedContent);
         }
         
         return {
@@ -970,6 +973,115 @@ B1 Examples:
     }
   }
   
+  /**
+   * Validate and improve the generated content for quality control
+   */
+  private async validateAndImproveContent(content: any, params: LessonGenerateParams): Promise<any> {
+    try {
+      console.log('Starting quality control validation...');
+      
+      // Check if we have sentence frames that need validation
+      if (content.sections) {
+        for (let section of content.sections) {
+          if (section.type === 'sentenceFrames' && section.frames) {
+            for (let frame of section.frames) {
+              if (frame.examples && Array.isArray(frame.examples)) {
+                // Validate each example for logical coherence
+                const validatedExamples = await this.validateSentenceFrameExamples(
+                  frame.examples, 
+                  frame.pattern || frame.patternTemplate,
+                  params.topic
+                );
+                frame.examples = validatedExamples;
+              }
+            }
+          }
+        }
+      }
+      
+      console.log('Quality control validation completed');
+      return content;
+    } catch (error) {
+      console.error('Error in quality control validation:', error);
+      return content; // Return original content if validation fails
+    }
+  }
+
+  /**
+   * Validate sentence frame examples for logical coherence
+   */
+  private async validateSentenceFrameExamples(examples: any[], pattern: string, topic: string): Promise<any[]> {
+    try {
+      const validationPrompt = `You are a quality control expert for ESL lesson content specializing in sentence pattern validation.
+
+CRITICAL TASK: Review these sentence examples and ensure they CORRECTLY DEMONSTRATE the target sentence pattern while being logical and grammatically correct.
+
+TARGET SENTENCE PATTERN: ${pattern}
+LESSON TOPIC: ${topic}
+CURRENT EXAMPLES: ${JSON.stringify(examples)}
+
+VALIDATION CRITERIA (ALL must be met):
+1. **PATTERN ADHERENCE**: The sentence MUST follow the exact structure of the target pattern
+2. **LOGICAL MEANING**: The content must make logical sense
+3. **GRAMMAR CORRECTNESS**: Perfect grammar and syntax
+4. **TOPIC RELEVANCE**: Appropriate for the lesson topic
+
+COMMON PATTERN ISSUES TO FIX:
+- If pattern is "It is ___ to ___ because ___" but example is "Mars is difficult because...", fix to "It is difficult to travel to Mars because..."
+- If pattern uses specific connectors (like "because", "when", "although"), ensure they're present
+- If pattern requires infinitives ("to + verb"), ensure they're used correctly
+- If pattern has placeholders, ensure each placeholder is properly filled
+
+EXAMPLE FIXES FOR PATTERN "It is ___ to ___ because ___":
+❌ WRONG: "Mars is difficult because it is far away" (doesn't follow pattern)
+✅ CORRECT: "It is difficult to travel to Mars because it is far away"
+
+❌ WRONG: "Space exploration expensive because rockets cost money" (missing pattern structure)
+✅ CORRECT: "It is expensive to explore space because rockets cost a lot of money"
+
+Return ONLY a JSON array of corrected examples. Each example must perfectly demonstrate the target sentence pattern while being logical and appropriate for the topic.
+
+If an example is a simple string, return a string. If it's an object with "completeSentence" and "breakdown" properties, maintain that structure and ensure the breakdown correctly maps to the pattern components.`;
+
+      const requestBody = {
+        model: "qwen-max",
+        messages: [
+          { role: "system", content: "You are a meticulous ESL content quality control expert. Return only valid JSON." },
+          { role: "user", content: validationPrompt }
+        ],
+        temperature: 0.1, // Low temperature for consistency
+        max_tokens: 2000
+      };
+
+      const response = await axios({
+        method: 'post',
+        url: 'https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions',
+        headers: {
+          'Authorization': `Bearer ${this.apiKey}`,
+          'Content-Type': 'application/json'
+        },
+        data: requestBody,
+        timeout: 30000
+      });
+
+      if (response.data?.choices?.[0]?.message?.content) {
+        try {
+          const validatedExamples = JSON.parse(response.data.choices[0].message.content);
+          console.log('Successfully validated sentence frame examples');
+          return Array.isArray(validatedExamples) ? validatedExamples : examples;
+        } catch (parseError) {
+          console.error('Error parsing validation response, using original examples');
+          return examples;
+        }
+      }
+
+      return examples;
+    } catch (error) {
+      console.error('Error validating sentence frame examples:', error);
+      return examples; // Return original examples if validation fails
+    }
+  }
+
   /**
    * Format and process the lesson content, adding image data
    */
