@@ -892,11 +892,11 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
           "pronunciation": {"syllables": ["syl"], "stressIndex": 0, "phoneticGuide": "guide"},
           "imagePrompt": "Complete image prompt (no text)...",
           "semanticMap": {
-            "synonyms": ["synonym1", "synonym2", "synonym3"],
-            "antonyms": ["antonym1", "antonym2"], 
-            "relatedConcepts": ["concept1", "concept2", "concept3"],
-            "contexts": ["context1", "context2", "context3"],
-            "associatedWords": ["word1", "word2", "word3"]
+            "synonyms": ["actual_synonym1", "actual_synonym2", "actual_synonym3"],
+            "antonyms": ["actual_antonym1", "actual_antonym2"], 
+            "relatedConcepts": ["actual_concept1", "actual_concept2", "actual_concept3"],
+            "contexts": ["actual_context1", "actual_context2", "actual_context3"],
+            "associatedWords": ["actual_word1", "actual_word2", "actual_word3"]
           }
         },
         {
@@ -910,11 +910,11 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
           "pronunciation": {"syllables": ["syl"], "stressIndex": 0, "phoneticGuide": "guide"},
           "imagePrompt": "Complete image prompt (no text)...",
           "semanticMap": {
-            "synonyms": ["synonym1", "synonym2", "synonym3"],
-            "antonyms": ["antonym1", "antonym2"], 
-            "relatedConcepts": ["concept1", "concept2", "concept3"],
-            "contexts": ["context1", "context2", "context3"],
-            "associatedWords": ["word1", "word2", "word3"]
+            "synonyms": ["actual_synonym1", "actual_synonym2", "actual_synonym3"],
+            "antonyms": ["actual_antonym1", "actual_antonym2"], 
+            "relatedConcepts": ["actual_concept1", "actual_concept2", "actual_concept3"],
+            "contexts": ["actual_context1", "actual_context2", "actual_context3"],
+            "associatedWords": ["actual_word1", "actual_word2", "actual_word3"]
           }
         },
         {
@@ -928,11 +928,11 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
           "pronunciation": {"syllables": ["syl"], "stressIndex": 0, "phoneticGuide": "guide"},
           "imagePrompt": "Complete image prompt (no text)...",
           "semanticMap": {
-            "synonyms": ["synonym1", "synonym2", "synonym3"],
-            "antonyms": ["antonym1", "antonym2"], 
-            "relatedConcepts": ["concept1", "concept2", "concept3"],
-            "contexts": ["context1", "context2", "context3"],
-            "associatedWords": ["word1", "word2", "word3"]
+            "synonyms": ["actual_synonym1", "actual_synonym2", "actual_synonym3"],
+            "antonyms": ["actual_antonym1", "actual_antonym2"], 
+            "relatedConcepts": ["actual_concept1", "actual_concept2", "actual_concept3"],
+            "contexts": ["actual_context1", "actual_context2", "actual_context3"],
+            "associatedWords": ["actual_word1", "actual_word2", "actual_word3"]
           }
         },
         {
@@ -946,11 +946,11 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
           "pronunciation": {"syllables": ["syl"], "stressIndex": 0, "phoneticGuide": "guide"},
           "imagePrompt": "Complete image prompt (no text)...",
           "semanticMap": {
-            "synonyms": ["synonym1", "synonym2", "synonym3"],
-            "antonyms": ["antonym1", "antonym2"], 
-            "relatedConcepts": ["concept1", "concept2", "concept3"],
-            "contexts": ["context1", "context2", "context3"],
-            "associatedWords": ["word1", "word2", "word3"]
+            "synonyms": ["actual_synonym1", "actual_synonym2", "actual_synonym3"],
+            "antonyms": ["actual_antonym1", "actual_antonym2"], 
+            "relatedConcepts": ["actual_concept1", "actual_concept2", "actual_concept3"],
+            "contexts": ["actual_context1", "actual_context2", "actual_context3"],
+            "associatedWords": ["actual_word1", "actual_word2", "actual_word3"]
           }
         },
         {
@@ -964,11 +964,11 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
           "pronunciation": {"syllables": ["syl"], "stressIndex": 0, "phoneticGuide": "guide"},
           "imagePrompt": "Complete image prompt (no text)...",
           "semanticMap": {
-            "synonyms": ["synonym1", "synonym2", "synonym3"],
-            "antonyms": ["antonym1", "antonym2"], 
-            "relatedConcepts": ["concept1", "concept2", "concept3"],
-            "contexts": ["context1", "context2", "context3"],
-            "associatedWords": ["word1", "word2", "word3"]
+            "synonyms": ["actual_synonym1", "actual_synonym2", "actual_synonym3"],
+            "antonyms": ["actual_antonym1", "actual_antonym2"], 
+            "relatedConcepts": ["actual_concept1", "actual_concept2", "actual_concept3"],
+            "contexts": ["actual_context1", "actual_context2", "actual_context3"],
+            "associatedWords": ["actual_word1", "actual_word2", "actual_word3"]
           }
         }
       ]

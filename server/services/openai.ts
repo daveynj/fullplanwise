@@ -291,6 +291,49 @@ CRITICAL LESSON DEVELOPMENT PROCESS:
      c. "phoneticGuide": Text guide showing pronunciation using CAPITALIZATION for stress (e.g., "voh-KAB-yuh-lair-ee")
    - IMPORTANT: DO NOT use IPA symbols like "ə", "ɪ", or "ʃ" in the pronunciation guide. Use only regular English spelling to approximate sounds.
 
+SEMANTIC MAP GENERATION APPROACH:
+CRITICAL: For each vocabulary word, you MUST generate a complete semantic map with REAL words, not placeholders. This is essential for the interactive semantic maps feature.
+
+For each vocabulary word, create semanticMap with these 5 categories:
+
+1. **synonyms**: 3-5 words with similar meanings
+   - Choose words at appropriate CEFR level (simpler for A1/A2, more sophisticated for C1/C2)
+   - Include both exact synonyms and near-synonyms
+   - Example: For "happy" → ["joyful", "pleased", "content", "cheerful"]
+
+2. **antonyms**: 2-4 words with opposite meanings
+   - Include direct antonyms and contrasting concepts
+   - Choose level-appropriate vocabulary
+   - Example: For "happy" → ["sad", "upset", "disappointed"]
+
+3. **relatedConcepts**: 3-5 concepts/ideas connected to the word
+   - Include broader themes, categories, or associated ideas
+   - Think about semantic fields and conceptual connections
+   - Example: For "innovation" → ["technology", "progress", "creativity", "development"]
+
+4. **contexts**: 3-4 situations or environments where the word is commonly used
+   - Focus on real-world contexts where students might encounter the word
+   - Include both formal and informal contexts when appropriate
+   - Example: For "negotiate" → ["business meetings", "buying/selling", "conflict resolution"]
+
+5. **associatedWords**: 3-5 words commonly used together with the target word
+   - Include common collocations and frequently co-occurring words
+   - Think about words that naturally appear in the same sentences or contexts
+   - Example: For "environment" → ["protect", "sustainable", "pollution", "conservation"]
+
+SEMANTIC MAP QUALITY REQUIREMENTS:
+- NEVER use placeholder text like "synonym1", "word1", "concept1"
+- All words must be real English words appropriate for the CEFR level
+- Choose words that genuinely relate to the target vocabulary word
+- Ensure semantic relationships are accurate and meaningful
+- Consider the lesson topic "${topic}" when selecting related words
+- Vary the vocabulary complexity based on ${cefrLevel} level
+
+LEVEL-SPECIFIC SEMANTIC MAP GUIDELINES:
+- A1/A2: Use basic, high-frequency words in semantic maps
+- B1/B2: Include more sophisticated vocabulary and abstract concepts
+- C1/C2: Use advanced vocabulary and nuanced semantic relationships
+
 2. SECOND, write a reading passage that:
    - Contains EXACTLY 5 substantial paragraphs (each with 4-6 sentences minimum)
    - Incorporates ALL 5 vocabulary words naturally within the text (one vocabulary word per paragraph)
@@ -361,11 +404,11 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
           "teachingTips": "Suggestions for effectively teaching this vocabulary item",
           "imageDescription": "Description of an image that would illustrate this word",
           "semanticMap": {
-            "synonyms": ["synonym1", "synonym2", "synonym3"],
-            "antonyms": ["antonym1", "antonym2"], 
-            "relatedConcepts": ["concept1", "concept2", "concept3"],
-            "contexts": ["context1", "context2", "context3"],
-            "associatedWords": ["word1", "word2", "word3"]
+            "synonyms": ["actual_synonym1", "actual_synonym2", "actual_synonym3"],
+            "antonyms": ["actual_antonym1", "actual_antonym2"], 
+            "relatedConcepts": ["actual_concept1", "actual_concept2", "actual_concept3"],
+            "contexts": ["actual_context1", "actual_context2", "actual_context3"],
+            "associatedWords": ["actual_word1", "actual_word2", "actual_word3"]
           }
         },
         {
@@ -379,11 +422,11 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
           "teachingTips": "Suggestions for effectively teaching this vocabulary item",
           "imageDescription": "Description of an image that would illustrate this word",
           "semanticMap": {
-            "synonyms": ["synonym1", "synonym2", "synonym3"],
-            "antonyms": ["antonym1", "antonym2"], 
-            "relatedConcepts": ["concept1", "concept2", "concept3"],
-            "contexts": ["context1", "context2", "context3"],
-            "associatedWords": ["word1", "word2", "word3"]
+            "synonyms": ["actual_synonym1", "actual_synonym2", "actual_synonym3"],
+            "antonyms": ["actual_antonym1", "actual_antonym2"], 
+            "relatedConcepts": ["actual_concept1", "actual_concept2", "actual_concept3"],
+            "contexts": ["actual_context1", "actual_context2", "actual_context3"],
+            "associatedWords": ["actual_word1", "actual_word2", "actual_word3"]
           }
         },
         {
@@ -397,11 +440,11 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
           "teachingTips": "Suggestions for effectively teaching this vocabulary item",
           "imageDescription": "Description of an image that would illustrate this word",
           "semanticMap": {
-            "synonyms": ["synonym1", "synonym2", "synonym3"],
-            "antonyms": ["antonym1", "antonym2"], 
-            "relatedConcepts": ["concept1", "concept2", "concept3"],
-            "contexts": ["context1", "context2", "context3"],
-            "associatedWords": ["word1", "word2", "word3"]
+            "synonyms": ["actual_synonym1", "actual_synonym2", "actual_synonym3"],
+            "antonyms": ["actual_antonym1", "actual_antonym2"], 
+            "relatedConcepts": ["actual_concept1", "actual_concept2", "actual_concept3"],
+            "contexts": ["actual_context1", "actual_context2", "actual_context3"],
+            "associatedWords": ["actual_word1", "actual_word2", "actual_word3"]
           }
         },
         {
@@ -415,11 +458,11 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
           "teachingTips": "Suggestions for effectively teaching this vocabulary item",
           "imageDescription": "Description of an image that would illustrate this word",
           "semanticMap": {
-            "synonyms": ["synonym1", "synonym2", "synonym3"],
-            "antonyms": ["antonym1", "antonym2"], 
-            "relatedConcepts": ["concept1", "concept2", "concept3"],
-            "contexts": ["context1", "context2", "context3"],
-            "associatedWords": ["word1", "word2", "word3"]
+            "synonyms": ["actual_synonym1", "actual_synonym2", "actual_synonym3"],
+            "antonyms": ["actual_antonym1", "actual_antonym2"], 
+            "relatedConcepts": ["actual_concept1", "actual_concept2", "actual_concept3"],
+            "contexts": ["actual_context1", "actual_context2", "actual_context3"],
+            "associatedWords": ["actual_word1", "actual_word2", "actual_word3"]
           }
         },
         {
@@ -433,11 +476,11 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
           "teachingTips": "Suggestions for effectively teaching this vocabulary item",
           "imageDescription": "Description of an image that would illustrate this word",
           "semanticMap": {
-            "synonyms": ["synonym1", "synonym2", "synonym3"],
-            "antonyms": ["antonym1", "antonym2"], 
-            "relatedConcepts": ["concept1", "concept2", "concept3"],
-            "contexts": ["context1", "context2", "context3"],
-            "associatedWords": ["word1", "word2", "word3"]
+            "synonyms": ["actual_synonym1", "actual_synonym2", "actual_synonym3"],
+            "antonyms": ["actual_antonym1", "actual_antonym2"], 
+            "relatedConcepts": ["actual_concept1", "actual_concept2", "actual_concept3"],
+            "contexts": ["actual_context1", "actual_context2", "actual_context3"],
+            "associatedWords": ["actual_word1", "actual_word2", "actual_word3"]
           }
         }
       ],
