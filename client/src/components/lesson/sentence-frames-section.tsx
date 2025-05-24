@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ChevronLeft, ChevronRight, Lightbulb, Copy, Info, Languages, BookOpen, Pencil, AlignJustify, ListTree, Zap, MessageSquareQuote, Target, Shuffle, Play, CheckCircle, AlertCircle, Brain, Palette, Users } from "lucide-react";
+import { ChevronLeft, ChevronRight, ArrowRight, Lightbulb, Copy, Info, Languages, BookOpen, Pencil, AlignJustify, ListTree, Zap, MessageSquareQuote, Target, Shuffle, Play, CheckCircle, AlertCircle, Brain, Palette, Users } from "lucide-react";
 import { SectionHeader } from "./shared/section-header";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -14,6 +14,9 @@ import {
   SentenceFrameComponent,
   SentenceFrameExample 
 } from '../../../types/lessonContentTypes';
+
+// Import the scaffolding component
+import { SentenceFramesScaffolding } from './sentence-frames-scaffolding';
 
 // Define the OLD data structures (for backward compatibility)
 interface OldStructureComponent {
@@ -77,6 +80,7 @@ interface SentenceFramesSectionProps {
     title?: string;
     frames?: SentenceFramePattern[];
     description?: string;
+    topic?: string; // Add topic for scaffolding context
     // Old structure fallback
     pattern?: string;
     components?: OldStructureComponent[];
@@ -84,97 +88,7 @@ interface SentenceFramesSectionProps {
   };
 }
 
-// Interactive Practice Components
-function InteractivePractice({ frame }: { frame: SentenceFramePattern }) {
-  const [currentActivity, setCurrentActivity] = useState(0);
-  const [userInput, setUserInput] = useState('');
-  const [showFeedback, setShowFeedback] = useState(false);
-  const [practiceProgress, setPracticeProgress] = useState(0);
 
-  const activities = frame.practiceActivities || [];
-  
-  if (activities.length === 0) return null;
-
-  const handleActivityComplete = () => {
-    setShowFeedback(true);
-    setPracticeProgress(Math.min(100, practiceProgress + 33));
-    setTimeout(() => {
-      setShowFeedback(false);
-      setCurrentActivity((prev) => Math.min(activities.length - 1, prev + 1));
-      setUserInput('');
-    }, 2000);
-  };
-
-  return (
-    <Card className="border-indigo-200 shadow-sm">
-      <CardHeader className="bg-indigo-50 p-4 border-b border-indigo-200">
-        <CardTitle className="text-lg font-semibold text-indigo-800 flex items-center gap-2">
-          <Target className="h-5 w-5" />
-          Interactive Practice
-        </CardTitle>
-        <Progress value={practiceProgress} className="w-full mt-2" />
-      </CardHeader>
-      <CardContent className="p-5 space-y-4">
-        {activities.length > 0 && (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h4 className="font-medium text-indigo-700">
-                {activities[currentActivity]?.name || `Activity ${currentActivity + 1}`}
-              </h4>
-              <Badge className={
-                activities[currentActivity]?.difficulty === 'easy' ? 'bg-green-100 text-green-800' :
-                activities[currentActivity]?.difficulty === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                'bg-red-100 text-red-800'
-              }>
-                {activities[currentActivity]?.difficulty || 'medium'}
-              </Badge>
-            </div>
-            
-            <div className="p-3 bg-white rounded border border-indigo-200">
-              <p className="text-gray-700 mb-3">
-                {activities[currentActivity]?.instruction}
-              </p>
-              
-              <div className="space-y-3">
-                <input
-                  type="text"
-                  value={userInput}
-                  onChange={(e) => setUserInput(e.target.value)}
-                  placeholder="Type your sentence here..."
-                  className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                />
-                
-                <div className="flex gap-2">
-                  <Button 
-                    onClick={handleActivityComplete}
-                    disabled={!userInput.trim()}
-                    className="bg-indigo-600 hover:bg-indigo-700"
-                  >
-                    <CheckCircle className="h-4 w-4 mr-1" />
-                    Check Answer
-                  </Button>
-                  <Button variant="outline" onClick={() => setUserInput('')}>
-                    <Shuffle className="h-4 w-4 mr-1" />
-                    Try Again
-                  </Button>
-                </div>
-              </div>
-
-              {showFeedback && (
-                <Alert className="mt-3 border-green-200 bg-green-50">
-                  <CheckCircle className="h-4 w-4 text-green-600" />
-                  <AlertDescription className="text-green-700">
-                    Great work! You're using the pattern correctly.
-                  </AlertDescription>
-                </Alert>
-              )}
-            </div>
-          </div>
-        )}
-      </CardContent>
-    </Card>
-  );
-}
 
 // Enhanced Visual Pattern Builder with fixed color classes
 function VisualPatternBuilder({ frame }: { frame: SentenceFramePattern }) {
@@ -204,8 +118,8 @@ function VisualPatternBuilder({ frame }: { frame: SentenceFramePattern }) {
   return (
     <Card className="border-purple-200 shadow-sm">
       <CardHeader className="bg-purple-50 p-4 border-b border-purple-200">
-        <CardTitle className="text-lg font-semibold text-purple-800 flex items-center gap-2">
-          <Brain className="h-5 w-5" />
+        <CardTitle className="text-xl font-semibold text-purple-800 flex items-center gap-2">
+          <Brain className="h-6 w-6" />
           Sentence Builder
         </CardTitle>
       </CardHeader>
@@ -250,8 +164,8 @@ function VisualPatternBuilder({ frame }: { frame: SentenceFramePattern }) {
         </div>
 
         <div className="p-4 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-          <h4 className="text-sm font-medium text-gray-600 mb-2">Your Sentence:</h4>
-          <p className="text-lg font-mono bg-white p-3 rounded border">
+          <h4 className="text-lg font-semibold text-gray-600 mb-2">Your Sentence:</h4>
+          <p className="text-xl font-bold font-mono bg-white p-3 rounded border">
             {builtSentence || 'Select components to build your sentence...'}
           </p>
         </div>
@@ -274,32 +188,32 @@ function CulturalAdaptation({ frame }: { frame: SentenceFramePattern }) {
   return (
     <Card className="border-teal-200 shadow-sm">
       <CardHeader className="bg-teal-50 p-4 border-b border-teal-200">
-        <CardTitle className="text-lg font-semibold text-teal-800 flex items-center gap-2">
-          <Languages className="h-5 w-5" />
+        <CardTitle className="text-xl font-semibold text-teal-800 flex items-center gap-2">
+          <Languages className="h-6 w-6" />
           Cultural Context
         </CardTitle>
       </CardHeader>
       <CardContent className="p-5 space-y-4">
         <div className="p-3 bg-teal-50 rounded-lg border border-teal-200">
-          <h4 className="font-medium text-teal-800 mb-2">Universal Application</h4>
-          <p className="text-teal-700">{frame.culturalAdaptation.universalApplication}</p>
+          <h4 className="text-lg font-semibold text-teal-800 mb-2">Universal Application</h4>
+          <p className="text-teal-700 text-xl font-bold">{frame.culturalAdaptation.universalApplication}</p>
         </div>
 
         {frame.culturalAdaptation.culturalNotes && (
           <div className="p-3 bg-white rounded-lg border border-teal-200">
-            <h4 className="font-medium text-teal-800 mb-2">Teaching Notes</h4>
-            <p className="text-gray-700">{frame.culturalAdaptation.culturalNotes}</p>
+            <h4 className="text-lg font-semibold text-teal-800 mb-2">Teaching Notes</h4>
+            <p className="text-gray-700 text-xl font-bold">{frame.culturalAdaptation.culturalNotes}</p>
           </div>
         )}
 
         {frame.culturalAdaptation.discussionStarters && frame.culturalAdaptation.discussionStarters.length > 0 && (
           <div className="space-y-2">
-            <h4 className="font-medium text-teal-800">Discussion Starters</h4>
+            <h4 className="text-lg font-semibold text-teal-800">Discussion Starters</h4>
             <ul className="space-y-1">
               {frame.culturalAdaptation.discussionStarters.map((starter, index) => (
                 <li key={index} className="flex items-start gap-2">
-                  <MessageSquareQuote className="h-4 w-4 text-teal-600 mt-0.5 flex-shrink-0" />
-                  <span className="text-gray-700">{starter}</span>
+                  <MessageSquareQuote className="h-5 w-5 text-teal-600 mt-0.5 flex-shrink-0" />
+                  <span className="text-gray-700 text-xl font-bold">{starter}</span>
                 </li>
               ))}
             </ul>
@@ -317,8 +231,8 @@ function ErrorCorrectionHelper({ frame }: { frame: SentenceFramePattern }) {
   return (
     <Card className="border-red-200 shadow-sm">
       <CardHeader className="bg-red-50 p-4 border-b border-red-200">
-        <CardTitle className="text-lg font-semibold text-red-800 flex items-center gap-2">
-          <AlertCircle className="h-5 w-5" />
+        <CardTitle className="text-xl font-semibold text-red-800 flex items-center gap-2">
+          <AlertCircle className="h-6 w-6" />
           Common Mistakes & Corrections
         </CardTitle>
       </CardHeader>
@@ -327,18 +241,18 @@ function ErrorCorrectionHelper({ frame }: { frame: SentenceFramePattern }) {
           <div key={index} className="p-3 bg-white rounded-lg border border-red-200">
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-red-600">❌ Incorrect:</span>
-                <code className="bg-red-100 text-red-800 px-2 py-1 rounded text-sm">
+                <span className="text-base font-medium text-red-600">❌ Incorrect:</span>
+                <code className="bg-red-100 text-red-800 px-2 py-1 rounded text-lg font-bold">
                   {mistake.error}
                 </code>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-green-600">✅ Correct:</span>
-                <code className="bg-green-100 text-green-800 px-2 py-1 rounded text-sm">
+                <span className="text-base font-medium text-green-600">✅ Correct:</span>
+                <code className="bg-green-100 text-green-800 px-2 py-1 rounded text-lg font-bold">
                   {mistake.correction}
                 </code>
               </div>
-              <p className="text-sm text-gray-600 pl-4 border-l-2 border-gray-300">
+              <p className="text-base text-gray-600 pl-4 border-l-2 border-gray-300">
                 <strong>Why:</strong> {mistake.explanation}
               </p>
             </div>
@@ -456,13 +370,13 @@ export function SentenceFramesSection({ section }: SentenceFramesSectionProps) {
       )}
       
             {/* Updated EnhancedFrameLayout with better Gemini support */}
-      <EnhancedFrameLayout frame={frame} />
+      <EnhancedFrameLayout frame={frame} section={section} />
     </div>
   );
 }
 
 // Updated EnhancedFrameLayout with better Gemini support
-function EnhancedFrameLayout({ frame }: { frame: SentenceFramePattern }) {
+function EnhancedFrameLayout({ frame, section }: { frame: SentenceFramePattern, section: SentenceFramesSectionProps['section'] }) {
   // console.log("Rendering EnhancedFrameLayout with frame data:", frame);
 
   // Map component labels to colors for consistent use
@@ -500,10 +414,19 @@ function EnhancedFrameLayout({ frame }: { frame: SentenceFramePattern }) {
     frame.examples.length > 0 && 
     typeof frame.examples[0] === 'string';
 
+  // Check if this frame has scaffolding for A1-B1 learners
+  const hasScaffolding = frame.lowerLevelScaffolding && (
+    frame.lowerLevelScaffolding.sentenceWorkshop?.length ||
+    frame.lowerLevelScaffolding.patternTrainer ||
+    frame.lowerLevelScaffolding.visualMaps?.length
+  );
+
   return (
     <Tabs defaultValue="pattern" className="w-full">
       {/* Enhanced Tab Triggers */}
-      <TabsList className="grid w-full grid-cols-5 bg-gray-100 mb-4 p-1 h-auto rounded-lg border border-gray-200">
+      <TabsList className={`grid w-full bg-gray-100 mb-4 p-1 h-auto rounded-lg border border-gray-200 ${
+        hasScaffolding ? 'grid-cols-5' : 'grid-cols-4'
+      }`}>
         <TabsTrigger value="pattern" className="text-sm font-medium data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-blue-600 py-1.5">
           <ListTree className="h-4 w-4 mr-1" />
           Pattern
@@ -516,10 +439,12 @@ function EnhancedFrameLayout({ frame }: { frame: SentenceFramePattern }) {
           <Pencil className="h-4 w-4 mr-1" />
           Examples
         </TabsTrigger>
-        <TabsTrigger value="practice" className="text-sm font-medium data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-indigo-600 py-1.5">
-          <Target className="h-4 w-4 mr-1" />
-          Practice
-        </TabsTrigger>
+        {hasScaffolding && (
+          <TabsTrigger value="scaffold" className="text-sm font-medium data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-cyan-600 py-1.5">
+            <Play className="h-4 w-4 mr-1" />
+            A1-B1
+          </TabsTrigger>
+        )}
         <TabsTrigger value="help" className="text-sm font-medium data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-red-600 py-1.5">
           <Lightbulb className="h-4 w-4 mr-1" />
           Help
@@ -531,33 +456,33 @@ function EnhancedFrameLayout({ frame }: { frame: SentenceFramePattern }) {
       <TabsContent value="pattern" className="space-y-6">
         <Card className="border-blue-200 shadow-sm">
           <CardHeader className="bg-blue-50 p-4 border-b border-blue-200">
-            <CardTitle className="text-lg font-semibold text-blue-800 flex items-center gap-2">
-              <ListTree className="h-5 w-5"/>
+            <CardTitle className="text-xl font-semibold text-blue-800 flex items-center gap-2">
+              <ListTree className="h-6 w-6"/>
               Sentence Pattern
             </CardTitle>
           </CardHeader>
           <CardContent className="p-5 space-y-4">
-            <div className="font-mono p-4 bg-white rounded-lg border border-blue-300 text-gray-900 relative text-xl font-bold shadow-inner">
+            <div className="font-mono p-4 bg-white rounded-lg border border-blue-300 text-gray-900 relative text-2xl font-bold shadow-inner">
               {frame.patternTemplate || frame.pattern}
               <button 
                 className="absolute right-2 top-2 text-gray-400 hover:text-blue-600 p-1 rounded hover:bg-blue-100/50"
                 onClick={() => navigator.clipboard.writeText(frame.patternTemplate || frame.pattern || "")}
                 title="Copy Pattern"
               >
-                <Copy className="h-4 w-4" />
+                <Copy className="h-5 w-5" />
               </button>
             </div>
-            <div className="text-base text-blue-900 flex items-start gap-2">
-              <Languages className="h-5 w-5 mt-0.5 flex-shrink-0 text-blue-700" /> 
-              <div className="text-lg">
+            <div className="text-blue-900 flex items-start gap-2">
+              <Languages className="h-6 w-6 mt-0.5 flex-shrink-0 text-blue-700" /> 
+              <div className="text-xl font-bold">
                  <span className="font-semibold">Language Function:</span> {frame.languageFunction || frame.communicativeFunction || "Express ideas effectively"}
               </div>
             </div>
             
             {frame.title && (
-              <div className="text-base text-blue-900 flex items-start gap-2 mt-2">
-                <Lightbulb className="h-5 w-5 mt-0.5 flex-shrink-0 text-blue-700" /> 
-                <div className="text-lg">
+              <div className="text-blue-900 flex items-start gap-2 mt-2">
+                <Lightbulb className="h-6 w-6 mt-0.5 flex-shrink-0 text-blue-700" /> 
+                <div className="text-xl font-bold">
                   <span className="font-semibold">Title:</span> {frame.title}
                 </div>
               </div>
@@ -649,8 +574,8 @@ function EnhancedFrameLayout({ frame }: { frame: SentenceFramePattern }) {
       <TabsContent value="structure" className="space-y-6">
         <Card className="border-green-200 shadow-sm">
           <CardHeader className="bg-green-50 p-4 border-b border-green-200">
-            <CardTitle className="text-lg font-semibold text-green-800 flex items-center gap-2">
-              <AlignJustify className="h-5 w-5" />
+            <CardTitle className="text-xl font-semibold text-green-800 flex items-center gap-2">
+              <AlignJustify className="h-6 w-6" />
               Structure Breakdown
             </CardTitle>
           </CardHeader>
@@ -673,9 +598,9 @@ function EnhancedFrameLayout({ frame }: { frame: SentenceFramePattern }) {
                         {component.label}
                       </div>
                       <div className="md:w-3/4">
-                        <p className="text-gray-700">{component.description}</p>
+                        <p className="text-gray-700 text-xl font-bold">{component.description}</p>
                         {component.examples && component.examples.length > 0 && (
-                          <div className="mt-1 text-sm text-gray-500">
+                          <div className="mt-1 text-base text-gray-500">
                             <span className="font-medium">Examples: </span>
                             {component.examples.join(', ')}
                           </div>
@@ -690,15 +615,15 @@ function EnhancedFrameLayout({ frame }: { frame: SentenceFramePattern }) {
               <div className="flex flex-col gap-4">
                 {/* Display a clear explanation about pattern usage */}
                 <div className="bg-white p-4 rounded-lg border border-green-200 shadow-sm">
-                  <h3 className="font-medium text-green-800 mb-2">Pattern Usage</h3>
-                  <p className="text-gray-700">
+                  <h3 className="text-lg font-semibold text-green-800 mb-2">Pattern Usage</h3>
+                  <p className="text-gray-700 text-xl font-bold">
                     {frame.usageNotes || `This sentence pattern helps students practice using ${frame.communicativeFunction || 'appropriate language structures'}.`}
                   </p>
                 </div>
                 
                 {/* Show the key elements that can be filled in */}
                 <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-                  <h3 className="font-medium text-green-800 mb-2">Key Elements</h3>
+                  <h3 className="text-lg font-semibold text-green-800 mb-2">Key Elements</h3>
                   {frame.pattern && (
                     <div className="space-y-3">
                       {/* Extract blanks from pattern for Gemini format */}
@@ -740,8 +665,8 @@ function EnhancedFrameLayout({ frame }: { frame: SentenceFramePattern }) {
       <TabsContent value="examples" className="space-y-6">
         <Card className="border-amber-200 shadow-sm">
           <CardHeader className="bg-amber-50 p-4 border-b border-amber-200">
-            <CardTitle className="text-lg font-semibold text-amber-800 flex items-center gap-2">
-              <Pencil className="h-5 w-5" />
+            <CardTitle className="text-xl font-semibold text-amber-800 flex items-center gap-2">
+              <Pencil className="h-6 w-6" />
               Example Sentences
             </CardTitle>
           </CardHeader>
@@ -755,16 +680,16 @@ function EnhancedFrameLayout({ frame }: { frame: SentenceFramePattern }) {
                     return (
                       <div key={idx} className="bg-white p-4 rounded-lg border border-amber-200 shadow-sm">
                         <div className="mb-2 flex justify-between items-center">
-                          <span className="text-amber-600 font-medium">Example {idx + 1}</span>
+                          <span className="text-amber-600 font-semibold text-lg">Example {idx + 1}</span>
                           <button 
                             className="text-gray-400 hover:text-amber-600 p-1 rounded hover:bg-amber-100/50"
                             onClick={() => navigator.clipboard.writeText(example)}
                             title="Copy Example"
                           >
-                            <Copy className="h-4 w-4" />
+                            <Copy className="h-5 w-5" />
                           </button>
                         </div>
-                        <div className="text-gray-800 text-lg">{example}</div>
+                        <div className="text-gray-800 text-xl font-bold">{example}</div>
                       </div>
                     );
                   } else if (example.completeSentence) {
@@ -772,16 +697,16 @@ function EnhancedFrameLayout({ frame }: { frame: SentenceFramePattern }) {
                     return (
                       <div key={idx} className="bg-white p-4 rounded-lg border border-amber-200 shadow-sm">
                         <div className="mb-2 flex justify-between items-center">
-                          <span className="text-amber-600 font-medium">Example {idx + 1}</span>
+                          <span className="text-amber-600 font-semibold text-lg">Example {idx + 1}</span>
                           <button 
                             className="text-gray-400 hover:text-amber-600 p-1 rounded hover:bg-amber-100/50"
                             onClick={() => navigator.clipboard.writeText(example.completeSentence)}
                             title="Copy Example"
                           >
-                            <Copy className="h-4 w-4" />
+                            <Copy className="h-5 w-5" />
                           </button>
                         </div>
-                        <div className="text-gray-800 text-lg">
+                        <div className="text-gray-800 text-xl font-bold">
                           {example.breakdown
                             ? highlightSentence(example.completeSentence, example.breakdown)
                             : (example as any).componentBreakdown
@@ -800,10 +725,15 @@ function EnhancedFrameLayout({ frame }: { frame: SentenceFramePattern }) {
         </Card>
       </TabsContent>
 
-      {/* 4. Practice Tab - NEW */}
-      <TabsContent value="practice" className="space-y-6">
-        <InteractivePractice frame={frame} />
-      </TabsContent>
+      {/* 4. Scaffolding Tab - NEW (A1-B1 Support) */}
+      {hasScaffolding && (
+        <TabsContent value="scaffold" className="space-y-6">
+          <SentenceFramesScaffolding 
+            scaffolding={frame.lowerLevelScaffolding!} 
+            topic={section.topic || 'this lesson'}
+          />
+        </TabsContent>
+      )}
 
       {/* 5. Help Tab - NEW */}
       <TabsContent value="help" className="space-y-6">
@@ -813,8 +743,8 @@ function EnhancedFrameLayout({ frame }: { frame: SentenceFramePattern }) {
         {(frame.teachingNotes || frame.teachingTips) && (
           <Card className="border-orange-200 shadow-sm">
             <CardHeader className="bg-orange-50 p-4 border-b border-orange-200">
-              <CardTitle className="text-lg font-semibold text-orange-800 flex items-center gap-2">
-                <Lightbulb className="h-5 w-5" />
+              <CardTitle className="text-xl font-semibold text-orange-800 flex items-center gap-2">
+                <Lightbulb className="h-6 w-6" />
                 Teaching Notes
               </CardTitle>
             </CardHeader>
@@ -822,13 +752,13 @@ function EnhancedFrameLayout({ frame }: { frame: SentenceFramePattern }) {
               {Array.isArray(frame.teachingNotes) ? (
                 <ul className="list-disc space-y-2 pl-5 text-gray-700">
                   {frame.teachingNotes.map((note, index) => (
-                    <li key={index} className="text-base">{note}</li>
+                    <li key={index} className="text-xl font-bold">{note}</li>
                   ))}
                 </ul>
               ) : frame.teachingTips ? (
-                <p className="text-gray-700">{frame.teachingTips}</p>
+                <p className="text-gray-700 text-xl font-bold">{frame.teachingTips}</p>
               ) : (
-                <p className="text-gray-700">{frame.teachingNotes}</p>
+                <p className="text-gray-700 text-xl font-bold">{frame.teachingNotes}</p>
               )}
             </CardContent>
           </Card>
@@ -838,8 +768,8 @@ function EnhancedFrameLayout({ frame }: { frame: SentenceFramePattern }) {
         {frame.discussionPrompts && frame.discussionPrompts.length > 0 && (
           <Card className="border-teal-200 shadow-sm">
             <CardHeader className="bg-teal-50 p-4 border-b border-teal-200">
-              <CardTitle className="text-lg font-semibold text-teal-800 flex items-center gap-2">
-                <MessageSquareQuote className="h-5 w-5" />
+              <CardTitle className="text-xl font-semibold text-teal-800 flex items-center gap-2">
+                <MessageSquareQuote className="h-6 w-6" />
                 Discussion Prompts
               </CardTitle>
             </CardHeader>
@@ -850,7 +780,7 @@ function EnhancedFrameLayout({ frame }: { frame: SentenceFramePattern }) {
                     <div className="flex-shrink-0 w-6 h-6 bg-teal-100 text-teal-700 rounded-full flex items-center justify-center text-sm font-medium">
                       {index + 1}
                     </div>
-                    <span className="text-gray-700">{prompt}</span>
+                    <span className="text-gray-700 text-xl font-bold">{prompt}</span>
                   </li>
                 ))}
               </ul>

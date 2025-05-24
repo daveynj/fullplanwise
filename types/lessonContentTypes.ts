@@ -99,6 +99,80 @@ export interface InteractiveFeatures {
 }
 
 /**
+ * Sentence building step for progressive learning
+ */
+export interface SentenceBuildingStep {
+  /** Level of construction (word, phrase, sentence) */
+  level: "word" | "phrase" | "sentence";
+  /** Example at this level */
+  example: string;
+  /** Optional explanation */
+  explanation?: string;
+}
+
+/**
+ * Sentence workshop activity for A1-B1 learners
+ */
+export interface SentenceWorkshopActivity {
+  /** Name of the activity */
+  name: string;
+  /** Progressive steps in sentence building */
+  steps: SentenceBuildingStep[];
+  /** Teaching notes for this activity */
+  teachingNotes?: string;
+}
+
+/**
+ * Pattern trainer scaffolding for basic patterns
+ */
+export interface PatternTrainerScaffolding {
+  /** Available verbs for the pattern */
+  verbs?: string[];
+  /** Available nouns for the pattern */
+  nouns?: string[];
+  /** Available adjectives for the pattern */
+  adjectives?: string[];
+  /** Available reasons/explanations */
+  reasons?: string[];
+  /** Other word categories */
+  [category: string]: string[] | undefined;
+}
+
+/**
+ * Pattern trainer for A1-B1 learners
+ */
+export interface PatternTrainer {
+  /** Simple pattern with clear placeholders */
+  pattern: string;
+  /** Title of the pattern trainer */
+  title: string;
+  /** Scaffolding word banks */
+  scaffolding: PatternTrainerScaffolding;
+  /** Example sentences using the pattern */
+  examples: string[];
+  /** Step-by-step instructions */
+  instructions: string[];
+}
+
+/**
+ * Enhanced scaffolding data for lower-level learners (A1-B1)
+ */
+export interface LowerLevelScaffolding {
+  /** Sentence workshop activities */
+  sentenceWorkshop?: SentenceWorkshopActivity[];
+  /** Pattern trainer */
+  patternTrainer?: PatternTrainer;
+  /** Visual sentence maps */
+  visualMaps?: Array<{
+    pattern: string;
+    colorCoding: {
+      [component: string]: string; // component -> color
+    };
+    example: string;
+  }>;
+}
+
+/**
  * Represents the complete data structure for the enhanced
  * Sentence Frame section within a lesson.
  */
@@ -162,4 +236,8 @@ export interface SentenceFramePattern {
   culturalAdaptation?: CulturalAdaptation;
   /** Interactive learning features */
   interactiveFeatures?: InteractiveFeatures;
+  
+  // --- Enhanced Scaffolding for A1-B1 Learners (Optional) ---
+  /** Enhanced scaffolding for lower-level learners */
+  lowerLevelScaffolding?: LowerLevelScaffolding;
 } 

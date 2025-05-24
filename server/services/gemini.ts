@@ -70,6 +70,22 @@ export class GeminiService {
             cleanedContent = text.replace(/`\s*/g, '').replace(/`\s*$/g, '').trim();
           }
           
+          // Clean responses that start with just "json" (without markdown)
+          if (cleanedContent.trim().startsWith('json\n') || cleanedContent.trim().startsWith('json\r\n') || cleanedContent.trim().startsWith('json ')) {
+            console.log('Detected "json" prefix, removing it');
+            cleanedContent = cleanedContent.trim().replace(/^json\s*[\r\n\s]+/, '');
+          }
+          
+          // Clean any other common AI response prefixes
+          cleanedContent = cleanedContent.trim().replace(/^(Here's the|Here is the|The following is the)\s*[\w\s]*:?\s*[\r\n]*/, '');
+          cleanedContent = cleanedContent.trim().replace(/^JSON\s*[\r\n]+/, '');
+          
+          // Clean leading/trailing quotes that sometimes wrap the entire JSON
+          if (cleanedContent.startsWith('"') && cleanedContent.endsWith('"')) {
+            console.log('Removing wrapping quotes');
+            cleanedContent = cleanedContent.slice(1, -1);
+          }
+          
           // Now try to parse the cleaned content
           try {
             const jsonContent = JSON.parse(cleanedContent);
@@ -775,6 +791,16 @@ Then, based on your analysis:
   d) Require different reading skills (locating information, making connections, drawing conclusions)
   e) Provide appropriate scaffolding for students at this level
 
+SCAFFOLDING REQUIREMENTS FOR LOWER LEVELS:
+${params.cefrLevel === 'A1' || params.cefrLevel === 'A2' || params.cefrLevel === 'B1' 
+  ? `Since this is a ${params.cefrLevel} level lesson, you MUST include enhanced scaffolding for lower-level learners. For each sentence frame, add a "lowerLevelScaffolding" object with:
+1. "sentenceWorkshop": Progressive building activities from word → phrase → sentence
+2. "patternTrainer": Interactive word banks with categorized vocabulary for building sentences
+3. "visualMaps": Color-coded structure maps showing sentence components
+
+This scaffolding is CRITICAL for A1-B1 learners and must be included.`
+  : `Since this is a ${params.cefrLevel} level lesson, do NOT include "lowerLevelScaffolding" in the sentence frames. Advanced learners do not need this additional scaffolding.`}
+
 FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure all fields contain complete content. Do not use placeholders.
 
 {
@@ -903,7 +929,64 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
             "Increased funding spurred faster development because more researchers could be hired."
           ],
           "practicePrompt": "Create your own sentence using this pattern: [CAUSE] spurred [EFFECT] because [REASON]. Try to use vocabulary from the lesson.",
-          "teachingTips": "Discuss each component with students. Elicit more examples for each component before asking students to write their own sentences."
+          "teachingTips": "Discuss each component with students. Elicit more examples for each component before asking students to write their own sentences."${params.cefrLevel === 'A1' || params.cefrLevel === 'A2' || params.cefrLevel === 'B1' ? `,
+          "lowerLevelScaffolding": {
+            "sentenceWorkshop": [
+              {
+                "name": "Step-by-Step Building",
+                "steps": [
+                  {
+                    "level": "word",
+                    "example": "discovery",
+                    "explanation": "Start with the cause (what happened first)"
+                  },
+                  {
+                    "level": "phrase", 
+                    "example": "The discovery spurred",
+                    "explanation": "Add the verb 'spurred' to show the effect"
+                  },
+                  {
+                    "level": "sentence",
+                    "example": "The discovery spurred new research because it was exciting.",
+                    "explanation": "Complete with effect and reason"
+                  }
+                ],
+                "teachingNotes": "Build confidence by adding one piece at a time"
+              }
+            ],
+            "patternTrainer": {
+              "pattern": "[CAUSE] spurred [EFFECT] because [REASON].",
+              "title": "Cause and Effect Builder",
+              "scaffolding": {
+                "causes": ["The discovery", "New funding", "Public interest", "Better technology", "Government support"],
+                "effects": ["new research", "faster progress", "more projects", "better results", "wider participation"],
+                "reasons": ["it was important", "resources were available", "people were excited", "tools improved", "goals were clear"]
+              },
+              "examples": [
+                "The discovery spurred new research because it was important.",
+                "New funding spurred faster progress because resources were available."
+              ],
+              "instructions": [
+                "Choose what caused something to happen",
+                "Pick the effect that followed", 
+                "Add a reason explaining why",
+                "Connect them with 'spurred' and 'because'"
+              ]
+            },
+            "visualMaps": [
+              {
+                "pattern": "[CAUSE] spurred [EFFECT] because [REASON]",
+                "colorCoding": {
+                  "cause": "blue",
+                  "spurred": "gray", 
+                  "effect": "green",
+                  "because": "gray",
+                  "reason": "purple"
+                },
+                "example": "The discovery spurred new research because it was important"
+              }
+            ]
+          }` : ''}
         }
         // (Potentially include 1 more frame object)
       ]

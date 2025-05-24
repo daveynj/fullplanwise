@@ -420,6 +420,16 @@ Then, based on your analysis:
   d) Require different reading skills (locating information, making connections, drawing conclusions)
   e) Provide appropriate scaffolding for students at this level
 
+SCAFFOLDING REQUIREMENTS FOR LOWER LEVELS:
+${params.cefrLevel === 'A1' || params.cefrLevel === 'A2' || params.cefrLevel === 'B1' 
+  ? `Since this is a ${params.cefrLevel} level lesson, you MUST include enhanced scaffolding for lower-level learners. For each sentence frame, add a "lowerLevelScaffolding" object with:
+1. "sentenceWorkshop": Progressive building activities from word → phrase → sentence
+2. "patternTrainer": Interactive word banks with categorized vocabulary for building sentences
+3. "visualMaps": Color-coded structure maps showing sentence components
+
+This scaffolding is CRITICAL for A1-B1 learners and must be included.`
+  : `Since this is a ${params.cefrLevel} level lesson, do NOT include "lowerLevelScaffolding" in the sentence frames. Advanced learners do not need this additional scaffolding.`}
+
 FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure all fields contain complete content. Do not use placeholders.
 
 {
@@ -685,7 +695,66 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
             "Can you think of a time when understanding cultural differences was important?",
             "How would you teach someone from another culture about politeness in your country?",
             "What behaviors are considered essential in professional settings?"
-          ]
+          ]${params.cefrLevel === 'A1' || params.cefrLevel === 'A2' || params.cefrLevel === 'B1' ? `,
+          "lowerLevelScaffolding": {
+            "sentenceWorkshop": [
+              {
+                "name": "Building Step by Step",
+                "steps": [
+                  {
+                    "level": "word",
+                    "example": "important",
+                    "explanation": "Start with an opinion word"
+                  },
+                  {
+                    "level": "phrase", 
+                    "example": "It is important",
+                    "explanation": "Add the beginning structure"
+                  },
+                  {
+                    "level": "sentence",
+                    "example": "It is important to study English.",
+                    "explanation": "Complete with action and reason"
+                  }
+                ],
+                "teachingNotes": "Help students build confidence by constructing sentences piece by piece"
+              }
+            ],
+            "patternTrainer": {
+              "pattern": "It is [adjective] to [verb] because [reason].",
+              "title": "Pattern Practice Tool",
+              "scaffolding": {
+                "adjectives": ["important", "difficult", "easy", "fun", "necessary", "good", "bad", "helpful"],
+                "verbs": ["study", "learn", "practice", "travel", "work", "help", "listen", "understand"],
+                "reasons": ["it helps you communicate", "you can get better jobs", "it opens opportunities", "it's useful for travel", "it shows respect", "it builds relationships"]
+              },
+              "examples": [
+                "It is important to study because it helps you communicate.",
+                "It is difficult to learn because grammar is complex.",
+                "It is fun to travel because you meet new people."
+              ],
+              "instructions": [
+                "Choose an adjective from the word bank",
+                "Pick a verb that fits the topic", 
+                "Select a reason that makes sense",
+                "Put them together following the pattern"
+              ]
+            },
+            "visualMaps": [
+              {
+                "pattern": "It is [ADJ] to [VERB] because [REASON]",
+                "colorCoding": {
+                  "It is": "gray",
+                  "adjective": "blue", 
+                  "to": "gray",
+                  "verb": "green",
+                  "because": "gray",
+                  "reason": "purple"
+                },
+                "example": "It is important to study because it helps you communicate"
+              }
+            ]
+          }` : ''}
         }
       ],
       "aiGeneratedSupport": {
@@ -871,6 +940,30 @@ B1 Examples:
             
             // Try cleaning content first
             let cleanedContent = content.replace(/```json\s*/g, '').replace(/```\s*$/g, '').trim();
+            
+            // Clean responses that start with just "json" (without markdown)
+            if (cleanedContent.trim().startsWith('json\n') || cleanedContent.trim().startsWith('json\r\n') || cleanedContent.trim().startsWith('json ')) {
+              console.log('Detected "json" prefix, removing it');
+              cleanedContent = cleanedContent.trim().replace(/^json\s*[\r\n\s]+/, '');
+            }
+            
+            // Clean any other common AI response prefixes
+            cleanedContent = cleanedContent.trim().replace(/^(Here's the|Here is the|The following is the)\s*[\w\s]*:?\s*[\r\n]*/, '');
+            cleanedContent = cleanedContent.trim().replace(/^JSON\s*[\r\n]+/, '');
+            
+            // Clean leading/trailing quotes that sometimes wrap the entire JSON
+            if (cleanedContent.startsWith('"') && cleanedContent.endsWith('"')) {
+              console.log('Removing wrapping quotes');
+              cleanedContent = cleanedContent.slice(1, -1);
+            }
+            
+            // Fix common character encoding issues
+            cleanedContent = cleanedContent.replace(/[""]|['']/g, '"')  // Replace smart quotes
+                                         .replace(/…/g, '...')          // Replace ellipsis
+                                         .replace(/–|—/g, '-')          // Replace em/en dashes
+                                         .replace(/\u00A0/g, ' ')       // Replace non-breaking spaces
+                                         .replace(/[\u2000-\u206F]/g, ' ') // Replace other unicode spaces
+                                         .replace(/\r\n|\r/g, '\n');    // Normalize line endings
             
             try {
               jsonContent = JSON.parse(cleanedContent);
@@ -1439,6 +1532,21 @@ If an example is a simple string, return a string. If it's an object with "compl
     
     // Clean up potential markdown and trim
     let cleanedContent = content.replace(/```json\s*/g, '').replace(/```\s*$/g, '').trim();
+    
+    // Clean responses that start with just "json" (without markdown)
+    if (cleanedContent.trim().startsWith('json\n') || cleanedContent.trim().startsWith('json\r\n') || cleanedContent.trim().startsWith('json ')) {
+      cleanedContent = cleanedContent.trim().replace(/^json\s*[\r\n\s]+/, '');
+    }
+    
+    // Clean other prefixes and encoding issues
+    cleanedContent = cleanedContent.trim().replace(/^(Here's the|Here is the|The following is the)\s*[\w\s]*:?\s*[\r\n]*/, '');
+    cleanedContent = cleanedContent.trim().replace(/^JSON\s*[\r\n]+/, '');
+    cleanedContent = cleanedContent.replace(/[""]|['']/g, '"')  // Replace smart quotes
+                                   .replace(/…/g, '...')          // Replace ellipsis
+                                   .replace(/–|—/g, '-')          // Replace em/en dashes
+                                   .replace(/\u00A0/g, ' ')       // Replace non-breaking spaces
+                                   .replace(/[\u2000-\u206F]/g, ' ') // Replace other unicode spaces
+                                   .replace(/\r\n|\r/g, '\n');    // Normalize line endings
     
     // Attempt to fix the most common structural issues with regex first
     try {
