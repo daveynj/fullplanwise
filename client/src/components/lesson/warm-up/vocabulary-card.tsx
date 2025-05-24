@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { BookOpen, Mic, Lightbulb, MessageSquare, Heart, Users, ChevronDown, ChevronUp, Tag } from 'lucide-react';
+import { VocabularySemanticMap } from '../vocabulary-semantic-map';
 
 export interface VocabularyWord {
   word: string;
@@ -21,6 +22,15 @@ export interface VocabularyWord {
   };
   collocations?: string[];                  // Common phrases with this word
   usageNotes?: string;                      // Additional information about word usage
+  
+  // Semantic map data for visual thinking tools
+  semanticMap?: {
+    synonyms?: string[];                    // Words with similar meanings
+    antonyms?: string[];                    // Words with opposite meanings
+    relatedConcepts?: string[];             // Related ideas/concepts
+    contexts?: string[];                    // Common contexts where this word is used
+    associatedWords?: string[];             // Words commonly used together
+  };
 }
 
 interface VocabularyCardProps {
@@ -302,6 +312,13 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
             </div>
           )}
         </div>
+        
+        {/* Semantic Map Section */}
+        {word.semanticMap && (
+          <div className="mt-4">
+            <VocabularySemanticMap word={word} />
+          </div>
+        )}
       </div>
     </div>
   );

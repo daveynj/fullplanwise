@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vocabulary Semantic Map Demo</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/lucide-react@latest/dist/umd/lucide-react.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .semantic-map-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+        const { ArrowRight, Circle, FileText, Eye, EyeOff, RotateCcw } = lucideReact;
+
+        // Mock vocabulary word with semantic map data
+        const mockVocabularyWord = {
+            word: "innovation",
+            definition: "The introduction of new ideas, methods, or technologies that create value or improve existing processes.",
+            example: "The company's innovation in renewable energy has revolutionized the industry.",
+            partOfSpeech: "noun",
+            semanticMap: {
+                synonyms: ["creativity", "invention", "breakthrough", "novelty"],
+                antonyms: ["tradition", "convention", "stagnation"],
+                relatedConcepts: ["technology", "progress", "research", "development", "entrepreneurship"],
+                contexts: ["business environment", "scientific research", "technology sector", "startup culture"],
+                associatedWords: ["disruptive", "cutting-edge", "revolutionary", "transformative", "pioneering"]
+            }
+        };
+
+        function VocabularySemanticMap({ word }) {
+            const [selectedCategory, setSelectedCategory] = useState(null);
+            const [showAllConnections, setShowAllConnections] = useState(true);
+
+            // Skip if no semantic map data
+            if (!word.semanticMap) {
+                return null;
+            }
+
+            const { semanticMap } = word;
+
+            // Prepare semantic connections with consistent styling
+            const semanticConnections = [
+                {
+                    category: 'Synonyms',
+                    words: semanticMap.synonyms || [],
+                    color: 'bg-green-100 border-green-300 text-green-800',
+                    icon: React.createElement(Circle, { className: "h-4 w-4 text-green-600" })
+                },
+                {
+                    category: 'Antonyms', 
+                    words: semanticMap.antonyms || [],
+                    color: 'bg-red-100 border-red-300 text-red-800',
+                    icon: React.createElement(Circle, { className: "h-4 w-4 text-red-600" })
+                },
+                {
+                    category: 'Related Concepts',
+                    words: semanticMap.relatedConcepts || [],
+                    color: 'bg-blue-100 border-blue-300 text-blue-800',
+                    icon: React.createElement(FileText, { className: "h-4 w-4 text-blue-600" })
+                },
+                {
+                    category: 'Contexts',
+                    words: semanticMap.contexts || [],
+                    color: 'bg-purple-100 border-purple-300 text-purple-800',
+                    icon: React.createElement(Eye, { className: "h-4 w-4 text-purple-600" })
+                },
+                {
+                    category: 'Associated Words',
+                    words: semanticMap.associatedWords || [],
+                    color: 'bg-orange-100 border-orange-300 text-orange-800',
+                    icon: React.createElement(ArrowRight, { className: "h-4 w-4 text-orange-600" })
+                }
+            ].filter(connection => connection.words.length > 0);
+
+            // Don't render if no connections
+            if (semanticConnections.length === 0) {
+                return null;
+            }
+
+            const toggleCategory = (category) => {
+                setSelectedCategory(selectedCategory === category ? null : category);
+            };
+
+            const resetView = () => {
+                setSelectedCategory(null);
+                setShowAllConnections(true);
+            };
+
+            return React.createElement(
+                'div',
+                { className: "bg-white rounded-lg border-2 border-gray-200 p-6 shadow-lg" },
+                
+                // Header
+                React.createElement(
+                    'div',
+                    { className: "flex justify-between items-center mb-6" },
+                    React.createElement(
+                        'div',
+                        { className: "flex items-center space-x-3" },
+                        React.createElement(
+                            'div',
+                            { className: "h-8 w-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center" },
+                            React.createElement(FileText, { className: "h-4 w-4 text-white" })
+                        ),
+                        React.createElement(
+                            'div',
+                            null,
+                            React.createElement('h3', { className: "text-xl font-bold text-gray-900" }, "Semantic Map"),
+                            React.createElement('p', { className: "text-sm text-gray-600" }, `Explore connections for "${word.word}"`)
+                        )
+                    ),
+                    
+                    // Controls
+                    React.createElement(
+                        'div',
+                        { className: "flex items-center space-x-2" },
+                        React.createElement(
+                            'button',
+                            {
+                                onClick: () => setShowAllConnections(!showAllConnections),
+                                className: "p-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors",
+                                title: showAllConnections ? "Hide connections" : "Show all connections"
+                            },
+                            showAllConnections 
+                                ? React.createElement(EyeOff, { className: "h-4 w-4" })
+                                : React.createElement(Eye, { className: "h-4 w-4" })
+                        ),
+                        React.createElement(
+                            'button',
+                            {
+                                onClick: resetView,
+                                className: "p-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors",
+                                title: "Reset view"
+                            },
+                            React.createElement(RotateCcw, { className: "h-4 w-4" })
+                        )
+                    )
+                ),
+
+                // Semantic Map Visualization
+                React.createElement(
+                    'div',
+                    { className: "relative" },
+                    
+                    // Central Word
+                    React.createElement(
+                        'div',
+                        { className: "flex justify-center mb-8" },
+                        React.createElement(
+                            'div',
+                            { className: "bg-gradient-to-r from-blue-600 to-purple-700 text-white px-8 py-4 rounded-xl shadow-lg transform transition-transform hover:scale-105" },
+                            React.createElement('h2', { className: "text-2xl font-bold text-center" }, word.word)
+                        )
+                    ),
+
+                    // Semantic Connections Grid
+                    React.createElement(
+                        'div',
+                        { className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" },
+                        semanticConnections.map((connection, index) => {
+                            const isSelected = selectedCategory === connection.category;
+                            const isVisible = showAllConnections || selectedCategory === null || isSelected;
+                            
+                            if (!isVisible) return null;
+
+                            return React.createElement(
+                                'div',
+                                {
+                                    key: connection.category,
+                                    className: `relative ${connection.color} border-2 rounded-xl p-4 transition-all duration-300 cursor-pointer ${
+                                        isSelected ? 'ring-4 ring-blue-300 scale-105' : 'hover:scale-102'
+                                    }`,
+                                    onClick: () => toggleCategory(connection.category)
+                                },
+                                
+                                // Category Header
+                                React.createElement(
+                                    'div',
+                                    { className: "flex items-center justify-between mb-3" },
+                                    React.createElement(
+                                        'div',
+                                        { className: "flex items-center space-x-2" },
+                                        connection.icon,
+                                        React.createElement('h4', { className: "font-bold text-lg" }, connection.category)
+                                    ),
+                                    React.createElement(
+                                        'div',
+                                        { className: "text-xs font-medium bg-white bg-opacity-70 px-2 py-1 rounded-full" },
+                                        connection.words.length
+                                    )
+                                ),
+
+                                // Words List
+                                React.createElement(
+                                    'div',
+                                    { className: "space-y-2" },
+                                    connection.words.slice(0, isSelected ? connection.words.length : 3).map((wordItem, wordIndex) =>
+                                        React.createElement(
+                                            'div',
+                                            {
+                                                key: wordIndex,
+                                                className: "bg-white bg-opacity-80 px-3 py-2 rounded-lg text-sm font-medium border border-gray-200 hover:bg-opacity-100 transition-all"
+                                            },
+                                            wordItem
+                                        )
+                                    ),
+                                    
+                                    // Show more indicator
+                                    !isSelected && connection.words.length > 3 &&
+                                    React.createElement(
+                                        'div',
+                                        { className: "text-center text-xs font-medium opacity-70 pt-1" },
+                                        `+${connection.words.length - 3} more...`
+                                    )
+                                ),
+
+                                // Connection Line to Center
+                                React.createElement('div', { className: "absolute top-1/2 -left-2 w-4 h-0.5 bg-gray-400 opacity-50" })
+                            );
+                        })
+                    ),
+
+                    // Instructions
+                    React.createElement(
+                        'div',
+                        { className: "mt-6 text-center text-sm text-gray-600" },
+                        React.createElement('p', null, "Click on any category to focus on that connection type")
+                    )
+                )
+            );
+        }
+
+        function VocabularyDemo() {
+            return React.createElement(
+                'div',
+                { className: "semantic-map-container" },
+                React.createElement(
+                    'div',
+                    { className: "bg-white rounded-lg p-8 shadow-lg mb-8" },
+                    React.createElement('h1', { className: "text-3xl font-bold text-center mb-4" }, "🎯 Vocabulary Semantic Map Prototype"),
+                    React.createElement('p', { className: "text-center text-gray-600 mb-6" }, "AI-generated semantic maps help students understand word relationships and build vocabulary networks."),
+                    
+                    // Word definition card
+                    React.createElement(
+                        'div',
+                        { className: "bg-blue-50 rounded-lg p-6 mb-6" },
+                        React.createElement('h2', { className: "text-2xl font-bold text-blue-900 mb-2" }, mockVocabularyWord.word),
+                        React.createElement('p', { className: "text-blue-800 text-sm mb-3" }, mockVocabularyWord.partOfSpeech),
+                        React.createElement('p', { className: "text-base font-medium mb-3" }, mockVocabularyWord.definition),
+                        React.createElement('p', { className: "text-base italic" }, `"${mockVocabularyWord.example}"`)
+                    )
+                ),
+                
+                React.createElement(VocabularySemanticMap, { word: mockVocabularyWord }),
+                
+                React.createElement(
+                    'div',
+                    { className: "bg-green-50 rounded-lg p-6 mt-8" },
+                    React.createElement('h3', { className: "text-xl font-bold text-green-900 mb-3" }, "✅ Prototype Features Implemented:"),
+                    React.createElement(
+                        'ul',
+                        { className: "space-y-2 text-green-800" },
+                        React.createElement('li', null, "• Interactive semantic map visualization"),
+                        React.createElement('li', null, "• 5 categories: Synonyms, Antonyms, Related Concepts, Contexts, Associated Words"),
+                        React.createElement('li', null, "• Click to focus on specific word relationships"),
+                        React.createElement('li', null, "• Color-coded categories for visual learning"),
+                        React.createElement('li', null, "• Responsive design for different screen sizes"),
+                        React.createElement('li', null, "• AI services updated to generate semantic map data"),
+                        React.createElement('li', null, "• Integration ready for lesson vocabulary section")
+                    )
+                )
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(React.createElement(VocabularyDemo));
+    </script>
+</body>
+</html> 

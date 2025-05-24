@@ -359,7 +359,14 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
           "collocations": ["Common phrase 1", "Common phrase 2"],
           "usageNotes": "Brief notes on how and when to use this word appropriately",
           "teachingTips": "Suggestions for effectively teaching this vocabulary item",
-          "imageDescription": "Description of an image that would illustrate this word"
+          "imageDescription": "Description of an image that would illustrate this word",
+          "semanticMap": {
+            "synonyms": ["synonym1", "synonym2", "synonym3"],
+            "antonyms": ["antonym1", "antonym2"], 
+            "relatedConcepts": ["concept1", "concept2", "concept3"],
+            "contexts": ["context1", "context2", "context3"],
+            "associatedWords": ["word1", "word2", "word3"]
+          }
         },
         {
           "term": "vocabulary2",
@@ -370,7 +377,14 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
           "collocations": ["Common phrase 1", "Common phrase 2"],
           "usageNotes": "Brief notes on how and when to use this word appropriately",
           "teachingTips": "Suggestions for effectively teaching this vocabulary item",
-          "imageDescription": "Description of an image that would illustrate this word"
+          "imageDescription": "Description of an image that would illustrate this word",
+          "semanticMap": {
+            "synonyms": ["synonym1", "synonym2", "synonym3"],
+            "antonyms": ["antonym1", "antonym2"], 
+            "relatedConcepts": ["concept1", "concept2", "concept3"],
+            "contexts": ["context1", "context2", "context3"],
+            "associatedWords": ["word1", "word2", "word3"]
+          }
         },
         {
           "term": "vocabulary3",
@@ -381,7 +395,14 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
           "collocations": ["Common phrase 1", "Common phrase 2"],
           "usageNotes": "Brief notes on how and when to use this word appropriately",
           "teachingTips": "Suggestions for effectively teaching this vocabulary item",
-          "imageDescription": "Description of an image that would illustrate this word"
+          "imageDescription": "Description of an image that would illustrate this word",
+          "semanticMap": {
+            "synonyms": ["synonym1", "synonym2", "synonym3"],
+            "antonyms": ["antonym1", "antonym2"], 
+            "relatedConcepts": ["concept1", "concept2", "concept3"],
+            "contexts": ["context1", "context2", "context3"],
+            "associatedWords": ["word1", "word2", "word3"]
+          }
         },
         {
           "term": "vocabulary4",
@@ -392,7 +413,14 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
           "collocations": ["Common phrase 1", "Common phrase 2"],
           "usageNotes": "Brief notes on how and when to use this word appropriately",
           "teachingTips": "Suggestions for effectively teaching this vocabulary item",
-          "imageDescription": "Description of an image that would illustrate this word"
+          "imageDescription": "Description of an image that would illustrate this word",
+          "semanticMap": {
+            "synonyms": ["synonym1", "synonym2", "synonym3"],
+            "antonyms": ["antonym1", "antonym2"], 
+            "relatedConcepts": ["concept1", "concept2", "concept3"],
+            "contexts": ["context1", "context2", "context3"],
+            "associatedWords": ["word1", "word2", "word3"]
+          }
         },
         {
           "term": "vocabulary5",
@@ -403,7 +431,14 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
           "collocations": ["Common phrase 1", "Common phrase 2"],
           "usageNotes": "Brief notes on how and when to use this word appropriately",
           "teachingTips": "Suggestions for effectively teaching this vocabulary item",
-          "imageDescription": "Description of an image that would illustrate this word"
+          "imageDescription": "Description of an image that would illustrate this word",
+          "semanticMap": {
+            "synonyms": ["synonym1", "synonym2", "synonym3"],
+            "antonyms": ["antonym1", "antonym2"], 
+            "relatedConcepts": ["concept1", "concept2", "concept3"],
+            "contexts": ["context1", "context2", "context3"],
+            "associatedWords": ["word1", "word2", "word3"]
+          }
         }
       ],
       "practice": "Brief activity to practice using the vocabulary",
