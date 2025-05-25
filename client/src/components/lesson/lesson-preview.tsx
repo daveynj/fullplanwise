@@ -17,6 +17,38 @@ export function LessonPreview({ lesson }: LessonPreviewProps) {
   const [activeTab, setActiveTab] = useState("lesson");
   const { toast } = useToast();
   
+  // Fixed position HTML download button that's always visible
+  const renderDownloadButton = () => {
+    if (!lesson || !lesson.id) return null;
+    
+    return (
+      <div className="fixed bottom-6 right-6 z-50">
+        <a 
+          href={`/api/lessons/${lesson.id}/pdf?format=html`}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '12px 16px',
+            backgroundColor: '#16a34a',
+            color: 'white',
+            fontWeight: 'bold',
+            borderRadius: '6px',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+            border: '2px solid white',
+            animation: 'bounce 1s infinite',
+            textDecoration: 'none'
+          }}
+        >
+          <Download size={20} />
+          <span>DOWNLOAD FULL HTML VERSION</span>
+        </a>
+      </div>
+    );
+  };
+  
   // If no lesson has been generated yet
   if (!lesson) {
     return (
@@ -245,6 +277,7 @@ export function LessonPreview({ lesson }: LessonPreviewProps) {
 
   return (
     <Card className="bg-white rounded-xl shadow-sm overflow-hidden flex flex-col h-full">
+      {renderDownloadButton()}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col h-full">
         <TabsList className="w-full justify-start px-0 bg-transparent border-b border-gray-200 rounded-none">
           <TabsTrigger
