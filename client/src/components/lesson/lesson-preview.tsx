@@ -277,22 +277,23 @@ export function LessonPreview({ lesson }: LessonPreviewProps) {
               <button className="ml-3 text-gray-400 hover:text-primary">
                 <Edit className="h-5 w-5" />
               </button>
-              <div className="flex gap-2">
-                <button 
-                  className="flex items-center gap-1 ml-2 text-gray-500 hover:text-primary" 
-                  onClick={() => handleDownloadPDF('pdf')}
-                >
-                  <Download className="h-5 w-5" />
-                  <span className="text-xs">PDF</span>
-                </button>
-                <button
-                  className="flex items-center gap-1 ml-1 text-gray-500 hover:text-primary bg-gray-50 px-2 py-1 rounded-md"
-                  onClick={() => handleDownloadPDF('html')}
-                >
-                  <Download className="h-4 w-4" />
-                  <span className="text-xs font-medium">HTML</span>
-                </button>
-              </div>
+              <button 
+                className="ml-2 text-gray-400 hover:text-primary" 
+                onClick={() => handleDownloadPDF()}
+              >
+                <Download className="h-5 w-5" />
+              </button>
+            </div>
+            
+            <div className="fixed bottom-8 right-8 z-50 shadow-xl animate-pulse">
+              <a 
+                href={`/api/lessons/${lesson.id}/pdf?format=html`}
+                target="_blank"
+                className="inline-flex items-center justify-center gap-2 rounded-md bg-green-600 px-4 py-3 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 border-2 border-white"
+              >
+                <Download className="h-5 w-5" />
+                DOWNLOAD FULL HTML VERSION
+              </a>
             </div>
           </div>
           
