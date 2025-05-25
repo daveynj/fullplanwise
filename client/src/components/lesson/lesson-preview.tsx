@@ -23,28 +23,21 @@ export function LessonPreview({ lesson }: LessonPreviewProps) {
     
     return (
       <div className="fixed bottom-6 right-6 z-50">
-        <a 
-          href={`/api/lessons/${lesson.id}/pdf?format=html`}
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '12px 16px',
-            backgroundColor: '#16a34a',
-            color: 'white',
-            fontWeight: 'bold',
-            borderRadius: '6px',
-            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-            border: '2px solid white',
-            animation: 'bounce 1s infinite',
-            textDecoration: 'none'
-          }}
+        <Button
+          asChild
+          variant="outline"
+          className="shadow-lg animate-bounce border-2 border-white bg-white"
         >
-          <Download size={20} />
-          <span>DOWNLOAD FULL HTML VERSION</span>
-        </a>
+          <a 
+            href={`/api/lessons/${lesson.id}/pdf?format=html`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2"
+          >
+            <Download className="h-5 w-5" />
+            <span>DOWNLOAD FULL HTML VERSION</span>
+          </a>
+        </Button>
       </div>
     );
   };
@@ -203,77 +196,7 @@ export function LessonPreview({ lesson }: LessonPreviewProps) {
     }
   });
 
-  const handleDownloadPDF = async (format = 'pdf') => {
-    try {
-      // Check if lesson has vocabulary
-      const vocabularySection = parsedContent.sections?.find((section: any) => section.type === 'vocabulary');
-      if (!vocabularySection || !vocabularySection.words || vocabularySection.words.length === 0) {
-        toast({
-          title: "No vocabulary found",
-          description: "This lesson doesn't contain vocabulary words to include in a review PDF.",
-          variant: "destructive",
-        });
-        return;
-      }
 
-      toast({
-        title: format === 'html' ? "Generating HTML..." : "Generating PDF...",
-        description: format === 'html' 
-          ? "Please wait while we create your comprehensive vocabulary review HTML document."
-          : "Please wait while we create your vocabulary review PDF.",
-      });
-
-      const apiUrl = format === 'html' 
-        ? `/api/lessons/${lesson.id}/pdf?format=html` 
-        : `/api/lessons/${lesson.id}/pdf`;
-
-      const response = await fetch(apiUrl, {
-        method: 'GET',
-        credentials: 'include',
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
-        throw new Error(errorData.message || 'Failed to generate PDF');
-      }
-
-      // Create a blob from the response
-      const blob = await response.blob();
-      
-      // Create a download link
-      const downloadUrl = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = downloadUrl;
-      
-      // Set filename based on format
-      if (format === 'html') {
-        a.download = `vocabulary-review-${lesson.title.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}.html`;
-      } else {
-        a.download = `vocabulary-review-${lesson.title.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}.pdf`;
-      }
-      
-      document.body.appendChild(a);
-      a.click();
-      
-      // Cleanup
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(downloadUrl);
-
-      toast({
-        title: format === 'html' ? "HTML downloaded!" : "PDF downloaded!",
-        description: format === 'html'
-          ? "Your comprehensive vocabulary HTML document has been downloaded successfully."
-          : "Your vocabulary review PDF has been downloaded successfully.",
-      });
-    } catch (error: any) {
-      console.error('Error downloading PDF:', error);
-      toast({
-        title: "Download failed",
-        description: error.message || "Failed to generate the PDF. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
 
   return (
     <Card className="bg-white rounded-xl shadow-sm overflow-hidden flex flex-col h-full">
@@ -308,13 +231,18 @@ export function LessonPreview({ lesson }: LessonPreviewProps) {
                   <Download className="h-6 w-6 text-green-600 mr-2" />
                   <span className="font-medium text-green-800">Need offline access?</span>
                 </div>
-                <a 
-                  href={`/api/lessons/${lesson.id}/pdf?format=html`} 
-                  target="_blank"
-                  className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md shadow transition-colors"
+                <Button
+                  asChild
+                  variant="outline"
                 >
-                  Download Complete HTML Version
-                </a>
+                  <a 
+                    href={`/api/lessons/${lesson.id}/pdf?format=html`} 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Download Complete HTML Version
+                  </a>
+                </Button>
               </div>
             </div>
           </div>
@@ -327,12 +255,6 @@ export function LessonPreview({ lesson }: LessonPreviewProps) {
               </span>
               <button className="ml-3 text-gray-400 hover:text-primary">
                 <Edit className="h-5 w-5" />
-              </button>
-              <button 
-                className="ml-2 text-gray-400 hover:text-primary" 
-                onClick={() => handleDownloadPDF()}
-              >
-                <Download className="h-5 w-5" />
               </button>
             </div>
           </div>
