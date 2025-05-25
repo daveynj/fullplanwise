@@ -607,65 +607,90 @@ export class PDFGeneratorService {
     try {
       console.log('Launching browser for Replit deployment...');
       
-      // Set environment variables for Replit
-      if (process.env.REPL_SLUG) {
-        process.env.CHROME_BIN = process.env.CHROME_BIN || '/nix/store/*/bin/chromium';
-        process.env.PUPPETEER_SKIP_CHROMIUM_DOWNLOAD = 'true';
-      }
-      
+      // For Replit, always use system Chrome instead of @sparticuz/chromium
       let executablePath;
-      let args;
       
+      // Try to find system Chrome/Chromium paths in Replit
+      const possiblePaths = [
+        '/nix/store/*/bin/chromium',          // Nix-installed chromium
+        '/usr/bin/google-chrome',
+        '/usr/bin/google-chrome-stable', 
+        '/usr/bin/chromium-browser',
+        '/usr/bin/chromium',
+        '/snap/bin/chromium',
+        process.env.CHROME_BIN,
+        process.env.CHROMIUM_BIN
+      ].filter(Boolean);
+      
+      // Check if any system Chrome exists
+      const fs = await import('fs');
+      const { spawn } = await import('child_process');
+      
+      // Try to find chromium using 'which' command first
       try {
-        // Try to get chromium executable path
-        executablePath = await chromium.executablePath;
-        args = chromium.args;
-        console.log('Using @sparticuz/chromium executable');
-      } catch (chromiumError) {
-        console.log('Chromium package failed, trying system Chrome...', chromiumError.message);
+        const whichResult = await new Promise((resolve, reject) => {
+          const proc = spawn('which', ['chromium'], { stdio: 'pipe' });
+          let output = '';
+          proc.stdout.on('data', (data) => output += data);
+          proc.on('close', (code) => {
+            if (code === 0 && output.trim()) {
+              resolve(output.trim());
+            } else {
+              reject(new Error('which chromium failed'));
+            }
+          });
+        });
+        executablePath = whichResult as string;
+        console.log(`Found chromium via 'which': ${executablePath}`);
+      } catch (whichError) {
+        console.log('which command failed, trying manual paths...');
         
-        // Fallback: try system Chrome/Chromium paths
-        const possiblePaths = [
-          '/usr/bin/google-chrome',
-          '/usr/bin/google-chrome-stable',
-          '/usr/bin/chromium-browser',
-          '/usr/bin/chromium',
-          '/snap/bin/chromium',
-          process.env.CHROME_BIN,
-          process.env.CHROMIUM_BIN
-        ].filter(Boolean);
-        
-        // Check if any system Chrome exists
-        const fs = await import('fs');
+        // Fallback to manual path checking
         for (const path of possiblePaths) {
           try {
-            await fs.promises.access(path);
-            executablePath = path;
-            console.log(`Found system Chrome at: ${path}`);
-            break;
+            if (path.includes('*')) {
+              // Handle glob patterns for Nix store
+              const { glob } = await import('glob');
+              const matches = await glob(path);
+              if (matches.length > 0) {
+                executablePath = matches[0];
+                console.log(`Found Chrome via glob: ${executablePath}`);
+                break;
+              }
+            } else {
+              await fs.promises.access(path);
+              executablePath = path;
+              console.log(`Found Chrome at: ${path}`);
+              break;
+            }
           } catch (e) {
             // Continue to next path
           }
         }
-        
-        // Use safe args for system Chrome
-        args = [
-          '--no-sandbox',
-          '--disable-setuid-sandbox',
-          '--disable-dev-shm-usage',
-          '--disable-accelerated-2d-canvas',
-          '--disable-gpu',
-          '--disable-features=VizDisplayCompositor',
-          '--disable-extensions',
-          '--disable-plugins',
-          '--single-process',
-          '--no-zygote'
-        ];
       }
       
       if (!executablePath) {
-        throw new Error('No Chrome executable found. Chrome/Chromium is required for PDF generation.');
+        throw new Error('No Chrome executable found. Please ensure Chrome/Chromium is installed in the deployment environment.');
       }
+      
+      // Use safe args for system Chrome in Replit
+      const args = [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-accelerated-2d-canvas',
+        '--disable-gpu',
+        '--disable-features=VizDisplayCompositor',
+        '--disable-extensions',
+        '--disable-plugins',
+        '--single-process',
+        '--no-zygote',
+        '--disable-background-timer-throttling',
+        '--disable-backgrounding-occluded-windows',
+        '--disable-renderer-backgrounding'
+      ];
+      
+      console.log(`Launching Chrome: ${executablePath}`);
       
       // Launch browser with found executable
       browser = await puppeteer.launch({
@@ -713,8 +738,8 @@ export class PDFGeneratorService {
     } catch (error) {
       console.error('PDF generation error:', error);
       
-      // Provide detailed error for Replit debugging
-      throw new Error(`PDF generation failed in Replit environment: ${error.message}. Chrome/Chromium dependencies may need to be installed in the deployment environment.`);
+      // Provide detailed error for debugging
+      throw new Error(`PDF generation failed in Replit: ${error.message}. Make sure Chrome is installed via replit.nix configuration.`);
     } finally {
       if (browser) {
         try {
