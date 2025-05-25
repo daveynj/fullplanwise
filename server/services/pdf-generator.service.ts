@@ -602,7 +602,7 @@ export class PDFGeneratorService {
 
   async generateVocabularyReviewPDF(lessonData: LessonData): Promise<Buffer> {
     try {
-      console.log('Starting comprehensive vocabulary PDF generation...');
+      console.log('Starting basic PDF generation for vocabulary review...');
       
       // Get vocabulary words from the lesson
       const vocabularySection = lessonData.sections.find(section => section.type === 'vocabulary');
@@ -628,111 +628,94 @@ export class PDFGeneratorService {
       doc.setFont('helvetica', 'normal');
       
       // Add header
-      doc.setFontSize(24);
+      doc.setFontSize(18);
       doc.setTextColor(30, 64, 175); // Primary blue
       const title = lessonData.title.length > 60 ? lessonData.title.substring(0, 60) + '...' : lessonData.title;
       doc.text(title, 20, 20);
       
       doc.setFontSize(12);
-      doc.setTextColor(107, 114, 128); // Gray
+      doc.setTextColor(100, 100, 100); // Gray
       doc.text(`Vocabulary Review • CEFR Level ${lessonData.level} • ${words.length} Words`, 20, 28);
       
       doc.setDrawColor(59, 130, 246); // Blue
       doc.setLineWidth(0.5);
       doc.line(20, 32, 190, 32);
       
-      // Add color key section
+      // Add color key
       doc.setFontSize(14);
-      doc.setTextColor(55, 65, 81);
-      doc.text('Color Key', 105, 42, { align: 'center' });
+      doc.setTextColor(50, 50, 50);
+      doc.text('Word Categories', 20, 42);
       
       doc.setFontSize(10);
-      doc.setFillColor(59, 130, 246); // Noun - Blue
-      doc.circle(40, 48, 2, 'F');
-      doc.text('Nouns', 45, 49);
       
-      doc.setFillColor(16, 185, 129); // Verb - Green
-      doc.circle(80, 48, 2, 'F');
-      doc.text('Verbs', 85, 49);
+      // Basic legend with safe colors
+      doc.setFillColor(59, 130, 246); // Blue for nouns
+      doc.rect(20, 45, 5, 5, 'F');
+      doc.text('Noun', 30, 49);
       
-      doc.setFillColor(245, 158, 11); // Adjective - Amber
-      doc.circle(120, 48, 2, 'F');
-      doc.text('Adjectives', 125, 49);
+      doc.setFillColor(16, 185, 129); // Green for verbs
+      doc.rect(60, 45, 5, 5, 'F');
+      doc.text('Verb', 70, 49);
       
-      doc.setFillColor(249, 115, 22); // Adverb - Orange
-      doc.circle(160, 48, 2, 'F');
-      doc.text('Adverbs', 165, 49);
+      doc.setFillColor(245, 158, 11); // Amber for adjectives
+      doc.rect(100, 45, 5, 5, 'F');
+      doc.text('Adjective', 110, 49);
       
-      // Key for symbols - use full text instead of emojis for PDF compatibility
-      doc.setFontSize(8);
-      doc.setTextColor(107, 114, 128);
-      doc.text('Example Sentences • Pronunciation • Related Words • Usage Notes', 105, 54, { align: 'center' });
+      doc.setFillColor(249, 115, 22); // Orange for adverbs
+      doc.rect(150, 45, 5, 5, 'F');
+      doc.text('Adverb', 160, 49);
       
-      let y = 60; // Start position for vocabulary cards
+      let y = 60; // Start position for vocabulary words
       
-      // Add vocabulary cards
+      // Process each vocabulary word
       for (const word of words) {
-        // Calculate card height based on content - more space for full content
-        let cardHeight = 90; // Start with base height
+        // Calculate needed height
+        let cardHeight = 60; // Basic height
         
-        // Increase height for various content types
-        if (word.wordFamily && word.wordFamily.words && word.wordFamily.words.length > 0) cardHeight += 8;
-        if (word.collocations && word.collocations.length > 0) cardHeight += 8;
-        if (word.usageNotes) cardHeight += 8;
-        if (word.additionalExamples && word.additionalExamples.length > 0) cardHeight += 8;
-        if (word.semanticMap) cardHeight += 15;
+        // Add more height for additional content
+        if (word.wordFamily && word.wordFamily.words && word.wordFamily.words.length > 0) {
+          cardHeight += 10;
+        }
+        if (word.collocations && word.collocations.length > 0) {
+          cardHeight += 10;
+        }
+        if (word.usageNotes) {
+          cardHeight += 10;
+        }
         
-        // Adjust if we need a new page - give more space for full content
+        // Check if we need a new page
         if (y + cardHeight > 270) {
           doc.addPage();
           y = 20;
         }
         
         // Draw card background
-        doc.setFillColor(255, 255, 255);
-        doc.setDrawColor(229, 231, 235);
+        doc.setFillColor(250, 250, 250);
+        doc.setDrawColor(200, 200, 200);
         doc.setLineWidth(0.3);
         doc.roundedRect(20, y, 170, cardHeight, 3, 3, 'FD');
         
-        // Handle semantic group if present
-        if (word.semanticGroup) {
-          let groupColor = this.getSemanticGroupColor(word.semanticGroup);
-          // Convert hex to RGB
-          const r = parseInt(groupColor.slice(1, 3), 16);
-          const g = parseInt(groupColor.slice(3, 5), 16);
-          const b = parseInt(groupColor.slice(5, 7), 16);
-          
-          doc.setFillColor(r, g, b);
-          doc.roundedRect(150, y, 37, 6, 3, 3, 'F');
-          doc.setTextColor(255, 255, 255);
-          doc.setFontSize(7);
-          const displayGroup = word.semanticGroup.length > 10 ? 
-                              word.semanticGroup.substring(0, 10) + '...' : 
-                              word.semanticGroup;
-          doc.text(displayGroup.toUpperCase(), 168.5, y + 4, { align: 'center' });
-        }
+        // Word term with appropriate color based on part of speech
+        doc.setFontSize(16);
+        let wordColor;
         
-        // --- HEADER SECTION ---
-        // Word term
-        doc.setFontSize(18);
-        doc.setTextColor(31, 41, 55);
-        doc.text(word.term, 23, y + 12);
-        
-        // Part of speech tag
-        let posColor;
         switch(word.partOfSpeech.toLowerCase()) {
-          case 'noun': posColor = [59, 130, 246]; break; // Blue
-          case 'verb': posColor = [16, 185, 129]; break; // Green
-          case 'adjective': posColor = [245, 158, 11]; break; // Amber
-          case 'adverb': posColor = [249, 115, 22]; break; // Orange
-          default: posColor = [107, 114, 128]; // Gray
+          case 'noun': wordColor = [59, 130, 246]; break; // Blue
+          case 'verb': wordColor = [16, 185, 129]; break; // Green  
+          case 'adjective': wordColor = [245, 158, 11]; break; // Amber
+          case 'adverb': wordColor = [249, 115, 22]; break; // Orange
+          default: wordColor = [100, 100, 100]; // Gray
         }
         
-        doc.setFillColor(posColor[0], posColor[1], posColor[2]);
-        doc.roundedRect(23, y + 15, 25, 6, 3, 3, 'F');
-        doc.setTextColor(255, 255, 255);
-        doc.setFontSize(7);
-        doc.text(word.partOfSpeech.toUpperCase(), 35.5, y + 19, { align: 'center' });
+        doc.setTextColor(wordColor[0], wordColor[1], wordColor[2]);
+        doc.setFont('helvetica', 'bold');
+        doc.text(word.term, 25, y + 15);
+        
+        // Part of speech
+        doc.setFontSize(9);
+        doc.setTextColor(100, 100, 100);
+        doc.setFont('helvetica', 'italic');
+        doc.text(`(${word.partOfSpeech})`, 25 + doc.getTextWidth(word.term) + 5, y + 15);
         
         // Pronunciation if available
         if (word.pronunciation) {
@@ -747,207 +730,90 @@ export class PDFGeneratorService {
           
           if (pronText) {
             doc.setFontSize(9);
-            doc.setTextColor(107, 114, 128);
+            doc.setTextColor(100, 100, 100);
             doc.setFont('helvetica', 'italic');
-            doc.text(`/${pronText}/`, 120, y + 12);
-            doc.setFont('helvetica', 'normal');
+            doc.text(`/${pronText}/`, 120, y + 15);
           }
         }
         
-        // --- DEFINITION SECTION ---
-        doc.setFontSize(11);
-        doc.setTextColor(55, 65, 81);
-        doc.setFont('helvetica', 'bold');
-        doc.text('Definition:', 23, y + 28);
+        // Definition
+        doc.setFontSize(10);
+        doc.setTextColor(50, 50, 50);
         doc.setFont('helvetica', 'normal');
-        
-        const maxWidth = 164;
         const definition = word.definition || "No definition available";
-        const splitDefinition = doc.splitTextToSize(definition, maxWidth);
+        const splitDefinition = doc.splitTextToSize(definition, 160);
         
-        // Allow up to 3 lines for definition
+        // Show up to 3 lines for definition
         const defLines = splitDefinition.length > 3 ? 
           [splitDefinition[0], splitDefinition[1], splitDefinition[2] + '...'] : 
           splitDefinition;
         
-        doc.setFontSize(10);
-        doc.text(defLines, 23, y + 35);
+        doc.text(defLines, 25, y + 25);
         
-        // --- EXAMPLE SECTION ---
-        const exampleY = y + 35 + (defLines.length * 4);
+        // Example sentence
         if (word.example) {
-          doc.setFontSize(11);
-          doc.setTextColor(55, 65, 81);
-          doc.setFont('helvetica', 'bold');
-          doc.text('Example:', 23, exampleY);
-          doc.setFont('helvetica', 'normal');
-          
-          // Example background
-          doc.setFillColor(243, 244, 246); // Light gray background
-          doc.roundedRect(23, exampleY + 4, 164, 12, 1, 1, 'F');
-          
-          // Blue accent on left
-          doc.setFillColor(59, 130, 246);
-          doc.rect(23, exampleY + 4, 1, 12, 'F');
-          
-          // Example text
+          const exampleY = y + 25 + (defLines.length * 5);
           doc.setFontSize(9);
-          doc.setTextColor(75, 85, 99);
+          doc.setTextColor(80, 80, 80);
           doc.setFont('helvetica', 'italic');
           
           const example = word.example;
-          const splitExample = doc.splitTextToSize(`"${example}"`, maxWidth - 6);
+          const splitExample = doc.splitTextToSize(`"${example}"`, 160);
           
-          // Allow up to 2 lines for example
+          // Show up to 2 lines for example
           const exLines = splitExample.length > 2 ? 
             [splitExample[0], splitExample[1] + '...'] : 
             splitExample;
           
-          doc.text(exLines, 26, exampleY + 9);
-          doc.setFont('helvetica', 'normal');
+          doc.text(exLines, 25, exampleY);
         }
         
-        // --- ADDITIONAL DETAILS SECTION ---
-        let detailsY = exampleY + 20;
-        
-        // Additional examples if available
-        if (word.additionalExamples && word.additionalExamples.length > 0) {
-          doc.setFontSize(9);
-          doc.setTextColor(55, 65, 81);
-          doc.setFont('helvetica', 'bold');
-          doc.text('More Examples:', 23, detailsY);
-          doc.setFont('helvetica', 'normal');
-          
-          // Show just the first additional example
-          const addExample = word.additionalExamples[0];
-          if (addExample.length > 60) {
-            doc.text(`"${addExample.substring(0, 60)}..."`, 90, detailsY);
-          } else {
-            doc.text(`"${addExample}"`, 90, detailsY);
-          }
-          
-          detailsY += 6;
-        }
+        let additionalInfoY = y + 40;
         
         // Word family
         if (word.wordFamily && word.wordFamily.words && word.wordFamily.words.length > 0) {
           doc.setFontSize(9);
-          doc.setTextColor(55, 65, 81);
+          doc.setTextColor(50, 50, 50);
           doc.setFont('helvetica', 'bold');
-          doc.text('Word Family:', 23, detailsY);
+          doc.text('Related Words:', 25, additionalInfoY);
+          
           doc.setFont('helvetica', 'normal');
-          
           const familyWords = word.wordFamily.words.join(', ');
-          if (familyWords.length > 65) {
-            doc.text(familyWords.substring(0, 65) + '...', 90, detailsY);
-          } else {
-            doc.text(familyWords, 90, detailsY);
-          }
+          const truncatedFamily = familyWords.length > 90 ? familyWords.substring(0, 90) + '...' : familyWords;
+          doc.text(truncatedFamily, 70, additionalInfoY);
           
-          detailsY += 6;
+          additionalInfoY += 10;
         }
         
         // Collocations
         if (word.collocations && word.collocations.length > 0) {
           doc.setFontSize(9);
-          doc.setTextColor(55, 65, 81);
+          doc.setTextColor(50, 50, 50);
           doc.setFont('helvetica', 'bold');
-          doc.text('Common with:', 23, detailsY);
+          doc.text('Common with:', 25, additionalInfoY);
+          
           doc.setFont('helvetica', 'normal');
-          
           const collocations = word.collocations.join(', ');
-          if (collocations.length > 65) {
-            doc.text(collocations.substring(0, 65) + '...', 90, detailsY);
-          } else {
-            doc.text(collocations, 90, detailsY);
-          }
+          const truncatedCollocations = collocations.length > 90 ? collocations.substring(0, 90) + '...' : collocations;
+          doc.text(truncatedCollocations, 70, additionalInfoY);
           
-          detailsY += 6;
+          additionalInfoY += 10;
         }
         
         // Usage notes
         if (word.usageNotes) {
           doc.setFontSize(9);
-          doc.setTextColor(55, 65, 81);
+          doc.setTextColor(50, 50, 50);
           doc.setFont('helvetica', 'bold');
-          doc.text('Usage Note:', 23, detailsY);
+          doc.text('Usage Note:', 25, additionalInfoY);
+          
           doc.setFont('helvetica', 'normal');
-          
-          if (word.usageNotes.length > 65) {
-            doc.text(word.usageNotes.substring(0, 65) + '...', 90, detailsY);
-          } else {
-            doc.text(word.usageNotes, 90, detailsY);
-          }
-          
-          detailsY += 6;
+          const truncatedNotes = word.usageNotes.length > 90 ? word.usageNotes.substring(0, 90) + '...' : word.usageNotes;
+          doc.text(truncatedNotes, 70, additionalInfoY);
         }
         
-        // Semantic map (if available)
-        if (word.semanticMap) {
-          detailsY += 3; // Add a bit more space
-          
-          // Draw semantic map header
-          doc.setFontSize(9);
-          doc.setTextColor(55, 65, 81);
-          doc.setFont('helvetica', 'bold');
-          doc.text('Semantic Map:', 23, detailsY);
-          doc.setFont('helvetica', 'normal');
-          
-          detailsY += 5;
-          
-          // Semantic relationship columns
-          const colWidth = 80;
-          
-          // Synonyms
-          if (word.semanticMap.synonyms && word.semanticMap.synonyms.length > 0) {
-            doc.setFontSize(8);
-            doc.setFont('helvetica', 'bold');
-            doc.text('Synonyms:', 23, detailsY);
-            doc.setFont('helvetica', 'normal');
-            
-            const synonymText = word.semanticMap.synonyms.slice(0, 3).join(', ');
-            doc.text(synonymText, 50, detailsY);
-          }
-          
-          // Antonyms
-          if (word.semanticMap.antonyms && word.semanticMap.antonyms.length > 0) {
-            doc.setFontSize(8);
-            doc.setFont('helvetica', 'bold');
-            doc.text('Antonyms:', 105, detailsY);
-            doc.setFont('helvetica', 'normal');
-            
-            const antonymText = word.semanticMap.antonyms.slice(0, 3).join(', ');
-            doc.text(antonymText, 132, detailsY);
-          }
-          
-          // Second row of semantic map
-          detailsY += 5;
-          
-          // Related concepts
-          if (word.semanticMap.relatedConcepts && word.semanticMap.relatedConcepts.length > 0) {
-            doc.setFontSize(8);
-            doc.setFont('helvetica', 'bold');
-            doc.text('Related:', 23, detailsY);
-            doc.setFont('helvetica', 'normal');
-            
-            const relatedText = word.semanticMap.relatedConcepts.slice(0, 3).join(', ');
-            doc.text(relatedText, 43, detailsY);
-          }
-          
-          // Contexts
-          if (word.semanticMap.contexts && word.semanticMap.contexts.length > 0) {
-            doc.setFontSize(8);
-            doc.setFont('helvetica', 'bold');
-            doc.text('Contexts:', 105, detailsY);
-            doc.setFont('helvetica', 'normal');
-            
-            const contextsText = word.semanticMap.contexts.slice(0, 3).join(', ');
-            doc.text(contextsText, 132, detailsY);
-          }
-        }
-        
-        // Move to next card position with appropriate spacing
-        y += cardHeight + 8;
+        // Move to next word position
+        y += cardHeight + 10;
       }
       
       // Add footer with page numbers
@@ -955,8 +821,8 @@ export class PDFGeneratorService {
       for (let i = 1; i <= pageCount; i++) {
         doc.setPage(i);
         doc.setFontSize(8);
-        doc.setTextColor(156, 163, 175);
-        doc.text(`Generated on ${new Date().toLocaleDateString()} • Page ${i} of ${pageCount}`, 105, 285, { align: 'center' });
+        doc.setTextColor(150, 150, 150);
+        doc.text(`Page ${i} of ${pageCount}`, 105, 285, { align: 'center' });
       }
       
       // Generate PDF
