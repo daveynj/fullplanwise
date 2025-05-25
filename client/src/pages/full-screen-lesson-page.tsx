@@ -124,6 +124,63 @@ export default function FullScreenLessonPage() {
   const printLesson = () => {
     window.print();
   };
+
+  const handleDownloadPDF = async () => {
+    try {
+      // Check if lesson has vocabulary
+      const vocabularySection = parsedContent?.sections?.find((section: any) => section.type === 'vocabulary');
+      if (!vocabularySection || !vocabularySection.words || vocabularySection.words.length === 0) {
+        toast({
+          title: "No vocabulary found",
+          description: "This lesson doesn't contain vocabulary words to include in a review PDF.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      toast({
+        title: "Generating PDF...",
+        description: "Please wait while we create your vocabulary review PDF.",
+      });
+
+      const response = await fetch(`/api/lessons/${lessonId}/pdf`, {
+        method: 'GET',
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
+        throw new Error(errorData.message || 'Failed to generate PDF');
+      }
+
+      // Create a blob from the response
+      const blob = await response.blob();
+      
+      // Create a download link
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `vocabulary-review-${lesson.title.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      
+      // Cleanup
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+
+      toast({
+        title: "PDF downloaded!",
+        description: "Your vocabulary review PDF has been downloaded successfully.",
+      });
+    } catch (error: any) {
+      console.error('Error downloading PDF:', error);
+      toast({
+        title: "Download failed",
+        description: error.message || "Failed to generate the PDF. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
   
   // Track fullscreen changes
   useEffect(() => {
@@ -199,6 +256,15 @@ export default function FullScreenLessonPage() {
             >
               <Printer className="h-4 w-4 mr-2" />
               <span className="hidden sm:inline">Print</span>
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleDownloadPDF}
+              className="text-gray-600"
+            >
+              <Download className="h-4 w-4 mr-2" />
+              <span className="hidden sm:inline">Download PDF</span>
             </Button>
             <Button
               variant="outline"

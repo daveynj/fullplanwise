@@ -1289,6 +1289,9 @@ If an example is a simple string, return a string. If it's an object with "compl
         if (section.type === 'discussion' && section.questions && Array.isArray(section.questions)) {
             console.log(`Found ${section.questions.length} discussion questions, generating images...`);
           for (const question of section.questions) {
+            // Debug: Log the actual question structure
+            console.log(`Processing discussion question:`, JSON.stringify(question, null, 2));
+            
             // Ensure each question has its own paragraphContext
             // This field is already provided in the template - just make sure it's intact
             if (!question.paragraphContext && section.paragraphContext) {
@@ -1316,16 +1319,27 @@ If an example is a simple string, return a string. If it's an object with "compl
               }
             }
             
+            // Generate fallback imagePrompt if missing
+            if (!question.imagePrompt && question.question) {
+              question.imagePrompt = `An illustration representing the discussion topic: "${question.question.substring(0, 100)}". The image should be visually engaging and help students think about the topic. No text or words should appear in the image.`;
+              console.log(`Generated fallback imagePrompt for question: "${question.question.substring(0, 50)}..."`);
+            }
+            
             // Generate image if prompt exists
             if (question.imagePrompt) {
                try {
                  // Generate unique ID for logging - use part of question text
                  const requestId = `disc_${question.question ? question.question.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 15) : 'question'}`;
+                 console.log(`Requesting image generation for discussion question with prompt: "${question.imagePrompt.substring(0, 100)}..."`);
                  question.imageBase64 = await stabilityService.generateImage(question.imagePrompt, requestId);
+                 console.log(`Successfully generated image for discussion question`);
                } catch (imgError) {
                   console.error(`Error generating image for discussion question:`, imgError);
                   question.imageBase64 = null; // Ensure field exists even on error
                }
+            } else {
+              console.log(`No imagePrompt found for discussion question: "${question.question || 'unknown'}"`);
+              question.imageBase64 = null; // Ensure field exists
             }
           }
         }

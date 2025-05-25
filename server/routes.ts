@@ -15,6 +15,9 @@ import Stripe from "stripe";
 import { qwenService } from "./services/qwen";
 import { geminiService } from "./services/gemini";
 import { db } from "./db";
+import { pdfGeneratorService } from "./services/pdf-generator.service";
+import fs from 'fs/promises';
+import path from 'path';
 
 // Initialize Stripe if API key is available
 const stripe = process.env.STRIPE_SECRET_KEY 
@@ -297,8 +300,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-
-
   app.post("/api/lessons/generate", ensureAuthenticated, async (req, res) => {
     try {
       const validatedData = lessonGenerateSchema.parse(req.body);
@@ -479,6 +480,67 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(204).send();
     } catch (error: any) {
       res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Generate vocabulary review PDF for a lesson
+  app.get("/api/lessons/:id/pdf", ensureAuthenticated, async (req, res) => {
+    try {
+      const lessonId = parseInt(req.params.id);
+      const lesson = await storage.getLesson(lessonId);
+      
+      if (!lesson) {
+        return res.status(404).json({ message: "Lesson not found" });
+      }
+      
+      if (lesson.teacherId !== req.user!.id) {
+        return res.status(403).json({ message: "Unauthorized access to lesson" });
+      }
+      
+      // Parse the lesson content
+      let lessonContent;
+      try {
+        lessonContent = typeof lesson.content === 'string' 
+          ? JSON.parse(lesson.content) 
+          : lesson.content;
+      } catch (parseError) {
+        return res.status(400).json({ message: "Invalid lesson content format" });
+      }
+      
+      // Check if lesson has vocabulary section
+      const vocabularySection = lessonContent.sections?.find((section: any) => section.type === 'vocabulary');
+      if (!vocabularySection || !vocabularySection.words || vocabularySection.words.length === 0) {
+        return res.status(400).json({ message: "No vocabulary found in this lesson" });
+      }
+      
+      // Prepare lesson data for PDF generation
+      const lessonData = {
+        title: lesson.title,
+        level: lesson.cefrLevel,
+        sections: lessonContent.sections
+      };
+      
+      console.log(`Generating vocabulary review PDF for lesson ${lessonId}: "${lesson.title}"`);
+      
+      // Generate PDF
+      const pdfBuffer = await pdfGeneratorService.generateVocabularyReviewPDF(lessonData);
+      
+      // Set headers for PDF download
+      const filename = `vocabulary-review-${lesson.title.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}.pdf`;
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+      res.setHeader('Content-Length', pdfBuffer.length);
+      
+      // Send the PDF
+      res.send(pdfBuffer);
+      
+      console.log(`Successfully generated PDF for lesson ${lessonId}, size: ${pdfBuffer.length} bytes`);
+    } catch (error: any) {
+      console.error(`Error generating PDF for lesson ${req.params.id}:`, error);
+      res.status(500).json({ 
+        message: "Failed to generate vocabulary review PDF", 
+        error: error.message 
+      });
     }
   });
   

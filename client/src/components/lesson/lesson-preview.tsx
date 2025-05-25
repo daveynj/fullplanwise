@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Edit, Download, Share, Maximize2 } from "lucide-react";
 import { LessonContent } from "./lesson-content";
 import { Link } from "wouter";
+import { useToast } from "@/hooks/use-toast";
 
 interface LessonPreviewProps {
   lesson: any;
@@ -14,6 +15,7 @@ interface LessonPreviewProps {
 
 export function LessonPreview({ lesson }: LessonPreviewProps) {
   const [activeTab, setActiveTab] = useState("lesson");
+  const { toast } = useToast();
   
   // If no lesson has been generated yet
   if (!lesson) {
@@ -169,6 +171,63 @@ export function LessonPreview({ lesson }: LessonPreviewProps) {
     }
   });
 
+  const handleDownloadPDF = async () => {
+    try {
+      // Check if lesson has vocabulary
+      const vocabularySection = parsedContent.sections?.find((section: any) => section.type === 'vocabulary');
+      if (!vocabularySection || !vocabularySection.words || vocabularySection.words.length === 0) {
+        toast({
+          title: "No vocabulary found",
+          description: "This lesson doesn't contain vocabulary words to include in a review PDF.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      toast({
+        title: "Generating PDF...",
+        description: "Please wait while we create your vocabulary review PDF.",
+      });
+
+      const response = await fetch(`/api/lessons/${lesson.id}/pdf`, {
+        method: 'GET',
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
+        throw new Error(errorData.message || 'Failed to generate PDF');
+      }
+
+      // Create a blob from the response
+      const blob = await response.blob();
+      
+      // Create a download link
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `vocabulary-review-${lesson.title.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      
+      // Cleanup
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+
+      toast({
+        title: "PDF downloaded!",
+        description: "Your vocabulary review PDF has been downloaded successfully.",
+      });
+    } catch (error: any) {
+      console.error('Error downloading PDF:', error);
+      toast({
+        title: "Download failed",
+        description: error.message || "Failed to generate the PDF. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <Card className="bg-white rounded-xl shadow-sm overflow-hidden flex flex-col h-full">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col h-full">
@@ -203,7 +262,7 @@ export function LessonPreview({ lesson }: LessonPreviewProps) {
               <button className="ml-3 text-gray-400 hover:text-primary">
                 <Edit className="h-5 w-5" />
               </button>
-              <button className="ml-2 text-gray-400 hover:text-primary">
+              <button className="ml-2 text-gray-400 hover:text-primary" onClick={handleDownloadPDF}>
                 <Download className="h-5 w-5" />
               </button>
             </div>

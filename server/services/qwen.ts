@@ -1185,7 +1185,7 @@ B1 Examples:
    */
   private async validateAndImproveContent(content: any, params: LessonGenerateParams): Promise<any> {
     try {
-      console.log('Starting quality control validation...');
+      console.log('Starting quality control validation for Qwen content...');
       
       // Check if we have sentence frames that need validation
       if (content.sections) {
@@ -1193,20 +1193,27 @@ B1 Examples:
           if (section.type === 'sentenceFrames' && section.frames) {
             for (let frame of section.frames) {
               if (frame.examples && Array.isArray(frame.examples)) {
-                // Validate each example for logical coherence
-                const validatedExamples = await this.validateSentenceFrameExamples(
-                  frame.examples, 
-                  frame.pattern || frame.patternTemplate,
-                  params.topic
-                );
-                frame.examples = validatedExamples;
+                try {
+                  // Validate each example for logical coherence
+                  const validatedExamples = await this.validateSentenceFrameExamples(
+                    frame.examples, 
+                    frame.pattern || frame.patternTemplate,
+                    params.topic
+                  );
+                  frame.examples = validatedExamples;
+                  console.log('Successfully validated sentence frame examples using Qwen');
+                } catch (validationError) {
+                  console.error('Sentence frame validation failed, keeping original examples:', validationError);
+                  // Keep original examples if validation fails
+                  // This prevents the entire lesson from failing due to validation issues
+                }
               }
             }
           }
         }
       }
       
-      console.log('Quality control validation completed');
+      console.log('Quality control validation completed for Qwen content');
       return content;
     } catch (error) {
       console.error('Error in quality control validation:', error);
@@ -1247,8 +1254,7 @@ EXAMPLE FIXES FOR PATTERN "It is ___ to ___ because ___":
 ✅ CORRECT: "It is expensive to explore space because rockets cost a lot of money"
 
 Return ONLY a JSON array of corrected examples. Each example must perfectly demonstrate the target sentence pattern while being logical and appropriate for the topic.
-
-If an example is a simple string, return a string. If it's an object with "completeSentence" and "breakdown" properties, maintain that structure and ensure the breakdown correctly maps to the pattern components.`;
+`;
 
       const requestBody = {
         model: "qwen-max",
@@ -1260,6 +1266,7 @@ If an example is a simple string, return a string. If it's an object with "compl
         max_tokens: 2000
       };
 
+      // Use a shorter timeout for validation to prevent hanging
       const response = await axios({
         method: 'post',
         url: 'https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions',
@@ -1268,7 +1275,7 @@ If an example is a simple string, return a string. If it's an object with "compl
           'Content-Type': 'application/json'
         },
         data: requestBody,
-        timeout: 30000
+        timeout: 20000 // Reduced from 30000 to 20000 (20 seconds)
       });
 
       if (response.data?.choices?.[0]?.message?.content) {
@@ -1283,9 +1290,10 @@ If an example is a simple string, return a string. If it's an object with "compl
       }
 
       return examples;
-    } catch (error) {
-      console.error('Error validating sentence frame examples:', error);
-      return examples; // Return original examples if validation fails
+    } catch (error: any) {
+      console.error('Error validating sentence frame examples:', error.message);
+      // Instead of throwing, return original examples to prevent cascade failure
+      return examples;
     }
   }
 
