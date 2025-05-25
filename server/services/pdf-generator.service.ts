@@ -656,61 +656,60 @@ export class PDFGeneratorService {
       }
       
       console.log('Launching browser with options:', JSON.stringify(launchOptions, null, 2));
-      browser = await puppeteer.launch(launchOptions);
-      console.log('Browser launched successfully');
+      
+      try {
+        browser = await puppeteer.launch(launchOptions);
+        console.log('Browser launched successfully');
 
-      const page = await browser.newPage();
-      
-      // Set viewport explicitly
-      await page.setViewport({ width: 794, height: 1123 });
-      
-      console.log('Setting PDF content...');
-      
-      // Set content with shorter timeout
-      await page.setContent(html, { 
-        waitUntil: 'domcontentloaded',
-        timeout: 15000 // Reduced timeout
-      });
-      
-      console.log('Generating PDF...');
-      
-      // Generate PDF with optimized settings
-      const pdfBuffer = await page.pdf({
-        format: 'A4',
-        margin: {
-          top: '20px',
-          right: '20px',
-          bottom: '20px',
-          left: '20px'
-        },
-        printBackground: true,
-        preferCSSPageSize: false,
-        timeout: 15000 // Reduced timeout
-      });
+        const page = await browser.newPage();
+        
+        // Set viewport explicitly
+        await page.setViewport({ width: 794, height: 1123 });
+        
+        console.log('Setting PDF content...');
+        
+        // Set content with shorter timeout
+        await page.setContent(html, { 
+          waitUntil: 'domcontentloaded',
+          timeout: 15000 // Reduced timeout
+        });
+        
+        console.log('Generating PDF...');
+        
+        // Generate PDF with optimized settings
+        const pdfBuffer = await page.pdf({
+          format: 'A4',
+          margin: {
+            top: '20px',
+            right: '20px',
+            bottom: '20px',
+            left: '20px'
+          },
+          printBackground: true,
+          preferCSSPageSize: false,
+          timeout: 15000 // Reduced timeout
+        });
 
-      console.log(`PDF generated successfully, size: ${pdfBuffer.length} bytes`);
-      return Buffer.from(pdfBuffer);
+        console.log(`PDF generated successfully, size: ${pdfBuffer.length} bytes`);
+        return Buffer.from(pdfBuffer);
+      } finally {
+        if (browser) {
+          await browser.close();
+          console.log('Browser closed successfully');
+        }
+      }
     } catch (error: any) {
       console.error('PDF generation error:', error);
       
       // Provide more specific error messages
       if (error.message.includes('TimeoutError') || error.message.includes('Timed out')) {
-        throw new Error(`PDF generation timed out. This may be due to an incompatible Chrome version or system resources. Please try again or contact support.`);
+        throw new Error(`PDF generation timed out. This may be due to system resources. Please try again.`);
       } else if (error.message.includes('spawn') || error.message.includes('ENOENT')) {
-        throw new Error(`Chrome executable not found or cannot be launched. Please ensure Chrome/Chromium is properly installed.`);
+        throw new Error(`Browser executable not found. Please try a different document format.`);
       } else if (error.message.includes('Protocol error')) {
-        throw new Error(`Browser communication error. The Chrome version may be incompatible with the current Puppeteer version.`);
+        throw new Error(`Browser communication error. Please try again later.`);
       } else {
         throw new Error(`PDF generation failed: ${error.message}`);
-      }
-    } finally {
-      if (browser) {
-        try {
-          await browser.close();
-          console.log('Browser closed successfully');
-        } catch (closeError) {
-          console.warn('Error closing browser:', closeError);
-        }
       }
     }
   }
