@@ -209,9 +209,9 @@ export function LessonPreview({ lesson }: LessonPreviewProps) {
       const blob = await response.blob();
       
       // Create a download link
-      const url = window.URL.createObjectURL(blob);
+      const downloadUrl = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
-      a.href = url;
+      a.href = downloadUrl;
       
       // Set filename based on format
       if (format === 'html') {
@@ -225,7 +225,7 @@ export function LessonPreview({ lesson }: LessonPreviewProps) {
       
       // Cleanup
       document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
+      window.URL.revokeObjectURL(downloadUrl);
 
       toast({
         title: format === 'html' ? "HTML downloaded!" : "PDF downloaded!",
@@ -277,9 +277,20 @@ export function LessonPreview({ lesson }: LessonPreviewProps) {
               <button className="ml-3 text-gray-400 hover:text-primary">
                 <Edit className="h-5 w-5" />
               </button>
-              <button className="ml-2 text-gray-400 hover:text-primary" onClick={handleDownloadPDF}>
-                <Download className="h-5 w-5" />
-              </button>
+              <div className="flex items-center gap-1">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="text-gray-400 hover:text-primary" 
+                  onClick={() => handleDownloadPDF('pdf')}
+                  title="Download PDF"
+                >
+                  <Download className="h-5 w-5" />
+                </Button>
+                <div className="text-xs text-gray-400 hover:text-primary cursor-pointer" onClick={() => handleDownloadPDF('html')} title="Download HTML with complete vocabulary data">
+                  <span className="underline">HTML</span>
+                </div>
+              </div>
             </div>
           </div>
           
