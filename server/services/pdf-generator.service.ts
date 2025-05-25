@@ -602,7 +602,7 @@ export class PDFGeneratorService {
 
   async generateVocabularyReviewPDF(lessonData: LessonData): Promise<Buffer> {
     try {
-      console.log('Starting PDF generation using jsPDF...');
+      console.log('Starting comprehensive vocabulary PDF generation...');
       
       // Get vocabulary words from the lesson
       const vocabularySection = lessonData.sections.find(section => section.type === 'vocabulary');
@@ -630,7 +630,8 @@ export class PDFGeneratorService {
       // Add header
       doc.setFontSize(24);
       doc.setTextColor(30, 64, 175); // Primary blue
-      doc.text(lessonData.title, 20, 20);
+      const title = lessonData.title.length > 60 ? lessonData.title.substring(0, 60) + '...' : lessonData.title;
+      doc.text(title, 20, 20);
       
       doc.setFontSize(12);
       doc.setTextColor(107, 114, 128); // Gray
@@ -662,12 +663,27 @@ export class PDFGeneratorService {
       doc.circle(160, 48, 2, 'F');
       doc.text('Adverbs', 165, 49);
       
+      // Key for symbols - use full text instead of emojis for PDF compatibility
+      doc.setFontSize(8);
+      doc.setTextColor(107, 114, 128);
+      doc.text('Example Sentences • Pronunciation • Related Words • Usage Notes', 105, 54, { align: 'center' });
+      
       let y = 60; // Start position for vocabulary cards
       
       // Add vocabulary cards
       for (const word of words) {
-        // Check if we need a new page
-        if (y > 260) {
+        // Calculate card height based on content - more space for full content
+        let cardHeight = 90; // Start with base height
+        
+        // Increase height for various content types
+        if (word.wordFamily && word.wordFamily.words && word.wordFamily.words.length > 0) cardHeight += 8;
+        if (word.collocations && word.collocations.length > 0) cardHeight += 8;
+        if (word.usageNotes) cardHeight += 8;
+        if (word.additionalExamples && word.additionalExamples.length > 0) cardHeight += 8;
+        if (word.semanticMap) cardHeight += 15;
+        
+        // Adjust if we need a new page - give more space for full content
+        if (y + cardHeight > 270) {
           doc.addPage();
           y = 20;
         }
@@ -676,79 +692,265 @@ export class PDFGeneratorService {
         doc.setFillColor(255, 255, 255);
         doc.setDrawColor(229, 231, 235);
         doc.setLineWidth(0.3);
-        doc.roundedRect(20, y, 170, 50, 3, 3, 'FD');
+        doc.roundedRect(20, y, 170, cardHeight, 3, 3, 'FD');
         
-        // Word term
-        doc.setFontSize(16);
-        doc.setTextColor(31, 41, 55);
-        doc.text(word.term, 23, y + 15);
-        
-        // Part of speech tag
-        let posColor = [107, 114, 128]; // Default gray
-        const pos = word.partOfSpeech.toLowerCase();
-        if (pos === 'noun') posColor = [59, 130, 246];
-        else if (pos === 'verb') posColor = [16, 185, 129];
-        else if (pos === 'adjective') posColor = [245, 158, 11];
-        else if (pos === 'adverb') posColor = [249, 115, 22];
-        
-        doc.setFillColor(posColor[0], posColor[1], posColor[2]);
-        doc.roundedRect(23, y + 18, 20, 5, 2, 2, 'F');
-        doc.setTextColor(255, 255, 255);
-        doc.setFontSize(7);
-        doc.text(word.partOfSpeech.toUpperCase(), 33, y + 21.5, { align: 'center' });
-        
-        // Definition
-        doc.setFontSize(10);
-        doc.setTextColor(55, 65, 81);
-        
-        // Safely handle definition - truncate if too long
-        const definition = word.definition || "No definition available";
-        const maxWidth = 164;
-        const truncatedDef = definition.length > 300 ? definition.substring(0, 300) + '...' : definition;
-        const splitDefinition = doc.splitTextToSize(truncatedDef, maxWidth);
-        
-        // Limit to 2 lines for consistency
-        if (splitDefinition.length > 2) {
-          splitDefinition.length = 2;
-          splitDefinition[1] += '...';
+        // Handle semantic group if present
+        if (word.semanticGroup) {
+          let groupColor = this.getSemanticGroupColor(word.semanticGroup);
+          // Convert hex to RGB
+          const r = parseInt(groupColor.slice(1, 3), 16);
+          const g = parseInt(groupColor.slice(3, 5), 16);
+          const b = parseInt(groupColor.slice(5, 7), 16);
+          
+          doc.setFillColor(r, g, b);
+          doc.roundedRect(150, y, 37, 6, 3, 3, 'F');
+          doc.setTextColor(255, 255, 255);
+          doc.setFontSize(7);
+          const displayGroup = word.semanticGroup.length > 10 ? 
+                              word.semanticGroup.substring(0, 10) + '...' : 
+                              word.semanticGroup;
+          doc.text(displayGroup.toUpperCase(), 168.5, y + 4, { align: 'center' });
         }
         
-        doc.text(splitDefinition, 23, y + 28);
+        // --- HEADER SECTION ---
+        // Word term
+        doc.setFontSize(18);
+        doc.setTextColor(31, 41, 55);
+        doc.text(word.term, 23, y + 12);
         
-        // Example
+        // Part of speech tag
+        let posColor;
+        switch(word.partOfSpeech.toLowerCase()) {
+          case 'noun': posColor = [59, 130, 246]; break; // Blue
+          case 'verb': posColor = [16, 185, 129]; break; // Green
+          case 'adjective': posColor = [245, 158, 11]; break; // Amber
+          case 'adverb': posColor = [249, 115, 22]; break; // Orange
+          default: posColor = [107, 114, 128]; // Gray
+        }
+        
+        doc.setFillColor(posColor[0], posColor[1], posColor[2]);
+        doc.roundedRect(23, y + 15, 25, 6, 3, 3, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(7);
+        doc.text(word.partOfSpeech.toUpperCase(), 35.5, y + 19, { align: 'center' });
+        
+        // Pronunciation if available
+        if (word.pronunciation) {
+          let pronText = '';
+          if (typeof word.pronunciation === 'string') {
+            pronText = word.pronunciation;
+          } else if (word.pronunciation.phoneticGuide) {
+            pronText = word.pronunciation.phoneticGuide;
+          } else if (word.pronunciation.syllables) {
+            pronText = word.pronunciation.syllables.join('-');
+          }
+          
+          if (pronText) {
+            doc.setFontSize(9);
+            doc.setTextColor(107, 114, 128);
+            doc.setFont('helvetica', 'italic');
+            doc.text(`/${pronText}/`, 120, y + 12);
+            doc.setFont('helvetica', 'normal');
+          }
+        }
+        
+        // --- DEFINITION SECTION ---
+        doc.setFontSize(11);
+        doc.setTextColor(55, 65, 81);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Definition:', 23, y + 28);
+        doc.setFont('helvetica', 'normal');
+        
+        const maxWidth = 164;
+        const definition = word.definition || "No definition available";
+        const splitDefinition = doc.splitTextToSize(definition, maxWidth);
+        
+        // Allow up to 3 lines for definition
+        const defLines = splitDefinition.length > 3 ? 
+          [splitDefinition[0], splitDefinition[1], splitDefinition[2] + '...'] : 
+          splitDefinition;
+        
+        doc.setFontSize(10);
+        doc.text(defLines, 23, y + 35);
+        
+        // --- EXAMPLE SECTION ---
+        const exampleY = y + 35 + (defLines.length * 4);
         if (word.example) {
+          doc.setFontSize(11);
+          doc.setTextColor(55, 65, 81);
+          doc.setFont('helvetica', 'bold');
+          doc.text('Example:', 23, exampleY);
+          doc.setFont('helvetica', 'normal');
+          
+          // Example background
           doc.setFillColor(243, 244, 246); // Light gray background
-          doc.roundedRect(23, y + 35, 164, 10, 1, 1, 'F');
+          doc.roundedRect(23, exampleY + 4, 164, 12, 1, 1, 'F');
           
           // Blue accent on left
           doc.setFillColor(59, 130, 246);
-          doc.rect(23, y + 35, 1, 10, 'F');
+          doc.rect(23, exampleY + 4, 1, 12, 'F');
           
           // Example text
           doc.setFontSize(9);
           doc.setTextColor(75, 85, 99);
           doc.setFont('helvetica', 'italic');
           
-          // Truncate example if needed
-          const example = word.example.length > 150 ? word.example.substring(0, 150) + '...' : word.example;
-          const splitExample = doc.splitTextToSize(example, maxWidth - 6);
+          const example = word.example;
+          const splitExample = doc.splitTextToSize(`"${example}"`, maxWidth - 6);
           
-          if (splitExample.length > 1) {
-            splitExample.length = 1;
-            splitExample[0] += '...';
-          }
+          // Allow up to 2 lines for example
+          const exLines = splitExample.length > 2 ? 
+            [splitExample[0], splitExample[1] + '...'] : 
+            splitExample;
           
-          doc.text(splitExample, 26, y + 40);
-          
-          // Reset font
+          doc.text(exLines, 26, exampleY + 9);
           doc.setFont('helvetica', 'normal');
         }
         
-        // Move to next position
-        y += 55;
+        // --- ADDITIONAL DETAILS SECTION ---
+        let detailsY = exampleY + 20;
+        
+        // Additional examples if available
+        if (word.additionalExamples && word.additionalExamples.length > 0) {
+          doc.setFontSize(9);
+          doc.setTextColor(55, 65, 81);
+          doc.setFont('helvetica', 'bold');
+          doc.text('More Examples:', 23, detailsY);
+          doc.setFont('helvetica', 'normal');
+          
+          // Show just the first additional example
+          const addExample = word.additionalExamples[0];
+          if (addExample.length > 60) {
+            doc.text(`"${addExample.substring(0, 60)}..."`, 90, detailsY);
+          } else {
+            doc.text(`"${addExample}"`, 90, detailsY);
+          }
+          
+          detailsY += 6;
+        }
+        
+        // Word family
+        if (word.wordFamily && word.wordFamily.words && word.wordFamily.words.length > 0) {
+          doc.setFontSize(9);
+          doc.setTextColor(55, 65, 81);
+          doc.setFont('helvetica', 'bold');
+          doc.text('Word Family:', 23, detailsY);
+          doc.setFont('helvetica', 'normal');
+          
+          const familyWords = word.wordFamily.words.join(', ');
+          if (familyWords.length > 65) {
+            doc.text(familyWords.substring(0, 65) + '...', 90, detailsY);
+          } else {
+            doc.text(familyWords, 90, detailsY);
+          }
+          
+          detailsY += 6;
+        }
+        
+        // Collocations
+        if (word.collocations && word.collocations.length > 0) {
+          doc.setFontSize(9);
+          doc.setTextColor(55, 65, 81);
+          doc.setFont('helvetica', 'bold');
+          doc.text('Common with:', 23, detailsY);
+          doc.setFont('helvetica', 'normal');
+          
+          const collocations = word.collocations.join(', ');
+          if (collocations.length > 65) {
+            doc.text(collocations.substring(0, 65) + '...', 90, detailsY);
+          } else {
+            doc.text(collocations, 90, detailsY);
+          }
+          
+          detailsY += 6;
+        }
+        
+        // Usage notes
+        if (word.usageNotes) {
+          doc.setFontSize(9);
+          doc.setTextColor(55, 65, 81);
+          doc.setFont('helvetica', 'bold');
+          doc.text('Usage Note:', 23, detailsY);
+          doc.setFont('helvetica', 'normal');
+          
+          if (word.usageNotes.length > 65) {
+            doc.text(word.usageNotes.substring(0, 65) + '...', 90, detailsY);
+          } else {
+            doc.text(word.usageNotes, 90, detailsY);
+          }
+          
+          detailsY += 6;
+        }
+        
+        // Semantic map (if available)
+        if (word.semanticMap) {
+          detailsY += 3; // Add a bit more space
+          
+          // Draw semantic map header
+          doc.setFontSize(9);
+          doc.setTextColor(55, 65, 81);
+          doc.setFont('helvetica', 'bold');
+          doc.text('Semantic Map:', 23, detailsY);
+          doc.setFont('helvetica', 'normal');
+          
+          detailsY += 5;
+          
+          // Semantic relationship columns
+          const colWidth = 80;
+          
+          // Synonyms
+          if (word.semanticMap.synonyms && word.semanticMap.synonyms.length > 0) {
+            doc.setFontSize(8);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Synonyms:', 23, detailsY);
+            doc.setFont('helvetica', 'normal');
+            
+            const synonymText = word.semanticMap.synonyms.slice(0, 3).join(', ');
+            doc.text(synonymText, 50, detailsY);
+          }
+          
+          // Antonyms
+          if (word.semanticMap.antonyms && word.semanticMap.antonyms.length > 0) {
+            doc.setFontSize(8);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Antonyms:', 105, detailsY);
+            doc.setFont('helvetica', 'normal');
+            
+            const antonymText = word.semanticMap.antonyms.slice(0, 3).join(', ');
+            doc.text(antonymText, 132, detailsY);
+          }
+          
+          // Second row of semantic map
+          detailsY += 5;
+          
+          // Related concepts
+          if (word.semanticMap.relatedConcepts && word.semanticMap.relatedConcepts.length > 0) {
+            doc.setFontSize(8);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Related:', 23, detailsY);
+            doc.setFont('helvetica', 'normal');
+            
+            const relatedText = word.semanticMap.relatedConcepts.slice(0, 3).join(', ');
+            doc.text(relatedText, 43, detailsY);
+          }
+          
+          // Contexts
+          if (word.semanticMap.contexts && word.semanticMap.contexts.length > 0) {
+            doc.setFontSize(8);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Contexts:', 105, detailsY);
+            doc.setFont('helvetica', 'normal');
+            
+            const contextsText = word.semanticMap.contexts.slice(0, 3).join(', ');
+            doc.text(contextsText, 132, detailsY);
+          }
+        }
+        
+        // Move to next card position with appropriate spacing
+        y += cardHeight + 8;
       }
       
-      // Add footer
+      // Add footer with page numbers
       const pageCount = doc.getNumberOfPages();
       for (let i = 1; i <= pageCount; i++) {
         doc.setPage(i);
