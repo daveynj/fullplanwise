@@ -605,15 +605,75 @@ export class PDFGeneratorService {
     let browser;
     
     try {
-      console.log('Launching browser with chrome-aws-lambda...');
+      console.log('Launching browser for Replit deployment...');
       
-      // Use chrome-aws-lambda for better compatibility
+      // Set environment variables for Replit
+      if (process.env.REPL_SLUG) {
+        process.env.CHROME_BIN = process.env.CHROME_BIN || '/nix/store/*/bin/chromium';
+        process.env.PUPPETEER_SKIP_CHROMIUM_DOWNLOAD = 'true';
+      }
+      
+      let executablePath;
+      let args;
+      
+      try {
+        // Try to get chromium executable path
+        executablePath = await chromium.executablePath;
+        args = chromium.args;
+        console.log('Using @sparticuz/chromium executable');
+      } catch (chromiumError) {
+        console.log('Chromium package failed, trying system Chrome...', chromiumError.message);
+        
+        // Fallback: try system Chrome/Chromium paths
+        const possiblePaths = [
+          '/usr/bin/google-chrome',
+          '/usr/bin/google-chrome-stable',
+          '/usr/bin/chromium-browser',
+          '/usr/bin/chromium',
+          '/snap/bin/chromium',
+          process.env.CHROME_BIN,
+          process.env.CHROMIUM_BIN
+        ].filter(Boolean);
+        
+        // Check if any system Chrome exists
+        const fs = await import('fs');
+        for (const path of possiblePaths) {
+          try {
+            await fs.promises.access(path);
+            executablePath = path;
+            console.log(`Found system Chrome at: ${path}`);
+            break;
+          } catch (e) {
+            // Continue to next path
+          }
+        }
+        
+        // Use safe args for system Chrome
+        args = [
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+          '--disable-dev-shm-usage',
+          '--disable-accelerated-2d-canvas',
+          '--disable-gpu',
+          '--disable-features=VizDisplayCompositor',
+          '--disable-extensions',
+          '--disable-plugins',
+          '--single-process',
+          '--no-zygote'
+        ];
+      }
+      
+      if (!executablePath) {
+        throw new Error('No Chrome executable found. Chrome/Chromium is required for PDF generation.');
+      }
+      
+      // Launch browser with found executable
       browser = await puppeteer.launch({
-        args: chromium.args,
-        defaultViewport: chromium.defaultViewport,
-        executablePath: await chromium.executablePath,
-        headless: chromium.headless,
+        executablePath,
+        args,
+        headless: true,
         ignoreHTTPSErrors: true,
+        timeout: 60000
       });
 
       const page = await browser.newPage();
@@ -651,10 +711,10 @@ export class PDFGeneratorService {
       console.log('PDF generated successfully');
       return pdf;
     } catch (error) {
-      console.error('Chrome-aws-lambda PDF generation error:', error);
+      console.error('PDF generation error:', error);
       
-      // Provide helpful error message
-      throw new Error(`PDF generation failed: ${error.message}. This feature works best in production deployment environments.`);
+      // Provide detailed error for Replit debugging
+      throw new Error(`PDF generation failed in Replit environment: ${error.message}. Chrome/Chromium dependencies may need to be installed in the deployment environment.`);
     } finally {
       if (browser) {
         try {
