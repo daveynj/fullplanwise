@@ -522,7 +522,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       console.log(`Generating vocabulary review PDF for lesson ${lessonId}: "${lesson.title}"`);
       
-      // Generate PDF
+      // Check if HTML format was requested
+      if (req.query.format === 'html') {
+        // Generate HTML document
+        const htmlContent = await pdfGeneratorService.generateVocabularyReviewHTML(lessonData);
+        
+        // Set headers for HTML download
+        const htmlFilename = `vocabulary-review-${lesson.title.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}.html`;
+        res.setHeader('Content-Type', 'text/html');
+        res.setHeader('Content-Disposition', `attachment; filename="${htmlFilename}"`);
+        
+        // Send the HTML
+        return res.send(htmlContent);
+      }
+      
+      // Generate PDF (default)
       const pdfBuffer = await pdfGeneratorService.generateVocabularyReviewPDF(lessonData);
       
       // Set headers for PDF download
