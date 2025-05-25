@@ -643,7 +643,7 @@ export class PDFGeneratorService {
       // Add color key section
       doc.setFontSize(14);
       doc.setTextColor(55, 65, 81);
-      doc.text('🎨 Color Key', 105, 42, { align: 'center' });
+      doc.text('Color Key', 105, 42, { align: 'center' });
       
       doc.setFontSize(10);
       doc.setFillColor(59, 130, 246); // Noun - Blue
@@ -678,66 +678,71 @@ export class PDFGeneratorService {
         doc.setLineWidth(0.3);
         doc.roundedRect(20, y, 170, 50, 3, 3, 'FD');
         
-        // Draw part of speech label
-        let posColor;
-        switch(word.partOfSpeech.toLowerCase()) {
-          case 'noun':
-            posColor = [59, 130, 246]; // Blue
-            break;
-          case 'verb':
-            posColor = [16, 185, 129]; // Green
-            break;
-          case 'adjective':
-            posColor = [245, 158, 11]; // Amber
-            break;
-          case 'adverb':
-            posColor = [249, 115, 22]; // Orange
-            break;
-          default:
-            posColor = [107, 114, 128]; // Gray
-        }
-        
-        // Part of speech tag
-        doc.setFillColor(posColor[0], posColor[1], posColor[2]);
-        doc.roundedRect(100, y, 25, 6, 3, 3, 'F');
-        doc.setTextColor(255, 255, 255);
-        doc.setFontSize(8);
-        doc.text(word.partOfSpeech.toUpperCase(), 112.5, y + 4, { align: 'center' });
-        
         // Word term
         doc.setFontSize(16);
         doc.setTextColor(31, 41, 55);
         doc.text(word.term, 23, y + 15);
         
+        // Part of speech tag
+        let posColor = [107, 114, 128]; // Default gray
+        const pos = word.partOfSpeech.toLowerCase();
+        if (pos === 'noun') posColor = [59, 130, 246];
+        else if (pos === 'verb') posColor = [16, 185, 129];
+        else if (pos === 'adjective') posColor = [245, 158, 11];
+        else if (pos === 'adverb') posColor = [249, 115, 22];
+        
+        doc.setFillColor(posColor[0], posColor[1], posColor[2]);
+        doc.roundedRect(23, y + 18, 20, 5, 2, 2, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(7);
+        doc.text(word.partOfSpeech.toUpperCase(), 33, y + 21.5, { align: 'center' });
+        
         // Definition
         doc.setFontSize(10);
         doc.setTextColor(55, 65, 81);
         
-        // Split definition into multiple lines if too long
+        // Safely handle definition - truncate if too long
+        const definition = word.definition || "No definition available";
         const maxWidth = 164;
-        const splitDefinition = doc.splitTextToSize(word.definition, maxWidth);
-        doc.text(splitDefinition, 23, y + 25);
+        const truncatedDef = definition.length > 300 ? definition.substring(0, 300) + '...' : definition;
+        const splitDefinition = doc.splitTextToSize(truncatedDef, maxWidth);
         
-        // Example - with background
-        const exampleY = y + 35;
-        doc.setFillColor(243, 244, 246);
-        doc.roundedRect(23, exampleY - 4, 164, 12, 1, 1, 'F');
+        // Limit to 2 lines for consistency
+        if (splitDefinition.length > 2) {
+          splitDefinition.length = 2;
+          splitDefinition[1] += '...';
+        }
         
-        // Add blue line to the left of example
-        doc.setFillColor(59, 130, 246);
-        doc.rect(23, exampleY - 4, 1, 12, 'F');
+        doc.text(splitDefinition, 23, y + 28);
         
-        // Example text
-        doc.setFontSize(9);
-        doc.setTextColor(75, 85, 99);
-        doc.setFont('helvetica', 'italic');
-        
-        // Split example into multiple lines if too long
-        const splitExample = doc.splitTextToSize(`💭 ${word.example}`, maxWidth - 6);
-        doc.text(splitExample, 26, exampleY);
-        
-        // Reset font
-        doc.setFont('helvetica', 'normal');
+        // Example
+        if (word.example) {
+          doc.setFillColor(243, 244, 246); // Light gray background
+          doc.roundedRect(23, y + 35, 164, 10, 1, 1, 'F');
+          
+          // Blue accent on left
+          doc.setFillColor(59, 130, 246);
+          doc.rect(23, y + 35, 1, 10, 'F');
+          
+          // Example text
+          doc.setFontSize(9);
+          doc.setTextColor(75, 85, 99);
+          doc.setFont('helvetica', 'italic');
+          
+          // Truncate example if needed
+          const example = word.example.length > 150 ? word.example.substring(0, 150) + '...' : word.example;
+          const splitExample = doc.splitTextToSize(example, maxWidth - 6);
+          
+          if (splitExample.length > 1) {
+            splitExample.length = 1;
+            splitExample[0] += '...';
+          }
+          
+          doc.text(splitExample, 26, y + 40);
+          
+          // Reset font
+          doc.setFont('helvetica', 'normal');
+        }
         
         // Move to next position
         y += 55;
