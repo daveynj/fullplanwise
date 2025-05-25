@@ -1,5 +1,4 @@
-import puppeteer from 'puppeteer-core';
-import chromium from '@sparticuz/chromium';
+import { jsPDF } from 'jspdf';
 
 interface VocabularyWord {
   term: string;
@@ -602,115 +601,165 @@ export class PDFGeneratorService {
   }
 
   async generateVocabularyReviewPDF(lessonData: LessonData): Promise<Buffer> {
-    let browser;
-    
     try {
-      console.log('Launching browser for PDF generation...');
+      console.log('Starting PDF generation using jsPDF...');
       
-      // Generate the HTML content first
-      const html = this.generateHTML(lessonData);
+      // Get vocabulary words from the lesson
+      const vocabularySection = lessonData.sections.find(section => section.type === 'vocabulary');
+      let words: VocabularyWord[] = [];
       
-      // Look for firefox which we installed as system dependency
-      let executablePath;
-      try {
-        const { glob } = await import('glob');
-        const matches = await glob('/nix/store/*/bin/firefox');
-        if (matches.length > 0) {
-          executablePath = matches[0];
-          console.log(`Found Firefox at: ${executablePath}`);
+      if (vocabularySection?.words) {
+        // Normalize all vocabulary words to ensure compatibility
+        words = vocabularySection.words.map(word => this.normalizeVocabularyWord(word));
+      }
+      
+      if (words.length === 0) {
+        throw new Error('No vocabulary words found in this lesson');
+      }
+      
+      // Create a new jsPDF instance (A4 size in portrait orientation)
+      const doc = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      });
+      
+      // Set font and colors
+      doc.setFont('helvetica', 'normal');
+      
+      // Add header
+      doc.setFontSize(24);
+      doc.setTextColor(30, 64, 175); // Primary blue
+      doc.text(lessonData.title, 20, 20);
+      
+      doc.setFontSize(12);
+      doc.setTextColor(107, 114, 128); // Gray
+      doc.text(`Vocabulary Review • CEFR Level ${lessonData.level} • ${words.length} Words`, 20, 28);
+      
+      doc.setDrawColor(59, 130, 246); // Blue
+      doc.setLineWidth(0.5);
+      doc.line(20, 32, 190, 32);
+      
+      // Add color key section
+      doc.setFontSize(14);
+      doc.setTextColor(55, 65, 81);
+      doc.text('🎨 Color Key', 105, 42, { align: 'center' });
+      
+      doc.setFontSize(10);
+      doc.setFillColor(59, 130, 246); // Noun - Blue
+      doc.circle(40, 48, 2, 'F');
+      doc.text('Nouns', 45, 49);
+      
+      doc.setFillColor(16, 185, 129); // Verb - Green
+      doc.circle(80, 48, 2, 'F');
+      doc.text('Verbs', 85, 49);
+      
+      doc.setFillColor(245, 158, 11); // Adjective - Amber
+      doc.circle(120, 48, 2, 'F');
+      doc.text('Adjectives', 125, 49);
+      
+      doc.setFillColor(249, 115, 22); // Adverb - Orange
+      doc.circle(160, 48, 2, 'F');
+      doc.text('Adverbs', 165, 49);
+      
+      let y = 60; // Start position for vocabulary cards
+      
+      // Add vocabulary cards
+      for (const word of words) {
+        // Check if we need a new page
+        if (y > 260) {
+          doc.addPage();
+          y = 20;
         }
-      } catch (err) {
-        console.log('Error finding Firefox via glob:', err);
-      }
-      
-      // If glob didn't work, try using which
-      if (!executablePath) {
-        try {
-          const { execSync } = await import('child_process');
-          executablePath = execSync('which firefox').toString().trim();
-          console.log(`Found Firefox via which: ${executablePath}`);
-        } catch (err) {
-          console.log('Could not find Firefox via which');
+        
+        // Draw card background
+        doc.setFillColor(255, 255, 255);
+        doc.setDrawColor(229, 231, 235);
+        doc.setLineWidth(0.3);
+        doc.roundedRect(20, y, 170, 50, 3, 3, 'FD');
+        
+        // Draw part of speech label
+        let posColor;
+        switch(word.partOfSpeech.toLowerCase()) {
+          case 'noun':
+            posColor = [59, 130, 246]; // Blue
+            break;
+          case 'verb':
+            posColor = [16, 185, 129]; // Green
+            break;
+          case 'adjective':
+            posColor = [245, 158, 11]; // Amber
+            break;
+          case 'adverb':
+            posColor = [249, 115, 22]; // Orange
+            break;
+          default:
+            posColor = [107, 114, 128]; // Gray
         }
+        
+        // Part of speech tag
+        doc.setFillColor(posColor[0], posColor[1], posColor[2]);
+        doc.roundedRect(100, y, 25, 6, 3, 3, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(8);
+        doc.text(word.partOfSpeech.toUpperCase(), 112.5, y + 4, { align: 'center' });
+        
+        // Word term
+        doc.setFontSize(16);
+        doc.setTextColor(31, 41, 55);
+        doc.text(word.term, 23, y + 15);
+        
+        // Definition
+        doc.setFontSize(10);
+        doc.setTextColor(55, 65, 81);
+        
+        // Split definition into multiple lines if too long
+        const maxWidth = 164;
+        const splitDefinition = doc.splitTextToSize(word.definition, maxWidth);
+        doc.text(splitDefinition, 23, y + 25);
+        
+        // Example - with background
+        const exampleY = y + 35;
+        doc.setFillColor(243, 244, 246);
+        doc.roundedRect(23, exampleY - 4, 164, 12, 1, 1, 'F');
+        
+        // Add blue line to the left of example
+        doc.setFillColor(59, 130, 246);
+        doc.rect(23, exampleY - 4, 1, 12, 'F');
+        
+        // Example text
+        doc.setFontSize(9);
+        doc.setTextColor(75, 85, 99);
+        doc.setFont('helvetica', 'italic');
+        
+        // Split example into multiple lines if too long
+        const splitExample = doc.splitTextToSize(`💭 ${word.example}`, maxWidth - 6);
+        doc.text(splitExample, 26, exampleY);
+        
+        // Reset font
+        doc.setFont('helvetica', 'normal');
+        
+        // Move to next position
+        y += 55;
       }
       
-      // Launch options for browser
-      const launchOptions: any = {
-        args: [
-          '--headless',
-          '--no-sandbox',
-          '--disable-setuid-sandbox',
-          '--disable-dev-shm-usage',
-          '--disable-gpu'
-        ],
-        headless: true,
-        ignoreHTTPSErrors: true,
-        defaultViewport: { width: 794, height: 1123 },
-        timeout: 30000
-      };
-      
-      // Add executablePath if found
-      if (executablePath) {
-        launchOptions.executablePath = executablePath;
-        launchOptions.product = 'firefox';
+      // Add footer
+      const pageCount = doc.getNumberOfPages();
+      for (let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        doc.setFontSize(8);
+        doc.setTextColor(156, 163, 175);
+        doc.text(`Generated on ${new Date().toLocaleDateString()} • Page ${i} of ${pageCount}`, 105, 285, { align: 'center' });
       }
       
-      console.log('Launching browser with options:', JSON.stringify(launchOptions, null, 2));
+      // Generate PDF
+      const pdfOutput = doc.output('arraybuffer');
+      console.log(`PDF generated successfully with jsPDF, size: ${pdfOutput.byteLength} bytes`);
       
-      try {
-        browser = await puppeteer.launch(launchOptions);
-        console.log('Browser launched successfully');
-
-        const page = await browser.newPage();
-        
-        // Set viewport explicitly
-        await page.setViewport({ width: 794, height: 1123 });
-        
-        console.log('Setting PDF content...');
-        
-        // Set content with shorter timeout
-        await page.setContent(html, { 
-          waitUntil: 'domcontentloaded',
-          timeout: 15000 // Reduced timeout
-        });
-        
-        console.log('Generating PDF...');
-        
-        // Generate PDF with optimized settings
-        const pdfBuffer = await page.pdf({
-          format: 'A4',
-          margin: {
-            top: '20px',
-            right: '20px',
-            bottom: '20px',
-            left: '20px'
-          },
-          printBackground: true,
-          preferCSSPageSize: false,
-          timeout: 15000 // Reduced timeout
-        });
-
-        console.log(`PDF generated successfully, size: ${pdfBuffer.length} bytes`);
-        return Buffer.from(pdfBuffer);
-      } finally {
-        if (browser) {
-          await browser.close();
-          console.log('Browser closed successfully');
-        }
-      }
+      return Buffer.from(pdfOutput);
     } catch (error: any) {
       console.error('PDF generation error:', error);
-      
-      // Provide more specific error messages
-      if (error.message.includes('TimeoutError') || error.message.includes('Timed out')) {
-        throw new Error(`PDF generation timed out. This may be due to system resources. Please try again.`);
-      } else if (error.message.includes('spawn') || error.message.includes('ENOENT')) {
-        throw new Error(`Browser executable not found. Please try a different document format.`);
-      } else if (error.message.includes('Protocol error')) {
-        throw new Error(`Browser communication error. Please try again later.`);
-      } else {
-        throw new Error(`PDF generation failed: ${error.message}`);
-      }
+      throw new Error(`PDF generation failed: ${error.message}`);
     }
   }
 }
