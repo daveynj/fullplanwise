@@ -277,19 +277,21 @@ export function LessonPreview({ lesson }: LessonPreviewProps) {
               <button className="ml-3 text-gray-400 hover:text-primary">
                 <Edit className="h-5 w-5" />
               </button>
-              <div className="flex items-center gap-1">
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  className="text-gray-400 hover:text-primary" 
+              <div className="flex items-center">
+                <button 
+                  className="ml-2 text-gray-400 hover:text-primary" 
                   onClick={() => handleDownloadPDF('pdf')}
                   title="Download PDF"
                 >
                   <Download className="h-5 w-5" />
-                </Button>
-                <div className="text-xs text-gray-400 hover:text-primary cursor-pointer" onClick={() => handleDownloadPDF('html')} title="Download HTML with complete vocabulary data">
-                  <span className="underline">HTML</span>
-                </div>
+                </button>
+                <button
+                  className="ml-1 text-xs px-2 py-1 text-gray-400 hover:text-primary border border-gray-200 rounded-md"
+                  onClick={() => handleDownloadPDF('html')}
+                  title="Download HTML with complete vocabulary data"
+                >
+                  HTML
+                </button>
               </div>
             </div>
           </div>
