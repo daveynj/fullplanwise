@@ -605,105 +605,81 @@ export class PDFGeneratorService {
     let browser;
     
     try {
-      console.log('Launching browser for Replit deployment...');
+      console.log('Launching browser for PDF generation...');
+
+      // Get HTML content first to reduce browser launch time
+      const html = this.generateHTML(lessonData);
       
-      // For Replit, always use system Chrome instead of @sparticuz/chromium
-      let executablePath;
-      
-      // Try to find system Chrome/Chromium paths in Replit
-      const possiblePaths = [
-        '/nix/store/*/bin/chromium',          // Nix-installed chromium
-        '/usr/bin/google-chrome',
-        '/usr/bin/google-chrome-stable', 
-        '/usr/bin/chromium-browser',
-        '/usr/bin/chromium',
-        '/snap/bin/chromium',
-        process.env.CHROME_BIN,
-        process.env.CHROMIUM_BIN
-      ].filter(Boolean);
-      
-      // Check if any system Chrome exists
-      const fs = await import('fs');
-      const { spawn } = await import('child_process');
-      
-      // Try to find chromium using 'which' command first
-      try {
-        const whichResult = await new Promise((resolve, reject) => {
-          const proc = spawn('which', ['chromium'], { stdio: 'pipe' });
-          let output = '';
-          proc.stdout.on('data', (data) => output += data);
-          proc.on('close', (code) => {
-            if (code === 0 && output.trim()) {
-              resolve(output.trim());
-            } else {
-              reject(new Error('which chromium failed'));
-            }
-          });
-        });
-        executablePath = whichResult as string;
-        console.log(`Found chromium via 'which': ${executablePath}`);
-      } catch (whichError) {
-        console.log('which command failed, trying manual paths...');
-        
-        // Fallback to manual path checking
-        for (const path of possiblePaths) {
-          try {
-            if (path.includes('*')) {
-              // Handle glob patterns for Nix store
-              const { glob } = await import('glob');
-              const matches = await glob(path);
-              if (matches.length > 0) {
-                executablePath = matches[0];
-                console.log(`Found Chrome via glob: ${executablePath}`);
-                break;
-              }
-            } else {
-              await fs.promises.access(path);
-              executablePath = path;
-              console.log(`Found Chrome at: ${path}`);
-              break;
-            }
-          } catch (e) {
-            // Continue to next path
-          }
-        }
-      }
-      
-      if (!executablePath) {
-        throw new Error('No Chrome executable found. Please ensure Chrome/Chromium is installed in the deployment environment.');
-      }
-      
-      // Use safe args for system Chrome in Replit
-      const args = [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage',
-        '--disable-accelerated-2d-canvas',
-        '--disable-gpu',
-        '--disable-features=VizDisplayCompositor',
-        '--disable-extensions',
-        '--disable-plugins',
-        '--single-process',
-        '--no-zygote',
-        '--disable-background-timer-throttling',
-        '--disable-backgrounding-occluded-windows',
-        '--disable-renderer-backgrounding'
+      // Look for firefox which we installed as system dependency
+      let executablePath = '/nix/store/*/bin/firefox';
+      let args: string[] = [
+        '--headless', 
+        '--no-remote'
       ];
       
-      console.log(`Launching Chrome: ${executablePath}`);
+      // Try to find firefox executable
+      try {
+        const { glob } = await import('glob');
+        const matches = await glob(executablePath);
+        if (matches.length > 0) {
+          executablePath = matches[0];
+          console.log(`Found Firefox at: ${executablePath}`);
+        } else {
+          // Try running which firefox
+          const { execSync } = await import('child_process');
+          try {
+            executablePath = execSync('which firefox').toString().trim();
+            console.log(`Found Firefox via which: ${executablePath}`);
+          } catch (err) {
+            console.log('Could not find Firefox, falling back to puppeteer defaults');
+            executablePath = ''; // Let puppeteer try to find a browser
+          }
+        }
+      } catch (err) {
+        console.log('Error finding Firefox:', err);
+        executablePath = ''; // Let puppeteer try to find a browser
+      }
       
-      // Launch browser with found executable
-      browser = await puppeteer.launch({
-        executablePath,
+      // Launch browser with reduced timeout and better error handling
+      const launchOptions: any = {
+        args,
+        executablePath: executablePath || undefined,
+        product: executablePath?.includes('firefox') ? 'firefox' : 'chrome',
+        headless: true,
+        ignoreHTTPSErrors: true,
+        defaultViewport: { width: 794, height: 1123 },
+        timeout: 30000,
         args,
         headless: true,
         ignoreHTTPSErrors: true,
-        timeout: 60000
-      });
+        timeout: isOldChrome ? 15000 : 30000, // Shorter timeout for old Chrome
+        ignoreDefaultArgs: useSystemChrome && isOldChrome ? true : ['--disable-extensions'],
+        defaultViewport: { width: 794, height: 1123 }
+      };
+      
+      // Additional options for @sparticuz/chromium
+      if (!useSystemChrome) {
+        launchOptions.ignoreDefaultArgs = false;
+      }
+      
+      // For very old Chrome versions, use minimal args
+      if (isOldChrome) {
+        launchOptions.args = [
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+          '--disable-dev-shm-usage',
+          '--disable-gpu',
+          '--headless'
+        ];
+        console.log('Using minimal args for old Chrome version');
+      }
+      
+      browser = await puppeteer.launch(launchOptions);
+      console.log('Browser launched successfully');
 
       const page = await browser.newPage();
       
-      // Set a reasonable viewport for A4 PDF
+      // Set viewport explicitly
       await page.setViewport({ width: 794, height: 1123 });
       
       // Generate the HTML content
@@ -711,10 +687,10 @@ export class PDFGeneratorService {
       
       console.log('Setting PDF content...');
       
-      // Set content
+      // Set content with shorter timeout
       await page.setContent(html, { 
         waitUntil: 'domcontentloaded',
-        timeout: 30000 
+        timeout: 15000 // Reduced timeout
       });
       
       console.log('Generating PDF...');
@@ -730,20 +706,29 @@ export class PDFGeneratorService {
         },
         printBackground: true,
         preferCSSPageSize: false,
-        timeout: 30000
+        timeout: 15000 // Reduced timeout
       });
 
-      console.log('PDF generated successfully');
+      console.log(`PDF generated successfully, size: ${pdf.length} bytes`);
       return pdf;
-    } catch (error) {
+    } catch (error: any) {
       console.error('PDF generation error:', error);
       
-      // Provide detailed error for debugging
-      throw new Error(`PDF generation failed in Replit: ${error.message}. Make sure Chrome is installed via replit.nix configuration.`);
+      // Provide more specific error messages
+      if (error.message.includes('TimeoutError') || error.message.includes('Timed out')) {
+        throw new Error(`PDF generation timed out. This may be due to an incompatible Chrome version or system resources. Please try again or contact support.`);
+      } else if (error.message.includes('spawn') || error.message.includes('ENOENT')) {
+        throw new Error(`Chrome executable not found or cannot be launched. Please ensure Chrome/Chromium is properly installed.`);
+      } else if (error.message.includes('Protocol error')) {
+        throw new Error(`Browser communication error. The Chrome version may be incompatible with the current Puppeteer version.`);
+      } else {
+        throw new Error(`PDF generation failed: ${error.message}`);
+      }
     } finally {
       if (browser) {
         try {
           await browser.close();
+          console.log('Browser closed successfully');
         } catch (closeError) {
           console.warn('Error closing browser:', closeError);
         }
