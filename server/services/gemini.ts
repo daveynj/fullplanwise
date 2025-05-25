@@ -694,48 +694,41 @@ Based on your analysis, establish guidelines for:
 - Word family relationships appropriate to introduce
 - Collocation complexity appropriate for this level
 
-SEMANTIC MAP GENERATION APPROACH:
-CRITICAL: For each vocabulary word, you MUST generate a complete semantic map with REAL words, not placeholders. This is essential for the interactive semantic maps feature.
+🚨 CRITICAL VOCABULARY DEFINITION REQUIREMENTS 🚨
 
-For each vocabulary word, create semanticMap with these 5 categories:
+**FUNDAMENTAL PEDAGOGICAL RULE**: Students CANNOT learn a new word if its definition contains vocabulary they don't understand!
 
-1. **synonyms**: 3-5 words with similar meanings
-   - Choose words at appropriate CEFR level (simpler for A1/A2, more sophisticated for C1/C2)
-   - Include both exact synonyms and near-synonyms
-   - Example: For "happy" → ["joyful", "pleased", "content", "cheerful"]
+**DEFINITION LANGUAGE MUST BE SIMPLER THAN THE TARGET WORD**
 
-2. **antonyms**: 2-4 words with opposite meanings
-   - Include direct antonyms and contrasting concepts
-   - Choose level-appropriate vocabulary
-   - Example: For "happy" → ["sad", "upset", "disappointed"]
+**CLEAR EXAMPLES BY LEVEL:**
 
-3. **relatedConcepts**: 3-5 concepts/ideas connected to the word
-   - Include broader themes, categories, or associated ideas
-   - Think about semantic fields and conceptual connections
-   - Example: For "innovation" → ["technology", "progress", "creativity", "development"]
+**A1 DEFINITIONS** (Use ONLY 500-800 most basic words):
+❌ WRONG: "Beautiful" = "aesthetically pleasing and visually attractive"
+✅ CORRECT: "Beautiful" = "very nice to look at"
+❌ WRONG: "Vehicle" = "a mechanical conveyance for transportation" 
+✅ CORRECT: "Vehicle" = "a car, bus, or truck"
 
-4. **contexts**: 3-4 situations or environments where the word is commonly used
-   - Focus on real-world contexts where students might encounter the word
-   - Include both formal and informal contexts when appropriate
-   - Example: For "negotiate" → ["business meetings", "buying/selling", "conflict resolution"]
+**A2 DEFINITIONS** (Use ONLY 1000-1500 basic words):
+❌ WRONG: "Environment" = "the aggregate of surrounding phenomena and conditions"
+✅ CORRECT: "Environment" = "the natural world around us with air, water, plants and animals"
+❌ WRONG: "Economy" = "the interrelated system of production and distribution"
+✅ CORRECT: "Economy" = "the way a country makes and spends money"
 
-5. **associatedWords**: 3-5 words commonly used together with the target word
-   - Include common collocations and frequently co-occurring words
-   - Think about words that naturally appear in the same sentences or contexts
-   - Example: For "environment" → ["protect", "sustainable", "pollution", "conservation"]
+**B1 DEFINITIONS** (Use ONLY 2500 intermediate words):
+❌ WRONG: "Innovation" = "implementation of novel methodologies and paradigms"
+✅ CORRECT: "Innovation" = "creating new ideas or ways of doing things"
+❌ WRONG: "Sustainability" = "maintaining ecological equilibrium through resource utilization"
+✅ CORRECT: "Sustainability" = "using natural resources without harming the environment for the future"
 
-SEMANTIC MAP QUALITY REQUIREMENTS:
-- NEVER use placeholder text like "synonym1", "word1", "concept1"
-- All words must be real English words appropriate for the CEFR level
-- Choose words that genuinely relate to the target vocabulary word
-- Ensure semantic relationships are accurate and meaningful
-- Consider the lesson topic "${params.topic}" when selecting related words
-- Vary the vocabulary complexity based on ${params.cefrLevel} level
+**B2 DEFINITIONS** (Maximum 3500 words):
+❌ WRONG: "Entrepreneur" = "an individual who conceptualizes and establishes commercial enterprises"
+✅ CORRECT: "Entrepreneur" = "a person who starts and runs their own business, often taking financial risks"
 
-LEVEL-SPECIFIC SEMANTIC MAP GUIDELINES:
-- A1/A2: Use basic, high-frequency words in semantic maps
-- B1/B2: Include more sophisticated vocabulary and abstract concepts
-- C1/C2: Use advanced vocabulary and nuanced semantic relationships
+**SENTENCE STRUCTURE LIMITS:**
+- A1: Maximum 8 words, present tense only, no complex grammar
+- A2: Maximum 12 words, simple past/future allowed, basic conjunctions only  
+- B1: Maximum 15 words, present perfect/conditionals allowed
+- B2: Maximum 20 words, all tenses and modals allowed
 
 CEFR LEVEL-APPROPRIATE DEFINITIONS GUIDELINES:
 - A1: Use only the most basic and frequent vocabulary (500-800 words). Very simple sentence structures. Definitions should be 1-5 words where possible.

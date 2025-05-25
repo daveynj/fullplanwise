@@ -322,6 +322,42 @@ LEVEL-SPECIFIC SEMANTIC MAP GUIDELINES:
 - B1/B2: Include more sophisticated vocabulary and abstract concepts
 - C1/C2: Use advanced vocabulary and nuanced semantic relationships
 
+🚨 CRITICAL VOCABULARY DEFINITION REQUIREMENTS 🚨
+
+**FUNDAMENTAL PEDAGOGICAL RULE**: Students CANNOT learn a new word if its definition contains vocabulary they don't understand!
+
+**DEFINITION LANGUAGE MUST BE SIMPLER THAN THE TARGET WORD**
+
+**CLEAR EXAMPLES BY LEVEL:**
+
+**A1 DEFINITIONS** (Use ONLY 500-800 most basic words):
+❌ WRONG: "Beautiful" = "aesthetically pleasing and visually attractive"
+✅ CORRECT: "Beautiful" = "very nice to look at"
+❌ WRONG: "Vehicle" = "a mechanical conveyance for transportation" 
+✅ CORRECT: "Vehicle" = "a car, bus, or truck"
+
+**A2 DEFINITIONS** (Use ONLY 1000-1500 basic words):
+❌ WRONG: "Environment" = "the aggregate of surrounding phenomena and conditions"
+✅ CORRECT: "Environment" = "the natural world around us with air, water, plants and animals"
+❌ WRONG: "Economy" = "the interrelated system of production and distribution"
+✅ CORRECT: "Economy" = "the way a country makes and spends money"
+
+**B1 DEFINITIONS** (Use ONLY 2500 intermediate words):
+❌ WRONG: "Innovation" = "implementation of novel methodologies and paradigms"
+✅ CORRECT: "Innovation" = "creating new ideas or ways of doing things"
+❌ WRONG: "Sustainability" = "maintaining ecological equilibrium through resource utilization"
+✅ CORRECT: "Sustainability" = "using natural resources without harming the environment for the future"
+
+**B2 DEFINITIONS** (Maximum 3500 words):
+❌ WRONG: "Entrepreneur" = "an individual who conceptualizes and establishes commercial enterprises"
+✅ CORRECT: "Entrepreneur" = "a person who starts and runs their own business, often taking financial risks"
+
+**SENTENCE STRUCTURE LIMITS:**
+- A1: Maximum 8 words, present tense only, no complex grammar
+- A2: Maximum 12 words, simple past/future allowed, basic conjunctions only  
+- B1: Maximum 15 words, present perfect/conditionals allowed
+- B2: Maximum 20 words, all tenses and modals allowed
+
 CEFR LEVEL-APPROPRIATE DEFINITIONS GUIDELINES:
 - A1: Use only the most basic and frequent vocabulary (500-800 words). Very simple sentence structures. Definitions should be 1-5 words where possible.
 - A2: Use basic vocabulary (about 1000-1500 words). Simple sentences. Avoid complex structures or uncommon words.
