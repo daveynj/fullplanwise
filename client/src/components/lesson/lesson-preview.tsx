@@ -268,6 +268,24 @@ export function LessonPreview({ lesson }: LessonPreviewProps) {
         </TabsList>
         
         <TabsContent value="lesson" className="flex-1 overflow-y-auto p-6 m-0">
+          <div className="relative mb-12">
+            <div className="bg-green-100 border-l-4 border-green-500 p-4 mb-6 rounded-r shadow-md">
+              <div className="flex justify-between items-center">
+                <div className="flex items-center">
+                  <Download className="h-6 w-6 text-green-600 mr-2" />
+                  <span className="font-medium text-green-800">Need offline access?</span>
+                </div>
+                <a 
+                  href={`/api/lessons/${lesson.id}/pdf?format=html`} 
+                  target="_blank"
+                  className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md shadow transition-colors"
+                >
+                  Download Complete HTML Version
+                </a>
+              </div>
+            </div>
+          </div>
+
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-nunito font-bold text-gray-800">{parsedContent.title}</h2>
             <div className="flex items-center gap-2">
@@ -283,17 +301,6 @@ export function LessonPreview({ lesson }: LessonPreviewProps) {
               >
                 <Download className="h-5 w-5" />
               </button>
-            </div>
-            
-            <div className="fixed bottom-8 right-8 z-50 shadow-xl animate-pulse">
-              <a 
-                href={`/api/lessons/${lesson.id}/pdf?format=html`}
-                target="_blank"
-                className="inline-flex items-center justify-center gap-2 rounded-md bg-green-600 px-4 py-3 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 border-2 border-white"
-              >
-                <Download className="h-5 w-5" />
-                DOWNLOAD FULL HTML VERSION
-              </a>
             </div>
           </div>
           

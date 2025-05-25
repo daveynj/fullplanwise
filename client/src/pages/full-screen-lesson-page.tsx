@@ -266,6 +266,15 @@ export default function FullScreenLessonPage() {
               <Download className="h-4 w-4 mr-2" />
               <span className="hidden sm:inline">Download PDF</span>
             </Button>
+            <a
+              href={`/api/lessons/${lessonId}/pdf?format=html`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center px-3 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-md shadow-md transition-colors"
+            >
+              <Download className="h-4 w-4 mr-2" />
+              <span>DOWNLOAD HTML</span>
+            </a>
             <Button
               variant="outline"
               size="sm"
