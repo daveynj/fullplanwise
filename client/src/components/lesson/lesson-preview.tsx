@@ -171,7 +171,7 @@ export function LessonPreview({ lesson }: LessonPreviewProps) {
     }
   });
 
-  const handleDownloadPDF = async () => {
+  const handleDownloadPDF = async (format = 'pdf') => {
     try {
       // Check if lesson has vocabulary
       const vocabularySection = parsedContent.sections?.find((section: any) => section.type === 'vocabulary');
@@ -185,11 +185,17 @@ export function LessonPreview({ lesson }: LessonPreviewProps) {
       }
 
       toast({
-        title: "Generating PDF...",
-        description: "Please wait while we create your vocabulary review PDF.",
+        title: format === 'html' ? "Generating HTML..." : "Generating PDF...",
+        description: format === 'html' 
+          ? "Please wait while we create your comprehensive vocabulary review HTML document."
+          : "Please wait while we create your vocabulary review PDF.",
       });
 
-      const response = await fetch(`/api/lessons/${lesson.id}/pdf`, {
+      const apiUrl = format === 'html' 
+        ? `/api/lessons/${lesson.id}/pdf?format=html` 
+        : `/api/lessons/${lesson.id}/pdf`;
+
+      const response = await fetch(apiUrl, {
         method: 'GET',
         credentials: 'include',
       });
@@ -206,7 +212,14 @@ export function LessonPreview({ lesson }: LessonPreviewProps) {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `vocabulary-review-${lesson.title.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}.pdf`;
+      
+      // Set filename based on format
+      if (format === 'html') {
+        a.download = `vocabulary-review-${lesson.title.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}.html`;
+      } else {
+        a.download = `vocabulary-review-${lesson.title.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}.pdf`;
+      }
+      
       document.body.appendChild(a);
       a.click();
       
@@ -215,8 +228,10 @@ export function LessonPreview({ lesson }: LessonPreviewProps) {
       window.URL.revokeObjectURL(url);
 
       toast({
-        title: "PDF downloaded!",
-        description: "Your vocabulary review PDF has been downloaded successfully.",
+        title: format === 'html' ? "HTML downloaded!" : "PDF downloaded!",
+        description: format === 'html'
+          ? "Your comprehensive vocabulary HTML document has been downloaded successfully."
+          : "Your vocabulary review PDF has been downloaded successfully.",
       });
     } catch (error: any) {
       console.error('Error downloading PDF:', error);

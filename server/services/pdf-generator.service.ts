@@ -1,4 +1,5 @@
 import { jsPDF } from 'jspdf';
+import { Buffer } from 'buffer';
 
 interface VocabularyWord {
   term: string;
@@ -38,6 +39,455 @@ interface LessonData {
 }
 
 export class PDFGeneratorService {
+  
+  /**
+   * Generates a comprehensive HTML document with all vocabulary information
+   * This provides a complete reference with no truncation of any content
+   */
+  async generateVocabularyReviewHTML(lessonData: LessonData): Promise<string> {
+    try {
+      console.log('Generating comprehensive HTML vocabulary review...');
+      
+      // Get vocabulary words from the lesson
+      const vocabularySection = lessonData.sections.find(section => section.type === 'vocabulary');
+      let words: VocabularyWord[] = [];
+      
+      if (vocabularySection?.words) {
+        // Normalize all vocabulary words to ensure compatibility
+        words = vocabularySection.words.map(word => this.normalizeVocabularyWord(word));
+      }
+      
+      if (words.length === 0) {
+        throw new Error('No vocabulary words found in this lesson');
+      }
+      
+      // Generate HTML for each vocabulary word - with ALL details included
+      const vocabularyHtml = words.map(word => {
+        // Get color for part of speech
+        let posColor = '#6B7280'; // Default gray
+        switch(word.partOfSpeech.toLowerCase()) {
+          case 'noun': posColor = '#3B82F6'; break; // Blue
+          case 'verb': posColor = '#10B981'; break; // Green  
+          case 'adjective': posColor = '#F59E0B'; break; // Amber
+          case 'adverb': posColor = '#F97316'; break; // Orange
+        }
+        
+        // Handle pronunciation
+        let pronunciationHtml = '';
+        if (word.pronunciation) {
+          let pronText = '';
+          if (typeof word.pronunciation === 'string') {
+            pronText = word.pronunciation;
+          } else if (word.pronunciation.phoneticGuide) {
+            pronText = word.pronunciation.phoneticGuide;
+          } else if (word.pronunciation.syllables && Array.isArray(word.pronunciation.syllables)) {
+            // Handle syllables with stress
+            pronText = word.pronunciation.syllables.map((syl, idx) => {
+              if (word.pronunciation && typeof word.pronunciation !== 'string' && 
+                  'stressIndex' in word.pronunciation && 
+                  word.pronunciation.stressIndex === idx) {
+                return `<b>${syl}</b>`;
+              }
+              return syl;
+            }).join('-');
+          }
+          
+          if (pronText) {
+            pronunciationHtml = `
+              <div class="pronunciation">
+                <span class="label">Pronunciation:</span> 
+                <span class="phonetic">/${pronText}/</span>
+              </div>
+            `;
+          }
+        }
+        
+        // Handle examples - include ALL of them
+        let examplesHtml = '';
+        if (word.example) {
+          examplesHtml = `
+            <div class="example">
+              <div class="label">Example:</div>
+              <div class="example-text">"${word.example}"</div>
+            </div>
+          `;
+        }
+        
+        // Handle additional examples - include ALL of them
+        let additionalExamplesHtml = '';
+        if (word.additionalExamples && word.additionalExamples.length > 0) {
+          const examplesList = word.additionalExamples.map(ex => 
+            `<li>"${ex}"</li>`
+          ).join('');
+          
+          additionalExamplesHtml = `
+            <div class="additional-examples">
+              <div class="label">Additional Examples:</div>
+              <ul class="examples-list">
+                ${examplesList}
+              </ul>
+            </div>
+          `;
+        }
+        
+        // Handle word family - include ALL related words
+        let wordFamilyHtml = '';
+        if (word.wordFamily && word.wordFamily.words && word.wordFamily.words.length > 0) {
+          const description = word.wordFamily.description ? 
+            `<div class="family-description">${word.wordFamily.description}</div>` : '';
+          
+          wordFamilyHtml = `
+            <div class="word-family">
+              <span class="label">Word Family:</span>
+              <span class="family-words">${word.wordFamily.words.join(', ')}</span>
+              ${description}
+            </div>
+          `;
+        }
+        
+        // Handle collocations - include ALL of them
+        let collocationsHtml = '';
+        if (word.collocations && word.collocations.length > 0) {
+          collocationsHtml = `
+            <div class="collocations">
+              <span class="label">Common Collocations:</span>
+              <span class="collocation-words">${word.collocations.join(', ')}</span>
+            </div>
+          `;
+        }
+        
+        // Handle usage notes - include ALL text
+        let usageNotesHtml = '';
+        if (word.usageNotes) {
+          usageNotesHtml = `
+            <div class="usage-notes">
+              <span class="label">Usage Notes:</span>
+              <span class="notes-text">${word.usageNotes}</span>
+            </div>
+          `;
+        }
+        
+        // Handle semantic map - include ALL relationships
+        let semanticMapHtml = '';
+        if (word.semanticMap) {
+          const semanticMap = word.semanticMap;
+          
+          // Synonyms
+          let synonymsHtml = '';
+          if (semanticMap.synonyms && semanticMap.synonyms.length > 0) {
+            synonymsHtml = `
+              <tr>
+                <td class="map-label" style="background-color: #E6F7EC;">Synonyms</td>
+                <td class="map-content">${semanticMap.synonyms.join(', ')}</td>
+              </tr>
+            `;
+          }
+          
+          // Antonyms
+          let antonymsHtml = '';
+          if (semanticMap.antonyms && semanticMap.antonyms.length > 0) {
+            antonymsHtml = `
+              <tr>
+                <td class="map-label" style="background-color: #FEE2E2;">Antonyms</td>
+                <td class="map-content">${semanticMap.antonyms.join(', ')}</td>
+              </tr>
+            `;
+          }
+          
+          // Related concepts
+          let relatedConceptsHtml = '';
+          if (semanticMap.relatedConcepts && semanticMap.relatedConcepts.length > 0) {
+            relatedConceptsHtml = `
+              <tr>
+                <td class="map-label" style="background-color: #E0E7FF;">Related Concepts</td>
+                <td class="map-content">${semanticMap.relatedConcepts.join(', ')}</td>
+              </tr>
+            `;
+          }
+          
+          // Contexts
+          let contextsHtml = '';
+          if (semanticMap.contexts && semanticMap.contexts.length > 0) {
+            contextsHtml = `
+              <tr>
+                <td class="map-label" style="background-color: #F3F4F6;">Contexts</td>
+                <td class="map-content">${semanticMap.contexts.join(', ')}</td>
+              </tr>
+            `;
+          }
+          
+          // Associated words
+          let associatedWordsHtml = '';
+          if (semanticMap.associatedWords && semanticMap.associatedWords.length > 0) {
+            associatedWordsHtml = `
+              <tr>
+                <td class="map-label" style="background-color: #FEF3C7;">Associated Words</td>
+                <td class="map-content">${semanticMap.associatedWords.join(', ')}</td>
+              </tr>
+            `;
+          }
+          
+          // Only create the semantic map if we have any content
+          if (synonymsHtml || antonymsHtml || relatedConceptsHtml || contextsHtml || associatedWordsHtml) {
+            semanticMapHtml = `
+              <div class="semantic-map">
+                <div class="map-title">Semantic Map</div>
+                <table class="map-table">
+                  ${synonymsHtml}
+                  ${antonymsHtml}
+                  ${relatedConceptsHtml}
+                  ${contextsHtml}
+                  ${associatedWordsHtml}
+                </table>
+              </div>
+            `;
+          }
+        }
+        
+        // Combine all sections into a vocabulary card
+        return `
+          <div class="vocabulary-card" style="border-left-color: ${posColor};">
+            <div class="term-container">
+              <h2 class="term" style="color: ${posColor};">${word.term}</h2>
+              <span class="part-of-speech">(${word.partOfSpeech})</span>
+            </div>
+            
+            ${pronunciationHtml}
+            
+            <div class="definition">
+              <span class="label">Definition:</span>
+              <span class="definition-text">${word.definition || 'No definition available'}</span>
+            </div>
+            
+            ${examplesHtml}
+            ${additionalExamplesHtml}
+            ${wordFamilyHtml}
+            ${collocationsHtml}
+            ${usageNotesHtml}
+            ${semanticMapHtml}
+          </div>
+        `;
+      }).join('');
+      
+      // Create a complete HTML document with styling
+      const htmlContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="UTF-8">
+          <title>${lessonData.title} - Vocabulary Review</title>
+          <style>
+            body {
+              font-family: Arial, Helvetica, sans-serif;
+              line-height: 1.6;
+              color: #333;
+              margin: 0;
+              padding: 20px;
+              background-color: #f9fafb;
+            }
+            
+            .header {
+              text-align: center;
+              margin-bottom: 40px;
+            }
+            
+            h1 {
+              color: #3B82F6;
+              margin-bottom: 10px;
+            }
+            
+            .subtitle {
+              color: #6B7280;
+              font-size: 18px;
+              margin-bottom: 20px;
+            }
+            
+            .introduction {
+              background-color: #f0f9ff;
+              padding: 15px;
+              border-radius: 8px;
+              margin-bottom: 30px;
+            }
+            
+            .vocabulary-card {
+              background-color: white;
+              border-radius: 8px;
+              box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+              padding: 20px;
+              margin-bottom: 30px;
+              border-left: 5px solid #3B82F6;
+            }
+            
+            .term-container {
+              display: flex;
+              align-items: baseline;
+              margin-bottom: 10px;
+              border-bottom: 1px solid #e5e7eb;
+              padding-bottom: 10px;
+            }
+            
+            .term {
+              font-size: 24px;
+              font-weight: bold;
+              margin: 0;
+              margin-right: 10px;
+            }
+            
+            .part-of-speech {
+              font-style: italic;
+              color: #6B7280;
+            }
+            
+            .pronunciation {
+              margin-bottom: 10px;
+            }
+            
+            .phonetic {
+              font-style: italic;
+              color: #6B7280;
+            }
+            
+            .definition {
+              margin-bottom: 15px;
+            }
+            
+            .example {
+              background-color: #f3f4f6;
+              padding: 10px 15px;
+              border-radius: 4px;
+              margin-bottom: 15px;
+              border-left: 4px solid #3B82F6;
+            }
+            
+            .example-text {
+              font-style: italic;
+              padding-left: 10px;
+            }
+            
+            .additional-examples {
+              margin-bottom: 15px;
+            }
+            
+            .examples-list {
+              font-style: italic;
+              color: #4B5563;
+            }
+            
+            .examples-list li {
+              margin-bottom: 8px;
+            }
+            
+            .word-family, .collocations, .usage-notes {
+              margin-bottom: 15px;
+              padding: 10px;
+              background-color: #FAFAFA;
+              border-radius: 4px;
+            }
+            
+            .label {
+              font-weight: bold;
+              color: #374151;
+              margin-right: 5px;
+            }
+            
+            .family-description {
+              font-style: italic;
+              color: #6B7280;
+              margin-top: 5px;
+              padding-left: 15px;
+            }
+            
+            .semantic-map {
+              margin-top: 20px;
+            }
+            
+            .map-title {
+              font-weight: bold;
+              color: #4B5563;
+              font-size: 18px;
+              margin-bottom: 10px;
+            }
+            
+            .map-table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-bottom: 10px;
+              border: 1px solid #e5e7eb;
+            }
+            
+            .map-table td {
+              border: 1px solid #d1d5db;
+              padding: 8px 12px;
+            }
+            
+            .map-label {
+              font-weight: bold;
+              width: 25%;
+            }
+            
+            .map-content {
+              width: 75%;
+            }
+            
+            .footer {
+              text-align: center;
+              color: #9CA3AF;
+              font-size: 12px;
+              margin-top: 30px;
+              border-top: 1px solid #e5e7eb;
+              padding-top: 15px;
+            }
+            
+            @media print {
+              body {
+                background-color: white;
+              }
+              
+              .vocabulary-card {
+                break-inside: avoid;
+                page-break-inside: avoid;
+                box-shadow: none;
+                border: 1px solid #e5e7eb;
+              }
+              
+              .introduction {
+                background-color: #f8f9fa;
+              }
+              
+              .example {
+                background-color: #f8f9fa;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1>${lessonData.title}</h1>
+            <div class="subtitle">Vocabulary Review • CEFR Level ${lessonData.level} • ${words.length} Words</div>
+          </div>
+          
+          <div class="introduction">
+            <p>This vocabulary review contains comprehensive information about each word including definitions, examples, word families, collocations, and usage notes. Study these words to enhance your vocabulary and understanding.</p>
+            <p><strong>Color Key:</strong> <span style="color: #3B82F6">■</span> Nouns • <span style="color: #10B981">■</span> Verbs • <span style="color: #F59E0B">■</span> Adjectives • <span style="color: #F97316">■</span> Adverbs</p>
+          </div>
+          
+          <div class="vocabulary-content">
+            ${vocabularyHtml}
+          </div>
+          
+          <div class="footer">
+            Generated on ${new Date().toLocaleDateString()}
+          </div>
+        </body>
+        </html>
+      `;
+      
+      return htmlContent;
+    } catch (error: any) {
+      console.error('HTML generation error:', error);
+      throw new Error(`HTML generation failed: ${error.message}`);
+    }
+  }
   private getPartOfSpeechColor(partOfSpeech: string): string {
     const colors: Record<string, string> = {
       'noun': '#3B82F6',      // Blue
