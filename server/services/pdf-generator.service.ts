@@ -40,7 +40,7 @@ interface LessonData {
 
 export class PDFGeneratorService {
   private getPartOfSpeechColor(partOfSpeech: string): string {
-    const colors = {
+    const colors: Record<string, string> = {
       'noun': '#3B82F6',      // Blue
       'verb': '#10B981',      // Green  
       'adjective': '#F59E0B', // Yellow/Amber
@@ -55,7 +55,7 @@ export class PDFGeneratorService {
   }
 
   private getSemanticGroupColor(group: string): string {
-    const colors = {
+    const colors: Record<string, string> = {
       'business': '#1E40AF',
       'technology': '#7C3AED', 
       'nature': '#059669',
@@ -67,7 +67,7 @@ export class PDFGeneratorService {
     };
     
     // Generate consistent color based on group name if not predefined
-    if (!colors[group?.toLowerCase()]) {
+    if (!group || !colors[group.toLowerCase()]) {
       const hash = group?.split('').reduce((a, b) => {
         a = ((a << 5) - a) + b.charCodeAt(0);
         return a & a;
@@ -606,74 +606,56 @@ export class PDFGeneratorService {
     
     try {
       console.log('Launching browser for PDF generation...');
-
-      // Get HTML content first to reduce browser launch time
+      
+      // Generate the HTML content first
       const html = this.generateHTML(lessonData);
       
       // Look for firefox which we installed as system dependency
-      let executablePath = '/nix/store/*/bin/firefox';
-      let args: string[] = [
-        '--headless', 
-        '--no-remote'
-      ];
-      
-      // Try to find firefox executable
+      let executablePath;
       try {
         const { glob } = await import('glob');
-        const matches = await glob(executablePath);
+        const matches = await glob('/nix/store/*/bin/firefox');
         if (matches.length > 0) {
           executablePath = matches[0];
           console.log(`Found Firefox at: ${executablePath}`);
-        } else {
-          // Try running which firefox
-          const { execSync } = await import('child_process');
-          try {
-            executablePath = execSync('which firefox').toString().trim();
-            console.log(`Found Firefox via which: ${executablePath}`);
-          } catch (err) {
-            console.log('Could not find Firefox, falling back to puppeteer defaults');
-            executablePath = ''; // Let puppeteer try to find a browser
-          }
         }
       } catch (err) {
-        console.log('Error finding Firefox:', err);
-        executablePath = ''; // Let puppeteer try to find a browser
+        console.log('Error finding Firefox via glob:', err);
       }
       
-      // Launch browser with reduced timeout and better error handling
+      // If glob didn't work, try using which
+      if (!executablePath) {
+        try {
+          const { execSync } = await import('child_process');
+          executablePath = execSync('which firefox').toString().trim();
+          console.log(`Found Firefox via which: ${executablePath}`);
+        } catch (err) {
+          console.log('Could not find Firefox via which');
+        }
+      }
+      
+      // Launch options for browser
       const launchOptions: any = {
-        args,
-        executablePath: executablePath || undefined,
-        product: executablePath?.includes('firefox') ? 'firefox' : 'chrome',
-        headless: true,
-        ignoreHTTPSErrors: true,
-        defaultViewport: { width: 794, height: 1123 },
-        timeout: 30000,
-        args,
-        headless: true,
-        ignoreHTTPSErrors: true,
-        timeout: isOldChrome ? 15000 : 30000, // Shorter timeout for old Chrome
-        ignoreDefaultArgs: useSystemChrome && isOldChrome ? true : ['--disable-extensions'],
-        defaultViewport: { width: 794, height: 1123 }
-      };
-      
-      // Additional options for @sparticuz/chromium
-      if (!useSystemChrome) {
-        launchOptions.ignoreDefaultArgs = false;
-      }
-      
-      // For very old Chrome versions, use minimal args
-      if (isOldChrome) {
-        launchOptions.args = [
+        args: [
+          '--headless',
           '--no-sandbox',
           '--disable-setuid-sandbox',
           '--disable-dev-shm-usage',
-          '--disable-gpu',
-          '--headless'
-        ];
-        console.log('Using minimal args for old Chrome version');
+          '--disable-gpu'
+        ],
+        headless: true,
+        ignoreHTTPSErrors: true,
+        defaultViewport: { width: 794, height: 1123 },
+        timeout: 30000
+      };
+      
+      // Add executablePath if found
+      if (executablePath) {
+        launchOptions.executablePath = executablePath;
+        launchOptions.product = 'firefox';
       }
       
+      console.log('Launching browser with options:', JSON.stringify(launchOptions, null, 2));
       browser = await puppeteer.launch(launchOptions);
       console.log('Browser launched successfully');
 
@@ -681,9 +663,6 @@ export class PDFGeneratorService {
       
       // Set viewport explicitly
       await page.setViewport({ width: 794, height: 1123 });
-      
-      // Generate the HTML content
-      const html = this.generateHTML(lessonData);
       
       console.log('Setting PDF content...');
       
@@ -696,7 +675,7 @@ export class PDFGeneratorService {
       console.log('Generating PDF...');
       
       // Generate PDF with optimized settings
-      const pdf = await page.pdf({
+      const pdfBuffer = await page.pdf({
         format: 'A4',
         margin: {
           top: '20px',
@@ -709,8 +688,8 @@ export class PDFGeneratorService {
         timeout: 15000 // Reduced timeout
       });
 
-      console.log(`PDF generated successfully, size: ${pdf.length} bytes`);
-      return pdf;
+      console.log(`PDF generated successfully, size: ${pdfBuffer.length} bytes`);
+      return Buffer.from(pdfBuffer);
     } catch (error: any) {
       console.error('PDF generation error:', error);
       
