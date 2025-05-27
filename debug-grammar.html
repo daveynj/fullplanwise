@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Grammar Analysis Debug</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .test-section { border: 1px solid #ccc; padding: 15px; margin: 10px 0; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .info { background-color: #d1ecf1; border-color: #bee5eb; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+        button { background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 3px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Grammar Analysis Debug Tool</h1>
+    
+    <div class="test-section info">
+        <h3>📋 Status Check</h3>
+        <p>This tool will help diagnose why grammar analysis isn't showing up in your lessons.</p>
+        <button onclick="runTests()">🧪 Run All Tests</button>
+    </div>
+
+    <div id="results"></div>
+
+    <script>
+        async function runTests() {
+            const results = document.getElementById('results');
+            results.innerHTML = '<div class="test-section info"><h3>🔄 Running tests...</h3></div>';
+            
+            const tests = [];
+            
+            // Test 1: Check if user is authenticated
+            try {
+                const userResponse = await fetch('/api/user');
+                const userData = await userResponse.json();
+                
+                if (userResponse.ok) {
+                    tests.push({
+                        name: '1. Authentication',
+                        status: 'success',
+                        message: `✅ Logged in as: ${userData.username} (Credits: ${userData.credits})`
+                    });
+                } else {
+                    tests.push({
+                        name: '1. Authentication', 
+                        status: 'error',
+                        message: `❌ Not authenticated: ${userData.message}`
+                    });
+                }
+            } catch (error) {
+                tests.push({
+                    name: '1. Authentication',
+                    status: 'error', 
+                    message: `❌ Auth check failed: ${error.message}`
+                });
+            }
+            
+            // Test 2: Check recent lessons
+            try {
+                const lessonsResponse = await fetch('/api/lessons?page=1&pageSize=3');
+                const lessonsData = await lessonsResponse.json();
+                
+                if (lessonsResponse.ok && lessonsData.lessons) {
+                    const hasGrammarData = lessonsData.lessons.some(lesson => lesson.grammarSpotlight);
+                    const grammarCount = lessonsData.lessons.filter(lesson => lesson.grammarSpotlight).length;
+                    
+                    tests.push({
+                        name: '2. Recent Lessons',
+                        status: hasGrammarData ? 'success' : 'error',
+                        message: hasGrammarData 
+                            ? `✅ Found ${grammarCount}/${lessonsData.lessons.length} lessons with grammar data`
+                            : `❌ No lessons with grammar data found (${lessonsData.lessons.length} recent lessons checked)`,
+                        data: lessonsData.lessons.map(l => ({
+                            id: l.id,
+                            title: l.title.substring(0, 30) + '...',
+                            hasGrammar: !!l.grammarSpotlight
+                        }))
+                    });
+                } else {
+                    tests.push({
+                        name: '2. Recent Lessons',
+                        status: 'error',
+                        message: `❌ Failed to fetch lessons: ${lessonsData.message || 'Unknown error'}`
+                    });
+                }
+            } catch (error) {
+                tests.push({
+                    name: '2. Recent Lessons',
+                    status: 'error',
+                    message: `❌ Lessons check failed: ${error.message}`
+                });
+            }
+            
+            // Test 3: Check specific lesson details
+            try {
+                const lessonsResponse = await fetch('/api/lessons?page=1&pageSize=1');
+                const lessonsData = await lessonsResponse.json();
+                
+                if (lessonsData.lessons && lessonsData.lessons.length > 0) {
+                    const latestLesson = lessonsData.lessons[0];
+                    const lessonResponse = await fetch(`/api/lessons/${latestLesson.id}`);
+                    const lessonData = await lessonResponse.json();
+                    
+                    if (lessonResponse.ok) {
+                        tests.push({
+                            name: '3. Latest Lesson Details',
+                            status: lessonData.grammarSpotlight ? 'success' : 'error',
+                            message: lessonData.grammarSpotlight 
+                                ? `✅ Lesson ${lessonData.id} has grammar data: ${lessonData.grammarSpotlight.grammarType}`
+                                : `❌ Lesson ${lessonData.id} missing grammar data`,
+                            data: {
+                                id: lessonData.id,
+                                title: lessonData.title,
+                                hasGrammarSpotlight: !!lessonData.grammarSpotlight,
+                                grammarType: lessonData.grammarSpotlight?.grammarType || 'none'
+                            }
+                        });
+                    }
+                }
+            } catch (error) {
+                tests.push({
+                    name: '3. Latest Lesson Details',
+                    status: 'error',
+                    message: `❌ Lesson details check failed: ${error.message}`
+                });
+            }
+            
+            // Display results
+            let html = '';
+            tests.forEach(test => {
+                html += `
+                    <div class="test-section ${test.status}">
+                        <h3>${test.name}</h3>
+                        <p>${test.message}</p>
+                        ${test.data ? `<pre>${JSON.stringify(test.data, null, 2)}</pre>` : ''}
+                    </div>
+                `;
+            });
+            
+            // Add recommendations
+            const hasErrors = tests.some(t => t.status === 'error');
+            const hasGrammarData = tests.some(t => t.name.includes('Lessons') && t.status === 'success');
+            
+            html += `
+                <div class="test-section info">
+                    <h3>🎯 Recommendations</h3>
+                    ${hasErrors ? '<p><strong>Issues found:</strong></p>' : '<p><strong>System looks healthy!</strong></p>'}
+                    <ul>
+                        ${!hasGrammarData ? '<li>❌ Try generating a <strong>NEW</strong> lesson - older lessons won\'t have grammar data</li>' : ''}
+                        <li>🔍 Check browser console for JavaScript errors</li>
+                        <li>📊 Look for "Grammar pattern detected" in server logs</li>
+                        <li>🔄 If still not working, restart the server</li>
+                    </ul>
+                </div>
+            `;
+            
+            results.innerHTML = html;
+        }
+    </script>
+</body>
+</html> 

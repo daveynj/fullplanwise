@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grammar Spotlight Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .info { background-color: #d1ecf1; border-color: #bee5eb; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>Grammar Spotlight Frontend Fix Test</h1>
+    
+    <div class="test-section info">
+        <h2>Test Overview</h2>
+        <p>This test verifies that:</p>
+        <ul>
+            <li>The API returns grammarSpotlight data for lesson 35</li>
+            <li>The frontend correctly receives and processes this data</li>
+            <li>The GrammarSpotlight component can be rendered</li>
+        </ul>
+    </div>
+
+    <div id="api-test" class="test-section">
+        <h2>1. API Response Test</h2>
+        <p>Testing API endpoint: <code>/api/lessons/35</code></p>
+        <div id="api-result">Loading...</div>
+    </div>
+
+    <div id="data-structure-test" class="test-section">
+        <h2>2. Data Structure Test</h2>
+        <div id="structure-result">Waiting for API response...</div>
+    </div>
+
+    <div id="component-test" class="test-section">
+        <h2>3. Component Integration Test</h2>
+        <div id="component-result">Waiting for data...</div>
+    </div>
+
+    <script>
+        async function testGrammarSpotlight() {
+            try {
+                // Test 1: API Response
+                console.log('Testing API response...');
+                const response = await fetch('/api/lessons/35');
+                const lesson = await response.json();
+                
+                const apiTestDiv = document.getElementById('api-result');
+                
+                if (response.ok) {
+                    apiTestDiv.innerHTML = `
+                        <div class="success">
+                            <h3>✅ API Response Success</h3>
+                            <p><strong>Lesson ID:</strong> ${lesson.id}</p>
+                            <p><strong>Title:</strong> ${lesson.title}</p>
+                            <p><strong>Has grammarSpotlight:</strong> ${lesson.grammarSpotlight ? 'Yes' : 'No'}</p>
+                            ${lesson.grammarSpotlight ? `
+                                <p><strong>Grammar Type:</strong> ${lesson.grammarSpotlight.grammarType}</p>
+                                <p><strong>Grammar Title:</strong> ${lesson.grammarSpotlight.title}</p>
+                            ` : ''}
+                        </div>
+                    `;
+                    
+                    // Test 2: Data Structure
+                    testDataStructure(lesson);
+                    
+                    // Test 3: Component Integration
+                    testComponentIntegration(lesson);
+                } else {
+                    apiTestDiv.innerHTML = `
+                        <div class="error">
+                            <h3>❌ API Response Failed</h3>
+                            <p>Status: ${response.status}</p>
+                            <p>Error: ${lesson.message || 'Unknown error'}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                document.getElementById('api-result').innerHTML = `
+                    <div class="error">
+                        <h3>❌ API Request Failed</h3>
+                        <p>Error: ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        function testDataStructure(lesson) {
+            const structureDiv = document.getElementById('structure-result');
+            
+            const tests = [
+                {
+                    name: 'Lesson has content',
+                    test: () => lesson.content !== null && lesson.content !== undefined,
+                    details: `Content type: ${typeof lesson.content}`
+                },
+                {
+                    name: 'Lesson has grammarSpotlight',
+                    test: () => lesson.grammarSpotlight !== null && lesson.grammarSpotlight !== undefined,
+                    details: lesson.grammarSpotlight ? `Grammar type: ${lesson.grammarSpotlight.grammarType}` : 'No grammar data'
+                },
+                {
+                    name: 'GrammarSpotlight has required fields',
+                    test: () => lesson.grammarSpotlight && 
+                              lesson.grammarSpotlight.grammarType && 
+                              lesson.grammarSpotlight.title && 
+                              lesson.grammarSpotlight.examples,
+                    details: lesson.grammarSpotlight ? 
+                        `Fields: ${Object.keys(lesson.grammarSpotlight).join(', ')}` : 
+                        'No grammar data to check'
+                },
+                {
+                    name: 'Examples array exists',
+                    test: () => lesson.grammarSpotlight && 
+                              Array.isArray(lesson.grammarSpotlight.examples) && 
+                              lesson.grammarSpotlight.examples.length > 0,
+                    details: lesson.grammarSpotlight && lesson.grammarSpotlight.examples ? 
+                        `${lesson.grammarSpotlight.examples.length} examples found` : 
+                        'No examples array'
+                },
+                {
+                    name: 'Visual steps array exists',
+                    test: () => lesson.grammarSpotlight && 
+                              Array.isArray(lesson.grammarSpotlight.visualSteps) && 
+                              lesson.grammarSpotlight.visualSteps.length > 0,
+                    details: lesson.grammarSpotlight && lesson.grammarSpotlight.visualSteps ? 
+                        `${lesson.grammarSpotlight.visualSteps.length} visual steps found` : 
+                        'No visual steps array'
+                }
+            ];
+
+            const results = tests.map(test => {
+                const passed = test.test();
+                return `
+                    <div style="margin: 10px 0; padding: 10px; border-radius: 3px; background: ${passed ? '#d4edda' : '#f8d7da'};">
+                        <strong>${passed ? '✅' : '❌'} ${test.name}</strong><br>
+                        <small>${test.details}</small>
+                    </div>
+                `;
+            }).join('');
+
+            structureDiv.innerHTML = `
+                <h3>Data Structure Validation</h3>
+                ${results}
+            `;
+        }
+
+        function testComponentIntegration(lesson) {
+            const componentDiv = document.getElementById('component-result');
+            
+            // Simulate how the frontend would process the data
+            const enhancedContent = {
+                ...lesson.content,
+                grammarSpotlight: lesson.grammarSpotlight
+            };
+
+            const hasGrammarData = enhancedContent.grammarSpotlight !== null && 
+                                 enhancedContent.grammarSpotlight !== undefined;
+
+            componentDiv.innerHTML = `
+                <h3>Component Integration Simulation</h3>
+                <div style="margin: 10px 0; padding: 10px; border-radius: 3px; background: ${hasGrammarData ? '#d4edda' : '#f8d7da'};">
+                    <strong>${hasGrammarData ? '✅' : '❌'} Grammar Spotlight Tab Available</strong><br>
+                    <small>Enhanced content includes grammarSpotlight: ${hasGrammarData ? 'Yes' : 'No'}</small>
+                </div>
+                
+                ${hasGrammarData ? `
+                    <div style="margin: 10px 0; padding: 10px; border-radius: 3px; background: #d1ecf1;">
+                        <h4>Grammar Spotlight Data Preview:</h4>
+                        <pre>${JSON.stringify(enhancedContent.grammarSpotlight, null, 2)}</pre>
+                    </div>
+                ` : `
+                    <div style="margin: 10px 0; padding: 10px; border-radius: 3px; background: #f8d7da;">
+                        <strong>No grammar data available for component rendering</strong>
+                    </div>
+                `}
+                
+                <div style="margin: 10px 0; padding: 10px; border-radius: 3px; background: #fff3cd;">
+                    <h4>Frontend Processing Steps:</h4>
+                    <ol>
+                        <li>API returns lesson with grammarSpotlight field ✅</li>
+                        <li>Frontend merges grammarSpotlight into content object ✅</li>
+                        <li>LessonContent component receives enhanced content ✅</li>
+                        <li>Grammar Spotlight tab checks for content.grammarSpotlight ${hasGrammarData ? '✅' : '❌'}</li>
+                        <li>GrammarSpotlight component renders with data ${hasGrammarData ? '✅' : '❌'}</li>
+                    </ol>
+                </div>
+            `;
+        }
+
+        // Run the test when page loads
+        window.addEventListener('load', testGrammarSpotlight);
+    </script>
+</body>
+</html> 

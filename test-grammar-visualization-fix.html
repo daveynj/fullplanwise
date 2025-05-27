@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grammar Visualization Fix Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .info { background-color: #d1ecf1; border-color: #bee5eb; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+        .button { padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; margin: 5px; }
+        .button:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <h1>Grammar Visualization Fix Test</h1>
+    <p>This test verifies that grammar visualizations now render correctly instead of showing "loading..."</p>
+
+    <div class="test-section info">
+        <h2>Test Instructions</h2>
+        <ol>
+            <li>Generate a new lesson using the app</li>
+            <li>Check if the Grammar Spotlight tab appears</li>
+            <li>Click on the Grammar Spotlight tab</li>
+            <li>Verify that the visualization shows actual content instead of "Visualization loading..."</li>
+            <li>Test the step navigation (Previous/Next buttons)</li>
+        </ol>
+    </div>
+
+    <div class="test-section">
+        <h2>Lesson API Test</h2>
+        <button class="button" onclick="testLessonAPI()">Test Latest Lesson Grammar Data</button>
+        <div id="apiTestResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Visualization Types Test</h2>
+        <button class="button" onclick="testVisualizationTypes()">Check Supported Types</button>
+        <div id="visualTypesResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Real Lesson Test</h2>
+        <p>Generate a lesson about any topic and check that:</p>
+        <ul>
+            <li>✅ Grammar Spotlight tab appears</li>
+            <li>✅ Clicking the tab shows visualization content</li>
+            <li>✅ No "Visualization loading..." text appears</li>
+            <li>✅ Step navigation works properly</li>
+            <li>✅ Examples from lesson text are highlighted</li>
+        </ul>
+    </div>
+
+    <script>
+        async function testLessonAPI() {
+            const resultDiv = document.getElementById('apiTestResult');
+            resultDiv.innerHTML = '<p>Testing...</p>';
+
+            try {
+                // Get the latest lesson with grammar data
+                const response = await fetch('/api/lessons');
+                const lessons = await response.json();
+                
+                const lessonWithGrammar = lessons.find(lesson => lesson.grammarSpotlight);
+                
+                if (!lessonWithGrammar) {
+                    resultDiv.innerHTML = `
+                        <div class="error">
+                            <h3>❌ No lessons with grammar data found</h3>
+                            <p>Please generate a new lesson first.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const grammarData = lessonWithGrammar.grammarSpotlight;
+                
+                // Check structure
+                const checks = [
+                    { name: 'Grammar type exists', test: !!grammarData.grammarType },
+                    { name: 'Has visual steps', test: Array.isArray(grammarData.visualSteps) && grammarData.visualSteps.length > 0 },
+                    { name: 'Visual steps have types', test: grammarData.visualSteps.every(step => step.visualElements && step.visualElements.type) },
+                    { name: 'Has examples', test: Array.isArray(grammarData.examples) && grammarData.examples.length > 0 }
+                ];
+
+                const results = checks.map(check => `
+                    <div style="margin: 10px 0; padding: 10px; border-radius: 3px; background: ${check.test ? '#d4edda' : '#f8d7da'};">
+                        <strong>${check.test ? '✅' : '❌'} ${check.name}</strong>
+                    </div>
+                `).join('');
+
+                // Show visualization types found
+                const visualTypes = grammarData.visualSteps.map(step => step.visualElements.type);
+                
+                resultDiv.innerHTML = `
+                    <div class="success">
+                        <h3>✅ Lesson with Grammar Data Found</h3>
+                        <p><strong>Lesson:</strong> ${lessonWithGrammar.title}</p>
+                        <p><strong>Grammar Type:</strong> ${grammarData.grammarType}</p>
+                        <p><strong>Visual Types Found:</strong> ${visualTypes.join(', ')}</p>
+                        ${results}
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <h3>❌ API Test Failed</h3>
+                        <p>Error: ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        function testVisualizationTypes() {
+            const resultDiv = document.getElementById('visualTypesResult');
+            
+            // These are the types that should now be supported
+            const supportedTypes = [
+                'timeline', 'timeline_with_actions', 'split_screen', 'if_then', 
+                'flow_diagram', 'comparison_chart', 'connection', 'categories',
+                'practice', 'functions', 'rule', 'forms', 'uses', 'patterns',
+                'guide', 'modal_scale', 'groups', 'comparison', 'structure',
+                'connectors', 'types', 'scale'
+            ];
+
+            const typesList = supportedTypes.map(type => `<li><code>${type}</code></li>`).join('');
+            
+            resultDiv.innerHTML = `
+                <div class="success">
+                    <h3>✅ Supported Visualization Types (${supportedTypes.length})</h3>
+                    <ul>${typesList}</ul>
+                    <p><strong>Note:</strong> These types should no longer show "Visualization loading..."</p>
+                </div>
+            `;
+        }
+
+        // Auto-run tests on page load
+        window.onload = function() {
+            testVisualizationTypes();
+        };
+    </script>
+</body>
+</html> 

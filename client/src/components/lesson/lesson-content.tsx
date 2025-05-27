@@ -42,6 +42,7 @@ import {
   Library,
   CheckCircle,
   Target,
+  RotateCcw,
 } from "lucide-react";
 import { AudioPlayer } from "@/components/shared/audio-player";
 import { handleMessageWithAPI } from '@/lib/api-helpers';
@@ -63,6 +64,7 @@ import { cn, extractDiscussionQuestions, extractQuizQuestions, extractComprehens
 // Using wouter instead of next/navigation
 import { useLocation } from "wouter";
 import { VocabularySemanticMap } from './vocabulary-semantic-map';
+import { GrammarSpotlight } from './grammar-spotlight';
 
 interface LessonContentProps {
   content: any;
@@ -78,6 +80,7 @@ type SectionType =
   | "comprehension" 
   | "sentenceFrames" 
   | "grammar" 
+  | "grammarSpotlight"
   | "discussion" 
   | "speaking" 
   | "quiz" 
@@ -101,6 +104,7 @@ export function LessonContent({ content }: LessonContentProps) {
   const [parsedContent, setParsedContent] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<string>(""); 
   const [location, setLocation] = useLocation();
+  const [grammarSpotlightHidden, setGrammarSpotlightHidden] = useState<boolean>(false);
   
   // Handle content object (already parsed by lesson-preview)
   useEffect(() => {
@@ -1932,6 +1936,17 @@ export function LessonContent({ content }: LessonContentProps) {
     }
   });
   
+  // Add grammar spotlight if the data exists in the content
+  if (content?.grammarSpotlight && !availableSections.includes("grammarSpotlight")) {
+    // Insert after grammar section if it exists, or after vocabulary
+    const grammarIndex = availableSections.indexOf("grammar");
+    const vocabularyIndex = availableSections.indexOf("vocabulary");
+    const insertIndex = grammarIndex !== -1 ? grammarIndex + 1 : 
+                      vocabularyIndex !== -1 ? vocabularyIndex + 1 : 
+                      availableSections.length;
+    availableSections.splice(insertIndex, 0, "grammarSpotlight");
+  }
+  
   // Always add the overview tab as the first tab
   if (!availableSections.includes("overview")) {
     availableSections.unshift("overview");
@@ -1963,20 +1978,7 @@ export function LessonContent({ content }: LessonContentProps) {
     
   console.log("Available sections for tabs:", availableSections);
   
-  // Navigation logic
-  const currentIndex = availableSections.indexOf(activeTab);
-  
-  const handlePrev = () => {
-    if (currentIndex > 0) {
-      setActiveTab(availableSections[currentIndex - 1]);
-    }
-  };
-  
-  const handleNext = () => {
-    if (currentIndex < availableSections.length - 1) {
-      setActiveTab(availableSections[currentIndex + 1]);
-    }
-  };
+  // Navigation logic will be updated after filtering
   
   // Creating the main render tree for the lesson
   const renderTree = [
@@ -2096,6 +2098,12 @@ export function LessonContent({ content }: LessonContentProps) {
       icon: <AlignLeft className="h-5 w-5" />,
       render: (
         (() => {
+          // If there's a Grammar Spotlight available, don't show this regular grammar section
+          if (content?.grammarSpotlight) {
+            console.log("Grammar Spotlight available, hiding regular grammar section");
+            return null;
+          }
+          
           const grammarData = findSection('grammar');
           console.log("Grammar data found:", grammarData);
           if (!grammarData) {
@@ -2116,6 +2124,58 @@ export function LessonContent({ content }: LessonContentProps) {
           
           console.log("Formatted grammar section:", formattedSection);
           return <SentenceFramesSection section={formattedSection} />;
+        })()
+      )
+    },
+    {
+      id: 'grammarSpotlight',
+      label: 'Grammar Spotlight',
+      icon: <Target className="h-5 w-5" />,
+      render: (
+        (() => {
+          // Check if grammar spotlight data exists in the content
+          console.log("=== GRAMMAR SPOTLIGHT DEBUG ===");
+          console.log("content object keys:", Object.keys(content || {}));
+          console.log("content.grammarSpotlight:", content?.grammarSpotlight);
+          console.log("typeof content.grammarSpotlight:", typeof content?.grammarSpotlight);
+          
+          if (!content?.grammarSpotlight) {
+            console.log("No grammar spotlight data found - tab will not be shown");
+            return null; // Don't show tab at all if no data
+          }
+          
+          if (grammarSpotlightHidden) {
+            console.log("Grammar spotlight hidden by user");
+            return <div className="p-8 text-center">
+              <div className="bg-green-50 border border-green-200 rounded-lg p-6">
+                <h3 className="text-green-800 font-semibold mb-2">Grammar Spotlight Completed!</h3>
+                <p className="text-green-700 mb-4">You can continue with the rest of the lesson.</p>
+                <Button
+                  variant="outline"
+                  onClick={() => setGrammarSpotlightHidden(false)}
+                  className="flex items-center gap-2 mx-auto"
+                >
+                  <RotateCcw className="h-4 w-4" />
+                  Review Again
+                </Button>
+              </div>
+            </div>;
+          }
+          
+          console.log("Grammar spotlight data found:", content.grammarSpotlight);
+          return (
+            <GrammarSpotlight 
+              grammarData={content.grammarSpotlight}
+              onSkip={() => {
+                // Hide the grammar spotlight
+                setGrammarSpotlightHidden(true);
+              }}
+              onComplete={() => {
+                // Hide the grammar spotlight
+                setGrammarSpotlightHidden(true);
+              }}
+            />
+          );
         })()
       )
     },
@@ -2198,6 +2258,24 @@ export function LessonContent({ content }: LessonContentProps) {
     }
   ];
   
+  // Filter out tabs with null content
+  const availableRenderTree = renderTree.filter(item => item.render !== null);
+  
+  // Navigation logic using filtered tree
+  const currentIndex = availableRenderTree.findIndex(item => item.id === activeTab);
+  
+  const handlePrev = () => {
+    if (currentIndex > 0) {
+      setActiveTab(availableRenderTree[currentIndex - 1].id);
+    }
+  };
+  
+  const handleNext = () => {
+    if (currentIndex < availableRenderTree.length - 1) {
+      setActiveTab(availableRenderTree[currentIndex + 1].id);
+    }
+  };
+  
   return (
     <div className="lesson-content w-[95%] max-w-[1800px] mx-auto"> {/* Increased width for better screen space utilization */}
       {/* Lesson header */}
@@ -2219,31 +2297,19 @@ export function LessonContent({ content }: LessonContentProps) {
       {/* Tabbed interface - styled based on template images */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-4 relative">
         <TabsList className="flex overflow-x-auto whitespace-nowrap justify-start p-1 h-auto rounded-lg bg-gray-100 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-          {availableSections.map((section) => {
-            // Handle sections as strings and provide fallback details
-            const sectionType = section as string;
-            const details = sectionDetails[sectionType as SectionType] || {
-                icon: BookOpen,
-                label: sectionType.charAt(0).toUpperCase() + sectionType.slice(1),
-                color: "bg-gray-100",
-                textColor: "text-gray-700",
-                description: "Section content"
-              };
-              
-              const Icon = details.icon;
-              
+          {availableRenderTree.map((item) => {
               return (
                 <TabsTrigger 
-                key={section} 
-                value={section}
+                key={item.id} 
+                value={item.id}
                   className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all
                     text-gray-500 hover:text-gray-800
                     data-[state=active]:bg-green-100 
                     data-[state=active]:text-green-800
                     data-[state=active]:shadow-sm`}
                 >
-                  <Icon className="h-5 w-5" />
-                  <span>{details.label}</span>
+                  {item.icon}
+                  <span>{item.label}</span>
                 </TabsTrigger>
               );
             })}
@@ -2251,7 +2317,7 @@ export function LessonContent({ content }: LessonContentProps) {
         
         {/* Section content */}
         <div className="p-1 text-2xl leading-relaxed"> {/* Increased text size for better readability */}
-          {renderTree.map((item) => (
+          {availableRenderTree.map((item) => (
             <TabsContent key={item.id} value={item.id} className="m-0">
               {item.render}
             </TabsContent>
@@ -2272,12 +2338,12 @@ export function LessonContent({ content }: LessonContentProps) {
           Previous
         </Button>
         <span className="text-sm text-gray-500">
-          Section {currentIndex + 1} of {availableSections.length}
+          Section {currentIndex + 1} of {availableRenderTree.length}
         </span>
         <Button 
           variant="outline" 
           onClick={handleNext} 
-          disabled={currentIndex === availableSections.length - 1}
+          disabled={currentIndex === availableRenderTree.length - 1}
           aria-label="Next Section"
           className="flex items-center"
         >

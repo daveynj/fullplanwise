@@ -948,8 +948,123 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
         {"question": "Complete Quiz Q5?", "options": ["True", "False"], "answer": "False", "correctAnswer": "False", "explanation": "Complete explanation..."}
       ]
     }
-  ]
+  ],
+  // GRAMMAR SPOTLIGHT (AI-GENERATED BASED ON READING TEXT)
+  "grammarSpotlight": {
+    "grammarType": "[IDENTIFY THE MOST EDUCATIONALLY VALUABLE GRAMMAR PATTERN from your reading text - PRIORITIZE: 'modal_verbs', 'present_perfect', 'articles', 'relative_clauses', 'conditionals', 'passive_voice', 'simple_past', 'simple_present' - AVOID: 'prepositions' unless no other patterns exist]",
+    "title": "[Clear educational title - e.g., 'Prepositions: Showing Relationships', 'Present Perfect: Past to Present Connection']",
+    "description": "[Brief explanation of what this grammar type does and why it's useful]",
+    "examples": [
+      {
+        "sentence": "[EXACT sentence from your reading text that contains this grammar pattern]",
+        "highlighted": "[SAME sentence but with ** around ONLY the specific grammar words - NOT entire phrases]",
+        "explanation": "[Brief explanation of why these specific words demonstrate this grammar pattern]"
+      }
+    ],
+    "visualSteps": [
+      {
+        "stepNumber": 1,
+        "instruction": "[What students should notice about this grammar pattern]",
+        "visualElements": {
+          "type": "categories",
+          "categories": ["[List 2-4 categories or types of this grammar - e.g., for prepositions: 'Place: in, on, at', 'Time: before, after, during', 'Movement: to, from, through']"]
+        }
+      },
+      {
+        "stepNumber": 2,
+        "instruction": "[Practice or application guidance]",
+        "visualElements": {
+          "type": "practice",
+          "examples": ["[2-4 simple practice examples that use this grammar pattern from the lesson topic]"]
+        }
+      }
+    ],
+    "visualLayout": {
+      "recommendedType": "[Choose the BEST visual type for this grammar: 'connection_flow' (for prepositions), 'certainty_scale' (for modals), 'timeline_bridge' (for tenses), 'decision_tree' (for articles), 'transformation_flow' (for passive voice), 'comparison_table' (for conditionals), 'process_steps' (for verb formation)]",
+      "primaryColor": "[Choose color theme: 'blue', 'green', 'purple', 'orange', 'red', 'teal']",
+      "components": [
+        {
+          "type": "main_explanation",
+          "title": "[Clear, engaging title for this grammar concept]",
+          "description": "[2-3 sentence explanation in simple language]",
+          "keyPoints": ["[Point 1]", "[Point 2]", "[Point 3]"]
+        },
+        {
+          "type": "visual_breakdown",
+          "structure": "[Describe the grammar structure/formula - e.g., 'Subject + have/has + past participle' or 'If + condition, result']",
+          "components": [
+            {
+              "part": "[Part name - e.g., 'Subject', 'Modal verb', 'Condition']",
+              "description": "[What this part does]",
+              "examples": ["[example1]", "[example2]", "[example3]"]
+            }
+          ]
+        },
+        {
+          "type": "categories_breakdown",
+          "categories": [
+            {
+              "name": "[Category name - e.g., 'Place prepositions', 'Ability modals']",
+              "description": "[When to use this category]",
+              "words": ["[word1]", "[word2]", "[word3]"],
+              "examples": ["[Complete sentence example 1]", "[Complete sentence example 2]"]
+            }
+          ]
+        },
+        {
+          "type": "practical_examples",
+          "title": "[Title like 'See It In Action' or 'Practice Examples']",
+          "examples": [
+            {
+              "sentence": "[Complete sentence from lesson topic]",
+              "breakdown": "[Explanation of how the grammar works in this sentence]",
+              "alternatives": ["[Alternative way to say the same thing]"]
+            }
+          ]
+        }
+      ]
+    },
+    "interactiveFeatures": {
+      "hasVisualDiagram": true,
+      "dynamicContent": true,
+      "adaptiveToLessonTopic": true,
+      "aiGeneratedExamples": true
+    }
+  }
 }
+
+**CRITICAL GRAMMAR SPOTLIGHT INSTRUCTIONS:**
+
+1. **ANALYSIS FIRST**: Look at your reading text and identify the most educationally valuable grammar pattern that appears multiple times. 
+
+**PRIORITY SELECTION RULES** (choose in this order):
+- AVOID prepositions unless no other patterns are available
+- PRIORITIZE grammar that teaches structure and meaning, not just function words
+- CHOOSE patterns that help students build sentences, not just recognize words
+
+Choose patterns appropriate for ${params.cefrLevel} level:
+   - A1-A2: **articles** (a, an, the), **simple present/past tense verbs**, basic prepositions (last resort)
+   - B1-B2: **modal verbs** (can, should, must), **present perfect tense**, **relative clauses** (who, which, that), prepositions (last resort)
+   - C1-C2: **conditionals** (if-clauses), **passive voice**, **complex tenses**, **subjunctive mood**
+
+**EXAMPLES OF BETTER CHOICES:**
+- Instead of highlighting prepositions "in", "on", "at" → highlight modal verbs "can", "should", "must"
+- Instead of prepositions "with", "for", "by" → highlight present perfect "has been", "have done", "has changed"
+- Instead of basic prepositions → highlight relative clauses "who", "which", "that"
+
+2. **PRECISE HIGHLIGHTING**: Use ** ONLY around the specific grammar words, not entire phrases:
+   - ✅ CORRECT: "Throughout history, philosophers have grappled **with** the fundamental question **of** life's meaning" 
+   - ❌ WRONG: "Throughout history, philosophers have grappled **with the fundamental** question **of life's** meaning"
+   - ✅ CORRECT: "**The** discovery **has** **led** to new understanding"
+   - ❌ WRONG: "**The discovery has led** to new understanding"
+
+3. **USE YOUR ACTUAL CONTENT**: The examples must come from sentences you actually wrote in the reading section.
+
+4. **EDUCATIONAL VALUE**: Choose a grammar pattern that genuinely helps ${params.cefrLevel} students and appears naturally in your text.
+
+5. **LESSON TOPIC INTEGRATION**: ALL visual content, examples, and categories MUST relate to the lesson topic "${params.topic}". Don't use generic examples - make everything specific to the actual lesson content.
+
+6. **AI-GENERATED CONTENT**: Use the visualLayout object to provide comprehensive, AI-generated visual instructions rather than relying on hard-coded components.
 
 Ensure the entire output is a single, valid JSON object starting with { and ending with }.
 

@@ -51,7 +51,18 @@ export default function FullScreenLessonPage() {
                  JSON.stringify(discussionSection).substring(0, 500) : "Not found");
             }
             
-            setParsedContent(parsed);
+            // Include grammarSpotlight data from the top-level lesson object
+            const enhancedParsedContent = {
+              ...parsed,
+              grammarSpotlight: lesson.grammarSpotlight
+            };
+            
+            console.log("Grammar spotlight data in lesson (JSON case):", lesson.grammarSpotlight ? "Found" : "Not found");
+            if (lesson.grammarSpotlight) {
+              console.log("Grammar spotlight data (JSON case):", lesson.grammarSpotlight);
+            }
+            
+            setParsedContent(enhancedParsedContent);
           } catch (jsonError) {
             console.error("Error parsing JSON string:", jsonError);
             setParsedContent({ 
@@ -81,7 +92,18 @@ export default function FullScreenLessonPage() {
               JSON.stringify(discussionSection).substring(0, 500) : "Not found");
           }
           
-          setParsedContent(lessonContent);
+          // Include grammarSpotlight data from the top-level lesson object
+          const enhancedLessonContent = {
+            ...lessonContent,
+            grammarSpotlight: lesson.grammarSpotlight
+          };
+          
+          console.log("Grammar spotlight data in lesson:", lesson.grammarSpotlight ? "Found" : "Not found");
+          if (lesson.grammarSpotlight) {
+            console.log("Grammar spotlight data:", lesson.grammarSpotlight);
+          }
+          
+          setParsedContent(enhancedLessonContent);
         }
         
       } catch (e) {

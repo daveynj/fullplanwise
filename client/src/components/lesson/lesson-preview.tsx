@@ -259,7 +259,7 @@ export function LessonPreview({ lesson }: LessonPreviewProps) {
             </div>
           </div>
           
-          <LessonContent content={parsedContent} />
+          <LessonContent content={{...parsedContent, grammarSpotlight: lesson.grammarSpotlight}} />
         </TabsContent>
         
         <TabsContent value="notes" className="flex-1 overflow-y-auto p-6 m-0">

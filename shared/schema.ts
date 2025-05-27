@@ -39,6 +39,7 @@ export const lessons = pgTable("lessons", {
   cefrLevel: text("cefr_level").notNull(),
   content: text("content").notNull(),
   notes: text("notes"),
+  grammarSpotlight: text("grammar_spotlight"), // Grammar visualization data as JSON
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
@@ -68,6 +69,7 @@ export const insertLessonSchema = createInsertSchema(lessons).pick({
   cefrLevel: true,
   content: true,
   notes: true,
+  grammarSpotlight: true,
 });
 
 // Types for inserts
