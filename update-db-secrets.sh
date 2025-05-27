@@ -20,14 +20,14 @@ echo "1. Go to the Secrets tab (key icon) in the Replit sidebar"
 echo
 echo "2. Delete all existing database secrets (if any)"
 echo 
-echo "3. Add the following secrets with these exact values:"
+echo "3. Add the following secrets with your actual database values:"
 echo
-echo "   DATABASE_URL: postgresql://neondb_owner:npg_n4SGo6BJvIqk@ep-wild-lab-a6kxw8q8.us-west-2.aws.neon.tech/neondb?sslmode=require"
-echo "   PGDATABASE: neondb"
-echo "   PGHOST: ep-wild-lab-a6kxw8q8.us-west-2.aws.neon.tech"
+echo "   DATABASE_URL: [Your Neon database connection string]"
+echo "   PGDATABASE: [Your database name]"
+echo "   PGHOST: [Your database host]"
 echo "   PGPORT: 5432"
-echo "   PGUSER: neondb_owner"
-echo "   PGPASSWORD: npg_n4SGo6BJvIqk"
+echo "   PGUSER: [Your database user]"
+echo "   PGPASSWORD: [Your database password]"
 echo
 echo "4. After updating all secrets, click the Deploy button"
 echo

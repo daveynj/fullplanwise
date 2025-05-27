@@ -8,10 +8,7 @@ I see you're getting a password authentication error for user 'neondb_owner' in 
    
    - Go to the Secrets tab (key icon) in the Replit sidebar
    - Delete the existing DATABASE_URL secret
-   - Add a new DATABASE_URL secret with the exact value from your .env file:
-     ```
-     postgresql://neondb_owner:npg_n4SGo6BJvIqk@ep-wild-lab-a6kxw8q8.us-west-2.aws.neon.tech/neondb?sslmode=require
-     ```
+   - Add a new DATABASE_URL secret with your actual Neon database connection string from your .env file
 
 2. **Alternative: Use Replit Database Instead**
    

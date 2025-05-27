@@ -10,12 +10,12 @@ Since we can't directly edit the `.replit` file, you'll need to:
 1. Go to the Replit Deployment settings by clicking on the "Deploy" button
 2. Look for the "Environment Variables" section in the deployment interface
 3. Add these environment variables manually to your deployment (not just as secrets):
-   - DATABASE_URL: postgresql://neondb_owner:npg_n4SGo6BJvIqk@ep-wild-lab-a6kxw8q8.us-west-2.aws.neon.tech/neondb?sslmode=require
-   - PGDATABASE: neondb
-   - PGHOST: ep-wild-lab-a6kxw8q8.us-west-2.aws.neon.tech
+   - DATABASE_URL: [Your actual Neon database connection string]
+   - PGDATABASE: [Your database name]
+   - PGHOST: [Your database host]
    - PGPORT: 5432
-   - PGUSER: neondb_owner
-   - PGPASSWORD: npg_n4SGo6BJvIqk
+   - PGUSER: [Your database user]
+   - PGPASSWORD: [Your database password]
 
 4. Deploy again with these environment variables set
 
