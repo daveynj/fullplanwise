@@ -23,19 +23,12 @@ function log(message, color = colors.reset) {
 try {
   log("🔧 Creating pre-deploy fix for database connection...", colors.blue);
   
-  // Modify the build command to ensure environment variables are included
-  const envFilePath = path.join(process.cwd(), '.env.deploy');
-  const envContent = `DATABASE_URL=${process.env.DATABASE_URL || ''}
-PGDATABASE=${process.env.PGDATABASE || ''}
-PGHOST=${process.env.PGHOST || ''}
-PGPORT=${process.env.PGPORT || ''}
-PGUSER=${process.env.PGUSER || ''}
-PGPASSWORD=${process.env.PGPASSWORD || ''}
-NODE_ENV=production
-`;
-
-  writeFileSync(envFilePath, envContent);
-  log("✅ Created deployment environment file with database credentials", colors.green);
+  // Note: Database credentials should be set via Replit Secrets, not written to files
+  log("⚠️  WARNING: Database credentials should be configured via Replit Secrets", colors.yellow);
+  log("📝 To deploy securely:", colors.blue);
+  log("   1. Go to Secrets tab in Replit sidebar", colors.blue);
+  log("   2. Add DATABASE_URL and other DB credentials as secrets", colors.blue);
+  log("   3. Deploy using the Deploy button", colors.blue);
   
   // Create a pre-deploy script to ensure the secrets are copied correctly
   const buildFilePath = path.join(process.cwd(), 'pre-deploy.sh');
