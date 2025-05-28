@@ -12,20 +12,70 @@ import {
 } from "@shared/schema";
 import { mailchimpService } from "./services/mailchimp.service";
 import Stripe from "stripe";
-import { qwenService } from "./services/qwen";
-import { geminiService } from "./services/gemini";
+// Dynamic imports for AI services - loaded only when needed
+// import { qwenService } from "./services/qwen";
+// import { geminiService } from "./services/gemini";
 
 import { db } from "./db";
-import { pdfGeneratorService } from "./services/pdf-generator.service";
+// Dynamic import for PDF service - loaded only when needed
+// import { pdfGeneratorService } from "./services/pdf-generator.service";
 import fs from 'fs/promises';
 import path from 'path';
 
-// Initialize Stripe if API key is available
-const stripe = process.env.STRIPE_SECRET_KEY 
-  ? new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: "2023-10-16" as any })
-  : undefined;
+// Dynamic Stripe initialization - load only when needed
+// const stripe = process.env.STRIPE_SECRET_KEY 
+//   ? new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: "2023-10-16" as any })
+//   : undefined;
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Dynamic AI service loaders - load only when needed for better performance
+  let qwenService: any = null;
+  let geminiService: any = null;
+  
+  const getQwenService = async () => {
+    if (!qwenService) {
+      console.log('Loading Qwen AI service...');
+      const { qwenService: service } = await import("./services/qwen");
+      qwenService = service;
+      console.log('Qwen AI service loaded successfully');
+    }
+    return qwenService;
+  };
+
+  const getGeminiService = async () => {
+    if (!geminiService) {
+      console.log('Loading Gemini AI service...');
+      const { geminiService: service } = await import("./services/gemini");
+      geminiService = service;
+      console.log('Gemini AI service loaded successfully');
+    }
+    return geminiService;
+  };
+
+  // Dynamic PDF service loader
+  let pdfGeneratorService: any = null;
+  const getPdfGeneratorService = async () => {
+    if (!pdfGeneratorService) {
+      console.log('Loading PDF generator service...');
+      const { pdfGeneratorService: service } = await import("./services/pdf-generator.service");
+      pdfGeneratorService = service;
+      console.log('PDF generator service loaded successfully');
+    }
+    return pdfGeneratorService;
+  };
+
+  // Dynamic Stripe loader
+  let stripe: any = null;
+  const getStripe = async () => {
+    if (!stripe && process.env.STRIPE_SECRET_KEY) {
+      console.log('Loading Stripe service...');
+      const Stripe = (await import("stripe")).default;
+      stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: "2023-10-16" as any });
+      console.log('Stripe service loaded successfully');
+    }
+    return stripe;
+  };
+
   // Set up authentication routes
   setupAuth(app);
 
@@ -342,10 +392,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // First try with the primary provider
         try {
           if (primaryProvider === 'gemini') {
-            generatedContent = await geminiService.generateLesson(validatedData);
+            const gemini = await getGeminiService();
+            generatedContent = await gemini.generateLesson(validatedData);
           } else {
             // Default to Qwen
-            generatedContent = await qwenService.generateLesson(validatedData);
+            const qwen = await getQwenService();
+            generatedContent = await qwen.generateLesson(validatedData);
           }
           
           // If we're using Qwen as primary and it returns empty/minimal content, consider it a failure
@@ -369,9 +421,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
           
           // Now try with the fallback provider (only once)
           if (fallbackProvider === 'gemini') {
-            generatedContent = await geminiService.generateLesson(validatedData);
+            const gemini = await getGeminiService();
+            generatedContent = await gemini.generateLesson(validatedData);
           } else {
-            generatedContent = await qwenService.generateLesson(validatedData);
+            const qwen = await getQwenService();
+            generatedContent = await qwen.generateLesson(validatedData);
           }
           
           // Don't cascade failures - if fallback fails too, the outer catch block will handle it
@@ -545,7 +599,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Check if HTML format was requested
       if (req.query.format === 'html') {
         // Generate HTML document
-        const htmlContent = await pdfGeneratorService.generateVocabularyReviewHTML(lessonData);
+        const pdfService = await getPdfGeneratorService();
+        const htmlContent = await pdfService.generateVocabularyReviewHTML(lessonData);
         
         // Set headers for HTML download
         const htmlFilename = `vocabulary-review-${lesson.title.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}.html`;
@@ -557,7 +612,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Generate PDF (default)
-      const pdfBuffer = await pdfGeneratorService.generateVocabularyReviewPDF(lessonData);
+      const pdfService = await getPdfGeneratorService();
+      const pdfBuffer = await pdfService.generateVocabularyReviewPDF(lessonData);
       
       // Set headers for PDF download
       const filename = `vocabulary-review-${lesson.title.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}.pdf`;
@@ -650,6 +706,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Credits and Payment Routes
   app.post("/api/create-payment-intent", ensureAuthenticated, async (req, res) => {
     try {
+      const stripe = await getStripe();
       if (!stripe) {
         return res.status(500).json({ message: "Stripe API key not configured" });
       }
@@ -700,6 +757,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Endpoint to manually fetch and apply a Stripe subscription based on session ID
   app.post("/api/subscriptions/fetch-session", ensureAuthenticated, async (req, res) => {
     try {
+      const stripe = await getStripe();
       if (!stripe) {
         return res.status(500).json({ message: "Stripe API key not configured" });
       }
@@ -783,6 +841,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/subscriptions/create", ensureAuthenticated, async (req, res) => {
     try {
+      const stripe = await getStripe();
       if (!stripe) {
         console.error("Stripe API key not configured when attempting to create subscription");
         return res.status(500).json({ message: "Stripe API key not configured" });
@@ -1093,6 +1152,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     
     console.log("Received Stripe webhook event");
 
+    const stripe = await getStripe();
     if (!stripe) {
       console.error("Stripe API key not configured");
       return res.status(200).json({ received: true, error: "Stripe API key not configured" });

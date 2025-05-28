@@ -33,5 +33,9 @@ export default defineConfig({
   build: {
     outDir: path.resolve(__dirname, "dist/public"),
     emptyOutDir: true,
+    target: 'esnext',
+    minify: 'esbuild',
+    sourcemap: false, // Disable source maps in production for faster builds
+    chunkSizeWarningLimit: 1000 // Increase limit to reduce warnings
   },
 });
