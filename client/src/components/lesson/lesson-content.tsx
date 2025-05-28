@@ -259,6 +259,11 @@ export function LessonContent({ content }: LessonContentProps) {
       // Clone the content to avoid modifying the original
       const processedContent = {...content};
       
+      // Ensure sections array always exists
+      if (!processedContent.sections || !Array.isArray(processedContent.sections)) {
+        processedContent.sections = [];
+      }
+      
       // Special handling for Gemini responses
       if (processedContent.provider === 'gemini') {
         console.log("Applying Gemini-specific processing");
@@ -568,6 +573,10 @@ export function LessonContent({ content }: LessonContentProps) {
       // Make sure we have an overview section for all lessons
       if (!finalSectionTypes.includes('overview')) {
         console.log("Adding overview section as it doesn't exist");
+        // Ensure sections array exists before trying to unshift
+        if (!processedContent.sections || !Array.isArray(processedContent.sections)) {
+          processedContent.sections = [];
+        }
         // Create an overview section if it doesn't exist
         processedContent.sections.unshift({
           type: 'overview',
