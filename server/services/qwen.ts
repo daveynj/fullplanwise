@@ -1063,4 +1063,4 @@ The Grammar Spotlight should use strategic grammar selection and pedagogically-o
 4. **Clear Communication**: Focus on helping students express their ideas effectively
 5. **Practical Application**: Show students when and how to use this grammar in real communication
 
-Ensure the entire output is a single, valid JSON object starting with { and ending with }".
+Ensure the entire output is a single, valid JSON object starting with { and ending with }";
