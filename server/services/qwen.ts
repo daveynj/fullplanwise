@@ -11,14 +11,14 @@ const QWEN_API_URL = 'https://dashscope-intl.aliyuncs.com/compatible-mode/v1/cha
  */
 export class QwenService {
   private apiKey: string;
-  
+
   constructor(apiKey: string) {
     if (!apiKey) {
       console.warn('Qwen API key is not provided or is empty');
     }
     this.apiKey = apiKey;
   }
-  
+
   /**
    * Generate a complete ESL lesson based on the provided parameters
    * @param params Lesson generation parameters
@@ -31,19 +31,19 @@ export class QwenService {
       }
 
       console.log('Starting Qwen API lesson generation...');
-      
+
       // Validate the API key format (basic validation)
       if (!this.apiKey.trim()) {
         throw new Error('Empty API key provided');
       }
-      
+
       // Log the key pattern (without revealing the actual key)
       const keyPattern = this.apiKey.substring(0, 4) + '...' + this.apiKey.substring(this.apiKey.length - 4);
       console.log(`Using API key pattern: ${keyPattern}`);
 
       // Set targetLevel variable to match what the system prompt expects
       const targetLevel = params.cefrLevel;
-      
+
       // Build the prompt for lesson generation
       console.log('Building prompt for lesson generation');
       const prompt = `You are an expert ESL (English as a Second Language) teacher and curriculum designer with over 20 years of experience.
@@ -615,7 +615,8 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
             "antonyms": ["actual_antonym1", "actual_antonym2"], 
             "relatedConcepts": ["actual_concept1", "actual_concept2", "actual_concept3"],
             "contexts": ["actual_context1", "actual_context2", "actual_context3"],
-            "associatedWords": ["actual_word1", "actual_word2", "actual_word3"]
+            "```text
+associatedWords": ["actual_word1", "actual_word2", "actual_word3"]
           }
         },
         {
@@ -952,23 +953,23 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
   // GRAMMAR SPOTLIGHT (AI-GENERATED STRATEGIC GRAMMAR TEACHING)
   "grammarSpotlight": {
     "grammarType": "[STRATEGICALLY CHOOSE the most pedagogically valuable grammar pattern for ${params.cefrLevel} level students studying '${params.topic}'. 
-    
+
     **CEFR-LEVEL PRIORITIES:**
     - A1-A2: 'simple_present', 'simple_past', 'articles', 'basic_modals' (can/can't), 'prepositions_basic'
     - B1-B2: 'present_perfect', 'modal_verbs', 'conditionals_basic', 'relative_clauses', 'comparative', 'future_forms'
     - C1-C2: 'conditionals_advanced', 'passive_voice', 'subjunctive', 'reported_speech', 'advanced_tenses'
-    
+
     **SELECTION CRITERIA:**
     1. What does a ${params.cefrLevel} student NEED to learn for effective communication?
     2. What grammar pattern works naturally with the topic '${params.topic}'?
     3. What's most useful for building speaking/writing confidence?
-    
+
     Choose ONE grammar type that meets these criteria.]",
-    
+
     "title": "[Create an engaging, clear title that explains the grammar's PURPOSE - e.g., 'Modal Verbs: Expressing Possibility and Necessity', 'Present Perfect: Connecting Past to Present', 'Articles: Making Your Meaning Clear']",
-    
+
     "description": "[Explain in simple terms WHY this grammar pattern is useful for communication and how it helps students express their ideas better - focus on practical benefits, not just rules]",
-    
+
     "examples": [
       {
         "sentence": "[CREATE a clear, pedagogically-perfect example sentence that demonstrates this grammar pattern. The sentence should:
@@ -986,7 +987,7 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
         "explanation": "[Explain how this example reinforces or extends the grammar pattern]"
       }
     ],
-    
+
     "visualSteps": [
       {
         "stepNumber": 1,
@@ -1014,7 +1015,7 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
         }
       }
     ],
-    
+
     "visualLayout": {
       "recommendedType": "[Choose the BEST visual approach for this grammar type:
       - 'certainty_scale' for modal verbs (showing levels of certainty/possibility)
@@ -1023,9 +1024,9 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
       - 'transformation_flow' for passive voice and complex structures
       - 'comparison_table' for comparatives and contrasting structures
       - 'process_steps' for step-by-step grammar construction]",
-      
+
       "primaryColor": "[Choose a color that fits the grammar type: 'blue' for certainty/modals, 'green' for time/tenses, 'purple' for relationships, 'orange' for actions, 'teal' for comparisons]",
-      
+
       "pedagogicalApproach": {
         "learningObjective": "[What should students be able to DO after learning this grammar? - e.g., 'Express different levels of certainty about future events' or 'Talk about past experiences that affect the present']",
         "practiceActivities": [
@@ -1034,14 +1035,14 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
         ],
         "realWorldApplication": "[Explain when students will use this grammar in actual conversation or writing - be specific about situations]"
       },
-      
+
       "adaptiveFeatures": {
         "levelAdjustment": "[How this lesson adjusts for ${params.cefrLevel} level - what makes it appropriate for these students?]",
         "scaffolding": "[What support structures help students understand this grammar? - e.g., 'Color-coding helps identify pattern parts' or 'Step-by-step building reduces complexity']",
         "extension": "[How advanced students can take this further - suggest more complex applications]"
       }
     },
-    
+
     "interactiveFeatures": {
       "hasVisualDiagram": true,
       "dynamicContent": true,
