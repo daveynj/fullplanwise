@@ -1064,3 +1064,54 @@ The Grammar Spotlight should use strategic grammar selection and pedagogically-o
 5. **Practical Application**: Show students when and how to use this grammar in real communication
 
 Ensure the entire output is a single, valid JSON object starting with { and ending with }`;
+
+      console.log('Sending request to Qwen API...');
+      
+      const response = await axios.post(QWEN_API_URL, {
+        model: 'qwen-max',
+        messages: [
+          {
+            role: 'user',
+            content: prompt
+          }
+        ],
+        temperature: 0.7,
+        max_tokens: 8000,
+        stream: false
+      }, {
+        headers: {
+          'Authorization': `Bearer ${this.apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        timeout: 120000
+      });
+
+      console.log('Qwen API response received');
+
+      if (response.data && response.data.choices && response.data.choices[0]) {
+        const content = response.data.choices[0].message.content;
+        
+        try {
+          const lessonData = JSON.parse(content);
+          console.log('Lesson data parsed successfully');
+          return lessonData;
+        } catch (parseError) {
+          console.error('Failed to parse Qwen response as JSON:', parseError);
+          throw new Error('Invalid JSON response from Qwen API');
+        }
+      } else {
+        throw new Error('Invalid response format from Qwen API');
+      }
+
+    } catch (error: any) {
+      console.error('Qwen API error:', error);
+      if (error?.response) {
+        console.error('Response status:', error.response.status);
+        console.error('Response data:', error.response.data);
+      }
+      throw error;
+    }
+  }
+}
+
+export const qwenService = new QwenService(process.env.QWEN_API_KEY || '');
