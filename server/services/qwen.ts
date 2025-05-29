@@ -615,8 +615,7 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
             "antonyms": ["actual_antonym1", "actual_antonym2"], 
             "relatedConcepts": ["actual_concept1", "actual_concept2", "actual_concept3"],
             "contexts": ["actual_context1", "actual_context2", "actual_context3"],
-            "```text
-associatedWords": ["actual_word1", "actual_word2", "actual_word3"]
+            "associatedWords": ["actual_word1", "actual_word2", "actual_word3"]
           }
         },
         {
