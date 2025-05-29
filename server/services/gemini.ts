@@ -1139,122 +1139,119 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
       ]
     }
   ],
-  // GRAMMAR SPOTLIGHT (AI-GENERATED BASED ON READING TEXT)
+  // GRAMMAR SPOTLIGHT (AI-GENERATED STRATEGIC GRAMMAR TEACHING)
   "grammarSpotlight": {
-    "grammarType": "[IDENTIFY THE MOST EDUCATIONALLY VALUABLE GRAMMAR PATTERN from your reading text - PRIORITIZE: 'modal_verbs', 'present_perfect', 'articles', 'relative_clauses', 'conditionals', 'passive_voice', 'simple_past', 'simple_present' - AVOID: 'prepositions' unless no other patterns exist]",
-    "title": "[Clear educational title - e.g., 'Prepositions: Showing Relationships', 'Present Perfect: Past to Present Connection']",
-    "description": "[Brief explanation of what this grammar type does and why it's useful]",
+    "grammarType": "[STRATEGICALLY CHOOSE the most pedagogically valuable grammar pattern for ${cefrLevel} level students studying '${topic}'. 
+    
+    **CEFR-LEVEL PRIORITIES:**
+    - A1-A2: 'simple_present', 'simple_past', 'articles', 'basic_modals' (can/can't), 'prepositions_basic'
+    - B1-B2: 'present_perfect', 'modal_verbs', 'conditionals_basic', 'relative_clauses', 'comparative', 'future_forms'
+    - C1-C2: 'conditionals_advanced', 'passive_voice', 'subjunctive', 'reported_speech', 'advanced_tenses'
+    
+    **SELECTION CRITERIA:**
+    1. What does a ${cefrLevel} student NEED to learn for effective communication?
+    2. What grammar pattern works naturally with the topic '${topic}'?
+    3. What's most useful for building speaking/writing confidence?
+    
+    Choose ONE grammar type that meets these criteria.]",
+    
+    "title": "[Create an engaging, clear title that explains the grammar's PURPOSE - e.g., 'Modal Verbs: Expressing Possibility and Necessity', 'Present Perfect: Connecting Past to Present', 'Articles: Making Your Meaning Clear']",
+    
+    "description": "[Explain in simple terms WHY this grammar pattern is useful for communication and how it helps students express their ideas better - focus on practical benefits, not just rules]",
+    
     "examples": [
       {
-        "sentence": "[EXACT sentence from your reading text that contains this grammar pattern]",
-        "highlighted": "[SAME sentence but with ** around ONLY the specific grammar words - NOT entire phrases]",
-        "explanation": "[Brief explanation of why these specific words demonstrate this grammar pattern]"
+        "sentence": "[CREATE a clear, pedagogically-perfect example sentence that demonstrates this grammar pattern. The sentence should:
+        - Be appropriate for ${cefrLevel} level
+        - Relate to the topic '${topic}' when possible 
+        - Clearly demonstrate the grammar pattern
+        - Be useful for students to learn and remember
+        - Avoid complex vocabulary that might confuse the grammar lesson]",
+        "highlighted": "[SAME sentence but with ** around ONLY the specific grammar elements you're teaching - be precise and consistent with highlighting]",
+        "explanation": "[Explain clearly and simply why these highlighted words demonstrate this grammar pattern and how they work together]"
+      },
+      {
+        "sentence": "[CREATE a second example that shows a different aspect or variation of the same grammar pattern - this helps students recognize the pattern in different contexts]",
+        "highlighted": "[Again, highlight only the relevant grammar elements]", 
+        "explanation": "[Explain how this example reinforces or extends the grammar pattern]"
       }
     ],
+    
     "visualSteps": [
       {
         "stepNumber": 1,
-        "instruction": "[What students should notice about this grammar pattern]",
+        "instruction": "[What students should understand about this grammar pattern - focus on meaning and use, not just form]",
         "visualElements": {
-          "type": "categories",
-          "categories": ["[List 2-4 categories or types of this grammar - e.g., for prepositions: 'Place: in, on, at', 'Time: before, after, during', 'Movement: to, from, through']"]
+          "type": "pattern_recognition",
+          "elements": "[Describe the key components students should identify - e.g., 'Notice the helping verb + main verb structure' or 'Look for the time connection words']"
         }
       },
       {
         "stepNumber": 2,
-        "instruction": "[Practice or application guidance]",
+        "instruction": "[How students can practice and use this pattern effectively]",
         "visualElements": {
-          "type": "practice",
-          "examples": ["[2-4 simple practice examples that use this grammar pattern from the lesson topic]"]
+          "type": "application",
+          "guidance": "[Practical advice for using this grammar in speaking/writing - e.g., 'Use this pattern when you want to express uncertainty' or 'This helps you talk about experiences without specific times']"
+        }
+      },
+      {
+        "stepNumber": 3,
+        "instruction": "[Common mistakes to avoid and tips for success]",
+        "visualElements": {
+          "type": "tips",
+          "commonMistakes": "[List 2-3 typical errors students make with this grammar]",
+          "successTips": "[Give 2-3 practical tips for using this grammar correctly]"
         }
       }
     ],
+    
     "visualLayout": {
-      "recommendedType": "[Choose the BEST visual type for this grammar: 'connection_flow' (for prepositions), 'certainty_scale' (for modals), 'timeline_bridge' (for tenses), 'decision_tree' (for articles), 'transformation_flow' (for passive voice), 'comparison_table' (for conditionals), 'process_steps' (for verb formation)]",
-      "primaryColor": "[Choose color theme: 'blue', 'green', 'purple', 'orange', 'red', 'teal']",
-      "components": [
-        {
-          "type": "main_explanation",
-          "title": "[Clear, engaging title for this grammar concept]",
-          "description": "[2-3 sentence explanation in simple language]",
-          "keyPoints": ["[Point 1]", "[Point 2]", "[Point 3]"]
-        },
-        {
-          "type": "visual_breakdown",
-          "structure": "[Describe the grammar structure/formula - e.g., 'Subject + have/has + past participle' or 'If + condition, result']",
-          "components": [
-            {
-              "part": "[Part name - e.g., 'Subject', 'Modal verb', 'Condition']",
-              "description": "[What this part does]",
-              "examples": ["[example1]", "[example2]", "[example3]"]
-            }
-          ]
-        },
-        {
-          "type": "categories_breakdown",
-          "categories": [
-            {
-              "name": "[Category name - e.g., 'Place prepositions', 'Ability modals']",
-              "description": "[When to use this category]",
-              "words": ["[word1]", "[word2]", "[word3]"],
-              "examples": ["[Complete sentence example 1]", "[Complete sentence example 2]"]
-            }
-          ]
-        },
-        {
-          "type": "practical_examples",
-          "title": "[Title like 'See It In Action' or 'Practice Examples']",
-          "examples": [
-            {
-              "sentence": "[Complete sentence from lesson topic]",
-              "breakdown": "[Explanation of how the grammar works in this sentence]",
-              "alternatives": ["[Alternative way to say the same thing]"]
-            }
-          ]
-        }
-      ]
+      "recommendedType": "[Choose the BEST visual approach for this grammar type:
+      - 'certainty_scale' for modal verbs (showing levels of certainty/possibility)
+      - 'timeline_bridge' for tenses that connect time periods (present perfect, past perfect)
+      - 'decision_tree' for articles and conditionals (showing choice logic)
+      - 'transformation_flow' for passive voice and complex structures
+      - 'comparison_table' for comparatives and contrasting structures
+      - 'process_steps' for step-by-step grammar construction]",
+      
+      "primaryColor": "[Choose a color that fits the grammar type: 'blue' for certainty/modals, 'green' for time/tenses, 'purple' for relationships, 'orange' for actions, 'teal' for comparisons]",
+      
+      "pedagogicalApproach": {
+        "learningObjective": "[What should students be able to DO after learning this grammar? - e.g., 'Express different levels of certainty about future events' or 'Talk about past experiences that affect the present']",
+        "practiceActivities": [
+          "[Suggest a simple practice activity students can do - e.g., 'Create sentences about your own experiences using this pattern']",
+          "[Suggest a communicative activity - e.g., 'Ask classmates questions using these modal verbs']"
+        ],
+        "realWorldApplication": "[Explain when students will use this grammar in actual conversation or writing - be specific about situations]"
+      },
+      
+      "adaptiveFeatures": {
+        "levelAdjustment": "[How this lesson adjusts for ${cefrLevel} level - what makes it appropriate for these students?]",
+        "scaffolding": "[What support structures help students understand this grammar? - e.g., 'Color-coding helps identify pattern parts' or 'Step-by-step building reduces complexity']",
+        "extension": "[How advanced students can take this further - suggest more complex applications]"
+      }
     },
+    
     "interactiveFeatures": {
       "hasVisualDiagram": true,
       "dynamicContent": true,
       "adaptiveToLessonTopic": true,
-      "aiGeneratedExamples": true
+      "aiGeneratedExamples": true,
+      "pedagogicallyOptimized": true
     }
   }
 }
 
 **CRITICAL GRAMMAR SPOTLIGHT INSTRUCTIONS:**
 
-1. **ANALYSIS FIRST**: Look at your reading text and identify the most educationally valuable grammar pattern that appears multiple times. 
+The Grammar Spotlight should use strategic grammar selection and pedagogically-optimized examples to provide maximum educational value for ${cefrLevel} level students studying "${topic}".
 
-**PRIORITY SELECTION RULES** (choose in this order):
-- AVOID prepositions unless no other patterns are available
-- PRIORITIZE grammar that teaches structure and meaning, not just function words
-- CHOOSE patterns that help students build sentences, not just recognize words
-
-Choose patterns appropriate for ${params.cefrLevel} level:
-   - A1-A2: **articles** (a, an, the), **simple present/past tense verbs**, basic prepositions (last resort)
-   - B1-B2: **modal verbs** (can, should, must), **present perfect tense**, **relative clauses** (who, which, that), prepositions (last resort)
-   - C1-C2: **conditionals** (if-clauses), **passive voice**, **complex tenses**, **subjunctive mood**
-
-**EXAMPLES OF BETTER CHOICES:**
-- Instead of highlighting prepositions "in", "on", "at" → highlight modal verbs "can", "should", "must"
-- Instead of prepositions "with", "for", "by" → highlight present perfect "has been", "have done", "has changed"
-- Instead of basic prepositions → highlight relative clauses "who", "which", "that"
-
-2. **PRECISE HIGHLIGHTING**: Use ** ONLY around the specific grammar words, not entire phrases:
-   - ✅ CORRECT: "Throughout history, philosophers have grappled **with** the fundamental question **of** life's meaning" 
-   - ❌ WRONG: "Throughout history, philosophers have grappled **with the fundamental** question **of life's** meaning"
-   - ✅ CORRECT: "**The** discovery **has** **led** to new understanding"
-   - ❌ WRONG: "**The discovery has led** to new understanding"
-
-3. **USE YOUR ACTUAL CONTENT**: The examples must come from sentences you actually wrote in the reading section.
-
-4. **EDUCATIONAL VALUE**: Choose a grammar pattern that genuinely helps ${params.cefrLevel} students and appears naturally in your text.
-
-5. **LESSON TOPIC INTEGRATION**: ALL visual content, examples, and categories MUST relate to the lesson topic "${params.topic}". Don't use generic examples - make everything specific to the actual lesson content.
-
-6. **AI-GENERATED CONTENT**: Use the visualLayout object to provide comprehensive, AI-generated visual instructions rather than relying on hard-coded components.
+**KEY PRINCIPLES:**
+1. **Strategic Selection**: Choose grammar that students at this level need to learn
+2. **Topic Integration**: Connect grammar naturally to the lesson topic when possible
+3. **Pedagogical Excellence**: Create examples designed for teaching, not just extracted from text
+4. **Clear Communication**: Focus on helping students express their ideas effectively
+5. **Practical Application**: Show students when and how to use this grammar in real communication
 
 Ensure the entire output is a single, valid JSON object starting with { and ending with }.`;
 

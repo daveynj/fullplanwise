@@ -24,6 +24,18 @@ import ResetPasswordPage from "@/pages/reset-password-page";
 import { AdminDashboardPage } from "@/pages/admin-dashboard-page";
 import LandingPage from "@/pages/landing-page";
 import TwitterCardPreview from "@/pages/twitter-card-preview";
+import GrammarTestPage from "@/pages/grammar-test-page";
+import { GrammarComponentShowcase } from "@/components/lesson/grammar-component-showcase";
+
+function GrammarShowcasePage() {
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <div className="container mx-auto py-8">
+        <GrammarComponentShowcase />
+      </div>
+    </div>
+  );
+}
 
 function Router() {
   return (
@@ -41,6 +53,8 @@ function Router() {
       <ProtectedRoute path="/subscription-success" component={SubscriptionSuccessPage} />
       <ProtectedRoute path="/settings" component={SettingsPage} />
       <ProtectedRoute path="/admin" component={AdminDashboardPage} />
+      <ProtectedRoute path="/grammar-test" component={GrammarTestPage} />
+      <ProtectedRoute path="/grammar-showcase" component={GrammarShowcasePage} />
       <Route path="/auth" component={AuthPage} />
       <Route path="/forgot-password" component={ForgotPasswordPage} />
       <Route path="/reset-password/:token" component={ResetPasswordPage} />

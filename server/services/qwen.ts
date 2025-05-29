@@ -949,968 +949,118 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
       ]
     }
   ],
-  // GRAMMAR SPOTLIGHT (AI-GENERATED BASED ON READING TEXT)
+  // GRAMMAR SPOTLIGHT (AI-GENERATED STRATEGIC GRAMMAR TEACHING)
   "grammarSpotlight": {
-    "grammarType": "[IDENTIFY THE MOST EDUCATIONALLY VALUABLE GRAMMAR PATTERN from your reading text - PRIORITIZE: 'modal_verbs', 'present_perfect', 'articles', 'relative_clauses', 'conditionals', 'passive_voice', 'simple_past', 'simple_present' - AVOID: 'prepositions' unless no other patterns exist]",
-    "title": "[Clear educational title - e.g., 'Prepositions: Showing Relationships', 'Present Perfect: Past to Present Connection']",
-    "description": "[Brief explanation of what this grammar type does and why it's useful]",
+    "grammarType": "[STRATEGICALLY CHOOSE the most pedagogically valuable grammar pattern for ${params.cefrLevel} level students studying '${params.topic}'. 
+    
+    **CEFR-LEVEL PRIORITIES:**
+    - A1-A2: 'simple_present', 'simple_past', 'articles', 'basic_modals' (can/can't), 'prepositions_basic'
+    - B1-B2: 'present_perfect', 'modal_verbs', 'conditionals_basic', 'relative_clauses', 'comparative', 'future_forms'
+    - C1-C2: 'conditionals_advanced', 'passive_voice', 'subjunctive', 'reported_speech', 'advanced_tenses'
+    
+    **SELECTION CRITERIA:**
+    1. What does a ${params.cefrLevel} student NEED to learn for effective communication?
+    2. What grammar pattern works naturally with the topic '${params.topic}'?
+    3. What's most useful for building speaking/writing confidence?
+    
+    Choose ONE grammar type that meets these criteria.]",
+    
+    "title": "[Create an engaging, clear title that explains the grammar's PURPOSE - e.g., 'Modal Verbs: Expressing Possibility and Necessity', 'Present Perfect: Connecting Past to Present', 'Articles: Making Your Meaning Clear']",
+    
+    "description": "[Explain in simple terms WHY this grammar pattern is useful for communication and how it helps students express their ideas better - focus on practical benefits, not just rules]",
+    
     "examples": [
       {
-        "sentence": "[EXACT sentence from your reading text that contains this grammar pattern]",
-        "highlighted": "[SAME sentence but with ** around ONLY the specific grammar words - NOT entire phrases]",
-        "explanation": "[Brief explanation of why these specific words demonstrate this grammar pattern]"
+        "sentence": "[CREATE a clear, pedagogically-perfect example sentence that demonstrates this grammar pattern. The sentence should:
+        - Be appropriate for ${params.cefrLevel} level
+        - Relate to the topic '${params.topic}' when possible 
+        - Clearly demonstrate the grammar pattern
+        - Be useful for students to learn and remember
+        - Avoid complex vocabulary that might confuse the grammar lesson]",
+        "highlighted": "[SAME sentence but with ** around ONLY the specific grammar elements you're teaching - be precise and consistent with highlighting]",
+        "explanation": "[Explain clearly and simply why these highlighted words demonstrate this grammar pattern and how they work together]"
+      },
+      {
+        "sentence": "[CREATE a second example that shows a different aspect or variation of the same grammar pattern - this helps students recognize the pattern in different contexts]",
+        "highlighted": "[Again, highlight only the relevant grammar elements]", 
+        "explanation": "[Explain how this example reinforces or extends the grammar pattern]"
       }
     ],
+    
     "visualSteps": [
       {
         "stepNumber": 1,
-        "instruction": "[What students should notice about this grammar pattern]",
+        "instruction": "[What students should understand about this grammar pattern - focus on meaning and use, not just form]",
         "visualElements": {
-          "type": "categories",
-          "categories": ["[List 2-4 categories or types of this grammar - e.g., for prepositions: 'Place: in, on, at', 'Time: before, after, during', 'Movement: to, from, through']"]
+          "type": "pattern_recognition",
+          "elements": "[Describe the key components students should identify - e.g., 'Notice the helping verb + main verb structure' or 'Look for the time connection words']"
         }
       },
       {
         "stepNumber": 2,
-        "instruction": "[Practice or application guidance]",
+        "instruction": "[How students can practice and use this pattern effectively]",
         "visualElements": {
-          "type": "practice",
-          "examples": ["[2-4 simple practice examples that use this grammar pattern from the lesson topic]"]
+          "type": "application",
+          "guidance": "[Practical advice for using this grammar in speaking/writing - e.g., 'Use this pattern when you want to express uncertainty' or 'This helps you talk about experiences without specific times']"
+        }
+      },
+      {
+        "stepNumber": 3,
+        "instruction": "[Common mistakes to avoid and tips for success]",
+        "visualElements": {
+          "type": "tips",
+          "commonMistakes": "[List 2-3 typical errors students make with this grammar]",
+          "successTips": "[Give 2-3 practical tips for using this grammar correctly]"
         }
       }
     ],
+    
     "visualLayout": {
-      "recommendedType": "[Choose the BEST visual type for this grammar: 'connection_flow' (for prepositions), 'certainty_scale' (for modals), 'timeline_bridge' (for tenses), 'decision_tree' (for articles), 'transformation_flow' (for passive voice), 'comparison_table' (for conditionals), 'process_steps' (for verb formation)]",
-      "primaryColor": "[Choose color theme: 'blue', 'green', 'purple', 'orange', 'red', 'teal']",
-      "components": [
-        {
-          "type": "main_explanation",
-          "title": "[Clear, engaging title for this grammar concept]",
-          "description": "[2-3 sentence explanation in simple language]",
-          "keyPoints": ["[Point 1]", "[Point 2]", "[Point 3]"]
-        },
-        {
-          "type": "visual_breakdown",
-          "structure": "[Describe the grammar structure/formula - e.g., 'Subject + have/has + past participle' or 'If + condition, result']",
-          "components": [
-            {
-              "part": "[Part name - e.g., 'Subject', 'Modal verb', 'Condition']",
-              "description": "[What this part does]",
-              "examples": ["[example1]", "[example2]", "[example3]"]
-            }
-          ]
-        },
-        {
-          "type": "categories_breakdown",
-          "categories": [
-            {
-              "name": "[Category name - e.g., 'Place prepositions', 'Ability modals']",
-              "description": "[When to use this category]",
-              "words": ["[word1]", "[word2]", "[word3]"],
-              "examples": ["[Complete sentence example 1]", "[Complete sentence example 2]"]
-            }
-          ]
-        },
-        {
-          "type": "practical_examples",
-          "title": "[Title like 'See It In Action' or 'Practice Examples']",
-          "examples": [
-            {
-              "sentence": "[Complete sentence from lesson topic]",
-              "breakdown": "[Explanation of how the grammar works in this sentence]",
-              "alternatives": ["[Alternative way to say the same thing]"]
-            }
-          ]
-        }
-      ]
+      "recommendedType": "[Choose the BEST visual approach for this grammar type:
+      - 'certainty_scale' for modal verbs (showing levels of certainty/possibility)
+      - 'timeline_bridge' for tenses that connect time periods (present perfect, past perfect)
+      - 'decision_tree' for articles and conditionals (showing choice logic)
+      - 'transformation_flow' for passive voice and complex structures
+      - 'comparison_table' for comparatives and contrasting structures
+      - 'process_steps' for step-by-step grammar construction]",
+      
+      "primaryColor": "[Choose a color that fits the grammar type: 'blue' for certainty/modals, 'green' for time/tenses, 'purple' for relationships, 'orange' for actions, 'teal' for comparisons]",
+      
+      "pedagogicalApproach": {
+        "learningObjective": "[What should students be able to DO after learning this grammar? - e.g., 'Express different levels of certainty about future events' or 'Talk about past experiences that affect the present']",
+        "practiceActivities": [
+          "[Suggest a simple practice activity students can do - e.g., 'Create sentences about your own experiences using this pattern']",
+          "[Suggest a communicative activity - e.g., 'Ask classmates questions using these modal verbs']"
+        ],
+        "realWorldApplication": "[Explain when students will use this grammar in actual conversation or writing - be specific about situations]"
+      },
+      
+      "adaptiveFeatures": {
+        "levelAdjustment": "[How this lesson adjusts for ${params.cefrLevel} level - what makes it appropriate for these students?]",
+        "scaffolding": "[What support structures help students understand this grammar? - e.g., 'Color-coding helps identify pattern parts' or 'Step-by-step building reduces complexity']",
+        "extension": "[How advanced students can take this further - suggest more complex applications]"
+      }
     },
+    
     "interactiveFeatures": {
       "hasVisualDiagram": true,
       "dynamicContent": true,
       "adaptiveToLessonTopic": true,
-      "aiGeneratedExamples": true
+      "aiGeneratedExamples": true,
+      "pedagogicallyOptimized": true
     }
   }
 }
 
 **CRITICAL GRAMMAR SPOTLIGHT INSTRUCTIONS:**
 
-1. **ANALYSIS FIRST**: Look at your reading text and identify the most educationally valuable grammar pattern that appears multiple times. 
+The Grammar Spotlight should use strategic grammar selection and pedagogically-optimized examples to provide maximum educational value for ${params.cefrLevel} level students studying "${params.topic}".
 
-**PRIORITY SELECTION RULES** (choose in this order):
-- AVOID prepositions unless no other patterns are available
-- PRIORITIZE grammar that teaches structure and meaning, not just function words
-- CHOOSE patterns that help students build sentences, not just recognize words
-
-Choose patterns appropriate for ${params.cefrLevel} level:
-   - A1-A2: **articles** (a, an, the), **simple present/past tense verbs**, basic prepositions (last resort)
-   - B1-B2: **modal verbs** (can, should, must), **present perfect tense**, **relative clauses** (who, which, that), prepositions (last resort)
-   - C1-C2: **conditionals** (if-clauses), **passive voice**, **complex tenses**, **subjunctive mood**
-
-**EXAMPLES OF BETTER CHOICES:**
-- Instead of highlighting prepositions "in", "on", "at" → highlight modal verbs "can", "should", "must"
-- Instead of prepositions "with", "for", "by" → highlight present perfect "has been", "have done", "has changed"
-- Instead of basic prepositions → highlight relative clauses "who", "which", "that"
-
-2. **PRECISE HIGHLIGHTING**: Use ** ONLY around the specific grammar words, not entire phrases:
-   - ✅ CORRECT: "Throughout history, philosophers have grappled **with** the fundamental question **of** life's meaning" 
-   - ❌ WRONG: "Throughout history, philosophers have grappled **with the fundamental** question **of life's** meaning"
-   - ✅ CORRECT: "**The** discovery **has** **led** to new understanding"
-   - ❌ WRONG: "**The discovery has led** to new understanding"
-
-3. **USE YOUR ACTUAL CONTENT**: The examples must come from sentences you actually wrote in the reading section.
-
-4. **EDUCATIONAL VALUE**: Choose a grammar pattern that genuinely helps ${params.cefrLevel} students and appears naturally in your text.
-
-5. **LESSON TOPIC INTEGRATION**: ALL visual content, examples, and categories MUST relate to the lesson topic "${params.topic}". Don't use generic examples - make everything specific to the actual lesson content.
-
-6. **AI-GENERATED CONTENT**: Use the visualLayout object to provide comprehensive, AI-generated visual instructions rather than relying on hard-coded components.
+**KEY PRINCIPLES:**
+1. **Strategic Selection**: Choose grammar that students at this level need to learn
+2. **Topic Integration**: Connect grammar naturally to the lesson topic when possible
+3. **Pedagogical Excellence**: Create examples designed for teaching, not just extracted from text
+4. **Clear Communication**: Focus on helping students express their ideas effectively
+5. **Practical Application**: Show students when and how to use this grammar in real communication
 
 Ensure the entire output is a single, valid JSON object starting with { and ending with }.
-
-CEFR LEVEL-SPECIFIC EXAMPLES:
-
-A1 Examples:
-
-- "I like to eat ___."
-
-- "My favorite ___ is ___."
-
-- "I can ___ very well."
-
-- "In the morning, I ___."
-
-A2 Examples:
-
-- "Last weekend, I went to ___ and I saw ___."
-
-- "I usually ___ because I think it's ___."
-
-- "I would like to ___ next ___."
-
-- "If I have time, I will ___."
-
-B1 Examples:
-
-- "I think that ___ is important because ___."
-
-- "Although many people believe ____, I think ___."
-
-- "When I was younger, I used to ____, but now I ___."
-`;
-      
-      // Use qwen-max model for better JSON handling ability
-      const modelName = "qwen-max";
-      
-      // Request payload following OpenAI-compatible format for the international endpoint
-      const requestBody = {
-        model: modelName,
-        messages: [
-          { 
-            role: "system", 
-            content: prompt 
-          },
-          { 
-            role: "user", 
-            content: `Generate the lesson content for topic: "${params.topic}", CEFR level: ${params.cefrLevel}. Focus: ${params.focus}. Length: ${params.lessonLength} minutes. ${params.additionalNotes ? `Additional notes: ${params.additionalNotes}` : ''}` 
-          }
-        ],
-        temperature: 0.3, 
-        top_p: 0.9,
-        max_tokens: 8192 // Qwen API maximum limit
-      };
-      
-      console.log(`Using model: ${modelName}`);
-      console.log('Request endpoint:', QWEN_API_URL);
-      
-      // Log request details without sensitive information
-      console.log('Request structure:', JSON.stringify({
-        model: requestBody.model,
-        messages: [
-          { role: requestBody.messages[0].role, content: "**system prompt content** [redacted]" },
-          { role: requestBody.messages[1].role, content: "**user prompt content** [redacted]" }
-        ],
-        temperature: requestBody.temperature,
-        top_p: requestBody.top_p,
-        max_tokens: requestBody.max_tokens
-      }, null, 2));
-      
-      console.log('Sending request to Qwen API...');
-      
-      // Create unique identifiers for this request
-      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-      const topicSafe = params.topic.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 20);
-      const requestId = `${topicSafe}_${timestamp}`;
-      
-      try {
-        const response = await axios({
-          method: 'post',
-          url: QWEN_API_URL,
-          headers: {
-            'Authorization': `Bearer ${this.apiKey}`,
-            'Content-Type': 'application/json'
-          },
-          data: requestBody,
-          timeout: 300000 // 5 minute timeout (increased from 180000)
-        });
-        
-        console.log('Received response from Qwen API');
-        
-        // Parse the response, transform, and return
-        if (response.data?.choices?.[0]?.message?.content) {
-          const content = response.data.choices[0].message.content;
-          let jsonContent: any;
-          
-          try {
-            jsonContent = JSON.parse(content);
-            console.log('Successfully parsed JSON response');
-          } catch (parseError) {
-            console.error('Error parsing Qwen response as JSON:', parseError);
-            
-            // Try cleaning content first
-            let cleanedContent = content.replace(/```json\s*/g, '').replace(/```\s*$/g, '').trim();
-            
-            // Clean responses that start with just "json" (without markdown)
-            if (cleanedContent.trim().startsWith('json\n') || cleanedContent.trim().startsWith('json\r\n') || cleanedContent.trim().startsWith('json ')) {
-              console.log('Detected "json" prefix, removing it');
-              cleanedContent = cleanedContent.trim().replace(/^json\s*[\r\n\s]+/, '');
-            }
-            
-            // Clean any other common AI response prefixes
-            cleanedContent = cleanedContent.trim().replace(/^(Here's the|Here is the|The following is the)\s*[\w\s]*:?\s*[\r\n]*/, '');
-            cleanedContent = cleanedContent.trim().replace(/^JSON\s*[\r\n]+/, '');
-            
-            // Clean leading/trailing quotes that sometimes wrap the entire JSON
-            if (cleanedContent.startsWith('"') && cleanedContent.endsWith('"')) {
-              console.log('Removing wrapping quotes');
-              cleanedContent = cleanedContent.slice(1, -1);
-            }
-            
-            // Fix common character encoding issues
-            cleanedContent = cleanedContent.replace(/[""]|['']/g, '"')  // Replace smart quotes
-                                         .replace(/…/g, '...')          // Replace ellipsis
-                                         .replace(/–|—/g, '-')          // Replace em/en dashes
-                                         .replace(/\u00A0/g, ' ')       // Replace non-breaking spaces
-                                         .replace(/[\u2000-\u206F]/g, ' ') // Replace other unicode spaces
-                                         .replace(/\r\n|\r/g, '\n');    // Normalize line endings
-            
-            try {
-              jsonContent = JSON.parse(cleanedContent);
-              console.log('Successfully parsed JSON after cleaning content');
-            } catch (cleanError) {
-              console.error('Failed to parse JSON even after cleaning, trying to fix malformed JSON');
-              
-              // Try fixing malformed JSON
-              const fixedContent = this.parseQwenColonFormat(cleanedContent);
-              
-              try {
-                jsonContent = JSON.parse(fixedContent);
-                console.log('Successfully parsed JSON after fixing malformed content');
-              } catch (fixError) {
-                console.error('Failed to parse JSON even after fixing, returning error response');
-                return {
-                  title: `Lesson on ${params.topic}`,
-                  content: content,
-                  error: 'JSON parsing failed',
-                  provider: 'qwen'
-                };
-              }
-            }
-          }
-          
-          // Quality control check before formatting
-          const validatedContent = await this.validateAndImproveContent(jsonContent, params);
-          
-          // Format content AND generate images
-          return await this.formatLessonContent(validatedContent);
-        }
-        
-        return {
-          title: params.topic ? `Lesson on ${params.topic}` : 'ESL Lesson',
-          content: 'Unable to generate lesson content',
-          error: 'No content in response',
-          provider: 'qwen'
-        };
-      } catch (apiError: any) {
-        console.error('Error during API request:', apiError.message);
-        
-        if (apiError.response) {
-          // The request was made and the server responded with a status code
-          console.error('Qwen API Response Error:');
-          console.error('Status:', apiError.response.status);
-          console.error('Status Text:', apiError.response.statusText);
-          console.error('Headers:', JSON.stringify(apiError.response.headers, null, 2));
-          console.error('Response Data:', JSON.stringify(apiError.response.data, null, 2));
-          
-          return {
-            title: `Lesson Generation Error`,
-            provider: 'qwen',
-            error: `Qwen API Error: ${apiError.response.status} - ${apiError.response.statusText}`,
-            sections: [{
-              type: "error",
-              title: "API Error",
-              content: `The Qwen AI service returned an error: ${apiError.response.status} ${apiError.response.statusText}. ${
-                apiError.response.data && apiError.response.data.error && apiError.response.data.error.message
-                  ? `\n\nAPI error: ${apiError.response.data.error.message}` 
-                  : apiError.response.data && apiError.response.data.message
-                    ? `\n\nMessage: ${apiError.response.data.message}`
-                    : ''
-              }`
-            }]
-          };
-        } else if (apiError.request) {
-          // The request was made but no response was received
-          console.error('Qwen API No Response Error:');
-          console.error('Request:', apiError.request);
-          
-          return {
-            title: `Lesson Generation Error`,
-            provider: 'qwen',
-            error: 'No response received from Qwen API',
-            sections: [{
-              type: "error",
-              title: "Connection Error",
-              content: "No response was received from the Qwen AI service. This could be due to a timeout or network issue."
-            }]
-          };
-        } else {
-          // Something happened in setting up the request that triggered an Error
-          console.error('Qwen API Setup Error:', apiError.message);
-          
-          return {
-            title: `Lesson Generation Error`,
-            provider: 'qwen',
-            error: `Error setting up request: ${apiError.message}`,
-            sections: [{
-              type: "error",
-              title: "Request Error",
-              content: `An error occurred while preparing the request: ${apiError.message}`
-            }]
-          };
-        }
-      }
-    } catch (error: any) {
-      console.error('Error in QwenService.generateLesson:', error.message);
-      throw error;
-    }
-  }
-  
-  /**
-   * Validate and improve the generated content for quality control
-   */
-  private async validateAndImproveContent(content: any, params: LessonGenerateParams): Promise<any> {
-    try {
-      console.log('Starting quality control validation for Qwen content...');
-      
-      // Check if we have sentence frames that need validation
-      if (content.sections) {
-        for (let section of content.sections) {
-          if (section.type === 'sentenceFrames' && section.frames) {
-            for (let frame of section.frames) {
-              if (frame.examples && Array.isArray(frame.examples)) {
-                try {
-                  // Validate each example for logical coherence
-                  const validatedExamples = await this.validateSentenceFrameExamples(
-                    frame.examples, 
-                    frame.pattern || frame.patternTemplate,
-                    params.topic
-                  );
-                  frame.examples = validatedExamples;
-                  console.log('Successfully validated sentence frame examples using Qwen');
-                } catch (validationError) {
-                  console.error('Sentence frame validation failed, keeping original examples:', validationError);
-                  // Keep original examples if validation fails
-                  // This prevents the entire lesson from failing due to validation issues
-                }
-              }
-            }
-          }
-        }
-      }
-      
-      console.log('Quality control validation completed for Qwen content');
-      return content;
-    } catch (error) {
-      console.error('Error in quality control validation:', error);
-      return content; // Return original content if validation fails
-    }
-  }
-
-  /**
-   * Validate sentence frame examples for logical coherence
-   */
-  private async validateSentenceFrameExamples(examples: any[], pattern: string, topic: string): Promise<any[]> {
-    try {
-      const validationPrompt = `You are a quality control expert for ESL lesson content specializing in sentence pattern validation.
-
-CRITICAL TASK: Review these sentence examples and ensure they CORRECTLY DEMONSTRATE the target sentence pattern while being logical and grammatically correct.
-
-TARGET SENTENCE PATTERN: ${pattern}
-LESSON TOPIC: ${topic}
-CURRENT EXAMPLES: ${JSON.stringify(examples)}
-
-VALIDATION CRITERIA (ALL must be met):
-1. **PATTERN ADHERENCE**: The sentence MUST follow the exact structure of the target pattern
-2. **LOGICAL MEANING**: The content must make logical sense
-3. **GRAMMAR CORRECTNESS**: Perfect grammar and syntax
-4. **TOPIC RELEVANCE**: Appropriate for the lesson topic
-
-COMMON PATTERN ISSUES TO FIX:
-- If pattern is "It is ___ to ___ because ___" but example is "Mars is difficult because...", fix to "It is difficult to travel to Mars because..."
-- If pattern uses specific connectors (like "because", "when", "although"), ensure they're present
-- If pattern requires infinitives ("to + verb"), ensure they're used correctly
-- If pattern has placeholders, ensure each placeholder is properly filled
-
-EXAMPLE FIXES FOR PATTERN "It is ___ to ___ because ___":
-❌ WRONG: "Mars is difficult because it is far away" (doesn't follow pattern)
-✅ CORRECT: "It is difficult to travel to Mars because it is far away"
-
-❌ WRONG: "Space exploration expensive because rockets cost money" (missing pattern structure)
-✅ CORRECT: "It is expensive to explore space because rockets cost a lot of money"
-
-Return ONLY a JSON array of corrected examples. Each example must perfectly demonstrate the target sentence pattern while being logical and appropriate for the topic.
-`;
-
-      const requestBody = {
-        model: "qwen-max",
-        messages: [
-          { role: "system", content: "You are a meticulous ESL content quality control expert. Return only valid JSON." },
-          { role: "user", content: validationPrompt }
-        ],
-        temperature: 0.1, // Low temperature for consistency
-        max_tokens: 2000
-      };
-
-      // Use a shorter timeout for validation to prevent hanging
-      const response = await axios({
-        method: 'post',
-        url: 'https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions',
-        headers: {
-          'Authorization': `Bearer ${this.apiKey}`,
-          'Content-Type': 'application/json'
-        },
-        data: requestBody,
-        timeout: 20000 // Reduced from 30000 to 20000 (20 seconds)
-      });
-
-      if (response.data?.choices?.[0]?.message?.content) {
-        try {
-          const validatedExamples = JSON.parse(response.data.choices[0].message.content);
-          console.log('Successfully validated sentence frame examples');
-          return Array.isArray(validatedExamples) ? validatedExamples : examples;
-        } catch (parseError) {
-          console.error('Error parsing validation response, using original examples');
-          return examples;
-        }
-      }
-
-      return examples;
-    } catch (error: any) {
-      console.error('Error validating sentence frame examples:', error.message);
-      // Instead of throwing, return original examples to prevent cascade failure
-      return examples;
-    }
-  }
-
-  /**
-   * Format and process the lesson content, adding image data
-   */
-  private async formatLessonContent(content: any): Promise<any> {
-    try {
-      // Ensure content is a valid object
-      if (!content || typeof content !== 'object') {
-        console.log('Content is not a valid object, creating a default structure');
-        content = {
-          title: 'ESL Lesson',
-          sections: [],
-          provider: 'qwen'
-        };
-      }
-      
-      const lessonContent = content;
-      
-      // Log the state of cloze/unscramble data BEFORE validation
-      const preValidationCloze = lessonContent.sections?.find((s: any) => s?.type === 'cloze');
-      const preValidationUnscramble = lessonContent.sections?.find((s: any) => s?.type === 'sentenceUnscramble');
-      console.log('Cloze data BEFORE validation:', JSON.stringify(preValidationCloze, null, 2));
-      console.log('Sentence Unscramble data BEFORE validation:', JSON.stringify(preValidationUnscramble, null, 2));
-      
-      // Add provider field
-      lessonContent.provider = 'qwen';
-      
-      // Ensure the content has a title
-      if (!lessonContent.title || typeof lessonContent.title !== 'string') {
-        console.log('Missing or invalid title, setting default');
-        lessonContent.title = 'ESL Lesson';
-      }
-      
-      // Ensure sections array exists
-      if (!lessonContent.sections || !Array.isArray(lessonContent.sections)) {
-        console.log('Missing or invalid sections array, creating an empty one');
-        lessonContent.sections = [];
-      }
-      
-      // Process each section if sections array exists
-      if (lessonContent.sections && Array.isArray(lessonContent.sections)) {
-        console.log('Validating lesson sections...');
-        
-        // Initialize new array for validated sections
-        const validatedSections = [];
-        
-        // Check if required sections exist, track them
-        let hasReadingSection = false;
-        
-        // Validate all sections have the required properties
-        for (let i = 0; i < lessonContent.sections.length; i++) {
-          const section = lessonContent.sections[i];
-          let isValidSection = true; // Assume valid initially
-          
-          // Skip if not a valid section object
-          if (!section || typeof section !== 'object') {
-            console.log(`Section ${i} is not a valid object, skipping it`);
-            isValidSection = false;
-            continue; // Skip to next iteration
-          }
-          
-          // Ensure all sections have a type and title
-          if (!section.type || typeof section.type !== 'string') {
-            console.log(`Section ${i} missing type, setting to 'unknown'`);
-            section.type = 'unknown'; // Still try to keep the section if possible
-          }
-          
-          if (!section.title || typeof section.title !== 'string') {
-            console.log(`Section ${i} missing title, adding default title for ${section.type}`);
-            section.title = `${section.type.charAt(0).toUpperCase() + section.type.slice(1)} Section`;
-          }
-          
-          // Track if required reading section exists
-          if (section.type === 'reading') hasReadingSection = true;
-          
-          // Validate reading section
-          if (section.type === 'reading') {
-            if (!section.paragraphs || !Array.isArray(section.paragraphs) || section.paragraphs.length === 0) {
-              console.log('Reading section missing paragraphs, creating empty array');
-              section.paragraphs = ['No content available'];
-            }
-          }
-          
-          // Validate vocabulary section
-          if (section.type === 'vocabulary') {
-            if (!section.words || !Array.isArray(section.words) || section.words.length === 0) {
-              console.log('Vocabulary section missing words, creating empty array');
-              section.words = [];
-            } else {
-              // Validate each vocabulary word (and filter out nulls)
-              const validWords = [];
-              for (let j = 0; j < section.words.length; j++) {
-                const word = section.words[j];
-                if (!word || typeof word !== 'object') {
-                  console.log(`Vocabulary word ${j} is not a valid object, skipping it`);
-                  continue; // Skip this word
-                }
-                
-                // Add defaults for missing fields but keep the word
-                if (!word.term || typeof word.term !== 'string') word.term = 'unknown';
-                if (!word.definition || typeof word.definition !== 'string') word.definition = 'No definition available';
-                if (!word.partOfSpeech || typeof word.partOfSpeech !== 'string') word.partOfSpeech = 'noun';
-                if (!word.example || typeof word.example !== 'string') word.example = `Example with "${word.term}".`;
-                if (!word.semanticGroup || typeof word.semanticGroup !== 'string') word.semanticGroup = 'General Vocabulary';
-                if (!word.additionalExamples || !Array.isArray(word.additionalExamples)) word.additionalExamples = [];
-                if (!word.wordFamily || typeof word.wordFamily !== 'object') word.wordFamily = { words: [], description: 'No related words available' };
-                if (!word.collocations || !Array.isArray(word.collocations)) word.collocations = [];
-                if (!word.pronunciation || typeof word.pronunciation !== 'object') word.pronunciation = { syllables: [word.term], stressIndex: 0, phoneticGuide: word.term };
-                
-                validWords.push(word); // Add the potentially modified word
-              }
-              section.words = validWords; // Assign the filtered/validated words
-            }
-          }
-          
-          // Validate comprehension section
-          if (section.type === 'comprehension') {
-            if (!section.questions || !Array.isArray(section.questions) || section.questions.length === 0) {
-              console.log('Comprehension section missing questions, creating empty array');
-              section.questions = [];
-            } else {
-              // Validate each question (and filter out nulls)
-              const validQuestions = [];
-              for (let j = 0; j < section.questions.length; j++) {
-                const question = section.questions[j];
-                if (!question || typeof question !== 'object') {
-                  console.log(`Comprehension question ${j} is not a valid object, skipping it`);
-                  continue; // Skip this question
-                }
-                // Add defaults for missing fields but keep the question
-                if (!question.question || typeof question.question !== 'string') question.question = 'Question text missing';
-                if (!question.options || !Array.isArray(question.options) || question.options.length === 0) question.options = ['True', 'False'];
-                if (!question.correctAnswer) question.correctAnswer = question.options[0];
-                if (!question.explanation || typeof question.explanation !== 'string') question.explanation = 'No explanation available.';
-                
-                validQuestions.push(question);
-              }
-              section.questions = validQuestions;
-            }
-          }
-          
-          // Validate cloze section
-          if (section.type === 'cloze') {
-            if (!section.text || typeof section.text !== 'string' || !section.text.includes('[')) {
-              console.log('Cloze section has invalid text, removing section');
-              isValidSection = false;
-            } else if (!section.wordBank || !Array.isArray(section.wordBank) || section.wordBank.length === 0) {
-              console.log('Cloze section missing wordBank, trying to extract from text');
-              const wordBankMatches = section.text.match(/\[\d+:([^\]]+)\]/g) || [];
-              const wordBank = wordBankMatches.map(match => {
-                const word = match.match(/\[\d+:([^\]]+)\]/);
-                return word ? word[1] : '';
-              }).filter(Boolean);
-              
-              if (wordBank.length > 0) {
-                section.wordBank = wordBank;
-                console.log('Successfully extracted wordBank');
-              } else {
-                console.log('Could not extract wordBank from text, removing section');
-                isValidSection = false;
-              }
-            }
-            if (isValidSection && (!section.teacherNotes || typeof section.teacherNotes !== 'string')) {
-              section.teacherNotes = 'Review the vocabulary before attempting to fill in the blanks.';
-            }
-          }
-          
-          // Validate sentence unscramble section
-          if (section.type === 'sentenceUnscramble') {
-            if (!section.sentences || !Array.isArray(section.sentences) || section.sentences.length === 0) {
-              console.log('Sentence unscramble section missing sentences, removing section');
-              isValidSection = false;
-            } else {
-              // Validate each sentence (and filter out nulls)
-              const validSentences = [];
-              for (let j = 0; j < section.sentences.length; j++) {
-                const sentence = section.sentences[j];
-                if (!sentence || typeof sentence !== 'object') {
-                  console.log(`Sentence ${j} is not a valid object, skipping it`);
-                  continue; // Skip this sentence
-                }
-                if (!sentence.words || !Array.isArray(sentence.words) || sentence.words.length === 0) {
-                  console.log(`Sentence ${j} missing words array, skipping it`);
-                  continue; // Skip this sentence
-                }
-                if (!sentence.correctSentence || typeof sentence.correctSentence !== 'string') {
-                  console.log(`Sentence ${j} missing correctSentence, generating from words`);
-                  sentence.correctSentence = sentence.words.join(' ') + '.';
-                }
-                validSentences.push(sentence);
-              }
-              section.sentences = validSentences; // Assign the filtered/validated sentences
-              
-              // If all sentences were invalid after inner validation, remove the section
-              if (section.sentences.length === 0) {
-                console.log('All sentences were invalid after validation, removing section');
-                isValidSection = false;
-              }
-            }
-            if (isValidSection && (!section.teacherNotes || typeof section.teacherNotes !== 'string')) {
-              section.teacherNotes = 'This exercise helps students practice word order in English sentences.';
-            }
-          }
-          
-          // Validate discussion section
-          if (section.type === 'discussion') {
-             if (!section.questions || !Array.isArray(section.questions) || section.questions.length === 0) {
-              console.log('Discussion section missing questions, creating empty array');
-              section.questions = [];
-            } else {
-              // Validate each question (and filter out nulls)
-              const validQuestions = [];
-              for (let j = 0; j < section.questions.length; j++) {
-                let q = section.questions[j];
-                let questionObj: any = {}; 
-                
-                if (typeof q === 'string') {
-                  questionObj = { question: q, paragraphContext: null };
-                } else if (q && typeof q === 'object') {
-                   questionObj = { ...q }; 
-                } else {
-                  console.log(`Discussion question ${j} is not a valid object, creating default`);
-                  questionObj = { question: `Discussion Question ${j + 1}`, paragraphContext: null };
-                }
-                
-                // Ensure question field exists
-                if (!questionObj.question || typeof questionObj.question !== 'string') {
-                  questionObj.question = questionObj.text || `Discussion Question ${j + 1}`;
-                }
-                
-                // Check for paragraph context
-                if (!questionObj.paragraphContext) {
-                  questionObj.paragraphContext = questionObj.context || questionObj.paragraph || questionObj.introduction || null;
-                }
-                validQuestions.push(questionObj);
-              }
-               section.questions = validQuestions;
-            }
-          }
-          
-          // Validate quiz section
-          if (section.type === 'quiz') {
-            if (!section.questions || !Array.isArray(section.questions) || section.questions.length === 0) {
-              console.log('Quiz section missing questions, creating empty array');
-              section.questions = [];
-            } else {
-              // Validate each question (and filter out nulls)
-              const validQuestions = [];
-              for (let j = 0; j < section.questions.length; j++) {
-                const question = section.questions[j];
-                 if (!question || typeof question !== 'object') {
-                  console.log(`Quiz question ${j} is not a valid object, skipping it`);
-                   continue;
-                 }
-                 // Add defaults
-                 if (!question.question || typeof question.question !== 'string') question.question = 'Question text missing';
-                 if (!question.options || !Array.isArray(question.options) || question.options.length === 0) question.options = ['True', 'False'];
-                 if (!question.correctAnswer) question.correctAnswer = question.options[0];
-                 
-                 validQuestions.push(question);
-              }
-               section.questions = validQuestions;
-            }
-          }
-          
-          // Add valid section to new array
-          if (isValidSection) {
-            validatedSections.push(section);
-          } else {
-             console.log(`Section type '${section.type}' (index ${i}) was deemed invalid and removed.`);
-          }
-        }
-        
-        // Replace old sections array with validated one
-        lessonContent.sections = validatedSections;
-        
-        // Ensure there is at least one reading section
-        // Re-check hasReadingSection on the newly validated array
-        hasReadingSection = lessonContent.sections.some(s => s.type === 'reading');
-        if (!hasReadingSection) {
-          console.log('No valid reading section found after validation, adding a default one');
-          // Add to the beginning of the validated array
-          lessonContent.sections.unshift({
-            type: 'reading',
-            title: `Reading: ${lessonContent.title}`,
-            paragraphs: ['No reading content available. Please try generating the lesson again.']
-          });
-        }
-        
-        // DO NOT add default sections for cloze and sentenceUnscramble
-        // Let the UI display the message about using AI to generate custom exercises
-        
-        // Image generation loop uses validated array
-        console.log('Starting image generation loop for Qwen lesson (using validated sections)...');
-        for (const section of lessonContent.sections) { // Iterate over the validated array
-          // Skip if not a valid section object (redundant check, but safe)
-          if (!section || typeof section !== 'object') continue;
-          
-          // Generate images for Vocabulary
-          if (section.type === 'vocabulary' && section.words && Array.isArray(section.words)) {
-            console.log(`Found ${section.words.length} vocabulary words, generating images...`);
-            // Use Promise.all for potentially faster image generation
-            await Promise.all(section.words.map(async (word) => {
-              if (word.imagePrompt) {
-                try {
-                  const requestId = `vocab_${word.term ? word.term.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 15) : 'word'}`;
-                  word.imageBase64 = await stabilityService.generateImage(word.imagePrompt, requestId);
-                } catch (imgError) {
-                  console.error(`Error generating image for vocab word ${word.term}:`, imgError);
-                  word.imageBase64 = null;
-                }
-              }
-            }));
-          }
-
-          // Handle discussion section specially (including image generation)
-          if (section.type === 'discussion' && section.questions && Array.isArray(section.questions)) {
-             console.log(`Found ${section.questions.length} discussion questions, generating images...`);
-             // Use Promise.all for potentially faster image generation
-             await Promise.all(section.questions.map(async (q) => {
-                if (q.imagePrompt) {
-                    try {
-                      const requestId = `disc_${q.question ? q.question.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 15) : 'question'}`;
-                      q.imageBase64 = await stabilityService.generateImage(q.imagePrompt, requestId);
-                    } catch (imgError) {
-                      console.error(`Error generating image for discussion question:`, imgError);
-                      q.imageBase64 = null;
-                    }
-                 }
-             }));
-          }
-        }
-        console.log('Finished image generation loop for Qwen lesson.');
-      }
-      
-      return lessonContent;
-    } catch (error: any) {
-      console.error('Error formatting lesson content:', error);
-      return content; // Return original content on formatting error
-    }
-  }
-
-  /**
-   * Special parser for Qwen's unique colon-based format
-   * This handles the specific pattern seen in Qwen AI responses where objects use colons as separators
-   * It attempts a more robust line-by-line parsing approach.
-   */
-  private parseQwenColonFormat(content: string): any | null {
-    console.log("Attempting robust parsing of Qwen's colon format");
-    
-    // Basic check for minimum content
-    if (!content || content.length < 50) {
-      console.log("Content too short, skipping special parser");
-      return null;
-    }
-    
-    // Clean up potential markdown and trim
-    let cleanedContent = content.replace(/```json\s*/g, '').replace(/```\s*$/g, '').trim();
-    
-    // Clean responses that start with just "json" (without markdown)
-    if (cleanedContent.trim().startsWith('json\n') || cleanedContent.trim().startsWith('json\r\n') || cleanedContent.trim().startsWith('json ')) {
-      cleanedContent = cleanedContent.trim().replace(/^json\s*[\r\n\s]+/, '');
-    }
-    
-    // Clean other prefixes and encoding issues
-    cleanedContent = cleanedContent.trim().replace(/^(Here's the|Here is the|The following is the)\s*[\w\s]*:?\s*[\r\n]*/, '');
-    cleanedContent = cleanedContent.trim().replace(/^JSON\s*[\r\n]+/, '');
-    cleanedContent = cleanedContent.replace(/[""]|['']/g, '"')  // Replace smart quotes
-                                   .replace(/…/g, '...')          // Replace ellipsis
-                                   .replace(/–|—/g, '-')          // Replace em/en dashes
-                                   .replace(/\u00A0/g, ' ')       // Replace non-breaking spaces
-                                   .replace(/[\u2000-\u206F]/g, ' ') // Replace other unicode spaces
-                                   .replace(/\r\n|\r/g, '\n');    // Normalize line endings
-    
-    // Attempt to fix the most common structural issues with regex first
-    try {
-      // Convert "key" : "value" : patterns to "key": "value",
-      cleanedContent = cleanedContent.replace(/"([^"\\]*(?:\\.[^"\\]*)*)"\s*:\s*"([^"\\]*(?:\\.[^"\\]*)*)"\s*:/g, '"$1": "$2",');
-      // Convert "key" : value : (for numbers/booleans) to "key": value,
-      cleanedContent = cleanedContent.replace(/"([^"\\]*(?:\\.[^"\\]*)*)"\s*:\s*([\d\.\w]+)\s*:/g, '"$1": $2,');
-      // Convert array items like , "value" : to , "value",
-      cleanedContent = cleanedContent.replace(/,\s*"([^"\\]*(?:\\.[^"\\]*)*)"\s*:/g, ', "$1",');
-      // Convert first array items like [ "value" : to [ "value",
-      cleanedContent = cleanedContent.replace(/\[\s*"([^"\\]*(?:\\.[^"\\]*)*)"\s*:/g, '[ "$1",');
-      // Remove trailing commas before closing braces/brackets
-      cleanedContent = cleanedContent.replace(/,\s*([}\]])/g, '$1');
-      // Ensure object starts correctly after a key
-      cleanedContent = cleanedContent.replace(/"([^"\\]*(?:\\.[^"\\]*)*)"\s*:\s*{/g, '"$1": {');
-      // Ensure array starts correctly after a key
-      cleanedContent = cleanedContent.replace(/"([^"\\]*(?:\\.[^"\\]*)*)"\s*:\s*\[/g, '"$1": [');
-      // Fix quotes inside strings that break JSON parsing
-      cleanedContent = cleanedContent.replace(/(?<=": ".*?)\\?"(?=.*?")/g, '\\"');
-      // Fix missing commas between properties
-      cleanedContent = cleanedContent.replace(/}(\s*){/g, '},\n{');
-      // Fix missing commas between array items
-      cleanedContent = cleanedContent.replace(/}(\s*)\[/g, '},\n[');
-      // Fix duplicate commas
-      cleanedContent = cleanedContent.replace(/,\s*,/g, ',');
-      
-      // Remove potential garbage/incomplete structures at the end
-      // Find the last valid closing brace or bracket
-      const lastBrace = cleanedContent.lastIndexOf('}');
-      const lastBracket = cleanedContent.lastIndexOf(']');
-      const endPoint = Math.max(lastBrace, lastBracket);
-      if (endPoint > 0 && endPoint < cleanedContent.length - 1) {
-         // Check nesting to ensure we are closing the root object
-         let openBraces = 0;
-         let openBrackets = 0;
-         for (let i = 0; i <= endPoint; i++) {
-            if (cleanedContent[i] === '{') openBraces++;
-            else if (cleanedContent[i] === '}') openBraces--;
-            else if (cleanedContent[i] === '[') openBrackets++;
-            else if (cleanedContent[i] === ']') openBrackets--;
-         }
-         // Only truncate if we are sure the structure up to endPoint is potentially valid
-         // and that it seems to close the root object
-         if (openBraces === 0 && openBrackets === 0 && cleanedContent[endPoint] === '}') { 
-            console.log(`Truncating potentially corrupt data after index ${endPoint}`);
-            cleanedContent = cleanedContent.substring(0, endPoint + 1);
-         } else {
-            console.log("Could not reliably determine truncation point.");
-         }
-      } else if (endPoint === -1) {
-          console.log("No closing brace/bracket found for truncation.");
-          // If there's no closing brace at all, the JSON is likely completely broken
-          return null; 
-      }
-
-      // Final check: Does it start with { and end with }?
-      if (!cleanedContent.startsWith('{') || !cleanedContent.endsWith('}')) {
-        console.log("Cleaned content doesn't start/end with braces.")
-        // Attempt to find the first { and last }
-        const firstBrace = cleanedContent.indexOf('{');
-        const lastBraceIdx = cleanedContent.lastIndexOf('}');
-        if (firstBrace !== -1 && lastBraceIdx > firstBrace) {
-          cleanedContent = cleanedContent.substring(firstBrace, lastBraceIdx + 1);
-          console.log("Extracted content between first and last brace.")
-        } else {
-          console.log("Cannot fix start/end braces.");
-          return null;
-        }
-      }
-      
-      // Try parsing the regex-fixed content
-      try {
-        const parsedJson = JSON.parse(cleanedContent);
-        console.log("Successfully parsed Qwen content after regex fixing.");
-        return parsedJson;
-      } catch (parseError) {
-        // Extra recovery attempt: try to recover partial content
-        console.log("Standard JSON parse failed, attempting to extract valid structure manually");
-        
-        // Try to reconstruct basic lesson structure from the content
-        const titleMatch = cleanedContent.match(/"title":\s*"([^"]+)"/);
-        const levelMatch = cleanedContent.match(/"level":\s*"([^"]+)"/);
-        
-        if (titleMatch) {
-          console.log("Found title in malformed content, constructing emergency fallback structure");
-          // Create a minimal valid structure with what we can extract
-          const emergencyStructure = {
-            title: titleMatch[1] || "Recovered Lesson",
-            sections: [
-              {
-                type: "reading",
-                title: "Reading: " + (titleMatch[1] || "Recovered Content"),
-                paragraphs: [
-                  "Note: This is a recovered lesson. The original content couldn't be fully parsed.",
-                  "Please try again with a different topic or contact support if this issue persists."
-                ]
-              }
-            ]
-          };
-          
-          // Try to extract any paragraphs we can find
-          const paragraphMatches = cleanedContent.match(/"paragraphs":\s*\[(.*?)\]/gs);
-          if (paragraphMatches && paragraphMatches.length > 0) {
-            try {
-              // Extract paragraphs from the first match
-              const paragraphsJson = paragraphMatches[0].replace(/"paragraphs":\s*/, '');
-              const paragraphs = JSON.parse(paragraphsJson);
-              if (Array.isArray(paragraphs) && paragraphs.length > 0) {
-                emergencyStructure.sections[0].paragraphs = paragraphs;
-              }
-            } catch (e) {
-              console.log("Could not extract paragraphs from malformed content");
-            }
-          }
-          
-          return emergencyStructure;
-        }
-        
-        return null;
-      }
-    } catch (error) {
-      console.error("Error during robust Qwen parsing attempt:", error);
-      console.log("Failed content sample (start):", content.substring(0, 200));
-      console.log("Failed content sample (end):", content.substring(content.length - 200));
-      return null; // Indicate failure
-    }
-  }
-}
-
-export const qwenService = new QwenService(process.env.QWEN_API_KEY || '');
