@@ -1,0 +1,160 @@
+2025-05-30 15:12:33.21
+a3924ecb
+User
+'Connection: keep-alive\r\n' +
+2025-05-30 15:12:33.21
+a3924ecb
+User
+'\r\n',
+2025-05-30 15:12:33.21
+a3924ecb
+User
+_keepAliveTimeout: 0,
+2025-05-30 15:12:33.21
+a3924ecb
+User
+_onPendingData: [Function: nop],
+2025-05-30 15:12:33.21
+a3924ecb
+User
+agent: [Agent],
+2025-05-30 15:12:33.21
+a3924ecb
+User
+socketPath: undefined,
+2025-05-30 15:12:33.21
+a3924ecb
+User
+method: 'POST',
+2025-05-30 15:12:33.21
+a3924ecb
+User
+maxHeaderSize: undefined,
+2025-05-30 15:12:33.21
+a3924ecb
+User
+insecureHTTPParser: undefined,
+2025-05-30 15:12:33.21
+a3924ecb
+User
+joinDuplicateHeaders: undefined,
+2025-05-30 15:12:33.21
+a3924ecb
+User
+path: '/compatible-mode/v1/chat/completions',
+2025-05-30 15:12:33.21
+a3924ecb
+User
+_ended: false,
+2025-05-30 15:12:33.21
+a3924ecb
+User
+res: null,
+2025-05-30 15:12:33.21
+a3924ecb
+User
+aborted: false,
+2025-05-30 15:12:33.21
+a3924ecb
+User
+timeoutCb: [Function: emitRequestTimeout],
+2025-05-30 15:12:33.21
+a3924ecb
+User
+upgradeOrConnect: false,
+2025-05-30 15:12:33.21
+a3924ecb
+User
+parser: null,
+2025-05-30 15:12:33.21
+a3924ecb
+User
+maxHeadersCount: null,
+2025-05-30 15:12:33.21
+a3924ecb
+User
+reusedSocket: false,
+2025-05-30 15:12:33.21
+a3924ecb
+User
+host: 'dashscope-intl.aliyuncs.com',
+2025-05-30 15:12:33.21
+a3924ecb
+User
+protocol: 'https:',
+2025-05-30 15:12:33.21
+a3924ecb
+User
+_redirectable: [Circular *1],
+2025-05-30 15:12:33.21
+a3924ecb
+User
+[Symbol(shapeMode)]: false,
+2025-05-30 15:12:33.21
+a3924ecb
+User
+[Symbol(kCapture)]: false,
+2025-05-30 15:12:33.21
+a3924ecb
+User
+[Symbol(kBytesWritten)]: 0,
+2025-05-30 15:12:33.21
+a3924ecb
+User
+[Symbol(kNeedDrain)]: false,
+2025-05-30 15:12:33.21
+a3924ecb
+User
+[Symbol(corked)]: 0,
+2025-05-30 15:12:33.21
+a3924ecb
+User
+[Symbol(kOutHeaders)]: [Object: null prototype],
+2025-05-30 15:12:33.21
+a3924ecb
+User
+[Symbol(errored)]: null,
+2025-05-30 15:12:33.21
+a3924ecb
+User
+[Symbol(kHighWaterMark)]: 16384,
+2025-05-30 15:12:33.21
+a3924ecb
+User
+[Symbol(kRejectNonStandardBodyWrites)]: false,
+2025-05-30 15:12:33.21
+a3924ecb
+User
+[Symbol(kUniqueHeaders)]: null
+2025-05-30 15:12:33.21
+a3924ecb
+User
+},
+2025-05-30 15:12:33.21
+a3924ecb
+User
+_currentUrl: 'https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions',
+2025-05-30 15:12:33.21
+a3924ecb
+User
+_timeout: null,
+2025-05-30 15:12:33.21
+a3924ecb
+User
+[Symbol(shapeMode)]: true,
+2025-05-30 15:12:33.21
+a3924ecb
+User
+[Symbol(kCapture)]: false
+2025-05-30 15:12:33.21
+a3924ecb
+User
+}
+2025-05-30 15:12:33.21
+a3924ecb
+User
+}
+2025-05-30 15:12:35.44
+a3924ecb
+User
+8:12:35 AM [express] POST /api/lessons/generate 503 in 229779ms :: {"message":"AI service unavailabl…
