@@ -1,0 +1,136 @@
+2025-05-31 07:34:26.98
+e7e38351
+User
+chunkedEncoding: false,
+2025-05-31 07:34:26.98
+e7e38351
+User
+shouldKeepAlive: true,
+2025-05-31 07:34:26.98
+e7e38351
+User
+maxRequestsOnConnectionReached: false,
+2025-05-31 07:34:26.98
+e7e38351
+User
+_defaultKeepAlive: true,
+2025-05-31 07:34:26.98
+e7e38351
+User
+useChunkedEncodingByDefault: true,
+2025-05-31 07:34:26.98
+e7e38351
+User
+sendDate: false,
+2025-05-31 07:34:26.98
+e7e38351
+User
+_removedConnection: false,
+2025-05-31 07:34:26.98
+e7e38351
+User
+_removedContLen: false,
+2025-05-31 07:34:26.98
+e7e38351
+User
+_contentLength: '56277',
+2025-05-31 07:34:26.98
+e7e38351
+User
+_hasBody: true,
+2025-05-31 07:34:26.98
+e7e38351
+User
+_trailer: '',
+2025-05-31 07:34:26.98
+e7e38351
+User
+finished: true,
+2025-05-31 07:34:26.98
+e7e38351
+User
+_headerSent: true,
+2025-05-31 07:34:26.98
+e7e38351
+User
+_closed: false,
+2025-05-31 07:34:26.98
+e7e38351
+User
+socket: [TLSSocket],
+2025-05-31 07:34:26.98
+e7e38351
+User
+_header: 'POST /compatible-mode/v1/chat/completions HTTP/1.1\r\n' +
+2025-05-31 07:34:26.98
+e7e38351
+User
+'Accept: application/json, text/plain, */*\r\n' +
+2025-05-31 07:34:26.98
+e7e38351
+User
+'Host: dashscope-intl.aliyuncs.com\r\n' +
+2025-05-31 07:34:26.98
+e7e38351
+User
+'Connection: keep-alive\r\n' +
+2025-05-31 07:34:26.98
+e7e38351
+User
+_onPendingData: [Function: nop],
+2025-05-31 07:34:26.98
+e7e38351
+User
+agent: [Agent],
+2025-05-31 07:34:26.98
+e7e38351
+User
+socketPath: undefined,
+2025-05-31 07:34:26.98
+e7e38351
+User
+method: 'POST',
+2025-05-31 07:34:26.98
+e7e38351
+User
+maxHeaderSize: undefined,
+2025-05-31 07:34:26.98
+e7e38351
+User
+joinDuplicateHeaders: undefined,
+2025-05-31 07:34:26.98
+e7e38351
+User
+aborted: false,
+2025-05-31 07:34:26.98
+e7e38351
+User
+[Symbol(kCapture)]: false,
+2025-05-31 07:34:26.98
+e7e38351
+User
+[Symbol(kBytesWritten)]: 0,
+2025-05-31 07:34:26.98
+e7e38351
+User
+[Symbol(kHighWaterMark)]: 16384,
+2025-05-31 07:34:26.98
+e7e38351
+User
+[Symbol(kRejectNonStandardBodyWrites)]: false,
+2025-05-31 07:34:26.98
+e7e38351
+User
+[Symbol(kUniqueHeaders)]: null
+2025-05-31 07:34:26.98
+e7e38351
+User
+},
+2025-05-31 07:34:26.98
+e7e38351
+User
+_timeout: null,
+2025-05-31 07:34:26.98
+e7e38351
+User
+at GeminiService.generateLesson (file:///home/runner/workspace/dist/index.js:1347:21)

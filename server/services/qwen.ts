@@ -17,6 +17,7 @@ export class QwenService {
       console.warn('Qwen API key is not provided or is empty');
     }
     this.apiKey = apiKey;
+    console.log(`Qwen service initialized. API key present: ${!!apiKey}, Length: ${apiKey?.length || 0}`);
   }
 
   /**
