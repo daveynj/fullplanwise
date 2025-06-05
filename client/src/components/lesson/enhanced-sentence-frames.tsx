@@ -95,7 +95,7 @@ function AIPatternBuilder({ frame }: { frame: EnhancedSentenceFrame }) {
   // Simulate AI suggestions based on context
   useEffect(() => {
     const generateAISuggestions = () => {
-      const suggestions: {[key: string]: string[} = {};
+      const suggestions: {[key: string]: string[]} = {};
       frame.structureComponents.forEach(component => {
         // AI would analyze context and generate contextually appropriate suggestions
         suggestions[component.label] = [

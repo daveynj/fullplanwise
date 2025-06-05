@@ -1507,7 +1507,7 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
       ]
     }
   ],
-  // GRAMMAR SPOTLIGHT (AI-GENERATED STRATEGIC GRAMMAR TEACHING)
+  // GRAMMAR SPOTLIGHT (AI-GENERATED LOGIC-BASED GRAMMAR TEACHING)
   "grammarSpotlight": {
     "grammarType": "[STRATEGICALLY CHOOSE the most pedagogically valuable grammar pattern for ${cefrLevel} level students studying '${topic}'. 
     
@@ -1526,6 +1526,22 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
     "title": "[Create an engaging, clear title that explains the grammar's PURPOSE - e.g., 'Modal Verbs: Expressing Possibility and Necessity', 'Present Perfect: Connecting Past to Present', 'Articles: Making Your Meaning Clear']",
     
     "description": "[Explain in simple terms WHY this grammar pattern is useful for communication and how it helps students express their ideas better - focus on practical benefits, not just rules]",
+
+    "logicExplanation": {
+      "communicationNeed": "[CRITICAL: Explain WHY this grammar exists. What communication problem does it solve? What happens when people DON'T use this grammar correctly? Focus on real-world communication needs - e.g., 'English speakers need to show when past actions still affect the present situation' or 'Speakers need to express different levels of certainty about future events']",
+      
+      "logicalSolution": "[Explain HOW the language solves this communication need. What's the logical structure? Why does it work this way? - e.g., 'English combines present helping verb (have/has) with past participle to bridge past and present' or 'Modal verbs act as attitude adjusters - they modify the main verb to show speaker relationship to the action']",
+      
+      "usagePattern": "[Explain WHEN and WHERE students should use this grammar. What signals tell them this pattern is needed? - e.g., 'Use when past action affects current situation - look for time words like since, for, already, yet' or 'Use when you need to express possibility, advice, or obligation rather than stating facts']",
+      
+      "communicationImpact": "[Explain what DIFFERENCE this makes in communication. How does using this grammar change meaning or impression? - e.g., 'This tells listeners your past experience explains current knowledge or situation' or 'This makes speech more polite and socially appropriate by showing your attitude toward the action']"
+    },
+
+    "teachingTips": [
+      "[Practical classroom tip: How should teachers introduce this concept? - e.g., 'Start with the communication need: Why do we need this grammar? Then show the logical solution']",
+      "[Common student confusion: What do students typically misunderstand? - e.g., 'Students often memorize rules without understanding purpose - focus on meaning first, then form']",
+      "[Teaching sequence: What order works best? - e.g., '1) Explain need → 2) Show logic → 3) Practice examples → 4) Apply in context']"
+    ],
     
     "examples": [
       {

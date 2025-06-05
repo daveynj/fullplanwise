@@ -1325,7 +1325,7 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
       ]
     }
   ],
-  // GRAMMAR SPOTLIGHT (AI-GENERATED STRATEGIC GRAMMAR TEACHING)
+  // GRAMMAR SPOTLIGHT (AI-GENERATED LOGIC-BASED GRAMMAR TEACHING)
   "grammarSpotlight": {
     "grammarType": "[STRATEGICALLY CHOOSE the most pedagogically valuable grammar pattern for ${params.cefrLevel} level students studying '${params.topic}'. 
 
@@ -1344,6 +1344,19 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
     "title": "[Create an engaging, clear title that explains the grammar's PURPOSE - e.g., 'Modal Verbs: Expressing Possibility and Necessity', 'Present Perfect: Connecting Past to Present', 'Articles: Making Your Meaning Clear']",
 
     "description": "[Explain in simple terms WHY this grammar pattern is useful for communication and how it helps students express their ideas better - focus on practical benefits, not just rules]",
+
+    "logicExplanation": {
+      "communicationNeed": "[CRITICAL: Explain WHY this grammar exists. What communication problem does it solve? Focus on real-world communication needs]",
+      "logicalSolution": "[Explain HOW the language solves this communication need. What's the logical structure? Why does it work this way?]", 
+      "usagePattern": "[Explain WHEN and WHERE students should use this grammar. What signals tell them this pattern is needed?]",
+      "communicationImpact": "[Explain what DIFFERENCE this makes in communication. How does using this grammar change meaning or impression?]"
+    },
+
+    "teachingTips": [
+      "[Practical classroom tip: How should teachers introduce this concept?]",
+      "[Common student confusion: What do students typically misunderstand?]", 
+      "[Teaching sequence: What order works best?]"
+    ],
 
     "examples": [
       {

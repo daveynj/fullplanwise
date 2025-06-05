@@ -756,6 +756,13 @@ export function LessonContent({ content }: LessonContentProps) {
       textColor: "text-green-700",
       description: "Practice pronunciation of key words"
     },
+    "grammarSpotlight": {
+      icon: Target,
+      label: "Grammar Focus",
+      color: "bg-purple-100",
+      textColor: "text-purple-700",
+      description: "Deep dive into grammar concepts with logic explanations"
+    },
   };
 
   // Utility function to extract discussion questions from the raw Qwen response
