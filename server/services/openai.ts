@@ -187,69 +187,98 @@ ALL content must be STRICTLY appropriate for the specified CEFR level ${cefrLeve
 - Reading text difficulty must match the specified level
 - Discussion paragraph contexts must be level-appropriate with vocabulary and grammar matching the CEFR level
 
-CEFR LEVEL-SPECIFIC TEXT COMPLEXITY GUIDELINES:
-Follow these precise metrics for creating text at the appropriate ${cefrLevel} level:
+READING TEXT DEVELOPMENT APPROACH
 
-A1 LEVEL TEXT (BEGINNER):
-- 100-150 words total, 2-3 short paragraphs
-- Average sentence length: 5-7 words
-- Vocabulary: Limited to 500 most common words plus topic-specific terms
-- Grammar: Present simple, present continuous only
-- Sentence types: 80% simple sentences, 20% compound with 'and', 'but', 'or'
-- No passive voice, no conditionals
-- Readability: Flesch-Kincaid Grade 1-2 (very easy)
-- Content: Concrete topics only, no abstract concepts
+STEP 1: SPEAKING-FOCUSED TEXT PURPOSE ANALYSIS
 
-A2 LEVEL TEXT (ELEMENTARY):
-- 150-200 words total, 3 short paragraphs
-- Average sentence length: 7-10 words
-- Vocabulary: Limited to 1000 most common words plus topic-specific terms
-- Grammar: Present, past, and future simple tenses, basic modals (can, should)
-- Sentence types: 70% simple sentences, 30% compound with common conjunctions
-- Limited passive voice (1-2 instances max)
-- No conditionals above first conditional
-- Readability: Flesch-Kincaid Grade 3-4 (easy)
-- Content: Mostly concrete with simple abstract concepts
+Before writing, analyze the text's role in a speaking-focused lesson for ${cefrLevel} students:
 
-B1 LEVEL TEXT (INTERMEDIATE):
-- 200-250 words total, 3-4 paragraphs
-- Average sentence length: 10-12 words
-- Vocabulary: Up to 2500 common words plus topic-specific terms
-- Grammar: All basic tenses, present perfect, conditionals (first and second)
-- Sentence types: 60% simple, 30% compound, 10% complex with common subordinators
-- Some passive voice is acceptable (3-4 instances)
-- Readability: Flesch-Kincaid Grade 5-6 (fairly easy)
-- Content: Mix of concrete and abstract concepts
+PURPOSE CLARIFICATION:
+- This text serves as a CONVERSATION CATALYST, not comprehensive reading practice
+- Students will use this text to GENERATE SPEAKING opportunities about "${topic}"
+- The text should PROVIDE ENOUGH CONTENT for meaningful discussion without overwhelming
+- Focus on ACCESSIBLE INFORMATION that students can reference, react to, and build upon in conversation
 
-B2 LEVEL TEXT (UPPER INTERMEDIATE):
-- 300-350 words total, 4 paragraphs
-- Average sentence length: 12-15 words
-- Vocabulary: Up to 3500 words, including some academic terms
-- Grammar: Full range of tenses, conditionals, modals, gerunds and infinitives
-- Sentence types: 40% simple, 40% compound, 20% complex with varied connectors
-- Passive voice used naturally throughout (5-7 instances)
-- Readability: Flesch-Kincaid Grade 7-9 (standard)
-- Content: Equal mix of concrete and abstract concepts
+SPEAKING-LESSON TEXT REQUIREMENTS:
+- SHORTER TEXTS that can be quickly processed to focus lesson time on speaking
+- DISCUSSION-WORTHY CONTENT that naturally generates opinions, questions, and personal connections
+- CLEAR TALKING POINTS that students can easily reference during conversations
+- RELATABLE SCENARIOS that connect to students' experiences and interests
 
-C1 LEVEL TEXT (ADVANCED):
-- 400-450 words total, 4-5 paragraphs
-- Average sentence length: 15-20 words
-- Vocabulary: Up to 5000 words, including academic and specialized terms
-- Grammar: Full range of structures, including complex passives, perfect modals
-- Sentence types: 20% simple, 40% compound, 40% complex with sophisticated connectors
-- Natural use of passive voice, inverted structures, cleft sentences
-- Readability: Flesch-Kincaid Grade 10-12 (fairly difficult)
-- Content: Sophisticated abstract concepts, nuanced arguments
+STEP 2: READER ENGAGEMENT AND COMPREHENSION ANALYSIS FOR ${cefrLevel}
 
-C2 LEVEL TEXT (PROFICIENCY):
-- 500-600 words total, 5 paragraphs
-- Average sentence length: 20-25 words
-- Vocabulary: 6000+ words, including specialized academic/technical vocabulary
-- Grammar: Mastery of all structures, including complex conditionals, subjunctive
-- Sentence types: 10% simple, 30% compound, 60% complex with advanced subordination
-- Sophisticated use of all structures, including rare forms
-- Readability: Flesch-Kincaid Grade 13+ (difficult)
-- Content: Highly abstract, sophisticated concepts and arguments
+Analyze what ${cefrLevel} students can meaningfully engage with:
+
+COGNITIVE ENGAGEMENT ANALYSIS:
+A1 STUDENTS: Can engage with immediate, concrete experiences they can relate to personally
+- Personal situations, daily activities, familiar objects and people
+- Simple cause-and-effect relationships they experience directly
+- Basic problem-solution scenarios from everyday life
+
+A2 STUDENTS: Can engage with personal experiences and simple social situations
+- Past experiences, future plans, personal opinions about familiar topics
+- Simple comparisons between different places, people, or experiences
+- Basic cultural or social topics they encounter in daily life
+
+B1 STUDENTS: Can engage with social issues and practical problems that affect their lives
+- Community issues, lifestyle choices, personal challenges and solutions
+- Comparing different approaches to common problems
+- Topics where they can express opinions and give reasons
+
+B2 STUDENTS: Can engage with analytical thinking about complex social and professional topics
+- Abstract concepts they can relate to their experiences
+- Multiple perspectives on contemporary issues
+- Topics requiring evaluation and critical thinking
+
+C1 STUDENTS: Can engage with sophisticated analysis and nuanced discussion
+- Complex social, academic, or professional issues
+- Subtle distinctions and implied meanings
+- Topics requiring synthesis of multiple ideas and perspectives
+
+C2 STUDENTS: Can engage with highly sophisticated and specialized content
+- Expert-level discussions with nuanced argumentation
+- Complex interdisciplinary connections
+- Topics requiring deep critical analysis and evaluation
+
+STEP 3: CONTENT APPROPRIATENESS AND ENGAGEMENT VALIDATION
+
+Before finalizing content, verify it meets speaking-lesson requirements:
+
+CONTENT VALIDATION CHECKLIST:
+✓ PERSONAL RELEVANCE: Can students connect this to their own experiences or opinions?
+✓ DISCUSSION POTENTIAL: Does this content naturally generate questions, reactions, and responses?
+✓ OPINION-WORTHY: Are there aspects students can agree/disagree with or have personal views about?
+✓ ACCESSIBLE COMPLEXITY: Can students understand this quickly to focus on speaking practice?
+✓ CONVERSATION STARTERS: Does this provide clear talking points for pair/group discussions?
+
+REJECTION CRITERIA - AVOID CONTENT THAT:
+❌ Is purely informational without discussion potential
+❌ Requires extensive reading comprehension that dominates lesson time
+❌ Is too abstract or distant from students' experiences to generate authentic responses
+❌ Provides facts without opportunities for personal reaction or opinion
+❌ Is too complex for students to quickly process and then discuss
+
+SPEAKING-OPTIMIZED TEXT LENGTH GUIDELINES:
+
+A1 LEVEL: 80-120 words (2-3 short paragraphs)
+- Quick to read, maximum time for speaking practice
+- Focus on concrete, relatable situations that generate immediate responses
+
+A2 LEVEL: 100-150 words (2-3 paragraphs)  
+- Manageable length allowing focus on conversation
+- Include personal experience connections that prompt sharing
+
+B1 LEVEL: 120-180 words (3 paragraphs)
+- Balanced content that provides discussion material without overwhelming
+- Include different perspectives or approaches students can respond to
+
+B2 LEVEL: 150-220 words (3-4 paragraphs)
+- Rich enough content for analytical discussion
+- Multiple aspects or viewpoints students can explore in conversation
+
+C1/C2 LEVELS: 180-250 words (3-4 paragraphs)
+- Sophisticated content that merits extended discussion
+- Complex enough to sustain in-depth conversation while remaining accessible
 
 DISCUSSION PARAGRAPH CONTEXT GUIDELINES:
 Each discussion question MUST have its own unique paragraph context (3-5 sentences) that must follow these CEFR level requirements:

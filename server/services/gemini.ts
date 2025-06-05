@@ -931,21 +931,81 @@ Based on your analysis, ensure your lesson content:
 - Creates authentic but accessible cultural learning opportunities
 - Respects diverse backgrounds while expanding cultural awareness
 
-DISCUSSION QUESTIONS APPROACH:
-First, analyze effective discussion questions for ${params.cefrLevel} level students:
-- Research effective questioning techniques for ${params.cefrLevel} level language learners
-- Identify appropriate cognitive challenge levels for discussions at this level
-- Determine the balance between scaffolding and open-ended questioning
-- Consider how background/context should be provided at this level
-- Analyze how to encourage extended responses from students at this proficiency level
+STEP 4: DISCUSSION QUESTIONS DEVELOPMENT APPROACH
 
-Based on your analysis, create discussion questions that:
-- Match the cognitive abilities of ${params.cefrLevel} level students
-- Provide appropriate contextual support based on level needs
-- Encourage critical thinking appropriate to this level
-- Are designed for optimal language production at this level
-- Connect to both the lesson content and students' experiences
-- Progress from more supported to more independent thinking
+COGNITIVE READINESS ANALYSIS FOR ${params.cefrLevel} STUDENTS:
+
+Before creating discussion questions, analyze what ${params.cefrLevel} students can cognitively and linguistically handle:
+
+COGNITIVE ABILITIES BY LEVEL:
+A1 STUDENTS: Can discuss immediate, personal experiences and basic preferences
+- Personal likes/dislikes, family, daily routines, immediate environment
+- Simple yes/no responses with basic explanations
+- Concrete situations they have direct experience with
+
+A2 STUDENTS: Can discuss personal experiences and make simple comparisons
+- Past experiences, future plans, simple opinions about familiar topics
+- Basic problem-solving in everyday situations
+- Simple cultural comparisons and personal preferences
+
+B1 STUDENTS: Can express opinions with reasons and engage with social topics
+- Practical problems, lifestyle choices, community issues
+- Can give opinions and support them with basic reasoning
+- Can discuss advantages/disadvantages of different approaches
+
+B2 STUDENTS: Can engage in analytical discussions about complex topics
+- Abstract concepts related to their experiences
+- Multiple perspectives on contemporary issues
+- Can evaluate different viewpoints and present arguments
+
+C1 STUDENTS: Can engage in sophisticated analysis and nuanced discussion
+- Complex social, academic, or professional issues
+- Can synthesize information and present well-structured arguments
+- Can handle hypothetical and speculative discussions
+
+C2 STUDENTS: Can engage in expert-level discussions with subtle distinctions
+- Highly sophisticated concepts requiring advanced critical thinking
+- Can handle nuanced argumentation and complex interdisciplinary topics
+
+LINGUISTIC SCAFFOLDING REQUIREMENTS BY LEVEL:
+
+A1/A2 SCAFFOLDING NEEDS:
+- Provide concrete context and examples in questions
+- Use familiar vocabulary and simple sentence structures in questions
+- Offer sentence starters or model responses
+- Focus on personal experiences students can easily access
+
+B1 SCAFFOLDING NEEDS:
+- Provide some context but allow for independent thinking
+- Use question stems that guide logical thinking
+- Include opinion-asking with reason-giving opportunities
+- Connect to both personal and broader social experiences
+
+B2+ SCAFFOLDING NEEDS:
+- Minimal scaffolding, focus on analytical thinking
+- Open-ended questions that require evaluation and synthesis
+- Multiple perspectives and complex reasoning opportunities
+
+DISCUSSION QUESTION VALIDATION CHECKLIST:
+
+Before finalizing questions, verify each meets these criteria:
+
+✓ COGNITIVE MATCH: Does this question match the thinking abilities of ${params.cefrLevel} students?
+✓ LINGUISTIC ACCESSIBILITY: Can students understand the question using their current language level?
+✓ SCAFFOLDING APPROPRIATENESS: Is the right amount of support provided for this level?
+✓ PERSONAL RELEVANCE: Can students connect this to their own experiences or interests?
+✓ DISCUSSION POTENTIAL: Will this generate meaningful conversation between students?
+✓ SPEAKING PRACTICE VALUE: Does this question encourage extended speaking appropriate to the level?
+✓ TOPIC CONNECTION: Does this clearly relate to the lesson content and vocabulary?
+
+AUTOMATIC REJECTION CRITERIA - REJECT QUESTIONS THAT:
+❌ Require language skills above the students' level to answer meaningfully
+❌ Are too abstract for students to relate to their experiences
+❌ Can be answered with simple yes/no without encouraging elaboration
+❌ Assume cultural knowledge students may not have
+❌ Are too complex cognitively for the developmental stage
+❌ Don't provide enough context for students to engage meaningfully
+❌ Are generic and could apply to any topic (not specifically about "${params.topic}")
 
 READING COMPREHENSION APPROACH:
 First, analyze appropriate comprehension skills for ${params.cefrLevel} level:
