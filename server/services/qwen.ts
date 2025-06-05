@@ -223,28 +223,78 @@ After writing the reading text, create:
 - A brief warm-up activity that MUST incorporate all vocabulary items from your vocabulary list, not just one word
 - NEW REQUIREMENT: 1-2 sentence frames and templates appropriate for the ${params.cefrLevel} level to help students with sentence structure and grammar, following the DETAILED STRUCTURE BELOW.
 
-SENTENCE FRAMES APPROACH:
-**Goal:** Develop high-frequency, versatile sentence patterns that support key language functions in the lesson.
+STEP 6: SENTENCE FRAMES PATTERN SELECTION APPROACH
 
-First, analyze what sentence patterns are appropriate for ${params.cefrLevel} level:
-- Research the syntactic structures typically taught at ${params.cefrLevel} level
-- Identify high-frequency, versatile sentence patterns used in authentic contexts
-- Determine appropriate complexity of explanations for this level
-- Consider how the patterns should be presented and practiced
+COMMUNICATIVE NEED ANALYSIS FOR ${params.cefrLevel} STUDENTS:
 
-Then, based on your analysis:
-- Design 1-2 sentence patterns that are:
-  a) Appropriate for ${params.cefrLevel} level complexity
-  b) Genuinely useful in everyday communication
-  c) Relevant to the lesson topic
-  d) Structured in a way students can easily understand and practice
+Before selecting sentence patterns, analyze what communication needs ${params.cefrLevel} students actually have:
 
-For each pattern, determine the most appropriate way to:
-- Present the pattern visually
-- Break it down into comprehensible components
-- Provide level-appropriate examples
-- Create practice opportunities
-- Guide teachers in presenting it effectively
+REAL-WORLD COMMUNICATION NEEDS BY LEVEL:
+A1 STUDENTS: Need patterns for immediate, concrete communication
+- Expressing basic preferences: "I like ___ because ___"
+- Simple descriptions: "___ is ___" 
+- Basic needs: "I want/need ___"
+- Present actions: "I am ___ing"
+
+A2 STUDENTS: Need patterns for personal experiences and simple social interaction
+- Past experiences: "Yesterday I ___ and it was ___"
+- Future plans: "I'm going to ___ because ___"
+- Simple comparisons: "___ is more ___ than ___"
+- Basic opinions: "I think ___ is ___"
+
+B1 STUDENTS: Need patterns for social topics and reasoned communication
+- Expressing opinions with reasons: "I believe ___ because ___"
+- Problem-solution: "The problem is ___, so we should ___"
+- Advantages/disadvantages: "On one hand ___, but on the other hand ___"
+- Making suggestions: "We could ___ in order to ___"
+
+B2 STUDENTS: Need patterns for analytical and evaluative communication
+- Complex reasoning: "Although ___, ___ nevertheless ___"
+- Cause and effect: "___ has led to ___, which in turn ___"
+- Evaluation: "While ___ has advantages, it also ___"
+- Hypotheticals: "If ___ were to happen, then ___"
+
+C1/C2 STUDENTS: Need patterns for sophisticated analysis and professional communication
+- Nuanced arguments: "Despite the fact that ___, it could be argued that ___"
+- Academic discourse: "Research suggests that ___, indicating that ___"
+- Complex conditionals: "Had ___ not occurred, ___ would likely have ___"
+
+PATTERN COMPLEXITY VALIDATION:
+
+Before finalizing patterns, verify each meets these requirements:
+
+COMPLEXITY CHECK FOR ${params.cefrLevel} LEVEL:
+✓ GRAMMAR APPROPRIATENESS: Does this pattern use grammar structures students know?
+✓ VOCABULARY ACCESSIBILITY: Can students fill in the blanks with vocabulary at their level?
+✓ COGNITIVE MATCH: Does this pattern require thinking skills appropriate for this level?
+✓ USAGE FREQUENCY: Will students actually use this pattern in real communication?
+✓ TOPIC RELEVANCE: Does this pattern specifically help students discuss "${params.topic}"?
+
+AUTOMATIC REJECTION CRITERIA - REJECT PATTERNS THAT:
+❌ Use grammar structures above the students' current level
+❌ Require vocabulary students don't know to complete meaningfully  
+❌ Are too abstract for students to relate to their experiences
+❌ Are rarely used in authentic communication at this level
+❌ Don't specifically support discussion of "${params.topic}"
+❌ Are generic and could apply to any topic without topic-specific value
+
+TOPIC-SPECIFIC PATTERN SELECTION FOR "${params.topic}":
+
+Analyze how students at ${params.cefrLevel} level specifically need to talk about "${params.topic}":
+
+TOPIC COMMUNICATION ANALYSIS:
+1. What specific ideas about "${params.topic}" do ${params.cefrLevel} students need to express?
+2. What types of conversations about this topic will they have in real life?
+3. What language functions are most important for discussing this topic?
+4. How does this topic connect to their personal experiences and interests?
+
+PATTERN SELECTION STRATEGY:
+- Choose patterns that enable students to express authentic ideas about "${params.topic}"
+- Focus on high-frequency communication functions related to this topic
+- Ensure patterns can be used productively in conversations about this topic
+- Select patterns that connect the topic to students' experiences and opinions
+
+**Goal:** Develop topic-specific, communicatively valuable sentence patterns that support authentic expression about "${params.topic}" at the ${params.cefrLevel} level.
 
 CRITICAL ISSUES TO AVOID:
 1.  Do NOT choose obscure, rarely used sentence patterns (unless C1/C2 level justifies it).
@@ -569,21 +619,81 @@ Create guidance for connecting vocabulary to visual elements:
 - Compare familiar concepts with new vocabulary
 - Connect vocabulary to images that relate to students' experiences
 
-DISCUSSION QUESTIONS APPROACH:
-First, analyze effective discussion questions for ${params.cefrLevel} level students:
-- Research effective questioning techniques for ${params.cefrLevel} level language learners
-- Identify appropriate cognitive challenge levels for discussions at this level
-- Determine the balance between scaffolding and open-ended questioning
-- Consider how background/context should be provided at this level
-- Analyze how to encourage extended responses from students at this proficiency level
+STEP 4: DISCUSSION QUESTIONS DEVELOPMENT APPROACH
 
-Based on your analysis, create discussion questions that:
-- Match the cognitive abilities of ${params.cefrLevel} level students
-- Provide appropriate contextual support based on level needs
-- Encourage critical thinking appropriate to this level
-- Are designed for optimal language production at this level
-- Connect to both the lesson content and students' experiences
-- Progress from more supported to more independent thinking
+COGNITIVE READINESS ANALYSIS FOR ${params.cefrLevel} STUDENTS:
+
+Before creating discussion questions, analyze what ${params.cefrLevel} students can cognitively and linguistically handle:
+
+COGNITIVE ABILITIES BY LEVEL:
+A1 STUDENTS: Can discuss immediate, personal experiences and basic preferences
+- Personal likes/dislikes, family, daily routines, immediate environment
+- Simple yes/no responses with basic explanations
+- Concrete situations they have direct experience with
+
+A2 STUDENTS: Can discuss personal experiences and make simple comparisons
+- Past experiences, future plans, simple opinions about familiar topics
+- Basic problem-solving in everyday situations
+- Simple cultural comparisons and personal preferences
+
+B1 STUDENTS: Can express opinions with reasons and engage with social topics
+- Practical problems, lifestyle choices, community issues
+- Can give opinions and support them with basic reasoning
+- Can discuss advantages/disadvantages of different approaches
+
+B2 STUDENTS: Can engage in analytical discussions about complex topics
+- Abstract concepts related to their experiences
+- Multiple perspectives on contemporary issues
+- Can evaluate different viewpoints and present arguments
+
+C1 STUDENTS: Can engage in sophisticated analysis and nuanced discussion
+- Complex social, academic, or professional issues
+- Can synthesize information and present well-structured arguments
+- Can handle hypothetical and speculative discussions
+
+C2 STUDENTS: Can engage in expert-level discussions with subtle distinctions
+- Highly sophisticated concepts requiring advanced critical thinking
+- Can handle nuanced argumentation and complex interdisciplinary topics
+
+LINGUISTIC SCAFFOLDING REQUIREMENTS BY LEVEL:
+
+A1/A2 SCAFFOLDING NEEDS:
+- Provide concrete context and examples in questions
+- Use familiar vocabulary and simple sentence structures in questions
+- Offer sentence starters or model responses
+- Focus on personal experiences students can easily access
+
+B1 SCAFFOLDING NEEDS:
+- Provide some context but allow for independent thinking
+- Use question stems that guide logical thinking
+- Include opinion-asking with reason-giving opportunities
+- Connect to both personal and broader social experiences
+
+B2+ SCAFFOLDING NEEDS:
+- Minimal scaffolding, focus on analytical thinking
+- Open-ended questions that require evaluation and synthesis
+- Multiple perspectives and complex reasoning opportunities
+
+DISCUSSION QUESTION VALIDATION CHECKLIST:
+
+Before finalizing questions, verify each meets these criteria:
+
+✓ COGNITIVE MATCH: Does this question match the thinking abilities of ${params.cefrLevel} students?
+✓ LINGUISTIC ACCESSIBILITY: Can students understand the question using their current language level?
+✓ SCAFFOLDING APPROPRIATENESS: Is the right amount of support provided for this level?
+✓ PERSONAL RELEVANCE: Can students connect this to their own experiences or interests?
+✓ DISCUSSION POTENTIAL: Will this generate meaningful conversation between students?
+✓ SPEAKING PRACTICE VALUE: Does this question encourage extended speaking appropriate to the level?
+✓ TOPIC CONNECTION: Does this clearly relate to the lesson content and vocabulary?
+
+AUTOMATIC REJECTION CRITERIA - REJECT QUESTIONS THAT:
+❌ Require language skills above the students' level to answer meaningfully
+❌ Are too abstract for students to relate to their experiences
+❌ Can be answered with simple yes/no without encouraging elaboration
+❌ Assume cultural knowledge students may not have
+❌ Are too complex cognitively for the developmental stage
+❌ Don't provide enough context for students to engage meaningfully
+❌ Are generic and could apply to any topic (not specifically about "${params.topic}")
 
 ⚠️ CRITICAL REQUIREMENT: You MUST provide EXACTLY 5 paragraph-question pairs. Failure to provide 5 pairs, each with a paragraph and a question, will cause your response to be rejected.
 

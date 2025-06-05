@@ -432,28 +432,78 @@ READING TEXT REQUIREMENTS:
 4. SUBSTANTIAL CONTENT: Focus on creating a substantial, informative text appropriate for the topic and level.
 5. CEFR ALIGNMENT: Ensure vocabulary and sentence structures match the ${params.cefrLevel} level precisely.
 
-SENTENCE FRAMES APPROACH:
-**Goal:** Develop high-frequency, versatile sentence patterns that support key language functions in the lesson.
+STEP 6: SENTENCE FRAMES PATTERN SELECTION APPROACH
 
-First, analyze what sentence patterns are appropriate for ${params.cefrLevel} level:
-- Research the syntactic structures typically taught at ${params.cefrLevel} level
-- Identify high-frequency, versatile sentence patterns used in authentic contexts
-- Determine appropriate complexity of explanations for this level
-- Consider how the patterns should be presented and practiced
+COMMUNICATIVE NEED ANALYSIS FOR ${params.cefrLevel} STUDENTS:
 
-Then, based on your analysis:
-- Design 1-2 sentence patterns that are:
-  a) Appropriate for ${params.cefrLevel} level complexity
-  b) Genuinely useful in everyday communication
-  c) Relevant to the lesson topic
-  d) Structured in a way students can easily understand and practice
+Before selecting sentence patterns, analyze what communication needs ${params.cefrLevel} students actually have:
 
-For each pattern, determine the most appropriate way to:
-- Present the pattern visually
-- Break it down into comprehensible components
-- Provide level-appropriate examples
-- Create practice opportunities
-- Guide teachers in presenting it effectively
+REAL-WORLD COMMUNICATION NEEDS BY LEVEL:
+A1 STUDENTS: Need patterns for immediate, concrete communication
+- Expressing basic preferences: "I like ___ because ___"
+- Simple descriptions: "___ is ___" 
+- Basic needs: "I want/need ___"
+- Present actions: "I am ___ing"
+
+A2 STUDENTS: Need patterns for personal experiences and simple social interaction
+- Past experiences: "Yesterday I ___ and it was ___"
+- Future plans: "I'm going to ___ because ___"
+- Simple comparisons: "___ is more ___ than ___"
+- Basic opinions: "I think ___ is ___"
+
+B1 STUDENTS: Need patterns for social topics and reasoned communication
+- Expressing opinions with reasons: "I believe ___ because ___"
+- Problem-solution: "The problem is ___, so we should ___"
+- Advantages/disadvantages: "On one hand ___, but on the other hand ___"
+- Making suggestions: "We could ___ in order to ___"
+
+B2 STUDENTS: Need patterns for analytical and evaluative communication
+- Complex reasoning: "Although ___, ___ nevertheless ___"
+- Cause and effect: "___ has led to ___, which in turn ___"
+- Evaluation: "While ___ has advantages, it also ___"
+- Hypotheticals: "If ___ were to happen, then ___"
+
+C1/C2 STUDENTS: Need patterns for sophisticated analysis and professional communication
+- Nuanced arguments: "Despite the fact that ___, it could be argued that ___"
+- Academic discourse: "Research suggests that ___, indicating that ___"
+- Complex conditionals: "Had ___ not occurred, ___ would likely have ___"
+
+PATTERN COMPLEXITY VALIDATION:
+
+Before finalizing patterns, verify each meets these requirements:
+
+COMPLEXITY CHECK FOR ${params.cefrLevel} LEVEL:
+✓ GRAMMAR APPROPRIATENESS: Does this pattern use grammar structures students know?
+✓ VOCABULARY ACCESSIBILITY: Can students fill in the blanks with vocabulary at their level?
+✓ COGNITIVE MATCH: Does this pattern require thinking skills appropriate for this level?
+✓ USAGE FREQUENCY: Will students actually use this pattern in real communication?
+✓ TOPIC RELEVANCE: Does this pattern specifically help students discuss "${params.topic}"?
+
+AUTOMATIC REJECTION CRITERIA - REJECT PATTERNS THAT:
+❌ Use grammar structures above the students' current level
+❌ Require vocabulary students don't know to complete meaningfully  
+❌ Are too abstract for students to relate to their experiences
+❌ Are rarely used in authentic communication at this level
+❌ Don't specifically support discussion of "${params.topic}"
+❌ Are generic and could apply to any topic without topic-specific value
+
+TOPIC-SPECIFIC PATTERN SELECTION FOR "${params.topic}":
+
+Analyze how students at ${params.cefrLevel} level specifically need to talk about "${params.topic}":
+
+TOPIC COMMUNICATION ANALYSIS:
+1. What specific ideas about "${params.topic}" do ${params.cefrLevel} students need to express?
+2. What types of conversations about this topic will they have in real life?
+3. What language functions are most important for discussing this topic?
+4. How does this topic connect to their personal experiences and interests?
+
+PATTERN SELECTION STRATEGY:
+- Choose patterns that enable students to express authentic ideas about "${params.topic}"
+- Focus on high-frequency communication functions related to this topic
+- Ensure patterns can be used productively in conversations about this topic
+- Select patterns that connect the topic to students' experiences and opinions
+
+**Goal:** Develop topic-specific, communicatively valuable sentence patterns that support authentic expression about "${params.topic}" at the ${params.cefrLevel} level.
 
 ENHANCED SENTENCE FRAMES REQUIREMENTS:
 Each sentence frame MUST include the following enhanced structure for maximum teaching effectiveness:
