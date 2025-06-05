@@ -830,6 +830,61 @@ ${params.cefrLevel === 'A1' || params.cefrLevel === 'A2' || params.cefrLevel ===
 This scaffolding is CRITICAL for A1-B1 learners and must be included.`
   : `Since this is a ${params.cefrLevel} level lesson, do NOT include "lowerLevelScaffolding" in the sentence frames. Advanced learners do not need this additional scaffolding.`}
 
+STEP 5: CROSS-COMPONENT INTEGRATION VALIDATION
+
+CRITICAL: Before finalizing your lesson, you MUST perform explicit cross-component integration analysis to ensure vocabulary, reading text, and discussion questions work together synergistically.
+
+VOCABULARY-TEXT INTEGRATION ANALYSIS:
+Analyze how target vocabulary integrates with the reading text:
+
+✓ NATURAL INTEGRATION CHECK: Does each target vocabulary word appear naturally in the reading text (not forced or artificially inserted)?
+✓ CONTEXTUAL SUPPORT: Does the text provide sufficient context clues to help students understand the vocabulary in meaningful situations?
+✓ USAGE VARIETY: Are vocabulary words used in different contexts within the text to show versatility?
+✓ PREREQUISITE VOCABULARY: Does the text include necessary supporting vocabulary to make target words comprehensible?
+✓ TOPIC COHERENCE: Do all vocabulary choices genuinely support and enhance the topic "${params.topic}"?
+
+TEXT-DISCUSSION INTEGRATION ANALYSIS:
+Analyze how discussion questions connect to the reading text:
+
+✓ CONTENT DEPENDENCY: Do discussion questions require genuine understanding of the text content to answer effectively?
+✓ TOPIC EXTENSION: Do questions naturally extend text topics into meaningful personal or analytical discussions?
+✓ COMPREHENSION FOUNDATION: Are questions built on information and ideas presented in the text?
+✓ COGNITIVE PROGRESSION: Do questions appropriately build on text complexity for ${params.cefrLevel} level thinking?
+✓ ENGAGEMENT BRIDGE: Do questions create natural bridges from text content to student experiences and opinions?
+
+VOCABULARY-DISCUSSION INTEGRATION ANALYSIS:
+Analyze how discussion questions incorporate target vocabulary:
+
+✓ VOCABULARY USAGE OPPORTUNITIES: Do discussion questions provide natural opportunities for students to USE target vocabulary in their responses?
+✓ CONTEXTUAL REINFORCEMENT: Do questions require students to demonstrate understanding of vocabulary in new contexts?
+✓ SPEAKING PRACTICE: Would students naturally incorporate target vocabulary when answering these questions?
+✓ SCAFFOLDED APPLICATION: Do questions appropriately scaffold vocabulary usage for ${params.cefrLevel} level students?
+✓ MEANINGFUL COMMUNICATION: Do vocabulary usage opportunities feel authentic rather than mechanical?
+
+SYNERGISTIC LEARNING FLOW ANALYSIS:
+Analyze the overall learning experience across all components:
+
+✓ CONTENT COHERENCE: Do all components (vocabulary, text, discussion) support the same learning objectives for "${params.topic}"?
+✓ DIFFICULTY ALIGNMENT: Are all components appropriately leveled for ${params.cefrLevel} students?
+✓ REINFORCEMENT PATTERNS: Do components reinforce each other's content naturally?
+✓ PEDAGOGICAL SEQUENCE: Do components create an effective learning progression (vocabulary → text → discussion)?
+✓ AUTHENTIC CONNECTIONS: Do component relationships feel natural rather than artificially constructed?
+
+INTEGRATION QUALITY VALIDATION:
+Before proceeding, confirm your lesson achieves:
+- Target vocabulary appears meaningfully in text AND discussion contexts
+- Discussion questions genuinely require text comprehension to answer
+- Students will naturally use vocabulary when responding to discussion questions
+- All components work together to create a cohesive learning experience about "${params.topic}"
+- The learning flow from vocabulary → text → discussion feels natural and educationally sound
+
+REJECTION CRITERIA - REJECT LESSONS WHERE:
+❌ Vocabulary appears forced or artificially inserted into text
+❌ Discussion questions could be answered without reading the text
+❌ Students could answer discussion questions without using target vocabulary
+❌ Components feel disconnected or only superficially related
+❌ The lesson lacks a coherent learning progression
+
 FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure all fields contain complete content. Do not use placeholders.
 
 {
