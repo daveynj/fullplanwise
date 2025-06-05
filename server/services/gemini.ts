@@ -684,19 +684,126 @@ CRITICAL: Follow this EXACT JSON structure for sentence frames:
 // - Error prevention through common mistake identification
 // - Comprehensive teaching support for effective classroom implementation
 
-CEFR LEVEL-APPROPRIATE VOCABULARY SELECTION GUIDELINES:
-First, analyze what vocabulary is appropriate for ${params.cefrLevel} level:
-- Research the vocabulary range typical for ${params.cefrLevel} level students
-- Consider both receptive and productive vocabulary expectations
-- Determine which semantic fields are appropriate at this level
-- Identify vocabulary selection criteria specific to this level (frequency, complexity, abstractness)
+STEP 1: VOCABULARY LEVEL ANALYSIS (REQUIRED BEFORE SELECTION)
 
-Based on your analysis, establish guidelines for:
-- Appropriate vocabulary difficulty/complexity 
-- How to define words at this level (simple definitions for A1/A2, more nuanced for B2+)
-- Appropriate example sentence complexity
-- Word family relationships appropriate to introduce
-- Collocation complexity appropriate for this level
+Before selecting vocabulary, analyze what ${params.cefrLevel} students typically know and should learn next:
+
+FOUNDATION KNOWLEDGE ANALYSIS FOR ${params.cefrLevel} STUDENTS:
+- A1 students know: basic family, food, colors, numbers, simple present tense, essential survival vocabulary
+- A2 students know: A1 + basic past tense, common adjectives, simple descriptions, personal experiences
+- B1 students know: A1/A2 + present perfect, opinions, comparisons, everyday topics, functional language
+- B2 students know: A1/A2/B1 + academic thinking, complex discussions, abstract concepts, discourse markers
+- C1 students know: A1-B2 + advanced academic language, nuanced expression, specialized vocabulary
+- C2 students know: Near-native vocabulary range including idiomatic and specialized language
+
+APPROPRIATE NEW VOCABULARY FOR ${params.cefrLevel} LEVEL:
+- A1: Concrete, immediate needs (house, clothes, body parts, basic actions)
+- A2: Personal experiences and descriptions (interesting, boring, excited, yesterday, tomorrow)
+- B1: Social topics and functional language (community, environment, although, however, opinion)
+- B2: Academic and analytical language (sustainability, efficiency, infrastructure, furthermore)
+- C1: Sophisticated concepts (implications, comprehensive, predominantly, nevertheless)
+- C2: Advanced/specialized terminology (nuanced, paradigm, intrinsic, contemporary discourse)
+
+TOO ADVANCED FOR ${params.cefrLevel} LEVEL:
+- For A1: Abstract concepts, complex grammar constructions, specialized terms, academic language
+- For A2: Academic vocabulary, complex discourse markers, abstract philosophical concepts
+- For B1: Highly academic vocabulary, complex phrasal verbs, advanced idiomatic expressions
+- For B2: Specialized technical terms, advanced literary language, highly formal register
+- For C1: Archaic or highly specialized jargon, extremely formal academic discourse
+
+STEP 2: TOPIC-APPROPRIATE VOCABULARY SELECTION FOR "${params.topic}"
+
+Analyze the topic "${params.topic}" specifically for ${params.cefrLevel} level:
+
+TOPIC ANALYSIS QUESTIONS:
+1. What aspects of "${params.topic}" are cognitively appropriate for ${params.cefrLevel} students?
+2. What vocabulary domains within this topic match their developmental level?
+3. What real-world communication needs do they have for this topic?
+4. How does this topic connect to their life experiences and interests?
+
+VOCABULARY SELECTION STRATEGY BY LEVEL:
+A1/A2 LEVELS: Choose vocabulary for:
+- Concrete, observable aspects of the topic that students can see/touch/experience
+- Personal experiences and basic descriptions related to the topic
+- Essential functional language for basic communication about the topic
+- Example: For "transportation" → car, bus, train, ticket, station, fast, slow
+
+B1 LEVEL: Choose vocabulary for:
+- Social and practical aspects of the topic that affect daily life
+- Problem-solving and opinion-expressing related to the topic
+- Connecting ideas and experiences about the topic
+- Example: For "transportation" → commute, public transport, traffic jam, convenient, reliable
+
+B2 LEVEL: Choose vocabulary for:
+- Analytical and evaluative aspects that require critical thinking
+- Abstract concepts and complex relationships within the topic
+- Academic discussion and debate capabilities
+- Example: For "transportation" → infrastructure, sustainability, urban planning, efficiency
+
+C1/C2 LEVELS: Choose vocabulary for:
+- Sophisticated analysis and nuanced discussion of the topic
+- Professional and academic contexts related to the topic
+- Complex interdisciplinary connections and implications
+- Example: For "transportation" → multimodal integration, carbon footprint mitigation, transit-oriented development
+
+CRITICAL SELECTION CRITERIA:
+✓ Vocabulary must serve authentic communication needs at this specific level
+✓ Words should enable meaningful discussion of the topic at appropriate cognitive depth
+✓ Selection should reflect real-world language use patterns for this topic and level
+
+STEP 3: PREREQUISITE VOCABULARY VALIDATION
+
+Before finalizing vocabulary selection, verify each word meets these requirements:
+
+PREREQUISITE CHECK FOR EACH SELECTED WORD:
+1. FOUNDATION VERIFICATION: "What simpler words must students know to understand this word?"
+   - If selecting "comfortable," do they know "feeling," "good," "bad," "when"?
+   - If selecting "sustainability," do they know "environment," "future," "protect," "use"?
+   - If selecting "infrastructure," do they know "build," "roads," "system," "public"?
+
+2. COGNITIVE APPROPRIATENESS: "Is this word genuinely useful at ${params.cefrLevel} level?"
+   - Will students actually encounter this word in real communication at their level?
+   - Does it match their cognitive and linguistic development stage?
+   - Can they use this word productively in their own communication?
+
+3. COMMUNICATION RELEVANCE: "Does this word serve real communicative purposes?"
+   - Does it help students express ideas they actually need to express?
+   - Is it part of high-frequency, useful language patterns?
+   - Will it appear in authentic materials they encounter?
+
+AUTOMATIC REJECTION CRITERIA - REJECT WORDS THAT:
+❌ Require unknown prerequisite vocabulary for comprehension
+❌ Are too abstract/complex for the cognitive level (e.g., "paradigm" for A2 students)
+❌ Cannot be defined using significantly simpler language
+❌ Are rarely used in real communication at this level
+❌ Serve only academic/specialized purposes inappropriate for the level
+❌ Are taught better at a different CEFR level
+
+STEP 4: SEMANTIC COHERENCE AND GROUPING
+
+Select vocabulary that works together meaningfully:
+
+SEMANTIC COHERENCE REQUIREMENTS:
+1. Choose words that form logical, functional groups within the topic
+2. Ensure words can be used together in meaningful communication
+3. Create vocabulary sets that enable comprehensive topic discussion
+4. Consider word relationships (synonyms, antonyms, word families)
+
+FUNCTIONAL GROUPING EXAMPLES:
+A1 Transportation: [car, bus, walk] + [fast, slow] + [go, stop, wait]
+→ Enables: "I go by bus. The bus is slow. I wait for the bus."
+
+B1 Transportation: [commute, public transport, traffic] + [convenient, reliable, crowded] + [however, although, because]
+→ Enables: "I commute by public transport. However, it's often crowded because many people use it."
+
+B2 Transportation: [infrastructure, sustainability, urban planning] + [efficient, environmentally-friendly, cost-effective] + [furthermore, consequently, therefore]
+→ Enables: "Urban planning affects transportation infrastructure. Consequently, cities need sustainable and cost-effective solutions."
+
+COHERENCE VALIDATION:
+✓ Can students combine these words to discuss the topic meaningfully?
+✓ Do the words represent different aspects/dimensions of the topic?
+✓ Are there enough words to enable substantial communication about the topic?
+✓ Do the words progress logically from concrete to abstract (appropriate for level)?
 
 🚨 CRITICAL VOCABULARY DEFINITION REQUIREMENTS 🚨
 
@@ -751,6 +858,30 @@ For multi-word phrases, break down EACH WORD into syllables and list them sequen
 - "climate change" → syllables: ["cli", "mate", "change"], stressIndex: 0, phoneticGuide: "CLY-mit chaynj"
 
 CRITICALLY IMPORTANT: Always use ONLY regular English characters and hyphens for phoneticGuide. NEVER use IPA phonetic symbols like "ə", "ɪ", or "ʃ". Use simple English spelling to approximate sounds.
+
+STEP 5: FINAL VOCABULARY VALIDATION CHECKLIST
+
+Before submitting your vocabulary selection, verify EVERY word meets ALL criteria:
+
+MANDATORY QUALITY CONTROL CHECKLIST:
+✓ LEVEL APPROPRIATENESS: Is each word genuinely appropriate for ${params.cefrLevel} students?
+✓ USEFULNESS VERIFICATION: Will students actually need these words in real communication?
+✓ COHERENCE CONFIRMATION: Do the words work together to enable meaningful topic discussion?
+✓ DEFINITION FEASIBILITY: Can each word be defined using vocabulary simpler than the target word?
+✓ PREREQUISITE VALIDATION: Do students have the foundation vocabulary to understand these words?
+✓ COGNITIVE MATCH: Does each word match the cognitive development level of ${params.cefrLevel} students?
+✓ COMMUNICATION VALUE: Does each word serve authentic communicative purposes at this level?
+✓ TOPIC RELEVANCE: Is each word directly relevant and useful for discussing "${params.topic}"?
+
+REPLACEMENT PROTOCOL:
+If ANY word fails the above checks, IMMEDIATELY replace it with a more appropriate alternative that:
+- Meets all validation criteria
+- Serves the same communicative function
+- Fits better with the other selected vocabulary
+- Enables students to discuss the topic effectively at their level
+
+FINAL CONFIRMATION:
+Your selected vocabulary should enable ${params.cefrLevel} students to engage in meaningful, authentic communication about "${params.topic}" using language appropriate to their developmental stage.
 
 I will count the total number of vocabulary items. If you don't include EXACTLY ${minVocabCount} complete vocabulary items, your response will be rejected.
 

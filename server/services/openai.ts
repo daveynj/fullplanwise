@@ -280,8 +280,148 @@ Each discussion question MUST have its own unique paragraph context (3-5 sentenc
   - 5 sophisticated sentences with complex clauses, passive voice, and nuanced expressions
   - Example: "The intersection of technology and privacy rights presents one of the most formidable challenges of the digital era. As corporations amass unprecedented quantities of personal data, legislators worldwide struggle to establish regulatory frameworks that adequately protect citizens while fostering innovation. The concept of informed consent has become increasingly problematic in an environment where terms of service agreements are seldom read, let alone comprehended. Furthermore, the transnational nature of data flows complicates enforcement efforts, as information routinely traverses jurisdictional boundaries. These complexities necessitate a multifaceted approach involving stakeholders from various sectors of society."
 
+STEP 1: VOCABULARY LEVEL ANALYSIS (REQUIRED BEFORE SELECTION)
+
+Before selecting vocabulary, analyze what ${cefrLevel} students typically know and should learn next:
+
+FOUNDATION KNOWLEDGE ANALYSIS FOR ${cefrLevel} STUDENTS:
+- A1 students know: basic family, food, colors, numbers, simple present tense, essential survival vocabulary
+- A2 students know: A1 + basic past tense, common adjectives, simple descriptions, personal experiences
+- B1 students know: A1/A2 + present perfect, opinions, comparisons, everyday topics, functional language
+- B2 students know: A1/A2/B1 + academic thinking, complex discussions, abstract concepts, discourse markers
+- C1 students know: A1-B2 + advanced academic language, nuanced expression, specialized vocabulary
+- C2 students know: Near-native vocabulary range including idiomatic and specialized language
+
+APPROPRIATE NEW VOCABULARY FOR ${cefrLevel} LEVEL:
+- A1: Concrete, immediate needs (house, clothes, body parts, basic actions)
+- A2: Personal experiences and descriptions (interesting, boring, excited, yesterday, tomorrow)
+- B1: Social topics and functional language (community, environment, although, however, opinion)
+- B2: Academic and analytical language (sustainability, efficiency, infrastructure, furthermore)
+- C1: Sophisticated concepts (implications, comprehensive, predominantly, nevertheless)
+- C2: Advanced/specialized terminology (nuanced, paradigm, intrinsic, contemporary discourse)
+
+TOO ADVANCED FOR ${cefrLevel} LEVEL:
+- For A1: Abstract concepts, complex grammar constructions, specialized terms, academic language
+- For A2: Academic vocabulary, complex discourse markers, abstract philosophical concepts
+- For B1: Highly academic vocabulary, complex phrasal verbs, advanced idiomatic expressions
+- For B2: Specialized technical terms, advanced literary language, highly formal register
+- For C1: Archaic or highly specialized jargon, extremely formal academic discourse
+
+STEP 2: TOPIC-APPROPRIATE VOCABULARY SELECTION FOR "${topic}"
+
+Analyze the topic "${topic}" specifically for ${cefrLevel} level:
+
+TOPIC ANALYSIS QUESTIONS:
+1. What aspects of "${topic}" are cognitively appropriate for ${cefrLevel} students?
+2. What vocabulary domains within this topic match their developmental level?
+3. What real-world communication needs do they have for this topic?
+4. How does this topic connect to their life experiences and interests?
+
+VOCABULARY SELECTION STRATEGY BY LEVEL:
+A1/A2 LEVELS: Choose vocabulary for:
+- Concrete, observable aspects of the topic that students can see/touch/experience
+- Personal experiences and basic descriptions related to the topic
+- Essential functional language for basic communication about the topic
+- Example: For "transportation" → car, bus, train, ticket, station, fast, slow
+
+B1 LEVEL: Choose vocabulary for:
+- Social and practical aspects of the topic that affect daily life
+- Problem-solving and opinion-expressing related to the topic
+- Connecting ideas and experiences about the topic
+- Example: For "transportation" → commute, public transport, traffic jam, convenient, reliable
+
+B2 LEVEL: Choose vocabulary for:
+- Analytical and evaluative aspects that require critical thinking
+- Abstract concepts and complex relationships within the topic
+- Academic discussion and debate capabilities
+- Example: For "transportation" → infrastructure, sustainability, urban planning, efficiency
+
+C1/C2 LEVELS: Choose vocabulary for:
+- Sophisticated analysis and nuanced discussion of the topic
+- Professional and academic contexts related to the topic
+- Complex interdisciplinary connections and implications
+- Example: For "transportation" → multimodal integration, carbon footprint mitigation, transit-oriented development
+
+STEP 3: PREREQUISITE VOCABULARY VALIDATION
+
+Before finalizing vocabulary selection, verify each word meets these requirements:
+
+PREREQUISITE CHECK FOR EACH SELECTED WORD:
+1. FOUNDATION VERIFICATION: "What simpler words must students know to understand this word?"
+   - If selecting "comfortable," do they know "feeling," "good," "bad," "when"?
+   - If selecting "sustainability," do they know "environment," "future," "protect," "use"?
+   - If selecting "infrastructure," do they know "build," "roads," "system," "public"?
+
+2. COGNITIVE APPROPRIATENESS: "Is this word genuinely useful at ${cefrLevel} level?"
+   - Will students actually encounter this word in real communication at their level?
+   - Does it match their cognitive and linguistic development stage?
+   - Can they use this word productively in their own communication?
+
+3. COMMUNICATION RELEVANCE: "Does this word serve real communicative purposes?"
+   - Does it help students express ideas they actually need to express?
+   - Is it part of high-frequency, useful language patterns?
+   - Will it appear in authentic materials they encounter?
+
+AUTOMATIC REJECTION CRITERIA - REJECT WORDS THAT:
+❌ Require unknown prerequisite vocabulary for comprehension
+❌ Are too abstract/complex for the cognitive level (e.g., "paradigm" for A2 students)
+❌ Cannot be defined using significantly simpler language
+❌ Are rarely used in real communication at this level
+❌ Serve only academic/specialized purposes inappropriate for the level
+❌ Are taught better at a different CEFR level
+
+STEP 4: SEMANTIC COHERENCE AND GROUPING
+
+Select vocabulary that works together meaningfully:
+
+SEMANTIC COHERENCE REQUIREMENTS:
+1. Choose words that form logical, functional groups within the topic
+2. Ensure words can be used together in meaningful communication
+3. Create vocabulary sets that enable comprehensive topic discussion
+4. Consider word relationships (synonyms, antonyms, word families)
+
+FUNCTIONAL GROUPING EXAMPLES:
+A1 Transportation: [car, bus, walk] + [fast, slow] + [go, stop, wait]
+→ Enables: "I go by bus. The bus is slow. I wait for the bus."
+
+B1 Transportation: [commute, public transport, traffic] + [convenient, reliable, crowded] + [however, although, because]
+→ Enables: "I commute by public transport. However, it's often crowded because many people use it."
+
+B2 Transportation: [infrastructure, sustainability, urban planning] + [efficient, environmentally-friendly, cost-effective] + [furthermore, consequently, therefore]
+→ Enables: "Urban planning affects transportation infrastructure. Consequently, cities need sustainable and cost-effective solutions."
+
+COHERENCE VALIDATION:
+✓ Can students combine these words to discuss the topic meaningfully?
+✓ Do the words represent different aspects/dimensions of the topic?
+✓ Are there enough words to enable substantial communication about the topic?
+✓ Do the words progress logically from concrete to abstract (appropriate for level)?
+
+STEP 5: FINAL VOCABULARY VALIDATION CHECKLIST
+
+Before submitting your vocabulary selection, verify EVERY word meets ALL criteria:
+
+MANDATORY QUALITY CONTROL CHECKLIST:
+✓ LEVEL APPROPRIATENESS: Is each word genuinely appropriate for ${cefrLevel} students?
+✓ USEFULNESS VERIFICATION: Will students actually need these words in real communication?
+✓ COHERENCE CONFIRMATION: Do the words work together to enable meaningful topic discussion?
+✓ DEFINITION FEASIBILITY: Can each word be defined using vocabulary simpler than the target word?
+✓ PREREQUISITE VALIDATION: Do students have the foundation vocabulary to understand these words?
+✓ COGNITIVE MATCH: Does each word match the cognitive development level of ${cefrLevel} students?
+✓ COMMUNICATION VALUE: Does each word serve authentic communicative purposes at this level?
+✓ TOPIC RELEVANCE: Is each word directly relevant and useful for discussing "${topic}"?
+
+REPLACEMENT PROTOCOL:
+If ANY word fails the above checks, IMMEDIATELY replace it with a more appropriate alternative that:
+- Meets all validation criteria
+- Serves the same communicative function
+- Fits better with the other selected vocabulary
+- Enables students to discuss the topic effectively at their level
+
+FINAL CONFIRMATION:
+Your selected vocabulary should enable ${cefrLevel} students to engage in meaningful, authentic communication about "${topic}" using language appropriate to their developmental stage.
+
 CRITICAL LESSON DEVELOPMENT PROCESS:
-1. FIRST, select EXACTLY 5 vocabulary words that are:
+1. FIRST, select EXACTLY 5 vocabulary words that meet ALL the above criteria and are:
    - Appropriate for the ${cefrLevel} level
    - Highly relevant to the "${topic}" subject
    - Useful for students to know and discuss the topic
