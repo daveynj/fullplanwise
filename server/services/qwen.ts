@@ -67,19 +67,98 @@ Before creating any lesson content, first analyze and establish clear parameters
    - List 3-5 sentence structure patterns appropriate for this level
    - List 2-3 grammatical structures that would be too complex for this level
 
-3. TEXT COMPLEXITY ANALYSIS:
-   - Determine appropriate sentence length and complexity for ${params.cefrLevel} level
-   - Identify appropriate paragraph structure and length
-   - Establish appropriate use of idioms, phrasal verbs, and figurative language (if any)
+STEP 3: READING TEXT DEVELOPMENT APPROACH
 
-4. COGNITIVE DEMAND ANALYSIS:
-   - Identify appropriate cognitive tasks for ${params.cefrLevel} level (describing, explaining, comparing, etc.)
-   - Determine appropriate level of abstraction for concepts
-   - Assess appropriate cultural knowledge assumptions
+SPEAKING-FOCUSED TEXT PURPOSE ANALYSIS
 
-Spend time establishing these parameters before proceeding. This analysis will guide your creation of all lesson components to ensure they remain appropriate for ${params.cefrLevel} level students throughout.
+Before writing, analyze the text's role in a speaking-focused lesson for ${params.cefrLevel} students:
 
-Once complete, use these self-generated guidelines to create appropriately leveled content for all components of the lesson.
+PURPOSE CLARIFICATION:
+- This text serves as a CONVERSATION CATALYST, not comprehensive reading practice
+- Students will use this text to GENERATE SPEAKING opportunities about "${params.topic}"
+- The text should PROVIDE ENOUGH CONTENT for meaningful discussion without overwhelming
+- Focus on ACCESSIBLE INFORMATION that students can reference, react to, and build upon in conversation
+
+SPEAKING-LESSON TEXT REQUIREMENTS:
+- SHORTER TEXTS that can be quickly processed to focus lesson time on speaking
+- DISCUSSION-WORTHY CONTENT that naturally generates opinions, questions, and personal connections
+- CLEAR TALKING POINTS that students can easily reference during conversations
+- RELATABLE SCENARIOS that connect to students' experiences and interests
+
+READER ENGAGEMENT AND COMPREHENSION ANALYSIS FOR ${params.cefrLevel}
+
+Analyze what ${params.cefrLevel} students can meaningfully engage with:
+
+COGNITIVE ENGAGEMENT ANALYSIS:
+A1 STUDENTS: Can engage with immediate, concrete experiences they can relate to personally
+- Personal situations, daily activities, familiar objects and people
+- Simple cause-and-effect relationships they experience directly
+- Basic problem-solution scenarios from everyday life
+
+A2 STUDENTS: Can engage with personal experiences and simple social situations
+- Past experiences, future plans, personal opinions about familiar topics
+- Simple comparisons between different places, people, or experiences
+- Basic cultural or social topics they encounter in daily life
+
+B1 STUDENTS: Can engage with social issues and practical problems that affect their lives
+- Community issues, lifestyle choices, personal challenges and solutions
+- Comparing different approaches to common problems
+- Topics where they can express opinions and give reasons
+
+B2 STUDENTS: Can engage with analytical thinking about complex social and professional topics
+- Abstract concepts they can relate to their experiences
+- Multiple perspectives on contemporary issues
+- Topics requiring evaluation and critical thinking
+
+C1 STUDENTS: Can engage with sophisticated analysis and nuanced discussion
+- Complex social, academic, or professional issues
+- Subtle distinctions and implied meanings
+- Topics requiring synthesis of multiple ideas and perspectives
+
+C2 STUDENTS: Can engage with highly sophisticated and specialized content
+- Expert-level discussions with nuanced argumentation
+- Complex interdisciplinary connections
+- Topics requiring deep critical analysis and evaluation
+
+CONTENT APPROPRIATENESS AND ENGAGEMENT VALIDATION
+
+Before finalizing content, verify it meets speaking-lesson requirements:
+
+CONTENT VALIDATION CHECKLIST:
+✓ PERSONAL RELEVANCE: Can students connect this to their own experiences or opinions?
+✓ DISCUSSION POTENTIAL: Does this content naturally generate questions, reactions, and responses?
+✓ OPINION-WORTHY: Are there aspects students can agree/disagree with or have personal views about?
+✓ ACCESSIBLE COMPLEXITY: Can students understand this quickly to focus on speaking practice?
+✓ CONVERSATION STARTERS: Does this provide clear talking points for pair/group discussions?
+
+REJECTION CRITERIA - AVOID CONTENT THAT:
+❌ Is purely informational without discussion potential
+❌ Requires extensive reading comprehension that dominates lesson time
+❌ Is too abstract or distant from students' experiences to generate authentic responses
+❌ Provides facts without opportunities for personal reaction or opinion
+❌ Is too complex for students to quickly process and then discuss
+
+SPEAKING-OPTIMIZED TEXT LENGTH GUIDELINES:
+
+A1 LEVEL: 80-120 words (2-3 short paragraphs)
+- Quick to read, maximum time for speaking practice
+- Focus on concrete, relatable situations that generate immediate responses
+
+A2 LEVEL: 100-150 words (2-3 paragraphs)  
+- Manageable length allowing focus on conversation
+- Include personal experience connections that prompt sharing
+
+B1 LEVEL: 120-180 words (3 paragraphs)
+- Balanced content that provides discussion material without overwhelming
+- Include different perspectives or approaches students can respond to
+
+B2 LEVEL: 150-220 words (3-4 paragraphs)
+- Rich enough content for analytical discussion
+- Multiple aspects or viewpoints students can explore in conversation
+
+C1/C2 LEVELS: 180-250 words (3-4 paragraphs)
+- Sophisticated content that merits extended discussion
+- Complex enough to sustain in-depth conversation while remaining accessible
 
 STEP 1: WRITE A READING TEXT
 - First, write an original reading text about the topic "${params.topic}"
@@ -89,15 +168,6 @@ STEP 1: WRITE A READING TEXT
 - Make complex information approachable through clear explanations and engaging examples
 - Use a mix of sentence lengths for good flow
 - Occasionally address the reader directly with rhetorical questions or observations
-
-- CRITICAL REQUIREMENT: For ${params.cefrLevel} level, your text MUST be AT LEAST ${params.cefrLevel === "B1" ? "200" : params.cefrLevel === "C2" ? "500" : params.cefrLevel === "C3" ? "600" : params.cefrLevel === "A1" || params.cefrLevel === "A2" ? "100" : "300"} words
-- Your text will be REJECTED if it's shorter than ${params.cefrLevel === "B1" ? "200" : params.cefrLevel === "C2" ? "500" : params.cefrLevel === "C3" ? "600" : params.cefrLevel === "A1" || params.cefrLevel === "A2" ? "100" : "300"} words
-- The system counts words by splitting on whitespace - make sure you have enough actual words
-- Divide your text into 3-5 paragraphs with clear paragraph breaks (use double line breaks between paragraphs)
-- Focus on creating a substantial, informative text before moving on to other components
-- Make sure the vocabulary and sentence structures remain appropriate for ${params.cefrLevel} level students
-- For lower levels (A1, A2), simplify the language while maintaining a friendly, engaging tone
-- For higher levels (B2, C1, C2), use richer vocabulary and more complex sentences
 
 TONE & STYLE APPROACH:
 First, analyze appropriate tone and style considerations for ${params.cefrLevel} level:

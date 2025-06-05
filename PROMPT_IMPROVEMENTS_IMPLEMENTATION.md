@@ -27,8 +27,8 @@ We have successfully implemented **three major prompt improvements** that will s
 
 #### Files Updated:
 - `server/services/openai.ts` - Lines 189-320
-- `server/services/gemini.ts` - Applied same approach  
-- `server/services/qwen.ts` - Applied same approach
+- `server/services/gemini.ts` - Lines 410-500
+- `server/services/qwen.ts` - Lines 69-150
 
 ---
 
