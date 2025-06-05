@@ -688,56 +688,108 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
     },
     {
       "type": "sentenceFrames",
-      "title": "Sentence Frames",
-      "introduction": "Practice using sentence frames to talk about the topic.",
+      "title": "Sentence Practice",
+      "introduction": "Master key sentence patterns to express your ideas clearly and naturally.",
       "frames": [
         {
-          "pattern": "I think _____ is important because _____.",
-          "examples": [
-            "I think learning English is important because it helps with international communication.",
-            "I think healthy eating is important because it prevents many diseases."
-          ],
+          "patternTemplate": "I think _____ is _____ because _____.",
+          "languageFunction": "Expressing and justifying opinions",
+          "title": "Opinion Expression with Reasoning",
           "level": "intermediate",
-          "grammarFocus": "Expressing opinions with reasons",
-          "communicativeFunction": "Justifying opinions",
-          "usageNotes": "This pattern helps students express and support their views",
-          "teachingTips": "Start with familiar topics before moving to more abstract concepts"
+          "grammarFocus": [
+            "Structure: I think + [subject] + is + [adjective] + because + [reason]",
+            "Use of 'because' to provide justification",
+            "Expressing personal opinions with evidence"
+          ],
+          "structureComponents": [
+            {
+              "label": "Opinion Topic",
+              "description": "The subject or topic you have an opinion about",
+              "examples": ["learning English", "healthy eating", "traveling", "technology", "education", "sports"],
+              "inSentenceExample": "I think [Opinion Topic] is..."
+            },
+            {
+              "label": "Evaluative Adjective",
+              "description": "Your judgment or evaluation of the topic",
+              "examples": ["important", "useful", "difficult", "enjoyable", "necessary", "challenging"],
+              "inSentenceExample": "...is [Evaluative Adjective] because..."
+            },
+            {
+              "label": "Justification",
+              "description": "The reason or evidence supporting your opinion",
+              "examples": ["it helps with communication", "it improves health", "it expands your worldview", "it connects people"],
+              "inSentenceExample": "...because [Justification]."
+            }
+          ],
+          "examples": [
+            {
+              "completeSentence": "I think learning English is important because it helps with international communication.",
+              "breakdown": {
+                "Opinion Topic": "learning English",
+                "Evaluative Adjective": "important",
+                "Justification": "it helps with international communication"
+              }
+            },
+            {
+              "completeSentence": "I think healthy eating is necessary because it prevents many diseases.",
+              "breakdown": {
+                "Opinion Topic": "healthy eating",
+                "Evaluative Adjective": "necessary", 
+                "Justification": "it prevents many diseases"
+              }
+            }
+          ],
+          "teachingNotes": [
+            "Start with familiar topics before moving to more abstract concepts",
+            "Encourage students to use lesson vocabulary in their opinions",
+            "Practice both positive and negative opinions for balance"
+          ]
         },
         {
-          "pattern": "One way to _____ is to _____.",
-          "examples": [
-            "One way to improve vocabulary is to read regularly.",
-            "One way to stay healthy is to exercise daily."
-          ],
+          "patternTemplate": "One way to _____ is to _____.",
+          "languageFunction": "Suggesting solutions and giving advice",
+          "title": "Solution Suggestions",
           "level": "intermediate",
-          "grammarFocus": "Suggesting solutions or methods",
-          "communicativeFunction": "Giving advice",
-          "usageNotes": "Useful for discussing processes and solutions",
-          "teachingTips": "Have students brainstorm multiple solutions for the same problem"
-        },
-        {
-          "pattern": "When I _____, I always _____.",
-          "examples": [
-            "When I travel, I always take photos.",
-            "When I cook, I always follow a recipe."
+          "grammarFocus": [
+            "Structure: One way + infinitive + is + infinitive",
+            "Using infinitives to express purpose and method",
+            "Giving practical advice"
           ],
-          "level": "basic",
-          "grammarFocus": "Simple present for habits",
-          "communicativeFunction": "Describing routines",
-          "usageNotes": "Helps students discuss personal habits and routines",
-          "teachingTips": "Use this to encourage personal sharing in a structured way"
-        },
-        {
-          "pattern": "In the future, _____ will _____.",
-          "examples": [
-            "In the future, technology will change how we learn.",
-            "In the future, cities will become more environmentally friendly."
+          "structureComponents": [
+            {
+              "label": "Goal/Problem",
+              "description": "What someone wants to achieve or solve",
+              "examples": ["improve vocabulary", "stay healthy", "save money", "learn faster", "reduce stress"],
+              "inSentenceExample": "One way to [Goal/Problem] is..."
+            },
+            {
+              "label": "Solution Method",
+              "description": "The specific action or strategy to achieve the goal",
+              "examples": ["read regularly", "exercise daily", "cook at home", "practice speaking", "take breaks"],
+              "inSentenceExample": "...is to [Solution Method]."
+            }
           ],
-          "level": "intermediate",
-          "grammarFocus": "Future tense predictions",
-          "communicativeFunction": "Making predictions",
-          "usageNotes": "Good for expressing opinions about future developments",
-          "teachingTips": "Can be adapted for different time frames (tomorrow, next year, etc.)"
+          "examples": [
+            {
+              "completeSentence": "One way to improve vocabulary is to read regularly.",
+              "breakdown": {
+                "Goal/Problem": "improve vocabulary",
+                "Solution Method": "read regularly"
+              }
+            },
+            {
+              "completeSentence": "One way to stay healthy is to exercise daily.",
+              "breakdown": {
+                "Goal/Problem": "stay healthy",
+                "Solution Method": "exercise daily"
+              }
+            }
+          ],
+          "teachingNotes": [
+            "Have students brainstorm multiple solutions for the same problem",
+            "Connect to practical situations from the lesson topic",
+            "Practice with both personal and general advice"
+          ]
         }
       ],
       "timeAllocation": "10 minutes",

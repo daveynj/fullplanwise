@@ -258,6 +258,9 @@ Follow these EXACT requirements:
 
 CRITICAL: Your output must be properly formatted JSON with NO ERRORS!
 
+SENTENCE FRAMES CRITICAL INSTRUCTION:
+When you see template text like "REPLACE WITH: [instruction]" in the sentence frames section, you MUST replace it with actual content, NOT copy the instruction literally. Generate real examples, patterns, and teaching notes about ${params.topic}. The frontend expects real data, not placeholder text.
+
 1. EXTREMELY CRITICAL: ALL ARRAYS MUST CONTAIN FULL CONTENT, NOT NUMBERS OR COUNTS
    CORRECT: "paragraphs": ["Paragraph 1 text here...", "Paragraph 2 text here...", "Paragraph 3 text here..."]
    WRONG: "paragraphs": 5
@@ -628,183 +631,15 @@ Each sentence frame MUST include the following enhanced structure for maximum te
     - Discussion prompts related to the pattern
     - Classroom implementation tips
 
-CRITICAL: Follow this EXACT JSON structure for sentence frames:
+CRITICAL: Generate sentence frames using the enhanced format with these REQUIRED fields:
+- "patternTemplate": The actual pattern (e.g., "It is _____ to _____ because _____.")
+- "languageFunction": Purpose of the pattern (e.g., "Explaining reasons and justification")
+- "structureComponents": Array of component objects with label, description, examples, inSentenceExample
+- "examples": Array of objects with "completeSentence" and "breakdown" properties
+- "grammarFocus": Array of grammar points
+- "teachingNotes": Array of teaching tips
 
-\`\`\`
-{
-  "type": "sentenceFrames",
-  "title": "Sentence Practice", 
-  "introduction": "Master key sentence patterns to express your ideas clearly and naturally.",
-  "frames": [
-    {
-      "patternTemplate": "It is ___ to ___ because ___.",
-      "languageFunction": "Explaining reasons and justification",
-      "title": "Expressing Reasoned Opinions",
-      "level": "intermediate",
-      "grammarFocus": [
-        "Structure: It + is + adjective + infinitive (to + verb) + reason clause",
-        "Use of 'because' to introduce explanations",
-        "Infinitive forms after adjectives"
-      ],
-      "structureComponents": [
-        {
-          "label": "Evaluative Adjective",
-          "description": "An adjective that expresses judgment about the action",
-          "examples": ["important", "essential", "polite", "rude", "necessary", "helpful"],
-          "inSentenceExample": "It is [Evaluative Adjective] to..."
-        },
-        {
-          "label": "Infinitive Action", 
-          "description": "The main action being evaluated, in infinitive form",
-          "examples": ["learn new languages", "respect differences", "ask permission"],
-          "inSentenceExample": "...to [Infinitive Action] because..."
-        },
-        {
-          "label": "Reason Clause",
-          "description": "The explanation for why the evaluation is true", 
-          "examples": ["it shows respect", "it prevents problems", "it builds trust"],
-          "inSentenceExample": "...because [Reason Clause]."
-        }
-      ],
-      "visualStructure": {
-        "start": "It is",
-        "parts": [
-          { "label": "Evaluative Adjective" },
-          { "label": "Infinitive Action", "connector": "to" },
-          { "label": "Reason Clause", "connector": "because" }
-        ],
-        "end": "."
-      },
-      "examples": [
-        {
-          "completeSentence": "It is important to learn cultural customs because it shows respect for local traditions.",
-          "breakdown": {
-            "Evaluative Adjective": "important",
-            "Infinitive Action": "learn cultural customs", 
-            "Reason Clause": "it shows respect for local traditions"
-          }
-        },
-        {
-          "completeSentence": "It is polite to remove your shoes because it keeps the house clean.",
-          "breakdown": {
-            "Evaluative Adjective": "polite",
-            "Infinitive Action": "remove your shoes",
-            "Reason Clause": "it keeps the house clean"
-          }
-        },
-        {
-          "completeSentence": "It is essential to understand etiquette because it helps avoid embarrassing situations.",
-          "breakdown": {
-            "Evaluative Adjective": "essential", 
-            "Infinitive Action": "understand etiquette",
-            "Reason Clause": "it helps avoid embarrassing situations"
-          }
-        }
-      ],
-      "patternVariations": {
-        "negativeForm": "It is not polite to use your phone during meals because it shows disrespect.",
-        "questionForm": "Why is it important to learn about different cultures?",
-        "modalForm": "It can be difficult to understand all customs because every culture is different.",
-        "pastForm": "It was essential to follow the rules because the ceremony was very formal."
-      },
-      "interactiveFeatures": {
-        "fillInTheBlanks": [
-          {
-            "template": "It is ___ to ___ because ___.",
-            "prompts": [
-              "Think of something important in your culture",
-              "What action shows good manners?",
-              "Why is this behavior valued?"
-            ]
-          }
-        ],
-        "substitutionDrill": {
-          "basePattern": "It is important to respect others because it creates harmony.",
-          "substitutions": [
-            {"target": "important", "options": ["essential", "necessary", "polite"]},
-            {"target": "respect others", "options": ["listen carefully", "show courtesy", "be patient"]},
-            {"target": "creates harmony", "options": ["builds trust", "shows maturity", "prevents conflicts"]}
-          ]
-        },
-        "buildingSentences": {
-          "stepByStep": [
-            {"step": 1, "instruction": "Choose an evaluative adjective", "examples": ["important", "polite", "necessary"]},
-            {"step": 2, "instruction": "Add an infinitive action", "examples": ["to listen", "to wait", "to ask"]},
-            {"step": 3, "instruction": "Complete with a reason", "examples": ["it shows respect", "it's more polite", "it prevents problems"]}
-          ]
-        }
-      },
-      "culturalAdaptation": {
-        "universalApplication": "This pattern works across cultures for expressing values and social norms",
-        "culturalNotes": "Different cultures may emphasize different adjectives - adapt examples to student backgrounds",
-        "discussionStarters": [
-          "What behaviors are considered 'important' in your culture?",
-          "Are there actions that are 'polite' in one culture but not in another?"
-        ]
-      },
-      "practiceActivities": [
-        {
-          "type": "controlled",
-          "name": "Pattern Completion",
-          "instruction": "Complete the sentence with appropriate words from the lesson",
-          "difficulty": "easy"
-        },
-        {
-          "type": "guided", 
-          "name": "Cultural Comparison",
-          "instruction": "Use this pattern to compare customs from different cultures",
-          "difficulty": "medium"
-        },
-        {
-          "type": "free",
-          "name": "Personal Values",
-          "instruction": "Express your own opinions about social behaviors using this pattern",
-          "difficulty": "challenging"
-        }
-      ],
-      "errorCorrection": {
-        "commonMistakes": [
-          {"error": "*It is important learn...", "correction": "It is important TO learn...", "explanation": "Don't forget the infinitive 'to'"},
-          {"error": "*It is important to learn for...", "correction": "It is important to learn BECAUSE...", "explanation": "Use 'because' not 'for' to give reasons"},
-          {"error": "*It is importantly to...", "correction": "It is IMPORTANT to...", "explanation": "Use the adjective 'important', not the adverb"}
-        ]
-      },
-      "teachingNotes": [
-        "Start with familiar concepts before introducing new vocabulary",
-        "Use gestures and visual aids to reinforce the three-part structure", 
-        "Encourage students to personalize examples with their own cultural experiences",
-        "Practice rhythm: IT is im-POR-tant to LEARN be-CAUSE it HELPS",
-        "Connect to lesson vocabulary by using target words in the infinitive action slot"
-      ],
-      "discussionPrompts": [
-        "What customs from your culture would you explain using this pattern?",
-        "Can you think of a time when understanding cultural differences was important?",
-        "How would you teach someone from another culture about politeness in your country?",
-        "What behaviors are considered essential in professional settings?"
-      ]
-    }
-  ],
-  "aiGeneratedSupport": {
-    "adaptiveExamples": "AI can generate personalized examples based on student's cultural background and interests",
-    "levelAdjustment": "Pattern complexity and vocabulary automatically adjust to student's demonstrated proficiency",
-    "realTimeCorrection": "AI provides immediate feedback on student-generated sentences using this pattern",
-    "progressiveChallenge": "Difficulty increases as student masters basic pattern usage"
-  },
-  "visualLearningSupport": {
-    "colorCoding": "Each sentence component uses consistent colors across all examples",
-    "structureDiagrams": "Visual representation of sentence building blocks",
-    "animatedConstruction": "Step-by-step sentence building animation suggestions", 
-    "patternRecognition": "Highlighting recurring structures across different examples"
-  }
-}
-\`\`\`
-
-// This enhanced structure provides:
-// - Clear visual organization with color-coded components
-// - Interactive practice opportunities at multiple difficulty levels
-// - Cultural sensitivity and adaptation guidance
-// - Error prevention through common mistake identification
-// - Comprehensive teaching support for effective classroom implementation
+NEVER use the old format with "pattern", "communicativeFunction", "structureBreakdown", or "exampleSentences".
 
 STEP 1: VOCABULARY LEVEL ANALYSIS (REQUIRED BEFORE SELECTION)
 
@@ -1350,88 +1185,110 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
         {"question": "Complete Question 5?", "options": ["True", "False"], "answer": "False", "correctAnswer": "False", "explanation": "Complete explanation..."}
       ]
     },
-    // SENTENCE FRAMES SECTION (Explanatory Format)
+    // SENTENCE FRAMES SECTION - GENERATE CUSTOM CONTENT FOR THE TOPIC "${params.topic}"
+    // CRITICAL: Replace ALL placeholder text with REAL content. Generate actual examples, patterns, and teaching notes.
+    // Do NOT copy the template literally - generate real sentences about ${params.topic}.
     {
-      "type": "sentenceFrames",
-      "title": "Sentence Pattern Analysis", // Or similar title
+      "type": "sentenceFrames", 
+      "title": "REPLACE WITH: engaging title about ${params.topic}",
+      "introduction": "REPLACE WITH: how these patterns help students discuss ${params.topic}",
       "frames": [
         {
-          "pattern": "[CAUSE] spurred [EFFECT] because [REASON].",
-          "level": "intermediate",
-          "title": "Explaining Reasons for Developments",
-          "usage": "Use this pattern to explain the cause, effect, and reason behind events.",
-          "communicativeFunction": "Explaining Cause/Effect/Reason",
-          "grammarFocus": "Using past tense verbs, 'because' conjunction",
-          "structureBreakdown": [
-            { "componentName": "CAUSE", "description": "What started the chain of events?", "examples": ["The discovery", "Increased funding", "Public interest"] },
-            { "componentName": "EFFECT", "description": "What was the direct result?", "examples": ["new research", "faster development", "more volunteers"] },
-            { "componentName": "REASON", "description": "Why did the cause lead to the effect?", "examples": ["it opened new possibilities", "resources were available", "people were excited"] }
+          "patternTemplate": "REPLACE WITH: sentence pattern using _____ blanks for ${params.topic}",
+          "languageFunction": "REPLACE WITH: communication purpose for ${params.topic}",
+          "title": "REPLACE WITH: clear pattern title for ${params.topic}",
+          "level": "${params.cefrLevel.toLowerCase()}",
+          "grammarFocus": [
+            "REPLACE WITH: grammar points students will practice",
+            "REPLACE WITH: additional grammar features",
+            "REPLACE WITH: language structures to highlight"
           ],
-          "exampleSentences": [
-            "The launch of Sputnik 1 spurred the US space program because it highlighted a technology gap.",
-            "Increased funding spurred faster development because more researchers could be hired."
+          "structureComponents": [
+            {
+              "label": "Opinion Verb",
+              "description": "A verb that expresses your feeling or opinion",
+              "examples": ["like", "love", "enjoy", "prefer", "appreciate", "admire"],
+              "inSentenceExample": "I [Opinion Verb] ${params.topic} because..."
+            },
+            {
+              "label": "Reason", 
+              "description": "The explanation for your opinion",
+              "examples": ["it makes me happy", "it's interesting", "it's important", "it helps people", "it's beautiful", "it's useful"],
+              "inSentenceExample": "...because [Reason]."
+            }
           ],
-          "practicePrompt": "Create your own sentence using this pattern: [CAUSE] spurred [EFFECT] because [REASON]. Try to use vocabulary from the lesson.",
-          "teachingTips": "Discuss each component with students. Elicit more examples for each component before asking students to write their own sentences."${params.cefrLevel === 'A1' || params.cefrLevel === 'A2' || params.cefrLevel === 'B1' ? `,
+          "examples": [
+            {
+              "completeSentence": "I love ${params.topic} because it makes me happy.",
+              "breakdown": {
+                "Opinion Verb": "love",
+                "Reason": "it makes me happy"
+              }
+            },
+            {
+              "completeSentence": "I appreciate ${params.topic} because it's important.", 
+              "breakdown": {
+                "Opinion Verb": "appreciate",
+                "Reason": "it's important"
+              }
+            },
+            {
+              "completeSentence": "I enjoy ${params.topic} because it's interesting.",
+              "breakdown": {
+                "Opinion Verb": "enjoy", 
+                "Reason": "it's interesting"
+              }
+            }
+          ],
+          "teachingNotes": [
+            "Start with familiar opinion verbs like 'like' and 'love'",
+            "Help students give specific reasons, not just 'it's good'", 
+            "Practice with topics students care about personally"
+          ]${params.cefrLevel === 'A1' || params.cefrLevel === 'A2' || params.cefrLevel === 'B1' ? `,
           "lowerLevelScaffolding": {
             "sentenceWorkshop": [
               {
-                "name": "Step-by-Step Building",
+                "name": "Building Step by Step",
                 "steps": [
                   {
                     "level": "word",
-                    "example": "discovery",
-                    "explanation": "Start with the cause (what happened first)"
+                    "example": "[simple starting word]",
+                    "explanation": "[explain first step]"
                   },
                   {
                     "level": "phrase", 
-                    "example": "The discovery spurred",
-                    "explanation": "Add the verb 'spurred' to show the effect"
+                    "example": "[simple phrase using the word]",
+                    "explanation": "[explain second step]"
                   },
                   {
                     "level": "sentence",
-                    "example": "The discovery spurred new research because it was exciting.",
-                    "explanation": "Complete with effect and reason"
+                    "example": "[complete simple sentence about '${params.topic}']",
+                    "explanation": "[explain final step]"
                   }
                 ],
-                "teachingNotes": "Build confidence by adding one piece at a time"
+                "teachingNotes": "[guidance for teachers using this scaffolding]"
               }
             ],
             "patternTrainer": {
-              "pattern": "[CAUSE] spurred [EFFECT] because [REASON].",
-              "title": "Cause and Effect Builder",
+              "pattern": "[simplified version of the main pattern]",
+              "title": "Pattern Practice Tool",
               "scaffolding": {
-                "causes": ["The discovery", "New funding", "Public interest", "Better technology", "Government support"],
-                "effects": ["new research", "faster progress", "more projects", "better results", "wider participation"],
-                "reasons": ["it was important", "resources were available", "people were excited", "tools improved", "goals were clear"]
+                "component1": ["[word1]", "[word2]", "[word3]", "[word4]", "[word5]", "[word6]", "[word7]"],
+                "component2": ["[word1]", "[word2]", "[word3]", "[word4]", "[word5]", "[word6]", "[word7]"],
+                "component3": ["[phrase1]", "[phrase2]", "[phrase3]", "[phrase4]"]
               },
               "examples": [
-                "The discovery spurred new research because it was important.",
-                "New funding spurred faster progress because resources were available."
+                "[Example sentence using pattern trainer words about '${params.topic}']",
+                "[Another example sentence using pattern trainer words about '${params.topic}']"
               ],
               "instructions": [
-                "Choose what caused something to happen",
-                "Pick the effect that followed", 
-                "Add a reason explaining why",
-                "Connect them with 'spurred' and 'because'"
+                "[Step 1 instruction for students]",
+                "[Step 2 instruction for students]", 
+                "[Step 3 instruction for students]"
               ]
-            },
-            "visualMaps": [
-              {
-                "pattern": "[CAUSE] spurred [EFFECT] because [REASON]",
-                "colorCoding": {
-                  "cause": "blue",
-                  "spurred": "gray", 
-                  "effect": "green",
-                  "because": "gray",
-                  "reason": "purple"
-                },
-                "example": "The discovery spurred new research because it was important"
-              }
-            ]
+            }
           }` : ''}
         }
-        // (Potentially include 1 more frame object)
       ]
     },
     // CLOZE SECTION (Complete - Fill in the Blanks)

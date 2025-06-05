@@ -49,6 +49,8 @@ export class QwenService {
       console.log('Building prompt for lesson generation');
       const prompt = `You are an expert ESL (English as a Second Language) teacher and curriculum designer with over 20 years of experience.
 
+CRITICAL INSTRUCTION: Throughout this lesson template, you will see text that says "REPLACE WITH:" followed by instructions. You MUST replace ALL of this text with actual, real content. Never include "REPLACE WITH:" in your final response - it should only contain real lesson content about the topic "${params.topic}".
+
 TASK OVERVIEW:
 You will create a complete ESL lesson for ${params.cefrLevel} level students on a given topic.
 
@@ -1026,40 +1028,35 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
         {"question": "Complete Question 5?", "options": ["True", "False"], "answer": "False", "correctAnswer": "False", "explanation": "Complete explanation..."}
       ]
     },
-    // SENTENCE FRAMES SECTION (Complete - 1-2 frames)
+    // SENTENCE FRAMES SECTION - GENERATE CUSTOM CONTENT FOR THE TOPIC "${params.topic}"
+    // CRITICAL: Replace ALL placeholder text with REAL content about ${params.topic}. Generate actual examples, patterns, and teaching notes.
     {
       "type": "sentenceFrames",
-      "title": "Sentence Practice",
-      "introduction": "Master key sentence patterns to express your ideas clearly and naturally.",
+      "title": "REPLACE WITH: engaging title about ${params.topic}",
+      "introduction": "REPLACE WITH: how these patterns help students discuss ${params.topic}",
       "frames": [
         {
-          "patternTemplate": "It is ___ to ___ because ___.",
-          "languageFunction": "Explaining reasons and justification",
-          "title": "Expressing Reasoned Opinions",
+          "patternTemplate": "REPLACE WITH: sentence pattern using _____ blanks for ${params.topic}",
+          "languageFunction": "REPLACE WITH: communication purpose for ${params.topic}",
+          "title": "REPLACE WITH: clear pattern title for ${params.topic}",
           "level": "intermediate",
           "grammarFocus": [
-            "Structure: It + is + adjective + infinitive (to + verb) + reason clause",
-            "Use of 'because' to introduce explanations",
-            "Infinitive forms after adjectives"
+            "REPLACE WITH: grammar points students will practice",
+            "REPLACE WITH: additional grammar features",
+            "REPLACE WITH: language structures to highlight"
           ],
           "structureComponents": [
             {
-              "label": "Evaluative Adjective",
-              "description": "An adjective that expresses judgment or evaluation about the action",
-              "examples": ["important", "essential", "polite", "rude", "necessary", "helpful"],
-              "inSentenceExample": "It is [Evaluative Adjective] to..."
+              "label": "REPLACE WITH: component name for ${params.topic}",
+              "description": "REPLACE WITH: what this component does in the sentence",
+              "examples": ["REPLACE", "WITH", "ACTUAL", "WORDS", "FOR", "TOPIC"],
+              "inSentenceExample": "REPLACE WITH: how this component fits in the sentence pattern"
             },
             {
-              "label": "Infinitive Action",
-              "description": "The main action or behavior being evaluated, in infinitive form",
-              "examples": ["learn new languages", "respect cultural differences", "ask permission first"],
-              "inSentenceExample": "...to [Infinitive Action] because..."
-            },
-            {
-              "label": "Reason Clause",
-              "description": "The explanation or justification for why the evaluation is true",
-              "examples": ["it shows respect for others", "it helps us communicate better", "it prevents misunderstandings"],
-              "inSentenceExample": "...because [Reason Clause]."
+              "label": "REPLACE WITH: second component name for ${params.topic}",
+              "description": "REPLACE WITH: what this second component does",
+              "examples": ["REPLACE", "WITH", "ACTUAL", "WORDS", "FOR", "TOPIC"],
+              "inSentenceExample": "REPLACE WITH: how this second component fits"
             }
           ],
           "visualStructure": {
@@ -1073,35 +1070,24 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
           },
           "examples": [
             {
-              "completeSentence": "It is important to learn cultural customs because it shows respect for local traditions.",
+              "completeSentence": "REPLACE WITH: example sentence 1 about ${params.topic} using your pattern",
               "breakdown": {
-                "Evaluative Adjective": "important",
-                "Infinitive Action": "learn cultural customs",
-                "Reason Clause": "it shows respect for local traditions"
+                "Component1": "REPLACE WITH: actual word from your example sentence",
+                "Component2": "REPLACE WITH: actual phrase from your example sentence"
               }
             },
             {
-              "completeSentence": "It is polite to remove your shoes because it keeps the house clean.",
+              "completeSentence": "REPLACE WITH: example sentence 2 about ${params.topic} using your pattern",
               "breakdown": {
-                "Evaluative Adjective": "polite",
-                "Infinitive Action": "remove your shoes", 
-                "Reason Clause": "it keeps the house clean"
+                "Component1": "REPLACE WITH: actual word from this second sentence", 
+                "Component2": "REPLACE WITH: actual phrase from this second sentence"
               }
             },
             {
-              "completeSentence": "It is essential to understand local etiquette because it helps avoid embarrassing situations.",
+              "completeSentence": "REPLACE WITH: example sentence 3 about ${params.topic} using your pattern",
               "breakdown": {
-                "Evaluative Adjective": "essential",
-                "Infinitive Action": "understand local etiquette",
-                "Reason Clause": "it helps avoid embarrassing situations"
-              }
-            },
-            {
-              "completeSentence": "It is rude to interrupt others because it shows disrespect for their opinions.",
-              "breakdown": {
-                "Evaluative Adjective": "rude",
-                "Infinitive Action": "interrupt others",
-                "Reason Clause": "it shows disrespect for their opinions"
+                "Component1": "REPLACE WITH: actual word from this third sentence",
+                "Component2": "REPLACE WITH: actual phrase from this third sentence"
               }
             }
           ],
