@@ -171,8 +171,19 @@ Ensure the entire output is a valid JSON object starting with { and ending with 
       // Parse the JSON response
       let parsedContent;
       try {
-        // Clean the content in case there are any extra characters
-        const cleanContent = content.trim();
+        // Clean the content - remove markdown code blocks if present
+        let cleanContent = content.trim();
+        
+        // Remove markdown JSON code blocks
+        if (cleanContent.startsWith('```json')) {
+          cleanContent = cleanContent.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+        } else if (cleanContent.startsWith('```')) {
+          cleanContent = cleanContent.replace(/^```\s*/, '').replace(/\s*```$/, '');
+        }
+        
+        cleanContent = cleanContent.trim();
+        console.log('Cleaned content for parsing, length:', cleanContent.length);
+        
         parsedContent = JSON.parse(cleanContent);
         console.log('Successfully parsed JSON response');
       } catch (parseError) {
