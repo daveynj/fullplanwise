@@ -45,84 +45,20 @@ export class QwenService {
       // Set targetLevel variable to match what the system prompt expects
       const targetLevel = params.cefrLevel;
 
-      // Build a concise prompt for lesson generation
-      console.log('Building concise prompt for lesson generation');
-      const prompt = `Create a complete ESL lesson for ${params.cefrLevel} level students about "${params.topic}".
+      // Build the prompt for lesson generation
+      console.log('Building prompt for lesson generation');
+      const prompt = `You are an expert ESL (English as a Second Language) teacher and curriculum designer with over 20 years of experience.
 
-Requirements:
-- Include 5 vocabulary words appropriate for ${params.cefrLevel} level
-- Create a reading text (3-4 paragraphs, ${params.cefrLevel} appropriate)
-- Add 5 discussion questions with context
-- Include sentence frames for speaking practice
-- Add grammar spotlight section
-- All content must be about "${params.topic}"
+CRITICAL INSTRUCTION: Throughout this lesson template, you will see text that says "REPLACE WITH:" followed by instructions. You MUST replace ALL of this text with actual, real content. Never include "REPLACE WITH:" in your final response - it should only contain real lesson content about the topic "${params.topic}".
 
-${params.targetVocabulary ? `Include these specific vocabulary words: ${params.targetVocabulary}` : ''}
+TASK OVERVIEW:
+You will create a complete ESL lesson for ${params.cefrLevel} level students on a given topic.
 
-{
-  "title": "Lesson title about ${params.topic}",
-  "level": "${params.cefrLevel}",
-  "focus": "${params.focus}",
-  "estimatedTime": ${params.lessonLength},
-  "sections": [
-    {
-      "type": "warmup",
-      "title": "Warm-up Activity",
-      "content": "Brief description",
-      "questions": ["Question 1?", "Question 2?", "Question 3?", "Question 4?", "Question 5?"],
-      "targetVocabulary": ["word1", "word2", "word3", "word4", "word5"],
-      "procedure": "Instructions",
-      "teacherNotes": "Notes"
-    },
-    {
-      "type": "reading", 
-      "title": "Reading Text",
-      "introduction": "Brief intro",
-      "paragraphs": ["Paragraph 1", "Paragraph 2", "Paragraph 3"],
-      "teacherNotes": "Notes"
-    },
-    {
-      "type": "vocabulary",
-      "title": "Key Vocabulary", 
-      "words": [
-        {
-          "term": "word1",
-          "partOfSpeech": "noun",
-          "definition": "Definition",
-          "example": "Example sentence",
-          "imagePrompt": "Image description"
-        }
-      ]
-    },
-    {
-      "type": "discussion",
-      "title": "Discussion Questions",
-      "questions": [
-        {
-          "paragraphContext": "Context",
-          "question": "Question?",
-          "imagePrompt": "Image description"
-        }
-      ]
-    },
-    {
-      "type": "sentenceFrames",
-      "title": "Sentence Practice",
-      "frames": [
-        {
-          "patternTemplate": "Pattern with [PLACEHOLDER]",
-          "languageFunction": "Function",
-          "title": "Frame title"
-        }
-      ]
-    }
-  ],
-  "grammarSpotlight": {
-    "grammarType": "present_perfect",
-    "title": "Grammar title",
-    "description": "Brief description"
-  }
-}`;
+STEP 0: CEFR LEVEL ANALYSIS (REQUIRED BEFORE PROCEEDING)
+
+Before creating any lesson content, first analyze and establish clear parameters for what constitutes ${params.cefrLevel} level appropriate content:
+
+1. VOCABULARY ANALYSIS:
    - Identify what vocabulary range is appropriate for ${params.cefrLevel} level students
    ${params.targetVocabulary ? `   - IMPORTANT: You MUST include the following words in your lesson: ${params.targetVocabulary}` : ''}
    - List 5-10 example words that would be appropriate for this level
@@ -199,6 +135,713 @@ CONTENT VALIDATION CHECKLIST:
 
 REJECTION CRITERIA - AVOID CONTENT THAT:
 ❌ Is purely informational without discussion potential
+❌ Requires extensive reading comprehension that dominates lesson time
+❌ Is too abstract or distant from students' experiences to generate authentic responses
+❌ Provides facts without opportunities for personal reaction or opinion
+❌ Is too complex for students to quickly process and then discuss
+
+SPEAKING-OPTIMIZED TEXT LENGTH GUIDELINES:
+
+A1 LEVEL: 80-120 words (2-3 short paragraphs)
+- Quick to read, maximum time for speaking practice
+- Focus on concrete, relatable situations that generate immediate responses
+
+A2 LEVEL: 100-150 words (2-3 paragraphs)  
+- Manageable length allowing focus on conversation
+- Include personal experience connections that prompt sharing
+
+B1 LEVEL: 120-180 words (3 paragraphs)
+- Balanced content that provides discussion material without overwhelming
+- Include different perspectives or approaches students can respond to
+
+B2 LEVEL: 150-220 words (3-4 paragraphs)
+- Rich enough content for analytical discussion
+- Multiple aspects or viewpoints students can explore in conversation
+
+C1/C2 LEVELS: 180-250 words (3-4 paragraphs)
+- Sophisticated content that merits extended discussion
+- Complex enough to sustain in-depth conversation while remaining accessible
+
+STEP 1: WRITE A READING TEXT
+- First, write an original reading text about the topic "${params.topic}"
+- Use a warm, accessible, and conversational tone
+- Include interesting facts and observations woven naturally into the narrative
+- Use vivid, descriptive language that brings topics to life
+- Make complex information approachable through clear explanations and engaging examples
+- Use a mix of sentence lengths for good flow
+- Occasionally address the reader directly with rhetorical questions or observations
+
+TONE & STYLE APPROACH:
+First, analyze appropriate tone and style considerations for ${params.cefrLevel} level:
+- Research how tone and register should be adjusted for ${params.cefrLevel} level learners
+- Identify appropriate language complexity, sentence structure, and vocabulary choices for this level
+- Determine the optimal balance between authenticity and accessibility
+- Consider how the topic "${params.topic}" influences appropriate tone and style
+- Analyze engagement strategies that work best for this proficiency level and topic
+
+Based on your analysis, develop a tone and style that:
+- Is most effective for ${params.cefrLevel} level language comprehension
+- Creates appropriate engagement for the specific topic "${params.topic}"
+- Balances authenticity with accessibility
+- Models natural language use appropriate to the context
+- Demonstrates appropriate register for both the topic and level
+- Provides appropriate linguistic scaffolding through style choices
+- Creates interest and motivation for continued reading/learning
+
+Apply your determined tone and style consistently across all lesson components:
+- Reading text
+- Vocabulary definitions and examples
+- Activity instructions
+- Discussion questions and contexts
+- Teacher guidance sections
+
+TOPIC DIFFERENTIATION APPROACH:
+First, analyze how the topic "${params.topic}" should be treated differently across CEFR levels:
+- Research how the complexity and focus of topic treatment evolves from A1 to C2
+- Identify specific aspects of the topic appropriate for ${params.cefrLevel} level
+- Determine which vocabulary domains within this topic are level-appropriate
+- Consider how conceptual complexity should increase with higher levels
+
+For "${params.topic}" at ${params.cefrLevel} level specifically:
+- Identify 3-5 unique aspects or sub-topics that are specifically appropriate for this level
+- Determine which vocabulary domains are appropriate for THIS level but NOT lower levels
+- Consider which cognitive approaches to the topic match this specific level
+- Identify conceptual complexity appropriate specifically for ${params.cefrLevel}
+
+Based on your analysis, create a unique approach to "${params.topic}" for ${params.cefrLevel} level by:
+- Focusing on the sub-aspects most appropriate for this specific level
+- Selecting vocabulary that would NOT be taught at lower levels
+- Approaching the topic from a cognitive perspective matching this level
+- Ensuring clear differentiation from how this topic would be taught at other levels
+
+This approach should ensure that lessons on the same topic at different CEFR levels are substantially different in:
+- Vocabulary selection
+- Question complexity and type
+- Conceptual approach
+- Content focus and examples
+
+ENHANCED STYLE APPROACH:
+First, analyze writing style characteristics of exemplary language teaching materials:
+- Study highly engaging ESL materials at ${params.cefrLevel} level
+- Identify what makes certain materials more engaging than others
+- Research the balance between authenticity and accessibility
+- Determine style patterns that increase student motivation and interest
+
+Based on your analysis, develop a writing style for "${params.topic}" at ${params.cefrLevel} level that:
+- Has a clear, consistent voice throughout the lesson
+- Uses language patterns that model natural, native-like expression
+- Incorporates appropriate humor, warmth, or formality based on topic and level
+- Avoids "textbook language" that feels artificial or overly simplified
+- Creates genuine interest through vivid, specific language
+- Uses varied sentence structures appropriate for the level
+- Maintains an authentic voice while remaining level-appropriate
+
+Avoid these common stylistic issues:
+- Generic, predictable phrasing that feels template-based
+- Overly formal academic tone when inappropriate for the topic
+- Overly simple language that doesn't challenge students appropriately
+- Inconsistent voice across different sections
+- Repetitive sentence structures or vocabulary
+- Awkward phrasing that doesn't reflect how native speakers express ideas
+
+Instead, create content with:
+- Natural flow and cohesion between ideas
+- Appropriate contextual examples that feel relevant and contemporary
+- Language that demonstrates personality and engagement with the topic
+- A balance of concrete and abstract concepts appropriate to the level
+- Stylistic choices that would engage adult learners intellectually
+
+QUESTION QUALITY IMPROVEMENT APPROACH:
+First, analyze what constitutes high-quality questions for ${params.cefrLevel} level:
+- Research question taxonomies (Bloom's, DOK) appropriate for this level
+- Identify question types that stimulate meaningful language production
+- Determine markers of high-quality vs. low-quality questions
+- Study question formulation techniques used by expert language teachers
+
+For discussion questions, ensure each question:
+- Has clear purpose and language learning objectives
+- Elicits more than one-word or yes/no responses
+- Connects to students' experiences while remaining culturally inclusive
+- Builds on vocabulary/concepts from the lesson
+- Avoids vague, obvious, or simplistic formulations ("What did it look like?")
+- Encourages critical thinking appropriate to the level
+- Is genuinely interesting to discuss
+
+For comprehension questions, ensure each question:
+- Tests specific comprehension skills appropriate for ${params.cefrLevel}
+- Requires genuine understanding rather than just recognizing words
+- Progresses from literal to interpretive to applied understanding
+- Focuses on meaningful content rather than trivial details
+- Uses question stems appropriate for the cognitive level
+- Avoids ambiguity or multiple possible correct answers
+
+Apply these quality standards to generate questions that:
+- Engage students intellectually at their appropriate level
+- Provide meaningful language practice opportunities
+- Demonstrate careful thought and authentic curiosity
+- Serve clear pedagogical purposes
+- Would be asked by experienced language educators
+
+STEP 2: CREATE LESSON COMPONENTS
+After writing the reading text, create:
+- CRITICAL REQUIREMENT: You MUST include EXACTLY 5 vocabulary items from your text. The system requires a minimum of 5 vocabulary items and will REJECT the lesson if fewer are provided.
+- ABSOLUTELY CRITICAL: Each semantic group MUST contain at least 2-3 vocabulary words. DO NOT create groups with only one word.
+- DO NOT include basic words like "hi", "hello", "goodbye", or other extremely common words as vocabulary items.
+- Only choose words that are appropriate for the CEFR level ${params.cefrLevel} and would be genuinely useful for students to learn.
+- A brief warm-up activity that MUST incorporate all vocabulary items from your vocabulary list, not just one word
+
+VOCABULARY INTEGRATION ANALYSIS:
+Analyze how vocabulary integrates with reading text:
+
+✓ NATURAL INTEGRATION CHECK: Does each target vocabulary word appear naturally in the reading text (not forced or artificially inserted)?
+✓ CONTEXTUAL SUPPORT: Does the text provide sufficient context clues to help students understand the vocabulary in meaningful situations?
+✓ USAGE VARIETY: Are vocabulary words used in different contexts within the text to show versatility?
+✓ PREREQUISITE VOCABULARY: Does the text include necessary supporting vocabulary to make target words comprehensible?
+✓ TOPIC COHERENCE: Do all vocabulary choices genuinely support and enhance the topic "${params.topic}"?
+
+TEXT-DISCUSSION INTEGRATION ANALYSIS:
+Analyze how discussion questions connect to the reading text:
+
+✓ CONTENT DEPENDENCY: Do discussion questions require genuine understanding of the text content to answer effectively?
+✓ TOPIC EXTENSION: Do questions naturally extend text topics into meaningful personal or analytical discussions?
+✓ COMPREHENSION FOUNDATION: Are questions built on information and ideas presented in the text?
+✓ COGNITIVE PROGRESSION: Do questions appropriately build on text complexity for ${params.cefrLevel} level thinking?
+✓ ENGAGEMENT BRIDGE: Do questions create natural bridges from text content to student experiences and opinions?
+
+VOCABULARY-DISCUSSION INTEGRATION ANALYSIS:
+Analyze how discussion questions incorporate target vocabulary:
+
+✓ VOCABULARY USAGE OPPORTUNITIES: Do discussion questions provide natural opportunities for students to USE target vocabulary in their responses?
+✓ CONTEXTUAL REINFORCEMENT: Do questions require students to demonstrate understanding of vocabulary in new contexts?
+✓ SPEAKING PRACTICE: Would students naturally incorporate target vocabulary when answering these questions?
+✓ SCAFFOLDED APPLICATION: Do questions appropriately scaffold vocabulary usage for ${params.cefrLevel} level students?
+✓ MEANINGFUL COMMUNICATION: Do vocabulary usage opportunities feel authentic rather than mechanical?
+
+SYNERGISTIC LEARNING FLOW ANALYSIS:
+Analyze the overall learning experience across all components:
+
+✓ CONTENT COHERENCE: Do all components (vocabulary, text, discussion) support the same learning objectives for "${params.topic}"?
+✓ DIFFICULTY ALIGNMENT: Are all components appropriately leveled for ${params.cefrLevel} students?
+✓ REINFORCEMENT PATTERNS: Do components reinforce each other's content naturally?
+✓ PEDAGOGICAL SEQUENCE: Do components create an effective learning progression (vocabulary → text → discussion)?
+✓ AUTHENTIC CONNECTIONS: Do component relationships feel natural rather than artificially constructed?
+
+INTEGRATION QUALITY VALIDATION:
+Before proceeding, confirm your lesson achieves:
+- Target vocabulary appears meaningfully in text AND discussion contexts
+- Discussion questions genuinely require text comprehension to answer
+- Students will naturally use vocabulary when responding to discussion questions
+- All components work together to create a cohesive learning experience about "${params.topic}"
+- The learning flow from vocabulary → text → discussion feels natural and educationally sound
+
+REJECTION CRITERIA - REJECT LESSONS WHERE:
+❌ Vocabulary appears forced or artificially inserted into text
+❌ Discussion questions could be answered without reading the text
+❌ Students could answer discussion questions without using target vocabulary
+❌ Components feel disconnected or only superficially related
+❌ The lesson lacks a coherent learning progression
+
+FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure all fields contain complete content. Do not use placeholders.
+
+{
+  "title": "[Engaging, descriptive lesson title about ${params.topic}]",
+  "level": "${params.cefrLevel}",
+  "focus": "${params.focus}",
+  "estimatedTime": ${params.lessonLength},
+  "targetVocabulary": [
+    "[word1]", "[word2]", "[word3]", "[word4]", "[word5]"
+  ],
+  "sections": [
+    {
+      "type": "warmup",
+      "title": "Warm-up Activity",
+      "content": "[Brief description of the warm-up activity that introduces the topic and gets students thinking about ${params.topic}]",
+      "questions": [
+        "[Engaging question 1 about ${params.topic}?]",
+        "[Engaging question 2 about ${params.topic}?]",
+        "[Engaging question 3 about ${params.topic}?]",
+        "[Engaging question 4 about ${params.topic}?]",
+        "[Engaging question 5 about ${params.topic}?]"
+      ],
+      "targetVocabulary": [
+        "[word1]", "[word2]", "[word3]", "[word4]", "[word5]"
+      ],
+      "procedure": "[Clear instructions for the teacher on how to conduct this warm-up activity]",
+      "teacherNotes": "[Helpful notes for the teacher about managing this activity, expected student responses, or potential challenges]"
+    },
+    {
+      "type": "reading",
+      "title": "Reading Text: [Descriptive title related to ${params.topic}]",
+      "introduction": "[Brief introduction to the reading that connects to the warm-up and prepares students for the text]",
+      "paragraphs": [
+        "[First paragraph about ${params.topic} - should be engaging and incorporate target vocabulary naturally]",
+        "[Second paragraph about ${params.topic} - should develop the topic further and include more target vocabulary]",
+        "[Third paragraph about ${params.topic} - should provide additional depth or perspective on the topic]"
+      ],
+      "teacherNotes": "[Notes about the reading text, any cultural context students might need, or suggestions for pre-reading activities]"
+    },
+    {
+      "type": "vocabulary",
+      "title": "Key Vocabulary",
+      "words": [
+        {
+          "term": "[vocabulary word 1]",
+          "partOfSpeech": "[noun/verb/adjective/etc.]",
+          "definition": "[Clear, simple definition appropriate for ${params.cefrLevel} level]",
+          "example": "[Example sentence using the word in context related to ${params.topic}]",
+          "imagePrompt": "[Detailed description for generating an image that would help students understand this word - be specific about visual elements]"
+        },
+        {
+          "term": "[vocabulary word 2]",
+          "partOfSpeech": "[noun/verb/adjective/etc.]",
+          "definition": "[Clear, simple definition appropriate for ${params.cefrLevel} level]",
+          "example": "[Example sentence using the word in context related to ${params.topic}]",
+          "imagePrompt": "[Detailed description for generating an image that would help students understand this word - be specific about visual elements]"
+        },
+        {
+          "term": "[vocabulary word 3]",
+          "partOfSpeech": "[noun/verb/adjective/etc.]",
+          "definition": "[Clear, simple definition appropriate for ${params.cefrLevel} level]",
+          "example": "[Example sentence using the word in context related to ${params.topic}]",
+          "imagePrompt": "[Detailed description for generating an image that would help students understand this word - be specific about visual elements]"
+        },
+        {
+          "term": "[vocabulary word 4]",
+          "partOfSpeech": "[noun/verb/adjective/etc.]",
+          "definition": "[Clear, simple definition appropriate for ${params.cefrLevel} level]",
+          "example": "[Example sentence using the word in context related to ${params.topic}]",
+          "imagePrompt": "[Detailed description for generating an image that would help students understand this word - be specific about visual elements]"
+        },
+        {
+          "term": "[vocabulary word 5]",
+          "partOfSpeech": "[noun/verb/adjective/etc.]",
+          "definition": "[Clear, simple definition appropriate for ${params.cefrLevel} level]",
+          "example": "[Example sentence using the word in context related to ${params.topic}]",
+          "imagePrompt": "[Detailed description for generating an image that would help students understand this word - be specific about visual elements]"
+        }
+      ],
+      "semanticGroups": [
+        {
+          "groupName": "[Descriptive name for vocabulary group 1 - e.g., 'Actions and Activities', 'Objects and Tools', 'Feelings and Emotions']",
+          "words": ["[word1]", "[word2]"],
+          "explanation": "[Brief explanation of why these words are grouped together and how they relate to ${params.topic}]"
+        },
+        {
+          "groupName": "[Descriptive name for vocabulary group 2]",
+          "words": ["[word3]", "[word4]"],
+          "explanation": "[Brief explanation of why these words are grouped together and how they relate to ${params.topic}]"
+        }
+      ]
+    },
+    {
+      "type": "comprehension",
+      "title": "Reading Comprehension",
+      "questions": [
+        {
+          "type": "multiple-choice",
+          "question": "[Comprehension question 1 testing understanding of main ideas from the reading]",
+          "options": [
+            "[Correct answer]",
+            "[Plausible distractor 1]",
+            "[Plausible distractor 2]",
+            "[Plausible distractor 3]"
+          ],
+          "correctAnswer": 0,
+          "explanation": "[Brief explanation of why this is the correct answer]"
+        },
+        {
+          "type": "multiple-choice",
+          "question": "[Comprehension question 2 testing understanding of specific details from the reading]",
+          "options": [
+            "[Plausible distractor 1]",
+            "[Correct answer]",
+            "[Plausible distractor 2]",
+            "[Plausible distractor 3]"
+          ],
+          "correctAnswer": 1,
+          "explanation": "[Brief explanation of why this is the correct answer]"
+        },
+        {
+          "type": "multiple-choice",
+          "question": "[Comprehension question 3 testing inference or deeper understanding]",
+          "options": [
+            "[Plausible distractor 1]",
+            "[Plausible distractor 2]",
+            "[Correct answer]",
+            "[Plausible distractor 3]"
+          ],
+          "correctAnswer": 2,
+          "explanation": "[Brief explanation of why this is the correct answer]"
+        },
+        {
+          "type": "short-answer",
+          "question": "[Open-ended question requiring students to explain or describe something from the text]",
+          "sampleAnswer": "[Example of a good student response]",
+          "teacherNotes": "[Guidance for teachers on what to look for in student responses]"
+        },
+        {
+          "type": "short-answer",
+          "question": "[Another open-ended question that connects the reading to students' own experiences or opinions]",
+          "sampleAnswer": "[Example of a good student response]",
+          "teacherNotes": "[Guidance for teachers on what to look for in student responses]"
+        }
+      ]
+    },
+    {
+      "type": "discussion",
+      "title": "Discussion Questions",
+      "questions": [
+        {
+          "paragraphContext": "[Reference to specific part of the reading text that this question builds upon]",
+          "question": "[Thoughtful discussion question 1 that encourages students to share personal experiences or opinions related to ${params.topic}]",
+          "followUpQuestions": [
+            "[Follow-up question to deepen the discussion]",
+            "[Another follow-up to encourage more detailed responses]"
+          ],
+          "imagePrompt": "[Detailed description for generating an image that would support this discussion - be specific about what should be shown]"
+        },
+        {
+          "paragraphContext": "[Reference to specific part of the reading text that this question builds upon]",
+          "question": "[Thoughtful discussion question 2 that encourages critical thinking about ${params.topic}]",
+          "followUpQuestions": [
+            "[Follow-up question to deepen the discussion]",
+            "[Another follow-up to encourage more detailed responses]"
+          ],
+          "imagePrompt": "[Detailed description for generating an image that would support this discussion - be specific about what should be shown]"
+        },
+        {
+          "paragraphContext": "[Reference to specific part of the reading text that this question builds upon]",
+          "question": "[Thoughtful discussion question 3 that connects ${params.topic} to broader themes or cultural comparisons]",
+          "followUpQuestions": [
+            "[Follow-up question to deepen the discussion]",
+            "[Another follow-up to encourage more detailed responses]"
+          ],
+          "imagePrompt": "[Detailed description for generating an image that would support this discussion - be specific about what should be shown]"
+        },
+        {
+          "paragraphContext": "[Reference to specific part of the reading text that this question builds upon]",
+          "question": "[Thoughtful discussion question 4 that encourages students to make predictions or give advice related to ${params.topic}]",
+          "followUpQuestions": [
+            "[Follow-up question to deepen the discussion]",
+            "[Another follow-up to encourage more detailed responses]"
+          ],
+          "imagePrompt": "[Detailed description for generating an image that would support this discussion - be specific about what should be shown]"
+        },
+        {
+          "paragraphContext": "[Reference to specific part of the reading text that this question builds upon]",
+          "question": "[Thoughtful discussion question 5 that summarizes key themes and encourages reflection on ${params.topic}]",
+          "followUpQuestions": [
+            "[Follow-up question to deepen the discussion]",
+            "[Another follow-up to encourage more detailed responses]"
+          ],
+          "imagePrompt": "[Detailed description for generating an image that would support this discussion - be specific about what should be shown]"
+        }
+      ],
+      "teacherNotes": "[Guidance for teachers on facilitating these discussions, managing different opinions, and encouraging participation]"
+    },
+    {
+      "type": "sentenceFrames",
+      "title": "Sentence Practice",
+      "frames": [
+        {
+          "patternTemplate": "[Sentence pattern with [PLACEHOLDER] for students to complete - should use target vocabulary]",
+          "languageFunction": "[What this sentence pattern helps students do - e.g., 'expressing opinions', 'making comparisons', 'describing experiences']",
+          "examples": [
+            "[Example 1 using this pattern]",
+            "[Example 2 using this pattern]",
+            "[Example 3 using this pattern]"
+          ],
+          "title": "[Descriptive name for this sentence frame]"
+        },
+        {
+          "patternTemplate": "[Another sentence pattern with [PLACEHOLDER] - should connect to ${params.topic}]",
+          "languageFunction": "[What this sentence pattern helps students do]",
+          "examples": [
+            "[Example 1 using this pattern]",
+            "[Example 2 using this pattern]",
+            "[Example 3 using this pattern]"
+          ],
+          "title": "[Descriptive name for this sentence frame]"
+        },
+        {
+          "patternTemplate": "[Third sentence pattern with [PLACEHOLDER] - should incorporate target vocabulary]",
+          "languageFunction": "[What this sentence pattern helps students do]",
+          "examples": [
+            "[Example 1 using this pattern]",
+            "[Example 2 using this pattern]",
+            "[Example 3 using this pattern]"
+          ],
+          "title": "[Descriptive name for this sentence frame]"
+        }
+      ],
+      "teacherNotes": "[Instructions for teachers on how to use these sentence frames effectively in speaking practice]"
+    },
+    {
+      "type": "quiz",
+      "title": "Quick Check Quiz",
+      "questions": [
+        {
+          "type": "multiple-choice",
+          "question": "[Quiz question 1 testing vocabulary knowledge]",
+          "options": [
+            "[Correct answer]",
+            "[Distractor 1]",
+            "[Distractor 2]",
+            "[Distractor 3]"
+          ],
+          "correctAnswer": 0,
+          "explanation": "[Brief explanation of the correct answer]"
+        },
+        {
+          "type": "multiple-choice",
+          "question": "[Quiz question 2 testing comprehension of key concepts from ${params.topic}]",
+          "options": [
+            "[Distractor 1]",
+            "[Correct answer]",
+            "[Distractor 2]",
+            "[Distractor 3]"
+          ],
+          "correctAnswer": 1,
+          "explanation": "[Brief explanation of the correct answer]"
+        },
+        {
+          "type": "fill-in-blank",
+          "question": "[Sentence with blank for students to complete using target vocabulary]",
+          "correctAnswer": "[The correct word or phrase]",
+          "acceptableAnswers": ["[Alternative correct answer 1]", "[Alternative correct answer 2]"],
+          "explanation": "[Brief explanation of the correct answer]"
+        },
+        {
+          "type": "true-false",
+          "question": "[Statement about ${params.topic} for students to evaluate as true or false]",
+          "correctAnswer": true,
+          "explanation": "[Brief explanation of why this is true/false]"
+        },
+        {
+          "type": "matching",
+          "question": "[Instructions for matching vocabulary to definitions or examples]",
+          "pairs": [
+            {
+              "term": "[Vocabulary word 1]",
+              "definition": "[Definition or example]"
+            },
+            {
+              "term": "[Vocabulary word 2]",
+              "definition": "[Definition or example]"
+            },
+            {
+              "term": "[Vocabulary word 3]",
+              "definition": "[Definition or example]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "cloze",
+      "title": "Fill in the Blanks",
+      "passage": "[A paragraph about ${params.topic} with several words removed. Use _____ to indicate blanks. The missing words should be target vocabulary or key concepts from the lesson.]",
+      "answers": [
+        {
+          "blank": 1,
+          "correctAnswer": "[The correct word for blank 1]",
+          "acceptableAnswers": ["[Alternative answer 1]", "[Alternative answer 2]"]
+        },
+        {
+          "blank": 2,
+          "correctAnswer": "[The correct word for blank 2]",
+          "acceptableAnswers": ["[Alternative answer 1]"]
+        },
+        {
+          "blank": 3,
+          "correctAnswer": "[The correct word for blank 3]",
+          "acceptableAnswers": ["[Alternative answer 1]", "[Alternative answer 2]"]
+        }
+      ],
+      "teacherNotes": "[Guidance for teachers on how to use this cloze activity and what to accept as correct answers]"
+    },
+    {
+      "type": "unscramble",
+      "title": "Unscramble the Sentences",
+      "sentences": [
+        {
+          "scrambled": ["[word1]", "[word2]", "[word3]", "[word4]", "[word5]", "[word6]"],
+          "correct": "[The correct sentence order using target vocabulary and relating to ${params.topic}]",
+          "hint": "[A helpful hint about the sentence structure or meaning]"
+        },
+        {
+          "scrambled": ["[word1]", "[word2]", "[word3]", "[word4]", "[word5]", "[word6]", "[word7]"],
+          "correct": "[Another correct sentence using different target vocabulary]",
+          "hint": "[A helpful hint about the sentence structure or meaning]"
+        },
+        {
+          "scrambled": ["[word1]", "[word2]", "[word3]", "[word4]", "[word5]"],
+          "correct": "[A third correct sentence incorporating lesson themes]",
+          "hint": "[A helpful hint about the sentence structure or meaning]"
+        }
+      ],
+      "teacherNotes": "[Instructions for teachers on how to conduct this activity and support struggling students]"
+    }
+  ],
+  "grammarSpotlight": {
+    "grammarType": "[Choose the most appropriate grammar focus for ${params.cefrLevel} level and topic '${params.topic}'. Examples: present_perfect, modal_verbs, passive_voice, conditionals, comparatives, future_tenses, etc.]",
+    "title": "[Clear, engaging title for this grammar section - e.g., 'Using Modal Verbs to Express Possibility' or 'Present Perfect for Life Experiences']",
+    "description": "[Brief, clear explanation of what this grammar point is and why it's useful for communication - written for ${params.cefrLevel} level students]",
+    "rule": "[The main grammar rule explained in simple, clear language appropriate for ${params.cefrLevel} level]",
+    "formationPattern": "[How to form this grammar structure - e.g., 'Subject + have/has + past participle' or 'Modal verb + base form of verb']",
+    "examples": [
+      {
+        "sentence": "[Example sentence 1 using this grammar and relating to ${params.topic}]",
+        "explanation": "[Brief explanation of why this example demonstrates the grammar rule]",
+        "context": "[When/why you would use this sentence in real communication]"
+      },
+      {
+        "sentence": "[Example sentence 2 using this grammar and relating to ${params.topic}]",
+        "explanation": "[Brief explanation of why this example demonstrates the grammar rule]",
+        "context": "[When/why you would use this sentence in real communication]"
+      },
+      {
+        "sentence": "[Example sentence 3 using this grammar and relating to ${params.topic}]",
+        "explanation": "[Brief explanation of why this example demonstrates the grammar rule]",
+        "context": "[When/why you would use this sentence in real communication]"
+      }
+    ],
+    "commonMistakes": [
+      {
+        "mistake": "[Common error students make with this grammar]",
+        "correction": "[The correct form]",
+        "explanation": "[Why this mistake happens and how to avoid it]"
+      },
+      {
+        "mistake": "[Another common error]",
+        "correction": "[The correct form]",
+        "explanation": "[Why this mistake happens and how to avoid it]"
+      }
+    ],
+    "practiceActivities": [
+      {
+        "activity": "[Practice activity 1 that helps students use this grammar]",
+        "instructions": "[Clear instructions for students]",
+        "example": "[Example of what students should produce]"
+      },
+      {
+        "activity": "[Practice activity 2 that reinforces the grammar in context]",
+        "instructions": "[Clear instructions for students]",
+        "example": "[Example of what students should produce]"
+      }
+    ],
+    "timeSignals": "[List time words or phrases commonly used with this grammar - e.g., 'already, just, ever, never, since, for' for present perfect]",
+    "usageSituations": [
+      "[Situation 1 when you use this grammar - e.g., 'To talk about experiences without mentioning when they happened']",
+      "[Situation 2 when you use this grammar]",
+      "[Situation 3 when you use this grammar]"
+    ],
+
+    "pedagogicalExplanation": {
+      "conceptualFramework": "[How to think about this grammar concept - what mental model helps students understand it?]",
+      "levelAppropriate": "[Why this grammar point is specifically appropriate for ${params.cefrLevel} level students]",
+      "connectionToTopic": "[How this grammar naturally connects to the lesson topic '${params.topic}']",
+      "learningObjective": "[What students should be able to do with this grammar after the lesson]"
+    },
+
+    "visualSupport": {
+      "diagramType": "[Type of visual that would help - e.g., 'timeline', 'flowchart', 'comparison table', 'mind map']",
+      "description": "[Detailed description of the visual aid that would support learning this grammar]",
+      "keyElements": [
+        "[Element 1 that should be highlighted in the visual]",
+        "[Element 2 that should be highlighted in the visual]",
+        "[Element 3 that should be highlighted in the visual]"
+      ]
+    },
+
+    "errorCorrectionGuidance": {
+      "recognitionStrategies": "[How teachers can help students recognize when to use this grammar]",
+      "correctionTechniques": "[Effective ways to correct mistakes with this grammar point]",
+      "reinforcementActivities": "[Activities that reinforce correct usage]"
+    },
+
+    "steps": [
+      {
+        "stepNumber": 1,
+        "instruction": "[Clear explanation of the grammar pattern and how it works]",
+        "visualElements": {
+          "type": "explanation",
+          "content": "[The core grammar rule explained step-by-step for ${params.cefrLevel} level]",
+          "examples": [
+            "[Simple example 1]",
+            "[Simple example 2]",
+            "[Simple example 3]"
+          ]
+        }
+      },
+      {
+        "stepNumber": 2,
+        "instruction": "[How students can practice and use this pattern effectively]",
+        "visualElements": {
+          "type": "application",
+          "guidance": "[Practical advice for using this grammar in speaking/writing - e.g., 'Use this pattern when you want to express uncertainty' or 'This helps you talk about experiences without specific times']"
+        }
+      },
+      {
+        "stepNumber": 3,
+        "instruction": "[Common mistakes to avoid and tips for success]",
+        "visualElements": {
+          "type": "tips",
+          "commonMistakes": "[List 2-3 typical errors students make with this grammar]",
+          "successTips": "[Give 2-3 practical tips for using this grammar correctly]"
+        }
+      }
+    ],
+
+    "visualLayout": {
+      "recommendedType": "[Choose the BEST visual approach for this grammar type:
+      - 'certainty_scale' for modal verbs (showing levels of certainty/possibility)
+      - 'timeline_bridge' for tenses that connect time periods (present perfect, past perfect)
+      - 'decision_tree' for articles and conditionals (showing choice logic)
+      - 'transformation_flow' for passive voice and complex structures
+      - 'comparison_table' for comparatives and contrasting structures
+      - 'process_steps' for step-by-step grammar construction]",
+
+      "primaryColor": "[Choose a color that fits the grammar type: 'blue' for certainty/modals, 'green' for time/tenses, 'purple' for relationships, 'orange' for actions, 'teal' for comparisons]",
+
+      "pedagogicalApproach": {
+        "learningObjective": "[What should students be able to DO after learning this grammar? - e.g., 'Express different levels of certainty about future events' or 'Talk about past experiences that affect the present']",
+        "practiceActivities": [
+          "[Suggest a simple practice activity students can do - e.g., 'Create sentences about your own experiences using this pattern']",
+          "[Suggest a communicative activity - e.g., 'Ask classmates questions using these modal verbs']"
+        ],
+        "realWorldApplication": "[Explain when students will use this grammar in actual conversation or writing - be specific about situations]"
+      },
+
+      "adaptiveFeatures": {
+        "levelAdjustment": "[How this lesson adjusts for ${params.cefrLevel} level - what makes it appropriate for these students?]",
+        "scaffolding": "[What support structures help students understand this grammar? - e.g., 'Color-coding helps identify pattern parts' or 'Step-by-step building reduces complexity']",
+        "extension": "[How advanced students can take this further - suggest more complex applications]"
+      }
+    },
+
+    "interactiveFeatures": {
+      "hasVisualDiagram": true,
+      "dynamicContent": true,
+      "adaptiveToLessonTopic": true,
+      "aiGeneratedExamples": true,
+      "pedagogicallyOptimized": true
+    }
+  }
+}
+
+**CRITICAL GRAMMAR SPOTLIGHT INSTRUCTIONS:**
+
+The Grammar Spotlight should use strategic grammar selection and pedagogically-optimized examples to provide maximum educational value for ${params.cefrLevel} level students studying "${params.topic}".
+
+**KEY PRINCIPLES:**
+1. **Strategic Selection**: Choose grammar that students at this level need to learn
+2. **Topic Integration**: Connect grammar naturally to the lesson topic when possible
+3. **Pedagogical Excellence**: Create examples designed for teaching, not just extracted from text
+4. **Clear Communication**: Focus on helping students express their ideas effectively
+5. **Practical Application**: Show students when and how to use this grammar in real communication
+
+Ensure the entire output is a single, valid JSON object starting with { and ending with }`;
 ❌ Requires extensive reading comprehension that dominates lesson time
 ❌ Is too abstract or distant from students' experiences to generate authentic responses
 ❌ Provides facts without opportunities for personal reaction or opinion
