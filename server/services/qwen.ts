@@ -56,24 +56,97 @@ When you see template text like "REPLACE WITH: [instruction]" in the sentence fr
 
 4. CRITICAL: FOR EACH VOCABULARY WORD, YOU MUST INCLUDE THE 'pronunciation' OBJECT WITH 'syllables', 'stressIndex', AND 'phoneticGuide' FIELDS. The 'phoneticGuide' MUST use ONLY regular English characters and hyphens (like "AS-tro-naut" or "eks-PLOR-ay-shun"), NOT International Phonetic Alphabet (IPA) symbols.
 
-5. CEFR LEVEL ADAPTATION: ALL content must be STRICTLY appropriate for the specified CEFR level:
+5. CRITICAL VOCABULARY SELECTION PROTOCOL - FOLLOW 5-STEP PROCESS:
+
+STEP 1: VOCABULARY LEVEL ANALYSIS
+Before selecting vocabulary, analyze what ${cefrLevel} students know:
+- A1: basic family, food, colors, numbers, simple present, survival vocabulary
+- A2: A1 + basic past tense, common adjectives, personal experiences  
+- B1: A1/A2 + present perfect, opinions, comparisons, everyday topics
+- B2: A1-B1 + academic thinking, complex discussions, abstract concepts
+- C1: A1-B2 + advanced academic language, nuanced expression
+- C2: Near-native vocabulary including idiomatic and specialized language
+
+APPROPRIATE NEW VOCABULARY FOR ${cefrLevel}:
+- A1: Concrete, immediate needs (house, clothes, body parts, basic actions)
+- A2: Personal experiences (interesting, boring, excited, yesterday, tomorrow)
+- B1: Social topics (community, environment, although, however, opinion)
+- B2: Academic language (sustainability, efficiency, infrastructure, furthermore)
+- C1: Sophisticated concepts (implications, comprehensive, predominantly)
+- C2: Advanced terminology (nuanced, paradigm, intrinsic, contemporary)
+
+STEP 2: TOPIC-APPROPRIATE VOCABULARY FOR "${text}"
+Choose vocabulary that enables meaningful discussion of "${text}" at ${cefrLevel} level:
+- Focus on authentic communication needs for this topic
+- Select words that work together functionally
+- Ensure vocabulary serves real-world usage patterns
+
+STEP 3: DEFINITION REQUIREMENTS
+FUNDAMENTAL RULE: Definition language MUST be simpler than the target word!
+
+${cefrLevel} DEFINITION EXAMPLES:
+- A1: "Beautiful" = "very nice to look at" (NOT "aesthetically pleasing")
+- A2: "Environment" = "the natural world with air, water, plants" (NOT "aggregate phenomena")
+- B1: "Innovation" = "creating new ideas or ways of doing things" (NOT "novel methodologies")
+- B2: "Entrepreneur" = "person who starts and runs their own business" (NOT "conceptualizes enterprises")
+
+STEP 4: PRONUNCIATION GUIDELINES
+Examples: "vocabulary" → syllables: ["vo", "cab", "u", "lar", "y"], stressIndex: 1, phoneticGuide: "voh-KAB-yuh-lair-ee"
+Use ONLY English characters and hyphens, NO IPA symbols.
+
+STEP 5: SEMANTIC COHERENCE
+Select words that work together to enable comprehensive topic discussion.
+
+6. READING TEXT DEVELOPMENT APPROACH
+
+SPEAKING-FOCUSED TEXT PURPOSE:
+This text serves as a CONVERSATION CATALYST for ${cefrLevel} students:
+- Provide accessible content for discussion without overwhelming
+- Include discussion-worthy material that generates opinions
+- Incorporate all 5 vocabulary words naturally
+- Create talking points students can reference in conversation
+
+TEXT LENGTH GUIDELINES:
+- A1: 80-120 words (quick to read, maximum speaking time)
+- A2: 100-150 words (manageable, focuses on conversation)
+- B1: 120-180 words (balanced content for discussion)  
+- B2: 150-220 words (rich content for analytical discussion)
+- C1/C2: 180-250 words (sophisticated content for extended discussion)
+
+7. SENTENCE FRAMES PATTERN SELECTION
+
+COMMUNICATIVE NEED ANALYSIS FOR ${cefrLevel}:
+- A1: Basic preferences ("I like ___ because ___")
+- A2: Personal experiences ("Yesterday I ___ and it was ___")
+- B1: Opinions with reasons ("I believe ___ because ___")
+- B2: Analytical thinking ("Although ___, ___ nevertheless ___")
+- C1/C2: Sophisticated analysis ("Despite the fact that ___, it could be argued that ___")
+
+Select patterns that specifically help students discuss "${text}" effectively.
+
+8. DISCUSSION QUESTIONS DEVELOPMENT
+
+COGNITIVE ABILITIES BY LEVEL:
+- A1: Personal experiences, basic preferences, concrete situations
+- A2: Simple comparisons, past/future plans, basic cultural topics
+- B1: Opinions with reasons, practical problems, social issues
+- B2: Analytical discussions, multiple perspectives, abstract concepts
+- C1: Sophisticated analysis, synthesis of information, speculative discussion
+- C2: Expert-level discussions, nuanced argumentation, complex interdisciplinary topics
+
+Each question MUST include unique paragraph context (3-5 sentences) providing background for meaningful discussion.
+
+9. CEFR LEVEL ADAPTATION: ALL content must be STRICTLY appropriate for ${cefrLevel} level:
    - Vocabulary choices must match the CEFR level (A1=beginner, C2=advanced)
    - Sentence complexity must be appropriate (simple for A1-A2, more complex for B2-C2)
    - Grammar structures must align with the CEFR level (present simple for A1, conditionals for B1+, etc.)
    - Reading text difficulty must match the specified level
-   - Discussion paragraph contexts must be level-appropriate with vocabulary and grammar matching the CEFR level
+   - Discussion paragraph contexts must be level-appropriate
 
-6. DISCUSSION SECTION REQUIREMENTS:
-   - CRITICAL: Each discussion question MUST have its own unique paragraph context (paragraphContext field)
-   - These paragraph contexts must be 3-5 sentences that provide background information
-   - The paragraph contexts must use vocabulary and sentence structures appropriate for the specified CEFR level
-   - The paragraphs should include interesting information that helps students engage with the topic
-   - The paragraph contexts should lead naturally into the discussion question that follows
-
-7. CROSS-COMPONENT INTEGRATION VALIDATION:
-✓ NATURAL INTEGRATION CHECK: Does each target vocabulary word appear naturally in the reading text?
-✓ CONTENT DEPENDENCY: Do discussion questions require genuine understanding of the text content?
-✓ VOCABULARY USAGE OPPORTUNITIES: Do discussion questions provide natural opportunities for students to USE target vocabulary?
+10. CROSS-COMPONENT INTEGRATION VALIDATION:
+✓ NATURAL INTEGRATION: Does each vocabulary word appear naturally in the reading text?
+✓ CONTENT DEPENDENCY: Do discussion questions require genuine understanding of the text?
+✓ VOCABULARY USAGE: Do discussion questions provide opportunities to USE target vocabulary?
 
 I will count the total number of vocabulary items. If you don't include EXACTLY ${minVocabCount} complete vocabulary items, your response will be rejected.
 
