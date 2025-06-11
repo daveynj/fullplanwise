@@ -4,6 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ChevronRight, ChevronLeft, Target, ArrowDown, ArrowRight, Eye, X, RotateCcw, Brain, Lightbulb, Clock, CheckCircle2, Play, Zap, TrendingUp, Scale } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { EnhancedModalScale } from './enhanced-modal-scale';
+import { EnhancedDecisionTree } from './enhanced-decision-tree';
+import { EnhancedPatternRecognition } from './enhanced-pattern-recognition';
+import { EnhancedTimelineConnection } from './enhanced-timeline-connection';
+import { EnhancedTransformation } from './enhanced-transformation';
 
 interface GrammarSpotlightProps {
   grammarData: any;

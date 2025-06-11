@@ -641,6 +641,9 @@ CRITICAL: Generate sentence frames using the enhanced format with these REQUIRED
 
 NEVER use the old format with "pattern", "communicativeFunction", "structureBreakdown", or "exampleSentences".
 
+🎯 **CRITICAL VOCABULARY SELECTION PROTOCOL** 🎯
+**YOU MUST FOLLOW THIS 5-STEP PROCESS FOR ALL VOCABULARY SELECTION**
+
 STEP 1: VOCABULARY LEVEL ANALYSIS (REQUIRED BEFORE SELECTION)
 
 Before selecting vocabulary, analyze what ${params.cefrLevel} students typically know and should learn next:
@@ -770,25 +773,25 @@ COHERENCE VALIDATION:
 
 **CLEAR EXAMPLES BY LEVEL:**
 
-**A1 DEFINITIONS** (Use ONLY 500-800 most basic words):
+**A1 DEFINITIONS** (Use ONLY very basic, beginner-level vocabulary):
 ❌ WRONG: "Beautiful" = "aesthetically pleasing and visually attractive"
 ✅ CORRECT: "Beautiful" = "very nice to look at"
 ❌ WRONG: "Vehicle" = "a mechanical conveyance for transportation" 
 ✅ CORRECT: "Vehicle" = "a car, bus, or truck"
 
-**A2 DEFINITIONS** (Use ONLY 1000-1500 basic words):
+**A2 DEFINITIONS** (Use ONLY elementary vocabulary familiar to A2 students):
 ❌ WRONG: "Environment" = "the aggregate of surrounding phenomena and conditions"
 ✅ CORRECT: "Environment" = "the natural world around us with air, water, plants and animals"
 ❌ WRONG: "Economy" = "the interrelated system of production and distribution"
 ✅ CORRECT: "Economy" = "the way a country makes and spends money"
 
-**B1 DEFINITIONS** (Use ONLY 2500 intermediate words):
+**B1 DEFINITIONS** (Use ONLY intermediate vocabulary appropriate for B1 level):
 ❌ WRONG: "Innovation" = "implementation of novel methodologies and paradigms"
 ✅ CORRECT: "Innovation" = "creating new ideas or ways of doing things"
 ❌ WRONG: "Sustainability" = "maintaining ecological equilibrium through resource utilization"
 ✅ CORRECT: "Sustainability" = "using natural resources without harming the environment for the future"
 
-**B2 DEFINITIONS** (Maximum 3500 words):
+**B2 DEFINITIONS** (Use upper-intermediate vocabulary appropriate for B2 level):
 ❌ WRONG: "Entrepreneur" = "an individual who conceptualizes and establishes commercial enterprises"
 ✅ CORRECT: "Entrepreneur" = "a person who starts and runs their own business, often taking financial risks"
 
@@ -799,12 +802,12 @@ COHERENCE VALIDATION:
 - B2: Maximum 20 words, all tenses and modals allowed
 
 CEFR LEVEL-APPROPRIATE DEFINITIONS GUIDELINES:
-- A1: Use only the most basic and frequent vocabulary (500-800 words). Very simple sentence structures. Definitions should be 1-5 words where possible.
-- A2: Use basic vocabulary (about 1000-1500 words). Simple sentences. Avoid complex structures or uncommon words.
-- B1: Use intermediate vocabulary (about 2500 words). Moderately complex sentences allowed, but prioritize clarity.
-- B2: Upper-intermediate vocabulary (about 3500 words). More complex sentences and some academic words allowed.
-- C1: Advanced vocabulary (about 5000+ words). Complex sentences and academic/specialized terms acceptable.
-- C2: Proficient vocabulary with nuanced explanations. Full range of language structures. Can include specialized terminology.
+- A1: Use only the most basic beginner vocabulary. Very simple sentence structures. Definitions should be 1-5 words where possible.
+- A2: Use elementary vocabulary familiar to A2 students. Simple sentences. Avoid complex structures or uncommon words.
+- B1: Use intermediate vocabulary appropriate for B1 level. Moderately complex sentences allowed, but prioritize clarity.
+- B2: Use upper-intermediate vocabulary appropriate for B2 students. More complex sentences and some academic words allowed.
+- C1: Use advanced vocabulary appropriate for C1 students. Complex sentences and academic/specialized terms acceptable.
+- C2: Use proficient-level vocabulary with nuanced explanations. Full range of language structures. Can include specialized terminology.
 
 EXAMPLES OF PROPER SYLLABLE BREAKDOWNS AND PRONUNCIATION:
 - "vocabulary" → syllables: ["vo", "cab", "u", "lar", "y"], stressIndex: 1, phoneticGuide: "voh-KAB-yuh-lair-ee"
@@ -841,6 +844,13 @@ FINAL CONFIRMATION:
 Your selected vocabulary should enable ${params.cefrLevel} students to engage in meaningful, authentic communication about "${params.topic}" using language appropriate to their developmental stage.
 
 I will count the total number of vocabulary items. If you don't include EXACTLY ${minVocabCount} complete vocabulary items, your response will be rejected.
+
+🎯 VOCABULARY SELECTION SUCCESS CRITERIA:
+✓ Words selected through the 5-step analysis process above
+✓ Each word serves authentic communication needs for discussing "${params.topic}"
+✓ Vocabulary enables meaningful, topic-specific conversations
+✓ Words are appropriately challenging but achievable for ${params.cefrLevel} students
+✓ Selection demonstrates clear reasoning about topic relevance and level appropriateness
 
 CEFR LEVEL ALIGNMENT:
 Ensure all content is appropriate for ${params.cefrLevel} level students:
@@ -1366,32 +1376,20 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
   ],
   // GRAMMAR SPOTLIGHT (AI-GENERATED LOGIC-BASED GRAMMAR TEACHING)
   "grammarSpotlight": {
-    "grammarType": "[STRATEGICALLY CHOOSE the most pedagogically valuable grammar pattern for ${cefrLevel} level students studying '${topic}'. 
+    "grammarType": "Choose the most useful grammar pattern for ${params.cefrLevel} students studying ${params.topic}. For A1-A2: simple_present, simple_past, articles, basic_modals. For B1-B2: present_perfect, modal_verbs, conditionals_basic, relative_clauses. For C1-C2: conditionals_advanced, passive_voice, reported_speech. Select based on what helps students discuss ${params.topic} effectively.",
     
-    **CEFR-LEVEL PRIORITIES:**
-    - A1-A2: 'simple_present', 'simple_past', 'articles', 'basic_modals' (can/can't), 'prepositions_basic'
-    - B1-B2: 'present_perfect', 'modal_verbs', 'conditionals_basic', 'relative_clauses', 'comparative', 'future_forms'
-    - C1-C2: 'conditionals_advanced', 'passive_voice', 'subjunctive', 'reported_speech', 'advanced_tenses'
+    "title": "Create an engaging title that explains the grammar's communication purpose, like 'Modal Verbs: Expressing Possibility' or 'Present Perfect: Connecting Past to Present'",
     
-    **SELECTION CRITERIA:**
-    1. What does a ${cefrLevel} student NEED to learn for effective communication?
-    2. What grammar pattern works naturally with the topic '${topic}'?
-    3. What's most useful for building speaking/writing confidence?
-    
-    Choose ONE grammar type that meets these criteria.]",
-    
-    "title": "[Create an engaging, clear title that explains the grammar's PURPOSE - e.g., 'Modal Verbs: Expressing Possibility and Necessity', 'Present Perfect: Connecting Past to Present', 'Articles: Making Your Meaning Clear']",
-    
-    "description": "[Explain in simple terms WHY this grammar pattern is useful for communication and how it helps students express their ideas better - focus on practical benefits, not just rules]",
+    "description": "Explain in simple terms why this grammar pattern helps students communicate better when discussing ${params.topic}",
 
     "logicExplanation": {
-      "communicationNeed": "[CRITICAL: Explain WHY this grammar exists. What communication problem does it solve? What happens when people DON'T use this grammar correctly? Focus on real-world communication needs - e.g., 'English speakers need to show when past actions still affect the present situation' or 'Speakers need to express different levels of certainty about future events']",
+      "communicationNeed": "Explain why this grammar pattern exists and what communication problem it solves for people discussing ${params.topic}",
       
-      "logicalSolution": "[Explain HOW the language solves this communication need. What's the logical structure? Why does it work this way? - e.g., 'English combines present helping verb (have/has) with past participle to bridge past and present' or 'Modal verbs act as attitude adjusters - they modify the main verb to show speaker relationship to the action']",
+      "logicalSolution": "Explain how this grammar pattern works logically to solve that communication need",
       
-      "usagePattern": "[Explain WHEN and WHERE students should use this grammar. What signals tell them this pattern is needed? - e.g., 'Use when past action affects current situation - look for time words like since, for, already, yet' or 'Use when you need to express possibility, advice, or obligation rather than stating facts']",
+      "usagePattern": "Explain when students should use this grammar pattern when talking about ${params.topic}",
       
-      "communicationImpact": "[Explain what DIFFERENCE this makes in communication. How does using this grammar change meaning or impression? - e.g., 'This tells listeners your past experience explains current knowledge or situation' or 'This makes speech more polite and socially appropriate by showing your attitude toward the action']"
+      "communicationImpact": "Explain what difference using this grammar makes in how students can express ideas about ${params.topic}"
     },
 
     "teachingTips": [
@@ -1402,19 +1400,14 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
     
     "examples": [
       {
-        "sentence": "[CREATE a clear, pedagogically-perfect example sentence that demonstrates this grammar pattern. The sentence should:
-        - Be appropriate for ${cefrLevel} level
-        - Relate to the topic '${topic}' when possible 
-        - Clearly demonstrate the grammar pattern
-        - Be useful for students to learn and remember
-        - Avoid complex vocabulary that might confuse the grammar lesson]",
-        "highlighted": "[SAME sentence but with ** around ONLY the specific grammar elements you're teaching - be precise and consistent with highlighting]",
-        "explanation": "[Explain clearly and simply why these highlighted words demonstrate this grammar pattern and how they work together]"
+        "sentence": "Write a clear example sentence about ${params.topic} that demonstrates this grammar pattern at ${params.cefrLevel} level",
+        "highlighted": "Copy the exact sentence above, but put ** around the specific grammar elements you're teaching (e.g., **modal verb**, **perfect tense**, etc.)",
+        "explanation": "Explain simply why the highlighted grammar words work this way and what they accomplish in communication"
       },
       {
-        "sentence": "[CREATE a second example that shows a different aspect or variation of the same grammar pattern - this helps students recognize the pattern in different contexts]",
-        "highlighted": "[Again, highlight only the relevant grammar elements]", 
-        "explanation": "[Explain how this example reinforces or extends the grammar pattern]"
+        "sentence": "Write a second example sentence about ${params.topic} using the same grammar pattern but in a different context",
+        "highlighted": "Copy this second sentence, putting ** around the same type of grammar elements as in the first example", 
+        "explanation": "Explain how this second example reinforces the same grammar pattern and helps students recognize it"
       }
     ],
     

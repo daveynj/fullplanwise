@@ -284,30 +284,33 @@ DISCUSSION PARAGRAPH CONTEXT GUIDELINES:
 Each discussion question MUST have its own unique paragraph context (3-5 sentences) that must follow these CEFR level requirements:
 
 - A1 Level Paragraph Contexts: 
-  - Use only present tense and basic vocabulary (500-800 most common words)
+  - Use only present tense and very basic vocabulary familiar to beginners
   - 3 very simple sentences with basic subject-verb-object structure
   - No complex clauses or advanced vocabulary
   - Example: "Many people have pets. Cats and dogs are common pets. Some people like fish or birds."
 
 - A2 Level Paragraph Contexts:
-  - Use present and simple past tense, basic vocabulary (1000-1500 most common words)
+  - Use present and simple past tense with elementary-level vocabulary
   - 3-4 simple sentences with some basic conjunctions (and, but, because)
   - Example: "Last week, I visited a zoo. I saw many animals there. The elephants were very big. Some monkeys played with toys."
 
 - B1 Level Paragraph Contexts:
-  - Use present, past, and future tenses with moderate vocabulary (2000-2500 words)
+  - Use present, past, and future tenses with intermediate vocabulary
   - 4 sentences with some compound and complex structures
   - Example: "Many cities have problems with traffic congestion. Cars and buses often get stuck in traffic jams during rush hours. Some cities are building new subway lines to help people travel faster. Public transportation can reduce pollution and save time."
 
 - B2 Level Paragraph Contexts:
-  - Use varied tenses, conditional structures, and upper-intermediate vocabulary (3000-3500 words)
+  - Use varied tenses, conditional structures, and upper-intermediate vocabulary
   - 4-5 sentences with more sophisticated structures and transitions
   - Example: "The rapid development of artificial intelligence has transformed many industries in recent years. While some experts believe AI will create new job opportunities, others worry about potential job losses. Universities are now offering specialized courses to help students adapt to this changing landscape. Despite concerns, many businesses are investing heavily in AI solutions to remain competitive."
 
 - C1/C2 Level Paragraph Contexts:
-  - Use full range of tenses, complex structures, and advanced/academic vocabulary (4000+ words)
+  - Use full range of tenses, complex structures, and advanced/academic vocabulary
   - 5 sophisticated sentences with complex clauses, passive voice, and nuanced expressions
   - Example: "The intersection of technology and privacy rights presents one of the most formidable challenges of the digital era. As corporations amass unprecedented quantities of personal data, legislators worldwide struggle to establish regulatory frameworks that adequately protect citizens while fostering innovation. The concept of informed consent has become increasingly problematic in an environment where terms of service agreements are seldom read, let alone comprehended. Furthermore, the transnational nature of data flows complicates enforcement efforts, as information routinely traverses jurisdictional boundaries. These complexities necessitate a multifaceted approach involving stakeholders from various sectors of society."
+
+🎯 **CRITICAL VOCABULARY SELECTION PROTOCOL** 🎯
+**YOU MUST FOLLOW THIS 5-STEP PROCESS FOR ALL VOCABULARY SELECTION**
 
 STEP 1: VOCABULARY LEVEL ANALYSIS (REQUIRED BEFORE SELECTION)
 
@@ -448,6 +451,13 @@ If ANY word fails the above checks, IMMEDIATELY replace it with a more appropria
 
 FINAL CONFIRMATION:
 Your selected vocabulary should enable ${cefrLevel} students to engage in meaningful, authentic communication about "${topic}" using language appropriate to their developmental stage.
+
+🎯 VOCABULARY SELECTION SUCCESS CRITERIA:
+✓ Words selected through the 5-step analysis process above
+✓ Each word serves authentic communication needs for discussing "${topic}"
+✓ Vocabulary enables meaningful, topic-specific conversations
+✓ Words are appropriately challenging but achievable for ${cefrLevel} students
+✓ Selection demonstrates clear reasoning about topic relevance and level appropriateness
 
 CRITICAL LESSON DEVELOPMENT PROCESS:
 1. FIRST, select EXACTLY 5 vocabulary words that meet ALL the above criteria and are:
