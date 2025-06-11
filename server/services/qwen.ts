@@ -49,84 +49,140 @@ export class QwenService {
 
 IMPORTANT: Always return a valid JSON object with the exact structure specified below. No additional text outside the JSON.
 
-Create a lesson that includes:
-1. A warm-up activity to introduce the topic
-2. Main content with reading passage and vocabulary
-3. Discussion questions
-4. Grammar spotlight
-5. Practice activities
-6. Comprehension questions
-7. Sentence frames for guided practice
-
-The lesson should be appropriate for ${targetLevel} level students and focus on "${params.topic}".
-
-Return the response in this exact JSON format:
+Return the response in this exact JSON format with sections array:
 
 {
-  "title": "Lesson title here",
-  "warmup": {
-    "title": "Warm-up Activity",
-    "activity": "Description of warm-up activity"
-  },
-  "reading": {
-    "title": "Reading Passage",
-    "content": "A 150-200 word reading passage about the topic"
-  },
-  "vocabulary": {
-    "title": "Key Vocabulary",
-    "words": [
-      {"word": "word1", "definition": "definition1", "example": "example sentence1"},
-      {"word": "word2", "definition": "definition2", "example": "example sentence2"},
-      {"word": "word3", "definition": "definition3", "example": "example sentence3"},
-      {"word": "word4", "definition": "definition4", "example": "example sentence4"},
-      {"word": "word5", "definition": "definition5", "example": "example sentence5"}
-    ]
-  },
-  "discussion": {
-    "title": "Discussion Questions",
-    "questions": [
-      "Question 1 here",
-      "Question 2 here",
-      "Question 3 here",
-      "Question 4 here"
-    ]
-  },
-  "grammar": {
-    "title": "Grammar Spotlight",
-    "focus": "Grammar point being taught",
-    "explanation": "Clear explanation of the grammar rule",
-    "examples": [
-      "Example 1",
-      "Example 2",
-      "Example 3"
-    ]
-  },
-  "practice": {
-    "title": "Practice Activity",
-    "type": "fill-in-the-blank",
-    "questions": [
-      {"question": "Question 1", "answer": "Answer 1"},
-      {"question": "Question 2", "answer": "Answer 2"},
-      {"question": "Question 3", "answer": "Answer 3"},
-      {"question": "Question 4", "answer": "Answer 4"}
-    ]
-  },
-  "comprehension": {
-    "title": "Reading Comprehension",
-    "questions": [
-      {"question": "Question 1", "answer": "Answer 1"},
-      {"question": "Question 2", "answer": "Answer 2"},
-      {"question": "Question 3", "answer": "Answer 3"}
-    ]
-  },
-  "sentenceFrames": {
-    "title": "Sentence Practice",
-    "frames": [
-      "Frame 1 with ___ blanks",
-      "Frame 2 with ___ blanks",
-      "Frame 3 with ___ blanks"
-    ]
-  }
+  "title": "Descriptive lesson title about ${params.topic}",
+  "level": "${targetLevel}",
+  "focus": "speaking and vocabulary",
+  "estimatedTime": 45,
+  "sections": [
+    {
+      "type": "warmup",
+      "title": "Warm-up Activity",
+      "content": "Complete description of warm-up activity introducing the topic",
+      "questions": ["Question 1?", "Question 2?", "Question 3?", "Question 4?", "Question 5?"],
+      "targetVocabulary": ["word1", "word2", "word3", "word4", "word5"],
+      "procedure": "Step-by-step instructions for the teacher",
+      "teacherNotes": "Important notes for conducting this activity"
+    },
+    {
+      "type": "reading",
+      "title": "Reading Text: ${params.topic}",
+      "introduction": "Brief introduction to the reading",
+      "paragraphs": [
+        "First paragraph (3-4 sentences) introducing the topic",
+        "Second paragraph (3-4 sentences) developing the topic",
+        "Third paragraph (3-4 sentences) concluding the topic"
+      ],
+      "teacherNotes": "Notes about reading comprehension and vocabulary"
+    },
+    {
+      "type": "vocabulary",
+      "title": "Key Vocabulary",
+      "words": [
+        {
+          "term": "word1",
+          "partOfSpeech": "noun",
+          "definition": "Clear definition",
+          "example": "Example sentence using the word",
+          "imagePrompt": "Simple visual description for the word"
+        },
+        {
+          "term": "word2", 
+          "partOfSpeech": "verb",
+          "definition": "Clear definition",
+          "example": "Example sentence using the word",
+          "imagePrompt": "Simple visual description for the word"
+        },
+        {
+          "term": "word3",
+          "partOfSpeech": "adjective", 
+          "definition": "Clear definition",
+          "example": "Example sentence using the word",
+          "imagePrompt": "Simple visual description for the word"
+        },
+        {
+          "term": "word4",
+          "partOfSpeech": "noun",
+          "definition": "Clear definition", 
+          "example": "Example sentence using the word",
+          "imagePrompt": "Simple visual description for the word"
+        },
+        {
+          "term": "word5",
+          "partOfSpeech": "verb",
+          "definition": "Clear definition",
+          "example": "Example sentence using the word", 
+          "imagePrompt": "Simple visual description for the word"
+        }
+      ],
+      "teacherNotes": "Notes about teaching vocabulary effectively"
+    },
+    {
+      "type": "comprehension",
+      "title": "Reading Comprehension",
+      "questions": [
+        {
+          "question": "What is the main idea of the text?",
+          "answer": "The main idea is...",
+          "type": "main-idea"
+        },
+        {
+          "question": "According to the text, what...?",
+          "answer": "According to the text...",
+          "type": "detail"
+        },
+        {
+          "question": "Why do you think...?",
+          "answer": "I think... because...",
+          "type": "inference"
+        }
+      ],
+      "teacherNotes": "Guide students to find answers in the text"
+    },
+    {
+      "type": "discussion",
+      "title": "Discussion Questions", 
+      "questions": [
+        {
+          "question": "What do you think about ${params.topic}?",
+          "followUp": "Can you give an example?",
+          "targetVocabulary": ["word1", "word2"]
+        },
+        {
+          "question": "Have you ever experienced...?",
+          "followUp": "How did you feel?",
+          "targetVocabulary": ["word3", "word4"]
+        },
+        {
+          "question": "In your opinion, what is the most important...?",
+          "followUp": "Why do you think so?",
+          "targetVocabulary": ["word5"]
+        }
+      ],
+      "teacherNotes": "Encourage students to use target vocabulary in responses"
+    },
+    {
+      "type": "sentenceFrames",
+      "title": "Sentence Practice",
+      "pattern": "Structured sentence patterns for practice",
+      "examples": [
+        "I think ___ is important because ___",
+        "In my opinion, ___ is better than ___ because ___",
+        "When I ___, I usually ___"
+      ],
+      "teacherNotes": "Help students practice using new vocabulary in structured sentences"
+    },
+    {
+      "type": "speaking",
+      "title": "Speaking Activity",
+      "activity": "Pair or group speaking activity related to the topic",
+      "instructions": "Clear instructions for the speaking activity",
+      "timeAllocation": "10 minutes",
+      "teacherNotes": "Monitor and provide feedback during speaking practice"
+    }
+  ]
 }
 
 Ensure the entire output is a valid JSON object starting with { and ending with }`;
