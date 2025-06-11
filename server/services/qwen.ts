@@ -3,8 +3,8 @@ import { LessonGenerateParams } from '@shared/schema';
 import * as fs from 'fs';
 import { stabilityService } from './stability.service';
 
-// Qwen API endpoint for international usage
-const QWEN_API_URL = 'https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions';
+// Qwen API endpoint for international usage - updated to new format
+const QWEN_API_URL = 'https://dashscope-intl.aliyuncs.com/api/v1/services/aigc/text-generation/generation';
 
 /**
  * Service for interacting with the Qwen AI API
@@ -1437,15 +1437,19 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
       
       const response = await axios.post(QWEN_API_URL, {
         model: 'qwen-max',
-        messages: [
-          {
-            role: 'user',
-            content: prompt
-          }
-        ],
-        temperature: 0.7,
-        max_tokens: 8000,
-        stream: false
+        input: {
+          messages: [
+            {
+              role: 'user',
+              content: prompt
+            }
+          ]
+        },
+        parameters: {
+          temperature: 0.7,
+          max_tokens: 8000,
+          result_format: 'message'
+        }
       }, {
         headers: {
           'Authorization': `Bearer ${this.apiKey}`,
@@ -1456,8 +1460,8 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
 
       console.log('Qwen API response received');
 
-      if (response.data && response.data.choices && response.data.choices[0]) {
-        const content = response.data.choices[0].message.content;
+      if (response.data && response.data.output && response.data.output.text) {
+        const content = response.data.output.text;
         
         try {
           const lessonData = JSON.parse(content);
@@ -1468,6 +1472,7 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
           throw new Error('Invalid JSON response from Qwen API');
         }
       } else {
+        console.error('Unexpected Qwen API response format:', JSON.stringify(response.data, null, 2));
         throw new Error('Invalid response format from Qwen API');
       }
 
