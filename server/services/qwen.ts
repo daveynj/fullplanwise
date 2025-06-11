@@ -143,10 +143,91 @@ Each question MUST include unique paragraph context (3-5 sentences) providing ba
    - Reading text difficulty must match the specified level
    - Discussion paragraph contexts must be level-appropriate
 
-10. CROSS-COMPONENT INTEGRATION VALIDATION:
-✓ NATURAL INTEGRATION: Does each vocabulary word appear naturally in the reading text?
-✓ CONTENT DEPENDENCY: Do discussion questions require genuine understanding of the text?
-✓ VOCABULARY USAGE: Do discussion questions provide opportunities to USE target vocabulary?
+10. TONE & STYLE APPROACH:
+Analyze appropriate tone and style for ${cefrLevel} level:
+- Research how tone should be adjusted for ${cefrLevel} learners
+- Determine optimal balance between authenticity and accessibility  
+- Consider how "${text}" influences appropriate tone and style
+- Develop consistent voice throughout lesson components
+- Avoid generic, predictable phrasing that feels template-based
+- Create natural flow and cohesion between ideas
+
+11. TOPIC DIFFERENTIATION APPROACH:
+Analyze how "${text}" should be treated at ${cefrLevel} level:
+- Identify 3-5 unique aspects appropriate for this specific level
+- Select vocabulary domains appropriate for THIS level but NOT lower levels
+- Approach topic from cognitive perspective matching this level
+- Ensure clear differentiation from how topic would be taught at other levels
+
+12. QUESTION QUALITY IMPROVEMENT:
+For discussion questions, ensure each:
+- Has clear purpose and language learning objectives
+- Elicits more than one-word responses
+- Connects to students' experiences while remaining culturally inclusive
+- Builds on vocabulary/concepts from the lesson
+- Encourages critical thinking appropriate to ${cefrLevel} level
+- Is genuinely interesting to discuss
+
+For comprehension questions:
+- Tests specific comprehension skills for ${cefrLevel}
+- Requires genuine understanding rather than word recognition
+- Progresses from literal to interpretive understanding
+- Uses question stems appropriate for cognitive level
+
+13. WARM-UP ACTIVITIES APPROACH:
+Design warm-up that:
+- Is appropriate for ${cefrLevel} cognitive and linguistic abilities
+- Introduces key vocabulary contextually
+- Builds confidence through accessible starting points
+- Creates engagement through relevant content
+- All questions MUST be DIRECTLY RELATED to "${text}"
+- Avoid generic questions applicable to any topic
+
+14. CULTURAL ADAPTABILITY:
+Ensure lesson content:
+- Presents cultural information at appropriate complexity
+- Provides necessary cultural context for ${cefrLevel} learners
+- Offers multiple cultural perspectives when relevant
+- Avoids culturally inappropriate content for global use
+- Creates authentic but accessible cultural learning opportunities
+
+15. SCAFFOLDING REQUIREMENTS FOR LOWER LEVELS:
+${cefrLevel === 'A1' || cefrLevel === 'A2' || cefrLevel === 'B1' 
+  ? `Since this is ${cefrLevel} level, you MUST include enhanced scaffolding. For each sentence frame, add "lowerLevelScaffolding" object with:
+1. "sentenceWorkshop": Progressive building from word → phrase → sentence
+2. "patternTrainer": Interactive word banks with categorized vocabulary
+This scaffolding is CRITICAL for A1-B1 learners.`
+  : `Since this is ${cefrLevel} level, do NOT include "lowerLevelScaffolding" in sentence frames.`}
+
+16. CROSS-COMPONENT INTEGRATION VALIDATION:
+Before finalizing, perform explicit integration analysis:
+
+VOCABULARY-TEXT INTEGRATION:
+✓ NATURAL INTEGRATION: Does each vocabulary word appear naturally in reading text?
+✓ CONTEXTUAL SUPPORT: Does text provide context clues for vocabulary?
+✓ TOPIC COHERENCE: Do vocabulary choices genuinely support "${text}"?
+
+TEXT-DISCUSSION INTEGRATION:
+✓ CONTENT DEPENDENCY: Do discussion questions require genuine text understanding?
+✓ TOPIC EXTENSION: Do questions naturally extend text topics into meaningful discussion?
+✓ COGNITIVE PROGRESSION: Do questions appropriately build on text complexity?
+
+VOCABULARY-DISCUSSION INTEGRATION:
+✓ VOCABULARY USAGE OPPORTUNITIES: Do questions provide natural opportunities to USE target vocabulary?
+✓ SCAFFOLDED APPLICATION: Do questions appropriately scaffold vocabulary usage?
+✓ MEANINGFUL COMMUNICATION: Do vocabulary usage opportunities feel authentic?
+
+SYNERGISTIC LEARNING FLOW:
+✓ CONTENT COHERENCE: Do all components support same learning objectives?
+✓ DIFFICULTY ALIGNMENT: Are all components appropriately leveled?
+✓ PEDAGOGICAL SEQUENCE: Do components create effective progression?
+
+REJECTION CRITERIA - REJECT LESSONS WHERE:
+❌ Vocabulary appears forced or artificially inserted
+❌ Discussion questions could be answered without reading text
+❌ Students could answer without using target vocabulary
+❌ Components feel disconnected
+❌ Lesson lacks coherent learning progression
 
 I will count the total number of vocabulary items. If you don't include EXACTLY ${minVocabCount} complete vocabulary items, your response will be rejected.
 
