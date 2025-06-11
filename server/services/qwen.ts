@@ -54,40 +54,44 @@ export class QwenService {
       const minVocabCount = 5;
       const maxVocabCount = 5;
       
-      const prompt = `You are an expert ESL teacher creating a comprehensive lesson about "${text}" for ${cefrLevel} level students.
+      const prompt = `You are an expert ESL teacher. Create a comprehensive lesson about "${text}" for ${cefrLevel} level.
 
-CRITICAL REQUIREMENTS:
-1. Return ONLY valid JSON with NO extra text
-2. ALL content must be about "${text}" and appropriate for ${cefrLevel} level
-3. Include exactly 5 vocabulary words with complete details
-4. Create engaging, discussion-worthy content that promotes critical thinking
-5. Ensure vocabulary appears naturally in reading text and discussion questions
-
-LEVEL-APPROPRIATE CONTENT:
-- ${cefrLevel === 'A1' ? 'Simple concrete vocabulary, basic sentence structures, 80-120 word reading' : 
-   cefrLevel === 'A2' ? 'Personal experience vocabulary, simple past/future, 100-150 word reading' :
-   cefrLevel === 'B1' ? 'Social topics vocabulary, opinions with reasons, 120-180 word reading' :
-   cefrLevel === 'B2' ? 'Academic vocabulary, complex discussions, 150-220 word reading' :
-   'Sophisticated vocabulary, nuanced analysis, 180-250 word reading'}
+CRITICAL: Return ONLY valid JSON. ALL content must be about "${text}" and appropriate for ${cefrLevel} level.
 
 VOCABULARY REQUIREMENTS:
-- Definitions must use simpler vocabulary than the target word
-- Include pronunciation with syllables, stress index, and phonetic guide using only English letters and hyphens
+- Exactly 5 vocabulary words with complete details
+- Definitions using simpler vocabulary than target word
+- Include pronunciation: syllables array, stressIndex, phoneticGuide (English letters/hyphens only)
 - Example: "vocabulary" → syllables: ["vo", "cab", "u", "lar", "y"], stressIndex: 1, phoneticGuide: "voh-KAB-yuh-lair-ee"
-- Include semantic maps with synonyms, antonyms, related concepts, contexts, and associated words
-- Add word families, collocations, usage notes, and teaching tips
+- Include semanticMap with synonyms, antonyms, relatedConcepts, contexts, associatedWords
+- Add semanticGroup, additionalExamples, wordFamily, collocations, usageNotes, teachingTips
+- Add imagePrompt for each word (no text in images)
 
-CONTENT INTEGRATION:
-- Reading text should naturally incorporate all 5 vocabulary words
-- Discussion questions should encourage use of target vocabulary
-- Comprehension questions should test genuine understanding
-- All sections should work together cohesively around the topic "${text}"
+READING TEXT:
+- ${cefrLevel === 'A1' ? '80-120' : cefrLevel === 'A2' ? '100-150' : cefrLevel === 'B1' ? '120-180' : cefrLevel === 'B2' ? '150-220' : '180-250'} words
+- Naturally incorporate all 5 vocabulary words
+- Create paragraphs array with engaging content
+- Include introduction and teacherNotes
 
-DISCUSSION REQUIREMENTS:
-- Each discussion question needs a 3-5 sentence paragraph context
-- Questions should connect to students' experiences while remaining culturally inclusive
-- Promote critical thinking appropriate for ${cefrLevel} level
-- Include image prompts for visual engagement
+COMPREHENSION QUESTIONS:
+- 5 questions with options array, answer, correctAnswer, explanation
+- Mix multiple choice and true/false
+- Test understanding at appropriate ${cefrLevel} level
+
+DISCUSSION QUESTIONS:
+- Each question needs paragraphContext (3-5 sentences)
+- Include imagePrompt for visual engagement
+- Connect to students' experiences
+- Encourage critical thinking for ${cefrLevel} level
+
+SENTENCE FRAMES:
+- Include patternTemplate, languageFunction, structureComponents, examples
+- Add grammarFocus and teachingNotes arrays
+- Focus on patterns useful for discussing "${text}"
+
+WARMUP ACTIVITY:
+- Include content, questions array, targetVocabulary, procedure, teacherNotes
+- Introduce topic and vocabulary effectively
 
 FORMAT YOUR RESPONSE AS VALID JSON:
 
