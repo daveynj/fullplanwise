@@ -3,8 +3,8 @@ import { LessonGenerateParams } from '@shared/schema';
 import * as fs from 'fs';
 import { stabilityService } from './stability.service';
 
-// Qwen API endpoint for international usage - updated to new format
-const QWEN_API_URL = 'https://dashscope-intl.aliyuncs.com/api/v1/services/aigc/text-generation/generation';
+// Qwen API endpoint for international usage - using OpenAI compatible format
+const QWEN_API_URL = 'https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions';
 
 /**
  * Service for interacting with the Qwen AI API
@@ -1437,31 +1437,28 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
       
       const response = await axios.post(QWEN_API_URL, {
         model: 'qwen-max',
-        input: {
-          messages: [
-            {
-              role: 'user',
-              content: prompt
-            }
-          ]
-        },
-        parameters: {
-          temperature: 0.7,
-          max_tokens: 8000,
-          result_format: 'message'
-        }
+        messages: [
+          {
+            role: 'user',
+            content: prompt
+          }
+        ],
+        temperature: 0.7,
+        max_tokens: 8000,
+        stream: false
       }, {
         headers: {
           'Authorization': `Bearer ${this.apiKey}`,
           'Content-Type': 'application/json',
+          'X-DashScope-DataInspection': 'enable'
         },
         timeout: 120000
       });
 
       console.log('Qwen API response received');
 
-      if (response.data && response.data.output && response.data.output.text) {
-        const content = response.data.output.text;
+      if (response.data && response.data.choices && response.data.choices[0]) {
+        const content = response.data.choices[0].message.content;
         
         try {
           const lessonData = JSON.parse(content);
@@ -1477,11 +1474,25 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
       }
 
     } catch (error: any) {
-      console.error('Qwen API error:', error);
-      if (error?.response) {
-        console.error('Response status:', error.response.status);
-        console.error('Response data:', error.response.data);
+      console.error('Qwen API error details:', {
+        message: error.message,
+        status: error?.response?.status,
+        statusText: error?.response?.statusText,
+        data: error?.response?.data,
+        code: error.code,
+        timeout: error.timeout
+      });
+      
+      if (error?.response?.status === 401) {
+        console.error('Authentication failed - API key may be invalid');
+      } else if (error?.response?.status === 403) {
+        console.error('Access forbidden - check API key permissions');
+      } else if (error?.response?.status === 429) {
+        console.error('Rate limit exceeded');
+      } else if (error.code === 'ECONNABORTED') {
+        console.error('Request timeout - API took too long to respond');
       }
+      
       throw error;
     }
   }
