@@ -294,7 +294,7 @@ Ensure the entire output is a valid JSON object starting with { and ending with 
           }
         ],
         temperature: 0.7,
-        max_tokens: 16384 // Increased to match Gemini's token limit
+        max_tokens: 8192 // Maximum allowed by Qwen API
       }, {
         headers: {
           'Authorization': `Bearer ${this.apiKey}`,
