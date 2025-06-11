@@ -183,15 +183,7 @@ Design warm-up that:
 - All questions MUST be DIRECTLY RELATED to "${text}"
 - Avoid generic questions applicable to any topic
 
-14. CULTURAL ADAPTABILITY:
-Ensure lesson content:
-- Presents cultural information at appropriate complexity
-- Provides necessary cultural context for ${cefrLevel} learners
-- Offers multiple cultural perspectives when relevant
-- Avoids culturally inappropriate content for global use
-- Creates authentic but accessible cultural learning opportunities
-
-15. SCAFFOLDING REQUIREMENTS FOR LOWER LEVELS:
+14. SCAFFOLDING REQUIREMENTS FOR LOWER LEVELS:
 ${cefrLevel === 'A1' || cefrLevel === 'A2' || cefrLevel === 'B1' 
   ? `Since this is ${cefrLevel} level, you MUST include enhanced scaffolding. For each sentence frame, add "lowerLevelScaffolding" object with:
 1. "sentenceWorkshop": Progressive building from word → phrase → sentence
