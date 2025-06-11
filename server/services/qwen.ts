@@ -45,20 +45,84 @@ export class QwenService {
       // Set targetLevel variable to match what the system prompt expects
       const targetLevel = params.cefrLevel;
 
-      // Build the prompt for lesson generation
-      console.log('Building prompt for lesson generation');
-      const prompt = `You are an expert ESL (English as a Second Language) teacher and curriculum designer with over 20 years of experience.
+      // Build a concise prompt for lesson generation
+      console.log('Building concise prompt for lesson generation');
+      const prompt = `Create a complete ESL lesson for ${params.cefrLevel} level students about "${params.topic}".
 
-CRITICAL INSTRUCTION: Throughout this lesson template, you will see text that says "REPLACE WITH:" followed by instructions. You MUST replace ALL of this text with actual, real content. Never include "REPLACE WITH:" in your final response - it should only contain real lesson content about the topic "${params.topic}".
+Requirements:
+- Include 5 vocabulary words appropriate for ${params.cefrLevel} level
+- Create a reading text (3-4 paragraphs, ${params.cefrLevel} appropriate)
+- Add 5 discussion questions with context
+- Include sentence frames for speaking practice
+- Add grammar spotlight section
+- All content must be about "${params.topic}"
 
-TASK OVERVIEW:
-You will create a complete ESL lesson for ${params.cefrLevel} level students on a given topic.
+${params.targetVocabulary ? `Include these specific vocabulary words: ${params.targetVocabulary}` : ''}
 
-STEP 0: CEFR LEVEL ANALYSIS (REQUIRED BEFORE PROCEEDING)
-
-Before creating any lesson content, first analyze and establish clear parameters for what constitutes ${params.cefrLevel} level appropriate content:
-
-1. VOCABULARY ANALYSIS:
+{
+  "title": "Lesson title about ${params.topic}",
+  "level": "${params.cefrLevel}",
+  "focus": "${params.focus}",
+  "estimatedTime": ${params.lessonLength},
+  "sections": [
+    {
+      "type": "warmup",
+      "title": "Warm-up Activity",
+      "content": "Brief description",
+      "questions": ["Question 1?", "Question 2?", "Question 3?", "Question 4?", "Question 5?"],
+      "targetVocabulary": ["word1", "word2", "word3", "word4", "word5"],
+      "procedure": "Instructions",
+      "teacherNotes": "Notes"
+    },
+    {
+      "type": "reading", 
+      "title": "Reading Text",
+      "introduction": "Brief intro",
+      "paragraphs": ["Paragraph 1", "Paragraph 2", "Paragraph 3"],
+      "teacherNotes": "Notes"
+    },
+    {
+      "type": "vocabulary",
+      "title": "Key Vocabulary", 
+      "words": [
+        {
+          "term": "word1",
+          "partOfSpeech": "noun",
+          "definition": "Definition",
+          "example": "Example sentence",
+          "imagePrompt": "Image description"
+        }
+      ]
+    },
+    {
+      "type": "discussion",
+      "title": "Discussion Questions",
+      "questions": [
+        {
+          "paragraphContext": "Context",
+          "question": "Question?",
+          "imagePrompt": "Image description"
+        }
+      ]
+    },
+    {
+      "type": "sentenceFrames",
+      "title": "Sentence Practice",
+      "frames": [
+        {
+          "patternTemplate": "Pattern with [PLACEHOLDER]",
+          "languageFunction": "Function",
+          "title": "Frame title"
+        }
+      ]
+    }
+  ],
+  "grammarSpotlight": {
+    "grammarType": "present_perfect",
+    "title": "Grammar title",
+    "description": "Brief description"
+  }
+}`;
    - Identify what vocabulary range is appropriate for ${params.cefrLevel} level students
    ${params.targetVocabulary ? `   - IMPORTANT: You MUST include the following words in your lesson: ${params.targetVocabulary}` : ''}
    - List 5-10 example words that would be appropriate for this level
@@ -1434,9 +1498,15 @@ The Grammar Spotlight should use strategic grammar selection and pedagogically-o
 Ensure the entire output is a single, valid JSON object starting with { and ending with }`;
 
       console.log('Sending request to Qwen API...');
+      console.log('Request details:', {
+        url: QWEN_API_URL,
+        model: 'qwen-plus',
+        apiKeyPattern: this.apiKey.substring(0, 8) + '...',
+        promptLength: prompt.length
+      });
       
       const response = await axios.post(QWEN_API_URL, {
-        model: 'qwen-max',
+        model: 'qwen-plus',
         messages: [
           {
             role: 'user',
@@ -1444,15 +1514,14 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
           }
         ],
         temperature: 0.7,
-        max_tokens: 8000,
+        max_tokens: 4000,
         stream: false
       }, {
         headers: {
           'Authorization': `Bearer ${this.apiKey}`,
-          'Content-Type': 'application/json',
-          'X-DashScope-DataInspection': 'enable'
+          'Content-Type': 'application/json'
         },
-        timeout: 120000
+        timeout: 60000
       });
 
       console.log('Qwen API response received');
