@@ -7,7 +7,7 @@ export function cn(...inputs: ClassValue[]) {
 
 /**
  * Utility to extract quiz questions from lesson content
- * Works with various Qwen API response formats
+ * Works with various AI response formats
  */
 export function extractQuizQuestions(content: any): { question: string; answer: string; type?: string; options?: string[] }[] {
   if (!content) return [];
@@ -49,7 +49,7 @@ export function extractQuizQuestions(content: any): { question: string; answer: 
 
 /**
  * Utility to extract comprehension questions from lesson content
- * Works with various Qwen API response formats
+ * Works with various AI response formats
  */
 export function extractComprehensionQuestions(content: any): { question: string; answer: string; type?: string; options?: string[] }[] {
   if (!content) return [];
@@ -104,7 +104,7 @@ export function extractComprehensionQuestions(content: any): { question: string;
 
 /**
  * Utility to extract discussion questions from lesson content
- * Works with various Qwen API response formats
+ * Works with various AI response formats
  */
 export function extractDiscussionQuestions(content: any): any[] {
   if (!content) return [];
