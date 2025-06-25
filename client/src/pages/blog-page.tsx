@@ -45,7 +45,7 @@ const blogPosts = [
 
 **The Future of ESL Education:**
 
-AI-powered platforms like LinguaBoost are leading this transformation, offering teachers tools that were unimaginable just years ago. With natural language processing and advanced content generation, these platforms understand pedagogical principles and create educationally sound materials that engage students and accelerate learning.
+AI-powered platforms like PlanwiseESL are leading this transformation, offering teachers tools that were unimaginable just years ago. With natural language processing and advanced content generation, these platforms understand pedagogical principles and create educationally sound materials that engage students and accelerate learning.
 
 Whether you're teaching in a traditional classroom, online environment, or hybrid setting, AI tools are becoming essential for modern ESL instruction. The ability to generate unlimited, high-quality content means teachers can focus on what they do best: inspiring and guiding students on their language learning journey.`,
     category: "AI Technology",
@@ -1471,7 +1471,7 @@ Artificial intelligence has transformed lesson planning from a time-consuming ma
 **How AI Lesson Generation Works:**
 
 **Step 1: Input Requirements**
-Modern AI lesson generators like LinguaBoost require minimal input:
+Modern AI lesson generators like PlanwiseESL require minimal input:
 - Topic or theme selection
 - CEFR level (A1-C2)
 - Lesson duration and format
@@ -2303,7 +2303,7 @@ export default function BlogPage() {
       { term: "CEFR levels", url: "/blog", text: "CEFR levels" },
       { term: "ESL teaching", url: "/blog", text: "ESL teaching" },
       { term: "lesson generation", url: "/auth", text: "lesson generation platform" },
-      { term: "LinguaBoost", url: "/", text: "LinguaBoost" },
+      { term: "PlanwiseESL", url: "/", text: "PlanwiseESL" },
       { term: "student engagement", url: "/blog", text: "student engagement strategies" }
     ];
 
@@ -2338,10 +2338,10 @@ export default function BlogPage() {
           title={post.title}
           description={post.excerpt}
           keywords={post.tags}
-          canonicalUrl={`https://linguaboost.com/blog/${post.id}`}
+          canonicalUrl={`https://planwiseesl.com/blog/${post.id}`}
           article={{
             publishedTime: new Date(post.publishDate).toISOString(),
-            author: "LinguaBoost Team",
+            author: "PlanwiseESL Team",
             section: post.category,
             tags: post.tags
           }}
@@ -2356,7 +2356,7 @@ export default function BlogPage() {
                     <Sparkles className="h-6 w-6 text-white" />
                   </div>
                   <div>
-                    <h1 className="text-xl font-bold text-gray-900">LinguaBoost</h1>
+                    <h1 className="text-xl font-bold text-gray-900">PlanwiseESL</h1>
                     <p className="text-sm text-gray-500">AI-Powered ESL Lessons</p>
                   </div>
                 </div>
@@ -2461,7 +2461,7 @@ export default function BlogPage() {
         title="ESL Teaching Blog - AI-Powered Lesson Planning Tips & Strategies"
         description="Discover expert ESL teaching strategies, AI-powered lesson planning tips, and proven methods to improve student engagement. Free resources for online English teachers worldwide."
         keywords={["ESL teaching blog", "AI lesson planning", "online ESL teaching", "CEFR lesson plans", "English teaching strategies", "ESL teacher resources"]}
-        canonicalUrl="https://linguaboost.com/blog"
+        canonicalUrl="https://planwiseesl.com/blog"
       />
       {/* Header */}
       <header className="bg-white border-b border-gray-200">
@@ -2472,7 +2472,7 @@ export default function BlogPage() {
                 <Sparkles className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-900">LinguaBoost Blog</h1>
+                <h1 className="text-xl font-bold text-gray-900">PlanwiseESL Blog</h1>
                 <p className="text-sm text-gray-500">Insights on AI-Powered ESL Teaching</p>
               </div>
             </div>

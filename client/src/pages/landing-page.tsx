@@ -43,7 +43,7 @@ export default function LandingPage() {
           "automated lesson planning",
           "TESOL teaching tools"
         ]}
-        canonicalUrl="https://linguaboost.com"
+        canonicalUrl="https://planwiseesl.com"
       />
       {/* Header/Navigation */}
       <header className="bg-brand-light shadow-sm sticky top-0 z-10">

@@ -23,7 +23,7 @@ export function SEOHead({
   ogImage = "/twitter-card-new.png",
   article 
 }: SEOHeadProps) {
-  const fullTitle = title.includes("LinguaBoost") ? title : `${title} | LinguaBoost - AI-Powered ESL Lessons`;
+  const fullTitle = title.includes("PlanwiseESL") ? title : `${title} | PlanwiseESL - AI-Powered ESL Lessons`;
   const fullDescription = description.length > 160 ? description.substring(0, 157) + "..." : description;
   
   useEffect(() => {
@@ -66,7 +66,7 @@ export function SEOHead({
     }
     setMetaTag('robots', 'index, follow');
     setMetaTag('language', 'en-US');
-    setMetaTag('author', 'LinguaBoost Team');
+    setMetaTag('author', 'PlanwiseESL Team');
     
     // Set canonical URL
     if (canonicalUrl) {
@@ -111,11 +111,11 @@ export function SEOHead({
         "image": ogImage,
         "author": {
           "@type": "Organization",
-          "name": "LinguaBoost"
+          "name": "PlanwiseESL"
         },
         "publisher": {
           "@type": "Organization",
-          "name": "LinguaBoost",
+          "name": "PlanwiseESL",
           "logo": {
             "@type": "ImageObject",
             "url": "/PlanWise_ESL_logo.png"
@@ -146,7 +146,7 @@ export function SEOHead({
     return () => {
       // Reset title to default if needed
       if (document.title === fullTitle) {
-        document.title = "LinguaBoost - AI-Powered ESL Lessons";
+        document.title = "PlanwiseESL - AI-Powered ESL Lessons";
       }
     };
   }, [fullTitle, fullDescription, keywords, canonicalUrl, ogImage, article]);
