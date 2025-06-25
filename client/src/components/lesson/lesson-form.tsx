@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Student, AIProviderEnum } from "@shared/schema";
+import { Student, AIProviderEnum, LessonCategoryEnum, CATEGORY_LABELS } from "@shared/schema";
 import {
   Form,
   FormControl,
@@ -43,6 +43,7 @@ const formSchema = z.object({
   aiProvider: AIProviderEnum.default("qwen"),
   focus: z.string().default("general"),
   lessonLength: z.number().default(60),
+  category: LessonCategoryEnum.default("general"),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -66,6 +67,7 @@ export function LessonForm({ students, onSubmit, credits }: LessonFormProps) {
       aiProvider: "qwen",
       focus: "general",
       lessonLength: 60,
+      category: "general",
     },
   });
 
@@ -114,6 +116,32 @@ export function LessonForm({ students, onSubmit, credits }: LessonFormProps) {
                       {students.map((student) => (
                         <SelectItem key={student.id} value={student.id.toString()}>
                           {student.name} ({student.cefrLevel})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            {/* Category */}
+            <FormField
+              control={form.control}
+              name="category"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="font-semibold">Subject Area</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="w-full bg-white">
+                        <SelectValue placeholder="Select subject area" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {Object.entries(CATEGORY_LABELS).map(([value, label]) => (
+                        <SelectItem key={value} value={value}>
+                          {label}
                         </SelectItem>
                       ))}
                     </SelectContent>

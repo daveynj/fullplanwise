@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Lesson, Student } from "@shared/schema";
+import { Lesson, Student, CATEGORY_LABELS, CATEGORY_COLORS, LessonCategory } from "@shared/schema";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
 import { Button } from "@/components/ui/button";
@@ -481,6 +481,11 @@ export default function LessonHistoryPage() {
                                   <Badge variant="outline" className="bg-blue-100 text-blue-800">
                                     CEFR {lesson.cefrLevel}
                                   </Badge>
+                                  {lesson.category && (
+                                    <Badge variant="outline" className={CATEGORY_COLORS[lesson.category as LessonCategory] || CATEGORY_COLORS.general}>
+                                      {CATEGORY_LABELS[lesson.category as LessonCategory] || 'General English'}
+                                    </Badge>
+                                  )}
                                   <span className="text-sm text-gray-500">
                                     {lesson.createdAt ? formatDate(lesson.createdAt) : 'No date'}
                                   </span>

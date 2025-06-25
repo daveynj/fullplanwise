@@ -149,6 +149,8 @@ export const lessonGenerateSchema = z.object({
   generateImages: z.boolean().default(true),
   useStudentHistory: z.boolean().default(true),
   aiProvider: AIProviderEnum.default('qwen'), // Default to Qwen AI
+  category: LessonCategoryEnum.default('general'),
+  tags: z.array(z.string()).default([]),
 });
 
 export type LessonGenerateParams = z.infer<typeof lessonGenerateSchema>;
