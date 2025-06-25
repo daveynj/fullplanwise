@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'wouter';
 import { Button } from '@/components/ui/button';
+import { SEOHead } from '@/components/SEOHead';
 // Import Card components
 import { 
   Card, 
@@ -29,6 +30,21 @@ import {
 export default function LandingPage() {
   return (
     <div className="flex flex-col min-h-screen font-open-sans">
+      <SEOHead
+        title="AI-Powered ESL Lesson Generator | Create CEFR-Aligned Lessons in Minutes"
+        description="Generate professional ESL lessons instantly with AI. Save 15+ hours weekly on lesson planning. CEFR-aligned content for A1-C2 levels. Try free today!"
+        keywords={[
+          "AI ESL lesson generator",
+          "CEFR lesson plans",
+          "online ESL teaching tools",
+          "AI lesson planning software",
+          "English lesson generator",
+          "ESL teacher resources",
+          "automated lesson planning",
+          "TESOL teaching tools"
+        ]}
+        canonicalUrl="https://linguaboost.com"
+      />
       {/* Header/Navigation */}
       <header className="bg-brand-light shadow-sm sticky top-0 z-10">
         <nav className="container mx-auto px-6 py-3 flex justify-between items-center">
@@ -60,10 +76,10 @@ export default function LandingPage() {
             {/* Hero Text Column */}
             <div className="text-center lg:text-left lg:w-1/2">
               <h1 className="text-4xl md:text-5xl font-nunito font-bold mb-4">
-                Instantly Create Engaging ESL Lessons with AI
+                AI-Powered ESL Lesson Generator - Create Professional Lessons in Minutes
               </h1>
               <p className="text-xl md:text-2xl mb-6 opacity-90">
-                Save Hours on Lesson Planning and Focus on Teaching Your Online ESL Students More Effectively.
+                Save 15+ hours weekly on ESL lesson planning. Generate CEFR-aligned lessons instantly with our AI lesson generator. Transform your teaching efficiency today.
               </p>
               
               {/* Quick benefit list */}
