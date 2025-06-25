@@ -63,7 +63,7 @@ export function LessonForm({ students, onSubmit, credits }: LessonFormProps) {
       cefrLevel: "B1",
       topic: "",
       targetVocabulary: "",
-      aiProvider: "qwen",
+      aiProvider: "gemini",
       focus: "general",
       lessonLength: 60,
       category: "general",
