@@ -3,7 +3,7 @@ import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { CreditBadge } from "@/components/shared/credit-badge";
-import { LogOut, Home, Wand2, Users, Book, Settings, CreditCard, Shield } from "lucide-react";
+import { LogOut, Home, Wand2, Users, Book, Settings, CreditCard, Shield, Library } from "lucide-react";
 
 export function Sidebar() {
   const [location, setLocation] = useLocation();
@@ -17,8 +17,9 @@ export function Sidebar() {
   const navItems = [
     { path: "/dashboard", label: "Dashboard", icon: <Home className="mr-3 text-2xl" /> },
     { path: "/generate", label: "Generate Lesson", icon: <Wand2 className="mr-3 text-2xl" /> },
+    { path: "/history", label: "My Lessons", icon: <Book className="mr-3 text-2xl" /> },
+    { path: "/public-library", label: "Public Library", icon: <Library className="mr-3 text-2xl" /> },
     { path: "/students", label: "Students", icon: <Users className="mr-3 text-2xl" /> },
-    { path: "/history", label: "Lesson Library", icon: <Book className="mr-3 text-2xl" /> },
   ];
   
   // Function to render nav items without nested <a> tags

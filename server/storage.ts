@@ -37,6 +37,10 @@ export interface IStorage {
   updateLesson(id: number, lessonUpdate: Partial<Lesson>): Promise<Lesson>;
   deleteLesson(id: number): Promise<boolean>;
   
+  // Public library methods
+  getPublicLessons(page?: number, pageSize?: number, search?: string, cefrLevel?: string, category?: string): Promise<{lessons: Lesson[], total: number}>;
+  copyLessonToUser(lessonId: number, userId: number): Promise<Lesson>;
+  
   // Admin methods
   getUsersWithLessonStats(page?: number, pageSize?: number, search?: string, dateFilter?: string): Promise<{users: any[], total: number}>;
   getAdminAnalytics(): Promise<{
@@ -901,6 +905,113 @@ export class DatabaseStorage implements IStorage {
       };
     } catch (error) {
       console.error('Error fetching admin lessons:', error);
+      throw error;
+    }
+  }
+
+  async getPublicLessons(page = 1, pageSize = 20, search = '', cefrLevel = 'all', category = 'all') {
+    try {
+      const offset = (page - 1) * pageSize;
+      
+      // Build base query for counting
+      let countQuery = db
+        .select({ count: sql`count(*)` })
+        .from(lessons)
+        .innerJoin(users, eq(lessons.teacherId, users.id))
+        .where(eq(lessons.isPublic, true));
+
+      // Build base query for lessons
+      let lessonsQuery = db
+        .select({
+          id: lessons.id,
+          title: lessons.title,
+          topic: lessons.topic,
+          cefrLevel: lessons.cefrLevel,
+          category: lessons.category,
+          publicCategory: lessons.publicCategory,
+          createdAt: lessons.createdAt,
+          teacherName: users.username,
+          contentPreview: sql`substring(${lessons.content}::text, 1, 200)`.as('contentPreview')
+        })
+        .from(lessons)
+        .innerJoin(users, eq(lessons.teacherId, users.id))
+        .where(eq(lessons.isPublic, true));
+
+      // Apply search filter
+      if (search && search !== '') {
+        const searchCondition = or(
+          ilike(lessons.title, `%${search}%`),
+          ilike(lessons.topic, `%${search}%`),
+          ilike(users.username, `%${search}%`)
+        );
+        countQuery = countQuery.where(and(eq(lessons.isPublic, true), searchCondition));
+        lessonsQuery = lessonsQuery.where(and(eq(lessons.isPublic, true), searchCondition));
+      }
+      
+      // Apply category filter (using publicCategory field)
+      if (category && category !== 'all') {
+        countQuery = countQuery.where(and(eq(lessons.isPublic, true), eq(lessons.publicCategory, category)));
+        lessonsQuery = lessonsQuery.where(and(eq(lessons.isPublic, true), eq(lessons.publicCategory, category)));
+      }
+      
+      // Apply CEFR level filter
+      if (cefrLevel && cefrLevel !== 'all') {
+        countQuery = countQuery.where(and(eq(lessons.isPublic, true), eq(lessons.cefrLevel, cefrLevel)));
+        lessonsQuery = lessonsQuery.where(and(eq(lessons.isPublic, true), eq(lessons.cefrLevel, cefrLevel)));
+      }
+
+      // Execute count query
+      const [countResult] = await countQuery;
+      const total = Number(countResult.count);
+      
+      // Execute lessons query
+      const lessonsResult = await lessonsQuery
+        .orderBy(desc(lessons.createdAt))
+        .limit(pageSize)
+        .offset(offset);
+      
+      return {
+        lessons: lessonsResult,
+        total
+      };
+    } catch (error) {
+      console.error('Error fetching public lessons:', error);
+      throw error;
+    }
+  }
+
+  async copyLessonToUser(lessonId: number, userId: number): Promise<Lesson> {
+    try {
+      // Get the original lesson
+      const originalLesson = await this.getLesson(lessonId);
+      if (!originalLesson) {
+        throw new Error('Lesson not found');
+      }
+
+      // Verify it's a public lesson
+      if (!originalLesson.isPublic) {
+        throw new Error('Lesson is not available in public library');
+      }
+
+      // Create a copy for the user
+      const lessonCopy = {
+        teacherId: userId,
+        title: originalLesson.title + ' (Copy)',
+        topic: originalLesson.topic,
+        cefrLevel: originalLesson.cefrLevel,
+        content: originalLesson.content,
+        notes: originalLesson.notes,
+        grammarSpotlight: originalLesson.grammarSpotlight,
+        category: originalLesson.category,
+        tags: originalLesson.tags || [],
+        isPublic: false, // User copies are private by default
+        publicCategory: null
+      };
+
+      const [newLesson] = await db.insert(lessons).values(lessonCopy).returning();
+      return newLesson;
+    } catch (error) {
+      console.error('Error copying lesson:', error);
       throw error;
     }
   }

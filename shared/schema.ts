@@ -42,6 +42,8 @@ export const lessons = pgTable("lessons", {
   grammarSpotlight: text("grammar_spotlight"), // Grammar visualization data as JSON
   category: text("category").default("general"),
   tags: text("tags").array().default([]),
+  isPublic: boolean("is_public").default(false).notNull(),
+  publicCategory: text("public_category"), // Category for public library organization
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 

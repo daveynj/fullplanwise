@@ -26,6 +26,7 @@ import LandingPage from "@/pages/landing-page";
 import TwitterCardPreview from "@/pages/twitter-card-preview";
 import GrammarTestPage from "@/pages/grammar-test-page";
 import { GrammarComponentShowcase } from "@/components/lesson/grammar-component-showcase";
+import PublicLibraryPage from "@/pages/public-library-page";
 
 function GrammarShowcasePage() {
   return (
