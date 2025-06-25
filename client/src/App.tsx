@@ -52,7 +52,7 @@ function Router() {
       <ProtectedRoute path="/buy-credits" component={BuyCreditsPage} />
       <ProtectedRoute path="/subscription-success" component={SubscriptionSuccessPage} />
       <ProtectedRoute path="/settings" component={SettingsPage} />
-      <ProtectedRoute path="/admin" component={AdminDashboardPage} />
+      <ProtectedRoute path="/admin" component={AdminDashboardPage} requireAdmin={true} />
       <ProtectedRoute path="/grammar-test" component={GrammarTestPage} />
       <ProtectedRoute path="/grammar-showcase" component={GrammarShowcasePage} />
       <Route path="/auth" component={AuthPage} />

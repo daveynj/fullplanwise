@@ -527,7 +527,7 @@ export function AdminDashboardPage() {
                                       <Button
                                         variant="outline"
                                         size="sm"
-                                        onClick={() => window.open(`/history?user=${user.username}`, '_blank')}
+                                        onClick={() => window.open(`/history?teacherId=${user.id}`, '_blank')}
                                       >
                                         <Eye className="h-4 w-4" />
                                       </Button>
