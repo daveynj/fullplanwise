@@ -202,9 +202,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // For production environment, add an extra layer of protection
       if (process.env.NODE_ENV === 'production') {
         try {
+          // Allow admin to view other users' lessons via teacherId parameter
+          const teacherId = req.query.teacherId ? parseInt(req.query.teacherId as string) : req.user!.id;
+          
+          // Only allow viewing other users' lessons if the requester is admin
+          if (teacherId !== req.user!.id && !req.user!.isAdmin) {
+            return res.status(403).json({ message: "Access denied" });
+          }
+
           // Fetch paginated and filtered lessons
           const result = await storage.getLessons(
-            req.user!.id, 
+            teacherId, 
             page, 
             pageSize,
             search,

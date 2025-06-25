@@ -417,8 +417,12 @@ export default function LessonHistoryPage() {
               {/* Page header */}
               <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
                 <div>
-                  <h1 className="text-2xl md:text-3xl font-nunito font-bold">Lesson Library</h1>
-                  <p className="text-gray-600">All your created lessons in one place</p>
+                  <h1 className="text-2xl md:text-3xl font-nunito font-bold">
+                    {isViewingOtherUser ? "User's Lesson Library" : "Lesson Library"}
+                  </h1>
+                  <p className="text-gray-600">
+                    {isViewingOtherUser ? "Viewing another user's lessons" : "All your created lessons in one place"}
+                  </p>
                 </div>
                 <div className="mt-4 md:mt-0">
                   <Link href="/generate">
