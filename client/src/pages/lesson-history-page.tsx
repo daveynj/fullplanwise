@@ -41,6 +41,7 @@ import {
 } from "@/components/ui/dialog";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/use-auth";
 
 // Define interface for paginated response
 interface PaginatedLessons {
@@ -49,6 +50,14 @@ interface PaginatedLessons {
 }
 
 export default function LessonHistoryPage() {
+  const { user } = useAuth();
+  
+  // Get teacherId from URL params for admin viewing other users' libraries
+  const urlParams = new URLSearchParams(window.location.search);
+  const teacherIdParam = urlParams.get('teacherId');
+  const isViewingOtherUser = teacherIdParam && user?.isAdmin;
+  const effectiveTeacherId = isViewingOtherUser ? parseInt(teacherIdParam) : user?.id;
+  
   // State for filters and UI
   const [searchInput, setSearchInput] = useState(""); // Immediate input value
   const [searchQuery, setSearchQuery] = useState(""); // Debounced query sent to API

@@ -739,7 +739,7 @@ export class DatabaseStorage implements IStorage {
         .select({ count: sql`count(distinct ${users.id})` })
         .from(users)
         .innerJoin(lessons, eq(users.id, lessons.teacherId))
-        .where(gte(lessons.createdAt, thirtyDaysAgo.toISOString()));
+        .where(gte(lessons.createdAt, thirtyDaysAgo));
       const activeUsersLast30Days = Number(activeUsers30Result[0].count);
 
       // Active users who created lessons in last 7 days
@@ -747,21 +747,21 @@ export class DatabaseStorage implements IStorage {
         .select({ count: sql`count(distinct ${users.id})` })
         .from(users)
         .innerJoin(lessons, eq(users.id, lessons.teacherId))
-        .where(gte(lessons.createdAt, sevenDaysAgo.toISOString()));
+        .where(gte(lessons.createdAt, sevenDaysAgo));
       const activeUsersLast7Days = Number(activeUsers7Result[0].count);
 
       // Lessons created in last 30 days
       const lessons30Result = await db
         .select({ count: sql`count(*)` })
         .from(lessons)
-        .where(gte(lessons.createdAt, thirtyDaysAgo.toISOString()));
+        .where(gte(lessons.createdAt, thirtyDaysAgo));
       const lessonsLast30Days = Number(lessons30Result[0].count);
 
       // Lessons created in last 7 days
       const lessons7Result = await db
         .select({ count: sql`count(*)` })
         .from(lessons)
-        .where(gte(lessons.createdAt, sevenDaysAgo.toISOString()));
+        .where(gte(lessons.createdAt, sevenDaysAgo));
       const lessonsLast7Days = Number(lessons7Result[0].count);
 
       // Top categories
