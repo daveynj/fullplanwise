@@ -28,6 +28,7 @@ import GrammarTestPage from "@/pages/grammar-test-page";
 import { GrammarComponentShowcase } from "@/components/lesson/grammar-component-showcase";
 import PublicLibraryPage from "@/pages/public-library-page";
 import AdminLessonManagementPage from "@/pages/admin-lesson-management-page";
+import BlogPage from "@/pages/blog-page";
 
 function GrammarShowcasePage() {
   return (
@@ -60,6 +61,7 @@ function Router() {
       <ProtectedRoute path="/grammar-test" component={GrammarTestPage} />
       <ProtectedRoute path="/grammar-showcase" component={GrammarShowcasePage} />
       <Route path="/auth" component={AuthPage} />
+      <Route path="/blog" component={BlogPage} />
       <Route path="/forgot-password" component={ForgotPasswordPage} />
       <Route path="/reset-password/:token" component={ResetPasswordPage} />
       <Route path="/twitter-card" component={TwitterCardPreview} />

@@ -37,7 +37,12 @@ export default function LandingPage() {
             <img src="/PlanWise_ESL_logo.png" alt="Plan Wise ESL Logo" className="h-8 w-auto" /> {/* Slightly reduced height */} 
             <span className="text-xl font-nunito font-bold text-brand-navy">PLAN WISE ESL</span>
           </div>
-          <div>
+          <div className="flex items-center gap-4">
+            <Link href="/blog">
+              <Button variant="ghost" className="text-brand-navy hover:bg-brand-navy/10">
+                Blog
+              </Button>
+            </Link>
             <Link href="/auth">
               <Button variant="outline" className="mr-2 border-brand-navy text-brand-navy hover:bg-brand-navy/10">Login</Button>
             </Link>
