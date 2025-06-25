@@ -37,6 +37,8 @@ export default function LessonGeneratorPage() {
       setGeneratingLesson(true);
     },
     onSuccess: (data) => {
+      setGeneratingLesson(false); // Clear loading state immediately
+      
       // Invalidate queries to refresh data
       queryClient.invalidateQueries({ queryKey: ["/api/user"] });
       queryClient.invalidateQueries({ queryKey: ["/api/lessons"] });
@@ -50,7 +52,7 @@ export default function LessonGeneratorPage() {
       if (data && data.id) {
         // Short delay to allow the toast to be seen
         setTimeout(() => {
-          setLocation(`/fullscreen/${data.id}`);
+          setLocation(`/lessons/${data.id}`);
         }, 500);
       } else {
         // Fallback if no lesson ID is available
@@ -62,6 +64,8 @@ export default function LessonGeneratorPage() {
       }
     },
     onError: (error: Error) => {
+      setGeneratingLesson(false); // Clear loading state on error
+      
       toast({
         title: "Failed to generate lesson",
         description: error.message,
