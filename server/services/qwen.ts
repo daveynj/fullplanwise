@@ -1433,10 +1433,11 @@ The Grammar Spotlight should use strategic grammar selection and pedagogically-o
 
 Ensure the entire output is a single, valid JSON object starting with { and ending with }`;
 
-      console.log('Sending request to Qwen API...');
+      console.log('Sending request to Qwen API with optimized parameters...');
+      console.log(`Request details: model=qwen-plus, max_tokens=8192, timeout=180s`);
       
       const response = await axios.post(QWEN_API_URL, {
-        model: 'qwen-max',
+        model: 'qwen-plus', // Use qwen-plus instead of qwen-max for better speed/reliability balance
         messages: [
           {
             role: 'user',
@@ -1444,17 +1445,25 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
           }
         ],
         temperature: 0.7,
-        max_tokens: 8000,
-        stream: false
+        max_tokens: 8192, // Increased to maximum allowed for qwen-plus
+        stream: false,
+        top_p: 0.9, // Add top_p for more focused responses
+        presence_penalty: 0.1, // Slight penalty to reduce repetition
+        frequency_penalty: 0.1
       }, {
         headers: {
           'Authorization': `Bearer ${this.apiKey}`,
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Connection': 'keep-alive'
         },
-        timeout: 120000
+        timeout: 180000, // Increased timeout to 3 minutes
+        maxRedirects: 3,
+        validateStatus: (status) => status >= 200 && status < 300
       });
 
-      console.log('Qwen API response received');
+      console.log('Qwen API response received successfully');
+      console.log(`Response size: ${JSON.stringify(response.data).length} characters`);
 
       if (response.data && response.data.choices && response.data.choices[0]) {
         const content = response.data.choices[0].message.content;
@@ -1472,11 +1481,34 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
       }
 
     } catch (error: any) {
-      console.error('Qwen API error:', error);
+      console.error('Qwen API error details:', {
+        message: error.message,
+        code: error.code,
+        timeout: error.code === 'ECONNABORTED' || error.message?.includes('timeout'),
+        status: error?.response?.status,
+        statusText: error?.response?.statusText
+      });
+      
       if (error?.response) {
         console.error('Response status:', error.response.status);
-        console.error('Response data:', error.response.data);
+        console.error('Response data:', JSON.stringify(error.response.data, null, 2));
+        
+        // Handle specific API errors
+        if (error.response.status === 429) {
+          throw new Error('Qwen API rate limit exceeded. Please try again in a moment.');
+        } else if (error.response.status === 401) {
+          throw new Error('Qwen API authentication failed. Please check your API key.');
+        } else if (error.response.status >= 500) {
+          throw new Error('Qwen API server error. Service may be temporarily unavailable.');
+        }
       }
+      
+      // Handle timeout specifically
+      if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
+        throw new Error('Qwen API request timed out. The service may be experiencing high load.');
+      }
+      
+      // Re-throw with original error for other cases
       throw error;
     }
   }
