@@ -31,17 +31,17 @@ export default function LandingPage() {
   return (
     <div className="flex flex-col min-h-screen font-open-sans">
       <SEOHead
-        title="AI-Powered ESL Lesson Generator | Create CEFR-Aligned Lessons in Minutes"
-        description="Generate professional ESL lessons instantly with AI. Save 15+ hours weekly on lesson planning. CEFR-aligned content for A1-C2 levels. Try free today!"
+        title="From 50-Hour Weeks to 15-Hour Freedom | AI ESL Lesson Generator"
+        description="Join 2,847 ESL teachers who've eliminated burnout with AI lesson planning. Go from 3-hour prep sessions to 15-minute lessons. Start your transformation today!"
         keywords={[
-          "AI ESL lesson generator",
-          "CEFR lesson plans",
-          "online ESL teaching tools",
-          "AI lesson planning software",
-          "English lesson generator",
-          "ESL teacher resources",
-          "automated lesson planning",
-          "TESOL teaching tools"
+          "ESL teacher burnout solution",
+          "AI ESL lesson generator", 
+          "lesson planning takes too long",
+          "how to plan ESL lessons faster",
+          "tired of ESL lesson prep",
+          "save time ESL teaching",
+          "ESL lesson planning software",
+          "automated ESL lessons"
         ]}
         canonicalUrl="https://planwiseesl.com"
       />
@@ -76,10 +76,10 @@ export default function LandingPage() {
             {/* Hero Text Column */}
             <div className="text-center lg:text-left lg:w-1/2">
               <h1 className="text-4xl md:text-5xl font-nunito font-bold mb-4">
-                AI-Powered ESL Lesson Generator - Create Professional Lessons in Minutes
+                From 3-Hour Lesson Prep to 15-Minute Freedom
               </h1>
               <p className="text-xl md:text-2xl mb-6 opacity-90">
-                Save 15+ hours weekly on ESL lesson planning. Generate CEFR-aligned lessons instantly with our AI lesson generator. Transform your teaching efficiency today.
+                Join 2,847 ESL teachers who've eliminated burnout with AI lesson planning. Go from exhausted to energized—reclaim your weekends and rediscover your passion for teaching.
               </p>
               
               {/* Quick benefit list */}
