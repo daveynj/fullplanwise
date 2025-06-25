@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, jsonb } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -37,9 +37,11 @@ export const lessons = pgTable("lessons", {
   title: text("title").notNull(),
   topic: text("topic").notNull(),
   cefrLevel: text("cefr_level").notNull(),
-  content: text("content").notNull(),
+  content: jsonb("content").notNull(),
   notes: text("notes"),
   grammarSpotlight: text("grammar_spotlight"), // Grammar visualization data as JSON
+  category: text("category").default("general"),
+  tags: text("tags").array().default([]),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
@@ -85,6 +87,53 @@ export type Lesson = typeof lessons.$inferSelect;
 // AI provider enum
 export const AIProviderEnum = z.enum(['qwen', 'gemini']);
 export type AIProvider = z.infer<typeof AIProviderEnum>;
+
+// Lesson category enums
+export const LessonCategoryEnum = z.enum([
+  'general',
+  'business',
+  'academic',
+  'medical',
+  'legal',
+  'technology',
+  'tourism',
+  'finance',
+  'healthcare',
+  'science',
+  'arts',
+  'sports'
+]);
+export type LessonCategory = z.infer<typeof LessonCategoryEnum>;
+
+export const CATEGORY_LABELS: Record<LessonCategory, string> = {
+  general: 'General English',
+  business: 'Business English',
+  academic: 'Academic English',
+  medical: 'Medical English',
+  legal: 'Legal English',
+  technology: 'Technology English',
+  tourism: 'Tourism & Hospitality',
+  finance: 'Finance English',
+  healthcare: 'Healthcare English',
+  science: 'Science English',
+  arts: 'Arts & Culture',
+  sports: 'Sports English'
+};
+
+export const CATEGORY_COLORS: Record<LessonCategory, string> = {
+  general: 'bg-gray-100 text-gray-800',
+  business: 'bg-blue-100 text-blue-800',
+  academic: 'bg-purple-100 text-purple-800',
+  medical: 'bg-red-100 text-red-800',
+  legal: 'bg-indigo-100 text-indigo-800',
+  technology: 'bg-green-100 text-green-800',
+  tourism: 'bg-yellow-100 text-yellow-800',
+  finance: 'bg-emerald-100 text-emerald-800',
+  healthcare: 'bg-pink-100 text-pink-800',
+  science: 'bg-cyan-100 text-cyan-800',
+  arts: 'bg-orange-100 text-orange-800',
+  sports: 'bg-lime-100 text-lime-800'
+};
 
 // Lesson generation types
 export const lessonGenerateSchema = z.object({
