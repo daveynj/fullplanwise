@@ -1434,7 +1434,7 @@ The Grammar Spotlight should use strategic grammar selection and pedagogically-o
 Ensure the entire output is a single, valid JSON object starting with { and ending with }`;
 
       console.log('Sending request to Qwen API with optimized parameters...');
-      console.log(`Request details: model=qwen-long, max_tokens=8000, timeout=240s`);
+      console.log(`Request details: model=qwen-long, max_tokens=8000, timeout=300s`);
       
       const response = await axios.post(QWEN_API_URL, {
         model: 'qwen-long', // Use qwen-long for complex, long-context prompts
@@ -1457,7 +1457,7 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
           'Accept': 'application/json',
           'Connection': 'keep-alive'
         },
-        timeout: 240000, // Increased timeout to 4 minutes
+        timeout: 300000, // Increased timeout to 5 minutes for qwen-long
         maxRedirects: 3,
         validateStatus: (status) => status >= 200 && status < 300
       });
@@ -1518,7 +1518,7 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
       
       // Handle timeout specifically
       if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
-        throw new Error(`Qwen API request timed out after 4 minutes. Complex prompts may exceed service capacity. Model: qwen-long`);
+        throw new Error(`Qwen API request timed out after 5 minutes. Complex prompts may exceed service capacity. Model: qwen-long`);
       }
       
       // Re-throw with original error for other cases
