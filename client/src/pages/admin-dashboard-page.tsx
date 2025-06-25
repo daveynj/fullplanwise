@@ -228,8 +228,69 @@ export function AdminDashboardPage() {
               <p className="text-gray-600">Comprehensive analytics and user management for your ESL platform.</p>
             </div>
 
+            {/* Quick Action Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <BarChart3 className="h-5 w-5 text-blue-600" />
+                    Platform Analytics
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-gray-600 mb-4">View detailed analytics and user metrics</p>
+                  <div className="text-2xl font-bold text-blue-600">
+                    {analytics?.totalUsers || 0} Users
+                  </div>
+                  <p className="text-xs text-gray-500">
+                    {analytics?.activeUsersLast30Days || 0} active in last 30 days
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Link href="/admin/lessons" className="block">
+                <Card className="hover:shadow-lg transition-shadow cursor-pointer border-green-200 bg-green-50">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-green-700">
+                      <Settings className="h-5 w-5" />
+                      Manage Lessons
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-green-600 mb-4">Curate the public lesson library</p>
+                    <div className="text-2xl font-bold text-green-700">
+                      Public Library
+                    </div>
+                    <p className="text-xs text-green-600">
+                      Make lessons available to all users
+                    </p>
+                  </CardContent>
+                </Card>
+              </Link>
+
+              <Link href="/public-library" className="block">
+                <Card className="hover:shadow-lg transition-shadow cursor-pointer border-purple-200 bg-purple-50">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-purple-700">
+                      <Globe className="h-5 w-5" />
+                      View Public Library
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-purple-600 mb-4">Browse the public lesson collection</p>
+                    <div className="text-2xl font-bold text-purple-700">
+                      Browse Lessons
+                    </div>
+                    <p className="text-xs text-purple-600">
+                      See what users can access
+                    </p>
+                  </CardContent>
+                </Card>
+              </Link>
+            </div>
+
             <Tabs defaultValue="analytics" className="space-y-6">
-              <TabsList className="grid w-full grid-cols-3">
+              <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="analytics" className="flex items-center gap-2">
                   <BarChart3 className="h-4 w-4" />
                   Analytics
@@ -241,6 +302,10 @@ export function AdminDashboardPage() {
                 <TabsTrigger value="lessons" className="flex items-center gap-2">
                   <Eye className="h-4 w-4" />
                   All Lessons
+                </TabsTrigger>
+                <TabsTrigger value="manage" className="flex items-center gap-2">
+                  <Settings className="h-4 w-4" />
+                  Manage Lessons
                 </TabsTrigger>
               </TabsList>
 
@@ -749,6 +814,33 @@ export function AdminDashboardPage() {
                     </CardContent>
                   </Card>
                 )}
+              </TabsContent>
+
+              {/* Manage Lessons Tab */}
+              <TabsContent value="manage" className="space-y-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Settings className="h-5 w-5 text-green-600" />
+                      Lesson Management
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-center py-8">
+                      <Globe className="h-16 w-16 text-green-600 mx-auto mb-4" />
+                      <h3 className="text-xl font-semibold mb-4">Public Library Management</h3>
+                      <p className="text-gray-600 mb-6">
+                        Curate lessons for the public library and manage which lessons are available to all users.
+                      </p>
+                      <Link href="/admin/lessons">
+                        <Button className="bg-green-600 hover:bg-green-700">
+                          <Settings className="h-4 w-4 mr-2" />
+                          Open Lesson Manager
+                        </Button>
+                      </Link>
+                    </div>
+                  </CardContent>
+                </Card>
               </TabsContent>
             </Tabs>
           </div>
