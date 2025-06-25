@@ -280,7 +280,7 @@ export function extractDiscussionQuestions(content: any): any[] {
             console.log("Discussion questions as object:", discussionSection.questions);
             
             // Special case: Check if question keys themselves contain question marks
-            // This is the case with many Qwen API responses
+            // This handles various AI response formats
             const directQuestionKeys = Object.keys(discussionSection.questions).filter(
               key => typeof key === 'string' && key.includes('?')
             );

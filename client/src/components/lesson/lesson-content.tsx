@@ -765,36 +765,29 @@ export function LessonContent({ content }: LessonContentProps) {
     },
   };
 
-  // Utility function to extract discussion questions from the raw Qwen response
-  const extractQwenDiscussionQuestions = () => {
-    // Check if we have the raw content as a string
-    if (content && typeof content === 'string') {
-      console.log("Attempting to extract discussion questions from raw Qwen response");
+  // Utility function to extract discussion questions from structured lesson content
+  const extractDiscussionQuestions = () => {
+    // Check if we have structured content with discussion sections
+    if (content && typeof content === 'object') {
+      console.log("Extracting discussion questions from structured content");
       
       try {
-        // Look for the discussion section markers in the raw content
-        const discussionMatch = content.match(/\"type\"\s*\n\s*,\s*\n\s*\"discussion\"\s*\n\s*:\s*\n\s*\"title\"\s*\n\s*,\s*\n\s*\"([^\"]+)\"\s*\n\s*:\s*\n\s*\"introduction\"\s*\n\s*,\s*\n\s*\"([^\"]+)\"\s*\n\s*:\s*\n\s*\"questions\"\s*\n/);
+        // Look for discussion sections in the lesson structure
+        const discussionSections = parsedContent.sections?.filter(section => 
+          section.type === 'discussion' && section.questions
+        );
         
-        if (discussionMatch) {
-          console.log("Found discussion section marker in raw content!");
-          const title = discussionMatch[1] || "Discussion Questions";
-          const introduction = discussionMatch[2] || "";
-          
-          // Now look for question-answer pairs after the "questions" marker
-          // This regex pattern looks for quoted strings in the Qwen format
-          const questionsRegex = /\"([^\"]+)\"\s*\n\s*,\s*\n\s*\"([^\"]+)\"/g;
-          const questionStart = content.indexOf('"questions"');
-          
-          if (questionStart > -1) {
-            const questionsContent = content.substring(questionStart);
-            const questions = [];
-            let match;
-            
-            while ((match = questionsRegex.exec(questionsContent)) !== null) {
-              // Only capture until we hit another type marker
-              if (match[0].includes('"type"')) {
-                break;
-              }
+        if (discussionSections && discussionSections.length > 0) {
+          console.log("Found discussion sections in structured content");
+          return discussionSections;
+        }
+      } catch (error) {
+        console.error("Error extracting discussion questions:", error);
+      }
+    }
+    
+    return null;
+  };
               
               const question = match[1];
               const answer = match[2];
@@ -878,7 +871,7 @@ export function LessonContent({ content }: LessonContentProps) {
     const section = 
       findSection("warmup") || 
       findSection("warm-up") || 
-      findSection("sentenceFrames") || // Some Qwen responses use sentenceFrames for warm-up
+      findSection("sentenceFrames") || // Some AI responses use sentenceFrames for warm-up
       parsedContent.sections[0]; // Last resort, use the first section
     
     if (!section) return <p>No warm-up content available</p>;

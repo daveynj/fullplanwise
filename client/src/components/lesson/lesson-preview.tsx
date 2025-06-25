@@ -160,7 +160,7 @@ export function LessonPreview({ lesson }: LessonPreviewProps) {
     }];
   }
   
-  // Special handling for Qwen's unique format
+  // Special handling for various AI response formats
   // Look for sections that have questionable format (with colons instead of proper JSON)
   parsedContent.sections.forEach((section, index) => {
     if (section && typeof section === 'object') {

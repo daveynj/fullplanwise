@@ -44,11 +44,11 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
       questions: section.questions
     }, null, 2));
     
-    // First, check if the section is the Qwen special format with questions as key-value pairs
+    // First, check if the section has questions as key-value pairs
     if (section.questions) {
-      // Handle the Qwen format where questions is an object with question-answer pairs
+      // Handle format where questions is an object with question-answer pairs
       if (typeof section.questions === 'object' && !Array.isArray(section.questions)) {
-        console.log("Found Qwen question-answer object format");
+        console.log("Found question-answer object format");
         
         const questionKeys = Object.keys(section.questions).filter(key => 
           typeof key === 'string' && 
@@ -69,7 +69,7 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
           });
           
           questions = validQuestions;
-          console.log("Extracted questions from Qwen format:", questions.length);
+          console.log("Extracted questions from object format:", questions.length);
         }
       }
       
@@ -157,8 +157,8 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
       questions = section.discussionQuestions;
     } else if (section.questions && typeof section.questions === 'object' && !Array.isArray(section.questions)) {
       // Handle questions as object where keys are questions and values might be answers or descriptions
-      // This is the Qwen format from the example
-      console.log("Processing Qwen question object format");
+      // This handles various AI response formats
+      console.log("Processing question object format");
       const extractedQuestions: DiscussionQuestion[] = [];
       
       for (const questionText in section.questions) {

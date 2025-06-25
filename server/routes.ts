@@ -28,19 +28,8 @@ import path from 'path';
 //   : undefined;
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Dynamic AI service loaders - load only when needed for better performance
-  let qwenService: any = null;
+  // Dynamic AI service loader - using only Gemini for reliable lesson generation
   let geminiService: any = null;
-  
-  const getQwenService = async () => {
-    if (!qwenService) {
-      console.log('Loading Qwen AI service...');
-      const { qwenService: service } = await import("./services/qwen");
-      qwenService = service;
-      console.log('Qwen AI service loaded successfully');
-    }
-    return qwenService;
-  };
 
   const getGeminiService = async () => {
     if (!geminiService) {
