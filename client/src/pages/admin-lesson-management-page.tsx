@@ -44,7 +44,7 @@ export default function AdminLessonManagementPage() {
     if (!selectedLesson) return;
 
     try {
-      await apiRequest(`/api/lessons/${selectedLesson.id}/make-public`, {
+      await apiRequest(`/api/lessons/${selectedLesson.id}/public`, {
         method: "PATCH",
         body: JSON.stringify({ publicCategory: selectedPublicCategory }),
         headers: { "Content-Type": "application/json" },

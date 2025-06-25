@@ -1218,14 +1218,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Admin endpoint to make lessons public
-  app.patch("/api/lessons/:id/make-public", ensureAuthenticated, async (req, res) => {
+  // Admin endpoint to make lessons public  
+  app.patch("/api/lessons/:id/public", ensureAuthenticated, async (req, res) => {
     try {
       console.log('Making lesson public - User ID:', req.user?.id);
+      console.log('Request body:', req.body);
       
       const currentUser = await storage.getUser(req.user!.id);
+      console.log('Current user:', { id: currentUser?.id, isAdmin: currentUser?.isAdmin });
+      
       if (!currentUser?.isAdmin) {
-        console.log('User is not admin:', currentUser);
+        console.log('User is not admin');
         return res.status(403).json({ message: "Unauthorized. Admin privileges required." });
       }
 
