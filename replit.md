@@ -100,6 +100,7 @@ This is a full-stack ESL (English as a Second Language) teaching platform built 
 - June 25, 2025: Implemented comprehensive industry/domain category system with 12 subject areas
 - June 25, 2025: Added post-generation category editing and filtering capabilities  
 - June 25, 2025: Removed Qwen AI provider due to persistent timeout issues with comprehensive prompts, simplified to use only Google Gemini for reliable lesson generation
+- June 25, 2025: Enhanced admin dashboard with comprehensive marketing analytics including MAU, lesson creation trends, category distribution, CEFR analytics, user activity metrics, and platform-wide lesson browsing capabilities
 
 ## User Preferences
 
