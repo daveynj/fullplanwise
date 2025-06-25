@@ -88,7 +88,16 @@ export default function LessonHistoryPage() {
   const debugFetchLessons = useCallback(async () => {
     try {
       console.log('Attempting direct fetch of lessons...');
-      const response = await fetch('/api/lessons', {
+      const params = new URLSearchParams({
+        page: currentPage.toString(),
+        search: searchQuery,
+        cefrLevel: cefrFilter,
+        dateFilter: dateFilter,
+        category: categoryFilter,
+        ...(effectiveTeacherId && effectiveTeacherId !== user?.id ? { teacherId: effectiveTeacherId.toString() } : {})
+      });
+      
+      const response = await fetch(`/api/lessons?${params}`, {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -128,12 +137,14 @@ export default function LessonHistoryPage() {
         search: searchQuery,
         cefrLevel: cefrFilter,
         dateFilter: dateFilter,
-        category: categoryFilter
+        category: categoryFilter,
+        teacherId: effectiveTeacherId
       }
     ],
     retry: 1,
     staleTime: 0, // Don't use stale data in production environment
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
+    enabled: !!effectiveTeacherId
   });
   
   // Fallback loading if React Query fails
@@ -169,7 +180,8 @@ export default function LessonHistoryPage() {
           search: searchQuery,
           cefrLevel: cefrFilter,
           dateFilter: dateFilter,
-          category: categoryFilter
+          category: categoryFilter,
+          teacherId: effectiveTeacherId
         }
       ] 
     });
@@ -185,7 +197,7 @@ export default function LessonHistoryPage() {
       .finally(() => {
         setIsLoadingFallback(false);
       });
-  }, [debugFetchLessons, toast, currentPage, searchQuery, cefrFilter, dateFilter]);
+  }, [debugFetchLessons, toast, currentPage, searchQuery, cefrFilter, dateFilter, categoryFilter, effectiveTeacherId, user]);
   
   // Use data from React Query or fallback
   const effectiveData = lessonData || fallbackData;

@@ -841,66 +841,14 @@ export class DatabaseStorage implements IStorage {
     try {
       const offset = (page - 1) * pageSize;
       
-      let whereConditions = [];
-      let params: any[] = [];
-      
-      if (search && search !== '') {
-        whereConditions.push(`(l.title ILIKE $${params.length + 1} OR l.topic ILIKE $${params.length + 1} OR u.username ILIKE $${params.length + 1})`);
-        params.push(`%${search}%`);
-      }
-      
-      if (category && category !== 'all') {
-        whereConditions.push(`l.category = $${params.length + 1}`);
-        params.push(category);
-      }
-      
-      if (cefrLevel && cefrLevel !== 'all') {
-        whereConditions.push(`l.cefrLevel = $${params.length + 1}`);
-        params.push(cefrLevel);
-      }
-      
-      const whereClause = whereConditions.length > 0 ? `WHERE ${whereConditions.join(' AND ')}` : '';
-      
-      // Get total count
-      const countQuery = `
-        SELECT COUNT(*) as count
-        FROM ${lessons._.name} l
-        JOIN ${users._.name} u ON l.teacherId = u.id
-        ${whereClause}
-      `;
-      
-      // Use Drizzle ORM for better type safety
-      let query = this.db
-        .select({
-          count: sql`COUNT(*)`.as('count')
-        })
+      // Build base query for counting
+      let countQuery = db
+        .select({ count: sql`count(*)` })
         .from(lessons)
         .innerJoin(users, eq(lessons.teacherId, users.id));
 
-      // Apply filters using Drizzle
-      if (search && search !== '') {
-        query = query.where(
-          or(
-            ilike(lessons.title, `%${search}%`),
-            ilike(lessons.topic, `%${search}%`),
-            ilike(users.username, `%${search}%`)
-          )
-        );
-      }
-      
-      if (category && category !== 'all') {
-        query = query.where(eq(lessons.category, category));
-      }
-      
-      if (cefrLevel && cefrLevel !== 'all') {
-        query = query.where(eq(lessons.cefrLevel, cefrLevel));
-      }
-
-      const [countResult] = await query;
-      const total = Number(countResult.count);
-      
-      // Get lessons with user info using Drizzle
-      let lessonsQuery = this.db
+      // Build base query for lessons
+      let lessonsQuery = db
         .select({
           id: lessons.id,
           title: lessons.title,
@@ -909,33 +857,39 @@ export class DatabaseStorage implements IStorage {
           category: lessons.category,
           createdAt: lessons.createdAt,
           teacherName: users.username,
-          contentPreview: sql`CASE 
-            WHEN LENGTH(${lessons.content}) > 200 THEN SUBSTRING(${lessons.content}, 1, 200) || '...'
-            ELSE ${lessons.content}
-          END`.as('contentPreview')
+          contentPreview: sql`substring(${lessons.content}, 1, 200)`.as('contentPreview')
         })
         .from(lessons)
         .innerJoin(users, eq(lessons.teacherId, users.id));
 
-      // Apply same filters
+      // Apply search filter
       if (search && search !== '') {
-        lessonsQuery = lessonsQuery.where(
-          or(
-            ilike(lessons.title, `%${search}%`),
-            ilike(lessons.topic, `%${search}%`),
-            ilike(users.username, `%${search}%`)
-          )
+        const searchCondition = or(
+          ilike(lessons.title, `%${search}%`),
+          ilike(lessons.topic, `%${search}%`),
+          ilike(users.username, `%${search}%`)
         );
+        countQuery = countQuery.where(searchCondition);
+        lessonsQuery = lessonsQuery.where(searchCondition);
       }
       
+      // Apply category filter
       if (category && category !== 'all') {
+        countQuery = countQuery.where(eq(lessons.category, category));
         lessonsQuery = lessonsQuery.where(eq(lessons.category, category));
       }
       
+      // Apply CEFR level filter
       if (cefrLevel && cefrLevel !== 'all') {
+        countQuery = countQuery.where(eq(lessons.cefrLevel, cefrLevel));
         lessonsQuery = lessonsQuery.where(eq(lessons.cefrLevel, cefrLevel));
       }
 
+      // Execute count query
+      const [countResult] = await countQuery;
+      const total = Number(countResult.count);
+      
+      // Execute lessons query
       const lessonsResult = await lessonsQuery
         .orderBy(desc(lessons.createdAt))
         .limit(pageSize)
