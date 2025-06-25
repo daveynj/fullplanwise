@@ -720,7 +720,6 @@ export class DatabaseStorage implements IStorage {
       };
     }
   }
-}
 
   async getAdminAnalytics() {
     try {
@@ -904,27 +903,77 @@ export class DatabaseStorage implements IStorage {
         ${whereClause}
       `;
       
-      const [countResult] = await this.db.execute(sql.raw(countQuery, params));
+      // Use Drizzle ORM for better type safety
+      let query = this.db
+        .select({
+          count: sql`COUNT(*)`.as('count')
+        })
+        .from(lessons)
+        .innerJoin(users, eq(lessons.teacherId, users.id));
+
+      // Apply filters using Drizzle
+      if (search && search !== '') {
+        query = query.where(
+          or(
+            ilike(lessons.title, `%${search}%`),
+            ilike(lessons.topic, `%${search}%`),
+            ilike(users.username, `%${search}%`)
+          )
+        );
+      }
+      
+      if (category && category !== 'all') {
+        query = query.where(eq(lessons.category, category));
+      }
+      
+      if (cefrLevel && cefrLevel !== 'all') {
+        query = query.where(eq(lessons.cefrLevel, cefrLevel));
+      }
+
+      const [countResult] = await query;
       const total = Number(countResult.count);
       
-      // Get lessons with user info
-      const lessonsQuery = `
-        SELECT 
-          l.id, l.title, l.topic, l.cefrLevel, l.category, l.createdAt,
-          u.username as teacherName,
-          CASE 
-            WHEN LENGTH(l.content) > 200 THEN SUBSTRING(l.content, 1, 200) || '...'
-            ELSE l.content
-          END as contentPreview
-        FROM ${lessons._.name} l
-        JOIN ${users._.name} u ON l.teacherId = u.id
-        ${whereClause}
-        ORDER BY l.createdAt DESC
-        LIMIT $${params.length + 1} OFFSET $${params.length + 2}
-      `;
+      // Get lessons with user info using Drizzle
+      let lessonsQuery = this.db
+        .select({
+          id: lessons.id,
+          title: lessons.title,
+          topic: lessons.topic,
+          cefrLevel: lessons.cefrLevel,
+          category: lessons.category,
+          createdAt: lessons.createdAt,
+          teacherName: users.username,
+          contentPreview: sql`CASE 
+            WHEN LENGTH(${lessons.content}) > 200 THEN SUBSTRING(${lessons.content}, 1, 200) || '...'
+            ELSE ${lessons.content}
+          END`.as('contentPreview')
+        })
+        .from(lessons)
+        .innerJoin(users, eq(lessons.teacherId, users.id));
+
+      // Apply same filters
+      if (search && search !== '') {
+        lessonsQuery = lessonsQuery.where(
+          or(
+            ilike(lessons.title, `%${search}%`),
+            ilike(lessons.topic, `%${search}%`),
+            ilike(users.username, `%${search}%`)
+          )
+        );
+      }
       
-      params.push(pageSize, offset);
-      const lessonsResult = await this.db.execute(sql.raw(lessonsQuery, params));
+      if (category && category !== 'all') {
+        lessonsQuery = lessonsQuery.where(eq(lessons.category, category));
+      }
+      
+      if (cefrLevel && cefrLevel !== 'all') {
+        lessonsQuery = lessonsQuery.where(eq(lessons.cefrLevel, cefrLevel));
+      }
+
+      const lessonsResult = await lessonsQuery
+        .orderBy(desc(lessons.createdAt))
+        .limit(pageSize)
+        .offset(offset);
       
       return {
         lessons: lessonsResult,

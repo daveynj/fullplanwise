@@ -1044,6 +1044,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Admin analytics endpoint  
+  app.get("/api/admin/analytics", ensureAuthenticated, async (req, res) => {
+    try {
+      const currentUser = await storage.getUser(req.user!.id);
+      
+      if (!currentUser?.isAdmin) {
+        return res.status(403).json({ message: "Unauthorized. Admin privileges required." });
+      }
+      
+      const analytics = await storage.getAdminAnalytics();
+      res.json(analytics);
+    } catch (error: any) {
+      console.error('Error fetching admin analytics:', error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Admin lessons browser endpoint
+  app.get("/api/admin/lessons", ensureAuthenticated, async (req, res) => {
+    try {
+      const currentUser = await storage.getUser(req.user!.id);
+      
+      if (!currentUser?.isAdmin) {
+        return res.status(403).json({ message: "Unauthorized. Admin privileges required." });
+      }
+      
+      const page = parseInt(req.query.page as string) || 1;
+      const pageSize = parseInt(req.query.pageSize as string) || 20;
+      const search = req.query.search as string || '';
+      const category = req.query.category as string || 'all';
+      const cefrLevel = req.query.cefrLevel as string || 'all';
+      
+      const result = await storage.getAllLessonsForAdmin(page, pageSize, search, category, cefrLevel);
+      res.json(result);
+    } catch (error: any) {
+      console.error('Error fetching admin lessons:', error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   // Admin management route
   app.post("/api/admin/set-admin-status", ensureAuthenticated, async (req, res) => {
     try {

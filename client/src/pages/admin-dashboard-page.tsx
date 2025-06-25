@@ -322,8 +322,160 @@ export function AdminDashboardPage() {
             {/* Title and intro */}
             <div className="mb-8">
               <h1 className="text-2xl md:text-3xl font-bold mb-2">Admin Dashboard</h1>
-              <p className="text-gray-600">View and manage users and their lesson generation activity.</p>
+              <p className="text-gray-600">Comprehensive analytics and user management for your ESL platform.</p>
             </div>
+
+            <Tabs defaultValue="analytics" className="space-y-6">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="analytics" className="flex items-center gap-2">
+                  <BarChart3 className="h-4 w-4" />
+                  Analytics
+                </TabsTrigger>
+                <TabsTrigger value="users" className="flex items-center gap-2">
+                  <Users className="h-4 w-4" />
+                  Users
+                </TabsTrigger>
+                <TabsTrigger value="lessons" className="flex items-center gap-2">
+                  <Eye className="h-4 w-4" />
+                  All Lessons
+                </TabsTrigger>
+              </TabsList>
+
+              {/* Analytics Tab */}
+              <TabsContent value="analytics" className="space-y-6">
+                {analyticsLoading ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {[...Array(8)].map((_, i) => (
+                      <Card key={i} className="animate-pulse">
+                        <CardContent className="p-6">
+                          <div className="h-16 bg-gray-200 rounded"></div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                ) : analytics ? (
+                  <>
+                    {/* Key Metrics */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                      <MetricsCard
+                        title="Total Users"
+                        value={analytics.totalUsers}
+                        change={`${analytics.activeUsersLast30Days} active (30d)`}
+                        icon={<Users className="h-6 w-6" />}
+                        color="bg-blue-100 text-blue-800"
+                      />
+                      <MetricsCard
+                        title="Total Lessons"
+                        value={analytics.totalLessons}
+                        change={`${analytics.lessonsLast30Days} created (30d)`}
+                        icon={<BookOpen className="h-6 w-6" />}
+                        color="bg-green-100 text-green-800"
+                      />
+                      <MetricsCard
+                        title="MAU (30 days)"
+                        value={analytics.activeUsersLast30Days}
+                        change={`${analytics.activeUsersLast7Days} weekly`}
+                        icon={<TrendingUp className="h-6 w-6" />}
+                        color="bg-purple-100 text-purple-800"
+                      />
+                      <MetricsCard
+                        title="Avg Lessons/User"
+                        value={analytics.averageLessonsPerUser}
+                        change="Platform average"
+                        icon={<Activity className="h-6 w-6" />}
+                        color="bg-orange-100 text-orange-800"
+                      />
+                    </div>
+
+                    {/* Top Categories */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                      <Card>
+                        <CardHeader>
+                          <CardTitle className="flex items-center gap-2">
+                            <BarChart3 className="h-5 w-5" />
+                            Popular Categories
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="space-y-3">
+                            {analytics.topCategories.slice(0, 6).map((cat) => (
+                              <div key={cat.category} className="flex items-center justify-between">
+                                <span className="font-medium">
+                                  {CATEGORY_LABELS[cat.category as keyof typeof CATEGORY_LABELS] || cat.category}
+                                </span>
+                                <Badge variant="secondary">{cat.count} lessons</Badge>
+                              </div>
+                            ))}
+                          </div>
+                        </CardContent>
+                      </Card>
+
+                      <Card>
+                        <CardHeader>
+                          <CardTitle className="flex items-center gap-2">
+                            <Zap className="h-5 w-5" />
+                            CEFR Level Distribution
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="space-y-3">
+                            {analytics.cefrDistribution.map((level) => (
+                              <div key={level.level} className="flex items-center justify-between">
+                                <span className="font-medium">{level.level}</span>
+                                <div className="flex items-center gap-2">
+                                  <div className="w-20 bg-gray-200 rounded-full h-2">
+                                    <div
+                                      className="bg-primary h-2 rounded-full"
+                                      style={{
+                                        width: `${(level.count / analytics.totalLessons) * 100}%`
+                                      }}
+                                    ></div>
+                                  </div>
+                                  <span className="text-sm text-gray-600">{level.count}</span>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </div>
+
+                    {/* Top Users */}
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                          <Users className="h-5 w-5" />
+                          Most Active Users
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                          {analytics.topUsers.slice(0, 6).map((user) => (
+                            <div key={user.username} className="p-4 border rounded-lg">
+                              <div className="font-medium">{user.username}</div>
+                              <div className="text-sm text-gray-600">
+                                {user.lessonCount} lessons created
+                              </div>
+                              <div className="text-xs text-gray-500">
+                                Last active: {format(new Date(user.lastActive), 'MMM d, yyyy')}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </>
+                ) : (
+                  <Card>
+                    <CardContent className="p-6">
+                      <p className="text-center text-gray-600">No analytics data available</p>
+                    </CardContent>
+                  </Card>
+                )}
+              </TabsContent>
+
+              {/* Users Tab */}
+              <TabsContent value="users" className="space-y-6">
             
             {/* Search and filters */}
             <Card className="mb-6">
