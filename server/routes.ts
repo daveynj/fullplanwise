@@ -179,8 +179,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const search = req.query.search as string || '';
       const cefrLevel = req.query.cefrLevel as string || 'all';
       const dateFilter = req.query.dateFilter as string || '';
+      const category = req.query.category as string || 'all';
       
-      console.log(`API Request: GET /api/lessons for teacherId=${req.user!.id}, page=${page}, search=${search || 'none'}, cefrLevel=${cefrLevel}, dateFilter=${dateFilter || 'all'}`);
+      console.log(`API Request: GET /api/lessons for teacherId=${req.user!.id}, page=${page}, search=${search || 'none'}, cefrLevel=${cefrLevel}, dateFilter=${dateFilter || 'all'}, category=${category}`);
       
       // First check if user is authenticated properly
       if (!req.user?.id) {
@@ -208,7 +209,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
             pageSize,
             search,
             cefrLevel,
-            dateFilter
+            dateFilter,
+            category
           );
           
           // --- DEBUGGING: Check result structure before sending ---
@@ -265,7 +267,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           pageSize,
           search,
           cefrLevel,
-          dateFilter
+          dateFilter,
+          category
         );
         
         // --- DEBUGGING (Dev): Apply same logic as production for consistency ---
@@ -535,6 +538,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ message: "Invalid lesson data", errors: error.errors });
       }
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Update lesson category (PATCH /api/lessons/:id)
+  app.patch("/api/lessons/:id", ensureAuthenticated, async (req, res) => {
+    try {
+      const lessonId = parseInt(req.params.id);
+      const lesson = await storage.getLesson(lessonId);
+      
+      if (!lesson) {
+        return res.status(404).json({ message: "Lesson not found" });
+      }
+      
+      if (lesson.teacherId !== req.user!.id) {
+        return res.status(403).json({ message: "Unauthorized access to lesson" });
+      }
+      
+      // Only allow updating category for now
+      const { category } = req.body;
+      if (!category) {
+        return res.status(400).json({ message: "Category is required" });
+      }
+      
+      const updatedLesson = await storage.updateLesson(lessonId, { category });
+      res.json(updatedLesson);
+    } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
   });

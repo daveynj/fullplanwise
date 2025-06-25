@@ -836,6 +836,66 @@ export default function LessonHistoryPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Edit Category Dialog */}
+      <Dialog open={editCategoryDialogOpen} onOpenChange={setEditCategoryDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Edit Lesson Category</DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <div>
+              <p className="text-sm text-gray-600 mb-3">
+                Change the category for: <span className="font-semibold">{lessonToEditCategory?.title}</span>
+              </p>
+              
+              <Select value={newCategory} onValueChange={setNewCategory}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select a category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
+                    <SelectItem key={key} value={key}>
+                      <div className="flex items-center">
+                        <div className={`w-3 h-3 rounded-full mr-2 ${CATEGORY_COLORS[key as LessonCategory]?.split(' ')[0] || 'bg-gray-100'}`}></div>
+                        {label}
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          
+          <DialogFooter className="sm:justify-between">
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                setEditCategoryDialogOpen(false);
+                setLessonToEditCategory(null);
+                setNewCategory("general");
+              }}
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={confirmEditCategory}
+              className="bg-primary hover:bg-primary/90"
+              disabled={editCategoryMutation.isPending}
+            >
+              {editCategoryMutation.isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Updating...
+                </>
+              ) : (
+                <>Save Category</>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

@@ -366,6 +366,13 @@ export class DatabaseStorage implements IStorage {
         console.log('Added date condition for filter:', dateFilter, 'Start date:', startDate.toISOString()); // Simplified log
       }
       
+      // Add category filter if provided
+      if (category && category !== 'all') {
+        const categoryCondition = eq(lessons.category, category);
+        conditions.push(categoryCondition);
+        console.log('Added category condition for category:', category); // Simplified log
+      }
+      
       console.log(`Final condition count for count/fetch: ${conditions.length}`); // Simplified log
       
       // Try a direct query first to see if we can get any lessons at all for this teacher
