@@ -1434,10 +1434,10 @@ The Grammar Spotlight should use strategic grammar selection and pedagogically-o
 Ensure the entire output is a single, valid JSON object starting with { and ending with }`;
 
       console.log('Sending request to Qwen API with optimized parameters...');
-      console.log(`Request details: model=qwen-plus, max_tokens=8192, timeout=180s`);
+      console.log(`Request details: model=qwen-turbo, max_tokens=6000, timeout=240s`);
       
       const response = await axios.post(QWEN_API_URL, {
-        model: 'qwen-plus', // Use qwen-plus instead of qwen-max for better speed/reliability balance
+        model: 'qwen-turbo', // Use qwen-turbo for fastest response times
         messages: [
           {
             role: 'user',
@@ -1445,7 +1445,7 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
           }
         ],
         temperature: 0.7,
-        max_tokens: 8192, // Increased to maximum allowed for qwen-plus
+        max_tokens: 6000, // Reduced for faster processing with qwen-turbo
         stream: false,
         top_p: 0.9, // Add top_p for more focused responses
         presence_penalty: 0.1, // Slight penalty to reduce repetition
@@ -1457,7 +1457,7 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
           'Accept': 'application/json',
           'Connection': 'keep-alive'
         },
-        timeout: 180000, // Increased timeout to 3 minutes
+        timeout: 240000, // Increased timeout to 4 minutes
         maxRedirects: 3,
         validateStatus: (status) => status >= 200 && status < 300
       });
@@ -1505,7 +1505,7 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
       
       // Handle timeout specifically
       if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
-        throw new Error('Qwen API request timed out. The service may be experiencing high load.');
+        throw new Error(`Qwen API request timed out after 4 minutes. Complex prompts may exceed service capacity. Model: qwen-turbo`);
       }
       
       // Re-throw with original error for other cases

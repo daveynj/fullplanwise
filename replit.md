@@ -99,7 +99,7 @@ This is a full-stack ESL (English as a Second Language) teaching platform built 
 - June 25, 2025: Initial setup
 - June 25, 2025: Implemented comprehensive industry/domain category system with 12 subject areas
 - June 25, 2025: Added post-generation category editing and filtering capabilities  
-- June 25, 2025: Optimized Qwen API implementation with enhanced error handling and timeout management
+- June 25, 2025: Optimized Qwen API implementation with enhanced error handling, timeout management, and qwen-turbo model for improved reliability
 
 ## User Preferences
 
