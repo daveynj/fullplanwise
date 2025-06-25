@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
 import { LessonForm } from "@/components/lesson/lesson-form";
@@ -15,6 +15,11 @@ export default function LessonGeneratorPage() {
   const { toast } = useToast();
   const [, setLocation] = useLocation();
   const [generatingLesson, setGeneratingLesson] = useState(false);
+  
+  // Force reset loading state on component mount
+  useEffect(() => {
+    setGeneratingLesson(false);
+  }, []);
   
   // Fetch students for dropdown
   const { data: students = [] } = useQuery<Student[]>({

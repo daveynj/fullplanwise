@@ -74,11 +74,11 @@ export function LoadingOverlay({
     if (!isLoading) {
       // When loading completes, immediately set to 100% and reset after a brief delay
       setProgress(100);
-      setTimeout(() => {
+      const resetTimer = setTimeout(() => {
         setCurrentStage(0);
         setProgress(0);
-      }, 1000);
-      return;
+      }, 500);
+      return () => clearTimeout(resetTimer);
     }
 
     // Set random community activity
