@@ -13,7 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2 } from "lucide-react";
 
 const loginSchema = z.object({
-  username: z.string().min(3, "Username must be at least 3 characters"),
+  username: z.string().min(1, "Email or username is required"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
@@ -121,9 +121,9 @@ export default function AuthPage() {
                         name="username"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-brand-navy">Username</FormLabel>
+                            <FormLabel className="text-brand-navy">Email or Username</FormLabel>
                             <FormControl>
-                              <Input placeholder="your-username" {...field} />
+                              <Input placeholder="your@email.com or username" {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
