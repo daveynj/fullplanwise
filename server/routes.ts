@@ -433,7 +433,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           
           // Log specific error types for debugging
           if (primaryError.message?.includes('timeout')) {
-            console.log('Primary provider (Qwen-Long) failed due to timeout - comprehensive prompts may exceed current service capacity. Falling back to Gemini.');
+            console.log('Primary provider (Qwen 2.5-72B) failed due to timeout - comprehensive prompts may exceed current service capacity. Falling back to Gemini.');
           } else if (primaryError.message?.includes('rate limit')) {
             console.log('Primary provider failed due to rate limiting');
           } else if (primaryError.message?.includes('Invalid JSON')) {
