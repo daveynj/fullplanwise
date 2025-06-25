@@ -1434,10 +1434,10 @@ The Grammar Spotlight should use strategic grammar selection and pedagogically-o
 Ensure the entire output is a single, valid JSON object starting with { and ending with }`;
 
       console.log('Sending request to Qwen API with optimized parameters...');
-      console.log(`Request details: model=qwen-turbo, max_tokens=6000, timeout=240s`);
+      console.log(`Request details: model=qwen-long, max_tokens=8000, timeout=240s`);
       
       const response = await axios.post(QWEN_API_URL, {
-        model: 'qwen-turbo', // Use qwen-turbo for fastest response times
+        model: 'qwen-long', // Use qwen-long for complex, long-context prompts
         messages: [
           {
             role: 'user',
@@ -1445,7 +1445,7 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
           }
         ],
         temperature: 0.7,
-        max_tokens: 6000, // Reduced for faster processing with qwen-turbo
+        max_tokens: 8000, // qwen-long supports higher token limits
         stream: false,
         top_p: 0.9, // Add top_p for more focused responses
         presence_penalty: 0.1, // Slight penalty to reduce repetition
@@ -1467,14 +1467,27 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
 
       if (response.data && response.data.choices && response.data.choices[0]) {
         const content = response.data.choices[0].message.content;
+        console.log(`Qwen response content length: ${content.length} characters`);
+        console.log(`First 200 chars: ${content.substring(0, 200)}...`);
         
         try {
-          const lessonData = JSON.parse(content);
-          console.log('Lesson data parsed successfully');
+          // Clean up potential JSON formatting issues
+          let cleanedContent = content.trim();
+          
+          // Remove any markdown code blocks if present
+          if (cleanedContent.startsWith('```json')) {
+            cleanedContent = cleanedContent.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+          } else if (cleanedContent.startsWith('```')) {
+            cleanedContent = cleanedContent.replace(/^```\s*/, '').replace(/\s*```$/, '');
+          }
+          
+          const lessonData = JSON.parse(cleanedContent);
+          console.log('Lesson data parsed successfully from Qwen');
           return lessonData;
         } catch (parseError) {
           console.error('Failed to parse Qwen response as JSON:', parseError);
-          throw new Error('Invalid JSON response from Qwen API');
+          console.error('Raw Qwen response content:', content.substring(0, 500) + '...');
+          throw new Error(`Invalid JSON response from Qwen API: ${parseError.message}`);
         }
       } else {
         throw new Error('Invalid response format from Qwen API');
@@ -1505,7 +1518,7 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
       
       // Handle timeout specifically
       if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
-        throw new Error(`Qwen API request timed out after 4 minutes. Complex prompts may exceed service capacity. Model: qwen-turbo`);
+        throw new Error(`Qwen API request timed out after 4 minutes. Complex prompts may exceed service capacity. Model: qwen-long`);
       }
       
       // Re-throw with original error for other cases
