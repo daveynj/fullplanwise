@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useLocation, Link } from "wouter";
 import { LessonContent } from "@/components/lesson/lesson-content";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, X, ExpandIcon, MinimizeIcon, Download, Printer } from "lucide-react";
+import { ArrowLeft, X, ExpandIcon, MinimizeIcon, Download } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Lesson } from "@shared/schema";
@@ -216,19 +216,10 @@ export default function FullScreenLessonPage() {
           
           <div className="flex items-center gap-3">
             <Button
-              variant="outline"
-              size="sm"
-              onClick={printLesson}
-              className="text-gray-600"
-            >
-              <Printer className="h-4 w-4 mr-2" />
-              <span className="hidden sm:inline">Print</span>
-            </Button>
-            <Button
               asChild
               variant="outline"
               size="sm"
-              className="text-gray-600"
+              className="text-gray-600 bg-blue-50 border-blue-200 hover:bg-blue-100"
             >
               <a
                 href={`/api/lessons/${lessonId}/pdf?format=html`}
@@ -237,7 +228,8 @@ export default function FullScreenLessonPage() {
                 className="inline-flex items-center"
               >
                 <Download className="h-4 w-4 mr-2" />
-                <span className="hidden sm:inline">Download HTML</span>
+                <span className="hidden sm:inline">Download for PDF</span>
+                <span className="sm:hidden">PDF</span>
               </a>
             </Button>
             <Button

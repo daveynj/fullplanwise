@@ -35,7 +35,7 @@ export function LessonPreview({ lesson }: LessonPreviewProps) {
             className="flex items-center gap-2"
           >
             <Download className="h-5 w-5" />
-            <span>DOWNLOAD FULL HTML VERSION</span>
+            <span>DOWNLOAD FOR PDF</span>
           </a>
         </Button>
       </div>
@@ -225,22 +225,26 @@ export function LessonPreview({ lesson }: LessonPreviewProps) {
         
         <TabsContent value="lesson" className="flex-1 overflow-y-auto p-6 m-0">
           <div className="relative mb-12">
-            <div className="bg-green-100 border-l-4 border-green-500 p-4 mb-6 rounded-r shadow-md">
+            <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6 rounded-r shadow-md">
               <div className="flex justify-between items-center">
                 <div className="flex items-center">
-                  <Download className="h-6 w-6 text-green-600 mr-2" />
-                  <span className="font-medium text-green-800">Need offline access?</span>
+                  <Download className="h-6 w-6 text-blue-600 mr-2" />
+                  <div>
+                    <span className="font-medium text-blue-800 block">Create PDF for printing?</span>
+                    <span className="text-sm text-blue-600">Opens in browser, then use Ctrl+P to save as PDF</span>
+                  </div>
                 </div>
                 <Button
                   asChild
                   variant="outline"
+                  className="border-blue-300 text-blue-700 hover:bg-blue-100"
                 >
                   <a 
                     href={`/api/lessons/${lesson.id}/pdf?format=html`} 
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    Download Complete HTML Version
+                    Download for PDF
                   </a>
                 </Button>
               </div>

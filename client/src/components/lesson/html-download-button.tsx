@@ -17,7 +17,7 @@ export function HtmlDownloadButton({ lessonId, title }: HtmlDownloadButtonProps)
         style={{ animation: 'pulse 2s infinite' }}
       >
         <Download className="h-5 w-5" />
-        <span>Download Vocabulary (HTML)</span>
+        <span>Download for PDF</span>
       </a>
       
       <style jsx>{`
