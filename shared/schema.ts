@@ -87,7 +87,7 @@ export type Student = typeof students.$inferSelect;
 export type Lesson = typeof lessons.$inferSelect;
 
 // AI provider enum
-export const AIProviderEnum = z.enum(['qwen', 'gemini']);
+export const AIProviderEnum = z.enum(['gemini']);
 export type AIProvider = z.infer<typeof AIProviderEnum>;
 
 // Lesson category enums

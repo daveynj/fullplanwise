@@ -28,9 +28,8 @@ const cefrLevels = [
   { value: "C2", label: "C2 - Proficiency" },
 ];
 
-// AI providers
+// AI providers - only Gemini now
 const aiProviders = [
-  { value: "qwen", label: "Qwen AI", icon: Bot },
   { value: "gemini", label: "Google Gemini", icon: Sparkles }
 ];
 
@@ -40,7 +39,7 @@ const formSchema = z.object({
   cefrLevel: z.string(),
   topic: z.string().min(3, "Topic must be at least 3 characters"),
   targetVocabulary: z.string().optional(),
-  aiProvider: AIProviderEnum.default("qwen"),
+  aiProvider: AIProviderEnum.default("gemini"),
   focus: z.string().default("general"),
   lessonLength: z.number().default(60),
   category: LessonCategoryEnum.default("general"),

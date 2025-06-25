@@ -387,73 +387,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       try {
         // Generate lesson content using the selected AI provider
-        const primaryProvider = validatedData.aiProvider || 'qwen'; // Default to Qwen if not specified
-        let fallbackProvider = primaryProvider === 'qwen' ? 'gemini' : 'qwen';
+        const primaryProvider = validatedData.aiProvider || 'gemini'; // Default to Gemini
         
-        console.log(`Using primary AI provider: ${primaryProvider}, fallback provider: ${fallbackProvider}`);
+        console.log(`Using AI provider: ${primaryProvider}`);
         
-        // First try with the primary provider
-        try {
-          if (primaryProvider === 'gemini') {
-            const gemini = await getGeminiService();
-            generatedContent = await gemini.generateLesson(validatedData);
-          } else {
-            // Default to Qwen
-            const qwen = await getQwenService();
-            generatedContent = await qwen.generateLesson(validatedData);
-          }
+        // Generate lesson using Gemini
+        const gemini = await getGeminiService();
+        generatedContent = await gemini.generateLesson(validatedData);
           
-          // Enhanced validation for Qwen responses
-          if (primaryProvider === 'qwen') {
-            const sections = generatedContent?.sections || [];
-            const hasMeaningfulContent = sections.length > 3 && // Expect at least 4 sections
-              generatedContent?.title && 
-              generatedContent?.title.length > 5 &&
-              sections.some(section => section.type === 'vocabulary') &&
-              sections.some(section => section.type === 'reading') &&
-              sections.some(section => section.type === 'discussion');
-              
-            if (!hasMeaningfulContent) {
-              console.log('Qwen response validation failed - insufficient content quality');
-              throw new Error('Qwen returned incomplete lesson structure');
-            }
-            
-            // Validate vocabulary section specifically
-            const vocabSection = sections.find(s => s.type === 'vocabulary');
-            if (vocabSection && (!vocabSection.words || vocabSection.words.length < 3)) {
-              console.log('Qwen vocabulary section validation failed');
-              throw new Error('Qwen vocabulary section incomplete');
-            }
-            
-            console.log('Qwen response passed quality validation');
-          }
-          
-        } catch (primaryError: any) {
-          console.error(`${primaryProvider} generation failed, trying ${fallbackProvider} as fallback:`, primaryError);
-          
-          // Log specific error types for debugging
-          if (primaryError.message?.includes('timeout')) {
-            console.log('Primary provider (Qwen 2.5-72B) failed due to timeout - comprehensive prompts may exceed current service capacity. Falling back to Gemini.');
-          } else if (primaryError.message?.includes('rate limit')) {
-            console.log('Primary provider failed due to rate limiting');
-          } else if (primaryError.message?.includes('Invalid JSON')) {
-            console.log('Primary provider failed due to JSON parsing error - response may be truncated or malformed');
-          }
-          
-          primaryProviderError = primaryError;
-          usedFallbackProvider = true;
-          
-          // Now try with the fallback provider (only once)
-          if (fallbackProvider === 'gemini') {
-            const gemini = await getGeminiService();
-            generatedContent = await gemini.generateLesson(validatedData);
-          } else {
-            const qwen = await getQwenService();
-            generatedContent = await qwen.generateLesson(validatedData);
-          }
-          
-          // Don't cascade failures - if fallback fails too, the outer catch block will handle it
-        }
+        // No fallback needed since we're only using Gemini
         
         // Calculate time taken
         const endTime = Date.now();
@@ -498,7 +440,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             topic: validatedData.topic,
             cefrLevel: validatedData.cefrLevel,
             content: JSON.stringify(generatedContent), // Store as string in database
-            notes: usedFallbackProvider ? "Auto-saved lesson (used fallback provider)" : "Auto-saved lesson",
+            notes: "Auto-saved lesson",
             grammarSpotlight: grammarVisualization ? JSON.stringify(grammarVisualization) : null,
             category: validatedData.category || 'general',
             tags: validatedData.tags || []
