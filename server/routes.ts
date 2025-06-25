@@ -475,7 +475,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
             cefrLevel: validatedData.cefrLevel,
             content: JSON.stringify(generatedContent), // Store as string in database
             notes: usedFallbackProvider ? "Auto-saved lesson (used fallback provider)" : "Auto-saved lesson",
-            grammarSpotlight: grammarVisualization ? JSON.stringify(grammarVisualization) : null
+            grammarSpotlight: grammarVisualization ? JSON.stringify(grammarVisualization) : null,
+            category: validatedData.category || 'general',
+            tags: validatedData.tags || []
           };
           
           // Save to database

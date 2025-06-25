@@ -72,6 +72,8 @@ export const insertLessonSchema = createInsertSchema(lessons).pick({
   content: true,
   notes: true,
   grammarSpotlight: true,
+  category: true,
+  tags: true,
 });
 
 // Types for inserts

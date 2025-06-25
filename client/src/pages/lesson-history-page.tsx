@@ -52,6 +52,7 @@ export default function LessonHistoryPage() {
   const [searchQuery, setSearchQuery] = useState(""); // Debounced query sent to API
   const [cefrFilter, setCefrFilter] = useState<string>("all");
   const [dateFilter, setDateFilter] = useState<string>("all");
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [lessonToDelete, setLessonToDelete] = useState<Lesson | null>(null);
   const [assignDialogOpen, setAssignDialogOpen] = useState(false);
