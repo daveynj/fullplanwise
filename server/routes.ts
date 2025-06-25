@@ -1219,21 +1219,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Admin endpoint to make lessons public
-  app.put("/api/lessons/:id/make-public", ensureAuthenticated, async (req, res) => {
+  app.patch("/api/lessons/:id/make-public", ensureAuthenticated, async (req, res) => {
     try {
+      console.log('Making lesson public - User ID:', req.user?.id);
+      
       const currentUser = await storage.getUser(req.user!.id);
       if (!currentUser?.isAdmin) {
+        console.log('User is not admin:', currentUser);
         return res.status(403).json({ message: "Unauthorized. Admin privileges required." });
       }
 
       const lessonId = parseInt(req.params.id);
       const { publicCategory } = req.body;
       
+      console.log('Making lesson public:', { lessonId, publicCategory });
+      
       const updatedLesson = await storage.updateLesson(lessonId, { 
         isPublic: true, 
         publicCategory: publicCategory || 'general-english'
       });
       
+      console.log('Lesson updated successfully:', updatedLesson.id);
       res.json(updatedLesson);
     } catch (error: any) {
       console.error('Error making lesson public:', error);

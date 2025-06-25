@@ -45,7 +45,7 @@ export default function AdminLessonManagementPage() {
 
     try {
       await apiRequest(`/api/lessons/${selectedLesson.id}/make-public`, {
-        method: "PUT",
+        method: "PATCH",
         body: JSON.stringify({ publicCategory: selectedPublicCategory }),
         headers: { "Content-Type": "application/json" },
       });
