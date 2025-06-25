@@ -3,7 +3,7 @@ import createMemoryStore from "memorystore";
 import session from "express-session";
 import { Store } from "express-session";
 import { db } from "./db";
-import { SQL, eq, and, desc, count, or, ilike, gte } from "drizzle-orm";
+import { SQL, eq, and, desc, count, or, ilike, gte, sql } from "drizzle-orm";
 import connectPg from "connect-pg-simple";
 import { pool } from "./db";
 
