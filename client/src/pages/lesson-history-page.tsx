@@ -113,7 +113,8 @@ export default function LessonHistoryPage() {
         page: currentPage,
         search: searchQuery,
         cefrLevel: cefrFilter,
-        dateFilter: dateFilter
+        dateFilter: dateFilter,
+        category: categoryFilter
       }
     ],
     retry: 1,
@@ -153,7 +154,8 @@ export default function LessonHistoryPage() {
           page: currentPage,
           search: searchQuery,
           cefrLevel: cefrFilter,
-          dateFilter: dateFilter
+          dateFilter: dateFilter,
+          category: categoryFilter
         }
       ] 
     });
@@ -371,8 +373,8 @@ export default function LessonHistoryPage() {
               </div>
               
               {/* Search and filters */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                <div className="md:col-span-2 relative">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+                <div className="lg:col-span-2 relative">
                   <Input 
                     type="text" 
                     placeholder="Search by title or topic..." 
@@ -410,6 +412,36 @@ export default function LessonHistoryPage() {
                       <SelectItem value="B2">B2</SelectItem>
                       <SelectItem value="C1">C1</SelectItem>
                       <SelectItem value="C2">C2</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="relative">
+                  <Select 
+                    value={categoryFilter} 
+                    onValueChange={(value) => {
+                      setCategoryFilter(value);
+                      setCurrentPage(1); // Reset to first page on category filter change
+                    }}
+                  >
+                    <SelectTrigger className="w-full">
+                      <div className="flex items-center">
+                        <Tag className="mr-2 h-4 w-4 text-gray-400" />
+                        <span>
+                          {categoryFilter === "all" ? "All Categories" : CATEGORY_LABELS[categoryFilter as LessonCategory] || "Category"}
+                        </span>
+                      </div>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Categories</SelectItem>
+                      {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
+                        <SelectItem key={key} value={key}>
+                          <div className="flex items-center">
+                            <div className={`w-3 h-3 rounded-full mr-2 ${CATEGORY_COLORS[key as LessonCategory]?.split(' ')[0] || 'bg-gray-100'}`}></div>
+                            {label}
+                          </div>
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -521,6 +553,14 @@ export default function LessonHistoryPage() {
                               <Button 
                                 size="sm" 
                                 variant="outline" 
+                                className="bg-purple-50 text-purple-600 border-purple-200 hover:bg-purple-100 hover:text-purple-700"
+                                onClick={() => handleEditCategory(lesson)}
+                              >
+                                <Edit className="mr-2 h-4 w-4" /> Edit Category
+                              </Button>
+                              <Button 
+                                size="sm" 
+                                variant="outline" 
                                 className="bg-red-50 text-red-600 border-red-200 hover:bg-red-100 hover:text-red-700"
                                 onClick={() => handleDeleteLesson(lesson)}
                               >
@@ -587,6 +627,7 @@ export default function LessonHistoryPage() {
                             setSearchQuery("");
                             setCefrFilter("all");
                             setDateFilter("all");
+                            setCategoryFilter("all");
                             setCurrentPage(1); // Reset to first page on filter clear
                           }}
                         >
