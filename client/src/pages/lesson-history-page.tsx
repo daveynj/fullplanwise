@@ -18,7 +18,9 @@ import {
   Loader2,
   Trash2,
   AlertTriangle,
-  UserPlus
+  UserPlus,
+  Tag,
+  Edit
 } from "lucide-react";
 import {
   AlertDialog,
@@ -59,6 +61,9 @@ export default function LessonHistoryPage() {
   const [lessonToAssign, setLessonToAssign] = useState<Lesson | null>(null);
   const [selectedStudentId, setSelectedStudentId] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [editCategoryDialogOpen, setEditCategoryDialogOpen] = useState(false);
+  const [lessonToEditCategory, setLessonToEditCategory] = useState<Lesson | null>(null);
+  const [newCategory, setNewCategory] = useState<string>("general");
   const { toast } = useToast();
   
   // Debounce search input to reduce frequent API calls
@@ -295,6 +300,58 @@ export default function LessonHistoryPage() {
         title: "Please select a student",
         description: "You must select a student to assign this lesson to.",
         variant: "destructive",
+      });
+    }
+  };
+  
+  const handleEditCategory = (lesson: Lesson) => {
+    setLessonToEditCategory(lesson);
+    setNewCategory(lesson.category || 'general');
+    setEditCategoryDialogOpen(true);
+  };
+  
+  // Edit category mutation
+  const editCategoryMutation = useMutation({
+    mutationFn: async ({ lessonId, category }: { lessonId: number, category: string }) => {
+      const response = await apiRequest("PATCH", `/api/lessons/${lessonId}`, { category });
+      return await response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ 
+        queryKey: [
+          "/api/lessons", 
+          { 
+            page: currentPage,
+            search: searchQuery,
+            cefrLevel: cefrFilter,
+            dateFilter: dateFilter,
+            category: categoryFilter
+          }
+        ] 
+      });
+      
+      toast({
+        title: "Category updated",
+        description: "The lesson category has been updated successfully.",
+      });
+      
+      setEditCategoryDialogOpen(false);
+      setLessonToEditCategory(null);
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Failed to update category",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  });
+  
+  const confirmEditCategory = () => {
+    if (lessonToEditCategory && newCategory) {
+      editCategoryMutation.mutate({ 
+        lessonId: lessonToEditCategory.id, 
+        category: newCategory 
       });
     }
   };

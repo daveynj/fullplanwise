@@ -304,7 +304,8 @@ export class DatabaseStorage implements IStorage {
     pageSize: number = 10, 
     search?: string, 
     cefrLevel?: string, 
-    dateFilter?: string
+    dateFilter?: string,
+    category?: string
   ): Promise<{lessons: Lesson[], total: number}> {
     try {
       console.log(`[Storage.getLessons] START - teacherId: ${teacherId}, page: ${page}, pageSize: ${pageSize}, search: ${search || 'none'}`);
