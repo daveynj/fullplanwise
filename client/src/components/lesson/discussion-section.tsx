@@ -211,7 +211,7 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
         }
       }
       
-      // Handle the case where questions are direct key-value pairs in the section (Qwen format)
+      // Handle the case where questions are direct key-value pairs in the section
       // Example: "How might commercialization affect holidays?": "Some answer or more context"
       const questionPatterns = [
         /how/i, /why/i, /what/i, /which/i, /where/i, /when/i, /who/i, 

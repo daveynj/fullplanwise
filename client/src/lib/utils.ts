@@ -115,7 +115,7 @@ export function extractDiscussionQuestions(content: any): any[] {
     console.log("Extracting discussion questions from:", JSON.stringify(content).substring(0, 500));
     
     // NEW APPROACH: Look for structured string discussion prompt responses in reading
-    // Some Qwen responses put the structured discussion paragraph + questions in a string within reading
+    // Some AI responses put the structured discussion paragraph + questions in a string within reading
     if (content.sections && Array.isArray(content.sections)) {
       // First check reading sections for discussion prompts
       const readingSections = content.sections.filter((s: any) => 
@@ -200,7 +200,7 @@ export function extractDiscussionQuestions(content: any): any[] {
         }
         
         // DIRECT KEY EXTRACTION - Special case for the specific format seen in logs
-        // This is a critical case for the Qwen API format where question keys are the actual questions
+        // This is a critical case for AI formats where question keys are the actual questions
         const allKeys = Object.keys(discussionSection);
         console.log("Looking for direct question keys in discussion section:", allKeys);
         const questionKeys = allKeys.filter(key => 
@@ -227,7 +227,7 @@ export function extractDiscussionQuestions(content: any): any[] {
           }
         }
         
-        // Handle Qwen API format with questions as array or object
+        // Handle AI format with questions as array or object
         if (discussionSection.questions) {
           if (Array.isArray(discussionSection.questions)) {
             // Handle array format
@@ -276,7 +276,7 @@ export function extractDiscussionQuestions(content: any): any[] {
             console.log("Final processed questions:", processedQuestions);
             return processedQuestions;
           } else if (typeof discussionSection.questions === 'object') {
-            // Handle object format (Qwen sometimes returns objects instead of arrays)
+            // Handle object format (AI sometimes returns objects instead of arrays)
             console.log("Discussion questions as object:", discussionSection.questions);
             
             // Special case: Check if question keys themselves contain question marks
@@ -356,7 +356,7 @@ export function extractDiscussionQuestions(content: any): any[] {
             return null;
           }).filter(Boolean);
         } else if (typeof discussionData.questions === 'object') {
-          // Extract questions from question object (common in Qwen API responses)
+          // Extract questions from question object (common in AI responses)
           const extractedQuestions: any[] = [];
           const questionValues = Object.values(discussionData.questions).filter(
             (val: any) => typeof val === 'string' && val.includes('?')

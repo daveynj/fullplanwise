@@ -788,42 +788,6 @@ export function LessonContent({ content }: LessonContentProps) {
     
     return null;
   };
-              
-              const question = match[1];
-              const answer = match[2];
-              
-              // Skip if this doesn't look like a real question
-              if (question === 'type' || question === 'title' || question === 'introduction' || question === 'questions') {
-                continue;
-              }
-              
-              questions.push({
-                question: question,
-                level: question.toLowerCase().includes('critical') ? 'critical' : 'basic',
-                followUp: answer ? [answer] : []
-              });
-              
-              console.log("Extracted question from raw content:", question);
-            }
-            
-            if (questions.length > 0) {
-              console.log(`Successfully extracted ${questions.length} discussion questions from raw content`);
-              return {
-                type: "discussion",
-                title: title,
-                introduction: introduction,
-                questions: questions
-              };
-            }
-          }
-        }
-      } catch (err) {
-        console.error("Error extracting discussion questions from raw content:", err);
-      }
-    }
-    
-    return null;
-  };
   
   // Helper function to find a section by type with error handling
   const findSection = (type: SectionType | string) => {
@@ -879,7 +843,7 @@ export function LessonContent({ content }: LessonContentProps) {
     console.log("Warm-up section attempt:", section);
 
     // VOCABULARY EXTRACTION:
-    // The Qwen API provides vocabulary in different structures
+    // AI responses provide vocabulary in different structures
     const vocabWords: VocabularyWord[] = [];
     
     // We'll extract vocabulary words using direct key matching based on the sample images
@@ -960,7 +924,7 @@ export function LessonContent({ content }: LessonContentProps) {
       if (Array.isArray(section.questions)) {
         discussionQuestions = section.questions;
       } else if (typeof section.questions === 'object') {
-        // Extract questions from object format (Qwen API format)
+        // Extract questions from object format
         discussionQuestions = Object.keys(section.questions)
           .filter(q => typeof q === 'string' && q.trim().length > 0);
       }
@@ -1749,7 +1713,7 @@ export function LessonContent({ content }: LessonContentProps) {
       if (Array.isArray(warmupSection.questions)) {
         warmupQuestions = warmupSection.questions.filter((q: any): q is string => typeof q === 'string');
       } else if (typeof warmupSection.questions === 'object') {
-        // Handle object format (e.g., Qwen API) - assuming keys are the questions
+        // Handle object format - assuming keys are the questions
         warmupQuestions = Object.keys(warmupSection.questions)
           .filter(q => typeof q === 'string' && q.trim().length > 0);
       }
