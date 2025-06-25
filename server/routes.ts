@@ -339,8 +339,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Lesson not found" });
       }
       
-      // Allow admin users to access any lesson, regular users can only access their own
-      if (lesson.teacherId !== req.user!.id && !req.user!.isAdmin) {
+      // Allow access if: user owns the lesson, user is admin, OR lesson is public
+      if (lesson.teacherId !== req.user!.id && !req.user!.isAdmin && !lesson.isPublic) {
         return res.status(403).json({ message: "Unauthorized access to lesson" });
       }
       
@@ -1184,6 +1184,59 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ message: "Invalid Mailchimp configuration", errors: error.errors });
       }
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Public library endpoints
+  app.get("/api/public-lessons", ensureAuthenticated, async (req, res) => {
+    try {
+      const page = parseInt(req.query.page as string) || 1;
+      const pageSize = parseInt(req.query.pageSize as string) || 20;
+      const search = req.query.search as string || '';
+      const cefrLevel = req.query.cefrLevel as string || 'all';
+      const category = req.query.category as string || 'all';
+      
+      const result = await storage.getPublicLessons(page, pageSize, search, cefrLevel, category);
+      res.json(result);
+    } catch (error: any) {
+      console.error('Error fetching public lessons:', error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.post("/api/lessons/:id/copy", ensureAuthenticated, async (req, res) => {
+    try {
+      const lessonId = parseInt(req.params.id);
+      const userId = req.user!.id;
+      
+      const copiedLesson = await storage.copyLessonToUser(lessonId, userId);
+      res.json(copiedLesson);
+    } catch (error: any) {
+      console.error('Error copying lesson:', error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Admin endpoint to make lessons public
+  app.put("/api/lessons/:id/make-public", ensureAuthenticated, async (req, res) => {
+    try {
+      const currentUser = await storage.getUser(req.user!.id);
+      if (!currentUser?.isAdmin) {
+        return res.status(403).json({ message: "Unauthorized. Admin privileges required." });
+      }
+
+      const lessonId = parseInt(req.params.id);
+      const { publicCategory } = req.body;
+      
+      const updatedLesson = await storage.updateLesson(lessonId, { 
+        isPublic: true, 
+        publicCategory: publicCategory || 'general-english'
+      });
+      
+      res.json(updatedLesson);
+    } catch (error: any) {
+      console.error('Error making lesson public:', error);
       res.status(500).json({ message: error.message });
     }
   });

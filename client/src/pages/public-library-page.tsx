@@ -5,11 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { BookOpen, Copy, Search, Filter, Eye } from "lucide-react";
+import { BookOpen, Copy, Search, Filter, Eye, ArrowLeft } from "lucide-react";
 import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { PUBLIC_LIBRARY_LABELS } from "@shared/schema";
+import { Sidebar } from "@/components/layout/sidebar";
 
 interface PublicLesson {
   id: number;
@@ -98,16 +99,27 @@ export default function PublicLibraryPage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mb-8">
-        <div className="flex items-center gap-3 mb-4">
-          <BookOpen className="h-8 w-8 text-blue-600" />
-          <h1 className="text-3xl font-bold">Public Lesson Library</h1>
-        </div>
-        <p className="text-gray-600 text-lg">
-          Access our curated collection of professional ESL lessons. Copy any lesson to your personal library at no credit cost.
-        </p>
-      </div>
+    <div className="flex min-h-screen bg-gray-50">
+      <Sidebar />
+      <main className="flex-1 p-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="mb-8">
+            <div className="flex items-center gap-4 mb-4">
+              <Link href="/dashboard">
+                <Button variant="ghost" size="sm" className="flex items-center gap-2">
+                  <ArrowLeft className="h-4 w-4" />
+                  Back to Dashboard
+                </Button>
+              </Link>
+            </div>
+            <div className="flex items-center gap-3 mb-4">
+              <BookOpen className="h-8 w-8 text-blue-600" />
+              <h1 className="text-3xl font-bold">Public Lesson Library</h1>
+            </div>
+            <p className="text-gray-600 text-lg">
+              Access our curated collection of professional ESL lessons. Copy any lesson to your personal library at no credit cost.
+            </p>
+          </div>
 
       {/* Filters */}
       <Card className="mb-6">
@@ -267,6 +279,8 @@ export default function PublicLibraryPage() {
           <p className="text-gray-500">Try adjusting your search filters to find more lessons.</p>
         </div>
       )}
+        </div>
+      </main>
     </div>
   );
 }
