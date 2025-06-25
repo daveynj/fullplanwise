@@ -39,19 +39,23 @@ export default function LessonGeneratorPage() {
     onSuccess: (data) => {
       setGeneratingLesson(false); // Clear loading state immediately
       
-      // Invalidate queries to refresh data
-      queryClient.invalidateQueries({ queryKey: ["/api/user"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/lessons"] });
-      
-      toast({
-        title: "Lesson generated successfully!",
-        description: "Opening your new lesson...",
-      });
-      
-      // Redirect to the fullscreen lesson view immediately
+      // Redirect to the lesson view IMMEDIATELY - don't wait for queries
       if (data && data.id) {
-        console.log(`Lesson generated successfully with ID: ${data.id}, redirecting now...`);
+        console.log(`Lesson generated successfully with ID: ${data.id}, redirecting immediately...`);
+        
+        toast({
+          title: "Lesson generated successfully!",
+          description: "Opening your new lesson...",
+        });
+        
+        // Redirect first, then invalidate queries in background
         setLocation(`/lessons/${data.id}`);
+        
+        // Invalidate queries in background after redirect
+        setTimeout(() => {
+          queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+          queryClient.invalidateQueries({ queryKey: ["/api/lessons"] });
+        }, 100);
       } else {
         // Fallback if no lesson ID is available
         toast({
@@ -59,6 +63,10 @@ export default function LessonGeneratorPage() {
           description: "Please check your lesson history to view this lesson.",
           variant: "default"
         });
+        
+        // Still invalidate queries for fallback case
+        queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+        queryClient.invalidateQueries({ queryKey: ["/api/lessons"] });
       }
     },
     onError: (error: Error) => {

@@ -322,25 +322,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/lessons/:id", ensureAuthenticated, async (req, res) => {
     try {
       const lessonId = parseInt(req.params.id);
+      console.log(`Fetching lesson ${lessonId} for user ${req.user!.id}`);
+      
       const lesson = await storage.getLesson(lessonId);
       
       if (!lesson) {
+        console.log(`Lesson ${lessonId} not found`);
         return res.status(404).json({ message: "Lesson not found" });
       }
       
       // Allow access if: user owns the lesson, user is admin, OR lesson is public
       if (lesson.teacherId !== req.user!.id && !req.user!.isAdmin && !lesson.isPublic) {
+        console.log(`Unauthorized access to lesson ${lessonId} by user ${req.user!.id}`);
         return res.status(403).json({ message: "Unauthorized access to lesson" });
       }
       
-      // Parse grammarSpotlight JSON if it exists
+      // Parse grammarSpotlight JSON if it exists (with error handling)
+      let grammarSpotlight = null;
+      if (lesson.grammarSpotlight) {
+        try {
+          grammarSpotlight = JSON.parse(lesson.grammarSpotlight);
+        } catch (parseError) {
+          console.warn(`Failed to parse grammarSpotlight for lesson ${lessonId}:`, parseError);
+        }
+      }
+      
       const responseLesson = {
         ...lesson,
-        grammarSpotlight: lesson.grammarSpotlight ? JSON.parse(lesson.grammarSpotlight) : null
+        grammarSpotlight
       };
       
+      console.log(`Successfully fetched lesson ${lessonId}`);
       res.json(responseLesson);
     } catch (error: any) {
+      console.error(`Error fetching lesson ${req.params.id}:`, error);
       res.status(500).json({ message: error.message });
     }
   });

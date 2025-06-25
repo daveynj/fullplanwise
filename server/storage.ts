@@ -514,13 +514,21 @@ export class DatabaseStorage implements IStorage {
 
   async getLesson(id: number): Promise<Lesson | undefined> {
     try {
+      console.log(`[Storage.getLesson] Fetching lesson ${id}`);
       const [lesson] = await db
         .select()
         .from(lessons)
         .where(eq(lessons.id, id));
+      
+      if (lesson) {
+        console.log(`[Storage.getLesson] Found lesson ${id}: "${lesson.title}"`);
+      } else {
+        console.log(`[Storage.getLesson] Lesson ${id} not found in database`);
+      }
+      
       return lesson;
     } catch (error) {
-      console.error('Error fetching lesson:', error);
+      console.error(`[Storage.getLesson] Error fetching lesson ${id}:`, error);
       throw error;
     }
   }

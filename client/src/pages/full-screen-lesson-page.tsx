@@ -18,10 +18,12 @@ export default function FullScreenLessonPage() {
   // Extract lesson ID from URL
   const lessonId = location.split("/")[2];
   
-  // Fetch lesson data
+  // Fetch lesson data with optimized caching
   const { data: lesson, isLoading, error } = useQuery<Lesson>({
     queryKey: [`/api/lessons/${lessonId}`],
     retry: false,
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+    gcTime: 10 * 60 * 1000, // Keep in cache for 10 minutes
   });
   
   // Parse the content if it's a string (from database)
