@@ -101,7 +101,7 @@ export default function LandingPage() {
                 <div className="flex flex-col items-center lg:items-start">
                   <Link href="/auth?register=true">
                     <Button size="lg" variant="brand" className="font-semibold px-8 py-3 w-full sm:w-auto">
-                      Start Your Free Trial
+                      Start Your Transformation
                     </Button>
                   </Link>
                   <div className="flex items-center mt-2 text-brand-light/90 text-sm">
