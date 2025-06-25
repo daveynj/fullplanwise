@@ -72,8 +72,12 @@ export function LoadingOverlay({
 
   useEffect(() => {
     if (!isLoading) {
-      setCurrentStage(0);
-      setProgress(0);
+      // When loading completes, immediately set to 100% and reset after a brief delay
+      setProgress(100);
+      setTimeout(() => {
+        setCurrentStage(0);
+        setProgress(0);
+      }, 1000);
       return;
     }
 
@@ -98,6 +102,11 @@ export function LoadingOverlay({
           newStageIndex = i;
           break;
         }
+      }
+      
+      // If we've gone past all stages, stay at the last stage
+      if (elapsedTime >= totalDuration) {
+        newStageIndex = PROGRESS_STAGES.length - 1;
       }
 
       // Update stage if changed
