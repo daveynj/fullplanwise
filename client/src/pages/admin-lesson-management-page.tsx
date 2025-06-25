@@ -44,10 +44,8 @@ export default function AdminLessonManagementPage() {
     if (!selectedLesson) return;
 
     try {
-      const response = await apiRequest(`/api/lessons/${selectedLesson.id}/public`, {
-        method: "PATCH",
-        body: JSON.stringify({ publicCategory: selectedPublicCategory }),
-        headers: { "Content-Type": "application/json" },
+      await apiRequest("PATCH", `/api/lessons/${selectedLesson.id}/public`, {
+        publicCategory: selectedPublicCategory
       });
 
       toast({
