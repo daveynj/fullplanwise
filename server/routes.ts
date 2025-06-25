@@ -339,8 +339,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Lesson not found" });
       }
       
-      // Make sure the user can only access their own lessons
-      if (lesson.teacherId !== req.user!.id) {
+      // Allow admin users to access any lesson, regular users can only access their own
+      if (lesson.teacherId !== req.user!.id && !req.user!.isAdmin) {
         return res.status(403).json({ message: "Unauthorized access to lesson" });
       }
       
@@ -651,8 +651,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Lesson not found" });
       }
       
-      // Check authorization
-      if (lesson.teacherId !== req.user!.id) {
+      // Check authorization - allow owner or admin
+      if (lesson.teacherId !== req.user!.id && !req.user!.isAdmin) {
         return res.status(403).json({ message: "Unauthorized access to lesson" });
       }
       
@@ -688,8 +688,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Lesson not found" });
       }
 
-      // Check authorization (user must own the lesson)
-      if (lesson.teacherId !== req.user!.id) {
+      // Check authorization (user must own the lesson or be admin)
+      if (lesson.teacherId !== req.user!.id && !req.user!.isAdmin) {
         return res.status(403).json({ message: "Unauthorized access to lesson" });
       }
       
