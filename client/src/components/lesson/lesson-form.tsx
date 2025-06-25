@@ -220,32 +220,12 @@ export function LessonForm({ students, onSubmit, credits }: LessonFormProps) {
               )}
             />
             
-            {/* AI Provider */}
+            {/* AI Provider - Hidden since only Gemini */}
             <FormField
               control={form.control}
               name="aiProvider"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="font-semibold">AI Provider</FormLabel>
-                  <div className="grid grid-cols-2 gap-2">
-                    {aiProviders.map((provider) => {
-                      const Icon = provider.icon;
-                      return (
-                        <Button
-                          key={provider.value}
-                          type="button"
-                          variant={field.value === provider.value ? "default" : "outline"}
-                          className={field.value === provider.value ? "bg-primary" : "border-gray-300"}
-                          onClick={() => field.onChange(provider.value)}
-                        >
-                          <Icon className="mr-2 h-4 w-4" />
-                          {provider.label}
-                        </Button>
-                      );
-                    })}
-                  </div>
-                  <FormMessage />
-                </FormItem>
+                <input type="hidden" {...field} value="gemini" />
               )}
             />
             

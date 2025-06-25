@@ -150,7 +150,7 @@ export const lessonGenerateSchema = z.object({
   components: z.array(z.string()),
   generateImages: z.boolean().default(true),
   useStudentHistory: z.boolean().default(true),
-  aiProvider: AIProviderEnum.default('qwen'), // Default to Qwen AI
+  aiProvider: AIProviderEnum.default('gemini'), // Default to Gemini AI
   category: LessonCategoryEnum.default('general'),
   tags: z.array(z.string()).default([]),
 });
