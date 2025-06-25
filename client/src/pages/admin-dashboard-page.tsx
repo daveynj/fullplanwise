@@ -76,18 +76,56 @@ interface PaginatedUsers {
   total: number;
 }
 
+interface AdminAnalytics {
+  totalUsers: number;
+  activeUsersLast30Days: number;
+  activeUsersLast7Days: number;
+  totalLessons: number;
+  lessonsLast30Days: number;
+  lessonsLast7Days: number;
+  topCategories: Array<{category: string, count: number}>;
+  userGrowthData: Array<{date: string, users: number, lessons: number}>;
+  cefrDistribution: Array<{level: string, count: number}>;
+  averageLessonsPerUser: number;
+  topUsers: Array<{username: string, lessonCount: number, lastActive: string}>;
+}
+
+interface AdminLesson {
+  id: number;
+  title: string;
+  topic: string;
+  cefrLevel: string;
+  category: string;
+  createdAt: string;
+  teacherName: string;
+  contentPreview: string;
+}
+
+interface PaginatedLessons {
+  lessons: AdminLesson[];
+  total: number;
+}
+
 export function AdminDashboardPage() {
   const { user, isLoading: authLoading } = useAuth();
   const { toast } = useToast();
 
-  // Use component state directly
+  // State for users tab
   const [searchInput, setSearchInput] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [dateFilter, setDateFilter] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [pageSize] = useState<number>(10);
 
-  // Debounce search input
+  // State for lessons tab
+  const [lessonSearchInput, setLessonSearchInput] = useState<string>("");
+  const [lessonSearchQuery, setLessonSearchQuery] = useState<string>("");
+  const [lessonCategory, setLessonCategory] = useState<string>("all");
+  const [lessonCefrLevel, setLessonCefrLevel] = useState<string>("all");
+  const [lessonCurrentPage, setLessonCurrentPage] = useState<number>(1);
+  const [lessonPageSize] = useState<number>(15);
+
+  // Debounce search input for users
   useEffect(() => {
     const timer = setTimeout(() => {
       setSearchQuery(searchInput);
@@ -97,6 +135,23 @@ export function AdminDashboardPage() {
     }, 500);
     return () => clearTimeout(timer);
   }, [searchInput, searchQuery]);
+
+  // Debounce search input for lessons
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLessonSearchQuery(lessonSearchInput);
+      if (lessonSearchInput !== lessonSearchQuery) {
+        setLessonCurrentPage(1);
+      }
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [lessonSearchInput, lessonSearchQuery]);
+
+  // Fetch admin analytics
+  const { data: analytics, isLoading: analyticsLoading } = useQuery<AdminAnalytics>({
+    queryKey: ['/api/admin/analytics'],
+    enabled: !authLoading && !!user?.isAdmin,
+  });
 
   // Fetch users with lesson stats
   const { 
@@ -116,6 +171,24 @@ export function AdminDashboardPage() {
     enabled: !authLoading && !!user?.isAdmin,
   });
 
+  // Fetch admin lessons
+  const { 
+    data: lessonsData, 
+    isLoading: lessonsLoading
+  } = useQuery<PaginatedLessons>({
+    queryKey: [
+      '/api/admin/lessons',
+      {
+        page: lessonCurrentPage,
+        pageSize: lessonPageSize,
+        search: lessonSearchQuery,
+        category: lessonCategory,
+        cefrLevel: lessonCefrLevel
+      }
+    ],
+    enabled: !authLoading && !!user?.isAdmin,
+  });
+
   // Handle search
   const handleSearch = () => {
     setSearchQuery(searchInput);
@@ -126,6 +199,17 @@ export function AdminDashboardPage() {
   const handleDateFilterChange = (value: string) => {
     setDateFilter(value);
     setCurrentPage(1);
+  };
+
+  // Handle lesson filters
+  const handleLessonCategoryChange = (value: string) => {
+    setLessonCategory(value);
+    setLessonCurrentPage(1);
+  };
+
+  const handleLessonCefrChange = (value: string) => {
+    setLessonCefrLevel(value);
+    setLessonCurrentPage(1);
   };
 
   // Handle page change

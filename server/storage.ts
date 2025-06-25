@@ -39,6 +39,20 @@ export interface IStorage {
   
   // Admin methods
   getUsersWithLessonStats(page?: number, pageSize?: number, search?: string, dateFilter?: string): Promise<{users: any[], total: number}>;
+  getAdminAnalytics(): Promise<{
+    totalUsers: number;
+    activeUsersLast30Days: number;
+    activeUsersLast7Days: number;
+    totalLessons: number;
+    lessonsLast30Days: number;
+    lessonsLast7Days: number;
+    topCategories: Array<{category: string, count: number}>;
+    userGrowthData: Array<{date: string, users: number, lessons: number}>;
+    cefrDistribution: Array<{level: string, count: number}>;
+    averageLessonsPerUser: number;
+    topUsers: Array<{username: string, lessonCount: number, lastActive: string}>;
+  }>;
+  getAllLessonsForAdmin(page?: number, pageSize?: number, search?: string, category?: string, cefrLevel?: string): Promise<{lessons: any[], total: number}>;
   
   // Session store
   sessionStore: Store;
@@ -708,5 +722,219 @@ export class DatabaseStorage implements IStorage {
   }
 }
 
-// Switch to using DatabaseStorage instead of MemStorage
+  async getAdminAnalytics() {
+    try {
+      const now = new Date();
+      const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+      // Total users and active users
+      const [totalUsersResult] = await this.db.execute(sql`SELECT COUNT(*) as count FROM ${users}`);
+      const totalUsers = Number(totalUsersResult.count);
+
+      const [activeUsers30Result] = await this.db.execute(sql`
+        SELECT COUNT(DISTINCT u.id) as count 
+        FROM ${users} u 
+        JOIN ${lessons} l ON u.id = l.teacherId 
+        WHERE l.createdAt >= ${thirtyDaysAgo.toISOString()}
+      `);
+      const activeUsersLast30Days = Number(activeUsers30Result.count);
+
+      const [activeUsers7Result] = await this.db.execute(sql`
+        SELECT COUNT(DISTINCT u.id) as count 
+        FROM ${users} u 
+        JOIN ${lessons} l ON u.id = l.teacherId 
+        WHERE l.createdAt >= ${sevenDaysAgo.toISOString()}
+      `);
+      const activeUsersLast7Days = Number(activeUsers7Result.count);
+
+      // Total lessons and recent lessons
+      const [totalLessonsResult] = await this.db.execute(sql`SELECT COUNT(*) as count FROM ${lessons}`);
+      const totalLessons = Number(totalLessonsResult.count);
+
+      const [lessons30Result] = await this.db.execute(sql`
+        SELECT COUNT(*) as count FROM ${lessons} 
+        WHERE createdAt >= ${thirtyDaysAgo.toISOString()}
+      `);
+      const lessonsLast30Days = Number(lessons30Result.count);
+
+      const [lessons7Result] = await this.db.execute(sql`
+        SELECT COUNT(*) as count FROM ${lessons} 
+        WHERE createdAt >= ${sevenDaysAgo.toISOString()}
+      `);
+      const lessonsLast7Days = Number(lessons7Result.count);
+
+      // Top categories
+      const topCategoriesResult = await this.db.execute(sql`
+        SELECT category, COUNT(*) as count 
+        FROM ${lessons} 
+        GROUP BY category 
+        ORDER BY count DESC 
+        LIMIT 10
+      `);
+      const topCategories = topCategoriesResult.map(row => ({
+        category: row.category as string,
+        count: Number(row.count)
+      }));
+
+      // CEFR level distribution
+      const cefrDistributionResult = await this.db.execute(sql`
+        SELECT cefrLevel as level, COUNT(*) as count 
+        FROM ${lessons} 
+        GROUP BY cefrLevel 
+        ORDER BY 
+          CASE cefrLevel 
+            WHEN 'A1' THEN 1 
+            WHEN 'A2' THEN 2 
+            WHEN 'B1' THEN 3 
+            WHEN 'B2' THEN 4 
+            WHEN 'C1' THEN 5 
+            WHEN 'C2' THEN 6 
+            ELSE 7 
+          END
+      `);
+      const cefrDistribution = cefrDistributionResult.map(row => ({
+        level: row.level as string,
+        count: Number(row.count)
+      }));
+
+      // Average lessons per user
+      const averageLessonsPerUser = totalUsers > 0 ? Math.round((totalLessons / totalUsers) * 10) / 10 : 0;
+
+      // Top users by lesson count
+      const topUsersResult = await this.db.execute(sql`
+        SELECT u.username, COUNT(l.id) as lessonCount, MAX(l.createdAt) as lastActive
+        FROM ${users} u
+        LEFT JOIN ${lessons} l ON u.id = l.teacherId
+        GROUP BY u.id, u.username
+        HAVING COUNT(l.id) > 0
+        ORDER BY lessonCount DESC
+        LIMIT 10
+      `);
+      const topUsers = topUsersResult.map(row => ({
+        username: row.username as string,
+        lessonCount: Number(row.lessonCount),
+        lastActive: row.lastActive as string
+      }));
+
+      // User growth data (last 30 days)
+      const userGrowthResult = await this.db.execute(sql`
+        WITH RECURSIVE date_series AS (
+          SELECT CURRENT_DATE - INTERVAL '29 days' AS date
+          UNION ALL
+          SELECT date + INTERVAL '1 day'
+          FROM date_series
+          WHERE date < CURRENT_DATE
+        ),
+        daily_users AS (
+          SELECT DATE(createdAt) as date, COUNT(*) as new_users
+          FROM ${users}
+          WHERE createdAt >= CURRENT_DATE - INTERVAL '29 days'
+          GROUP BY DATE(createdAt)
+        ),
+        daily_lessons AS (
+          SELECT DATE(createdAt) as date, COUNT(*) as new_lessons
+          FROM ${lessons}
+          WHERE createdAt >= CURRENT_DATE - INTERVAL '29 days'
+          GROUP BY DATE(createdAt)
+        )
+        SELECT 
+          ds.date::text,
+          COALESCE(du.new_users, 0) as users,
+          COALESCE(dl.new_lessons, 0) as lessons
+        FROM date_series ds
+        LEFT JOIN daily_users du ON ds.date = du.date
+        LEFT JOIN daily_lessons dl ON ds.date = dl.date
+        ORDER BY ds.date
+      `);
+      const userGrowthData = userGrowthResult.map(row => ({
+        date: row.date as string,
+        users: Number(row.users),
+        lessons: Number(row.lessons)
+      }));
+
+      return {
+        totalUsers,
+        activeUsersLast30Days,
+        activeUsersLast7Days,
+        totalLessons,
+        lessonsLast30Days,
+        lessonsLast7Days,
+        topCategories,
+        userGrowthData,
+        cefrDistribution,
+        averageLessonsPerUser,
+        topUsers
+      };
+    } catch (error) {
+      console.error('Error fetching admin analytics:', error);
+      throw error;
+    }
+  }
+
+  async getAllLessonsForAdmin(page = 1, pageSize = 20, search = '', category = 'all', cefrLevel = 'all') {
+    try {
+      const offset = (page - 1) * pageSize;
+      
+      let whereConditions = [];
+      let params: any[] = [];
+      
+      if (search && search !== '') {
+        whereConditions.push(`(l.title ILIKE $${params.length + 1} OR l.topic ILIKE $${params.length + 1} OR u.username ILIKE $${params.length + 1})`);
+        params.push(`%${search}%`);
+      }
+      
+      if (category && category !== 'all') {
+        whereConditions.push(`l.category = $${params.length + 1}`);
+        params.push(category);
+      }
+      
+      if (cefrLevel && cefrLevel !== 'all') {
+        whereConditions.push(`l.cefrLevel = $${params.length + 1}`);
+        params.push(cefrLevel);
+      }
+      
+      const whereClause = whereConditions.length > 0 ? `WHERE ${whereConditions.join(' AND ')}` : '';
+      
+      // Get total count
+      const countQuery = `
+        SELECT COUNT(*) as count
+        FROM ${lessons._.name} l
+        JOIN ${users._.name} u ON l.teacherId = u.id
+        ${whereClause}
+      `;
+      
+      const [countResult] = await this.db.execute(sql.raw(countQuery, params));
+      const total = Number(countResult.count);
+      
+      // Get lessons with user info
+      const lessonsQuery = `
+        SELECT 
+          l.id, l.title, l.topic, l.cefrLevel, l.category, l.createdAt,
+          u.username as teacherName,
+          CASE 
+            WHEN LENGTH(l.content) > 200 THEN SUBSTRING(l.content, 1, 200) || '...'
+            ELSE l.content
+          END as contentPreview
+        FROM ${lessons._.name} l
+        JOIN ${users._.name} u ON l.teacherId = u.id
+        ${whereClause}
+        ORDER BY l.createdAt DESC
+        LIMIT $${params.length + 1} OFFSET $${params.length + 2}
+      `;
+      
+      params.push(pageSize, offset);
+      const lessonsResult = await this.db.execute(sql.raw(lessonsQuery, params));
+      
+      return {
+        lessons: lessonsResult,
+        total
+      };
+    } catch (error) {
+      console.error('Error fetching admin lessons:', error);
+      throw error;
+    }
+  }
+}
+
 export const storage = new DatabaseStorage();
