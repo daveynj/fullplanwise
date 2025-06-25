@@ -12,7 +12,8 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
-import { Search, Calendar, UserCheck, UserX, Clock, BookOpen, Users, Activity, TrendingUp, BarChart3, Eye, Zap } from "lucide-react";
+import { Search, Calendar, UserCheck, UserX, Clock, BookOpen, Users, Activity, TrendingUp, BarChart3, Eye, Zap, Settings, Globe } from "lucide-react";
+import { Link } from "wouter";
 import { format } from "date-fns";
 import { CATEGORY_LABELS } from "@shared/schema";
 
