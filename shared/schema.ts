@@ -124,6 +124,33 @@ export const CATEGORY_LABELS: Record<LessonCategory, string> = {
   sports: 'Sports English'
 };
 
+export const PublicLibraryCategoryEnum = z.enum([
+  'business-english',
+  'general-english', 
+  'ielts-preparation',
+  'conversation-practice',
+  'grammar-focus',
+  'vocabulary-building',
+  'pronunciation-practice',
+  'writing-skills',
+  'exam-preparation',
+  'workplace-communication'
+]);
+export type PublicLibraryCategory = z.infer<typeof PublicLibraryCategoryEnum>;
+
+export const PUBLIC_LIBRARY_LABELS: Record<PublicLibraryCategory, string> = {
+  'business-english': "Business English",
+  'general-english': "General English", 
+  'ielts-preparation': "IELTS Preparation",
+  'conversation-practice': "Conversation Practice",
+  'grammar-focus': "Grammar Focus",
+  'vocabulary-building': "Vocabulary Building",
+  'pronunciation-practice': "Pronunciation Practice",
+  'writing-skills': "Writing Skills",
+  'exam-preparation': "Exam Preparation",
+  'workplace-communication': "Workplace Communication"
+};
+
 export const CATEGORY_COLORS: Record<LessonCategory, string> = {
   general: 'bg-gray-100 text-gray-800',
   business: 'bg-blue-100 text-blue-800',

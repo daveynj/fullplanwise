@@ -50,6 +50,7 @@ function Router() {
       <ProtectedRoute path="/history/:id" component={FullScreenLessonPage} />
       <ProtectedRoute path="/lessons/:id" component={FullScreenLessonPage} />
       <ProtectedRoute path="/fullscreen/:id" component={FullScreenLessonPage} />
+      <ProtectedRoute path="/public-library" component={PublicLibraryPage} />
       <ProtectedRoute path="/buy-credits" component={BuyCreditsPage} />
       <ProtectedRoute path="/subscription-success" component={SubscriptionSuccessPage} />
       <ProtectedRoute path="/settings" component={SettingsPage} />
