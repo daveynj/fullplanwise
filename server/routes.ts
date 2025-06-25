@@ -462,9 +462,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
             tags: validatedData.tags || []
           };
           
+          console.log(`Starting lesson save to database...`);
           // Save to database
           const savedLesson = await storage.createLesson(lessonToSave);
-          console.log(`Lesson auto-saved with ID: ${savedLesson.id}`);
+          console.log(`Lesson auto-saved with ID: ${savedLesson.id} - responding immediately`);
           
           // Add the saved lesson ID to the response
           lessonResponse.id = savedLesson.id;

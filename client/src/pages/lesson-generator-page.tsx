@@ -48,12 +48,10 @@ export default function LessonGeneratorPage() {
         description: "Opening your new lesson...",
       });
       
-      // Redirect to the fullscreen lesson view
+      // Redirect to the fullscreen lesson view immediately
       if (data && data.id) {
-        // Short delay to allow the toast to be seen
-        setTimeout(() => {
-          setLocation(`/lessons/${data.id}`);
-        }, 500);
+        console.log(`Lesson generated successfully with ID: ${data.id}, redirecting now...`);
+        setLocation(`/lessons/${data.id}`);
       } else {
         // Fallback if no lesson ID is available
         toast({
@@ -73,6 +71,9 @@ export default function LessonGeneratorPage() {
       });
     },
     onSettled: () => {
+      // This runs after both success and error
+      // But we've already handled loading state in onSuccess and onError
+      // so this is just a safety net
       setGeneratingLesson(false);
     }
   });

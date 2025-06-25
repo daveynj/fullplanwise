@@ -16,9 +16,12 @@ console.log('Initializing database connection');
 // Add connection configuration with timeouts and error handling
 export const pool = new Pool({ 
   connectionString: process.env.DATABASE_URL,
-  max: 20, // Maximum number of clients in the pool
-  idleTimeoutMillis: 30000, // Close idle clients after 30 seconds
-  connectionTimeoutMillis: 10000, // Return an error after 10 seconds if connection couldn't be established
+  max: 5, // Reduced pool size for better connection management
+  idleTimeoutMillis: 60000, // Keep connections open longer (60 seconds)
+  connectionTimeoutMillis: 5000, // Faster timeout for new connections
+  maxUses: Infinity, // Allow unlimited uses per connection
+  allowExitOnIdle: false, // Don't exit process when idle
+  maxLifetimeSeconds: 0 // No max lifetime limit
 });
 
 // Handle pool errors
