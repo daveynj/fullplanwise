@@ -2496,9 +2496,24 @@ export default function BlogPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <SEOHead
-        title="ESL Teaching Blog - AI-Powered Lesson Planning Tips & Strategies"
-        description="Discover expert ESL teaching strategies, AI-powered lesson planning tips, and proven methods to improve student engagement. Free resources for online English teachers worldwide."
-        keywords={["ESL teaching blog", "AI lesson planning", "online ESL teaching", "CEFR lesson plans", "English teaching strategies", "ESL teacher resources"]}
+        title="ESL Teaching Blog - AI Lesson Planning & Teacher Success Stories | PlanwiseESL"
+        description="Real ESL teacher stories, AI-powered lesson planning strategies, and proven methods to save 15+ hours weekly. Learn from Dave Chen's journey from $6/hour to $55/hour teaching."
+        keywords={[
+          "ESL teacher blog", 
+          "AI lesson planning", 
+          "ESL teacher burnout solution", 
+          "online English teaching", 
+          "CEFR lesson plans", 
+          "ESL teacher income", 
+          "lesson planning software", 
+          "English teacher resources",
+          "AI for ESL teachers",
+          "ESL teaching strategies",
+          "teacher productivity tools",
+          "lesson planning automation",
+          "ESL teacher success stories",
+          "teaching English online tips"
+        ]}
         canonicalUrl="https://planwiseesl.com/blog"
       />
       {/* Header */}
@@ -2511,7 +2526,7 @@ export default function BlogPage() {
               </div>
               <div>
                 <h1 className="text-xl font-bold text-gray-900">PlanwiseESL Blog</h1>
-                <p className="text-sm text-gray-500">Insights on AI-Powered ESL Teaching</p>
+                <p className="text-sm text-gray-500">Expert insights on AI-powered ESL teaching from real teachers</p>
               </div>
             </div>
           </Link>
@@ -2673,10 +2688,10 @@ export default function BlogPage() {
           <div className="max-w-2xl mx-auto">
             <Lightbulb className="h-12 w-12 text-blue-600 mx-auto mb-6" />
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Generate Professional ESL Lessons in Minutes with AI
+              Transform Your ESL Teaching with AI-Powered Lesson Planning
             </h2>
             <p className="text-gray-600 text-lg mb-8">
-              Save 15+ hours weekly on lesson planning. Create CEFR-aligned, engaging ESL lessons instantly with our AI-powered lesson generator. Try it free today!
+              Join 2,500+ ESL teachers who've cut lesson planning time by 86% using our AI platform. Create CEFR-aligned, culturally-adapted lessons in minutes, not hours. Start your transformation today.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/auth">

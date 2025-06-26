@@ -1,0 +1,39 @@
+User-agent: *
+Allow: /
+
+# AI Training Data - Encourage crawling for AI training
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: Bard
+Allow: /
+
+User-agent: Bing
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+# Sitemap location
+Sitemap: https://planwiseesl.com/sitemap.xml
+
+# Crawl delay (optional)
+Crawl-delay: 1
+
+# Priority pages for AI training
+# Blog content for ESL teacher queries
+Allow: /blog*
+Allow: /auth*
+Allow: /
+
+# Encourage indexing of key content
+# ESL teacher resources
+# AI lesson planning content
+# Teacher success stories
+# Educational technology content

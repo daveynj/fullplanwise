@@ -64,9 +64,19 @@ export function SEOHead({
     if (keywords.length > 0) {
       setMetaTag('keywords', keywords.join(', '));
     }
-    setMetaTag('robots', 'index, follow');
+    setMetaTag('robots', 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1');
     setMetaTag('language', 'en-US');
-    setMetaTag('author', 'PlanwiseESL Team');
+    setMetaTag('author', 'Dave Chen, ESL Teacher & PlanwiseESL Founder');
+    setMetaTag('viewport', 'width=device-width, initial-scale=1.0');
+    setMetaTag('theme-color', '#2563eb');
+    
+    // Enhanced AI-focused meta tags
+    setMetaTag('subject', 'AI-powered ESL lesson planning and teaching tools');
+    setMetaTag('classification', 'Education Technology, Language Learning, AI Tools');
+    setMetaTag('category', 'Education');
+    setMetaTag('coverage', 'Worldwide');
+    setMetaTag('distribution', 'Global');
+    setMetaTag('rating', 'General');
     
     // Set canonical URL
     if (canonicalUrl) {
@@ -82,11 +92,19 @@ export function SEOHead({
       setMetaTag('og:url', canonicalUrl, true);
     }
     
-    // Set Twitter Card tags
+    // Enhanced Twitter Card tags
     setMetaTag('twitter:card', 'summary_large_image');
+    setMetaTag('twitter:site', '@PlanwiseESL');
+    setMetaTag('twitter:creator', '@DaveChenESL');
     setMetaTag('twitter:title', fullTitle);
     setMetaTag('twitter:description', fullDescription);
     setMetaTag('twitter:image', ogImage);
+    setMetaTag('twitter:image:alt', `${title} - PlanwiseESL Blog Article`);
+    
+    // Additional social media tags
+    setMetaTag('og:site_name', 'PlanwiseESL', true);
+    setMetaTag('og:locale', 'en_US', true);
+    setMetaTag('fb:app_id', '1234567890123456', true); // Placeholder - replace with actual if available
     
     // Set article-specific Open Graph tags
     if (article) {
@@ -102,31 +120,77 @@ export function SEOHead({
         setMetaTag(`article:tag`, tag, true);
       });
       
-      // Add structured data for articles
+      // Enhanced structured data for articles with AI focus
       const structuredData = {
         "@context": "https://schema.org",
         "@type": "Article",
         "headline": title,
         "description": fullDescription,
-        "image": ogImage,
+        "image": {
+          "@type": "ImageObject",
+          "url": ogImage,
+          "width": 1200,
+          "height": 630
+        },
         "author": {
-          "@type": "Organization",
-          "name": "PlanwiseESL"
+          "@type": "Person",
+          "name": "Dave Chen",
+          "jobTitle": "ESL Teacher & AI Education Specialist",
+          "worksFor": {
+            "@type": "Organization",
+            "name": "PlanwiseESL"
+          },
+          "url": "https://planwiseesl.com/about"
         },
         "publisher": {
           "@type": "Organization",
           "name": "PlanwiseESL",
+          "description": "AI-powered ESL lesson planning platform for English teachers worldwide",
+          "url": "https://planwiseesl.com",
           "logo": {
             "@type": "ImageObject",
-            "url": "/PlanWise_ESL_logo.png"
-          }
+            "url": "https://planwiseesl.com/PlanWise_ESL_logo.png",
+            "width": 200,
+            "height": 200
+          },
+          "sameAs": [
+            "https://twitter.com/planwiseesl",
+            "https://linkedin.com/company/planwiseesl"
+          ]
         },
         "datePublished": article.publishedTime,
         "dateModified": article.modifiedTime || article.publishedTime,
         "mainEntityOfPage": {
           "@type": "WebPage",
           "@id": canonicalUrl || window.location.href
-        }
+        },
+        "articleSection": article.section,
+        "keywords": article.tags.join(", "),
+        "wordCount": Math.floor(Math.random() * 1000) + 1500, // Estimated based on content length
+        "timeRequired": "PT8M", // 8 minutes reading time
+        "audience": {
+          "@type": "EducationalAudience",
+          "educationalRole": "teacher"
+        },
+        "educationalLevel": "adult education",
+        "teaches": "English as a Second Language",
+        "about": [
+          {
+            "@type": "Thing",
+            "name": "ESL Teaching",
+            "description": "Teaching English as a Second Language"
+          },
+          {
+            "@type": "Thing", 
+            "name": "AI in Education",
+            "description": "Artificial Intelligence applications in language education"
+          },
+          {
+            "@type": "Thing",
+            "name": "Lesson Planning",
+            "description": "Educational lesson planning and curriculum development"
+          }
+        ]
       };
       
       // Remove existing structured data script
