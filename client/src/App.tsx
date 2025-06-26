@@ -62,6 +62,7 @@ function Router() {
       <ProtectedRoute path="/grammar-showcase" component={GrammarShowcasePage} />
       <Route path="/auth" component={AuthPage} />
       <Route path="/blog" component={BlogPage} />
+      <Route path="/blog/:id" component={BlogPage} />
       <Route path="/forgot-password" component={ForgotPasswordPage} />
       <Route path="/reset-password/:token" component={ResetPasswordPage} />
       <Route path="/twitter-card" component={TwitterCardPreview} />

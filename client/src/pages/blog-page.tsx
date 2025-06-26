@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link } from "wouter";
+import { useState, useEffect } from "react";
+import { Link, useParams } from "wouter";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -2424,9 +2424,20 @@ Former Finance Professional, England`,
 const categories = ["All", "AI Technology", "Teaching Methods", "Teaching Strategies", "Research & Methods", "Inclusive Education", "Teaching Efficiency", "Student Engagement", "Professional Development", "Student Psychology", "Business Development", "Founder Story"];
 
 export default function BlogPage() {
+  const params = useParams();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedPost, setSelectedPost] = useState<number | null>(null);
+
+  // Handle URL-based post selection
+  useEffect(() => {
+    if (params.id) {
+      const postId = parseInt(params.id);
+      if (!isNaN(postId)) {
+        setSelectedPost(postId);
+      }
+    }
+  }, [params.id]);
 
   // Function to render content with internal links
   const renderContentWithLinks = (text: string) => {
