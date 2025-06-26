@@ -95,7 +95,7 @@ export function SEOHead({
     // Enhanced Twitter Card tags
     setMetaTag('twitter:card', 'summary_large_image');
     setMetaTag('twitter:site', '@PlanwiseESL');
-    setMetaTag('twitter:creator', '@DaveJacksonESL');
+    setMetaTag('twitter:creator', '@DaveTeacher1');
     setMetaTag('twitter:title', fullTitle);
     setMetaTag('twitter:description', fullDescription);
     setMetaTag('twitter:image', ogImage);
@@ -140,7 +140,11 @@ export function SEOHead({
             "@type": "Organization",
             "name": "PlanwiseESL"
           },
-          "url": "https://planwiseesl.com/about"
+          "url": "https://planwiseesl.com/about",
+          "sameAs": [
+            "https://www.linkedin.com/in/davidjackson113",
+            "https://x.com/DaveTeacher1"
+          ]
         },
         "publisher": {
           "@type": "Organization",
@@ -154,8 +158,8 @@ export function SEOHead({
             "height": 200
           },
           "sameAs": [
-            "https://twitter.com/planwiseesl",
-            "https://linkedin.com/company/planwiseesl"
+            "https://x.com/DaveTeacher1",
+            "https://www.linkedin.com/in/davidjackson113"
           ]
         },
         "datePublished": article.publishedTime,

@@ -114,3 +114,4 @@ This is a full-stack ESL (English as a Second Language) teaching platform built 
 
 Preferred communication style: Simple, everyday language.
 User name: Dave Jackson (prefers Dave, not David).
+Social media: LinkedIn - www.linkedin.com/in/davidjackson113, X (Twitter) - @DaveTeacher1
