@@ -610,7 +610,7 @@ export default function LandingPage() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/blog/11" className="text-gray-300 hover:text-white transition-colors duration-200">
+                  <Link href="/blog/14" className="text-gray-300 hover:text-white transition-colors duration-200">
                     Dave's Story
                   </Link>
                 </li>

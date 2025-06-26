@@ -1,0 +1,28 @@
+From Finance to the Forefront of AI in Education: The Story Behind PlanwiseESL
+My journey into the world of English teaching wasn't a straight line. In fact, for a significant part of my career, my world was one of numbers and targets, working in the fast-paced environment of financial sales in England. I hold a degree in Business and Marketing from the University of Southampton, and for a long time, that corporate path was my reality.
+
+But a desire for a different kind of impact, a different kind of connection, led me to a new calling. Nine years ago, at the age of 37, I pivoted. I traded stock tickers for storybooks and became an English teacher. My first five years were spent in the vibrant, chaotic, and incredibly rewarding world of a kindergarten. It was there, laying the foundational blocks of language for young learners, that I truly understood the art and science of teaching.
+
+Eventually, my journey led me to Cambodia, where I now live, and into the world of online ESL teaching. I found a passion for working with both adults and children, tailoring my approach to their unique needs. To do this effectively, I began creating my own custom teaching materials. I knew what worked, what engaged students, and what led to real progress.
+
+But I also discovered a universal truth that every dedicated teacher knows: lesson planning is a black hole for time. The late nights, the Sunday evening scrambles, the constant search for the perfect text or the right grammar exercise—it was exhausting. I was spending almost as much time preparing to teach as I was actually teaching. My business and marketing background kicked in, and I saw a problem that needed a solution.
+
+This was the "aha" moment. With the incredible advancements in artificial intelligence, I asked myself: What if I could combine my deep understanding of ESL pedagogy with the power of AI? What if I could create a tool that understood the nuances of the CEFR framework, that could generate high-quality, comprehensive lesson plans in minutes, not hours?
+
+This idea became my obsession. I wasn't just looking to create a simple content generator. I wanted to build a system that thought like a teacher. It needed to understand how to scaffold learning, the importance of a good warm-up, how to craft meaningful comprehension questions, and how to integrate grammar naturally. It needed to be built on proven methodologies like Communicative Language Teaching (CLT) and Task-Based Learning.
+
+After countless hours of development, design, and refining the AI's pedagogical core, PlanwiseESL was born.
+
+PlanwiseESL is the tool I wish I'd had all these years. It’s an AI-powered assistant designed specifically for busy online English teachers. You simply choose a CEFR level (from A1 to C2), type in any topic or subject you can imagine, and in about three minutes, it generates a complete, structured, and engaging lesson plan.
+
+Each lesson includes everything you need: a warm-up, a reading text, key vocabulary with definitions, comprehension questions, discussion prompts, grammar points, and interactive exercises. It's built to deliver not just content, but a quality, pedagogically-sound learning experience.
+
+My journey from financial sales to creating an AI-driven educational platform has been unexpected, but every step has been essential. I’ve gone from working for a corporation to building a tool that empowers my fellow educators. My goal with PlanwiseESL is simple: to give teachers back their most valuable resource—time. Time to focus on what they do best: connecting with and inspiring their students.
+
+This is more than just a piece of software for me; it's the culmination of my entire journey. It's a tool built from real-world teaching experience, designed to serve the community I'm so proud to be a part of.
+
+I invite you to see for yourself.
+
+David
+
+https://planwiseesl.com/

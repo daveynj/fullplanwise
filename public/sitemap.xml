@@ -71,6 +71,22 @@
     </news:news>
   </url>
 
+  <url>
+    <loc>https://planwiseesl.com/blog/14</loc>
+    <lastmod>2025-01-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <news:news>
+      <news:publication>
+        <news:name>PlanwiseESL Blog</news:name>
+        <news:language>en</news:language>
+      </news:publication>
+      <news:publication_date>2025-01-26</news:publication_date>
+      <news:title>From Finance to the Forefront of AI in Education: The Story Behind PlanwiseESL</news:title>
+      <news:keywords>founder story, Dave Jackson, ESL teacher, AI education, career change, PlanwiseESL</news:keywords>
+    </news:news>
+  </url>
+
   <!-- Additional blog articles -->
   <url>
     <loc>https://planwiseesl.com/blog/1</loc>
