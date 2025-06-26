@@ -2700,7 +2700,7 @@ export default function BlogPage() {
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
-              <Link href="/blog/11">
+              <Link href="/blog/14">
                 <Button variant="outline" size="lg">
                   Read Dave's Full Story
                 </Button>
