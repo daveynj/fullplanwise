@@ -2582,9 +2582,9 @@ export default function BlogPage() {
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
-                <Link href="/blog/11">
+                <Link href="/blog/14">
                   <Button variant="outline" className="border-blue-300 text-blue-700 hover:bg-blue-50">
-                    Read My Full Burnout Story
+                    Read My Full Story
                   </Button>
                 </Link>
               </div>
