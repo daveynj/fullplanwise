@@ -549,12 +549,94 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-gray-300 py-8 px-6 text-center">
-        <div className="container mx-auto">
-          <p>&copy; {new Date().getFullYear()} Plan Wise ESL. All rights reserved.</p>
-          <div className="mt-4">
-            <a href="mailto:dave@planwiseesl.com" className="text-brand-yellow hover:text-brand-yellow-light">Contact Me</a>
-            {/* Add other links as needed */}
+      <footer className="bg-gray-900 text-white py-12">
+        <div className="container mx-auto px-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            {/* Brand Section */}
+            <div className="md:col-span-2">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
+                  <Sparkles className="h-6 w-6 text-white" />
+                </div>
+                <span className="text-xl font-bold">PlanwiseESL</span>
+              </div>
+              <p className="text-gray-300 text-sm mb-4 max-w-md">
+                AI-powered ESL lesson generator created by ESL teacher Dave Jackson. 
+                Transform your teaching with lessons that engage students and save you 15+ hours weekly.
+              </p>
+              
+              {/* Social Links */}
+              <div className="flex space-x-4">
+                <a 
+                  href="https://www.linkedin.com/in/davidjackson113" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center space-x-2 text-gray-300 hover:text-blue-400 transition-colors duration-200"
+                  aria-label="Connect with Dave Jackson on LinkedIn"
+                >
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                  </svg>
+                  <span className="text-sm">LinkedIn</span>
+                </a>
+                
+                <a 
+                  href="https://x.com/DaveTeacher1" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center space-x-2 text-gray-300 hover:text-blue-400 transition-colors duration-200"
+                  aria-label="Follow Dave Jackson on X (Twitter)"
+                >
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/>
+                  </svg>
+                  <span className="text-sm">X (Twitter)</span>
+                </a>
+              </div>
+            </div>
+
+            {/* Quick Links */}
+            <div>
+              <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
+              <ul className="space-y-2 text-sm">
+                <li>
+                  <Link href="/auth" className="text-gray-300 hover:text-white transition-colors duration-200">
+                    Start Free Trial
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/blog" className="text-gray-300 hover:text-white transition-colors duration-200">
+                    ESL Teaching Blog
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/blog/11" className="text-gray-300 hover:text-white transition-colors duration-200">
+                    Dave's Story
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Contact */}
+            <div>
+              <h3 className="text-lg font-semibold mb-4">About</h3>
+              <ul className="space-y-2 text-sm text-gray-300">
+                <li>Created by ESL Teacher</li>
+                <li>Trusted by 2,500+ Teachers</li>
+                <li>CEFR-Aligned Content</li>
+                <li>15+ Hours Saved Weekly</li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Bottom Bar */}
+          <div className="border-t border-gray-700 mt-8 pt-6 flex flex-col md:flex-row justify-between items-center">
+            <p className="text-gray-400 text-sm">
+              © 2025 PlanwiseESL. Created by Dave Jackson, ESL Teacher.
+            </p>
+            <div className="flex space-x-6 mt-4 md:mt-0">
+              <span className="text-gray-400 text-xs">Built for ESL Teachers, by an ESL Teacher</span>
+            </div>
           </div>
         </div>
       </footer>
