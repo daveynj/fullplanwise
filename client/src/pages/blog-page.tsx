@@ -1819,7 +1819,7 @@ Your students have fascinating lives, opinions, dreams, and stories. Your job is
 
 *"Students don't care how much you know until they know how much you care."* - Someone smarter than me
 
-Dave Chen  
+Dave Jackson  
 PlanwiseESL Creator  
 Reformed Boring Teacher
 
@@ -2102,7 +2102,7 @@ Every high-earning teacher in my study started exactly where you are now. They j
 
 *"Your income is directly proportional to the value you provide, multiplied by your ability to communicate that value clearly."*
 
-Dave Chen  
+Dave Jackson  
 PlanwiseESL Creator  
 Former $12/hour Teacher, Current $55/hour Teacher
 
@@ -2497,7 +2497,7 @@ export default function BlogPage() {
     <div className="min-h-screen bg-gray-50">
       <SEOHead
         title="ESL Teaching Blog - AI Lesson Planning & Teacher Success Stories | PlanwiseESL"
-        description="Real ESL teacher stories, AI-powered lesson planning strategies, and proven methods to save 15+ hours weekly. Learn from Dave Chen's journey from $6/hour to $55/hour teaching."
+        description="Real ESL teacher stories, AI-powered lesson planning strategies, and proven methods to save 15+ hours weekly. Learn from Dave Jackson's journey from $6/hour to $55/hour teaching."
         keywords={[
           "ESL teacher blog", 
           "AI lesson planning", 

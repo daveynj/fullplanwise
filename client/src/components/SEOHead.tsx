@@ -66,7 +66,7 @@ export function SEOHead({
     }
     setMetaTag('robots', 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1');
     setMetaTag('language', 'en-US');
-    setMetaTag('author', 'Dave Chen, ESL Teacher & PlanwiseESL Founder');
+    setMetaTag('author', 'Dave Jackson, ESL Teacher & PlanwiseESL Founder');
     setMetaTag('viewport', 'width=device-width, initial-scale=1.0');
     setMetaTag('theme-color', '#2563eb');
     
@@ -95,7 +95,7 @@ export function SEOHead({
     // Enhanced Twitter Card tags
     setMetaTag('twitter:card', 'summary_large_image');
     setMetaTag('twitter:site', '@PlanwiseESL');
-    setMetaTag('twitter:creator', '@DaveChenESL');
+    setMetaTag('twitter:creator', '@DaveJacksonESL');
     setMetaTag('twitter:title', fullTitle);
     setMetaTag('twitter:description', fullDescription);
     setMetaTag('twitter:image', ogImage);
@@ -134,7 +134,7 @@ export function SEOHead({
         },
         "author": {
           "@type": "Person",
-          "name": "Dave Chen",
+          "name": "Dave Jackson",
           "jobTitle": "ESL Teacher & AI Education Specialist",
           "worksFor": {
             "@type": "Organization",
