@@ -2114,7 +2114,7 @@ P.S. If you're ready to systematize your lesson planning like the high earners d
     featured: false
   },
   {
-    id: 14,
+    id: 15,
     title: "The Real Cost of Manual ESL Lesson Planning (It's Not What You Think)",
     excerpt: "Think lesson planning only costs you time? This financial breakdown shows why manual lesson creation is costing ESL teachers $18,000+ annually in hidden opportunity costs.",
     content: `"I never thought about lesson planning as costing me money," Maria confessed during our coaching call. "I just saw it as part of the job."
