@@ -2316,10 +2316,112 @@ Teachers who master this method report 70% reduction in planning time, increased
     publishDate: "2025-01-15",
     tags: ["Lesson Planning", "Time Management", "Teaching Methods", "Quick Planning", "Teaching Framework"],
     featured: false
+  },
+  {
+    id: 14,
+    title: "From Finance to the Forefront of AI in Education: The Story Behind PlanwiseESL",
+    excerpt: "How a corporate finance professional became an ESL teacher and built an AI platform that's transforming lesson planning for thousands of teachers worldwide.",
+    content: `My journey into the world of English teaching wasn't a straight line. In fact, for a significant part of my career, my world was one of numbers and targets, working in the fast-paced environment of financial sales in England. I hold a degree in Business and Marketing from the University of Southampton, and for a long time, that corporate path was my reality.
+
+But a desire for a different kind of impact, a different kind of connection, led me to a new calling.
+
+## The Pivot That Changed Everything
+
+Nine years ago, at the age of 37, I pivoted. I traded stock tickers for storybooks and became an English teacher. My first five years were spent in the vibrant, chaotic, and incredibly rewarding world of a kindergarten classroom. It was there, laying the foundational blocks of language for young learners, that I truly understood the art and science of teaching.
+
+Those early years taught me that teaching isn't just about delivering content—it's about understanding how minds work, how motivation flows, and how small moments of connection can spark lifelong learning.
+
+## Finding My Voice in Cambodia
+
+Eventually, my journey led me to Cambodia, where I now live, and into the world of online ESL teaching. I found a passion for working with both adults and children, tailoring my approach to their unique needs. To do this effectively, I began creating my own custom teaching materials. I knew what worked, what engaged students, and what led to real progress.
+
+Living in Cambodia opened my eyes to the global hunger for English education. I worked with students from dozens of countries, each with their own dreams, challenges, and learning styles. Every lesson reinforced my belief that great teaching is deeply personal, even in a digital world.
+
+## The Problem Every Teacher Knows
+
+But I also discovered a universal truth that every dedicated teacher knows: lesson planning is a black hole for time. The late nights, the Sunday evening scrambles, the constant search for the perfect text or the right grammar exercise—it was exhausting. I was spending almost as much time preparing to teach as I was actually teaching.
+
+Sound familiar?
+
+My business and marketing background kicked in, and I saw a problem that needed a solution. This wasn't just my problem—it was the problem facing millions of ESL teachers worldwide.
+
+## The "Aha" Moment
+
+This was my breakthrough. With the incredible advancements in artificial intelligence, I asked myself: What if I could combine my deep understanding of ESL pedagogy with the power of AI? What if I could create a tool that understood the nuances of the CEFR framework, that could generate high-quality, comprehensive lesson plans in minutes, not hours?
+
+This idea became my obsession. I wasn't just looking to create a simple content generator. I wanted to build a system that thought like a teacher. It needed to understand:
+
+- How to scaffold learning appropriately
+- The importance of a strong warm-up
+- How to craft meaningful comprehension questions
+- How to integrate grammar naturally within context
+- The principles of Communicative Language Teaching (CLT)
+- Task-Based Learning methodologies
+- Cultural sensitivity in content creation
+
+## Building the Dream
+
+After countless hours of development, design, and refining the AI's pedagogical core, PlanwiseESL was born.
+
+PlanwiseESL is the tool I wish I'd had all these years. It's an AI-powered assistant designed specifically for busy online English teachers. You simply choose a CEFR level (from A1 to C2), type in any topic or subject you can imagine, and in about three minutes, it generates a complete, structured, and engaging lesson plan.
+
+Each lesson includes everything you need:
+- Dynamic warm-up activities
+- Engaging reading texts with authentic language
+- Key vocabulary with clear definitions
+- Thoughtful comprehension questions
+- Meaningful discussion prompts
+- Integrated grammar explanations
+- Interactive exercises and activities
+- Cultural adaptation notes
+
+## More Than Software—It's Teacher Empowerment
+
+My journey from financial sales to creating an AI-driven educational platform has been unexpected, but every step has been essential. I've gone from working for a corporation to building a tool that empowers my fellow educators.
+
+What makes PlanwiseESL different isn't just the technology—it's that it was built by a teacher, for teachers. Every feature, every output format, every design decision comes from real classroom experience and genuine understanding of what teachers need.
+
+## Giving Teachers Their Lives Back
+
+My goal with PlanwiseESL is simple: to give teachers back their most valuable resource—time. Time to focus on what they do best: connecting with and inspiring their students. Time to provide feedback that matters. Time to build relationships that transform lives.
+
+Since launching, we've helped over 2,500 teachers save thousands of hours on lesson planning. But more importantly, we've helped them become better teachers by removing the barriers that prevent them from focusing on their students.
+
+## The Ripple Effect
+
+This is more than just a piece of software for me; it's the culmination of my entire journey. It's a tool built from real-world teaching experience, designed to serve the community I'm so proud to be a part of.
+
+Every teacher who uses PlanwiseESL to save time, every student who benefits from a more engaging lesson, every moment of genuine learning that happens because a teacher had more energy to invest in their craft—that's the real measure of success.
+
+The ripple effects of better teaching reach far beyond the classroom. When we empower teachers, we're ultimately empowering learners to communicate across cultures, to access new opportunities, and to build bridges in our increasingly connected world.
+
+## Looking Forward
+
+As I write this from my home in Cambodia, I'm surrounded by the sounds of a language that once challenged me, in a country that has taught me as much as any classroom ever could. The journey from finance to education, from employee to entrepreneur, from struggling with lesson plans to solving that struggle for thousands of others—it all feels like it was meant to be.
+
+The future of education is here, and it's not about replacing teachers—it's about amplifying their impact. PlanwiseESL is just the beginning of what's possible when we combine human expertise with artificial intelligence in service of learning.
+
+## Try It Yourself
+
+I invite you to see for yourself what PlanwiseESL can do for your teaching. Whether you're burning out on lesson planning, looking to improve your content quality, or simply wanting more time to focus on your students, this tool was built with you in mind.
+
+Because at the end of the day, great teaching isn't about perfect lesson plans—it's about the human connections we make and the learning we inspire. PlanwiseESL just helps you get there faster.
+
+*Ready to transform your teaching? [Start your free trial today](https://planwiseesl.com/auth) and discover what 15+ extra hours per week feels like.*
+
+Dave Jackson  
+Founder & Creator, PlanwiseESL  
+ESL Teacher, Cambodia  
+Former Finance Professional, England`,
+    category: "Founder Story",
+    readTime: "12 min",
+    publishDate: "2025-01-26",
+    tags: ["Founder Story", "Teaching Journey", "AI in Education", "Career Change", "Teacher Inspiration"],
+    featured: false
   }
 ];
 
-const categories = ["All", "AI Technology", "Teaching Methods", "Teaching Strategies", "Research & Methods", "Inclusive Education", "Teaching Efficiency", "Student Engagement", "Professional Development", "Student Psychology", "Business Development"];
+const categories = ["All", "AI Technology", "Teaching Methods", "Teaching Strategies", "Research & Methods", "Inclusive Education", "Teaching Efficiency", "Student Engagement", "Professional Development", "Student Psychology", "Business Development", "Founder Story"];
 
 export default function BlogPage() {
   const [searchTerm, setSearchTerm] = useState("");
