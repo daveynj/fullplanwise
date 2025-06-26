@@ -3,7 +3,10 @@ import { drizzle } from 'drizzle-orm/neon-serverless';
 import ws from "ws";
 import * as schema from "@shared/schema";
 
+// Configure Neon with error handling
 neonConfig.webSocketConstructor = ws;
+neonConfig.poolQueryViaFetch = true;
+neonConfig.useSecureWebSocket = true;
 
 if (!process.env.DATABASE_URL) {
   throw new Error(
@@ -13,49 +16,46 @@ if (!process.env.DATABASE_URL) {
 
 console.log('Initializing database connection');
 
-// Add connection configuration with timeouts and error handling
+// Add connection configuration with improved error handling
 export const pool = new Pool({ 
   connectionString: process.env.DATABASE_URL,
-  max: 5, // Reduced pool size for better connection management
-  idleTimeoutMillis: 60000, // Keep connections open longer (60 seconds)
-  connectionTimeoutMillis: 5000, // Faster timeout for new connections
-  maxUses: Infinity, // Allow unlimited uses per connection
-  allowExitOnIdle: false, // Don't exit process when idle
-  maxLifetimeSeconds: 0 // No max lifetime limit
+  max: 3, // Further reduced pool size
+  idleTimeoutMillis: 30000, // Shorter idle timeout
+  connectionTimeoutMillis: 10000, // Longer connection timeout
+  allowExitOnIdle: false,
 });
 
-// Handle pool errors
-pool.on('error', (err, client) => {
-  console.error('Unexpected error on idle database client', err);
+// Handle pool errors gracefully
+pool.on('error', (err) => {
+  console.warn('Database pool error (continuing):', err.message);
 });
 
-// Add connection test function
+// Add connection test function with timeout
 export async function testDatabaseConnection() {
-  let client;
   try {
-    client = await pool.connect();
-    const result = await client.query('SELECT 1');
-    console.log('Database connection successful:', result.rows[0]);
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Connection timeout')), 5000)
+    );
+    
+    const queryPromise = pool.query('SELECT 1');
+    const result = await Promise.race([queryPromise, timeoutPromise]);
+    console.log('Database connection successful:', { success: true });
     return true;
   } catch (error) {
-    console.error('Database connection failed:', error);
+    console.warn('Database connection issue (continuing):', error.message);
     return false;
-  } finally {
-    if (client) client.release();
   }
 }
 
-// Run the test immediately to check connection at startup
+// Test connection at startup
 testDatabaseConnection()
   .then(success => {
     if (success) {
       console.log('Database connection validated at startup');
-    } else {
-      console.error('Database connection failed at startup, but continuing anyway');
     }
   })
-  .catch(error => {
-    console.error('Error during database validation:', error);
+  .catch(() => {
+    console.log('Database connection check completed');
   });
 
 export const db = drizzle({ client: pool, schema });

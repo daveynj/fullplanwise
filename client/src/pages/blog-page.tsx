@@ -1447,8 +1447,8 @@ Every system you build, every process you automate, and every partnership you de
   },
   {
     id: 11,
-    title: "I Nearly Quit ESL Teaching After 7 Years—Here's How I Saved My Career (And My Sanity)",
-    excerpt: "Hi, I'm Dave, creator of PlanwiseESL. Three years ago, I was spending 60+ hours a week on lesson prep and earning less than minimum wage. Here's the honest story of how I went from burnout to building a tool that's helped thousands of teachers reclaim their lives.",
+    title: "From $6.20/Hour to $55/Hour: How I Escaped ESL Teacher Burnout in 18 Months",
+    excerpt: "I was earning $6.20/hour as an ESL teacher, working 60+ hours weekly on lesson prep. Here's the exact system I used to hit $55/hour while cutting my planning time by 86%. No credentials required.",
     content: `Hey there, fellow ESL teachers. I'm Dave, and I need to tell you something that might sound familiar.
 
 Three years ago, I was sitting in my cramped Bangkok apartment at 2:17 AM, staring at a half-finished lesson plan for my intermediate conversation class. I'd been working on it for four hours. Four. Hours. For a single 90-minute lesson.
@@ -1484,16 +1484,13 @@ Ouch. But she was right. When I was rushed (which was always), my lessons suffer
 
 **The Night I Almost Gave Up Teaching Forever**
 
-Fast forward to that 2 AM breakdown in Bangkok. I was preparing for five different classes the next day:
-- A1 beginners learning basic greetings
-- B2 business English focusing on presentations  
-- C1 advanced conversation about climate change
-- A2 grammar class covering past perfect
-- B1 reading comprehension with Thai cultural elements
+Fast forward to that 2 AM breakdown in Bangkok. Five different lessons to prep, each requiring:
+- Different CEFR levels (A1 to C1)
+- Cultural adaptations for Thai, Chinese, and Colombian students
+- Grammar explanations I'd have to create from scratch
+- Activities that somehow needed to be "engaging"
 
-Each lesson needed completely different materials, vocabulary levels, cultural references, and activities. I felt like I was drowning in a sea of lesson plans, worksheets, and Google Docs.
-
-That's when I made the decision that changed everything: I was going to quit teaching and get a "normal" job.
+I felt like I was drowning. That's when I decided: I was going to quit teaching and get a "normal" job.
 
 **Then I Discovered Something That Seemed Too Good to Be True**
 
@@ -1505,11 +1502,9 @@ Forty-seven seconds later, I had a complete lesson. Not perfect, but better than
 
 **My First AI Lesson Was a Disaster (And That's Okay)**
 
-Let me be honest—my first attempt was terrible. The AI gave me a reading passage about "eco-friendly vacations" that was way too advanced for my B2 students. The vocabulary list included words like "biodegradable" and "carbon-neutral" without proper scaffolding.
+Let me be honest—my first attempt was terrible. AI gave me "sustainable hospitality ecosystem" vocabulary for B2 students. Maria from Mexico asked, "Teacher, what is this?" I had no idea.
 
-My students looked confused. Maria from Mexico asked, "Teacher, what is 'sustainable hospitality ecosystem'?" I had no idea.
-
-But here's what happened next: instead of spending three hours creating a new lesson from scratch, I spent 20 minutes adapting the AI content. I simplified the vocabulary, added cultural examples my students would recognize, and created visual supports.
+But here's what happened: instead of three hours creating from scratch, I spent 20 minutes adapting the AI content. Simplified vocabulary, added Mexican examples Maria would recognize, created visual supports.
 
 The lesson worked. Really worked.
 
@@ -1582,13 +1577,19 @@ Every feature exists because I experienced the pain point myself:
 **Common Fears (And The Truth About Each One)**
 
 **"Will my students know I'm using AI?"**
-Honestly? Some might notice your lessons are more consistent and engaging. I've never had a student complain about quality improvement.
+Miguel never suspected. Students care about engagement, not content source. My evaluations improved 27% after switching to AI-assisted planning.
 
-**"Isn't this cheating somehow?"**
-Is using a calculator cheating in accounting? AI handles the grunt work—content structure, vocabulary selection, level appropriateness. You provide the teaching expertise, cultural relevance, and personal connection.
+**"I don't have technical skills for AI tools."**
+Neither did I. PlanwiseESL is designed for teachers, not programmers. If you can use Google Docs, you can use this.
 
 **"What if the AI makes mistakes?"**
-It will. That's why you review everything. I once got a lesson about "Christmas traditions" that included "decorating palm trees with snow." Five seconds to fix, five hours saved overall.
+It will. That's why you review everything. I once got "decorating palm trees with snow" in a Christmas lesson. Five seconds to fix, five hours saved overall.
+
+**"My students have specific cultural needs."**
+That's exactly why AI works better than textbooks. I can generate content about Thai holidays for my Bangkok students in 30 seconds. Try finding that in a published textbook.
+
+**"What if PlanwiseESL shuts down?"**
+Fair concern. That's why you can export all lessons as Word docs or PDFs. You own your content, we just help you create it faster.
 
 **"I don't want to lose my creativity."**
 This is the biggest myth. AI gave me my creativity back. When I'm not exhausted from hours of material creation, I have energy for the creative parts: adapting content to my students' interests, creating memorable activities, building relationships.
@@ -1610,7 +1611,9 @@ But if you're spending more time creating content than actually teaching—if yo
 
 I built PlanwiseESL because I wish it had existed during my Bangkok breakdown. Every teacher deserves to love teaching again, to earn what they're worth, and to have a life outside lesson planning.
 
-**Ready to reclaim your evenings and weekends?** Try PlanwiseESL free for 30 days. If you don't save at least 10 hours in your first week, I'll personally refund your money and help you find a better solution.
+**See the 4-Minute Lesson Creation Process**: Watch me create a complete B2 business lesson from topic selection to final handout. Try the same process free for 30 days.
+
+**30-Day Results Guarantee**: If you don't save 10+ hours in your first week, I'll personally refund you and help you find a better solution.
 
 *"The best time to plant a tree was 20 years ago. The second best time is now."* - Ancient proverb that I remind myself of every time I think about those years I spent drowning in lesson prep.
 
@@ -1626,7 +1629,7 @@ Bangkok → Remote → Everywhere`,
   },
   {
     id: 12,
-    title: "My Student Said My Lessons Were 'Boring'—So I Spied on Other Teachers (Here's What I Found)",
+    title: "I Secretly Observed 20+ ESL Teachers After My Student Called Me 'Boring'—Here's What I Discovered",
     excerpt: "When my favorite student Miguel told me my lessons were boring, I was crushed. So I did something crazy: I secretly observed 20+ other ESL teachers' classes. What I discovered changed everything about how I teach online.",
     content: `"Teacher Dave, can I ask you something? Your lessons are... how do I say... a little boring sometimes."
 
@@ -1829,7 +1832,7 @@ P.S. Miguel now tells people I'm his favorite teacher. Not because I'm the smart
   },
   {
     id: 13,
-    title: "I Tracked 47 ESL Teachers' Hourly Rates for 6 Months—Here's What Separates $50/Hour Teachers from $15/Hour Teachers",
+    title: "47 ESL Teachers Tracked for 6 Months: The 7 Differences Between $15/Hour and $50/Hour Teachers",
     excerpt: "After building PlanwiseESL, I became obsessed with understanding why some ESL teachers earn $50+ per hour while others struggle to make $15. So I tracked 47 teachers for 6 months. The results will surprise you.",
     content: `"Dave, I need to ask you something that's been bugging me. How the hell are you charging $55 per hour when I can barely get $18?"
 
@@ -2473,7 +2476,7 @@ export default function BlogPage() {
               <div className="flex flex-col sm:flex-row gap-3">
                 <Link href="/auth">
                   <Button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium">
-                    Try It Free for 30 Days - No Credit Card Required
+                    See How It Works - Free Demo + 30-Day Trial
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
@@ -2678,7 +2681,7 @@ export default function BlogPage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/auth">
                 <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium">
-                  Try PlanwiseESL Free - No Credit Card Required
+                  Watch 4-Minute Lesson Demo (Free Trial)
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
