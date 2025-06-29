@@ -20,7 +20,8 @@ import {
   AlertTriangle,
   UserPlus,
   Tag,
-  Edit
+  Edit,
+  Share
 } from "lucide-react";
 import {
   AlertDialog,
