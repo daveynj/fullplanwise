@@ -451,14 +451,14 @@ export default function LandingPage() {
             <Card className="shadow-sm">
               <div className="bg-brand-navy text-brand-light text-center py-1 text-sm font-semibold rounded-t-lg">PAY AS YOU GO</div>
               <CardHeader>
-                <CardTitle className="font-nunito text-center text-brand-navy">Standard Pack</CardTitle>
-                <CardDescription className="text-center">Our most popular flexible option.</CardDescription>
+                <CardTitle className="font-nunito text-center text-brand-navy">Starter Pack</CardTitle>
+                <CardDescription className="text-center">Perfect for trying out the platform.</CardDescription>
               </CardHeader>
               <CardContent className="text-center space-y-4">
-                 <p className="text-4xl font-bold text-brand-navy">$60</p>
-                 <p className="text-xl font-semibold">50 Credits</p>
-                 <p className="text-gray-500 text-sm">($1.20 per lesson)</p>
-                 <p className="text-gray-600 text-sm">Perfect for occasional use. Credits never expire.</p>
+                 <p className="text-4xl font-bold text-brand-navy">$15</p>
+                 <p className="text-xl font-semibold">10 Credits</p>
+                 <p className="text-gray-500 text-sm">($1.50 per lesson)</p>
+                 <p className="text-gray-600 text-sm">Low-cost entry point. Credits never expire.</p>
               </CardContent>
               <CardFooter className="flex justify-center">
                  <Link href="/buy-credits">
@@ -471,14 +471,14 @@ export default function LandingPage() {
             <Card className="shadow-sm">
                <div className="bg-brand-yellow text-brand-navy text-center py-1 text-sm font-semibold rounded-t-lg">SUBSCRIPTION</div>
               <CardHeader>
-                <CardTitle className="font-nunito text-center text-brand-navy">Annual Plan</CardTitle>
-                <CardDescription className="text-center">Best value for regular users.</CardDescription>
+                <CardTitle className="font-nunito text-center text-brand-navy">Basic Monthly</CardTitle>
+                <CardDescription className="text-center">Affordable ongoing access.</CardDescription>
               </CardHeader>
               <CardContent className="text-center space-y-4">
-                 <p className="text-4xl font-bold text-brand-navy">$199<span className="text-lg font-normal text-gray-500">/year</span></p>
-                 <p className="text-xl font-semibold">250 Credits</p>
-                 <p className="text-gray-500 text-sm">(~$0.80 per lesson)</p>
-                 <p className="text-gray-600 text-sm">Save 32%! Incl. priority support & advanced features.</p>
+                 <p className="text-4xl font-bold text-brand-navy">$19<span className="text-lg font-normal text-gray-500">/month</span></p>
+                 <p className="text-xl font-semibold">20 Credits</p>
+                 <p className="text-gray-500 text-sm">(~$0.95 per lesson)</p>
+                 <p className="text-gray-600 text-sm">Low monthly commitment. Cancel anytime.</p>
               </CardContent>
               <CardFooter className="flex justify-center">
                  <Link href="/buy-credits?tab=subscription"> 
@@ -490,7 +490,7 @@ export default function LandingPage() {
           
           {/* Link to full pricing */}
           <p className="text-center text-gray-500 mt-8 text-sm">
-             Need more options or monthly plans? <Link href="/buy-credits" className="text-brand-navy hover:underline font-semibold">View full pricing details</Link>.
+             Want bigger packs or our best-value annual plan? <Link href="/buy-credits" className="text-brand-navy hover:underline font-semibold">View full pricing details</Link>.
           </p>
         </div>
       </section>
