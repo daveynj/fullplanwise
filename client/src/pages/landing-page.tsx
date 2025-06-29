@@ -41,7 +41,10 @@ export default function LandingPage() {
           "tired of ESL lesson prep",
           "save time ESL teaching",
           "ESL lesson planning software",
-          "automated ESL lessons"
+          "automated ESL lessons",
+          "CEFR lesson planning",
+          "ESL teacher productivity",
+          "AI for English teachers"
         ]}
         canonicalUrl="https://planwiseesl.com"
       />
@@ -50,7 +53,7 @@ export default function LandingPage() {
         <nav className="container mx-auto px-6 py-3 flex justify-between items-center">
           {/* Combine logo and text */}
           <div className="flex items-center gap-2">
-            <img src="/PlanWise_ESL_logo.png" alt="Plan Wise ESL Logo" className="h-8 w-auto" /> {/* Slightly reduced height */} 
+            <img src="/PlanWise_ESL_logo.png" alt="PlanwiseESL AI-powered ESL lesson generator logo" className="h-8 w-auto" /> 
             <span className="text-xl font-nunito font-bold text-brand-navy">PLAN WISE ESL</span>
           </div>
           <div className="flex items-center gap-4">
@@ -544,6 +547,76 @@ export default function LandingPage() {
               <LockIcon className="h-3 w-3 mr-1" />
               <span>No credit card required • 5 free lessons included</span>
             </p>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section with Schema Markup */}
+      <section className="py-20 px-6 bg-white">
+        <div className="container mx-auto max-w-4xl">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-nunito font-bold text-brand-navy mb-4">
+              Frequently Asked Questions
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Everything you need to know about PlanwiseESL and AI-powered lesson planning
+            </p>
+          </div>
+
+          <div className="grid gap-6">
+            <div className="bg-gray-50 rounded-lg p-6">
+              <h3 className="text-xl font-semibold text-brand-navy mb-3">
+                How does AI lesson planning save me time?
+              </h3>
+              <p className="text-gray-700">
+                Our AI generates complete CEFR-leveled lessons in under 2 minutes, including vocabulary cards, reading texts, comprehension questions, and discussion activities. What used to take 3+ hours now takes minutes, saving you 15+ hours weekly.
+              </p>
+            </div>
+
+            <div className="bg-gray-50 rounded-lg p-6">
+              <h3 className="text-xl font-semibold text-brand-navy mb-3">
+                Are the lessons really CEFR-aligned?
+              </h3>
+              <p className="text-gray-700">
+                Yes! Our AI is specifically trained on CEFR standards (A1-C2) and creates content appropriate for each level. Vocabulary, grammar structures, and reading complexity are automatically adjusted to match your students' proficiency level.
+              </p>
+            </div>
+
+            <div className="bg-gray-50 rounded-lg p-6">
+              <h3 className="text-xl font-semibold text-brand-navy mb-3">
+                Can I customize the generated lessons?
+              </h3>
+              <p className="text-gray-700">
+                Absolutely! While our AI creates comprehensive lessons instantly, you can easily edit any component, add your own materials, or adjust content to match your teaching style and student needs.
+              </p>
+            </div>
+
+            <div className="bg-gray-50 rounded-lg p-6">
+              <h3 className="text-xl font-semibold text-brand-navy mb-3">
+                What topics can I create lessons about?
+              </h3>
+              <p className="text-gray-700">
+                Any topic! From business English and travel to current events and specialized subjects. Our AI draws from extensive knowledge to create engaging, relevant content for any subject your students need to learn.
+              </p>
+            </div>
+
+            <div className="bg-gray-50 rounded-lg p-6">
+              <h3 className="text-xl font-semibold text-brand-navy mb-3">
+                Is there a free trial?
+              </h3>
+              <p className="text-gray-700">
+                Yes! Every new account includes 5 free lesson generations. No credit card required. This lets you experience how PlanwiseESL can transform your teaching before making any commitment.
+              </p>
+            </div>
+
+            <div className="bg-gray-50 rounded-lg p-6">
+              <h3 className="text-xl font-semibold text-brand-navy mb-3">
+                How much does it cost after the free trial?
+              </h3>
+              <p className="text-gray-700">
+                Our plans start at just $15/month for 50 lessons. Considering most teachers save 15+ hours weekly, that's less than $1 per hour saved. Compare that to your hourly teaching rate - it pays for itself immediately.
+              </p>
+            </div>
           </div>
         </div>
       </section>

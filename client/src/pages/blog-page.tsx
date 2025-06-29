@@ -2239,6 +2239,11 @@ Tracked every teaching-related minute for one week:
 
 If you're experiencing burnout symptoms, you're not failing—you're responding normally to an abnormal situation. The first step is acknowledging the current system isn't working.
 
+**Related Resources:**
+- [Read about Dave's journey from finance to ESL teaching](/blog/14) and how he overcame similar challenges
+- [Discover the 5-minute lesson planning method](/blog/16) that saves teachers 15+ hours weekly
+- [Learn from 47 teachers' research](/blog/13) on what separates high-earning ESL teachers
+
 *"Burnout isn't a character flaw—it's a system problem. When we fix the system, we save the teachers." - Dr. Sarah Mitchell*`,
     category: "Professional Development",
     readTime: "8 min",

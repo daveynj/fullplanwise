@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2 } from "lucide-react";
+import { SEOHead } from "@/components/SEOHead";
 
 const loginSchema = z.object({
   username: z.string().min(1, "Email or username is required"),
@@ -79,6 +80,20 @@ export default function AuthPage() {
 
   return (
     <div className="flex min-h-screen bg-brand-light">
+      <SEOHead
+        title="Login | Join PlanwiseESL - AI ESL Lesson Generator"
+        description="Sign in to PlanwiseESL to access AI-powered ESL lesson planning. Join 2,847+ teachers saving 15+ hours weekly with automated CEFR-level lesson generation."
+        keywords={[
+          "ESL teacher login",
+          "AI lesson planning account",
+          "ESL teacher registration", 
+          "PlanwiseESL sign up",
+          "ESL lesson generator login",
+          "CEFR lesson planning tool",
+          "AI ESL teaching platform"
+        ]}
+        canonicalUrl="https://planwiseesl.com/auth"
+      />
       {/* Left side - Auth forms */}
       <div className="flex flex-col justify-center w-full lg:w-1/2 px-4 sm:px-6 lg:px-8 py-12">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
