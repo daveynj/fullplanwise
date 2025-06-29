@@ -44,6 +44,7 @@ export const lessons = pgTable("lessons", {
   tags: text("tags").array().default([]),
   isPublic: boolean("is_public").default(false).notNull(),
   publicCategory: text("public_category"), // Category for public library organization
+  isShareable: boolean("is_shareable").default(false).notNull(), // Whether lesson can be accessed publicly via /share/lesson/id
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
