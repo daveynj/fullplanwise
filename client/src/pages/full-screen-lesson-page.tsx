@@ -8,12 +8,14 @@ import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Lesson } from "@shared/schema";
 import { queryClient } from "@/lib/queryClient";
+import { useAuth } from "@/hooks/use-auth";
 
 export default function FullScreenLessonPage() {
   const [location] = useLocation();
   const { toast } = useToast();
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [activeTab, setActiveTab] = useState("lesson");
+  const { user } = useAuth();
   
   // Extract lesson ID from URL
   const lessonId = location.split("/")[2];
@@ -206,7 +208,20 @@ export default function FullScreenLessonPage() {
             <Button
               variant="ghost"
               className="flex items-center text-gray-600 hover:text-primary mr-4 p-2"
-              onClick={() => window.location.replace("/history")}
+              onClick={() => {
+                // If user is authenticated, go to their lesson history
+                // If not authenticated (viewing shared lesson), close or go to homepage
+                if (user) {
+                  window.location.replace("/history");
+                } else {
+                  // For shared lessons, try to close the tab or go to homepage
+                  if (window.history.length > 1) {
+                    window.history.back();
+                  } else {
+                    window.location.replace("/");
+                  }
+                }
+              }}
             >
               <ArrowLeft className="h-5 w-5 mr-2" />
               <span className="font-medium">Exit</span>
