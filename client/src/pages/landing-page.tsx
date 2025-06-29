@@ -614,7 +614,7 @@ export default function LandingPage() {
                 How much does it cost after the free trial?
               </h3>
               <p className="text-gray-700">
-                You can buy credits as needed or choose a subscription. Our most popular annual plan is $199/year for 250 credits (about $0.80 per lesson). Monthly plans start with 20 credits for basic users. Since most teachers save 15+ hours weekly, it pays for itself immediately.
+                You can buy credits as needed or choose a subscription. Monthly plans start at just 20 credits for basic users, or you can save with our annual plan at $199/year for 250 credits (about $0.80 per lesson). Since most teachers save 15+ hours weekly, it pays for itself immediately.
               </p>
             </div>
           </div>
