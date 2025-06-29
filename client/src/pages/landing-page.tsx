@@ -584,10 +584,10 @@ export default function LandingPage() {
 
             <div className="bg-gray-50 rounded-lg p-6">
               <h3 className="text-xl font-semibold text-brand-navy mb-3">
-                Can I customize the generated lessons?
+                Can I specify what vocabulary to target?
               </h3>
               <p className="text-gray-700">
-                Absolutely! While our AI creates comprehensive lessons instantly, you can easily edit any component, add your own materials, or adjust content to match your teaching style and student needs.
+                Yes! Before generating a lesson, you can specify particular vocabulary words you want the AI to focus on. This ensures the lesson targets exactly the language points your students need to practice.
               </p>
             </div>
 
@@ -614,7 +614,7 @@ export default function LandingPage() {
                 How much does it cost after the free trial?
               </h3>
               <p className="text-gray-700">
-                Our plans start at just $15/month for 50 lessons. Considering most teachers save 15+ hours weekly, that's less than $1 per hour saved. Compare that to your hourly teaching rate - it pays for itself immediately.
+                You can buy credits as needed or choose a subscription. Our most popular annual plan is $199/year for 250 credits (about $0.80 per lesson). Monthly plans start with 20 credits for basic users. Since most teachers save 15+ hours weekly, it pays for itself immediately.
               </p>
             </div>
           </div>
