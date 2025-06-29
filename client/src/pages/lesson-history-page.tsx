@@ -627,6 +627,28 @@ export default function LessonHistoryPage() {
                               <Button 
                                 size="sm" 
                                 variant="outline" 
+                                className="bg-orange-50 text-orange-600 border-orange-200 hover:bg-orange-100 hover:text-orange-700"
+                                onClick={() => {
+                                  const shareUrl = `${window.location.origin}/lessons/${lesson.id}`;
+                                  navigator.clipboard.writeText(shareUrl).then(() => {
+                                    toast({
+                                      title: "Share link copied!",
+                                      description: "Students can now access this lesson without signing up.",
+                                    });
+                                  }).catch(() => {
+                                    toast({
+                                      title: "Copy failed",
+                                      description: `Share this URL: ${shareUrl}`,
+                                      variant: "destructive",
+                                    });
+                                  });
+                                }}
+                              >
+                                <Share className="mr-2 h-4 w-4" /> Share
+                              </Button>
+                              <Button 
+                                size="sm" 
+                                variant="outline" 
                                 className="bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100 hover:text-blue-700"
                                 onClick={() => handleAssignLesson(lesson)}
                               >

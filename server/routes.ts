@@ -319,22 +319,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  app.get("/api/lessons/:id", ensureAuthenticated, async (req, res) => {
+  app.get("/api/lessons/:id", async (req, res) => {
     try {
       const lessonId = parseInt(req.params.id);
-      console.log(`Fetching lesson ${lessonId} for user ${req.user!.id}`);
+      console.log(`Fetching lesson ${lessonId} for public access`);
       
       const lesson = await storage.getLesson(lessonId);
       
       if (!lesson) {
         console.log(`Lesson ${lessonId} not found`);
         return res.status(404).json({ message: "Lesson not found" });
-      }
-      
-      // Allow access if: user owns the lesson, user is admin, OR lesson is public
-      if (lesson.teacherId !== req.user!.id && !req.user!.isAdmin && !lesson.isPublic) {
-        console.log(`Unauthorized access to lesson ${lessonId} by user ${req.user!.id}`);
-        return res.status(403).json({ message: "Unauthorized access to lesson" });
       }
       
       // Parse grammarSpotlight JSON if it exists (with error handling)

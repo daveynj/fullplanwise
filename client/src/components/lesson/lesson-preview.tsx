@@ -328,7 +328,27 @@ export function LessonPreview({ lesson }: LessonPreviewProps) {
             }
           </div>
           <div className="flex space-x-2">
-            <Button className="bg-[#28A745] hover:bg-green-600 text-white font-semibold px-4 py-2 rounded-lg transition">
+            <Button 
+              className="bg-[#28A745] hover:bg-green-600 text-white font-semibold px-4 py-2 rounded-lg transition"
+              onClick={() => {
+                if (lesson.id) {
+                  const shareUrl = `${window.location.origin}/lessons/${lesson.id}`;
+                  navigator.clipboard.writeText(shareUrl).then(() => {
+                    toast({
+                      title: "Share link copied!",
+                      description: "Students can now access this lesson without signing up.",
+                    });
+                  }).catch(() => {
+                    toast({
+                      title: "Copy failed",
+                      description: `Share this URL: ${shareUrl}`,
+                      variant: "destructive",
+                    });
+                  });
+                }
+              }}
+              disabled={!lesson.id}
+            >
               <Share className="mr-1 h-4 w-4" /> Share
             </Button>
             <Button 
