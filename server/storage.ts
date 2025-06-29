@@ -33,13 +33,10 @@ export interface IStorage {
   getLessons(teacherId: number, page?: number, pageSize?: number, search?: string, cefrLevel?: string, dateFilter?: string): Promise<{lessons: Lesson[], total: number}>;
   getLessonsByStudent(studentId: number): Promise<Lesson[]>;
   getLesson(id: number): Promise<Lesson | undefined>;
-  getLessonByShareableToken(token: string): Promise<Lesson | undefined>;
   createLesson(lesson: InsertLesson): Promise<Lesson>;
   updateLesson(id: number, lessonUpdate: Partial<Lesson>): Promise<Lesson>;
   deleteLesson(id: number): Promise<boolean>;
-  generateShareableToken(lessonId: number): Promise<string>;
-  enableLessonSharing(lessonId: number): Promise<Lesson>;
-  disableLessonSharing(lessonId: number): Promise<Lesson>;
+  toggleLessonSharing(lessonId: number, isShareable: boolean): Promise<Lesson>;
   
   // Public library methods
   getPublicLessons(page?: number, pageSize?: number, search?: string, cefrLevel?: string, category?: string): Promise<{lessons: Lesson[], total: number}>;
