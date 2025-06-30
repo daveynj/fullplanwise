@@ -26,7 +26,7 @@ const blogPosts = [
     id: 17,
     title: "Tired of ESL Lesson Chaos? How to Personalize for 20+ Students Without Losing Your Mind",
     excerpt: "The moment you hit 10+ individual students, everything breaks down. Lessons feel generic. Students disengage. You're drowning in preparation. But what if chaos isn't inevitable? What if there's a way to scale personalization that actually works?",
-    content: `**The Breaking Point**
+    content: `The Breaking Point
 
 Every ESL teacher knows this moment.
 
@@ -38,7 +38,7 @@ By 8 students, you started cutting corners. Reusing materials. Generic discussio
 
 At 12 students, the chaos hit.
 
-**The Lesson Chaos Spiral**
+The Lesson Chaos Spiral
 
 Picture Monday morning with 20+ individual students:
 
@@ -55,7 +55,7 @@ Twenty different people. Twenty different urgencies. Twenty different dreams han
 
 And your current system? Create twenty different lessons from scratch, every single week.
 
-**Start with Why This Happens**
+Start with Why This Happens
 
 Why do we accept lesson chaos as inevitable?
 
@@ -63,27 +63,27 @@ Because we've been taught that personalization means starting from zero every ti
 
 But here's the truth nobody talks about: The chaos isn't because you care too much. It's because you're using a system designed for 3 students to manage 20.
 
-**The Hidden Cost of Chaos**
+The Hidden Cost of Chaos
 
 When lessons become chaotic, everyone loses:
 
-**Students lose engagement**: Generic materials don't speak to Elena's job anxiety or Jin's presentation nerves. They show up, go through the motions, but the spark is gone.
+Students lose engagement: Generic materials don't speak to Elena's job anxiety or Jin's presentation nerves. They show up, go through the motions, but the spark is gone.
 
-**Progress stagnates**: Without targeted content, Marcus spins his wheels on academic writing while Fatima never gets the past tense practice she desperately needs.
+Progress stagnates: Without targeted content, Marcus spins his wheels on academic writing while Fatima never gets the past tense practice she desperately needs.
 
-**Trust erodes**: Students sense when lessons aren't designed for them. They start questioning if you really understand their goals.
+Trust erodes: Students sense when lessons aren't designed for them. They start questioning if you really understand their goals.
 
-**You lose yourself**: Instead of inspiring transformations, you're drowning in preparation. You became a teacher to change lives, not to spend 30 hours a week creating materials.
+You lose yourself: Instead of inspiring transformations, you're drowning in preparation. You became a teacher to change lives, not to spend 30 hours a week creating materials.
 
-**The Golden Circle of Order**
+The Golden Circle of Order
 
-**WHY**: Because every student deserves lessons that feel designed specifically for their goals, their level, and their dreams.
+WHY: Because every student deserves lessons that feel designed specifically for their goals, their level, and their dreams.
 
-**HOW**: Through systematic personalization that scales without chaos.
+HOW: Through systematic personalization that scales without chaos.
 
-**WHAT**: A framework that transforms one teacher's expertise into unlimited, student-specific content.
+WHAT: A framework that transforms one teacher's expertise into unlimited, student-specific content.
 
-**The Personalization Paradox**
+The Personalization Paradox
 
 Here's what successful teachers discovered: True personalization doesn't require chaos. It requires systems.
 
@@ -96,54 +96,54 @@ Think about it: When you create a lesson for Jin's business presentations, you'r
 
 This expertise can be systematized. Your knowledge can be scaled without losing the personal touch.
 
-**The Framework That Ends Chaos**
+The Framework That Ends Chaos
 
-**Step 1: Student Architecture**
+Step 1: Student Architecture
 Instead of keeping student needs in your head, you build systematic profiles:
 - Individual CEFR assessments and progression tracking
 - Specific goals and urgent deadlines (Elena's job, Marcus's applications)
 - Learning preferences and cultural considerations
 - Progress patterns and breakthrough moments
 
-**Step 2: Systematic Content Creation**
+Step 2: Systematic Content Creation
 Your teaching expertise scales through intelligent lesson generation:
 - Vocabulary matched to their level and industry needs
 - Reading passages that address their specific interests and anxieties
 - Discussion questions that build confidence in their target scenarios
 - Grammar focus areas based on their individual progression gaps
 
-**Step 3: Effortless Personalization**
+Step 3: Effortless Personalization
 Each lesson feels completely customized because it is—without starting from scratch:
 - Elena gets A1-level workplace conversation with Mexican cultural context
 - Marcus receives C1 academic writing with university-specific examples
 - Fatima gets A2 past tense practice through vocabulary she already knows
 - Jin gets C1 business presentations with engineering industry focus
 
-**The Educational Transformation**
+The Educational Transformation
 
 This systematic approach doesn't just end chaos—it amplifies learning outcomes:
 
-**Enhanced Relevance**: Students engage 90% more when content directly addresses their real-world needs and anxieties.
+Enhanced Relevance: Students engage 90% more when content directly addresses their real-world needs and anxieties.
 
-**Accelerated Progress**: Targeted content moves students through CEFR levels 65% faster than generic materials.
+Accelerated Progress: Targeted content moves students through CEFR levels 65% faster than generic materials.
 
-**Increased Retention**: Personalized vocabulary and scenarios stick 4x longer than textbook examples.
+Increased Retention: Personalized vocabulary and scenarios stick 4x longer than textbook examples.
 
-**Improved Confidence**: Students report 75% higher confidence when lessons feel designed for their specific goals.
+Improved Confidence: Students report 75% higher confidence when lessons feel designed for their specific goals.
 
-**From Chaos to Clarity**
+From Chaos to Clarity
 
 When you replace chaos with systems:
 
-**Monday mornings transform**: Instead of panic about 20 different prep sessions, you have organized student profiles and systematic generation.
+Monday mornings transform: Instead of panic about 20 different prep sessions, you have organized student profiles and systematic generation.
 
-**Student engagement soars**: Elena stops checking her phone because the lesson directly addresses her workplace anxiety. Marcus takes detailed notes because every example relates to his university applications.
+Student engagement soars: Elena stops checking her phone because the lesson directly addresses her workplace anxiety. Marcus takes detailed notes because every example relates to his university applications.
 
-**Your expertise amplifies**: Instead of recreating basic frameworks 20 times, your knowledge scales across all students simultaneously.
+Your expertise amplifies: Instead of recreating basic frameworks 20 times, your knowledge scales across all students simultaneously.
 
-**Weekends return**: Saturday becomes a day off, not a day of desperate lesson scrambling.
+Weekends return: Saturday becomes a day off, not a day of desperate lesson scrambling.
 
-**The Ripple Effect of Order**
+The Ripple Effect of Order
 
 Here's what happens when chaos ends:
 
@@ -153,7 +153,7 @@ You rediscover why you became a teacher. Instead of fighting chaos, you're orche
 
 Other teachers ask your secret. How do you manage 20+ students without looking frazzled? How does every lesson seem perfectly matched to each student's needs?
 
-**The Leadership Question**
+The Leadership Question
 
 Leaders reject chaos as inevitable. So let me ask you:
 
@@ -161,7 +161,7 @@ Why did you become an ESL teacher?
 
 Was it to juggle 20 different prep sessions every week? Or was it to guide targeted transformations? Was it to fight administrative chaos? Or was it to create breakthrough moments?
 
-**Your Choice**
+Your Choice
 
 You have a choice to make.
 
@@ -181,7 +181,7 @@ Not because it's faster—though it is.
 
 But because it lets you be the teacher Elena, Marcus, and Fatima need you to be.
 
-**The Beginning of Order**
+The Beginning of Order
 
 This is just the beginning. When you start with why—when you remember that chaos isn't inevitable and every student deserves personalized learning—everything else becomes a matter of systems and scale.
 
@@ -208,7 +208,7 @@ Start with why. Then let the system amplify your impact.`,
     id: 16,
     title: "Stop the Prep Overload: Your Blueprint for Student-Specific ESL Lessons in Minutes",
     excerpt: "Why do we accept that teaching 20 different students means creating 20 different lesson plans? There's a better way. Discover the systematic approach that transforms overwhelming preparation into effortless personalization.",
-    content: `**Start with Why**
+    content: `Start with Why
 
 Why do we teach?
 
@@ -218,7 +218,7 @@ We teach because we believe in the transformative power of language. We believe 
 
 But here's what's broken: The current system is stealing our ability to do what we do best.
 
-**The Invisible Crisis**
+The Invisible Crisis
 
 Picture Sarah, an ESL teacher with 22 individual students. Each morning, she opens her laptop to a reality that would overwhelm anyone:
 
