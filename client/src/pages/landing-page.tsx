@@ -596,7 +596,7 @@ export default function LandingPage() {
                 What topics can I create lessons about?
               </h3>
               <p className="text-gray-700">
-                Any topic! From business English and travel to current events and specialized subjects. Our AI draws from extensive knowledge to create engaging, relevant content for any subject your students need to learn.
+                Any topic! From business English and travel to current events and specialized subjects. Our AI draws from extensive knowledge to create engaging, relevant content for any subject your students need to learn. <Link href="/blog/19" className="text-brand-navy hover:underline">Discover specialized niche ESL content generation</Link>.
               </p>
             </div>
 
@@ -614,7 +614,7 @@ export default function LandingPage() {
                 How much does it cost after the free trial?
               </h3>
               <p className="text-gray-700">
-                You can buy credits as needed or choose a subscription. Monthly plans start at just 20 credits for basic users, or you can save with our annual plan at $199/year for 250 credits (about $0.80 per lesson). Since most teachers save 15+ hours weekly, it pays for itself immediately.
+                You can buy credits as needed or choose a subscription. Monthly plans start at just 20 credits for basic users, or you can save with our annual plan at $199/year for 250 credits (about $0.80 per lesson). Since most teachers save 15+ hours weekly, it pays for itself immediately. <Link href="/blog/16" className="text-brand-navy hover:underline">Read how teachers cut prep time by 90%</Link>.
               </p>
             </div>
           </div>
