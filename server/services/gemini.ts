@@ -44,9 +44,9 @@ export class GeminiService {
       const model = this.genAI.getGenerativeModel({ 
         model: 'gemini-1.5-pro',
         generationConfig: {
-          temperature: 0.1,
-          topP: 0.8,
-          maxOutputTokens: 8192,
+          temperature: 0.3,
+          topP: 0.9,
+          maxOutputTokens: 16384,
         },
       });
       
@@ -254,13 +254,22 @@ export class GeminiService {
     
     // System instruction part
     const systemInstruction = `You are an expert ESL teacher. 
+Follow these EXACT requirements:
 
-CRITICAL: Return only valid JSON. No extra text before or after.
+CRITICAL: Your output must be properly formatted JSON with NO ERRORS!
 
-CONTENT REQUIREMENTS:
-1. ALL arrays must contain actual content, not numbers
-2. ALL content must be about the topic: ${params.topic}
-3. Replace any template text with real content
+SENTENCE FRAMES CRITICAL INSTRUCTION:
+When you see template text like "REPLACE WITH: [instruction]" in the sentence frames section, you MUST replace it with actual content, NOT copy the instruction literally. Generate real examples, patterns, and teaching notes about ${params.topic}. The frontend expects real data, not placeholder text.
+
+1. EXTREMELY CRITICAL: ALL ARRAYS MUST CONTAIN FULL CONTENT, NOT NUMBERS OR COUNTS
+   CORRECT: "paragraphs": ["Paragraph 1 text here...", "Paragraph 2 text here...", "Paragraph 3 text here..."]
+   WRONG: "paragraphs": 5
+   
+2. ARRAYS MUST USE PROPER ARRAY FORMAT
+   CORRECT: "questions": ["Question 1", "Question 2", "Question 3", "Question 4", "Question 5"]
+   WRONG: "questions": ["Question 1"], "Question 2": "Question 3"
+
+3. CRITICAL: ALL CONTENT MUST BE ABOUT THE SPECIFIC TOPIC PROVIDED BY THE USER.
 
 ${params.targetVocabulary ? `4. CRUCIAL: YOU MUST INCLUDE THE FOLLOWING VOCABULARY WORDS IN YOUR LESSON: ${params.targetVocabulary}` : ''}
 
