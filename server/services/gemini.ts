@@ -1073,7 +1073,7 @@ Based on your analysis, ensure your lesson content:
 - Creates authentic but accessible cultural learning opportunities
 - Respects diverse backgrounds while expanding cultural awareness
 
-STEP 4: DISCUSSION QUESTIONS DEVELOPMENT APPROACH
+STEP 5: ACTIVITY & QUESTION GENERATION
 
 COGNITIVE READINESS ANALYSIS FOR ${params.cefrLevel} STUDENTS:
 
@@ -1174,7 +1174,7 @@ ${params.cefrLevel === 'A1' || params.cefrLevel === 'A2' || params.cefrLevel ===
 This scaffolding is CRITICAL for A1-B1 learners and must be included.`
   : `Since this is a ${params.cefrLevel} level lesson, do NOT include "lowerLevelScaffolding" in the sentence frames. Advanced learners do not need this additional scaffolding.`}
 
-STEP 5: CROSS-COMPONENT INTEGRATION VALIDATION
+STEP 6: CROSS-COMPONENT INTEGRATION & FINAL VALIDATION
 
 CRITICAL: Before finalizing your lesson, you MUST perform explicit cross-component integration analysis to ensure vocabulary, reading text, and discussion questions work together synergistically.
 
