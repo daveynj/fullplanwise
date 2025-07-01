@@ -1647,11 +1647,10 @@ If an example is a simple string, return a string. If it's an object with "compl
           })), null, 2));
           
           for (const word of section.words) {
-            // Check if AI provided imagePrompt
+            // Generate fallback imagePrompt if missing (same approach as discussion questions)
             if (!word.imagePrompt && word.term) {
-              console.log(`⚠️ AI did not provide imagePrompt for vocabulary word: "${word.term}" - USING FALLBACK`);
-              word.imagePrompt = `A simple, clear illustration showing the concept of '${word.term}'. The image should help students understand and remember this vocabulary word. No text or words should appear in the image.`;
-              console.log(`Generated fallback imagePrompt for vocabulary word: "${word.term}"`);
+              word.imagePrompt = `An illustration representing the concept of '${word.term}'. The image should be visually engaging and help students understand and remember this vocabulary word. No text or words should appear in the image.`;
+              console.log(`🔄 Generated fallback imagePrompt for vocabulary word: "${word.term}"`);
             } else if (word.imagePrompt) {
               console.log(`✅ AI provided imagePrompt for vocabulary word: "${word.term}"`);
             }
