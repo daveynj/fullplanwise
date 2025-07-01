@@ -1627,9 +1627,10 @@ export function LessonContent({ content }: LessonContentProps) {
     // Add additional error handling for questions array
     let questions: any[] = [];
     try {
-      // Check if questions is a valid array
-      if (section.questions && Array.isArray(section.questions) && section.questions.length > 0) {
-        questions = section.questions;
+      // Check for questions in new improved prompt structure (content.questions) or legacy format
+      const questionsSource = section?.content?.questions || section?.questions;
+      if (questionsSource && Array.isArray(questionsSource) && questionsSource.length > 0) {
+        questions = questionsSource;
       } else {
         console.warn("No valid questions array found in comprehension section");
       }
@@ -1732,12 +1733,15 @@ export function LessonContent({ content }: LessonContentProps) {
       // Removed sentenceFrames and first section fallback for clarity in overview
       
     let warmupQuestions: string[] = [];
-    if (warmupSection?.questions) {
-      if (Array.isArray(warmupSection.questions)) {
-        warmupQuestions = warmupSection.questions.filter((q: any): q is string => typeof q === 'string');
-      } else if (typeof warmupSection.questions === 'object') {
+    
+    // Extract questions from new improved prompt structure (content.questions) or legacy format
+    const questionsSource = warmupSection?.content?.questions || warmupSection?.questions;
+    if (questionsSource) {
+      if (Array.isArray(questionsSource)) {
+        warmupQuestions = questionsSource.filter((q: any): q is string => typeof q === 'string');
+      } else if (typeof questionsSource === 'object') {
         // Handle object format - assuming keys are the questions
-        warmupQuestions = Object.keys(warmupSection.questions)
+        warmupQuestions = Object.keys(questionsSource)
           .filter(q => typeof q === 'string' && q.trim().length > 0);
       }
     }
