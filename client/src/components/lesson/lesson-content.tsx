@@ -842,6 +842,45 @@ export function LessonContent({ content }: LessonContentProps) {
     
     console.log("Warm-up section attempt:", section);
 
+    // Extract warmup questions from the section
+    let warmupQuestions: string[] = [];
+    const questionsSource = section?.content?.questions || section?.questions;
+    if (questionsSource && Array.isArray(questionsSource)) {
+      warmupQuestions = questionsSource.filter((q: any): q is string => typeof q === 'string');
+    }
+
+    // Extract instructions if available
+    const instructions = section?.content?.instructions || section?.instructions || "Discuss the following questions with a partner or in small groups.";
+
+    // If we have warmup questions, display them instead of vocabulary
+    if (warmupQuestions.length > 0) {
+      return (
+        <div className="space-y-6 p-6">
+          <SectionHeader
+            icon={Flame}
+            title="Warm-up Discussion"
+            description={instructions}
+            color="orange"
+          />
+          
+          <Card className="bg-white shadow-sm border border-gray-200 rounded-lg overflow-hidden">
+            <CardContent className="p-6">
+              <ul className="space-y-4">
+                {warmupQuestions.map((question: string, index: number) => (
+                  <li key={index} className="flex items-start p-4 bg-orange-50 border border-orange-100 rounded-md shadow-sm">
+                    <span className="flex-shrink-0 h-6 w-6 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm font-bold mr-3">
+                      {index + 1}
+                    </span>
+                    <p className="text-gray-700 leading-relaxed text-xl font-bold">{question}</p>
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+          </Card>
+        </div>
+      );
+    }
+
     // VOCABULARY EXTRACTION:
     // AI responses provide vocabulary in different structures
     const vocabWords: VocabularyWord[] = [];
