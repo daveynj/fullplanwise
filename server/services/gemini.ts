@@ -1054,6 +1054,9 @@ REJECTION CRITERIA - REJECT LESSONS WHERE:
 ❌ Components feel disconnected or only superficially related
 ❌ The lesson lacks a coherent learning progression
 
+IMPORTANT: IMAGE PROMPT GENERATION
+For each vocabulary word and discussion question, you MUST generate a specific, creative "imagePrompt" field. This imagePrompt should be a detailed description for generating an illustration that helps students understand and remember the concept. Be creative and specific - avoid generic descriptions. The image should not contain any text or words.
+
 FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure all fields contain complete content. Do not use placeholders.
 
 {
@@ -1102,7 +1105,7 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
           "usageNotes": "Complete usage notes...",
           "teachingTips": "Complete tips...",
           "pronunciation": {"syllables": ["syl"], "stressIndex": 0, "phoneticGuide": "guide"},
-          "imagePrompt": "REQUIRED: A detailed, creative visual description that clearly illustrates the concept of 'word1'. Be specific and vivid to help students remember this word. No text should appear in the image.",
+          "imagePrompt": "Complete image prompt (no text)...",
           "semanticMap": {
             "synonyms": ["actual_synonym1", "actual_synonym2", "actual_synonym3"],
             "antonyms": ["actual_antonym1", "actual_antonym2"], 
@@ -1120,7 +1123,7 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
           "usageNotes": "Complete usage notes...",
           "teachingTips": "Complete tips...",
           "pronunciation": {"syllables": ["syl"], "stressIndex": 0, "phoneticGuide": "guide"},
-          "imagePrompt": "REQUIRED: A detailed, creative visual description that clearly illustrates the concept of 'word2'. Be specific and vivid to help students remember this word. No text should appear in the image.",
+          "imagePrompt": "Complete image prompt (no text)...",
           "semanticMap": {
             "synonyms": ["actual_synonym1", "actual_synonym2", "actual_synonym3"],
             "antonyms": ["actual_antonym1", "actual_antonym2"], 
