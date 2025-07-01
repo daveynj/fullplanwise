@@ -1112,6 +1112,7 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
         },
         {
           "term": "word2", "partOfSpeech": "verb", "definition": "Complete definition...", "example": "Complete example...",
+          "imagePrompt": "A simple, clear illustration showing the concept of 'word2'. The image should help students understand and remember this vocabulary word. No text or words should appear in the image.",
           "semanticGroup": "Group Name", 
           "additionalExamples": ["Example 1", "Example 2"],
           "wordFamily": {"words": ["related1", "related2"], "description": "How these words are related"},
@@ -1625,15 +1626,26 @@ If an example is a simple string, return a string. If it's an object with "compl
         if (section.type === 'vocabulary' && section.words && Array.isArray(section.words)) {
           console.log(`Found ${section.words.length} vocabulary words, generating images...`);
           for (const word of section.words) {
+            // Generate fallback imagePrompt if missing (just like discussion questions)
+            if (!word.imagePrompt && word.term) {
+              word.imagePrompt = `A simple, clear illustration showing the concept of '${word.term}'. The image should help students understand and remember this vocabulary word. No text or words should appear in the image.`;
+              console.log(`Generated fallback imagePrompt for vocabulary word: "${word.term}"`);
+            }
+            
             if (word.imagePrompt) {
                try {
                  // Generate unique ID for logging
                  const requestId = `vocab_${word.term ? word.term.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 15) : 'word'}`;
+                 console.log(`Requesting image generation for vocabulary word "${word.term}" with prompt: "${word.imagePrompt.substring(0, 100)}..."`);
                  word.imageBase64 = await stabilityService.generateImage(word.imagePrompt, requestId);
+                 console.log(`Successfully generated image for vocabulary word "${word.term}"`);
                } catch (imgError) {
                  console.error(`Error generating image for vocab word ${word.term}:`, imgError);
                  word.imageBase64 = null; // Ensure field exists even on error
                }
+            } else {
+              console.log(`No imagePrompt found for vocabulary word: "${word.term || 'unknown'}"`);
+              word.imageBase64 = null; // Ensure field exists
             }
           }
         }
