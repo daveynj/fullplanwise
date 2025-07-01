@@ -149,7 +149,12 @@ export class GeminiService {
                 .replace(/(['"])([\w]+)(['"]):/g, '"$2":') // Ensure property names use double quotes
                 .replace(/,\s*,/g, ',')           // Fix double commas
                 .replace(/"\s*"([^"]*)\s*"/g, '"$1"') // Fix broken quoted strings
-                .replace(/,\s*"([^"]*)",\s*"can\s+lea/g, '", "can lea'); // Fix the specific error pattern from logs
+                .replace(/,\s*"([^"]*)",\s*"can\s+lea/g, '", "can lea') // Fix the specific error pattern from logs
+                .replace(/"(\s*)\n(\s*)"([^"]*)":/g, '"$1,$2"$3":') // Fix missing commas between properties
+                .replace(/}(\s*)\n(\s*)"([^"]*)":/g, '}$1,$2"$3":') // Fix missing commas after objects
+                .replace(/](\s*)\n(\s*)"([^"]*)":/g, ']$1,$2"$3":') // Fix missing commas after arrays
+                .replace(/"\s*\n\s*}/g, '"}') // Fix broken string endings
+                .replace(/"\s*\n\s*]/g, '"]'); // Fix broken string endings in arrays
                 
               // Handle other common errors
               let inString = false;
