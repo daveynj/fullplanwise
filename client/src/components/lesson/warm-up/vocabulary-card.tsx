@@ -31,6 +31,9 @@ export interface VocabularyWord {
     contexts?: string[];                    // Common contexts where this word is used
     associatedWords?: string[];             // Words commonly used together
   };
+  
+  // Topic-essential flag to indicate words critical for the topic
+  topicEssential?: boolean;
 }
 
 interface VocabularyCardProps {
@@ -171,7 +174,14 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
       {/* Header with Word and Part of Speech - Larger and bolder */}
       <div className="flex justify-between items-center border-b-2 border-blue-200 pb-3 mb-3">
         <div>
-          <h2 className="text-2xl font-extrabold text-blue-900">{word.word}</h2>
+          <div className="flex items-center gap-3 mb-1">
+            <h2 className="text-2xl font-extrabold text-blue-900">{word.word}</h2>
+            {word.topicEssential && (
+              <span className="bg-red-600 text-white text-xs font-medium px-2 py-1 rounded-md">
+                Topic Essential
+              </span>
+            )}
+          </div>
           <p className="text-blue-700 text-sm font-medium">{word.partOfSpeech || 'noun'}</p>
         </div>
         

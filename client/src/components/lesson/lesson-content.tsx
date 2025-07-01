@@ -1036,7 +1036,14 @@ export function LessonContent({ content }: LessonContentProps) {
                   {/* Added padding back here */}
                   <div className="w-full md:w-[70%] p-6 flex flex-col">
                     <div className="mb-3">
-                      <h2 className="text-3xl font-bold text-gray-800">{currentWord?.word}</h2>
+                      <div className="flex items-center gap-3 mb-2">
+                        <h2 className="text-3xl font-bold text-gray-800">{currentWord?.word}</h2>
+                        {currentWord?.topicEssential && (
+                          <Badge variant="destructive" className="bg-red-600 text-white text-sm font-medium px-2 py-1">
+                            Topic Essential
+                          </Badge>
+                        )}
+                      </div>
                       <p className="text-gray-600 italic">{currentWord?.partOfSpeech}</p>
                     </div>
                     
@@ -1515,7 +1522,14 @@ export function LessonContent({ content }: LessonContentProps) {
                     
                     {/* Word display (centered on the card) */}
                     <div className="relative z-10 text-center p-6 bg-white/80 rounded-lg shadow-sm backdrop-blur-sm">
-                      <h2 className="text-3xl font-bold text-gray-800 mb-1">{(currentWord as any).term || currentWord.word}</h2>
+                      <div className="flex items-center justify-center gap-3 mb-1">
+                        <h2 className="text-3xl font-bold text-gray-800">{(currentWord as any).term || currentWord.word}</h2>
+                        {currentWord.topicEssential && (
+                          <Badge variant="destructive" className="bg-red-600 text-white text-xs font-medium px-2 py-1">
+                            Topic Essential
+                          </Badge>
+                        )}
+                      </div>
                       <p className="text-gray-500 italic mb-4">{currentWord.partOfSpeech}</p>
                       <p className="text-sm text-gray-600">Click to reveal definition</p>
                     </div>
