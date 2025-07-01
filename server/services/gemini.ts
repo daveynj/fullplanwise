@@ -414,7 +414,31 @@ Before creating any lesson content, first analyze and establish clear parameters
    - List 3-5 sentence structure patterns appropriate for this level
    - List 2-3 grammatical structures that would be too complex for this level
 
-STEP 3: READING TEXT DEVELOPMENT APPROACH
+STEP 1: TOPIC DIFFERENTIATION & CONTENT STRATEGY
+
+First, analyze how the topic "${params.topic}" should be treated differently across CEFR levels:
+- Research how the complexity and focus of topic treatment evolves from A1 to C2
+- Identify specific aspects of the topic appropriate for ${params.cefrLevel} level
+- Determine which vocabulary domains within this topic are level-appropriate
+- Consider how conceptual complexity should increase with higher levels
+
+For "${params.topic}" at ${params.cefrLevel} level specifically:
+- Identify 3-5 unique aspects or sub-topics that are specifically appropriate for this level
+- Determine which vocabulary domains are appropriate for THIS level but NOT lower levels
+- Consider which cognitive approaches to the topic match this specific level
+- Identify conceptual complexity appropriate specifically for ${params.cefrLevel}
+
+Based on your analysis, create a unique approach to "${params.topic}" for ${params.cefrLevel} level by:
+- Focusing on the sub-aspects most appropriate for this specific level
+- Selecting vocabulary that would NOT be taught at lower levels
+- Approaching the topic from a cognitive perspective matching this level
+- Ensuring clear differentiation from how this topic would be taught at other levels
+
+This approach should ensure that lessons on the same topic at different CEFR levels are substantially different in:
+- Vocabulary selection
+- Question complexity and type
+- Conceptual approach
+- Content focus and examples
 
 SPEAKING-FOCUSED TEXT PURPOSE ANALYSIS
 
@@ -507,7 +531,7 @@ C1/C2 LEVELS: 180-250 words (3-4 paragraphs)
 - Sophisticated content that merits extended discussion
 - Complex enough to sustain in-depth conversation while remaining accessible
 
-STEP 6: SENTENCE FRAMES PATTERN SELECTION APPROACH
+STEP 2: VOCABULARY SELECTION & VALIDATION
 
 COMMUNICATIVE NEED ANALYSIS FOR ${params.cefrLevel} STUDENTS:
 
@@ -813,7 +837,21 @@ AUTOMATIC REJECTION CRITERIA - REJECT WORDS THAT:
 ❌ Serve only academic/specialized purposes inappropriate for the level
 ❌ Would appear in lessons one level below with the same meaning and usage
 
-STEP 4: SEMANTIC COHERENCE AND GROUPING
+VOCABULARY VALIDATION CHECKLIST:
+
+Before submitting your vocabulary selection, verify EVERY word meets ALL criteria:
+
+MANDATORY QUALITY CONTROL CHECKLIST:
+✓ LEVEL APPROPRIATENESS: Is each word genuinely appropriate for ${params.cefrLevel} students?
+✓ USEFULNESS VERIFICATION: Will students actually need these words in real communication?
+✓ COHERENCE CONFIRMATION: Do the words work together to enable meaningful topic discussion?
+✓ DEFINITION FEASIBILITY: Can each word be defined using vocabulary simpler than the target word?
+✓ PREREQUISITE VALIDATION: Do students have the foundation vocabulary to understand these words?
+✓ COGNITIVE MATCH: Does each word match the cognitive development level of ${params.cefrLevel} students?
+✓ COMMUNICATION VALUE: Does each word serve authentic communicative purposes at this level?
+✓ TOPIC RELEVANCE: Is each word directly relevant and useful for discussing "${params.topic}"?
+
+SEMANTIC COHERENCE AND GROUPING
 
 Select vocabulary that works together meaningfully:
 
@@ -893,29 +931,76 @@ For multi-word phrases, break down EACH WORD into syllables and list them sequen
 
 CRITICALLY IMPORTANT: Always use ONLY regular English characters and hyphens for phoneticGuide. NEVER use IPA phonetic symbols like "ə", "ɪ", or "ʃ". Use simple English spelling to approximate sounds.
 
-STEP 5: FINAL VOCABULARY VALIDATION CHECKLIST
+STEP 3: READING TEXT DEVELOPMENT
 
-Before submitting your vocabulary selection, verify EVERY word meets ALL criteria:
+Before writing, analyze the text's role in a speaking-focused lesson for ${params.cefrLevel} students:
 
-MANDATORY QUALITY CONTROL CHECKLIST:
-✓ LEVEL APPROPRIATENESS: Is each word genuinely appropriate for ${params.cefrLevel} students?
-✓ USEFULNESS VERIFICATION: Will students actually need these words in real communication?
-✓ COHERENCE CONFIRMATION: Do the words work together to enable meaningful topic discussion?
-✓ DEFINITION FEASIBILITY: Can each word be defined using vocabulary simpler than the target word?
-✓ PREREQUISITE VALIDATION: Do students have the foundation vocabulary to understand these words?
-✓ COGNITIVE MATCH: Does each word match the cognitive development level of ${params.cefrLevel} students?
-✓ COMMUNICATION VALUE: Does each word serve authentic communicative purposes at this level?
-✓ TOPIC RELEVANCE: Is each word directly relevant and useful for discussing "${params.topic}"?
+PURPOSE CLARIFICATION:
+- This text serves as a CONVERSATION CATALYST, not comprehensive reading practice
+- Students will use this text to GENERATE SPEAKING opportunities about "${params.topic}"
+- The text should PROVIDE ENOUGH CONTENT for meaningful discussion without overwhelming
+- Focus on ACCESSIBLE INFORMATION that students can reference, react to, and build upon in conversation
 
-REPLACEMENT PROTOCOL:
-If ANY word fails the above checks, IMMEDIATELY replace it with a more appropriate alternative that:
-- Meets all validation criteria
-- Serves the same communicative function
-- Fits better with the other selected vocabulary
-- Enables students to discuss the topic effectively at their level
+SPEAKING-LESSON TEXT REQUIREMENTS:
+- SHORTER TEXTS that can be quickly processed to focus lesson time on speaking
+- DISCUSSION-WORTHY CONTENT that naturally generates opinions, questions, and personal connections
+- CLEAR TALKING POINTS that students can easily reference during conversations
+- RELATABLE SCENARIOS that connect to students' experiences and interests
 
-FINAL CONFIRMATION:
-Your selected vocabulary should enable ${params.cefrLevel} students to engage in meaningful, authentic communication about "${params.topic}" using language appropriate to their developmental stage.
+CONTENT APPROPRIATENESS AND ENGAGEMENT VALIDATION
+
+Before finalizing content, verify it meets speaking-lesson requirements:
+
+CONTENT VALIDATION CHECKLIST:
+✓ PERSONAL RELEVANCE: Can students connect this to their own experiences or opinions?
+✓ DISCUSSION POTENTIAL: Does this content naturally generate questions, reactions, and responses?
+✓ OPINION-WORTHY: Are there aspects students can agree/disagree with or have personal views about?
+✓ ACCESSIBLE COMPLEXITY: Can students understand this quickly to focus on speaking practice?
+✓ CONVERSATION STARTERS: Does this provide clear talking points for pair/group discussions?
+
+STEP 4: SENTENCE FRAME SELECTION
+
+COMMUNICATIVE NEED ANALYSIS FOR ${params.cefrLevel} STUDENTS:
+
+Before selecting sentence patterns, analyze what communication needs ${params.cefrLevel} students actually have:
+
+REAL-WORLD COMMUNICATION NEEDS BY LEVEL:
+A1 STUDENTS: Need patterns for immediate, concrete communication
+- Expressing basic preferences: "I like ___ because ___"
+- Simple descriptions: "___ is ___" 
+- Basic needs: "I want/need ___"
+- Present actions: "I am ___ing"
+
+A2 STUDENTS: Need patterns for personal experiences and simple social interaction
+- Past experiences: "Yesterday I ___ and it was ___"
+- Future plans: "I'm going to ___ because ___"
+- Simple comparisons: "___ is more ___ than ___"
+- Basic opinions: "I think ___ is ___"
+
+B1 STUDENTS: Need patterns for social topics and reasoned communication
+- Expressing opinions with reasons: "I believe ___ because ___"
+- Problem-solution: "The problem is ___, so we should ___"
+- Advantages/disadvantages: "On one hand ___, but on the other hand ___"
+- Making suggestions: "We could ___ in order to ___"
+
+B2 STUDENTS: Need patterns for analytical and evaluative communication
+- Complex reasoning: "Although ___, ___ nevertheless ___"
+- Cause and effect: "___ has led to ___, which in turn ___"
+- Evaluation: "While ___ has advantages, it also ___"
+- Hypotheticals: "If ___ were to happen, then ___"
+
+C1/C2 STUDENTS: Need patterns for sophisticated analysis and professional communication
+- Nuanced arguments: "Despite the fact that ___, it could be argued that ___"
+- Academic discourse: "Research suggests that ___, indicating that ___"
+- Complex conditionals: "Had ___ not occurred, ___ would likely have ___"
+
+PATTERN SELECTION STRATEGY:
+- Choose patterns that enable students to express authentic ideas about "${params.topic}"
+- Focus on high-frequency communication functions related to this topic
+- Ensure patterns can be used productively in conversations about this topic
+- Select patterns that connect the topic to students' experiences and opinions
+
+**Goal:** Develop topic-specific, communicatively valuable sentence patterns that support authentic expression about "${params.topic}" at the ${params.cefrLevel} level.
 
 I will count the total number of vocabulary items. If you don't include EXACTLY ${minVocabCount} complete vocabulary items, your response will be rejected.
 
