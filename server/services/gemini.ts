@@ -1622,6 +1622,30 @@ If an example is a simple string, return a string. If it's an object with "compl
       provider: 'gemini'
     };
     
+    // Debug: Log the raw AI response for vocabulary and discussion sections
+    if (lessonContent.sections && Array.isArray(lessonContent.sections)) {
+      const vocabSection = lessonContent.sections.find((s: any) => s.type === 'vocabulary');
+      const discussionSection = lessonContent.sections.find((s: any) => s.type === 'discussion');
+      
+      if (vocabSection) {
+        console.log('🔍 RAW AI VOCABULARY RESPONSE:');
+        console.log('Vocabulary words from AI:', JSON.stringify(vocabSection.words?.slice(0, 2).map((w: any) => ({
+          term: w.term,
+          hasImagePrompt: !!w.imagePrompt,
+          imagePrompt: w.imagePrompt || 'NOT_PROVIDED'
+        })), null, 2));
+      }
+      
+      if (discussionSection) {
+        console.log('🔍 RAW AI DISCUSSION RESPONSE:');
+        console.log('Discussion questions from AI:', JSON.stringify(discussionSection.questions?.slice(0, 2).map((q: any) => ({
+          question: q.question?.substring(0, 50) + '...',
+          hasImagePrompt: !!q.imagePrompt,
+          imagePrompt: q.imagePrompt || 'NOT_PROVIDED'
+        })), null, 2));
+      }
+    }
+    
     // Generate images if sections exist
     if (lessonContent.sections && Array.isArray(lessonContent.sections)) {
       console.log('Starting image generation loop for Gemini lesson...');
