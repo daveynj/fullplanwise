@@ -802,6 +802,7 @@ If a word is outside the typical frequency range for ${params.cefrLevel} but ess
 - Include "topicEssential": true in the vocabulary item
 - Add explanation in "usageNotes" field: "This word is essential for discussing [topic] at [level] despite being above typical frequency range"
 - Ensure extra support through additional examples and clear definitions
+- IMPORTANT: topicEssential: true is for rare exceptions only. Always prioritize words within the typical frequency range for the CEFR level.
 
 AUTOMATIC REJECTION CRITERIA - REJECT WORDS THAT:
 ❌ Are primarily introduced at a lower CEFR level without significant complexity increase
@@ -1142,6 +1143,9 @@ REJECTION CRITERIA - REJECT LESSONS WHERE:
 ❌ Students could answer discussion questions without using target vocabulary
 ❌ Components feel disconnected or only superficially related
 ❌ The lesson lacks a coherent learning progression
+
+WARM-UP SECTION CLARIFICATION:
+The "targetVocabulary" field in the warm-up section should contain the key vocabulary words from the lesson's main vocabulary section. These are the same 5 words that will be featured in the vocabulary section, allowing students to preview and discuss them before formal introduction.
 
 FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure all fields contain complete content. Do not use placeholders.
 
