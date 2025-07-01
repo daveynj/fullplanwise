@@ -469,56 +469,7 @@ If a word is outside the typical frequency range for [CEFR_LEVEL] but essential 
 - Include "topicEssential": true in the vocabulary item
 - Add explanation in "usageNotes" field: "This word is essential for discussing [topic] at [level] despite being above typical frequency range"
 - Ensure extra support through additional examples and clear definitions
-
-AUTOMATIC REJECTION CRITERIA - REJECT WORDS THAT:
-❌ Are primarily introduced at a lower CEFR level without significant complexity increase
-❌ Require unknown prerequisite vocabulary for comprehension
-❌ Are too abstract/complex for the cognitive level
-❌ Cannot be defined using significantly simpler language
-❌ Are rarely used in real communication at this level
-❌ Serve only academic/specialized purposes inappropriate for the level
-❌ Would appear in lessons one level below with the same meaning and usage
-
-STEP 4: SEMANTIC COHERENCE AND GROUPING
-
-Select vocabulary that works together meaningfully:
-
-SEMANTIC COHERENCE REQUIREMENTS:
-1. Choose words that form logical, functional groups within the topic
-2. Ensure words can be used together in meaningful communication
-3. Create vocabulary sets that enable comprehensive topic discussion
-4. Include various word types (nouns, verbs, adjectives, connectors) that work together
-5. Consider semantic relationships (synonyms, antonyms, word families)
-
-FUNCTIONAL GROUPING EXAMPLES:
-A1 Transportation: [car, bus, walk] + [fast, slow] + [go, stop, wait]
-→ Enables: "I go by bus. The bus is slow. I wait for the bus."
-
-B1 Transportation: [commute, public transport, traffic] + [convenient, reliable, crowded] + [however, although, because]
-→ Enables: "I commute by public transport. However, it's often crowded because many people use it."
-
-B2 Transportation: [infrastructure, sustainability, urban planning] + [efficient, environmentally-friendly, cost-effective] + [furthermore, consequently, therefore]
-→ Enables: "Urban planning affects transportation infrastructure. Consequently, cities need sustainable and cost-effective solutions."
-
-COHERENCE VALIDATION:
-✓ Can students combine these words to discuss the topic meaningfully?
-✓ Do the words represent different aspects/dimensions of the topic?
-✓ Are there enough words to enable substantial communication about the topic?
-✓ Do the words progress logically from concrete to abstract (appropriate for level)?
-
-STEP 5: FINAL VOCABULARY VALIDATION CHECKLIST
-
-Before submitting your vocabulary selection, verify EVERY word meets ALL criteria:
-
-MANDATORY QUALITY CONTROL CHECKLIST:
-✓ LEVEL APPROPRIATENESS: Is each word genuinely appropriate for [CEFR_LEVEL] students?
-✓ USEFULNESS VERIFICATION: Will students actually need these words in real communication?
-✓ COHERENCE CONFIRMATION: Do the words work together to enable meaningful topic discussion?
-✓ DEFINITION FEASIBILITY: Can each word be defined using vocabulary simpler than the target word?
-✓ PREREQUISITE VALIDATION: Do students have the foundation vocabulary to understand these words?
-✓ COGNITIVE MATCH: Does each word match the cognitive development level of [CEFR_LEVEL] students?
-✓ COMMUNICATION VALUE: Does each word enable authentic expression about the topic?
-✓ NOVELTY VERIFICATION: Does each word represent appropriate challenge/advancement for this level?
+- IMPORTANT: topicEssential: true is for rare exceptions only. Always prioritize words within the typical frequency range for the CEFR level.
 
 ENHANCED VOCABULARY ITEM STRUCTURE:
 
@@ -648,6 +599,9 @@ LEVEL-SPECIFIC SEMANTIC MAP GUIDELINES:
 - A1/A2: Use basic, high-frequency words in semantic maps
 - B1/B2: Include more sophisticated vocabulary while maintaining accessibility
 - C1/C2: Include advanced, academic, or specialized vocabulary in semantic maps
+
+WARM-UP SECTION CLARIFICATION:
+The "targetVocabulary" field in the warm-up section should contain the key vocabulary words from the lesson's main vocabulary section. These are the same 5 words that will be featured in the vocabulary section, allowing students to preview and discuss them before formal introduction.
 
 JSON FORMAT REQUIREMENTS:
 
