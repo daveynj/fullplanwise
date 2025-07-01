@@ -920,16 +920,18 @@ export function LessonContent({ content }: LessonContentProps) {
     // If we don't have any vocabulary, we'll display a message to generate new content
 
     // DISCUSSION QUESTIONS EXTRACTION:
-    // Get discussion questions from the section
-    let discussionQuestions: string[] = [];
+    // Get discussion questions from the section (new improved prompt format)
+    let discussionQuestions: any[] = [];
     
-    if (section.questions) {
-      if (Array.isArray(section.questions)) {
-        discussionQuestions = section.questions;
-      } else if (typeof section.questions === 'object') {
+    const questionsArray = section.content?.questions || section.questions;
+    if (questionsArray) {
+      if (Array.isArray(questionsArray)) {
+        discussionQuestions = questionsArray;
+      } else if (typeof questionsArray === 'object') {
         // Extract questions from object format
-        discussionQuestions = Object.keys(section.questions)
-          .filter(q => typeof q === 'string' && q.trim().length > 0);
+        discussionQuestions = Object.keys(questionsArray)
+          .filter(q => typeof q === 'string' && q.trim().length > 0)
+          .map(q => ({ question: q }));
       }
     }
     
@@ -1369,9 +1371,10 @@ export function LessonContent({ content }: LessonContentProps) {
     
     // No hardcoded pronunciation data - we'll use the AI-generated data directly
     
-    // Look for the 'words' array in the vocabulary section (Gemini format)
-    if (section.words && Array.isArray(section.words)) {
-      section.words.forEach((wordData: any) => {
+    // Look for the 'words' array in the vocabulary section (improved prompt format)
+    const wordsArray = section.content?.words || section.words;
+    if (wordsArray && Array.isArray(wordsArray)) {
+      wordsArray.forEach((wordData: any) => {
         if (typeof wordData === 'object') {
           // Use only the AI-generated data
           extractedVocabWords.push({
