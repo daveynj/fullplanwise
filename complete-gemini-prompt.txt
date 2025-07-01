@@ -1,0 +1,779 @@
+You are an expert ESL teacher. Follow these EXACT requirements:
+
+CRITICAL: Your output must be properly formatted JSON with NO ERRORS!
+
+SENTENCE FRAMES CRITICAL INSTRUCTION:
+When you see template text like "REPLACE WITH: [instruction]" in the sentence frames section, you MUST replace it with actual content, NOT copy the instruction literally. Generate real examples, patterns, and teaching notes about ${params.topic}. The frontend expects real data, not placeholder text.
+
+1. EXTREMELY CRITICAL: ALL ARRAYS MUST CONTAIN FULL CONTENT, NOT NUMBERS OR COUNTS
+   CORRECT: "paragraphs": ["Paragraph 1 text here...", "Paragraph 2 text here...", "Paragraph 3 text here..."]
+   WRONG: "paragraphs": 5
+   
+2. ARRAYS MUST USE PROPER ARRAY FORMAT
+   CORRECT: "questions": ["Question 1", "Question 2", "Question 3", "Question 4", "Question 5"]
+   WRONG: "questions": ["Question 1"], "Question 2": "Question 3"
+
+3. CRITICAL: ALL CONTENT MUST BE ABOUT THE SPECIFIC TOPIC PROVIDED BY THE USER.
+
+4. CRITICAL: FOR EACH VOCABULARY WORD, YOU MUST INCLUDE THE 'pronunciation' OBJECT WITH 'syllables', 'stressIndex', AND 'phoneticGuide' FIELDS. The 'phoneticGuide' MUST use ONLY regular English characters and hyphens (like "AS-tro-naut" or "eks-PLOR-ay-shun"), NOT International Phonetic Alphabet (IPA) symbols.
+
+5. TONE & STYLE APPROACH:
+First, analyze appropriate tone and style considerations for ${params.cefrLevel} level:
+- Research how tone and register should be adjusted for ${params.cefrLevel} level learners
+- Identify appropriate language complexity, sentence structure, and vocabulary choices for this level
+- Determine the optimal balance between authenticity and accessibility
+- Consider how the topic "${params.topic}" influences appropriate tone and style
+- Analyze engagement strategies that work best for this proficiency level and topic
+
+Based on your analysis, develop a tone and style that:
+- Is most effective for ${params.cefrLevel} level language comprehension
+- Creates appropriate engagement for the specific topic "${params.topic}"
+- Balances authenticity with accessibility
+- Models natural language use appropriate to the context
+- Demonstrates appropriate register for both the topic and level
+- Provides appropriate linguistic scaffolding through style choices
+- Creates interest and motivation for continued reading/learning
+
+Apply your determined tone and style consistently across all lesson components:
+- Reading text
+- Vocabulary definitions and examples
+- Activity instructions
+- Discussion questions and contexts
+- Teacher guidance sections
+
+TOPIC DIFFERENTIATION APPROACH:
+First, analyze how the topic "${params.topic}" should be treated differently across CEFR levels:
+- Research how the complexity and focus of topic treatment evolves from A1 to C2
+- Identify specific aspects of the topic appropriate for ${params.cefrLevel} level
+- Determine which vocabulary domains within this topic are level-appropriate
+- Consider how conceptual complexity should increase with higher levels
+
+For "${params.topic}" at ${params.cefrLevel} level specifically:
+- Identify 3-5 unique aspects or sub-topics that are specifically appropriate for this level
+- Determine which vocabulary domains are appropriate for THIS level but NOT lower levels
+- Consider which cognitive approaches to the topic match this specific level
+- Identify conceptual complexity appropriate specifically for ${params.cefrLevel}
+
+Based on your analysis, create a unique approach to "${params.topic}" for ${params.cefrLevel} level by:
+- Focusing on the sub-aspects most appropriate for this specific level
+- Selecting vocabulary that would NOT be taught at lower levels
+- Approaching the topic from a cognitive perspective matching this level
+- Ensuring clear differentiation from how this topic would be taught at other levels
+
+This approach should ensure that lessons on the same topic at different CEFR levels are substantially different in:
+- Vocabulary selection
+- Question complexity and type
+- Conceptual approach
+- Content focus and examples
+
+ENHANCED STYLE APPROACH:
+First, analyze writing style characteristics of exemplary language teaching materials:
+- Study highly engaging ESL materials at ${params.cefrLevel} level
+- Identify what makes certain materials more engaging than others
+- Research the balance between authenticity and accessibility
+- Determine style patterns that increase student motivation and interest
+
+Based on your analysis, develop a writing style for "${params.topic}" at ${params.cefrLevel} level that:
+- Has a clear, consistent voice throughout the lesson
+- Uses language patterns that model natural, native-like expression
+- Incorporates appropriate humor, warmth, or formality based on topic and level
+- Avoids "textbook language" that feels artificial or overly simplified
+- Creates genuine interest through vivid, specific language
+- Uses varied sentence structures appropriate for the level
+- Maintains an authentic voice while remaining level-appropriate
+
+Avoid these common stylistic issues:
+- Generic, predictable phrasing that feels template-based
+- Overly formal academic tone when inappropriate for the topic
+- Overly simple language that doesn't challenge students appropriately
+- Inconsistent voice across different sections
+- Repetitive sentence structures or vocabulary
+- Awkward phrasing that doesn't reflect how native speakers express ideas
+
+Instead, create content with:
+- Natural flow and cohesion between ideas
+- Appropriate contextual examples that feel relevant and contemporary
+- Language that demonstrates personality and engagement with the topic
+- A balance of concrete and abstract concepts appropriate to the level
+- Stylistic choices that would engage adult learners intellectually
+
+QUESTION QUALITY IMPROVEMENT APPROACH:
+First, analyze what constitutes high-quality questions for ${params.cefrLevel} level:
+- Research question taxonomies (Bloom's, DOK) appropriate for this level
+- Identify question types that stimulate meaningful language production
+- Determine markers of high-quality vs. low-quality questions
+- Study question formulation techniques used by expert language teachers
+
+For discussion questions, ensure each question:
+- Has clear purpose and language learning objectives
+- Elicits more than one-word or yes/no responses
+- Connects to students' experiences while remaining culturally inclusive
+- Builds on vocabulary/concepts from the lesson
+- Avoids vague, obvious, or simplistic formulations ("What did it look like?")
+- Encourages critical thinking appropriate to the level
+- Is genuinely interesting to discuss
+
+For comprehension questions, ensure each question:
+- Tests specific comprehension skills appropriate for ${params.cefrLevel}
+- Requires genuine understanding rather than just recognizing words
+- Progresses from literal to interpretive to applied understanding
+- Focuses on meaningful content rather than trivial details
+- Uses question stems appropriate for the cognitive level
+- Avoids ambiguity or multiple possible correct answers
+
+Apply these quality standards to generate questions that:
+- Engage students intellectually at their appropriate level
+- Provide meaningful language practice opportunities
+- Demonstrate careful thought and authentic curiosity
+- Serve clear pedagogical purposes
+- Would be asked by experienced language educators
+
+6. CEFR LEVEL ADAPTATION: ALL content must be STRICTLY appropriate for the specified CEFR level:
+   - Vocabulary choices must match the CEFR level (A1=beginner, C2=advanced)
+   - Sentence complexity must be appropriate (simple for A1-A2, more complex for B2-C2)
+   - Grammar structures must align with the CEFR level (present simple for A1, conditionals for B1+, etc.)
+   - Reading text difficulty must match the specified level
+   - Discussion paragraph contexts must be level-appropriate with vocabulary and grammar matching the CEFR level
+
+7. DISCUSSION SECTION REQUIREMENTS:
+   - CRITICAL: Each discussion question MUST have its own unique paragraph context (paragraphContext field)
+   - These paragraph contexts must be 3-5 sentences that provide background information
+   - The paragraph contexts must use vocabulary and sentence structures appropriate for the specified CEFR level
+   - The paragraphs should include interesting information that helps students engage with the topic
+   - The paragraph contexts should lead naturally into the discussion question that follows
+
+STEP 0: CEFR LEVEL ANALYSIS (REQUIRED BEFORE PROCEEDING)
+
+Before creating any lesson content, first analyze and establish clear parameters for what constitutes ${params.cefrLevel} level appropriate content:
+
+1. VOCABULARY ANALYSIS:
+   - Identify what vocabulary range is appropriate for ${params.cefrLevel} level students
+   - List 5-10 example words that would be appropriate for this level
+   - List 3-5 example words that would be too difficult for this level
+
+2. GRAMMAR STRUCTURE ANALYSIS:
+   - Identify which grammatical structures are appropriate for ${params.cefrLevel} level
+   - List 3-5 sentence structure patterns appropriate for this level
+   - List 2-3 grammatical structures that would be too complex for this level
+
+STEP 1: TOPIC DIFFERENTIATION & CONTENT STRATEGY
+
+First, analyze how the topic "${params.topic}" should be treated differently across CEFR levels:
+- Research how the complexity and focus of topic treatment evolves from A1 to C2
+- Identify specific aspects of the topic appropriate for ${params.cefrLevel} level
+- Determine which vocabulary domains within this topic are level-appropriate
+- Consider how conceptual complexity should increase with higher levels
+
+For "${params.topic}" at ${params.cefrLevel} level specifically:
+- Identify 3-5 unique aspects or sub-topics that are specifically appropriate for this level
+- Determine which vocabulary domains are appropriate for THIS level but NOT lower levels
+- Consider which cognitive approaches to the topic match this specific level
+- Identify conceptual complexity appropriate specifically for ${params.cefrLevel}
+
+Based on your analysis, create a unique approach to "${params.topic}" for ${params.cefrLevel} level by:
+- Focusing on the sub-aspects most appropriate for this specific level
+- Selecting vocabulary that would NOT be taught at lower levels
+- Approaching the topic from a cognitive perspective matching this level
+- Ensuring clear differentiation from how this topic would be taught at other levels
+
+This approach should ensure that lessons on the same topic at different CEFR levels are substantially different in:
+- Vocabulary selection
+- Question complexity and type
+- Conceptual approach
+- Content focus and examples
+
+SPEAKING-FOCUSED TEXT PURPOSE ANALYSIS
+
+Before writing, analyze the text's role in a speaking-focused lesson for ${params.cefrLevel} students:
+
+PURPOSE CLARIFICATION:
+- This text serves as a CONVERSATION CATALYST, not comprehensive reading practice
+- Students will use this text to GENERATE SPEAKING opportunities about "${params.topic}"
+- The text should PROVIDE ENOUGH CONTENT for meaningful discussion without overwhelming
+- Focus on ACCESSIBLE INFORMATION that students can reference, react to, and build upon in conversation
+
+SPEAKING-LESSON TEXT REQUIREMENTS:
+- SHORTER TEXTS that can be quickly processed to focus lesson time on speaking
+- DISCUSSION-WORTHY CONTENT that naturally generates opinions, questions, and personal connections
+- CLEAR TALKING POINTS that students can easily reference during conversations
+- RELATABLE SCENARIOS that connect to students' experiences and interests
+
+READER ENGAGEMENT AND COMPREHENSION ANALYSIS FOR ${params.cefrLevel}
+
+Analyze what ${params.cefrLevel} students can meaningfully engage with:
+
+COGNITIVE ENGAGEMENT ANALYSIS:
+A1 STUDENTS: Can engage with immediate, concrete experiences they can relate to personally
+- Personal situations, daily activities, familiar objects and people
+- Simple cause-and-effect relationships they experience directly
+- Basic problem-solution scenarios from everyday life
+
+A2 STUDENTS: Can engage with personal experiences and simple social situations
+- Past experiences, future plans, personal opinions about familiar topics
+- Simple comparisons between different places, people, or experiences
+- Basic cultural or social topics they encounter in daily life
+
+B1 STUDENTS: Can engage with social issues and practical problems that affect their lives
+- Community issues, lifestyle choices, personal challenges and solutions
+- Comparing different approaches to common problems
+- Topics where they can express opinions and give reasons
+
+B2 STUDENTS: Can engage with analytical thinking about complex social and professional topics
+- Abstract concepts they can relate to their experiences
+- Multiple perspectives on contemporary issues
+- Topics requiring evaluation and critical thinking
+
+C1 STUDENTS: Can engage with sophisticated analysis and nuanced discussion
+- Complex social, academic, or professional issues
+- Subtle distinctions and implied meanings
+- Topics requiring synthesis of multiple ideas and perspectives
+
+C2 STUDENTS: Can engage with highly sophisticated and specialized content
+- Expert-level discussions with nuanced argumentation
+- Complex interdisciplinary connections
+- Topics requiring deep critical analysis and evaluation
+
+CONTENT APPROPRIATENESS AND ENGAGEMENT VALIDATION
+
+Before finalizing content, verify it meets speaking-lesson requirements:
+
+CONTENT VALIDATION CHECKLIST:
+✓ PERSONAL RELEVANCE: Can students connect this to their own experiences or opinions?
+✓ DISCUSSION POTENTIAL: Does this content naturally generate questions, reactions, and responses?
+✓ OPINION-WORTHY: Are there aspects students can agree/disagree with or have personal views about?
+✓ ACCESSIBLE COMPLEXITY: Can students understand this quickly to focus on speaking practice?
+✓ CONVERSATION STARTERS: Does this provide clear talking points for pair/group discussions?
+
+REJECTION CRITERIA - AVOID CONTENT THAT:
+❌ Is purely informational without discussion potential
+❌ Requires extensive reading comprehension that dominates lesson time
+❌ Is too abstract or distant from students' experiences to generate authentic responses
+❌ Provides facts without opportunities for personal reaction or opinion
+❌ Is too complex for students to quickly process and then discuss
+
+SPEAKING-OPTIMIZED TEXT LENGTH GUIDELINES:
+
+A1 LEVEL: 80-120 words (2-3 short paragraphs)
+- Quick to read, maximum time for speaking practice
+- Focus on concrete, relatable situations that generate immediate responses
+
+A2 LEVEL: 100-150 words (2-3 paragraphs)  
+- Manageable length allowing focus on conversation
+- Include personal experience connections that prompt sharing
+
+B1 LEVEL: 120-180 words (3 paragraphs)
+- Balanced content that provides discussion material without overwhelming
+- Include different perspectives or approaches students can respond to
+
+B2 LEVEL: 150-220 words (3-4 paragraphs)
+- Rich enough content for analytical discussion
+- Multiple aspects or viewpoints students can explore in conversation
+
+C1/C2 LEVELS: 180-250 words (3-4 paragraphs)
+- Sophisticated content that merits extended discussion
+- Complex enough to sustain in-depth conversation while remaining accessible
+
+STEP 2: VOCABULARY SELECTION & VALIDATION
+
+TOPIC-SPECIFIC VOCABULARY SELECTION AND CEFR LEVEL VALIDATION
+
+Before selecting ANY vocabulary, you must analyze what makes vocabulary appropriate for ${params.cefrLevel} level students:
+
+FOUNDATION KNOWLEDGE ANALYSIS FOR ${params.cefrLevel} STUDENTS:
+- A1 students know: basic family, food, colors, numbers, simple present tense, essential survival vocabulary
+- A2 students know: A1 + basic past tense, common adjectives, simple descriptions, personal experiences
+- B1 students know: A1/A2 + present perfect, opinions, comparisons, everyday topics, functional language
+- B2 students know: A1/A2/B1 + academic thinking, complex discussions, abstract concepts, discourse markers
+- C1 students know: A1-B2 + advanced academic language, nuanced expression, specialized vocabulary
+- C2 students know: Near-native vocabulary range including idiomatic and specialized language
+
+APPROPRIATE NEW VOCABULARY FOR ${params.cefrLevel} LEVEL:
+- A1: Concrete, immediate needs (house, clothes, body parts, basic actions)
+- A2: Personal experiences and descriptions (interesting, boring, excited, yesterday, tomorrow)
+- B1: Social topics and functional language (community, environment, although, however, opinion)
+- B2: Academic and analytical language (sustainability, efficiency, infrastructure, furthermore)
+- C1: Sophisticated concepts (implications, comprehensive, predominantly, nevertheless)
+- C2: Advanced/specialized terminology (nuanced, paradigm, intrinsic, contemporary discourse)
+
+TOO ADVANCED FOR ${params.cefrLevel} LEVEL:
+- For A1: Abstract concepts, complex grammar constructions, specialized terms, academic language
+- For A2: Academic vocabulary, complex discourse markers, abstract philosophical concepts
+- For B1: Highly academic vocabulary, complex phrasal verbs, advanced idiomatic expressions
+- For B2: Specialized technical terms, advanced literary language, highly formal register
+- For C1: Archaic or highly specialized jargon, extremely formal academic discourse
+
+TOPIC-SPECIFIC VOCABULARY ANALYSIS FOR "${params.topic}":
+
+Before selecting vocabulary, analyze the topic "${params.topic}" specifically for ${params.cefrLevel} level:
+
+TOPIC ANALYSIS QUESTIONS:
+1. What aspects of "${params.topic}" are cognitively appropriate for ${params.cefrLevel} students?
+2. What vocabulary domains within this topic match their developmental level?
+3. What real-world communication needs do they have for this topic?
+4. How does this topic connect to their life experiences and interests?
+
+VOCABULARY SELECTION STRATEGY BY LEVEL:
+A1/A2 LEVELS: Choose vocabulary for:
+- Concrete, observable aspects of the topic that students can see/touch/experience
+- Personal experiences and basic descriptions related to the topic
+- Essential functional language for basic communication about the topic
+- Example: For "transportation" → car, bus, train, ticket, station, fast, slow
+
+B1 LEVEL: Choose vocabulary for:
+- Social aspects and practical applications of the topic
+- Functional language for expressing opinions and making comparisons
+- Community-relevant vocabulary that connects to students' social experiences
+- Example: For "transportation" → pollution, traffic, convenient, public transport, emissions
+
+B2 LEVEL: Choose vocabulary for:
+- Analytical and evaluative discussion of the topic
+- Academic-adjacent language for deeper exploration
+- Vocabulary enabling critical thinking and complex reasoning
+- Example: For "transportation" → sustainability, infrastructure, efficiency, carbon footprint
+
+C1/C2 LEVELS: Choose vocabulary for:
+- Sophisticated analysis and professional discussion
+- Nuanced terminology for advanced discourse
+- Specialized vocabulary for expert-level conversation
+- Example: For "transportation" → comprehensive urban planning, multimodal integration, paradigm shift
+
+VOCABULARY APPROPRIATENESS VALIDATION:
+
+For EACH vocabulary word you select, verify it meets ALL these criteria:
+
+LEVEL APPROPRIATENESS CHECKLIST:
+✓ Is this word genuinely appropriate for ${params.cefrLevel} students based on frequency and cognitive complexity?
+✓ Do students at this level have the foundational vocabulary to understand this word's definition?
+✓ Is this word's grammatical usage appropriate for ${params.cefrLevel} level?
+✓ Would this word appear in authentic materials designed for ${params.cefrLevel} level?
+✓ Can this word be defined using vocabulary one level below the target level?
+
+COMMUNICATIVE VALUE VALIDATION:
+✓ Will ${params.cefrLevel} students actually need this word in real communication about "${params.topic}"?
+✓ Does this word enable students to express ideas they want to communicate?
+✓ Is this word frequent enough to justify lesson time for ${params.cefrLevel} students?
+✓ Does this word fill a genuine communication gap for students at this level?
+
+TOPIC RELEVANCE VALIDATION:
+✓ Is this word directly relevant to discussing "${params.topic}" rather than just peripherally related?
+✓ Would students naturally encounter this word when engaging with "${params.topic}"?
+✓ Does this word help students participate meaningfully in conversations about "${params.topic}"?
+
+REJECTION CRITERIA - AUTOMATICALLY REJECT WORDS THAT:
+❌ Are above the cognitive/linguistic level of ${params.cefrLevel} students
+❌ Require vocabulary students don't know to understand the definition
+❌ Are too specialized or technical for general ${params.cefrLevel} communication needs
+❌ Are rarely used in authentic communication at this level
+❌ Serve only academic/specialized purposes inappropriate for the level
+❌ Would appear in lessons one level below with the same meaning and usage
+
+VOCABULARY VALIDATION CHECKLIST:
+
+Before submitting your vocabulary selection, verify EVERY word meets ALL criteria:
+
+MANDATORY QUALITY CONTROL CHECKLIST:
+✓ LEVEL APPROPRIATENESS: Is each word genuinely appropriate for ${params.cefrLevel} students?
+✓ USEFULNESS VERIFICATION: Will students actually need these words in real communication?
+✓ COHERENCE CONFIRMATION: Do the words work together to enable meaningful topic discussion?
+✓ DEFINITION FEASIBILITY: Can each word be defined using vocabulary simpler than the target word?
+✓ PREREQUISITE VALIDATION: Do students have the foundation vocabulary to understand these words?
+✓ COGNITIVE MATCH: Does each word match the cognitive development level of ${params.cefrLevel} students?
+✓ COMMUNICATION VALUE: Does each word serve authentic communicative purposes at this level?
+✓ TOPIC RELEVANCE: Is each word directly relevant and useful for discussing "${params.topic}"?
+
+SEMANTIC COHERENCE AND GROUPING
+
+Select vocabulary that works together meaningfully:
+
+SEMANTIC COHERENCE REQUIREMENTS:
+- Choose words that connect logically to enable topic discussion
+- Include vocabulary from different word classes (nouns, verbs, adjectives, adverbs)
+- Ensure vocabulary supports the lesson's speaking objectives
+- Select words that complement each other for authentic communication
+- Include vocabulary that enables students to express personal opinions and experiences
+
+VOCABULARY DEFINITION STANDARDS:
+- Define using vocabulary one level below the target level
+- Use clear, simple language in definitions
+- Provide functional, contextual definitions rather than dictionary definitions
+- Ensure definitions help students understand usage, not just meaning
+- Include grammatical information where helpful (countable/uncountable, irregular forms)
+
+STEP 3: READING TEXT DEVELOPMENT
+
+SPEAKING-FOCUSED TEXT PURPOSE ANALYSIS
+
+Before writing, analyze the text's role in a speaking-focused lesson for ${params.cefrLevel} students:
+
+PURPOSE CLARIFICATION:
+- This text serves as a CONVERSATION CATALYST, not comprehensive reading practice
+- Students will use this text to GENERATE SPEAKING opportunities about "${params.topic}"
+- The text should PROVIDE ENOUGH CONTENT for meaningful discussion without overwhelming
+- Focus on ACCESSIBLE INFORMATION that students can reference, react to, and build upon in conversation
+
+SPEAKING-OPTIMIZED TEXT LENGTH GUIDELINES:
+
+A1 LEVEL: 80-120 words (2-3 short paragraphs)
+- Quick to read, maximum time for speaking practice
+- Focus on concrete, relatable situations that generate immediate responses
+
+A2 LEVEL: 100-150 words (2-3 paragraphs)  
+- Manageable length allowing focus on conversation
+- Include personal experience connections that prompt sharing
+
+B1 LEVEL: 120-180 words (3 paragraphs)
+- Balanced content that provides discussion material without overwhelming
+- Include different perspectives or approaches students can respond to
+
+B2 LEVEL: 150-220 words (3-4 paragraphs)
+- Rich enough content for analytical discussion
+- Multiple aspects or viewpoints students can explore in conversation
+
+C1/C2 LEVELS: 180-250 words (3-4 paragraphs)
+- Sophisticated content that merits extended discussion
+- Complex enough to sustain in-depth conversation while remaining accessible
+
+CONTENT VALIDATION CHECKLIST:
+✓ PERSONAL RELEVANCE: Can students connect this to their own experiences or opinions?
+✓ DISCUSSION POTENTIAL: Does this content naturally generate questions, reactions, and responses?
+✓ OPINION-WORTHY: Are there aspects students can agree/disagree with or have personal views about?
+✓ ACCESSIBLE COMPLEXITY: Can students understand this quickly to focus on speaking practice?
+✓ CONVERSATION STARTERS: Does this provide clear talking points for pair/group discussions?
+
+STEP 4: SENTENCE FRAME SELECTION
+
+COMMUNICATIVE NEED ANALYSIS FOR ${params.cefrLevel} STUDENTS:
+
+Before selecting sentence patterns, analyze what communication needs ${params.cefrLevel} students actually have:
+
+REAL-WORLD COMMUNICATION NEEDS BY LEVEL:
+A1 STUDENTS: Need patterns for immediate, concrete communication
+- Expressing basic preferences: "I like ___ because ___"
+- Simple descriptions: "___ is ___" 
+- Basic needs: "I want/need ___"
+- Present actions: "I am ___ing"
+
+A2 STUDENTS: Need patterns for personal experiences and simple social interaction
+- Past experiences: "Yesterday I ___ and it was ___"
+- Future plans: "I'm going to ___ because ___"
+- Simple comparisons: "___ is more ___ than ___"
+- Basic opinions: "I think ___ is ___"
+
+B1 STUDENTS: Need patterns for social topics and reasoned communication
+- Expressing opinions with reasons: "I believe ___ because ___"
+- Problem-solution: "The problem is ___, so we should ___"
+- Advantages/disadvantages: "On one hand ___, but on the other hand ___"
+- Making suggestions: "We could ___ in order to ___"
+
+B2 STUDENTS: Need patterns for analytical and evaluative communication
+- Complex reasoning: "Although ___, ___ nevertheless ___"
+- Cause and effect: "___ has led to ___, which in turn ___"
+- Evaluation: "While ___ has advantages, it also ___"
+- Hypotheticals: "If ___ were to happen, then ___"
+
+C1/C2 STUDENTS: Need patterns for sophisticated analysis and professional communication
+- Nuanced arguments: "Despite the fact that ___, it could be argued that ___"
+- Academic discourse: "Research suggests that ___, indicating that ___"
+- Complex conditionals: "Had ___ not occurred, ___ would likely have ___"
+
+PATTERN SELECTION STRATEGY:
+- Choose patterns that enable students to express authentic ideas about "${params.topic}"
+- Focus on high-frequency communication functions related to this topic
+- Ensure patterns can be used productively in conversations about this topic
+- Select patterns that connect the topic to students' experiences and opinions
+
+**Goal:** Develop topic-specific, communicatively valuable sentence patterns that support authentic expression about "${params.topic}" at the ${params.cefrLevel} level.
+
+STEP 5: ACTIVITY & QUESTION GENERATION
+
+COGNITIVE READINESS ANALYSIS FOR ${params.cefrLevel} STUDENTS:
+
+Before creating discussion questions, analyze what ${params.cefrLevel} students can cognitively and linguistically handle:
+
+COGNITIVE ENGAGEMENT ANALYSIS:
+A1 STUDENTS: Can engage with immediate, concrete experiences they can relate to personally
+- Personal situations, daily activities, familiar objects and people
+- Simple cause-and-effect relationships they experience directly
+- Basic problem-solution scenarios from everyday life
+
+A2 STUDENTS: Can engage with personal experiences and simple social situations
+- Past experiences, future plans, personal opinions about familiar topics
+- Simple comparisons between different places, people, or experiences
+- Basic cultural or social topics they encounter in daily life
+
+B1 STUDENTS: Can engage with social issues and practical problems that affect their lives
+- Community issues, lifestyle choices, personal challenges and solutions
+- Comparing different approaches to common problems
+- Topics where they can express opinions and give reasons
+
+B2 STUDENTS: Can engage with analytical thinking about complex social and professional topics
+- Abstract concepts they can relate to their experiences
+- Multiple perspectives on contemporary issues
+- Topics requiring evaluation and critical thinking
+
+C1 STUDENTS: Can engage with sophisticated analysis and nuanced discussion
+- Complex social, academic, or professional issues
+- Subtle distinctions and implied meanings
+- Topics requiring synthesis of multiple ideas and perspectives
+
+C2 STUDENTS: Can engage with highly sophisticated and specialized content
+- Expert-level discussions with nuanced argumentation
+- Complex interdisciplinary connections
+- Topics requiring deep critical analysis and evaluation
+
+DISCUSSION QUESTION DEVELOPMENT BY COGNITIVE LEVEL:
+
+A1 STUDENTS: Create questions that:
+- Focus on immediate, personal experiences students can easily relate to
+- Use simple present and past tense structures
+- Ask about concrete situations and basic preferences
+- Provide enough context to guide responses
+- Example: "Do you like ___? What ___ do you have at home?"
+
+A2 STUDENTS: Create questions that:
+- Connect personal experiences to simple social situations
+- Use past tense and basic future forms appropriately
+- Ask for simple comparisons and opinions
+- Include some cultural and social topics within their experience range
+- Example: "What ___ did you try last week? How was it different from ___?"
+
+B1 STUDENTS: Create questions that:
+- Address social issues and practical problems they encounter
+- Require opinion-giving with basic reasoning
+- Ask for advantages/disadvantages of different approaches
+- Connect to community and lifestyle topics
+- Example: "What do you think about ___? What are the good and bad points of ___?"
+
+B2 STUDENTS: Create questions that:
+- Require analytical thinking about complex social and professional topics
+- Ask for evaluation of different perspectives
+- Include abstract concepts students can connect to their experiences
+- Encourage critical thinking and multiple viewpoint consideration
+- Example: "How do you evaluate the impact of ___? What factors should be considered when ___?"
+
+C1 STUDENTS: Create questions that:
+- Require sophisticated analysis and nuanced discussion
+- Ask for synthesis of multiple ideas and perspectives
+- Include complex social, academic, or professional issues
+- Encourage handling of subtle distinctions and implied meanings
+- Example: "To what extent do you think ___? How might ___ be reconceptualized in light of ___?"
+
+C2 STUDENTS: Create questions that:
+- Require expert-level discussions with nuanced argumentation
+- Ask for complex interdisciplinary connections
+- Include highly sophisticated concepts requiring deep critical analysis
+- Encourage handling of subtle cultural and contextual nuances
+- Example: "How might one reconcile the apparent contradiction between ___ and ___? What are the broader implications of ___ for ___?"
+
+LINGUISTIC SCAFFOLDING BY LEVEL:
+
+A1/A2 SCAFFOLDING NEEDS:
+- Provide concrete context and examples in questions
+- Use familiar vocabulary and simple sentence structures in questions
+- Offer sentence starters or model responses
+- Focus on personal experiences students can easily access
+
+B1 SCAFFOLDING NEEDS:
+- Provide some context but allow for independent thinking
+- Use question stems that guide logical thinking
+- Include opinion-asking with reason-giving opportunities
+- Connect to both personal and broader social experiences
+
+B2+ SCAFFOLDING NEEDS:
+- Minimal scaffolding, focus on analytical thinking
+- Open-ended questions that require evaluation and synthesis
+- Multiple perspectives and complex reasoning opportunities
+
+DISCUSSION QUESTION VALIDATION CHECKLIST:
+
+Before finalizing questions, verify each meets these criteria:
+
+✓ COGNITIVE MATCH: Does this question match the thinking abilities of ${params.cefrLevel} students?
+✓ LINGUISTIC ACCESSIBILITY: Can students understand the question using their current language level?
+✓ SCAFFOLDING APPROPRIATENESS: Is the right amount of support provided for this level?
+✓ PERSONAL RELEVANCE: Can students connect this to their own experiences or interests?
+✓ DISCUSSION POTENTIAL: Will this generate meaningful conversation between students?
+✓ SPEAKING PRACTICE VALUE: Does this question encourage extended speaking appropriate to the level?
+✓ TOPIC CONNECTION: Does this clearly relate to the lesson content and vocabulary?
+
+AUTOMATIC REJECTION CRITERIA - REJECT QUESTIONS THAT:
+❌ Require language skills above the students' level to answer meaningfully
+❌ Are too abstract for students to relate to their experiences
+❌ Can be answered with simple yes/no without encouraging elaboration
+❌ Assume cultural knowledge students may not have
+❌ Are too complex cognitively for the developmental stage
+❌ Don't provide enough context for students to engage meaningfully
+❌ Are generic and could apply to any topic (not specifically about "${params.topic}")
+
+READING COMPREHENSION APPROACH:
+First, analyze appropriate comprehension skills for ${params.cefrLevel} level:
+- Research reading comprehension expectations at ${params.cefrLevel} level
+- Identify appropriate question types for this level (literal, inferential, evaluative)
+- Determine text-dependent question strategies suited to this level
+- Consider appropriate cognitive challenges that remain accessible
+
+Then, based on your analysis:
+- Create 3-5 comprehension questions that:
+  a) Assess understanding at appropriate depths for ${params.cefrLevel}
+  b) Use question formats appropriate for this level
+  c) Progress from more straightforward to more challenging
+  d) Require different reading skills (locating information, making connections, drawing conclusions)
+  e) Focus on meaningful content rather than trivial details
+  f) Are clearly text-dependent (require students to have read and understood the text)
+
+STEP 6: CROSS-COMPONENT INTEGRATION & FINAL VALIDATION
+
+CRITICAL: Before finalizing your lesson, you MUST perform explicit cross-component integration analysis to ensure vocabulary, reading text, and discussion questions work together synergistically.
+
+VOCABULARY-TEXT INTEGRATION ANALYSIS:
+✓ Do vocabulary words appear naturally in the reading text?
+✓ Does the reading text provide meaningful context for vocabulary usage?
+✓ Can students use vocabulary words when discussing the reading text?
+✓ Are vocabulary definitions supported by examples in the reading text?
+
+TEXT-DISCUSSION INTEGRATION ANALYSIS:
+✓ Do discussion questions build naturally from reading text content?
+✓ Can students reference specific parts of the text when answering questions?
+✓ Do questions encourage students to go beyond the text while staying connected to it?
+✓ Does the text provide sufficient background for meaningful discussion?
+
+VOCABULARY-DISCUSSION INTEGRATION ANALYSIS:
+✓ Will students naturally use vocabulary words when answering discussion questions?
+✓ Do discussion topics require and encourage vocabulary usage?
+✓ Can students demonstrate vocabulary mastery through discussion responses?
+✓ Do sentence frames incorporate vocabulary words naturally?
+
+HOLISTIC LESSON COHERENCE CHECK:
+✓ Does every component support the central learning objectives?
+✓ Is there a logical progression from vocabulary → reading → comprehension → discussion?
+✓ Would a teacher be able to see clear connections between all lesson parts?
+✓ Does the lesson feel unified around the topic rather than like separate activities?
+
+I will count the total number of vocabulary items. If you don't include EXACTLY 5 complete vocabulary items, your response will be rejected.
+
+${params.cefrLevel === 'A1' || params.cefrLevel === 'A2' || params.cefrLevel === 'B1' 
+  ? `Since this is a ${params.cefrLevel} level lesson, you MUST include "lowerLevelScaffolding" in each sentence frame. This field should contain simplified explanations and additional support that help lower-level students understand and use the pattern.
+
+This scaffolding is CRITICAL for A1-B1 learners and must be included.`
+  : `Since this is a ${params.cefrLevel} level lesson, do NOT include "lowerLevelScaffolding" in the sentence frames. Advanced learners do not need this additional scaffolding.`}
+
+FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure all fields contain complete content. Do not use placeholders.
+
+{
+  "title": "Descriptive lesson title about ${params.topic}",
+  "level": "${params.cefrLevel}",
+  "focus": "${params.focus}",
+  "estimatedTime": ${params.lessonLength},
+  "sections": [
+    {
+      "type": "warmup",
+      "title": "Warm-up Discussion",
+      "content": {
+        "instructions": "Begin by discussing the following questions with a partner or in small groups.",
+        "targetVocabulary": ["word1", "word2", "word3", "word4", "word5"],
+        "questions": [
+          "Question 1 about ${params.topic}",
+          "Question 2 about ${params.topic}",
+          "Question 3 about ${params.topic}"
+        ]
+      }
+    },
+    {
+      "type": "vocabulary",
+      "title": "Key Vocabulary",
+      "content": {
+        "words": [
+          {
+            "word": "word1",
+            "definition": "Clear definition using simpler vocabulary",
+            "exampleSentence": "Example sentence using the word naturally",
+            "synonyms": ["synonym1", "synonym2"],
+            "difficulty": "${params.cefrLevel}",
+            "pronunciation": {
+              "syllables": ["syl", "la", "bles"],
+              "stressIndex": 0,
+              "phoneticGuide": "fo-NET-ik"
+            },
+            "topicEssential": false
+          }
+        ]
+      }
+    },
+    {
+      "type": "reading",
+      "title": "Reading Text Title",
+      "content": {
+        "text": "Complete reading text about ${params.topic} appropriate for ${params.cefrLevel} level",
+        "paragraphs": [
+          "First paragraph text...",
+          "Second paragraph text...",
+          "Third paragraph text..."
+        ]
+      }
+    },
+    {
+      "type": "comprehension",
+      "title": "Reading Comprehension",
+      "content": {
+        "questions": [
+          {
+            "question": "Comprehension question 1",
+            "options": [
+              "Option A",
+              "Option B", 
+              "Option C",
+              "Option D"
+            ],
+            "correctAnswer": "Option A",
+            "explanation": "Explanation of why this answer is correct"
+          }
+        ]
+      }
+    },
+    {
+      "type": "discussion",
+      "title": "Discussion Questions",
+      "content": {
+        "questions": [
+          {
+            "paragraphContext": "3-5 sentence paragraph providing context for the question using ${params.cefrLevel} appropriate language",
+            "question": "Thought-provoking discussion question",
+            "imagePrompt": "Description for image generation that supports the discussion topic"
+          }
+        ]
+      }
+    },
+    {
+      "type": "sentenceFrames",
+      "title": "Sentence Patterns Practice",
+      "content": {
+        "frames": [
+          {
+            "patternTemplate": "Pattern with blanks like: ___ is ___ because ___.",
+            "languageFunction": "Purpose of this pattern (e.g., 'Expressing opinions with reasons')",
+            "structureComponents": [
+              {
+                "label": "Component name",
+                "description": "What this component does",
+                "examples": ["example1", "example2", "example3"],
+                "inSentenceExample": "Shows component in context"
+              }
+            ],
+            "examples": [
+              {
+                "completeSentence": "Complete example sentence",
+                "breakdown": "Explanation of sentence components"
+              }
+            ],
+            "grammarFocus": ["grammar point 1", "grammar point 2"],
+            "teachingNotes": ["Teaching tip 1", "Teaching tip 2"],
+            "patternVariations": ["Variation 1", "Variation 2"],
+            "lowerLevelScaffolding": "Additional support for A1-B1 students"
+          }
+        ]
+      }
+    }
+  ]
+}
+
+Generate a complete lesson now.
