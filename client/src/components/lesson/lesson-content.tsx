@@ -872,7 +872,7 @@ export function LessonContent({ content }: LessonContentProps) {
               word: wordData.term || wordData.word || "",
               partOfSpeech: wordData.partOfSpeech || "noun",
               definition: wordData.definition || "",
-              example: wordData.example || "",
+              example: wordData.exampleSentence || wordData.example || "",
               pronunciation: pronunciationData,
               syllables: wordData.syllables,
               stressIndex: wordData.stressIndex,
@@ -890,8 +890,14 @@ export function LessonContent({ content }: LessonContentProps) {
               collocations: Array.isArray(wordData.collocations) ? wordData.collocations : undefined,
               usageNotes: wordData.usageNotes || wordData.usage || undefined,
               
-              // CRITICAL: Include semantic map data
-              semanticMap: wordData.semanticMap,
+              // CRITICAL: Include semantic map data (create from available data if not present)
+              semanticMap: wordData.semanticMap || (wordData.synonyms ? {
+                synonyms: Array.isArray(wordData.synonyms) ? wordData.synonyms : [],
+                antonyms: Array.isArray(wordData.antonyms) ? wordData.antonyms : [],
+                relatedConcepts: Array.isArray(wordData.relatedConcepts) ? wordData.relatedConcepts : [],
+                contexts: Array.isArray(wordData.contexts) ? wordData.contexts : [],
+                associatedWords: Array.isArray(wordData.associatedWords) ? wordData.associatedWords : []
+              } : undefined),
               
               // Include topic-essential flag
               topicEssential: wordData.topicEssential || false
