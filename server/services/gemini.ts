@@ -1620,8 +1620,18 @@ If an example is a simple string, return a string. If it's an object with "compl
     // Generate images if sections exist
     if (lessonContent.sections && Array.isArray(lessonContent.sections)) {
       console.log('Starting image generation loop for Gemini lesson...');
-      console.log('Available sections:', lessonContent.sections.map(s => s.type));
+      console.log('Available sections:', lessonContent.sections.map((s: any) => s.type));
       for (const section of lessonContent.sections) {
+        // Debug: Log each section being processed
+        console.log(`Processing section: ${section.type}`);
+        if (section.type === 'vocabulary') {
+          console.log('Vocabulary section found:', JSON.stringify({
+            hasWords: !!section.words,
+            wordsIsArray: Array.isArray(section.words),
+            wordCount: section.words ? section.words.length : 0,
+            firstWordStructure: section.words && section.words[0] ? Object.keys(section.words[0]) : 'no words'
+          }, null, 2));
+        }
         if (section.type === 'vocabulary' && section.words && Array.isArray(section.words)) {
           console.log(`Found ${section.words.length} vocabulary words, checking for imagePrompts...`);
           // Debug: Log what vocabulary words actually contain
