@@ -46,7 +46,7 @@ export class GeminiService {
         generationConfig: {
           temperature: 0.3,
           topP: 0.9,
-          maxOutputTokens: 16384,
+          maxOutputTokens: 16384, // Increased token count from 8192 to 16384 for more detailed lessons
         },
       });
       
@@ -1054,9 +1054,6 @@ REJECTION CRITERIA - REJECT LESSONS WHERE:
 ❌ Components feel disconnected or only superficially related
 ❌ The lesson lacks a coherent learning progression
 
-IMPORTANT: IMAGE PROMPT GENERATION
-For each vocabulary word and discussion question, you MUST generate a specific, creative "imagePrompt" field. This imagePrompt should be a detailed description for generating an illustration that helps students understand and remember the concept. Be creative and specific - avoid generic descriptions. The image should not contain any text or words.
-
 FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure all fields contain complete content. Do not use placeholders.
 
 {
@@ -1090,8 +1087,6 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
       "teacherNotes": "Complete teacher notes..."
     },
     // VOCABULARY SECTION (Complete - 5 words)
-    // CRITICAL: Each vocabulary word MUST include a creative, specific imagePrompt
-    // The imagePrompt should be a detailed description for generating an illustration
     {
       "type": "vocabulary",
       "title": "Key Vocabulary",
@@ -1622,8 +1617,6 @@ If an example is a simple string, return a string. If it's an object with "compl
       provider: 'gemini'
     };
     
-
-    
     // Generate images if sections exist
     if (lessonContent.sections && Array.isArray(lessonContent.sections)) {
       console.log('Starting image generation loop for Gemini lesson...');
@@ -1631,25 +1624,23 @@ If an example is a simple string, return a string. If it's an object with "compl
         if (section.type === 'vocabulary' && section.words && Array.isArray(section.words)) {
           console.log(`Found ${section.words.length} vocabulary words, generating images...`);
           for (const word of section.words) {
-            // Generate fallback imagePrompt if missing
-            if (!word.imagePrompt && word.term) {
-              word.imagePrompt = `An illustration representing the concept of '${word.term}'. The image should be visually engaging and help students understand and remember this vocabulary word. No text or words should appear in the image.`;
-            }
-            
             if (word.imagePrompt) {
                try {
+                 // Generate unique ID for logging
                  const requestId = `vocab_${word.term ? word.term.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 15) : 'word'}`;
                  word.imageBase64 = await stabilityService.generateImage(word.imagePrompt, requestId);
                } catch (imgError) {
                  console.error(`Error generating image for vocab word ${word.term}:`, imgError);
-                 word.imageBase64 = null;
+                 word.imageBase64 = null; // Ensure field exists even on error
                }
             }
           }
         }
         if (section.type === 'discussion' && section.questions && Array.isArray(section.questions)) {
-          console.log(`Found ${section.questions.length} discussion questions, generating images...`);
+            console.log(`Found ${section.questions.length} discussion questions, generating images...`);
           for (const question of section.questions) {
+            // Debug: Log the actual question structure
+            console.log(`Processing discussion question:`, JSON.stringify(question, null, 2));
             
             // Ensure each question has its own paragraphContext
             // This field is already provided in the template - just make sure it's intact
