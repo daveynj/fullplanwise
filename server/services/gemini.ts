@@ -149,12 +149,7 @@ export class GeminiService {
                 .replace(/(['"])([\w]+)(['"]):/g, '"$2":') // Ensure property names use double quotes
                 .replace(/,\s*,/g, ',')           // Fix double commas
                 .replace(/"\s*"([^"]*)\s*"/g, '"$1"') // Fix broken quoted strings
-                .replace(/,\s*"([^"]*)",\s*"can\s+lea/g, '", "can lea') // Fix the specific error pattern from logs
-                .replace(/"(\s*)\n(\s*)"([^"]*)":/g, '"$1,$2"$3":') // Fix missing commas between properties
-                .replace(/}(\s*)\n(\s*)"([^"]*)":/g, '}$1,$2"$3":') // Fix missing commas after objects
-                .replace(/](\s*)\n(\s*)"([^"]*)":/g, ']$1,$2"$3":') // Fix missing commas after arrays
-                .replace(/"\s*\n\s*}/g, '"}') // Fix broken string endings
-                .replace(/"\s*\n\s*]/g, '"]'); // Fix broken string endings in arrays
+                .replace(/,\s*"([^"]*)",\s*"can\s+lea/g, '", "can lea'); // Fix the specific error pattern from logs
                 
               // Handle other common errors
               let inString = false;
@@ -1627,92 +1622,34 @@ If an example is a simple string, return a string. If it's an object with "compl
       provider: 'gemini'
     };
     
-    // Debug: Log the raw AI response for vocabulary and discussion sections
-    if (lessonContent.sections && Array.isArray(lessonContent.sections)) {
-      const vocabSection = lessonContent.sections.find((s: any) => s.type === 'vocabulary');
-      const discussionSection = lessonContent.sections.find((s: any) => s.type === 'discussion');
-      
-      if (vocabSection) {
-        console.log('🔍 RAW AI VOCABULARY RESPONSE:');
-        console.log('Vocabulary words from AI:', JSON.stringify(vocabSection.words?.slice(0, 2).map((w: any) => ({
-          term: w.term,
-          hasImagePrompt: !!w.imagePrompt,
-          imagePrompt: w.imagePrompt || 'NOT_PROVIDED'
-        })), null, 2));
-      }
-      
-      if (discussionSection) {
-        console.log('🔍 RAW AI DISCUSSION RESPONSE:');
-        console.log('Discussion questions from AI:', JSON.stringify(discussionSection.questions?.slice(0, 2).map((q: any) => ({
-          question: q.question?.substring(0, 50) + '...',
-          hasImagePrompt: !!q.imagePrompt,
-          imagePrompt: q.imagePrompt || 'NOT_PROVIDED'
-        })), null, 2));
-      }
-    }
+
     
     // Generate images if sections exist
     if (lessonContent.sections && Array.isArray(lessonContent.sections)) {
       console.log('Starting image generation loop for Gemini lesson...');
-      console.log('Available sections:', lessonContent.sections.map((s: any) => s.type));
       for (const section of lessonContent.sections) {
-        // Debug: Log each section being processed
-        console.log(`Processing section: ${section.type}`);
-        if (section.type === 'vocabulary') {
-          console.log('Vocabulary section found:', JSON.stringify({
-            hasWords: !!section.words,
-            wordsIsArray: Array.isArray(section.words),
-            wordCount: section.words ? section.words.length : 0,
-            firstWordStructure: section.words && section.words[0] ? Object.keys(section.words[0]) : 'no words'
-          }, null, 2));
-        }
         if (section.type === 'vocabulary' && section.words && Array.isArray(section.words)) {
-          console.log(`Found ${section.words.length} vocabulary words, checking for imagePrompts...`);
-          // Debug: Log what vocabulary words actually contain
-          console.log('Vocabulary words structure:', JSON.stringify(section.words.map(w => ({
-            term: w.term,
-            hasImagePrompt: !!w.imagePrompt,
-            imagePrompt: w.imagePrompt ? w.imagePrompt.substring(0, 50) + '...' : 'MISSING'
-          })), null, 2));
-          
+          console.log(`Found ${section.words.length} vocabulary words, generating images...`);
           for (const word of section.words) {
-            // Generate fallback imagePrompt if missing (same approach as discussion questions)
+            // Generate fallback imagePrompt if missing
             if (!word.imagePrompt && word.term) {
               word.imagePrompt = `An illustration representing the concept of '${word.term}'. The image should be visually engaging and help students understand and remember this vocabulary word. No text or words should appear in the image.`;
-              console.log(`🔄 Generated fallback imagePrompt for vocabulary word: "${word.term}"`);
-            } else if (word.imagePrompt) {
-              console.log(`✅ AI provided imagePrompt for vocabulary word: "${word.term}"`);
             }
             
             if (word.imagePrompt) {
                try {
-                 // Generate unique ID for logging
                  const requestId = `vocab_${word.term ? word.term.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 15) : 'word'}`;
-                 console.log(`Requesting image generation for vocabulary word "${word.term}" with prompt: "${word.imagePrompt.substring(0, 100)}..."`);
                  word.imageBase64 = await stabilityService.generateImage(word.imagePrompt, requestId);
-                 console.log(`Successfully generated image for vocabulary word "${word.term}"`);
                } catch (imgError) {
                  console.error(`Error generating image for vocab word ${word.term}:`, imgError);
-                 word.imageBase64 = null; // Ensure field exists even on error
+                 word.imageBase64 = null;
                }
-            } else {
-              console.log(`No imagePrompt found for vocabulary word: "${word.term || 'unknown'}"`);
-              word.imageBase64 = null; // Ensure field exists
             }
           }
         }
         if (section.type === 'discussion' && section.questions && Array.isArray(section.questions)) {
-          console.log(`Found ${section.questions.length} discussion questions, checking for imagePrompts...`);
-          // Debug: Log what discussion questions actually contain
-          console.log('Discussion questions structure:', JSON.stringify(section.questions.map(q => ({
-            question: q.question ? q.question.substring(0, 30) + '...' : 'MISSING',
-            hasImagePrompt: !!q.imagePrompt,
-            imagePrompt: q.imagePrompt ? q.imagePrompt.substring(0, 50) + '...' : 'MISSING'
-          })), null, 2));
-          
+          console.log(`Found ${section.questions.length} discussion questions, generating images...`);
           for (const question of section.questions) {
-            // Debug: Log the actual question structure
-            console.log(`Processing discussion question:`, JSON.stringify(question, null, 2));
             
             // Ensure each question has its own paragraphContext
             // This field is already provided in the template - just make sure it's intact
