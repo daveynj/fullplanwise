@@ -1620,6 +1620,7 @@ If an example is a simple string, return a string. If it's an object with "compl
     // Generate images if sections exist
     if (lessonContent.sections && Array.isArray(lessonContent.sections)) {
       console.log('Starting image generation loop for Gemini lesson...');
+      console.log('Available sections:', lessonContent.sections.map(s => s.type));
       for (const section of lessonContent.sections) {
         if (section.type === 'vocabulary' && section.words && Array.isArray(section.words)) {
           console.log(`Found ${section.words.length} vocabulary words, checking for imagePrompts...`);
@@ -1631,10 +1632,13 @@ If an example is a simple string, return a string. If it's an object with "compl
           })), null, 2));
           
           for (const word of section.words) {
-            // Generate fallback imagePrompt if missing (just like discussion questions)
+            // Check if AI provided imagePrompt
             if (!word.imagePrompt && word.term) {
+              console.log(`⚠️ AI did not provide imagePrompt for vocabulary word: "${word.term}" - USING FALLBACK`);
               word.imagePrompt = `A simple, clear illustration showing the concept of '${word.term}'. The image should help students understand and remember this vocabulary word. No text or words should appear in the image.`;
               console.log(`Generated fallback imagePrompt for vocabulary word: "${word.term}"`);
+            } else if (word.imagePrompt) {
+              console.log(`✅ AI provided imagePrompt for vocabulary word: "${word.term}"`);
             }
             
             if (word.imagePrompt) {
