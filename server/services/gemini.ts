@@ -845,6 +845,22 @@ Your selected vocabulary should enable ${params.cefrLevel} students to engage in
 
 I will count the total number of vocabulary items. If you don't include EXACTLY ${minVocabCount} complete vocabulary items, your response will be rejected.
 
+🎯 VOCABULARY IMAGE PROMPT INSTRUCTIONS:
+For each vocabulary word, create a detailed imagePrompt using this exact format:
+"A [style] illustration of [specific visual elements] showing [vocabulary concept]. [Details about colors, setting, perspective]. No text, words, or letters visible in the image."
+
+IMAGEROMPT EXAMPLES:
+- "restaurant" → "A modern illustration of a busy restaurant interior with customers dining at tables, waiters serving food, and a warm, inviting atmosphere. Bright lighting and colorful decor. No text, words, or letters visible in the image."
+- "excited" → "A realistic illustration of a young person jumping with arms raised in celebration, with a big smile and bright, joyful expression. Vibrant colors and dynamic pose showing clear excitement. No text, words, or letters visible in the image."
+- "compare" → "A clean illustration showing two smartphones side by side with hands pointing at different features of each phone. Modern style with bright colors demonstrating comparison. No text, words, or letters visible in the image."
+
+Each imagePrompt MUST include:
+✓ Specific visual elements that clearly show the word meaning
+✓ Style direction (modern illustration, realistic, clean cartoon)
+✓ Color and composition details
+✓ Cultural appropriateness for diverse ESL learners
+✓ Always end with "No text, words, or letters visible in the image."
+
 🎯 VOCABULARY SELECTION SUCCESS CRITERIA:
 ✓ Words selected through the 5-step analysis process above
 ✓ Each word serves authentic communication needs for discussing "${params.topic}"
