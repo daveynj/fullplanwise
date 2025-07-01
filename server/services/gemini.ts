@@ -1093,7 +1093,6 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
       "words": [
         {
           "term": "word1", "partOfSpeech": "noun", "definition": "Complete definition...", "example": "Complete example...",
-          "imagePrompt": "A simple, clear illustration showing the concept of 'word1'. The image should help students understand and remember this vocabulary word. No text or words should appear in the image.",
           "semanticGroup": "Group Name", 
           "additionalExamples": ["Example 1", "Example 2"],
           "wordFamily": {"words": ["related1", "related2"], "description": "How these words are related"},
@@ -1112,7 +1111,6 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
         },
         {
           "term": "word2", "partOfSpeech": "verb", "definition": "Complete definition...", "example": "Complete example...",
-          "imagePrompt": "A simple, clear illustration showing the concept of 'word2'. The image should help students understand and remember this vocabulary word. No text or words should appear in the image.",
           "semanticGroup": "Group Name", 
           "additionalExamples": ["Example 1", "Example 2"],
           "wordFamily": {"words": ["related1", "related2"], "description": "How these words are related"},
