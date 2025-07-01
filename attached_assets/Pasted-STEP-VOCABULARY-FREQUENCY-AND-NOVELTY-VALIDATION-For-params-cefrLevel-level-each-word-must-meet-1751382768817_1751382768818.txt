@@ -1,0 +1,62 @@
+STEP: VOCABULARY FREQUENCY AND NOVELTY VALIDATION
+For ${params.cefrLevel} level, each word must meet these criteria. The aim is to introduce new, relevant vocabulary while ensuring a solid foundation.
+ * A1 WORDS:
+   * Primary Introduction: Must be within the top 1,000 most frequent English words.
+   * Novelty Check: Prioritize words generally introduced at A1 or words that are essential for basic communication within the topic.
+ * A2 WORDS:
+   * Primary Introduction: Must be within the top 2,000 most frequent English words.
+   * Novelty Check: Prioritize words generally introduced at A2, and avoid words primarily introduced at A1, unless their A2 usage is significantly more complex (e.g., a new phrasal verb using an A1 base verb).
+ * B1 WORDS:
+   * Primary Introduction: Must be within the top 3,000 most frequent English words.
+   * Novelty Check: Prioritize words generally introduced at B1, and avoid words primarily introduced at A1 or A2, unless they are critical topic-specific vocabulary with a new B1 context or collocation.
+ * B2 WORDS:
+   * Primary Introduction: Can use words beyond the top 3,000, focusing on those typically introduced at B2.
+   * Novelty Check: Prioritize words that are new to the B2 level for the given topic. Words from lower levels should only be included if they form part of a new, more complex B2-level phrase, collocation, or idiom, or are essential for abstract discussion.
+   * Topic-Essential: Must be highly relevant and essential for understanding and discussing the specific topic at a B2 depth.
+ * C1/C2 WORDS:
+   * Primary Introduction: Focus on specialized, academic, formal, or nuanced vocabulary. Frequency is less of a strict constraint here.
+   * Novelty Check: Prioritize words that are new to the C1/C2 level for the given topic, allowing for highly sophisticated and abstract terms.
+   * Sophistication: Can include idiomatic expressions, advanced collocations, and words demonstrating a high level of lexical precision.
+VALIDATION CHECK: Before including any word, verify:
+"Is [word] appropriate for ${params.cefrLevel} considering its typical introduction level and novelty for this CEFR band?"
+If NO, replace with a level-appropriate and novel alternative.
+COGNITIVE APPROPRIATENESS CHECK:
+Verify if students at ${params.cefrLevel} can not only comprehend but also productively engage with the word as expected for their level.
+ * A1: Can students identify this word and use it in single-word or very short phrase responses in basic daily survival situations?
+ * A2: Can students describe something simple using this word and participate in simple social interactions?
+ * B1: Can students explain concepts in simple sentences, express personal opinions, or narrate simple events using this word in problem-solving discussions?
+ * B2: Can students use this word in abstract discussions, support arguments, speculate, or evaluate situations?
+ * C1/C2: Can students analyze nuanced meanings, synthesize information, present formal arguments, or discuss complex ethical dilemmas using this word?
+REJECT if the word requires cognitive or productive abilities beyond the specified level's typical output.
+COMMUNICATION CONTEXT CHECK:
+Ensure the word's primary use-case aligns with the communication needs and contexts typical for ${params.cefrLevel}.
+ * A1: Is this word predominantly used in basic daily survival situations (e.g., introductions, simple requests, personal information)?
+ * A2: Is this word predominantly used in simple social interactions (e.g., describing routines, expressing simple likes/dislikes, making simple plans)?
+ * B1: Is this word predominantly used in problem-solving discussions, for giving instructions, making comparisons, or expressing agreement/disagreement about familiar topics?
+ * B2: Is this word predominantly used in opinion/argument contexts, for debating, persuading, or negotiating complex issues?
+ * C1/C2: Is this word predominantly used in academic/professional contexts, for presenting formal arguments, critical analysis, or moderating discussions?
+REJECT if the word's typical usage context doesn't match the student's communication needs at this level.
+FOUNDATION VOCABULARY CHECK:
+Before introducing a new word, ensure students are expected to know its prerequisite vocabulary.
+ * Instruction: For each selected vocabulary item, explicitly identify 1-3 foundational words from preceding CEFR levels that are essential for understanding it.
+ * Example: Before teaching "destination" (B1), students must know: "place" (A1), "go" (A1), "travel" (A2), "where" (A1).
+ * Validation: If any prerequisite word is typically not known at a lower level, reconsider the target word's appropriateness or ensure the prerequisite is also introduced/recycled.
+REJECT any word requiring unknown prerequisite vocabulary that cannot be easily inferred or quickly introduced.
+LEVEL-SPECIFIC TOPIC VOCABULARY & NOVELTY FOCUS:
+For the chosen topic (e.g., "Travel"), focus on providing new and challenging vocabulary for each CEFR level.
+ * General Principle: The goal is to provide vocabulary that is fresh and appropriate for the current level, avoiding direct re-teaching of words primarily introduced at lower levels.
+ * A1: Focus on fundamental, concrete words directly related to the topic for basic communication.
+   * Examples for "Travel": plane, hotel, ticket, bag, passport, go, see.
+ * A2: Focus on slightly more descriptive or action-oriented words related to the topic, expanding on A1 concepts.
+   * Examples for "Travel": journey, tourist, vacation, culture, local, visit, stay, foreign.
+ * B1: Focus on vocabulary for discussing experiences, plans, and more nuanced aspects of the topic.
+   * Examples for "Travel": destination, experience, adventure, explore, traditional, organize, book, arrange.
+ * B2: Focus on vocabulary for abstract discussions, opinions, and more complex aspects of the topic (e.g., ethical, environmental).
+   * Examples for "Travel": itinerary, authentic, sustainable, perspective, immersive, impact, develop, consider.
+ * C1: Focus on sophisticated, formal, or specialized vocabulary, including collocations and academic terms related to the topic.
+   * Examples for "Travel": expedition, cosmopolitan, wanderlust, cultural immersion, heritage, preservation, undertake.
+ * C2: Focus on highly specialized, nuanced, or idiomatic vocabulary for expert-level discussion and critical analysis.
+   * Examples for "Travel": vernacular, peripatetic, cultural dialectics, arduous, discerning, profound.
+VALIDATION: For each new level's topic vocabulary, ensure that:
+ * Words are primarily introduced at that specific CEFR level or higher.
+ * There is minimal to no overlap where a word primarily taught as "new" at a lower level is re-presented as "new" at a higher level for the same basic meaning. If a word appears across levels, it must be because it's used in a significantly more complex way, collocation, or nuanced meaning appropriate for the higher level (e.g., "go" (A1) vs. "undergo a transformation" (C1)).

@@ -890,7 +890,10 @@ export function LessonContent({ content }: LessonContentProps) {
               usageNotes: wordData.usageNotes || wordData.usage || undefined,
               
               // CRITICAL: Include semantic map data
-              semanticMap: wordData.semanticMap
+              semanticMap: wordData.semanticMap,
+              
+              // Include topic-essential flag
+              topicEssential: wordData.topicEssential || false
             });
           }
         });
@@ -1393,7 +1396,10 @@ export function LessonContent({ content }: LessonContentProps) {
             usageNotes: wordData.usageNotes || wordData.usage || undefined,
             
             // CRITICAL: Include semantic map data
-            semanticMap: wordData.semanticMap
+            semanticMap: wordData.semanticMap,
+            
+            // Include topic-essential flag
+            topicEssential: wordData.topicEssential || false
           });
         }
       });
