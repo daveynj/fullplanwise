@@ -1622,7 +1622,14 @@ If an example is a simple string, return a string. If it's an object with "compl
       console.log('Starting image generation loop for Gemini lesson...');
       for (const section of lessonContent.sections) {
         if (section.type === 'vocabulary' && section.words && Array.isArray(section.words)) {
-          console.log(`Found ${section.words.length} vocabulary words, generating images...`);
+          console.log(`Found ${section.words.length} vocabulary words, checking for imagePrompts...`);
+          // Debug: Log what vocabulary words actually contain
+          console.log('Vocabulary words structure:', JSON.stringify(section.words.map(w => ({
+            term: w.term,
+            hasImagePrompt: !!w.imagePrompt,
+            imagePrompt: w.imagePrompt ? w.imagePrompt.substring(0, 50) + '...' : 'MISSING'
+          })), null, 2));
+          
           for (const word of section.words) {
             // Generate fallback imagePrompt if missing (just like discussion questions)
             if (!word.imagePrompt && word.term) {
@@ -1648,7 +1655,14 @@ If an example is a simple string, return a string. If it's an object with "compl
           }
         }
         if (section.type === 'discussion' && section.questions && Array.isArray(section.questions)) {
-            console.log(`Found ${section.questions.length} discussion questions, generating images...`);
+          console.log(`Found ${section.questions.length} discussion questions, checking for imagePrompts...`);
+          // Debug: Log what discussion questions actually contain
+          console.log('Discussion questions structure:', JSON.stringify(section.questions.map(q => ({
+            question: q.question ? q.question.substring(0, 30) + '...' : 'MISSING',
+            hasImagePrompt: !!q.imagePrompt,
+            imagePrompt: q.imagePrompt ? q.imagePrompt.substring(0, 50) + '...' : 'MISSING'
+          })), null, 2));
+          
           for (const question of section.questions) {
             // Debug: Log the actual question structure
             console.log(`Processing discussion question:`, JSON.stringify(question, null, 2));
