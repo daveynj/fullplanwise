@@ -1087,6 +1087,8 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
       "teacherNotes": "Complete teacher notes..."
     },
     // VOCABULARY SECTION (Complete - 5 words)
+    // CRITICAL: Each vocabulary word MUST include a creative, specific imagePrompt
+    // The imagePrompt should be a detailed description for generating an illustration
     {
       "type": "vocabulary",
       "title": "Key Vocabulary",
@@ -1100,7 +1102,7 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
           "usageNotes": "Complete usage notes...",
           "teachingTips": "Complete tips...",
           "pronunciation": {"syllables": ["syl"], "stressIndex": 0, "phoneticGuide": "guide"},
-          "imagePrompt": "Complete image prompt (no text)...",
+          "imagePrompt": "REQUIRED: A detailed, creative visual description that clearly illustrates the concept of 'word1'. Be specific and vivid to help students remember this word. No text should appear in the image.",
           "semanticMap": {
             "synonyms": ["actual_synonym1", "actual_synonym2", "actual_synonym3"],
             "antonyms": ["actual_antonym1", "actual_antonym2"], 
@@ -1118,7 +1120,7 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
           "usageNotes": "Complete usage notes...",
           "teachingTips": "Complete tips...",
           "pronunciation": {"syllables": ["syl"], "stressIndex": 0, "phoneticGuide": "guide"},
-          "imagePrompt": "Complete image prompt (no text)...",
+          "imagePrompt": "REQUIRED: A detailed, creative visual description that clearly illustrates the concept of 'word2'. Be specific and vivid to help students remember this word. No text should appear in the image.",
           "semanticMap": {
             "synonyms": ["actual_synonym1", "actual_synonym2", "actual_synonym3"],
             "antonyms": ["actual_antonym1", "actual_antonym2"], 
