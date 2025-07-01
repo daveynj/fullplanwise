@@ -66,8 +66,10 @@ export function extractComprehensionQuestions(content: any): { question: string;
         (s.title && typeof s.title === 'string' && s.title.toLowerCase().includes('comprehension'))
       );
       
-      if (section && section.questions && Array.isArray(section.questions) && section.questions.length > 0) {
-        return section.questions;
+      // Check for questions in new improved prompt structure (content.questions) or legacy format
+      const questionsSource = section?.content?.questions || section?.questions;
+      if (questionsSource && Array.isArray(questionsSource) && questionsSource.length > 0) {
+        return questionsSource;
       }
     }
     
