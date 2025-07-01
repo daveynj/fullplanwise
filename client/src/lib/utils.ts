@@ -232,13 +232,15 @@ export function extractDiscussionQuestions(content: any): any[] {
         }
         
         // Handle AI format with questions as array or object
-        if (discussionSection.questions) {
-          if (Array.isArray(discussionSection.questions)) {
+        // Check for questions in new improved prompt structure (content.questions) or legacy format
+        const questionsSource = discussionSection.content?.questions || discussionSection.questions;
+        if (questionsSource) {
+          if (Array.isArray(questionsSource)) {
             // Handle array format
-            console.log("Discussion questions as array:", discussionSection.questions);
+            console.log("Discussion questions as array:", questionsSource);
             
             // Map the questions, but with enhanced structure debugging
-            const processedQuestions = discussionSection.questions.map((q: any) => {
+            const processedQuestions = questionsSource.map((q: any) => {
               console.log("Processing discussion question item:", q);
               
               if (typeof q === 'string') {
@@ -279,13 +281,13 @@ export function extractDiscussionQuestions(content: any): any[] {
             
             console.log("Final processed questions:", processedQuestions);
             return processedQuestions;
-          } else if (typeof discussionSection.questions === 'object') {
+          } else if (typeof questionsSource === 'object') {
             // Handle object format (AI sometimes returns objects instead of arrays)
-            console.log("Discussion questions as object:", discussionSection.questions);
+            console.log("Discussion questions as object:", questionsSource);
             
             // Special case: Check if question keys themselves contain question marks
             // This handles various AI response formats
-            const directQuestionKeys = Object.keys(discussionSection.questions).filter(
+            const directQuestionKeys = Object.keys(questionsSource).filter(
               key => typeof key === 'string' && key.includes('?')
             );
             
@@ -308,14 +310,14 @@ export function extractDiscussionQuestions(content: any): any[] {
             }
             
             // Standard case: Look for question keys/values
-            const questionKeys = Object.keys(discussionSection.questions).filter(
-              key => typeof discussionSection.questions[key] === 'string' && 
-                    (key.includes('question') || discussionSection.questions[key].includes('?'))
+            const questionKeys = Object.keys(questionsSource).filter(
+              key => typeof questionsSource[key] === 'string' && 
+                    (key.includes('question') || questionsSource[key].includes('?'))
             );
             
             if (questionKeys.length > 0) {
               questionKeys.forEach(key => {
-                const question = discussionSection.questions[key];
+                const question = questionsSource[key];
                 if (question && typeof question === 'string' && question.trim().length > 0) {
                   questions.push({ 
                     question: question.trim(),
