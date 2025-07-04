@@ -1005,20 +1005,13 @@ PATTERN SELECTION STRATEGY:
 I will count the total number of vocabulary items. If you don't include EXACTLY ${minVocabCount} complete vocabulary items, your response will be rejected.
 
 🎯 VOCABULARY IMAGE PROMPT INSTRUCTIONS:
-For each vocabulary word, create a detailed imagePrompt using this exact format:
-"A [style] illustration of [specific visual elements] showing [vocabulary concept]. [Details about colors, setting, perspective]. No text, words, or letters visible in the image."
+For each vocabulary word, create a simple imagePrompt that clearly shows the word meaning:
+"An illustration showing [word meaning] in a clear, educational way. No text visible."
 
-IMAGEROMPT EXAMPLES:
-- "restaurant" → "A modern illustration of a busy restaurant interior with customers dining at tables, waiters serving food, and a warm, inviting atmosphere. Bright lighting and colorful decor. No text, words, or letters visible in the image."
-- "excited" → "A realistic illustration of a young person jumping with arms raised in celebration, with a big smile and bright, joyful expression. Vibrant colors and dynamic pose showing clear excitement. No text, words, or letters visible in the image."
-- "compare" → "A clean illustration showing two smartphones side by side with hands pointing at different features of each phone. Modern style with bright colors demonstrating comparison. No text, words, or letters visible in the image."
-
-Each imagePrompt MUST include:
-✓ Specific visual elements that clearly show the word meaning
-✓ Style direction (modern illustration, realistic, clean cartoon)
-✓ Color and composition details
-✓ Cultural appropriateness for diverse ESL learners
-✓ Always end with "No text, words, or letters visible in the image."
+EXAMPLES:
+- "restaurant" → "An illustration showing a restaurant with people dining. No text visible."
+- "excited" → "An illustration showing someone feeling excited and happy. No text visible."
+- "compare" → "An illustration showing two items being compared side by side. No text visible."
 
 🎯 VOCABULARY SELECTION SUCCESS CRITERIA:
 ✓ Words selected through the 5-step analysis process above
@@ -1278,7 +1271,7 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
           "usageNotes": "Complete usage notes...",
           "teachingTips": "Complete tips...",
           "pronunciation": {"syllables": ["syl"], "stressIndex": 0, "phoneticGuide": "guide"},
-          "imagePrompt": "Complete image prompt (no text)...",
+          "imagePrompt": "An illustration showing the meaning of word1 clearly. No text visible.",
           "semanticMap": {
             "synonyms": ["actual_synonym1", "actual_synonym2", "actual_synonym3"],
             "antonyms": ["actual_antonym1", "actual_antonym2"], 
@@ -1296,7 +1289,7 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
           "usageNotes": "Complete usage notes...",
           "teachingTips": "Complete tips...",
           "pronunciation": {"syllables": ["syl"], "stressIndex": 0, "phoneticGuide": "guide"},
-          "imagePrompt": "Complete image prompt (no text)...",
+          "imagePrompt": "An illustration showing the meaning of word2 clearly. No text visible.",
           "semanticMap": {
             "synonyms": ["actual_synonym1", "actual_synonym2", "actual_synonym3"],
             "antonyms": ["actual_antonym1", "actual_antonym2"], 
@@ -1314,7 +1307,7 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
           "usageNotes": "Complete usage notes...",
           "teachingTips": "Complete tips...",
           "pronunciation": {"syllables": ["syl"], "stressIndex": 0, "phoneticGuide": "guide"},
-          "imagePrompt": "Complete image prompt (no text)...",
+          "imagePrompt": "An illustration showing the meaning of word3 clearly. No text visible.",
           "semanticMap": {
             "synonyms": ["actual_synonym1", "actual_synonym2", "actual_synonym3"],
             "antonyms": ["actual_antonym1", "actual_antonym2"], 
@@ -1332,7 +1325,7 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
           "usageNotes": "Complete usage notes...",
           "teachingTips": "Complete tips...",
           "pronunciation": {"syllables": ["syl"], "stressIndex": 0, "phoneticGuide": "guide"},
-          "imagePrompt": "Complete image prompt (no text)...",
+          "imagePrompt": "An illustration showing the meaning of word4 clearly. No text visible.",
           "semanticMap": {
             "synonyms": ["actual_synonym1", "actual_synonym2", "actual_synonym3"],
             "antonyms": ["actual_antonym1", "actual_antonym2"], 
@@ -1350,7 +1343,7 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
           "usageNotes": "Complete usage notes...",
           "teachingTips": "Complete tips...",
           "pronunciation": {"syllables": ["syl"], "stressIndex": 0, "phoneticGuide": "guide"},
-          "imagePrompt": "Complete image prompt (no text)...",
+          "imagePrompt": "An illustration showing the meaning of word5 clearly. No text visible.",
           "semanticMap": {
             "synonyms": ["actual_synonym1", "actual_synonym2", "actual_synonym3"],
             "antonyms": ["actual_antonym1", "actual_antonym2"], 
@@ -1802,15 +1795,25 @@ If an example is a simple string, return a string. If it's an object with "compl
         if (section.type === 'vocabulary' && section.words && Array.isArray(section.words)) {
           console.log(`Found ${section.words.length} vocabulary words, generating images...`);
           for (const word of section.words) {
+            // Generate fallback imagePrompt if missing
+            if (!word.imagePrompt && word.term) {
+              word.imagePrompt = `An illustration showing the meaning of "${word.term}" in a clear, educational way. No text visible in the image.`;
+              console.log(`Generated fallback imagePrompt for vocab word: "${word.term}"`);
+            }
+            
             if (word.imagePrompt) {
                try {
                  // Generate unique ID for logging
                  const requestId = `vocab_${word.term ? word.term.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 15) : 'word'}`;
                  word.imageBase64 = await stabilityService.generateImage(word.imagePrompt, requestId);
+                 console.log(`Successfully generated image for vocab word: ${word.term}`);
                } catch (imgError) {
                  console.error(`Error generating image for vocab word ${word.term}:`, imgError);
                  word.imageBase64 = null; // Ensure field exists even on error
                }
+            } else {
+              console.log(`No imagePrompt available for vocab word: "${word.term}"`);
+              word.imageBase64 = null; // Ensure field exists
             }
           }
         }
