@@ -42,35 +42,47 @@ export function VocabularySemanticMap({ word }: SemanticMapProps) {
 
   const { semanticMap } = word;
 
+  // Helper function to ensure semantic map fields are arrays
+  const ensureArray = (value: any): string[] => {
+    if (Array.isArray(value)) {
+      return value.filter(item => typeof item === 'string' && item.trim().length > 0);
+    }
+    if (typeof value === 'string' && value.trim().length > 0) {
+      // Handle comma-separated strings
+      return value.split(',').map(item => item.trim()).filter(item => item.length > 0);
+    }
+    return [];
+  };
+
   // Prepare semantic connections with consistent styling
   const semanticConnections: SemanticConnection[] = [
     {
       category: 'Synonyms',
-      words: semanticMap.synonyms || [],
+      words: ensureArray(semanticMap.synonyms),
       color: 'bg-green-100 border-green-300 text-green-800',
       icon: <Circle className="h-4 w-4 text-green-600" />
     },
     {
       category: 'Antonyms', 
-      words: semanticMap.antonyms || [],
+      words: ensureArray(semanticMap.antonyms),
       color: 'bg-red-100 border-red-300 text-red-800',
       icon: <Circle className="h-4 w-4 text-red-600" />
     },
     {
       category: 'Related Concepts',
-      words: semanticMap.relatedConcepts || [],
+      words: ensureArray(semanticMap.relatedConcepts),
       color: 'bg-blue-100 border-blue-300 text-blue-800',
       icon: <FileText className="h-4 w-4 text-blue-600" />
     },
     {
       category: 'Contexts',
-      words: semanticMap.contexts || [],
+      words: ensureArray(semanticMap.contexts),
       color: 'bg-purple-100 border-purple-300 text-purple-800',
       icon: <Circle className="h-4 w-4 text-purple-600" />
     },
     {
       category: 'Associated Words',
-      words: semanticMap.associatedWords || [],
+      words: ensureArray(semanticMap.associatedWords),
       color: 'bg-orange-100 border-orange-300 text-orange-800',
       icon: <ArrowRight className="h-4 w-4 text-orange-600" />
     }

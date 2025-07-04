@@ -41,6 +41,20 @@ interface LessonData {
 export class PDFGeneratorService {
   
   /**
+   * Helper function to ensure semantic map fields are arrays
+   */
+  private ensureSemanticArray(value: any): string[] {
+    if (Array.isArray(value)) {
+      return value.filter(item => typeof item === 'string' && item.trim().length > 0);
+    }
+    if (typeof value === 'string' && value.trim().length > 0) {
+      // Handle comma-separated strings
+      return value.split(',').map(item => item.trim()).filter(item => item.length > 0);
+    }
+    return [];
+  }
+
+  /**
    * Generates a comprehensive HTML document with all vocabulary information
    * This provides a complete reference with no truncation of any content
    */
@@ -174,55 +188,60 @@ export class PDFGeneratorService {
           
           // Synonyms
           let synonymsHtml = '';
-          if (semanticMap.synonyms && semanticMap.synonyms.length > 0) {
+          const synonymsArray = this.ensureSemanticArray(semanticMap.synonyms);
+          if (synonymsArray.length > 0) {
             synonymsHtml = `
               <tr>
                 <td class="map-label" style="background-color: #E6F7EC;">Synonyms</td>
-                <td class="map-content">${semanticMap.synonyms.join(', ')}</td>
+                <td class="map-content">${synonymsArray.join(', ')}</td>
               </tr>
             `;
           }
           
           // Antonyms
           let antonymsHtml = '';
-          if (semanticMap.antonyms && semanticMap.antonyms.length > 0) {
+          const antonymsArray = this.ensureSemanticArray(semanticMap.antonyms);
+          if (antonymsArray.length > 0) {
             antonymsHtml = `
               <tr>
                 <td class="map-label" style="background-color: #FEE2E2;">Antonyms</td>
-                <td class="map-content">${semanticMap.antonyms.join(', ')}</td>
+                <td class="map-content">${antonymsArray.join(', ')}</td>
               </tr>
             `;
           }
           
           // Related concepts
           let relatedConceptsHtml = '';
-          if (semanticMap.relatedConcepts && semanticMap.relatedConcepts.length > 0) {
+          const relatedConceptsArray = this.ensureSemanticArray(semanticMap.relatedConcepts);
+          if (relatedConceptsArray.length > 0) {
             relatedConceptsHtml = `
               <tr>
                 <td class="map-label" style="background-color: #E0E7FF;">Related Concepts</td>
-                <td class="map-content">${semanticMap.relatedConcepts.join(', ')}</td>
+                <td class="map-content">${relatedConceptsArray.join(', ')}</td>
               </tr>
             `;
           }
           
           // Contexts
           let contextsHtml = '';
-          if (semanticMap.contexts && semanticMap.contexts.length > 0) {
+          const contextsArray = this.ensureSemanticArray(semanticMap.contexts);
+          if (contextsArray.length > 0) {
             contextsHtml = `
               <tr>
                 <td class="map-label" style="background-color: #F3F4F6;">Contexts</td>
-                <td class="map-content">${semanticMap.contexts.join(', ')}</td>
+                <td class="map-content">${contextsArray.join(', ')}</td>
               </tr>
             `;
           }
           
           // Associated words
           let associatedWordsHtml = '';
-          if (semanticMap.associatedWords && semanticMap.associatedWords.length > 0) {
+          const associatedWordsArray = this.ensureSemanticArray(semanticMap.associatedWords);
+          if (associatedWordsArray.length > 0) {
             associatedWordsHtml = `
               <tr>
                 <td class="map-label" style="background-color: #FEF3C7;">Associated Words</td>
-                <td class="map-content">${semanticMap.associatedWords.join(', ')}</td>
+                <td class="map-content">${associatedWordsArray.join(', ')}</td>
               </tr>
             `;
           }
@@ -1330,7 +1349,7 @@ export class PDFGeneratorService {
               doc.text('Synonyms:', 25, yPosition);
               doc.setFont('helvetica', 'normal');
               
-              const synonymText = semanticMap.synonyms.join(', ');
+              const synonymText = this.ensureSemanticArray(semanticMap.synonyms).join(', ');
               const synonymLines = doc.splitTextToSize(synonymText, 120);
               const displaySynonymLines = synonymLines.length > 1 ? 
                                         [synonymLines[0] + '...'] : 
@@ -1348,7 +1367,7 @@ export class PDFGeneratorService {
               doc.text('Antonyms:', 25, yPosition);
               doc.setFont('helvetica', 'normal');
               
-              const antonymText = semanticMap.antonyms.join(', ');
+              const antonymText = this.ensureSemanticArray(semanticMap.antonyms).join(', ');
               const antonymLines = doc.splitTextToSize(antonymText, 120);
               const displayAntonymLines = antonymLines.length > 1 ? 
                                         [antonymLines[0] + '...'] : 
@@ -1366,7 +1385,7 @@ export class PDFGeneratorService {
               doc.text('Related:', 25, yPosition);
               doc.setFont('helvetica', 'normal');
               
-              const relatedText = semanticMap.relatedConcepts.join(', ');
+              const relatedText = this.ensureSemanticArray(semanticMap.relatedConcepts).join(', ');
               const relatedLines = doc.splitTextToSize(relatedText, 120);
               const displayRelatedLines = relatedLines.length > 1 ? 
                                         [relatedLines[0] + '...'] : 
@@ -1384,7 +1403,7 @@ export class PDFGeneratorService {
               doc.text('Contexts:', 25, yPosition);
               doc.setFont('helvetica', 'normal');
               
-              const contextsText = semanticMap.contexts.join(', ');
+              const contextsText = this.ensureSemanticArray(semanticMap.contexts).join(', ');
               const contextsLines = doc.splitTextToSize(contextsText, 120);
               const displayContextsLines = contextsLines.length > 1 ? 
                                           [contextsLines[0] + '...'] : 
