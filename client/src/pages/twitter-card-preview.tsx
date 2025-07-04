@@ -3,11 +3,11 @@ import { Card, CardContent } from "@/components/ui/card";
 export default function TwitterCardPreview() {
   // These match the meta tags in index.html
   const title = "Create CEFR leveled ESL lessons on any topic";
-  const description = "Instant ESL Lessons. Smarter, Faster. Planwise generates full ESL lessons with AI — in seconds.";
+  const description = "AI-powered lesson generation for ESL teachers. Create comprehensive lessons with vocabulary, reading, grammar, and activities in minutes.";
   
-  // Using the new image with the split layout from the images folder
-  const imageUrl = "/images/twitter-card-new-design.png";
-  const imageAlt = "PlanWise ESL: Create CEFR leveled ESL lessons on any topic. Ready to teach in 2 minutes";
+  // Using the new brand-updated image with modern design
+  const imageUrl = "/images/twitter-card-brand-updated.svg";
+  const imageAlt = "PlanwiseESL: Create CEFR leveled ESL lessons on any topic with AI-powered lesson generation";
   
   return (
     <div className="container mx-auto py-10">
