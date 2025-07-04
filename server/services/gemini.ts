@@ -733,23 +733,15 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
   "focus": "${focus}",
   "estimatedTime": ${lessonLength},
   "sections": [
-    // WARMUP SECTION - CRITICAL: NO VISUAL REFERENCES
-    // Purpose: Activate prior knowledge about the lesson topic through discussion
-    // MUST NOT reference pictures, images, or visual materials
+    // WARMUP SECTION (Complete)
     {
       "type": "warmup",
-      "title": "Warm-up: [Topic-Related Title]",
-      "content": "A brief description of the discussion activity that connects to the lesson topic and activates students' prior knowledge and experiences. NEVER reference pictures or images.",
-      "questions": [
-        "Question 1 that elicits personal experience with the topic",
-        "Question 2 that explores students' existing knowledge", 
-        "Question 3 that connects to cultural or universal experiences",
-        "Question 4 that prepares students for the lesson content",
-        "Question 5 that encourages prediction or opinion sharing"
-      ],
-      "targetVocabulary": ["5 key terms that students will use in discussion"],
-      "procedure": "Clear teacher instructions for facilitating the discussion activity - no visual materials needed",
-      "teacherNotes": "Tips for eliciting responses and connecting to the main lesson"
+      "title": "Warm-up Activity",
+      "content": "Complete description of the warm-up...",
+      "questions": ["Complete Question 1?", "Complete Question 2?", "Complete Question 3?", "Complete Question 4?", "Complete Question 5?"],
+      "targetVocabulary": ["word1", "word2", "word3", "word4", "word5"],
+      "procedure": "Complete step-by-step instructions...",
+      "teacherNotes": "Complete teacher notes..."
     },
     // READING SECTION (Complete)
     {
