@@ -868,18 +868,24 @@ export function LessonContent({ content }: LessonContentProps) {
               pronunciationData = wordData.pronunciation || "";
             }
             
-            vocabWords.push({
-              word: wordData.term || wordData.word || "",
+            // Handle both NEW format (word, exampleSentence, synonyms) and OLD format (term, example, semanticMap)
+            const mappedWord = {
+              // Core fields - handle both formats
+              word: wordData.word || wordData.term || "",
               partOfSpeech: wordData.partOfSpeech || "noun",
               definition: wordData.definition || "",
               example: wordData.exampleSentence || wordData.example || "",
+              
+              // Pronunciation handling
               pronunciation: pronunciationData,
               syllables: wordData.syllables,
               stressIndex: wordData.stressIndex,
               phoneticGuide: wordData.phoneticGuide,
+              
+              // Image handling
               imageBase64: wordData.imageBase64 || null,
               
-              // New enhanced vocabulary fields
+              // Enhanced vocabulary fields (favor OLD format with fallbacks to NEW format)
               semanticGroup: wordData.semanticGroup || wordData.category || wordData.group,
               additionalExamples: Array.isArray(wordData.additionalExamples) ? wordData.additionalExamples : 
                                   Array.isArray(wordData.examples) ? wordData.examples.slice(1) : undefined,
@@ -890,7 +896,7 @@ export function LessonContent({ content }: LessonContentProps) {
               collocations: Array.isArray(wordData.collocations) ? wordData.collocations : undefined,
               usageNotes: wordData.usageNotes || wordData.usage || undefined,
               
-              // CRITICAL: Include semantic map data (create from available data if not present)
+              // Semantic map handling (prioritize OLD format semanticMap, create from NEW format synonyms if needed)
               semanticMap: wordData.semanticMap || (wordData.synonyms ? {
                 synonyms: Array.isArray(wordData.synonyms) ? wordData.synonyms : [],
                 antonyms: Array.isArray(wordData.antonyms) ? wordData.antonyms : [],
@@ -899,9 +905,13 @@ export function LessonContent({ content }: LessonContentProps) {
                 associatedWords: Array.isArray(wordData.associatedWords) ? wordData.associatedWords : []
               } : undefined),
               
-              // Include topic-essential flag
-              topicEssential: wordData.topicEssential || false
-            });
+              // Topic essential and teaching fields
+              topicEssential: wordData.topicEssential || false,
+              teachingTips: wordData.teachingTips,
+              imagePrompt: wordData.imagePrompt
+            };
+            
+            vocabWords.push(mappedWord);
           }
         });
         console.log("Extracted vocabulary words from Gemini format:", vocabWords);
