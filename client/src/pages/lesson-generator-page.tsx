@@ -48,6 +48,28 @@ export default function LessonGeneratorPage() {
           description: "Opening your new lesson...",
         });
         
+        // Store lesson data in React Query cache to avoid database fetch
+        if (data.content) {
+          queryClient.setQueryData([`/api/lessons/${data.id}`], {
+            id: data.id,
+            title: data.title,
+            topic: data.topic,
+            cefrLevel: data.cefrLevel,
+            content: typeof data.content === 'string' ? data.content : JSON.stringify(data.content),
+            grammarSpotlight: data.grammarSpotlight,
+            teacherId: data.teacherId,
+            studentId: data.studentId,
+            notes: "Auto-saved lesson",
+            category: data.category || 'general',
+            tags: data.tags || [],
+            isPublic: false,
+            publicCategory: null,
+            createdAt: data.generatedAt,
+            isTemporary: data.isTemporary || false
+          });
+          console.log(`Cached lesson data for ID: ${data.id} - skipping database fetch`);
+        }
+        
         // Redirect first, then invalidate queries in background
         setLocation(`/lessons/${data.id}`);
         

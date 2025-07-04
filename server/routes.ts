@@ -432,8 +432,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
           await storage.updateUserCredits(req.user!.id, user.credits - 1);
         }
         
-        // Prepare response
+        // Prepare response with temporary ID for immediate response
+        const tempId = `temp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
         const lessonResponse: any = {
+          id: tempId, // Temporary ID for immediate response
           title: generatedContent.title,
           topic: validatedData.topic,
           cefrLevel: validatedData.cefrLevel,
@@ -442,37 +444,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
           generatedAt: new Date().toISOString(),
           generationTimeSeconds: timeTaken,
           studentId: validatedData.studentId || null,
-          aiProvider: 'gemini'
+          aiProvider: 'gemini',
+          isTemporary: true // Flag to indicate this is a temporary response
         };
         
-        // Auto-save the lesson
-        try {
-          const lessonToSave = {
-            teacherId: req.user!.id,
-            studentId: validatedData.studentId || null,
-            title: generatedContent.title,
-            topic: validatedData.topic,
-            cefrLevel: validatedData.cefrLevel,
-            content: JSON.stringify(generatedContent), // Store as string in database
-            notes: "Auto-saved lesson",
-            grammarSpotlight: grammarVisualization ? JSON.stringify(grammarVisualization) : null,
-            category: validatedData.category || 'general',
-            tags: validatedData.tags || []
-          };
-          
-          console.log(`Starting lesson save to database...`);
-          // Save to database
-          const savedLesson = await storage.createLesson(lessonToSave);
-          console.log(`Lesson auto-saved with ID: ${savedLesson.id} - responding immediately`);
-          
-          // Add the saved lesson ID to the response
-          lessonResponse.id = savedLesson.id;
-        } catch (saveError) {
-          console.error("Error auto-saving lesson:", saveError);
-          // Continue even if saving fails - we'll still return the generated content
-        }
-        
+        // Send response immediately - don't wait for database save
+        console.log(`Lesson generation completed in ${timeTaken.toFixed(1)}s - responding immediately with temp ID: ${tempId}`);
         res.json(lessonResponse);
+        
+        // Save to database asynchronously (non-blocking)
+        const lessonToSave = {
+          teacherId: req.user!.id,
+          studentId: validatedData.studentId || null,
+          title: generatedContent.title,
+          topic: validatedData.topic,
+          cefrLevel: validatedData.cefrLevel,
+          content: JSON.stringify(generatedContent), // Store as string in database
+          notes: "Auto-saved lesson",
+          grammarSpotlight: grammarVisualization ? JSON.stringify(grammarVisualization) : null,
+          category: validatedData.category || 'general',
+          tags: validatedData.tags || []
+        };
+        
+        // Asynchronous save - don't await, let it run in background
+        console.log(`Starting async lesson save to database for temp ID: ${tempId}...`);
+        storage.createLesson(lessonToSave)
+          .then(savedLesson => {
+            console.log(`✅ Lesson successfully saved with permanent ID: ${savedLesson.id} (was temp: ${tempId})`);
+            // TODO: Optionally notify frontend of permanent ID via websocket/polling
+          })
+          .catch(saveError => {
+            console.error(`❌ Error saving lesson with temp ID ${tempId}:`, saveError);
+            // TODO: Implement retry logic or manual save recovery
+          });
       } catch (aiError: any) {
         // Gemini provider failed
         console.error("Gemini AI provider failed:", aiError);
