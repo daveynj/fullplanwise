@@ -853,10 +853,9 @@ export function LessonContent({ content }: LessonContentProps) {
       // Get vocabulary words from the content
       // Do not use hardcoded fallback values - extract from the actual content
       
-      // Look for the 'words' array in the vocabulary section (Improved prompt format)
-      const wordsArray = vocabularySection.content?.words || vocabularySection.words;
-      if (wordsArray && Array.isArray(wordsArray)) {
-        wordsArray.forEach((wordData: any) => {
+      // Look for the 'words' array in the vocabulary section (Gemini format)
+      if (vocabularySection.words && Array.isArray(vocabularySection.words)) {
+        vocabularySection.words.forEach((wordData: any) => {
           if (typeof wordData === 'object') {
             // Handle complex pronunciation object structure
             let pronunciationData;
@@ -868,24 +867,18 @@ export function LessonContent({ content }: LessonContentProps) {
               pronunciationData = wordData.pronunciation || "";
             }
             
-            // Handle both NEW format (word, exampleSentence, synonyms) and OLD format (term, example, semanticMap)
-            const mappedWord = {
-              // Core fields - handle both formats
-              word: wordData.word || wordData.term || "",
+            vocabWords.push({
+              word: wordData.term || wordData.word || "",
               partOfSpeech: wordData.partOfSpeech || "noun",
               definition: wordData.definition || "",
-              example: wordData.exampleSentence || wordData.example || "",
-              
-              // Pronunciation handling
+              example: wordData.example || "",
               pronunciation: pronunciationData,
               syllables: wordData.syllables,
               stressIndex: wordData.stressIndex,
               phoneticGuide: wordData.phoneticGuide,
-              
-              // Image handling
               imageBase64: wordData.imageBase64 || null,
               
-              // Enhanced vocabulary fields (favor OLD format with fallbacks to NEW format)
+              // New enhanced vocabulary fields
               semanticGroup: wordData.semanticGroup || wordData.category || wordData.group,
               additionalExamples: Array.isArray(wordData.additionalExamples) ? wordData.additionalExamples : 
                                   Array.isArray(wordData.examples) ? wordData.examples.slice(1) : undefined,
@@ -896,22 +889,12 @@ export function LessonContent({ content }: LessonContentProps) {
               collocations: Array.isArray(wordData.collocations) ? wordData.collocations : undefined,
               usageNotes: wordData.usageNotes || wordData.usage || undefined,
               
-              // Semantic map handling (prioritize OLD format semanticMap, create from NEW format synonyms if needed)
-              semanticMap: wordData.semanticMap || (wordData.synonyms ? {
-                synonyms: Array.isArray(wordData.synonyms) ? wordData.synonyms : [],
-                antonyms: Array.isArray(wordData.antonyms) ? wordData.antonyms : [],
-                relatedConcepts: Array.isArray(wordData.relatedConcepts) ? wordData.relatedConcepts : [],
-                contexts: Array.isArray(wordData.contexts) ? wordData.contexts : [],
-                associatedWords: Array.isArray(wordData.associatedWords) ? wordData.associatedWords : []
-              } : undefined),
+              // CRITICAL: Include semantic map data
+              semanticMap: wordData.semanticMap,
               
-              // Topic essential and teaching fields
-              topicEssential: wordData.topicEssential || false,
-              teachingTips: wordData.teachingTips,
-              imagePrompt: wordData.imagePrompt
-            };
-            
-            vocabWords.push(mappedWord);
+              // Include topic-essential flag
+              topicEssential: wordData.topicEssential || false
+            });
           }
         });
         console.log("Extracted vocabulary words from Gemini format:", vocabWords);
@@ -937,18 +920,16 @@ export function LessonContent({ content }: LessonContentProps) {
     // If we don't have any vocabulary, we'll display a message to generate new content
 
     // DISCUSSION QUESTIONS EXTRACTION:
-    // Get discussion questions from the section (new improved prompt format)
-    let discussionQuestions: any[] = [];
+    // Get discussion questions from the section
+    let discussionQuestions: string[] = [];
     
-    const questionsArray = section.content?.questions || section.questions;
-    if (questionsArray) {
-      if (Array.isArray(questionsArray)) {
-        discussionQuestions = questionsArray;
-      } else if (typeof questionsArray === 'object') {
+    if (section.questions) {
+      if (Array.isArray(section.questions)) {
+        discussionQuestions = section.questions;
+      } else if (typeof section.questions === 'object') {
         // Extract questions from object format
-        discussionQuestions = Object.keys(questionsArray)
-          .filter(q => typeof q === 'string' && q.trim().length > 0)
-          .map(q => ({ question: q }));
+        discussionQuestions = Object.keys(section.questions)
+          .filter(q => typeof q === 'string' && q.trim().length > 0);
       }
     }
     
@@ -1388,10 +1369,9 @@ export function LessonContent({ content }: LessonContentProps) {
     
     // No hardcoded pronunciation data - we'll use the AI-generated data directly
     
-    // Look for the 'words' array in the vocabulary section (improved prompt format)
-    const wordsArray = section.content?.words || section.words;
-    if (wordsArray && Array.isArray(wordsArray)) {
-      wordsArray.forEach((wordData: any) => {
+    // Look for the 'words' array in the vocabulary section (Gemini format)
+    if (section.words && Array.isArray(section.words)) {
+      section.words.forEach((wordData: any) => {
         if (typeof wordData === 'object') {
           // Use only the AI-generated data
           extractedVocabWords.push({
@@ -1644,10 +1624,9 @@ export function LessonContent({ content }: LessonContentProps) {
     // Add additional error handling for questions array
     let questions: any[] = [];
     try {
-      // Check for questions in new improved prompt structure (content.questions) or legacy format
-      const questionsSource = section?.content?.questions || section?.questions;
-      if (questionsSource && Array.isArray(questionsSource) && questionsSource.length > 0) {
-        questions = questionsSource;
+      // Check if questions is a valid array
+      if (section.questions && Array.isArray(section.questions) && section.questions.length > 0) {
+        questions = section.questions;
       } else {
         console.warn("No valid questions array found in comprehension section");
       }
@@ -1750,15 +1729,12 @@ export function LessonContent({ content }: LessonContentProps) {
       // Removed sentenceFrames and first section fallback for clarity in overview
       
     let warmupQuestions: string[] = [];
-    
-    // Extract questions from new improved prompt structure (content.questions) or legacy format
-    const questionsSource = warmupSection?.content?.questions || warmupSection?.questions;
-    if (questionsSource) {
-      if (Array.isArray(questionsSource)) {
-        warmupQuestions = questionsSource.filter((q: any): q is string => typeof q === 'string');
-      } else if (typeof questionsSource === 'object') {
+    if (warmupSection?.questions) {
+      if (Array.isArray(warmupSection.questions)) {
+        warmupQuestions = warmupSection.questions.filter((q: any): q is string => typeof q === 'string');
+      } else if (typeof warmupSection.questions === 'object') {
         // Handle object format - assuming keys are the questions
-        warmupQuestions = Object.keys(questionsSource)
+        warmupQuestions = Object.keys(warmupSection.questions)
           .filter(q => typeof q === 'string' && q.trim().length > 0);
       }
     }

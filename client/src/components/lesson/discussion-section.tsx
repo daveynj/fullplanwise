@@ -24,7 +24,6 @@ interface DiscussionQuestion {
   paragraphContext?: string;
   answer?: string; // Add support for answer field
   imageBase64?: string | null; // Added for Stability AI image
-  imagePrompt?: string; // Added for new improved prompt format
 }
 
 interface DiscussionSectionProps {
@@ -45,15 +44,13 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
       questions: section.questions
     }, null, 2));
     
-    // Handle both new format (section.content.questions) and legacy format (section.questions)
-    const questionsSource = section.content?.questions || section.questions;
-    
-    if (questionsSource) {
+    // First, check if the section has questions as key-value pairs
+    if (section.questions) {
       // Handle format where questions is an object with question-answer pairs
-      if (typeof questionsSource === 'object' && !Array.isArray(questionsSource)) {
+      if (typeof section.questions === 'object' && !Array.isArray(section.questions)) {
         console.log("Found question-answer object format");
         
-        const questionKeys = Object.keys(questionsSource).filter(key => 
+        const questionKeys = Object.keys(section.questions).filter(key => 
           typeof key === 'string' && 
           key.trim().length > 0 &&
           key !== 'question' && // Skip placeholder keys
@@ -62,7 +59,7 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
         
         if (questionKeys.length > 0) {
           const validQuestions: DiscussionQuestion[] = questionKeys.map(questionText => {
-            const answer = questionsSource[questionText];
+            const answer = section.questions[questionText];
             const level = questionText.toLowerCase().includes('critical') ? 'critical' : 'basic';
             return {
               question: questionText,
@@ -76,12 +73,12 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
         }
       }
       
-      // Otherwise check if we have questions directly in the questionsSource array
-      if (Array.isArray(questionsSource) && questionsSource.length > 0) {
-        console.log("Found questions array in section:", questionsSource.length, "questions");
+      // Otherwise check if we have questions directly in the section.questions array
+      if (Array.isArray(section.questions) && section.questions.length > 0) {
+        console.log("Found questions array in section:", section.questions.length, "questions");
         
         // Clean up any malformed questions and ensure paragraphContext is kept
-        const validQuestions = questionsSource.filter((q: any) => 
+        const validQuestions = section.questions.filter((q: any) => 
           q && typeof q === 'object' && (q.question || q.text)
         ).map((q: any) => ({
           question: q.question || q.text || "Discussion question",

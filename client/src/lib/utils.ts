@@ -23,10 +23,8 @@ export function extractQuizQuestions(content: any): { question: string; answer: 
          (s.title.toLowerCase().includes('quiz') || s.title.toLowerCase().includes('assessment')))
       );
       
-      // Check for questions in new improved prompt structure (content.questions) or legacy format
-      const questionsSource = section?.content?.questions || section?.questions;
-      if (questionsSource && Array.isArray(questionsSource) && questionsSource.length > 0) {
-        return questionsSource;
+      if (section && section.questions && Array.isArray(section.questions) && section.questions.length > 0) {
+        return section.questions;
       }
     }
     
@@ -66,10 +64,8 @@ export function extractComprehensionQuestions(content: any): { question: string;
         (s.title && typeof s.title === 'string' && s.title.toLowerCase().includes('comprehension'))
       );
       
-      // Check for questions in new improved prompt structure (content.questions) or legacy format
-      const questionsSource = section?.content?.questions || section?.questions;
-      if (questionsSource && Array.isArray(questionsSource) && questionsSource.length > 0) {
-        return questionsSource;
+      if (section && section.questions && Array.isArray(section.questions) && section.questions.length > 0) {
+        return section.questions;
       }
     }
     
@@ -232,15 +228,13 @@ export function extractDiscussionQuestions(content: any): any[] {
         }
         
         // Handle AI format with questions as array or object
-        // Check for questions in new improved prompt structure (content.questions) or legacy format
-        const questionsSource = discussionSection.content?.questions || discussionSection.questions;
-        if (questionsSource) {
-          if (Array.isArray(questionsSource)) {
+        if (discussionSection.questions) {
+          if (Array.isArray(discussionSection.questions)) {
             // Handle array format
-            console.log("Discussion questions as array:", questionsSource);
+            console.log("Discussion questions as array:", discussionSection.questions);
             
             // Map the questions, but with enhanced structure debugging
-            const processedQuestions = questionsSource.map((q: any) => {
+            const processedQuestions = discussionSection.questions.map((q: any) => {
               console.log("Processing discussion question item:", q);
               
               if (typeof q === 'string') {
@@ -281,13 +275,13 @@ export function extractDiscussionQuestions(content: any): any[] {
             
             console.log("Final processed questions:", processedQuestions);
             return processedQuestions;
-          } else if (typeof questionsSource === 'object') {
+          } else if (typeof discussionSection.questions === 'object') {
             // Handle object format (AI sometimes returns objects instead of arrays)
-            console.log("Discussion questions as object:", questionsSource);
+            console.log("Discussion questions as object:", discussionSection.questions);
             
             // Special case: Check if question keys themselves contain question marks
             // This handles various AI response formats
-            const directQuestionKeys = Object.keys(questionsSource).filter(
+            const directQuestionKeys = Object.keys(discussionSection.questions).filter(
               key => typeof key === 'string' && key.includes('?')
             );
             
@@ -310,14 +304,14 @@ export function extractDiscussionQuestions(content: any): any[] {
             }
             
             // Standard case: Look for question keys/values
-            const questionKeys = Object.keys(questionsSource).filter(
-              key => typeof questionsSource[key] === 'string' && 
-                    (key.includes('question') || questionsSource[key].includes('?'))
+            const questionKeys = Object.keys(discussionSection.questions).filter(
+              key => typeof discussionSection.questions[key] === 'string' && 
+                    (key.includes('question') || discussionSection.questions[key].includes('?'))
             );
             
             if (questionKeys.length > 0) {
               questionKeys.forEach(key => {
-                const question = questionsSource[key];
+                const question = discussionSection.questions[key];
                 if (question && typeof question === 'string' && question.trim().length > 0) {
                   questions.push({ 
                     question: question.trim(),

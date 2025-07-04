@@ -19,25 +19,9 @@ export function ReadingSection({ section }: ReadingSectionProps) {
   // Extract paragraphs from the section
   let sectionParagraphs: string[] = [];
   
-  // Check for new improved prompt structure first
-  if (section?.content?.paragraphs && Array.isArray(section.content.paragraphs)) {
-    sectionParagraphs = section.content.paragraphs;
-  } 
-  // Check for full text in content object
-  else if (section?.content?.text && typeof section.content.text === 'string') {
-    // Split by double newlines or paragraphs markers
-    const fullText = section.content.text;
-    const splitByDoubleNewline = fullText.split('\n\n').filter((p: string) => p.trim().length > 0);
-    if (splitByDoubleNewline.length > 1) {
-      sectionParagraphs = splitByDoubleNewline;
-    } else {
-      sectionParagraphs = [fullText];
-    }
-  }
-  // Legacy structure support
-  else if (section?.paragraphs && Array.isArray(section.paragraphs)) {
+  if (section?.paragraphs && Array.isArray(section.paragraphs)) {
     sectionParagraphs = section.paragraphs;
-  } else if (section?.content && typeof section.content === 'string') {
+  } else if (section?.content) {
     sectionParagraphs = [section.content];
   } else if (section?.introduction) {
     sectionParagraphs = [section.introduction];
