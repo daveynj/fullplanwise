@@ -273,6 +273,14 @@ When you see template text like "REPLACE WITH: [instruction]" in the sentence fr
 
 ${params.targetVocabulary ? `4. CRUCIAL: YOU MUST INCLUDE THE FOLLOWING VOCABULARY WORDS IN YOUR LESSON: ${params.targetVocabulary}` : ''}
 
+${params.targetVocabulary ? '5' : '4'}. WARMUP SECTION REQUIREMENTS:
+- NEVER reference pictures, images, or visual materials in warmup activities
+- Questions must activate prior knowledge about the specific lesson topic: "${params.topic}"
+- Focus on personal experience, cultural knowledge, or universal concepts
+- Questions should prepare students for the vocabulary and reading content
+- All questions must be discussion-based, not visual-based
+- Connect directly to the lesson topic through conversation and reflection
+
 ${params.targetVocabulary ? '5' : '4'}. CRITICAL: FOR EACH VOCABULARY WORD, YOU MUST INCLUDE THE 'pronunciation' OBJECT WITH 'syllables', 'stressIndex', AND 'phoneticGuide' FIELDS. The 'phoneticGuide' MUST use ONLY regular English characters and hyphens (like "AS-tro-naut" or "eks-PLOR-ay-shun"), NOT International Phonetic Alphabet (IPA) symbols.
 
 5. WRITING STYLE REQUIREMENTS:
@@ -725,15 +733,23 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
   "focus": "${focus}",
   "estimatedTime": ${lessonLength},
   "sections": [
-    // WARMUP SECTION (Complete)
+    // WARMUP SECTION - CRITICAL: NO VISUAL REFERENCES
+    // Purpose: Activate prior knowledge about the lesson topic through discussion
+    // MUST NOT reference pictures, images, or visual materials
     {
       "type": "warmup",
-      "title": "Warm-up Activity",
-      "content": "Complete description of the warm-up...",
-      "questions": ["Complete Question 1?", "Complete Question 2?", "Complete Question 3?", "Complete Question 4?", "Complete Question 5?"],
-      "targetVocabulary": ["word1", "word2", "word3", "word4", "word5"],
-      "procedure": "Complete step-by-step instructions...",
-      "teacherNotes": "Complete teacher notes..."
+      "title": "Warm-up: [Topic-Related Title]",
+      "content": "A brief description of the discussion activity that connects to the lesson topic and activates students' prior knowledge and experiences. NEVER reference pictures or images.",
+      "questions": [
+        "Question 1 that elicits personal experience with the topic",
+        "Question 2 that explores students' existing knowledge", 
+        "Question 3 that connects to cultural or universal experiences",
+        "Question 4 that prepares students for the lesson content",
+        "Question 5 that encourages prediction or opinion sharing"
+      ],
+      "targetVocabulary": ["5 key terms that students will use in discussion"],
+      "procedure": "Clear teacher instructions for facilitating the discussion activity - no visual materials needed",
+      "teacherNotes": "Tips for eliciting responses and connecting to the main lesson"
     },
     // READING SECTION (Complete)
     {
