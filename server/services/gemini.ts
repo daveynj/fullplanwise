@@ -533,7 +533,7 @@ C1/C2 LEVELS: 180-250 words (3-4 paragraphs)
 
 STEP 2: VOCABULARY SELECTION & VALIDATION
 
-COMMUNICATIVE NEED ANALYSIS FOR ${params.cefrLevel} STUDENTS:
+**🎯 STREAMLINED VOCABULARY SELECTION FOR ${params.cefrLevel} LEVEL**
 
 Before selecting sentence patterns, analyze what communication needs ${params.cefrLevel} students actually have:
 
@@ -665,273 +665,101 @@ CRITICAL: Generate sentence frames using the enhanced format with these REQUIRED
 
 NEVER use the old format with "pattern", "communicativeFunction", "structureBreakdown", or "exampleSentences".
 
-🎯 **CRITICAL VOCABULARY SELECTION PROTOCOL** 🎯
-**YOU MUST FOLLOW THIS 5-STEP PROCESS FOR ALL VOCABULARY SELECTION**
+**VOCABULARY VALIDATION CHECKLIST:**
+Before selecting each word, verify it meets ALL criteria:
 
-STEP 1: VOCABULARY LEVEL ANALYSIS (REQUIRED BEFORE SELECTION)
+✓ **Level Appropriateness**: Genuinely suitable for ${params.cefrLevel} students
+✓ **Communication Value**: Students will actually use this when discussing "${params.topic}"
+✓ **Topic Relevance**: Directly useful for meaningful topic discussion
+✓ **Definition Feasibility**: Can be defined using simpler vocabulary students know
+✓ **Learning Value**: Provides new communicative ability (not already known)
+✓ **Semantic Coherence**: Works together with other selected words
 
-Before selecting vocabulary, analyze what ${params.cefrLevel} students typically know and should learn next:
+**${params.cefrLevel} LEVEL REQUIREMENTS:**
 
-FOUNDATION KNOWLEDGE ANALYSIS FOR ${params.cefrLevel} STUDENTS:
-- A1 students know: basic family, food, colors, numbers, simple present tense, essential survival vocabulary
-- A2 students know: A1 + basic past tense, common adjectives, simple descriptions, personal experiences
-- B1 students know: A1/A2 + present perfect, opinions, comparisons, everyday topics, functional language
-- B2 students know: A1/A2/B1 + academic thinking, complex discussions, abstract concepts, discourse markers
-- C1 students know: A1-B2 + advanced academic language, nuanced expression, specialized vocabulary
-- C2 students know: Near-native vocabulary range including idiomatic and specialized language
+${params.cefrLevel === 'A1' ? `
+• **Frequency**: Top 1,000 words OR essential daily vocabulary
+• **Cognitive Level**: Concrete, observable concepts
+• **Definition Standard**: Use basic everyday vocabulary only
+` : params.cefrLevel === 'A2' ? `
+• **Frequency**: Top 2,000 words OR essential personal experience vocabulary
+• **Cognitive Level**: Personal experiences and simple social concepts
+• **Definition Standard**: Use A1 vocabulary + basic personal experience terms
+` : params.cefrLevel === 'B1' ? `
+• **Frequency**: Top 3,000 words OR functionally important vocabulary
+• **Cognitive Level**: Community and practical concepts
+• **Definition Standard**: Use A1-A2 vocabulary + functional language
+` : params.cefrLevel === 'B2' ? `
+• **Frequency**: 3,000-5,000+ range for academic/professional communication
+• **Cognitive Level**: Abstract concepts requiring analytical thinking
+• **Definition Standard**: Use A1-B1 vocabulary + basic academic terms
+` : params.cefrLevel === 'C1' ? `
+• **Frequency**: 5,000+ range when pedagogically valuable
+• **Cognitive Level**: Complex concepts requiring synthesis
+• **Definition Standard**: Use A1-B2 vocabulary + intermediate academic language
+` : `
+• **Frequency**: Advanced vocabulary and specialized terminology as needed
+• **Cognitive Level**: Expert-level concepts
+• **Definition Standard**: Use sophisticated but accessible vocabulary
+`}
 
-APPROPRIATE NEW VOCABULARY FOR ${params.cefrLevel} LEVEL:
-- A1: Concrete, immediate needs (house, clothes, body parts, basic actions)
-- A2: Personal experiences and descriptions (interesting, boring, excited, yesterday, tomorrow)
-- B1: Social topics and functional language (community, environment, although, however, opinion)
-- B2: Academic and analytical language (sustainability, efficiency, infrastructure, furthermore)
-- C1: Sophisticated concepts (implications, comprehensive, predominantly, nevertheless)
-- C2: Advanced/specialized terminology (nuanced, paradigm, intrinsic, contemporary discourse)
+**DEFINITION EXAMPLES:**
 
-TOO ADVANCED FOR ${params.cefrLevel} LEVEL:
-- For A1: Abstract concepts, complex grammar constructions, specialized terms, academic language
-- For A2: Academic vocabulary, complex discourse markers, abstract philosophical concepts
-- For B1: Highly academic vocabulary, complex phrasal verbs, advanced idiomatic expressions
-- For B2: Specialized technical terms, advanced literary language, highly formal register
-- For C1: Archaic or highly specialized jargon, extremely formal academic discourse
+${params.cefrLevel === 'A1' ? `
+**A1 DEFINITIONS** (Use basic everyday vocabulary only):
+• "Beautiful" = "very nice to look at" (NOT "aesthetically pleasing")
+• "Vehicle" = "a car, bus, or truck" (NOT "mechanical conveyance")
+` : params.cefrLevel === 'A2' ? `
+**A2 DEFINITIONS** (Use A1 vocabulary + basic personal experience terms):
+• "Environment" = "the air, water, and land around us" 
+• "Investigate" = "to look for information about something"
+` : params.cefrLevel === 'B1' ? `
+**B1 DEFINITIONS** (Use A1-A2 vocabulary + functional language):
+• "Sustainable" = "something that can continue without damaging the environment"
+• "Influence" = "to change the way someone thinks or acts"
+` : params.cefrLevel === 'B2' ? `
+**B2 DEFINITIONS** (Use A1-B1 vocabulary + basic academic terms):
+• "Infrastructure" = "the basic systems a country needs, like roads and electricity"
+• "Implement" = "to put a plan or idea into action"
+` : params.cefrLevel === 'C1' ? `
+**C1 DEFINITIONS** (Use A1-B2 vocabulary + intermediate academic language):
+• "Paradigm" = "a way of thinking about or understanding something"
+• "Comprehensive" = "including everything that is necessary; complete"
+` : `
+**C2 DEFINITIONS** (Use sophisticated but accessible vocabulary):
+• "Ubiquitous" = "present everywhere; found in all places"
+• "Paradigmatic" = "serving as a typical example or model"
+`}
 
-STEP 2: TOPIC-APPROPRIATE VOCABULARY SELECTION FOR "${params.topic}"
+**PRONUNCIATION GUIDE REQUIREMENTS:**
+For each word, provide:
+- syllables: ["array", "of", "syllables"]  
+- stressIndex: [number] (0 for first syllable, 1 for second, etc.)
+- phoneticGuide: "Simple phonetic approximation using English letters"
 
-Analyze the topic "${params.topic}" specifically for ${params.cefrLevel} level:
+**IMPORTANT**: Use ONLY regular English letters and hyphens. NO IPA symbols.
 
-TOPIC ANALYSIS QUESTIONS:
-1. What aspects of "${params.topic}" are cognitively appropriate for ${params.cefrLevel} students?
-2. What vocabulary domains within this topic match their developmental level?
-3. What real-world communication needs do they have for this topic?
-4. How does this topic connect to their life experiences and interests?
+**Examples:**
+- "beautiful" → syllables: ["beau", "ti", "ful"], stressIndex: 0, phoneticGuide: "BYOO-ti-ful"
+- "environment" → syllables: ["en", "vi", "ron", "ment"], stressIndex: 1, phoneticGuide: "en-VY-ron-ment"
 
-VOCABULARY SELECTION STRATEGY BY LEVEL:
-A1/A2 LEVELS: Choose vocabulary for:
-- Concrete, observable aspects of the topic that students can see/touch/experience
-- Personal experiences and basic descriptions related to the topic
-- Essential functional language for basic communication about the topic
-- Example: For "transportation" → car, bus, train, ticket, station, fast, slow
-
-B1 LEVEL: Choose vocabulary for:
-- Social and practical aspects of the topic that affect daily life
-- Problem-solving and opinion-expressing related to the topic
-- Connecting ideas and experiences about the topic
-- Example: For "transportation" → commute, public transport, traffic jam, convenient, reliable
-
-B2 LEVEL: Choose vocabulary for:
-- Analytical and evaluative aspects that require critical thinking
-- Abstract concepts and complex relationships within the topic
-- Academic discussion and debate capabilities
-- Example: For "transportation" → infrastructure, sustainability, urban planning, efficiency
-
-C1/C2 LEVELS: Choose vocabulary for:
-- Sophisticated analysis and nuanced discussion of the topic
-- Professional and academic contexts related to the topic
-- Complex interdisciplinary connections and implications
-- Example: For "transportation" → multimodal integration, carbon footprint mitigation, transit-oriented development
-
-CRITICAL SELECTION CRITERIA:
-✓ Vocabulary must serve authentic communication needs at this specific level
-✓ Words should enable meaningful discussion of the topic at appropriate cognitive depth
-✓ Selection should reflect real-world language use patterns for this topic and level
-
-STEP 3: VOCABULARY FREQUENCY AND NOVELTY VALIDATION
-
-For ${params.cefrLevel} level, each word must meet these criteria. The aim is to introduce new, relevant vocabulary while ensuring a solid foundation.
-
-A1 WORDS:
-- Primary Introduction: Must be within the top 1,000 most frequent English words.
-- Novelty Check: Prioritize words generally introduced at A1 or words that are essential for basic communication within the topic.
-
-A2 WORDS:
-- Primary Introduction: Must be within the top 2,000 most frequent English words.
-- Novelty Check: Prioritize words generally introduced at A2, and avoid words primarily introduced at A1, unless their A2 usage is significantly more complex (e.g., a new phrasal verb using an A1 base verb).
-
-B1 WORDS:
-- Primary Introduction: Must be within the top 3,000 most frequent English words.
-- Novelty Check: Prioritize words generally introduced at B1, and avoid words primarily introduced at A1 or A2, unless they are critical topic-specific vocabulary with a new B1 context or collocation.
-
-B2 WORDS:
-- Primary Introduction: Can use words beyond the top 3,000, focusing on those typically introduced at B2.
-- Novelty Check: Prioritize words that are new to the B2 level for the given topic. Words from lower levels should only be included if they form part of a new, more complex B2-level phrase, collocation, or idiom, or are essential for abstract discussion.
-- Topic-Essential: Must be highly relevant and essential for understanding and discussing the specific topic at a B2 depth.
-
-C1/C2 WORDS:
-- Primary Introduction: Focus on specialized, academic, formal, or nuanced vocabulary. Frequency is less of a strict constraint here.
-- Novelty Check: Prioritize words that are new to the C1/C2 level for the given topic, allowing for highly sophisticated and abstract terms.
-- Sophistication: Can include idiomatic expressions, advanced collocations, and words demonstrating a high level of lexical precision.
-
-VALIDATION CHECK: Before including any word, verify:
-"Is [word] appropriate for ${params.cefrLevel} considering its typical introduction level and novelty for this CEFR band?"
-If NO, replace with a level-appropriate and novel alternative.
-
-COGNITIVE APPROPRIATENESS CHECK:
-Verify if students at ${params.cefrLevel} can not only comprehend but also productively engage with the word as expected for their level.
-- A1: Can students identify this word and use it in single-word or very short phrase responses in basic daily survival situations?
-- A2: Can students describe something simple using this word and participate in simple social interactions?
-- B1: Can students explain concepts in simple sentences, express personal opinions, or narrate simple events using this word in problem-solving discussions?
-- B2: Can students use this word in abstract discussions, support arguments, speculate, or evaluate situations?
-- C1/C2: Can students analyze nuanced meanings, synthesize information, present formal arguments, or discuss complex ethical dilemmas using this word?
-
-REJECT if the word requires cognitive or productive abilities beyond the specified level's typical output.
-
-COMMUNICATION CONTEXT CHECK:
-Ensure the word's primary use-case aligns with the communication needs and contexts typical for ${params.cefrLevel}.
-- A1: Is this word predominantly used in basic daily survival situations (e.g., introductions, simple requests, personal information)?
-- A2: Is this word predominantly used in simple social interactions (e.g., describing routines, expressing simple likes/dislikes, making simple plans)?
-- B1: Is this word predominantly used in problem-solving discussions, for giving instructions, making comparisons, or expressing agreement/disagreement about familiar topics?
-- B2: Is this word predominantly used in opinion/argument contexts, for debating, persuading, or negotiating complex issues?
-- C1/C2: Is this word predominantly used in academic/professional contexts, for presenting formal arguments, critical analysis, or moderating discussions?
-
-REJECT if the word's typical usage context doesn't match the student's communication needs at this level.
-
-FOUNDATION VOCABULARY CHECK:
-Before introducing a new word, ensure students are expected to know its prerequisite vocabulary.
-- Instruction: For each selected vocabulary item, explicitly identify 1-3 foundational words from preceding CEFR levels that are essential for understanding it.
-- Example: Before teaching "destination" (B1), students must know: "place" (A1), "go" (A1), "travel" (A2), "where" (A1).
-- Validation: If any prerequisite word is typically not known at a lower level, reconsider the target word's appropriateness or ensure the prerequisite is also introduced/recycled.
-
-REJECT any word requiring unknown prerequisite vocabulary that cannot be easily inferred or quickly introduced.
-
-LEVEL-SPECIFIC TOPIC VOCABULARY & NOVELTY FOCUS:
-For the chosen topic "${params.topic}", focus on providing new and challenging vocabulary for ${params.cefrLevel} level.
-
-General Principle: The goal is to provide vocabulary that is fresh and appropriate for the current level, avoiding direct re-teaching of words primarily introduced at lower levels.
-
-A1: Focus on fundamental, concrete words directly related to the topic for basic communication.
-- Examples for "Travel": plane, hotel, ticket, bag, passport, go, see.
-
-A2: Focus on slightly more descriptive or action-oriented words related to the topic, expanding on A1 concepts.
-- Examples for "Travel": journey, tourist, vacation, culture, local, visit, stay, foreign.
-
-B1: Focus on vocabulary for discussing experiences, plans, and more nuanced aspects of the topic.
-- Examples for "Travel": destination, experience, adventure, explore, traditional, organize, book, arrange.
-
-B2: Focus on vocabulary for abstract discussions, opinions, and more complex aspects of the topic (e.g., ethical, environmental).
-- Examples for "Travel": itinerary, authentic, sustainable, perspective, immersive, impact, develop, consider.
-
-C1: Focus on sophisticated, formal, or specialized vocabulary, including collocations and academic terms related to the topic.
-- Examples for "Travel": expedition, cosmopolitan, wanderlust, cultural immersion, heritage, preservation, undertake.
-
-C2: Focus on highly specialized, nuanced, or idiomatic vocabulary for expert-level discussion and critical analysis.
-- Examples for "Travel": vernacular, discerning, profound, comprehensive, intricate, sophisticated.
-
-VALIDATION: For each new level's topic vocabulary, ensure that:
-- Words are primarily introduced at that specific CEFR level or higher.
-- There is minimal to no overlap where a word primarily taught as "new" at a lower level is re-presented as "new" at a higher level for the same basic meaning.
-- If a word appears across levels, it must be because it's used in a significantly more complex way, collocation, or nuanced meaning appropriate for the higher level.
-
-TOPIC-ESSENTIAL VOCABULARY MARKING:
-If a word is outside the typical frequency range for ${params.cefrLevel} but essential for meaningful discussion of "${params.topic}", mark it as topic-essential:
-- Include "topicEssential": true in the vocabulary item
-- Add explanation in "usageNotes" field: "This word is essential for discussing [topic] at [level] despite being above typical frequency range"
-- Ensure extra support through additional examples and clear definitions
-- IMPORTANT: topicEssential: true is for rare exceptions only. Always prioritize words within the typical frequency range for the CEFR level.
-
-AUTOMATIC REJECTION CRITERIA - REJECT WORDS THAT:
-❌ Are primarily introduced at a lower CEFR level without significant complexity increase
-❌ Require unknown prerequisite vocabulary for comprehension
-❌ Are too abstract/complex for the cognitive level
+**REJECT WORDS THAT:**
+❌ Students already know from previous levels with same meaning/usage
 ❌ Cannot be defined using significantly simpler language
-❌ Are rarely used in real communication at this level
+❌ Are rarely used in real communication at this level  
 ❌ Serve only academic/specialized purposes inappropriate for the level
-❌ Would appear in lessons one level below with the same meaning and usage
 
-VOCABULARY VALIDATION CHECKLIST:
+**SELECT EXACTLY 5 VOCABULARY WORDS** that meet all criteria above for meaningful discussion of "${params.topic}" at ${params.cefrLevel} level.
 
-Before submitting your vocabulary selection, verify EVERY word meets ALL criteria:
 
-MANDATORY QUALITY CONTROL CHECKLIST:
-✓ LEVEL APPROPRIATENESS: Is each word genuinely appropriate for ${params.cefrLevel} students?
-✓ USEFULNESS VERIFICATION: Will students actually need these words in real communication?
-✓ COHERENCE CONFIRMATION: Do the words work together to enable meaningful topic discussion?
-✓ DEFINITION FEASIBILITY: Can each word be defined using vocabulary simpler than the target word?
-✓ PREREQUISITE VALIDATION: Do students have the foundation vocabulary to understand these words?
-✓ COGNITIVE MATCH: Does each word match the cognitive development level of ${params.cefrLevel} students?
-✓ COMMUNICATION VALUE: Does each word serve authentic communicative purposes at this level?
-✓ TOPIC RELEVANCE: Is each word directly relevant and useful for discussing "${params.topic}"?
 
-SEMANTIC COHERENCE AND GROUPING
 
-Select vocabulary that works together meaningfully:
 
-SEMANTIC COHERENCE REQUIREMENTS:
-1. Choose words that form logical, functional groups within the topic
-2. Ensure words can be used together in meaningful communication
-3. Create vocabulary sets that enable comprehensive topic discussion
-4. Consider word relationships (synonyms, antonyms, word families)
+**VOCABULARY GENERATION COMPLETE**
 
-FUNCTIONAL GROUPING EXAMPLES:
-A1 Transportation: [car, bus, walk] + [fast, slow] + [go, stop, wait]
-→ Enables: "I go by bus. The bus is slow. I wait for the bus."
+Now proceed to Step 1 (Reading Text Development).
 
-B1 Transportation: [commute, public transport, traffic] + [convenient, reliable, crowded] + [however, although, because]
-→ Enables: "I commute by public transport. However, it's often crowded because many people use it."
-
-B2 Transportation: [infrastructure, sustainability, urban planning] + [efficient, environmentally-friendly, cost-effective] + [furthermore, consequently, therefore]
-→ Enables: "Urban planning affects transportation infrastructure. Consequently, cities need sustainable and cost-effective solutions."
-
-COHERENCE VALIDATION:
-✓ Can students combine these words to discuss the topic meaningfully?
-✓ Do the words represent different aspects/dimensions of the topic?
-✓ Are there enough words to enable substantial communication about the topic?
-✓ Do the words progress logically from concrete to abstract (appropriate for level)?
-
-🚨 CRITICAL VOCABULARY DEFINITION REQUIREMENTS 🚨
-
-**FUNDAMENTAL PEDAGOGICAL RULE**: Students CANNOT learn a new word if its definition contains vocabulary they don't understand!
-
-**DEFINITION LANGUAGE MUST BE SIMPLER THAN THE TARGET WORD**
-
-**CLEAR EXAMPLES BY LEVEL:**
-
-**A1 DEFINITIONS** (Use ONLY very basic, beginner-level vocabulary):
-❌ WRONG: "Beautiful" = "aesthetically pleasing and visually attractive"
-✅ CORRECT: "Beautiful" = "very nice to look at"
-❌ WRONG: "Vehicle" = "a mechanical conveyance for transportation" 
-✅ CORRECT: "Vehicle" = "a car, bus, or truck"
-
-**A2 DEFINITIONS** (Use ONLY elementary vocabulary familiar to A2 students):
-❌ WRONG: "Environment" = "the aggregate of surrounding phenomena and conditions"
-✅ CORRECT: "Environment" = "the natural world around us with air, water, plants and animals"
-❌ WRONG: "Economy" = "the interrelated system of production and distribution"
-✅ CORRECT: "Economy" = "the way a country makes and spends money"
-
-**B1 DEFINITIONS** (Use ONLY intermediate vocabulary appropriate for B1 level):
-❌ WRONG: "Innovation" = "implementation of novel methodologies and paradigms"
-✅ CORRECT: "Innovation" = "creating new ideas or ways of doing things"
-❌ WRONG: "Sustainability" = "maintaining ecological equilibrium through resource utilization"
-✅ CORRECT: "Sustainability" = "using natural resources without harming the environment for the future"
-
-**B2 DEFINITIONS** (Use upper-intermediate vocabulary appropriate for B2 level):
-❌ WRONG: "Entrepreneur" = "an individual who conceptualizes and establishes commercial enterprises"
-✅ CORRECT: "Entrepreneur" = "a person who starts and runs their own business, often taking financial risks"
-
-**SENTENCE STRUCTURE LIMITS:**
-- A1: Maximum 8 words, present tense only, no complex grammar
-- A2: Maximum 12 words, simple past/future allowed, basic conjunctions only  
-- B1: Maximum 15 words, present perfect/conditionals allowed
-- B2: Maximum 20 words, all tenses and modals allowed
-
-CEFR LEVEL-APPROPRIATE DEFINITIONS GUIDELINES:
-- A1: Use only the most basic beginner vocabulary. Very simple sentence structures. Definitions should be 1-5 words where possible.
-- A2: Use elementary vocabulary familiar to A2 students. Simple sentences. Avoid complex structures or uncommon words.
-- B1: Use intermediate vocabulary appropriate for B1 level. Moderately complex sentences allowed, but prioritize clarity.
-- B2: Use upper-intermediate vocabulary appropriate for B2 students. More complex sentences and some academic words allowed.
-- C1: Use advanced vocabulary appropriate for C1 students. Complex sentences and academic/specialized terms acceptable.
-- C2: Use proficient-level vocabulary with nuanced explanations. Full range of language structures. Can include specialized terminology.
-
-EXAMPLES OF PROPER SYLLABLE BREAKDOWNS AND PRONUNCIATION:
-- "vocabulary" → syllables: ["vo", "cab", "u", "lar", "y"], stressIndex: 1, phoneticGuide: "voh-KAB-yuh-lair-ee"
-- "dissolution" → syllables: ["dis", "so", "lu", "tion"], stressIndex: 2, phoneticGuide: "dis-suh-LOO-shun"
-
-For multi-word phrases, break down EACH WORD into syllables and list them sequentially:
-- "industrial revolution" → syllables: ["in", "dus", "tri", "al", "rev", "o", "lu", "tion"], stressIndex: 6, phoneticGuide: "in-DUS-tree-ul REV-uh-LOO-shun"
-- "climate change" → syllables: ["cli", "mate", "change"], stressIndex: 0, phoneticGuide: "CLY-mit chaynj"
-
-CRITICALLY IMPORTANT: Always use ONLY regular English characters and hyphens for phoneticGuide. NEVER use IPA phonetic symbols like "ə", "ɪ", or "ʃ". Use simple English spelling to approximate sounds.
-
-STEP 3: READING TEXT DEVELOPMENT
+STEP 1: READING TEXT DEVELOPMENT
 
 Before writing, analyze the text's role in a speaking-focused lesson for ${params.cefrLevel} students:
 
