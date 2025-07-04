@@ -400,73 +400,342 @@ Apply these quality standards to generate questions that:
    - The paragraphs should include interesting information that helps students engage with the topic
    - The paragraph contexts should lead naturally into the discussion question that follows
 
-STEP 0: FOUNDATION ANALYSIS FOR ${params.cefrLevel} LEVEL
+STEP 0: CEFR LEVEL ANALYSIS (REQUIRED BEFORE PROCEEDING)
 
-Establish the lesson foundation by analyzing "${params.topic}" for ${params.cefrLevel} students:
+Before creating any lesson content, first analyze and establish clear parameters for what constitutes ${params.cefrLevel} level appropriate content:
 
-**COGNITIVE APPROACH:**
-${params.cefrLevel === 'A1' ? 'Focus on concrete, observable aspects that students can see, touch, or directly experience' : params.cefrLevel === 'A2' ? 'Focus on personal experiences and simple social interactions related to the topic' : params.cefrLevel === 'B1' ? 'Focus on practical problems and social issues that affect daily life' : params.cefrLevel === 'B2' ? 'Focus on abstract concepts requiring analysis and evaluation' : params.cefrLevel === 'C1' ? 'Focus on sophisticated concepts requiring synthesis and critical thinking' : 'Focus on expert-level analysis with nuanced understanding'}
+1. VOCABULARY ANALYSIS:
+   - Identify what vocabulary range is appropriate for ${params.cefrLevel} level students
+   - List 5-10 example words that would be appropriate for this level
+   - List 3-5 example words that would be too difficult for this level
 
-**VOCABULARY FOUNDATION:**
-${params.cefrLevel === 'A1' ? 'Students know basic daily vocabulary (top 1,000 words)' : params.cefrLevel === 'A2' ? 'Students know personal experience vocabulary (top 2,000 words)' : params.cefrLevel === 'B1' ? 'Students know functional language (top 3,000 words)' : params.cefrLevel === 'B2' ? 'Students know academic/professional vocabulary (3,000+ words)' : params.cefrLevel === 'C1' ? 'Students know advanced vocabulary (5,000+ words)' : 'Students know expert-level vocabulary with specialized terminology'}
+2. GRAMMAR STRUCTURE ANALYSIS:
+   - Identify which grammatical structures are appropriate for ${params.cefrLevel} level
+   - List 3-5 sentence structure patterns appropriate for this level
+   - List 2-3 grammatical structures that would be too complex for this level
 
-**TOPIC TREATMENT:**
-For "${params.topic}" at ${params.cefrLevel} level, approach through ${params.cefrLevel === 'A1' ? 'basic descriptions and immediate needs' : params.cefrLevel === 'A2' ? 'personal experiences and simple opinions' : params.cefrLevel === 'B1' ? 'practical applications and problem-solving' : params.cefrLevel === 'B2' ? 'analytical discussion and evaluation' : params.cefrLevel === 'C1' ? 'sophisticated analysis and synthesis' : 'expert-level discourse and critical evaluation'}
+STEP 1: TOPIC DIFFERENTIATION & CONTENT STRATEGY
 
-STEP 1: VOCABULARY SELECTION
+First, analyze how the topic "${params.topic}" should be treated differently across CEFR levels:
+- Research how the complexity and focus of topic treatment evolves from A1 to C2
+- Identify specific aspects of the topic appropriate for ${params.cefrLevel} level
+- Determine which vocabulary domains within this topic are level-appropriate
+- Consider how conceptual complexity should increase with higher levels
 
-**VOCABULARY REQUIREMENTS:**
-✓ Genuinely suitable for ${params.cefrLevel} students  
-✓ Useful for discussing "${params.topic}"
-✓ Can be defined using simpler vocabulary
-✓ Provides new communicative ability
+For "${params.topic}" at ${params.cefrLevel} level specifically:
+- Identify 3-5 unique aspects or sub-topics that are specifically appropriate for this level
+- Determine which vocabulary domains are appropriate for THIS level but NOT lower levels
+- Consider which cognitive approaches to the topic match this specific level
+- Identify conceptual complexity appropriate specifically for ${params.cefrLevel}
 
-${params.cefrLevel === 'A1' ? `**A1 Requirements:** Top 1,000 words, concrete concepts, simple definitions` : params.cefrLevel === 'A2' ? `**A2 Requirements:** Top 2,000 words, personal experience terms, elementary definitions` : params.cefrLevel === 'B1' ? `**B1 Requirements:** Top 3,000 words, functional language, intermediate definitions` : params.cefrLevel === 'B2' ? `**B2 Requirements:** Academic/professional vocabulary, analytical concepts, complex definitions` : params.cefrLevel === 'C1' ? `**C1 Requirements:** Advanced vocabulary, sophisticated concepts, nuanced definitions` : `**C2 Requirements:** Expert vocabulary, specialized terminology, comprehensive definitions`}
+Based on your analysis, create a unique approach to "${params.topic}" for ${params.cefrLevel} level by:
+- Focusing on the sub-aspects most appropriate for this specific level
+- Selecting vocabulary that would NOT be taught at lower levels
+- Approaching the topic from a cognitive perspective matching this level
+- Ensuring clear differentiation from how this topic would be taught at other levels
 
-**SELECT EXACTLY 5 VOCABULARY WORDS** with proper pronunciation guide (syllables, stressIndex, phoneticGuide using English letters only).
+This approach should ensure that lessons on the same topic at different CEFR levels are substantially different in:
+- Vocabulary selection
+- Question complexity and type
+- Conceptual approach
+- Content focus and examples
 
-STEP 2: READING TEXT DEVELOPMENT
+SPEAKING-FOCUSED TEXT PURPOSE ANALYSIS
 
-Create a conversation catalyst text (${params.cefrLevel === 'A1' ? '80-120 words' : params.cefrLevel === 'A2' ? '100-150 words' : params.cefrLevel === 'B1' ? '120-180 words' : params.cefrLevel === 'B2' ? '150-220 words' : '180-250 words'}) about "${params.topic}" that:
+Before writing, analyze the text's role in a speaking-focused lesson for ${params.cefrLevel} students:
 
-✓ Uses vocabulary from Step 1
-✓ Generates discussion opportunities  
-✓ Connects to students' experiences
-✓ Provides clear talking points
-✓ Matches ${params.cefrLevel} cognitive level
+PURPOSE CLARIFICATION:
+- This text serves as a CONVERSATION CATALYST, not comprehensive reading practice
+- Students will use this text to GENERATE SPEAKING opportunities about "${params.topic}"
+- The text should PROVIDE ENOUGH CONTENT for meaningful discussion without overwhelming
+- Focus on ACCESSIBLE INFORMATION that students can reference, react to, and build upon in conversation
 
-STEP 3: SENTENCE FRAMES
+SPEAKING-LESSON TEXT REQUIREMENTS:
+- SHORTER TEXTS that can be quickly processed to focus lesson time on speaking
+- DISCUSSION-WORTHY CONTENT that naturally generates opinions, questions, and personal connections
+- CLEAR TALKING POINTS that students can easily reference during conversations
+- RELATABLE SCENARIOS that connect to students' experiences and interests
 
-**PATTERN REQUIREMENTS:**
-✓ Enable authentic discussion about "${params.topic}"
-✓ Match ${params.cefrLevel} complexity level
-✓ Include Step 1 vocabulary
-✓ Support real communication needs
+READER ENGAGEMENT AND COMPREHENSION ANALYSIS FOR ${params.cefrLevel}
 
-${params.cefrLevel === 'A1' ? 'Focus on basic preferences and descriptions' : params.cefrLevel === 'A2' ? 'Focus on personal experiences and simple opinions' : params.cefrLevel === 'B1' ? 'Focus on reasons and problem-solving' : params.cefrLevel === 'B2' ? 'Focus on analysis and evaluation' : params.cefrLevel === 'C1' ? 'Focus on sophisticated arguments' : 'Focus on expert-level discourse'}
+Analyze what ${params.cefrLevel} students can meaningfully engage with:
 
-**Use enhanced format:** patternTemplate, languageFunction, structureComponents, examples, grammarFocus, teachingNotes.
+COGNITIVE ENGAGEMENT ANALYSIS:
+A1 STUDENTS: Can engage with immediate, concrete experiences they can relate to personally
+- Personal situations, daily activities, familiar objects and people
+- Simple cause-and-effect relationships they experience directly
+- Basic problem-solution scenarios from everyday life
 
-STEP 4: ACTIVITIES & QUESTIONS
+A2 STUDENTS: Can engage with personal experiences and simple social situations
+- Past experiences, future plans, personal opinions about familiar topics
+- Simple comparisons between different places, people, or experiences
+- Basic cultural or social topics they encounter in daily life
 
-Generate lesson activities building on previous steps:
+B1 STUDENTS: Can engage with social issues and practical problems that affect their lives
+- Community issues, lifestyle choices, personal challenges and solutions
+- Comparing different approaches to common problems
+- Topics where they can express opinions and give reasons
 
-**WARM-UP:** Simple activity using Step 1 vocabulary
-**COMPREHENSION:** 5 questions about Step 2 reading text  
-**DISCUSSION:** 5 speaking questions using Step 3 sentence patterns
-**VOCABULARY PRACTICE:** Interactive activity with Step 1 words
+B2 STUDENTS: Can engage with analytical thinking about complex social and professional topics
+- Abstract concepts they can relate to their experiences
+- Multiple perspectives on contemporary issues
+- Topics requiring evaluation and critical thinking
 
-STEP 5: INTEGRATION VALIDATION
+C1 STUDENTS: Can engage with sophisticated analysis and nuanced discussion
+- Complex social, academic, or professional issues
+- Subtle distinctions and implied meanings
+- Topics requiring synthesis of multiple ideas and perspectives
 
-✓ Vocabulary appears in reading text and activities
-✓ Sentence patterns use selected vocabulary  
-✓ Discussion questions reference reading content
-✓ All components match ${params.cefrLevel} level
-✓ Lesson flows logically from vocabulary to speaking practice
+C2 STUDENTS: Can engage with highly sophisticated and specialized content
+- Expert-level discussions with nuanced argumentation
+- Complex interdisciplinary connections
+- Topics requiring deep critical analysis and evaluation
 
-**LESSON GENERATION COMPLETE**
+CONTENT APPROPRIATENESS AND ENGAGEMENT VALIDATION
 
-Generate the lesson using this linear flow structure.
+Before finalizing content, verify it meets speaking-lesson requirements:
+
+CONTENT VALIDATION CHECKLIST:
+✓ PERSONAL RELEVANCE: Can students connect this to their own experiences or opinions?
+✓ DISCUSSION POTENTIAL: Does this content naturally generate questions, reactions, and responses?
+✓ OPINION-WORTHY: Are there aspects students can agree/disagree with or have personal views about?
+✓ ACCESSIBLE COMPLEXITY: Can students understand this quickly to focus on speaking practice?
+✓ CONVERSATION STARTERS: Does this provide clear talking points for pair/group discussions?
+
+REJECTION CRITERIA - AVOID CONTENT THAT:
+❌ Is purely informational without discussion potential
+❌ Requires extensive reading comprehension that dominates lesson time
+❌ Is too abstract or distant from students' experiences to generate authentic responses
+❌ Provides facts without opportunities for personal reaction or opinion
+❌ Is too complex for students to quickly process and then discuss
+
+SPEAKING-OPTIMIZED TEXT LENGTH GUIDELINES:
+
+A1 LEVEL: 80-120 words (2-3 short paragraphs)
+- Quick to read, maximum time for speaking practice
+- Focus on concrete, relatable situations that generate immediate responses
+
+A2 LEVEL: 100-150 words (2-3 paragraphs)  
+- Manageable length allowing focus on conversation
+- Include personal experience connections that prompt sharing
+
+B1 LEVEL: 120-180 words (3 paragraphs)
+- Balanced content that provides discussion material without overwhelming
+- Include different perspectives or approaches students can respond to
+
+B2 LEVEL: 150-220 words (3-4 paragraphs)
+- Rich enough content for analytical discussion
+- Multiple aspects or viewpoints students can explore in conversation
+
+C1/C2 LEVELS: 180-250 words (3-4 paragraphs)
+- Sophisticated content that merits extended discussion
+- Complex enough to sustain in-depth conversation while remaining accessible
+
+STEP 2: VOCABULARY SELECTION & VALIDATION
+
+**🎯 STREAMLINED VOCABULARY SELECTION FOR ${params.cefrLevel} LEVEL**
+
+Before selecting sentence patterns, analyze what communication needs ${params.cefrLevel} students actually have:
+
+REAL-WORLD COMMUNICATION NEEDS BY LEVEL:
+A1 STUDENTS: Need patterns for immediate, concrete communication
+- Expressing basic preferences: "I like ___ because ___"
+- Simple descriptions: "___ is ___" 
+- Basic needs: "I want/need ___"
+- Present actions: "I am ___ing"
+
+A2 STUDENTS: Need patterns for personal experiences and simple social interaction
+- Past experiences: "Yesterday I ___ and it was ___"
+- Future plans: "I'm going to ___ because ___"
+- Simple comparisons: "___ is more ___ than ___"
+- Basic opinions: "I think ___ is ___"
+
+B1 STUDENTS: Need patterns for social topics and reasoned communication
+- Expressing opinions with reasons: "I believe ___ because ___"
+- Problem-solution: "The problem is ___, so we should ___"
+- Advantages/disadvantages: "On one hand ___, but on the other hand ___"
+- Making suggestions: "We could ___ in order to ___"
+
+B2 STUDENTS: Need patterns for analytical and evaluative communication
+- Complex reasoning: "Although ___, ___ nevertheless ___"
+- Cause and effect: "___ has led to ___, which in turn ___"
+- Evaluation: "While ___ has advantages, it also ___"
+- Hypotheticals: "If ___ were to happen, then ___"
+
+C1/C2 STUDENTS: Need patterns for sophisticated analysis and professional communication
+- Nuanced arguments: "Despite the fact that ___, it could be argued that ___"
+- Academic discourse: "Research suggests that ___, indicating that ___"
+- Complex conditionals: "Had ___ not occurred, ___ would likely have ___"
+
+PATTERN COMPLEXITY VALIDATION:
+
+Before finalizing patterns, verify each meets these requirements:
+
+COMPLEXITY CHECK FOR ${params.cefrLevel} LEVEL:
+✓ GRAMMAR APPROPRIATENESS: Does this pattern use grammar structures students know?
+✓ VOCABULARY ACCESSIBILITY: Can students fill in the blanks with vocabulary at their level?
+✓ COGNITIVE MATCH: Does this pattern require thinking skills appropriate for this level?
+✓ USAGE FREQUENCY: Will students actually use this pattern in real communication?
+✓ TOPIC RELEVANCE: Does this pattern specifically help students discuss "${params.topic}"?
+
+AUTOMATIC REJECTION CRITERIA - REJECT PATTERNS THAT:
+❌ Use grammar structures above the students' current level
+❌ Require vocabulary students don't know to complete meaningfully  
+❌ Are too abstract for students to relate to their experiences
+❌ Are rarely used in authentic communication at this level
+❌ Don't specifically support discussion of "${params.topic}"
+❌ Are generic and could apply to any topic without topic-specific value
+
+TOPIC-SPECIFIC PATTERN SELECTION FOR "${params.topic}":
+
+Analyze how students at ${params.cefrLevel} level specifically need to talk about "${params.topic}":
+
+TOPIC COMMUNICATION ANALYSIS:
+1. What specific ideas about "${params.topic}" do ${params.cefrLevel} students need to express?
+2. What types of conversations about this topic will they have in real life?
+3. What language functions are most important for discussing this topic?
+4. How does this topic connect to their personal experiences and interests?
+
+PATTERN SELECTION STRATEGY:
+- Choose patterns that enable students to express authentic ideas about "${params.topic}"
+- Focus on high-frequency communication functions related to this topic
+- Ensure patterns can be used productively in conversations about this topic
+- Select patterns that connect the topic to students' experiences and opinions
+
+**Goal:** Develop topic-specific, communicatively valuable sentence patterns that support authentic expression about "${params.topic}" at the ${params.cefrLevel} level.
+
+ENHANCED SENTENCE FRAMES REQUIREMENTS:
+Each sentence frame MUST include the following enhanced structure for maximum teaching effectiveness:
+
+1. PATTERN TEMPLATE: Clear pattern with labeled blanks
+2. STRUCTURE COMPONENTS: Detailed breakdown of each part with:
+   - Component label (e.g., "Evaluative Adjective")
+   - Clear description of the component's function
+   - 4-6 examples appropriate for the CEFR level
+   - In-sentence example showing placement
+
+3. VISUAL STRUCTURE: Simplified diagram showing:
+   - Starting words (e.g., "It is")
+   - Component parts with connectors
+   - Ending punctuation
+
+4. ENHANCED EXAMPLES: 3-4 complete examples with:
+   - Full sentence using the pattern
+   - Component breakdown mapping each part
+   - Highlighting key vocabulary from the lesson
+
+5. PATTERN VARIATIONS: Different forms including:
+   - Negative form
+   - Question form  
+   - Modal variations
+   - Past tense form (if applicable)
+
+6. INTERACTIVE FEATURES:
+   - Fill-in-the-blank templates with guided prompts
+   - Substitution drill with multiple options
+   - Step-by-step sentence building instructions
+
+7. CULTURAL ADAPTATION:
+   - Universal application explanation
+   - Cultural notes for international students
+   - Discussion starters for cultural comparison
+
+8. PRACTICE ACTIVITIES: 3 activities of increasing difficulty:
+   - Controlled practice (easy)
+   - Guided practice (medium)
+   - Free practice (challenging)
+
+9. ERROR CORRECTION: Common mistakes with:
+   - Incorrect example
+   - Correct version
+   - Clear explanation of the error
+
+10. TEACHING SUPPORT:
+    - 4-5 practical teaching notes
+    - Discussion prompts related to the pattern
+    - Classroom implementation tips
+
+CRITICAL: Generate sentence frames using the enhanced format with these REQUIRED fields:
+- "patternTemplate": The actual pattern (e.g., "It is _____ to _____ because _____.")
+- "languageFunction": Purpose of the pattern (e.g., "Explaining reasons and justification")
+- "structureComponents": Array of component objects with label, description, examples, inSentenceExample
+- "examples": Array of objects with "completeSentence" and "breakdown" properties
+- "grammarFocus": Array of grammar points
+- "teachingNotes": Array of teaching tips
+
+NEVER use the old format with "pattern", "communicativeFunction", "structureBreakdown", or "exampleSentences".
+
+**VOCABULARY VALIDATION CHECKLIST:**
+Before selecting each word, verify it meets ALL criteria:
+
+✓ **Level Appropriateness**: Genuinely suitable for ${params.cefrLevel} students
+✓ **Communication Value**: Students will actually use this when discussing "${params.topic}"
+✓ **Topic Relevance**: Directly useful for meaningful topic discussion
+✓ **Definition Feasibility**: Can be defined using simpler vocabulary students know
+✓ **Learning Value**: Provides new communicative ability (not already known)
+✓ **Semantic Coherence**: Works together with other selected words
+
+**${params.cefrLevel} LEVEL REQUIREMENTS:**
+
+${params.cefrLevel === 'A1' ? `
+• **Frequency**: Top 1,000 words OR essential daily vocabulary
+• **Cognitive Level**: Concrete, observable concepts
+• **Definition Standard**: Use basic everyday vocabulary only
+` : params.cefrLevel === 'A2' ? `
+• **Frequency**: Top 2,000 words OR essential personal experience vocabulary
+• **Cognitive Level**: Personal experiences and simple social concepts
+• **Definition Standard**: Use A1 vocabulary + basic personal experience terms
+` : params.cefrLevel === 'B1' ? `
+• **Frequency**: Top 3,000 words OR functionally important vocabulary
+• **Cognitive Level**: Community and practical concepts
+• **Definition Standard**: Use A1-A2 vocabulary + functional language
+` : params.cefrLevel === 'B2' ? `
+• **Frequency**: 3,000-5,000+ range for academic/professional communication
+• **Cognitive Level**: Abstract concepts requiring analytical thinking
+• **Definition Standard**: Use A1-B1 vocabulary + basic academic terms
+` : params.cefrLevel === 'C1' ? `
+• **Frequency**: 5,000+ range when pedagogically valuable
+• **Cognitive Level**: Complex concepts requiring synthesis
+• **Definition Standard**: Use A1-B2 vocabulary + intermediate academic language
+` : `
+• **Frequency**: Advanced vocabulary and specialized terminology as needed
+• **Cognitive Level**: Expert-level concepts
+• **Definition Standard**: Use sophisticated but accessible vocabulary
+`}
+
+**DEFINITION EXAMPLES:**
+
+${params.cefrLevel === 'A1' ? `
+**A1 DEFINITIONS** (Use basic everyday vocabulary only):
+• "Beautiful" = "very nice to look at" (NOT "aesthetically pleasing")
+• "Vehicle" = "a car, bus, or truck" (NOT "mechanical conveyance")
+` : params.cefrLevel === 'A2' ? `
+**A2 DEFINITIONS** (Use A1 vocabulary + basic personal experience terms):
+• "Environment" = "the air, water, and land around us" 
+• "Investigate" = "to look for information about something"
+` : params.cefrLevel === 'B1' ? `
+**B1 DEFINITIONS** (Use A1-A2 vocabulary + functional language):
+• "Sustainable" = "something that can continue without damaging the environment"
+• "Influence" = "to change the way someone thinks or acts"
+` : params.cefrLevel === 'B2' ? `
+**B2 DEFINITIONS** (Use A1-B1 vocabulary + basic academic terms):
+• "Infrastructure" = "the basic systems a country needs, like roads and electricity"
+• "Implement" = "to put a plan or idea into action"
+` : params.cefrLevel === 'C1' ? `
+**C1 DEFINITIONS** (Use A1-B2 vocabulary + intermediate academic language):
+• "Paradigm" = "a way of thinking about or understanding something"
+• "Comprehensive" = "including everything that is necessary; complete"
+` : `
+**C2 DEFINITIONS** (Use sophisticated but accessible vocabulary):
+• "Ubiquitous" = "present everywhere; found in all places"
+• "Paradigmatic" = "serving as a typical example or model"
+`}
+
+**PRONUNCIATION GUIDE REQUIREMENTS:**
+For each word, provide:
+- syllables: ["array", "of", "syllables"]  
+- stressIndex: [number] (0 for first syllable, 1 for second, etc.)
+- phoneticGuide: "Simple phonetic approximation using English letters"
 
 **IMPORTANT**: Use ONLY regular English letters and hyphens. NO IPA symbols.
 
