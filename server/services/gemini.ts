@@ -275,118 +275,51 @@ ${params.targetVocabulary ? `4. CRUCIAL: YOU MUST INCLUDE THE FOLLOWING VOCABULA
 
 ${params.targetVocabulary ? '5' : '4'}. CRITICAL: FOR EACH VOCABULARY WORD, YOU MUST INCLUDE THE 'pronunciation' OBJECT WITH 'syllables', 'stressIndex', AND 'phoneticGuide' FIELDS. The 'phoneticGuide' MUST use ONLY regular English characters and hyphens (like "AS-tro-naut" or "eks-PLOR-ay-shun"), NOT International Phonetic Alphabet (IPA) symbols.
 
-5. TONE & STYLE APPROACH:
-First, analyze appropriate tone and style considerations for ${params.cefrLevel} level:
-- Research how tone and register should be adjusted for ${params.cefrLevel} level learners
-- Identify appropriate language complexity, sentence structure, and vocabulary choices for this level
-- Determine the optimal balance between authenticity and accessibility
-- Consider how the topic "${params.topic}" influences appropriate tone and style
-- Analyze engagement strategies that work best for this proficiency level and topic
-
-Based on your analysis, develop a tone and style that:
-- Is most effective for ${params.cefrLevel} level language comprehension
-- Creates appropriate engagement for the specific topic "${params.topic}"
-- Balances authenticity with accessibility
-- Models natural language use appropriate to the context
-- Demonstrates appropriate register for both the topic and level
-- Provides appropriate linguistic scaffolding through style choices
-- Creates interest and motivation for continued reading/learning
-
-Apply your determined tone and style consistently across all lesson components:
-- Reading text
-- Vocabulary definitions and examples
-- Activity instructions
-- Discussion questions and contexts
-- Teacher guidance sections
-
-TOPIC DIFFERENTIATION APPROACH:
-First, analyze how the topic "${params.topic}" should be treated differently across CEFR levels:
-- Research how the complexity and focus of topic treatment evolves from A1 to C2
-- Identify specific aspects of the topic appropriate for ${params.cefrLevel} level
-- Determine which vocabulary domains within this topic are level-appropriate
-- Consider how conceptual complexity should increase with higher levels
-
-For "${params.topic}" at ${params.cefrLevel} level specifically:
-- Identify 3-5 unique aspects or sub-topics that are specifically appropriate for this level
-- Determine which vocabulary domains are appropriate for THIS level but NOT lower levels
-- Consider which cognitive approaches to the topic match this specific level
-- Identify conceptual complexity appropriate specifically for ${params.cefrLevel}
-
-Based on your analysis, create a unique approach to "${params.topic}" for ${params.cefrLevel} level by:
-- Focusing on the sub-aspects most appropriate for this specific level
-- Selecting vocabulary that would NOT be taught at lower levels
-- Approaching the topic from a cognitive perspective matching this level
-- Ensuring clear differentiation from how this topic would be taught at other levels
-
-This approach should ensure that lessons on the same topic at different CEFR levels are substantially different in:
-- Vocabulary selection
-- Question complexity and type
-- Conceptual approach
-- Content focus and examples
-
-ENHANCED STYLE APPROACH:
-First, analyze writing style characteristics of exemplary language teaching materials:
-- Study highly engaging ESL materials at ${params.cefrLevel} level
-- Identify what makes certain materials more engaging than others
-- Research the balance between authenticity and accessibility
-- Determine style patterns that increase student motivation and interest
-
-Based on your analysis, develop a writing style for "${params.topic}" at ${params.cefrLevel} level that:
-- Has a clear, consistent voice throughout the lesson
-- Uses language patterns that model natural, native-like expression
-- Incorporates appropriate humor, warmth, or formality based on topic and level
-- Avoids "textbook language" that feels artificial or overly simplified
-- Creates genuine interest through vivid, specific language
+5. WRITING STYLE REQUIREMENTS:
+Create content with a natural, engaging voice that:
+- Uses language complexity appropriate for ${params.cefrLevel} level
+- Balances authenticity with accessibility for the topic "${params.topic}"
+- Models natural, native-like expression without "textbook language"
+- Incorporates appropriate tone (humor, warmth, or formality) based on topic and level
 - Uses varied sentence structures appropriate for the level
-- Maintains an authentic voice while remaining level-appropriate
+- Creates genuine interest through vivid, specific language
+- Maintains consistent voice across all lesson components
+- Provides appropriate linguistic scaffolding through style choices
 
-Avoid these common stylistic issues:
-- Generic, predictable phrasing that feels template-based
-- Overly formal academic tone when inappropriate for the topic
-- Overly simple language that doesn't challenge students appropriately
-- Inconsistent voice across different sections
+Apply this style consistently across:
+- Reading text, vocabulary definitions, activity instructions, discussion questions, and teacher guidance
+
+6. LEVEL-APPROPRIATE CONTENT:
+Ensure lessons on "${params.topic}" are appropriate for ${params.cefrLevel} level through:
+- Vocabulary selection that matches the level (not taught at lower levels)
+- Question complexity appropriate for the cognitive level
+- Conceptual approach matching ${params.cefrLevel} capabilities
+- Content focus suitable for this specific proficiency level
+
+Avoid these stylistic issues:
+- Generic, template-based phrasing
+- Overly formal academic tone when inappropriate
+- Overly simple language that doesn't challenge appropriately
+- Inconsistent voice across sections
 - Repetitive sentence structures or vocabulary
-- Awkward phrasing that doesn't reflect how native speakers express ideas
 
-Instead, create content with:
-- Natural flow and cohesion between ideas
-- Appropriate contextual examples that feel relevant and contemporary
-- Language that demonstrates personality and engagement with the topic
-- A balance of concrete and abstract concepts appropriate to the level
-- Stylistic choices that would engage adult learners intellectually
+7. QUESTION QUALITY STANDARDS:
+For discussion questions:
+- Elicit more than one-word or yes/no responses
+- Connect to students' experiences while remaining culturally inclusive
+- Build on vocabulary/concepts from the lesson
+- Avoid vague, obvious, or simplistic formulations
+- Encourage critical thinking appropriate to ${params.cefrLevel} level
+- Are genuinely interesting to discuss
 
-QUESTION QUALITY IMPROVEMENT APPROACH:
-First, analyze what constitutes high-quality questions for ${params.cefrLevel} level:
-- Research question taxonomies (Bloom's, DOK) appropriate for this level
-- Identify question types that stimulate meaningful language production
-- Determine markers of high-quality vs. low-quality questions
-- Study question formulation techniques used by expert language teachers
+For comprehension questions:
+- Test genuine understanding rather than just word recognition
+- Progress from literal to interpretive to applied understanding
+- Focus on meaningful content rather than trivial details
+- Use question stems appropriate for the cognitive level
+- Avoid ambiguity or multiple possible correct answers
 
-For discussion questions, ensure each question:
-- Has clear purpose and language learning objectives
-- Elicits more than one-word or yes/no responses
-- Connects to students' experiences while remaining culturally inclusive
-- Builds on vocabulary/concepts from the lesson
-- Avoids vague, obvious, or simplistic formulations ("What did it look like?")
-- Encourages critical thinking appropriate to the level
-- Is genuinely interesting to discuss
-
-For comprehension questions, ensure each question:
-- Tests specific comprehension skills appropriate for ${params.cefrLevel}
-- Requires genuine understanding rather than just recognizing words
-- Progresses from literal to interpretive to applied understanding
-- Focuses on meaningful content rather than trivial details
-- Uses question stems appropriate for the cognitive level
-- Avoids ambiguity or multiple possible correct answers
-
-Apply these quality standards to generate questions that:
-- Engage students intellectually at their appropriate level
-- Provide meaningful language practice opportunities
-- Demonstrate careful thought and authentic curiosity
-- Serve clear pedagogical purposes
-- Would be asked by experienced language educators
-
-6. CEFR LEVEL ADAPTATION: ALL content must be STRICTLY appropriate for the specified CEFR level:
+8. CEFR LEVEL ADAPTATION: ALL content must be STRICTLY appropriate for the specified CEFR level:
    - Vocabulary choices must match the CEFR level (A1=beginner, C2=advanced)
    - Sentence complexity must be appropriate (simple for A1-A2, more complex for B2-C2)
    - Grammar structures must align with the CEFR level (present simple for A1, conditionals for B1+, etc.)
