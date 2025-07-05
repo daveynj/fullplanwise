@@ -305,7 +305,42 @@ export class PDFGeneratorService {
               background-color: #f9fafb;
             }
             
-            .header {
+            .brand-header {
+              background: linear-gradient(135deg, #051d40 0%, #0a2854 100%);
+              color: white;
+              padding: 20px 30px;
+              margin: -20px -20px 40px -20px;
+              border-radius: 0 0 12px 12px;
+              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
+            
+            .brand-line {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: 8px;
+            }
+            
+            .brand-logo {
+              font-size: 1.5em;
+              font-weight: 700;
+              color: #edc437;
+            }
+            
+            .brand-url {
+              font-size: 1.1em;
+              color: #edc437;
+              font-weight: 500;
+            }
+            
+            .brand-tagline {
+              font-size: 0.95em;
+              color: #e5e7eb;
+              font-weight: 400;
+              text-align: center;
+            }
+            
+            .lesson-header {
               text-align: center;
               margin-bottom: 40px;
             }
@@ -449,12 +484,45 @@ export class PDFGeneratorService {
             }
             
             .footer {
-              text-align: center;
-              color: #9CA3AF;
-              font-size: 12px;
-              margin-top: 30px;
-              border-top: 1px solid #e5e7eb;
-              padding-top: 15px;
+              margin-top: 40px;
+              border-top: 2px solid #e5e7eb;
+              padding-top: 20px;
+              background: #f9fafb;
+              margin-left: -20px;
+              margin-right: -20px;
+              margin-bottom: -20px;
+              padding-left: 20px;
+              padding-right: 20px;
+              padding-bottom: 20px;
+            }
+            
+            .footer-content {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              flex-wrap: wrap;
+              gap: 15px;
+            }
+            
+            .generation-info {
+              color: #6B7280;
+              font-size: 0.9em;
+            }
+            
+            .brand-footer {
+              text-align: right;
+            }
+            
+            .powered-by {
+              color: #051d40;
+              font-size: 0.95em;
+              margin-bottom: 4px;
+            }
+            
+            .footer-tagline {
+              color: #6B7280;
+              font-size: 0.85em;
+              font-style: italic;
             }
             
             @media print {
@@ -480,7 +548,15 @@ export class PDFGeneratorService {
           </style>
         </head>
         <body>
-          <div class="header">
+          <div class="brand-header">
+            <div class="brand-line">
+              <div class="brand-logo">🎯 PlanwiseESL</div>
+              <div class="brand-url">planwiseesl.com</div>
+            </div>
+            <div class="brand-tagline">AI-Powered ESL Lesson Generator</div>
+          </div>
+          
+          <div class="lesson-header">
             <h1>${lessonData.title}</h1>
             <div class="subtitle">Vocabulary Review • CEFR Level ${lessonData.level} • ${words.length} Words</div>
           </div>
@@ -495,7 +571,13 @@ export class PDFGeneratorService {
           </div>
           
           <div class="footer">
-            Generated on ${new Date().toLocaleDateString()}
+            <div class="footer-content">
+              <div class="generation-info">Generated on ${new Date().toLocaleDateString()}</div>
+              <div class="brand-footer">
+                <div class="powered-by">Powered by <strong>PlanwiseESL.com</strong></div>
+                <div class="footer-tagline">Create your own AI lessons at planwiseesl.com</div>
+              </div>
+            </div>
           </div>
         </body>
         </html>
@@ -692,7 +774,42 @@ export class PDFGeneratorService {
           padding: 20px;
         }
         
-        .header {
+        .brand-header {
+          background: linear-gradient(135deg, #051d40 0%, #0a2854 100%);
+          color: white;
+          padding: 20px 30px;
+          margin: -20px -20px 30px -20px;
+          border-radius: 0 0 12px 12px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .brand-line {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 8px;
+        }
+        
+        .brand-logo {
+          font-size: 1.5em;
+          font-weight: 700;
+          color: #edc437;
+        }
+        
+        .brand-url {
+          font-size: 1.1em;
+          color: #edc437;
+          font-weight: 500;
+        }
+        
+        .brand-tagline {
+          font-size: 0.95em;
+          color: #e5e7eb;
+          font-weight: 400;
+          text-align: center;
+        }
+        
+        .lesson-header {
           text-align: center;
           margin-bottom: 30px;
           border-bottom: 3px solid #3B82F6;
@@ -942,10 +1059,60 @@ export class PDFGeneratorService {
             page-break-inside: avoid;
           }
         }
+        
+        .footer {
+          margin-top: 40px;
+          border-top: 2px solid #e5e7eb;
+          padding-top: 20px;
+          background: #f8fafc;
+          margin-left: -20px;
+          margin-right: -20px;
+          margin-bottom: -20px;
+          padding-left: 20px;
+          padding-right: 20px;
+          padding-bottom: 20px;
+        }
+        
+        .footer-content {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 15px;
+        }
+        
+        .generation-info {
+          color: #6B7280;
+          font-size: 0.9em;
+        }
+        
+        .brand-footer {
+          text-align: right;
+        }
+        
+        .powered-by {
+          color: #051d40;
+          font-size: 0.95em;
+          margin-bottom: 4px;
+        }
+        
+        .footer-tagline {
+          color: #6B7280;
+          font-size: 0.85em;
+          font-style: italic;
+        }
       </style>
     </head>
     <body>
-      <div class="header">
+      <div class="brand-header">
+        <div class="brand-line">
+          <div class="brand-logo">🎯 PlanwiseESL</div>
+          <div class="brand-url">planwiseesl.com</div>
+        </div>
+        <div class="brand-tagline">AI-Powered ESL Lesson Generator</div>
+      </div>
+      
+      <div class="lesson-header">
         <h1 class="lesson-title">${lessonData.title}</h1>
         <p class="lesson-subtitle">Vocabulary Review • CEFR Level ${lessonData.level} • ${words.length} Words</p>
       </div>
@@ -1063,6 +1230,16 @@ export class PDFGeneratorService {
             ` : ''}
           </div>
         `).join('')}
+      </div>
+      
+      <div class="footer">
+        <div class="footer-content">
+          <div class="generation-info">Generated on ${new Date().toLocaleDateString()}</div>
+          <div class="brand-footer">
+            <div class="powered-by">Powered by <strong>PlanwiseESL.com</strong></div>
+            <div class="footer-tagline">Create your own AI lessons at planwiseesl.com</div>
+          </div>
+        </div>
       </div>
     </body>
     </html>
