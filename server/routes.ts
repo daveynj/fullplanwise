@@ -566,7 +566,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Generate vocabulary review PDF for a lesson
-  app.get("/api/lessons/:id/pdf", ensureAuthenticated, async (req, res) => {
+  app.get("/api/lessons/:id/pdf", async (req, res) => {
     try {
       const lessonId = parseInt(req.params.id);
       const lesson = await storage.getLesson(lessonId);
@@ -575,8 +575,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Lesson not found" });
       }
       
-      if (lesson.teacherId !== req.user!.id) {
+      // Check authorization - allow lesson owner or any user for public access
+      if (req.isAuthenticated() && lesson.teacherId !== req.user!.id) {
         return res.status(403).json({ message: "Unauthorized access to lesson" });
+      }
+      
+      // If not authenticated, allow public access (for shared lessons)
+      if (!req.isAuthenticated()) {
+        console.log(`Public access to lesson ${lessonId} PDF download`);
       }
       
       // Parse the lesson content
