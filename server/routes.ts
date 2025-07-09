@@ -575,14 +575,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Lesson not found" });
       }
       
-      // Check authorization - allow lesson owner or any user for public access
-      if (req.isAuthenticated() && lesson.teacherId !== req.user!.id) {
-        return res.status(403).json({ message: "Unauthorized access to lesson" });
-      }
+      // Allow public access to PDF downloads for all lessons
+      console.log(`PDF download requested for lesson ${lessonId}: "${lesson.title}"`);
       
-      // If not authenticated, allow public access (for shared lessons)
-      if (!req.isAuthenticated()) {
-        console.log(`Public access to lesson ${lessonId} PDF download`);
+      // Log whether user is authenticated for analytics
+      if (req.isAuthenticated()) {
+        console.log(`Authenticated user ${req.user!.username} downloading lesson ${lessonId}`);
+      } else {
+        console.log(`Public user downloading lesson ${lessonId}`);
       }
       
       // Parse the lesson content
