@@ -1214,13 +1214,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/lessons/:id/copy", ensureAuthenticated, async (req, res) => {
+  app.post("/api/lessons/:id/copy", async (req, res) => {
     try {
       const lessonId = parseInt(req.params.id);
-      const userId = req.user!.id;
       
-      const copiedLesson = await storage.copyLessonToUser(lessonId, userId);
-      res.json(copiedLesson);
+      // Public access - return lesson data for anyone to use
+      const lesson = await storage.getLesson(lessonId);
+      if (!lesson) {
+        return res.status(404).json({ message: "Lesson not found" });
+      }
+      
+      console.log(`Public copy request for lesson ${lessonId}: "${lesson.title}"`);
+      
+      // Return the full lesson data for public use
+      res.json({ 
+        success: true, 
+        lesson: {
+          id: lesson.id,
+          title: lesson.title,
+          topic: lesson.topic,
+          cefrLevel: lesson.cefrLevel,
+          content: lesson.content,
+          category: lesson.category,
+          tags: lesson.tags
+        },
+        message: "Lesson copied successfully" 
+      });
     } catch (error: any) {
       console.error('Error copying lesson:', error);
       res.status(500).json({ message: error.message });

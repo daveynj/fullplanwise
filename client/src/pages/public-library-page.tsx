@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { PUBLIC_LIBRARY_LABELS } from "@shared/schema";
 import { Sidebar } from "@/components/layout/sidebar";
+import { useAuth } from "@/hooks/use-auth";
 
 interface PublicLesson {
   id: number;
@@ -35,6 +36,7 @@ export default function PublicLibraryPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 12;
   const { toast } = useToast();
+  const { user } = useAuth();
 
   // Debounce search input
   useEffect(() => {
@@ -67,13 +69,13 @@ export default function PublicLibraryPage() {
 
   const handleCopyLesson = async (lessonId: number) => {
     try {
-      await apiRequest(`/api/lessons/${lessonId}/copy`, {
+      const response = await apiRequest(`/api/lessons/${lessonId}/copy`, {
         method: "POST",
       });
       
       toast({
         title: "Lesson copied",
-        description: "The lesson has been added to your personal library",
+        description: "The lesson data is now available for you to use",
       });
     } catch (error: any) {
       toast({
