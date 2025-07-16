@@ -20,7 +20,7 @@ export function SEOHead({
   description, 
   keywords = [], 
   canonicalUrl,
-  ogImage = "/twitter-card-new.png",
+  ogImage = "/images/twitter-card-brand-updated.svg?v=2025-01-18",
   article 
 }: SEOHeadProps) {
   const fullTitle = title.includes("PlanwiseESL") ? title : `${title} | PlanwiseESL - AI-Powered ESL Lessons`;

@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Lesson } from "@shared/schema";
 import { queryClient } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/use-auth";
+import { SEOHead } from "@/components/SEOHead";
 
 export default function FullScreenLessonPage() {
   const [location] = useLocation();
@@ -200,7 +201,27 @@ export default function FullScreenLessonPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-white print:bg-white">
+    <>
+      {/* SEO meta tags for shared lessons */}
+      {lesson && (
+        <SEOHead
+          title={`${lesson.title} - ${lesson.cefrLevel} ESL Lesson`}
+          description={`AI-generated ${lesson.cefrLevel} level ESL lesson about ${lesson.topic}. Includes vocabulary, reading comprehension, and discussion activities.`}
+          keywords={[
+            'ESL lesson',
+            lesson.topic,
+            lesson.cefrLevel,
+            'English teaching',
+            'language learning',
+            'vocabulary',
+            'reading comprehension'
+          ]}
+          canonicalUrl={`${window.location.origin}/lessons/${lesson.id}`}
+          ogImage={`https://planwiseesl.com/images/twitter-card-brand-updated.svg?v=2025-01-18`}
+        />
+      )}
+      
+      <div className="min-h-screen flex flex-col bg-white print:bg-white">
       {/* Header - hidden when printing */}
       <header className="bg-white border-b border-gray-200 print:hidden">
         <div className="flex justify-between items-center px-5 py-3">
@@ -331,5 +352,6 @@ export default function FullScreenLessonPage() {
         </Tabs>
       </main>
     </div>
+    </>
   );
 }
