@@ -69,9 +69,7 @@ export default function PublicLibraryPage() {
 
   const handleCopyLesson = async (lessonId: number) => {
     try {
-      const response = await apiRequest(`/api/lessons/${lessonId}/copy`, {
-        method: "POST",
-      });
+      const response = await apiRequest("POST", `/api/lessons/${lessonId}/copy`);
       
       toast({
         title: "Lesson copied",
