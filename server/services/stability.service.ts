@@ -62,11 +62,11 @@ export class StabilityService {
         STABILITY_API_URL,
         {
           text_prompts: [{ text: prompt }, { text: NEGATIVE_PROMPT, weight: -0.7 }], // Add negative prompt with slight negative weight
-          height: 1024, // SDXL requires 1024x1024 or other supported dimensions
-          width: 1024, // SDXL standard dimensions
+          height: 512, // Smallest SDXL dimension for lowest cost
+          width: 512, // Smallest SDXL dimension for lowest cost  
           samples: 1, // Generate only one image to minimize cost
-          cfg_scale: 7, // SDXL recommended guidance scale
-          steps: 20, // SDXL minimum steps for good quality
+          cfg_scale: 5, // Lower guidance scale for faster/cheaper generation
+          steps: 15, // Reduced steps for lower cost while maintaining quality
           style_preset: "photographic" // Simple preset that works well for educational content
         },
         {
