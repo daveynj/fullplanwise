@@ -483,7 +483,22 @@ export class DatabaseStorage implements IStorage {
         try {
           console.log('[Storage.getLessons] Attempting fallback query with minimal conditions...');
           lessonsList = await db
-            .select()
+            .select({
+              id: lessons.id,
+              teacherId: lessons.teacherId,
+              studentId: lessons.studentId,
+              title: lessons.title,
+              topic: lessons.topic,
+              cefrLevel: lessons.cefrLevel,
+              notes: lessons.notes,
+              grammarSpotlight: lessons.grammarSpotlight,
+              category: lessons.category,
+              tags: lessons.tags,
+              isPublic: lessons.isPublic,
+              publicCategory: lessons.publicCategory,
+              createdAt: lessons.createdAt
+              // Excluding 'content' field to avoid 67MB response limit
+            })
             .from(lessons)
             .where(eq(lessons.teacherId, teacherId))
             .orderBy(desc(lessons.createdAt))
