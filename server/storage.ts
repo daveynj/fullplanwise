@@ -453,7 +453,22 @@ export class DatabaseStorage implements IStorage {
       let fetchErrorOccurred = false;
       try {
         lessonsList = await db
-          .select()
+          .select({
+            id: lessons.id,
+            teacherId: lessons.teacherId,
+            studentId: lessons.studentId,
+            title: lessons.title,
+            topic: lessons.topic,
+            cefrLevel: lessons.cefrLevel,
+            notes: lessons.notes,
+            grammarSpotlight: lessons.grammarSpotlight,
+            category: lessons.category,
+            tags: lessons.tags,
+            isPublic: lessons.isPublic,
+            publicCategory: lessons.publicCategory,
+            createdAt: lessons.createdAt
+            // Excluding 'content' field to avoid 67MB response limit
+          })
           .from(lessons)
           .where(and(...conditions))
           .orderBy(desc(lessons.createdAt))
