@@ -1573,6 +1573,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: error.message });
     }
   });
+
   
   // Create HTTP server
   const httpServer = createServer(app);

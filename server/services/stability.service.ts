@@ -1,10 +1,11 @@
 import axios from 'axios';
 import * as fs from 'fs';
 
-// Using SD 1.6 which supports smaller dimensions and is more cost-effective
-const STABILITY_API_URL = 'https://api.stability.ai/v1/generation/stable-diffusion-v1-6/text-to-image';
-// SDXL models have fixed dimension requirements - 1024x1024, 1152x896, etc.
-// const STABILITY_API_URL = 'https://api.stability.ai/v1/generation/stable-diffusion-xl-1024-v1-0/text-to-image';
+// Updated to use SDXL (SD 1.6 was discontinued July 24, 2025)
+// Using SDXL which is the current recommended model
+const STABILITY_API_URL = 'https://api.stability.ai/v1/generation/stable-diffusion-xl-1024-v1-0/text-to-image';
+// Legacy SD 1.6 endpoint (discontinued)
+// const STABILITY_API_URL = 'https://api.stability.ai/v1/generation/stable-diffusion-v1-6/text-to-image';
 const NEGATIVE_PROMPT = "blurry, distorted, text, words, letters, low quality, noisy, artifacts";
 
 /**
@@ -61,11 +62,11 @@ export class StabilityService {
         STABILITY_API_URL,
         {
           text_prompts: [{ text: prompt }, { text: NEGATIVE_PROMPT, weight: -0.7 }], // Add negative prompt with slight negative weight
-          height: 512, // SD 1.6 supports 512x512 as the smallest size
-          width: 512, // Keeping dimensions small to minimize cost
+          height: 1024, // SDXL requires 1024x1024 or other supported dimensions
+          width: 1024, // SDXL standard dimensions
           samples: 1, // Generate only one image to minimize cost
-          cfg_scale: 5, // Lower guidance scale for faster generation
-          steps: 10, // Minimum steps for acceptable quality - significantly reduces cost
+          cfg_scale: 7, // SDXL recommended guidance scale
+          steps: 20, // SDXL minimum steps for good quality
           style_preset: "photographic" // Simple preset that works well for educational content
         },
         {
