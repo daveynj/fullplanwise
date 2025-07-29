@@ -62,8 +62,8 @@ export class StabilityService {
         STABILITY_API_URL,
         {
           text_prompts: [{ text: prompt }, { text: NEGATIVE_PROMPT, weight: -0.7 }], // Add negative prompt with slight negative weight
-          height: 512, // Smallest SDXL dimension for lowest cost
-          width: 512, // Smallest SDXL dimension for lowest cost  
+          height: 1152, // SDXL required dimension for portrait format
+          width: 896, // SDXL required dimension for portrait format  
           samples: 1, // Generate only one image to minimize cost
           cfg_scale: 5, // Lower guidance scale for faster/cheaper generation
           steps: 15, // Reduced steps for lower cost while maintaining quality
