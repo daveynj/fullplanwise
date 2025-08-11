@@ -1,0 +1,476 @@
+{
+  "title": "Lesson Title About Your Topic",
+  "level": "B1",
+  "focus": "general",
+  "estimatedTime": 60,
+  "sections": [
+    {
+      "type": "warmup",
+      "title": "Warm-up Activity",
+      "content": "Description of the warm-up activity that activates prior knowledge about the topic.",
+      "questions": [
+        "Question 1 to activate knowledge?",
+        "Question 2 to engage students?",
+        "Question 3 to prepare for vocabulary?",
+        "Question 4 to connect to experiences?",
+        "Question 5 to generate interest?"
+      ],
+      "targetVocabulary": ["word1", "word2", "word3", "word4", "word5"],
+      "procedure": "Step-by-step instructions for conducting the warm-up activity.",
+      "teacherNotes": "Tips and guidance for teachers using this warm-up."
+    },
+    {
+      "type": "reading",
+      "title": "Reading Text: Your Topic Title",
+      "introduction": "Brief introduction to prepare students for the reading text.",
+      "paragraphs": [
+        "First paragraph of reading text...",
+        "Second paragraph of reading text...",
+        "Third paragraph of reading text...",
+        "Fourth paragraph of reading text...",
+        "Fifth paragraph of reading text..."
+      ],
+      "teacherNotes": "Notes on how to use the reading text effectively."
+    },
+    {
+      "type": "vocabulary",
+      "title": "Key Vocabulary",
+      "words": [
+        {
+          "term": "vocabulary1",
+          "partOfSpeech": "noun",
+          "definition": "Clear definition using simpler language.",
+          "example": "Example sentence showing the word in context.",
+          "semanticGroup": "Category/Theme",
+          "additionalExamples": [
+            "Additional example 1",
+            "Additional example 2"
+          ],
+          "wordFamily": {
+            "words": ["related1", "related2"],
+            "description": "How these words are related"
+          },
+          "collocations": ["common phrase 1", "common phrase 2"],
+          "usageNotes": "Important usage information for students.",
+          "teachingTips": "Tips for teaching this vocabulary word.",
+          "pronunciation": {
+            "syllables": ["vo", "cab", "u", "lar", "y"],
+            "stressIndex": 1,
+            "phoneticGuide": "vo-CAB-yoo-ler-ee"
+          },
+          "imagePrompt": "An illustration showing the meaning of vocabulary1 clearly. No text visible.",
+          "semanticMap": {
+            "synonyms": ["synonym1", "synonym2", "synonym3"],
+            "antonyms": ["antonym1", "antonym2"],
+            "relatedConcepts": ["concept1", "concept2", "concept3"],
+            "contexts": ["context1", "context2", "context3"],
+            "associatedWords": ["word1", "word2", "word3"]
+          }
+        },
+        {
+          "term": "vocabulary2",
+          "partOfSpeech": "verb",
+          "definition": "Clear definition using simpler language.",
+          "example": "Example sentence showing the word in context.",
+          "semanticGroup": "Category/Theme",
+          "additionalExamples": [
+            "Additional example 1",
+            "Additional example 2"
+          ],
+          "wordFamily": {
+            "words": ["related1", "related2"],
+            "description": "How these words are related"
+          },
+          "collocations": ["common phrase 1", "common phrase 2"],
+          "usageNotes": "Important usage information for students.",
+          "teachingTips": "Tips for teaching this vocabulary word.",
+          "pronunciation": {
+            "syllables": ["vo", "cab", "u", "lar", "y"],
+            "stressIndex": 1,
+            "phoneticGuide": "vo-CAB-yoo-ler-ee"
+          },
+          "imagePrompt": "An illustration showing the meaning of vocabulary2 clearly. No text visible.",
+          "semanticMap": {
+            "synonyms": ["synonym1", "synonym2", "synonym3"],
+            "antonyms": ["antonym1", "antonym2"],
+            "relatedConcepts": ["concept1", "concept2", "concept3"],
+            "contexts": ["context1", "context2", "context3"],
+            "associatedWords": ["word1", "word2", "word3"]
+          }
+        },
+        {
+          "term": "vocabulary3",
+          "partOfSpeech": "adjective",
+          "definition": "Clear definition using simpler language.",
+          "example": "Example sentence showing the word in context.",
+          "semanticGroup": "Category/Theme",
+          "additionalExamples": [
+            "Additional example 1",
+            "Additional example 2"
+          ],
+          "wordFamily": {
+            "words": ["related1", "related2"],
+            "description": "How these words are related"
+          },
+          "collocations": ["common phrase 1", "common phrase 2"],
+          "usageNotes": "Important usage information for students.",
+          "teachingTips": "Tips for teaching this vocabulary word.",
+          "pronunciation": {
+            "syllables": ["vo", "cab", "u", "lar", "y"],
+            "stressIndex": 1,
+            "phoneticGuide": "vo-CAB-yoo-ler-ee"
+          },
+          "imagePrompt": "An illustration showing the meaning of vocabulary3 clearly. No text visible.",
+          "semanticMap": {
+            "synonyms": ["synonym1", "synonym2", "synonym3"],
+            "antonyms": ["antonym1", "antonym2"],
+            "relatedConcepts": ["concept1", "concept2", "concept3"],
+            "contexts": ["context1", "context2", "context3"],
+            "associatedWords": ["word1", "word2", "word3"]
+          }
+        },
+        {
+          "term": "vocabulary4",
+          "partOfSpeech": "adverb",
+          "definition": "Clear definition using simpler language.",
+          "example": "Example sentence showing the word in context.",
+          "semanticGroup": "Category/Theme",
+          "additionalExamples": [
+            "Additional example 1",
+            "Additional example 2"
+          ],
+          "wordFamily": {
+            "words": ["related1", "related2"],
+            "description": "How these words are related"
+          },
+          "collocations": ["common phrase 1", "common phrase 2"],
+          "usageNotes": "Important usage information for students.",
+          "teachingTips": "Tips for teaching this vocabulary word.",
+          "pronunciation": {
+            "syllables": ["vo", "cab", "u", "lar", "y"],
+            "stressIndex": 1,
+            "phoneticGuide": "vo-CAB-yoo-ler-ee"
+          },
+          "imagePrompt": "An illustration showing the meaning of vocabulary4 clearly. No text visible.",
+          "semanticMap": {
+            "synonyms": ["synonym1", "synonym2", "synonym3"],
+            "antonyms": ["antonym1", "antonym2"],
+            "relatedConcepts": ["concept1", "concept2", "concept3"],
+            "contexts": ["context1", "context2", "context3"],
+            "associatedWords": ["word1", "word2", "word3"]
+          }
+        },
+        {
+          "term": "vocabulary5",
+          "partOfSpeech": "noun",
+          "definition": "Clear definition using simpler language.",
+          "example": "Example sentence showing the word in context.",
+          "semanticGroup": "Category/Theme",
+          "additionalExamples": [
+            "Additional example 1",
+            "Additional example 2"
+          ],
+          "wordFamily": {
+            "words": ["related1", "related2"],
+            "description": "How these words are related"
+          },
+          "collocations": ["common phrase 1", "common phrase 2"],
+          "usageNotes": "Important usage information for students.",
+          "teachingTips": "Tips for teaching this vocabulary word.",
+          "pronunciation": {
+            "syllables": ["vo", "cab", "u", "lar", "y"],
+            "stressIndex": 1,
+            "phoneticGuide": "vo-CAB-yoo-ler-ee"
+          },
+          "imagePrompt": "An illustration showing the meaning of vocabulary5 clearly. No text visible.",
+          "semanticMap": {
+            "synonyms": ["synonym1", "synonym2", "synonym3"],
+            "antonyms": ["antonym1", "antonym2"],
+            "relatedConcepts": ["concept1", "concept2", "concept3"],
+            "contexts": ["context1", "context2", "context3"],
+            "associatedWords": ["word1", "word2", "word3"]
+          }
+        }
+      ]
+    },
+    {
+      "type": "comprehension",
+      "title": "Reading Comprehension",
+      "questions": [
+        {
+          "question": "What is the main idea of the reading text?",
+          "options": ["Option A", "Option B", "Option C", "Option D"],
+          "answer": "Option C",
+          "correctAnswer": "Option C",
+          "explanation": "Explanation of why this is the correct answer."
+        },
+        {
+          "question": "According to the text, what causes...?",
+          "options": ["True", "False"],
+          "answer": "True",
+          "correctAnswer": "True",
+          "explanation": "Explanation based on the text content."
+        },
+        {
+          "question": "Which statement best describes...?",
+          "options": ["Statement A", "Statement B", "Statement C"],
+          "answer": "Statement B",
+          "correctAnswer": "Statement B",
+          "explanation": "Explanation referencing specific text details."
+        },
+        {
+          "question": "The author suggests that...?",
+          "options": ["Suggestion A", "Suggestion B"],
+          "answer": "Suggestion A",
+          "correctAnswer": "Suggestion A",
+          "explanation": "Explanation connecting to text evidence."
+        },
+        {
+          "question": "What can we infer about...?",
+          "options": ["True", "False"],
+          "answer": "False",
+          "correctAnswer": "False",
+          "explanation": "Explanation of the inference based on text clues."
+        }
+      ]
+    },
+    {
+      "type": "sentenceFrames",
+      "title": "Speaking Patterns: Discussing Your Topic",
+      "introduction": "These sentence patterns will help you express your ideas about the topic clearly and confidently.",
+      "frames": [
+        {
+          "patternTemplate": "I think _____ because _____.",
+          "languageFunction": "Expressing opinions with reasons",
+          "title": "Opinion and Reason Pattern",
+          "level": "b1",
+          "grammarFocus": [
+            "opinion verbs",
+            "causal connectors",
+            "present tense"
+          ],
+          "structureComponents": [
+            {
+              "label": "Opinion Verb",
+              "description": "A verb that expresses your viewpoint",
+              "examples": ["think", "believe", "feel", "consider", "find"],
+              "inSentenceExample": "I [Opinion Verb] this topic is important."
+            },
+            {
+              "label": "Main Idea",
+              "description": "Your main point about the topic",
+              "examples": ["it's essential", "it helps people", "it's challenging", "it makes a difference"],
+              "inSentenceExample": "I think [Main Idea]."
+            },
+            {
+              "label": "Reason",
+              "description": "Why you have this opinion",
+              "examples": ["it affects everyone", "I've experienced it", "research shows this", "it solves problems"],
+              "inSentenceExample": "...because [Reason]."
+            }
+          ],
+          "examples": [
+            {
+              "completeSentence": "I think this topic is important because it affects everyone's daily life.",
+              "breakdown": {
+                "Opinion Verb": "think",
+                "Main Idea": "this topic is important",
+                "Reason": "it affects everyone's daily life"
+              }
+            },
+            {
+              "completeSentence": "I believe we should learn about this because it helps us understand the world better.",
+              "breakdown": {
+                "Opinion Verb": "believe",
+                "Main Idea": "we should learn about this",
+                "Reason": "it helps us understand the world better"
+              }
+            }
+          ],
+          "teachingNotes": [
+            "Start with familiar opinion verbs like 'think' and 'believe'",
+            "Encourage students to give specific, personal reasons",
+            "Practice connecting opinions to the lesson topic"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "cloze",
+      "title": "Fill in the Blanks",
+      "text": "This is a paragraph about your topic with some [1:important] words removed. Students need to [2:choose] the correct words from the word bank to [3:complete] the text. The missing words should be [4:vocabulary] from the lesson that help students [5:practice] using new terms in context.",
+      "wordBank": ["important", "choose", "complete", "vocabulary", "practice"],
+      "teacherNotes": "Read the text aloud first, then let students work individually or in pairs to fill in the blanks."
+    },
+    {
+      "type": "sentenceUnscramble",
+      "title": "Sentence Unscramble",
+      "sentences": [
+        {
+          "words": ["topic", "this", "very", "is", "interesting"],
+          "correctSentence": "This topic is very interesting."
+        },
+        {
+          "words": ["learn", "students", "vocabulary", "new", "need", "to"],
+          "correctSentence": "Students need to learn new vocabulary."
+        },
+        {
+          "words": ["important", "practice", "it's", "to", "speaking"],
+          "correctSentence": "It's important to practice speaking."
+        }
+      ],
+      "teacherNotes": "Start with shorter sentences and progress to longer ones. Encourage students to read their answers aloud."
+    },
+    {
+      "type": "discussion",
+      "title": "Discussion Questions",
+      "questions": [
+        {
+          "paragraphContext": "Many people have different experiences with this topic. Some find it challenging at first, but with practice, they develop confidence and skills. Personal experiences often shape how we view and approach new learning opportunities. The way we first encounter something can influence our long-term relationship with it.",
+          "question": "How did you first learn about this topic, and what was your initial reaction?",
+          "imagePrompt": "An illustration showing someone learning something new with curiosity and interest. No text visible."
+        },
+        {
+          "paragraphContext": "Research shows that different methods work better for different people when it comes to learning and understanding new concepts. Some prefer hands-on experience, while others learn better through reading or listening. Cultural background and personal learning style both play important roles in how we process new information.",
+          "question": "What learning method works best for you when studying this type of topic? Why?",
+          "imagePrompt": "An illustration showing different learning methods like reading, listening, and hands-on practice. No text visible."
+        },
+        {
+          "paragraphContext": "In today's world, this topic has become increasingly relevant to many aspects of daily life. Technology and social changes have created new opportunities and challenges related to this subject. Understanding current trends and future developments helps us prepare for what's coming next.",
+          "question": "How do you think this topic will change or develop in the future?",
+          "imagePrompt": "An illustration showing future developments or technological changes. No text visible."
+        },
+        {
+          "paragraphContext": "Different cultures and communities approach this topic in various ways. What works in one place might not work in another due to different values, resources, or circumstances. Learning from diverse perspectives helps us develop a more complete understanding of complex issues.",
+          "question": "How is this topic viewed or handled differently in your culture compared to others?",
+          "imagePrompt": "An illustration showing diverse cultural perspectives or approaches. No text visible."
+        },
+        {
+          "paragraphContext": "Making personal connections to new topics helps us understand and remember information better. When we can relate new concepts to our own experiences, interests, or goals, learning becomes more meaningful and engaging. These connections also help us apply what we learn in practical ways.",
+          "question": "Can you think of a specific example from your own life that relates to this topic?",
+          "imagePrompt": "An illustration showing someone making connections between new learning and personal experience. No text visible."
+        }
+      ]
+    },
+    {
+      "type": "quiz",
+      "title": "Knowledge Check",
+      "questions": [
+        {
+          "question": "Which vocabulary word means '...'?",
+          "options": ["vocabulary1", "vocabulary2", "vocabulary3", "vocabulary4"],
+          "answer": "vocabulary2",
+          "correctAnswer": "vocabulary2",
+          "explanation": "This word specifically refers to... as mentioned in the vocabulary section."
+        },
+        {
+          "question": "According to the reading text, the main benefit is:",
+          "options": ["Benefit A", "Benefit B", "Benefit C"],
+          "answer": "Benefit B",
+          "correctAnswer": "Benefit B",
+          "explanation": "The text clearly states that the main benefit is..."
+        },
+        {
+          "question": "The sentence pattern 'I think ___ because ___' is used for:",
+          "options": ["Asking questions", "Expressing opinions", "Giving directions", "Making comparisons"],
+          "answer": "Expressing opinions",
+          "correctAnswer": "Expressing opinions",
+          "explanation": "This pattern helps students express their opinions and provide reasons for their viewpoints."
+        },
+        {
+          "question": "True or False: This topic is only relevant to certain groups of people.",
+          "options": ["True", "False"],
+          "answer": "False",
+          "correctAnswer": "False",
+          "explanation": "The reading text emphasizes that this topic affects many aspects of daily life for everyone."
+        },
+        {
+          "question": "What is the best way to practice the vocabulary from this lesson?",
+          "options": ["Memorize definitions only", "Use words in sentences", "Translate to native language", "Write words repeatedly"],
+          "answer": "Use words in sentences",
+          "correctAnswer": "Use words in sentences",
+          "explanation": "Using vocabulary in context helps students understand meaning and remember words better."
+        }
+      ]
+    }
+  ],
+  "grammarSpotlight": {
+    "grammarType": "present_simple",
+    "title": "Present Simple: Expressing Facts and Habits",
+    "description": "The present simple helps you talk about facts, regular activities, and general truths about your topic.",
+    "logicExplanation": {
+      "communicationNeed": "When discussing this topic, you often need to state facts, describe regular activities, or explain how things generally work.",
+      "logicalSolution": "The present simple tense provides a clear, straightforward way to express these ideas without worrying about time complications.",
+      "usagePattern": "Use present simple when talking about what always happens, what is generally true, or what regularly occurs with this topic.",
+      "communicationImpact": "Using present simple makes your explanations clear and helps listeners understand factual information easily."
+    },
+    "teachingTips": [
+      "Start with the communication need: Why do we need to state facts clearly?",
+      "Students often overthink tense choice - emphasize that present simple is for general truths",
+      "Practice with facts about the lesson topic before moving to personal examples"
+    ],
+    "examples": [
+      {
+        "sentence": "Many people use this method to solve everyday problems.",
+        "highlighted": "Many people **use** this method to **solve** everyday problems.",
+        "explanation": "The verbs 'use' and 'solve' are in present simple because they describe what generally happens - a regular pattern or fact."
+      },
+      {
+        "sentence": "This approach works well when people need quick results.",
+        "highlighted": "This approach **works** well when people **need** quick results.",
+        "explanation": "Both 'works' and 'need' describe general truths about the approach and people's requirements."
+      }
+    ],
+    "visualSteps": [
+      {
+        "stepNumber": 1,
+        "instruction": "Identify when you're talking about facts, habits, or general truths",
+        "visualElements": {
+          "type": "pattern_recognition",
+          "elements": "Look for words like 'always', 'usually', 'generally', 'every day' or statements that are simply true"
+        }
+      },
+      {
+        "stepNumber": 2,
+        "instruction": "Use the base form of the verb (add 's' for he/she/it)",
+        "visualElements": {
+          "type": "application",
+          "guidance": "For facts about the topic: I/You/We/They + base verb, He/She/It + verb + s"
+        }
+      },
+      {
+        "stepNumber": 3,
+        "instruction": "Check your meaning - does this happen regularly or is it generally true?",
+        "visualElements": {
+          "type": "tips",
+          "commonMistakes": ["Using present continuous for facts", "Forgetting 's' with he/she/it", "Overcomplicating simple statements"],
+          "successTips": ["Keep it simple for facts", "Remember the 's' rule", "Use present simple for topic explanations"]
+        }
+      }
+    ],
+    "visualLayout": {
+      "recommendedType": "process_steps",
+      "primaryColor": "green",
+      "pedagogicalApproach": {
+        "learningObjective": "Students will be able to state facts and describe regular activities related to the lesson topic using present simple tense",
+        "practiceActivities": [
+          "Create five facts about the lesson topic using present simple",
+          "Describe your regular activities related to this topic"
+        ],
+        "realWorldApplication": "Use present simple when explaining how things work, describing processes, or sharing factual information in conversations and presentations"
+      },
+      "adaptiveFeatures": {
+        "levelAdjustment": "B1 level focuses on accurate use of present simple for explanations and factual statements",
+        "scaffolding": "Step-by-step visual guides help students identify when and how to use present simple correctly",
+        "extension": "Advanced students can combine present simple with other tenses to create more complex explanations"
+      }
+    },
+    "interactiveFeatures": {
+      "hasVisualDiagram": true,
+      "dynamicContent": true,
+      "adaptiveToLessonTopic": true,
+      "aiGeneratedExamples": true,
+      "pedagogicallyOptimized": true
+    }
+  }
+}
