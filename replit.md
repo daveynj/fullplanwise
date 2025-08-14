@@ -118,6 +118,7 @@ This is a full-stack ESL (English as a Second Language) teaching platform built 
 - January 4, 2025: Updated Twitter card design with modern brand-aligned visual using proper design principles - blue gradient background (#051d40 to #0a2854), yellow text (#edc437) for headlines and CTAs, white text for subheadings, improved typography hierarchy, subtle glow effects, modern laptop illustration, better spacing and contrast, updated social media handles to @PlanwiseESL and @DaveTeacher1
 - January 18, 2025: Fixed Stability AI image generation by updating API endpoint from deprecated SD 1.6 to current SDXL model (stable-diffusion-xl-1024-v1-0) - API was discontinued July 24, 2025 causing image generation failures, updated parameters for SDXL requirements (896x1152 dimensions, adjusted cfg_scale and steps), verified functionality with successful test generation
 - January 29, 2025: Resolved lesson library database query performance issues caused by large base64 image data - modified getLessons queries to exclude heavy content field from list views while maintaining all necessary metadata, fixed dimension error in Stability AI service (corrected from 512x512 to required 896x1152 dimensions for SDXL model)
+- January 30, 2025: Upgraded AI lesson generation from Gemini 1.5 Pro to Gemini 2.0 Flash Experimental for faster response times, improved reasoning capabilities, and more reliable JSON output while maintaining same quality educational content generation
 
 ## User Preferences
 

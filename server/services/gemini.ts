@@ -40,9 +40,9 @@ export class GeminiService {
       const prompt = this.constructLessonPrompt(params);
       
       // Configure the model and features
-      // Using Gemini 1.5 Flash model per the latest API documentation
+      // Using Gemini 2.0 Flash model for improved performance and capabilities
       const model = this.genAI.getGenerativeModel({ 
-        model: 'gemini-1.5-pro',
+        model: 'gemini-2.0-flash-exp',
         generationConfig: {
           temperature: 0.3,
           topP: 0.9,
