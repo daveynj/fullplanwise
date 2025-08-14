@@ -13,14 +13,21 @@ export interface VocabularyWord {
   phoneticGuide?: string;
   imageBase64?: string | null;
   
-  // New fields for enhanced vocabulary learning
+  // Enhanced definition system (NEW - backwards compatible)
+  coreDefinition?: string;                  // One clear sentence using vocabulary 2 levels below target CEFR
+  simpleExplanation?: string;               // 2-3 sentences expanding understanding with familiar concepts
+  contextualMeaning?: string;               // How this word specifically relates to the lesson topic
+  levelAppropriateExample?: string;         // Original sentence showing natural usage (not from reading text)
+  commonCollocations?: string[];            // 2-3 phrases this word commonly appears with
+  additionalExamples?: string[];            // Multiple examples showing different contexts (enhanced with formal/informal/personal)
+  
+  // Enhanced vocabulary learning fields
   semanticGroup?: string;                   // Category/theme this word belongs to
-  additionalExamples?: string[];            // Multiple examples showing different contexts
   wordFamily?: {                            // Related words from the same family
     words: string[];
     description?: string;
   };
-  collocations?: string[];                  // Common phrases with this word
+  collocations?: string[];                  // Common phrases with this word (legacy - use commonCollocations for new)
   usageNotes?: string;                      // Additional information about word usage
   
   // Semantic map data for visual thinking tools
@@ -196,27 +203,53 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
 
       {/* Compact Content Grid */}
       <div className="grid grid-cols-1 gap-3">
-        {/* Row 1: Definition and Example */}
-        <div className="grid grid-cols-2 gap-3">
-          {/* Definition */}
+        {/* Enhanced Definition System - Backwards Compatible */}
+        <div className="space-y-3">
+          {/* Core Definition - Primary definition display */}
           <div className="bg-white rounded border-2 border-blue-200 p-3">
             <h3 className="text-blue-800 font-bold flex items-center text-base mb-2">
               <BookOpen className="mr-2 h-4 w-4" />
               Definition
             </h3>
             <p className="text-base font-medium">
-              {word.definition || `A definition for ${word.word}`}
+              {word.coreDefinition || word.definition || `A definition for ${word.word}`}
             </p>
           </div>
-          
-          {/* Example */}
+
+          {/* Simple Explanation - New enhanced field */}
+          {word.simpleExplanation && (
+            <div className="bg-blue-50 rounded border-2 border-blue-200 p-3">
+              <h3 className="text-blue-800 font-bold flex items-center text-base mb-2">
+                <Lightbulb className="mr-2 h-4 w-4" />
+                Simple Explanation
+              </h3>
+              <p className="text-base font-medium">
+                {word.simpleExplanation}
+              </p>
+            </div>
+          )}
+
+          {/* Contextual Meaning - How it relates to the topic */}
+          {word.contextualMeaning && (
+            <div className="bg-yellow-50 rounded border-2 border-yellow-200 p-3">
+              <h3 className="text-yellow-800 font-bold flex items-center text-base mb-2">
+                <Tag className="mr-2 h-4 w-4" />
+                In This Topic
+              </h3>
+              <p className="text-base font-medium">
+                {word.contextualMeaning}
+              </p>
+            </div>
+          )}
+
+          {/* Example Section */}
           <div className="bg-white rounded border-2 border-blue-200 p-3">
             <h3 className="text-blue-800 font-bold flex items-center text-base mb-2">
-              <BookOpen className="mr-2 h-4 w-4" />
+              <MessageSquare className="mr-2 h-4 w-4" />
               Example
             </h3>
             <p className="text-base font-medium italic">
-              "{word.example || `This is an example sentence using the word ${word.word}.`}"
+              "{word.levelAppropriateExample || word.example || `This is an example sentence using the word ${word.word}.`}"
             </p>
           </div>
         </div>
@@ -261,19 +294,33 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
         
         {/* Row 3: Additional Content - Always visible but compact */}
         <div className="grid grid-cols-1 gap-3">
-          {/* Additional Examples */}
+          {/* Enhanced Additional Examples - showing different contexts */}
           {word.additionalExamples && word.additionalExamples.length > 0 && (
             <div className="bg-white rounded border-2 border-blue-200 p-3">
               <h3 className="text-blue-800 font-bold flex items-center text-base mb-2">
                 <MessageSquare className="mr-2 h-4 w-4" />
                 More Examples
               </h3>
-              <div className="text-base space-y-2">
-                {word.additionalExamples.slice(0, 2).map((example, index) => (
-                  <p key={index} className="italic border-l-3 border-blue-400 pl-3 font-medium">
-                    "{example}"
-                  </p>
-                ))}
+              <div className="text-base space-y-3">
+                {word.additionalExamples.slice(0, 3).map((example, index) => {
+                  // Provide context labels for enhanced examples (first 3 are structured)
+                  const contextLabels = ['Formal/Academic', 'Everyday/Informal', 'Personal Experience'];
+                  return (
+                    <div key={index} className="border-l-4 border-blue-400 pl-3">
+                      {index < 3 && (
+                        <span className="text-xs font-bold text-blue-600 uppercase tracking-wide">
+                          {contextLabels[index]}
+                        </span>
+                      )}
+                      <p className="italic font-medium mt-1">
+                        "{example}"
+                      </p>
+                    </div>
+                  );
+                })}
+                {word.additionalExamples.length > 3 && (
+                  <p className="text-blue-600 text-sm font-bold">+{word.additionalExamples.length - 3} more examples</p>
+                )}
               </div>
             </div>
           )}
@@ -298,21 +345,23 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
             </div>
           )}
           
-          {/* Common Phrases - Always visible */}
-          {word.collocations && Array.isArray(word.collocations) && word.collocations.length > 0 && (
+          {/* Common Phrases - Enhanced with new commonCollocations field, backwards compatible */}
+          {((word.commonCollocations && Array.isArray(word.commonCollocations) && word.commonCollocations.length > 0) ||
+            (word.collocations && Array.isArray(word.collocations) && word.collocations.length > 0)) && (
             <div className="bg-white rounded border-2 border-blue-200 p-3">
               <h3 className="text-blue-800 font-bold flex items-center text-base mb-2">
                 <Users className="mr-2 h-4 w-4" />
                 Common Phrases
               </h3>
               <div className="flex flex-wrap gap-2">
-                {word.collocations.slice(0, 3).map((collocation, index) => (
+                {/* Use new commonCollocations field first, fallback to legacy collocations */}
+                {(word.commonCollocations || word.collocations || []).slice(0, 3).map((collocation, index) => (
                   <span key={index} className="bg-blue-50 border-2 border-blue-200 text-blue-800 px-3 py-1 rounded text-sm font-bold inline-block">
                     {collocation}
                   </span>
                 ))}
-                {word.collocations.length > 3 && (
-                  <span className="text-blue-600 text-sm font-bold">+{word.collocations.length - 3} more</span>
+                {(word.commonCollocations || word.collocations || []).length > 3 && (
+                  <span className="text-blue-600 text-sm font-bold">+{(word.commonCollocations || word.collocations || []).length - 3} more</span>
                 )}
               </div>
             </div>
@@ -333,13 +382,6 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
         </div>
         
         {/* Semantic Map Section */}
-        {/* DEBUG: Check semantic map data */}
-        {console.log('🔍 SEMANTIC MAP CHECK:', {
-          word: word.word,
-          hasSemanticMap: !!word.semanticMap,
-          semanticMapKeys: word.semanticMap ? Object.keys(word.semanticMap) : 'NO_DATA',
-          fullSemanticMapData: word.semanticMap
-        })}
         {word.semanticMap && (
           <div className="mt-4">
             <VocabularySemanticMap word={word} />

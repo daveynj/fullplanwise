@@ -356,13 +356,58 @@ For "${params.topic}" at ${params.cefrLevel} level, approach through ${params.ce
 
 STEP 1: VOCABULARY SELECTION
 
-**VOCABULARY REQUIREMENTS:**
+**ENHANCED VOCABULARY DEFINITION REQUIREMENTS:**
+
+Each vocabulary word must include:
+
+1. **coreDefinition**: One clear sentence using vocabulary 2 levels below target CEFR level
+2. **simpleExplanation**: 2-3 sentences that expand understanding using familiar concepts  
+3. **contextualMeaning**: How this word specifically relates to "${params.topic}"
+4. **levelAppropriateExample**: Original sentence showing natural usage (not from reading text)
+5. **commonCollocations**: 2-3 phrases this word commonly appears with
+6. **additionalExamples**: 3 varied example sentences showing different contexts:
+   - One formal/academic context
+   - One informal/everyday context  
+   - One that connects to student experiences
+
+**DEFINITION WRITING PRINCIPLES:**
+- Use concrete, observable concepts when possible
+- Avoid circular definitions (don't use the word to define itself)
+- Include relatable comparisons or analogies for abstract concepts
+- Ensure definitions are culturally neutral and globally accessible
+- Test that definitions can stand alone without the reading context
+
+**LEVEL-SPECIFIC DEFINITION STANDARDS:**
+
+${params.cefrLevel === 'A1' ? `**A1 Definition Standards:**
+- coreDefinition: Use only top 500 words, maximum 8 words
+- simpleExplanation: Use basic present tense, concrete examples
+- Example: "restaurant" → coreDefinition: "a place where people buy and eat food"` : params.cefrLevel === 'A2' ? `**A2 Definition Standards:**
+- coreDefinition: Use top 1,000 words, maximum 10 words
+- simpleExplanation: Use simple past/future, personal experiences
+- Example: "analyze" → coreDefinition: "to look at something carefully to understand it"` : params.cefrLevel === 'B1' ? `**B1 Definition Standards:**
+- coreDefinition: Use A2 vocabulary + common B1 words, maximum 12 words
+- simpleExplanation: Can include one slightly complex word if essential
+- Example: "evaluate" → coreDefinition: "to decide how good or useful something is"` : params.cefrLevel === 'B2' ? `**B2 Definition Standards:**
+- coreDefinition: Use B1 vocabulary appropriately, maximum 15 words
+- simpleExplanation: Focus on precision and nuance
+- Example: "synthesize" → coreDefinition: "to combine different ideas or information to create something new"` : `**C1+ Definition Standards:**
+- coreDefinition: Use sophisticated vocabulary appropriately
+- simpleExplanation: Include context clues for complex meanings
+- Focus on expert-level precision while maintaining clarity`}
+
+**VOCABULARY SELECTION CRITERIA:**
 ✓ Genuinely suitable for ${params.cefrLevel} students  
 ✓ Useful for discussing "${params.topic}"
-✓ Can be defined using simpler vocabulary
+✓ Can be defined using significantly simpler vocabulary
 ✓ Provides new communicative ability
+✓ Appears naturally in reading text with adequate context support
 
-${params.cefrLevel === 'A1' ? `**A1 Requirements:** Top 1,000 words, concrete concepts, simple definitions` : params.cefrLevel === 'A2' ? `**A2 Requirements:** Top 2,000 words, personal experience terms, elementary definitions` : params.cefrLevel === 'B1' ? `**B1 Requirements:** Top 3,000 words, functional language, intermediate definitions` : params.cefrLevel === 'B2' ? `**B2 Requirements:** Academic/professional vocabulary, analytical concepts, complex definitions` : params.cefrLevel === 'C1' ? `**C1 Requirements:** Advanced vocabulary, sophisticated concepts, nuanced definitions` : `**C2 Requirements:** Expert vocabulary, specialized terminology, comprehensive definitions`}
+**ENHANCED VOCABULARY INTEGRATION REQUIREMENTS:**
+- Each vocabulary word must appear in reading text with 2-3 context clues
+- Reading text provides enough context for word meaning without definition
+- Vocabulary density: Maximum 1 new word per 25 words of text
+- Words should be spaced throughout text, not clustered
 
 **SELECT EXACTLY 5 VOCABULARY WORDS** with proper pronunciation guide (syllables, stressIndex, phoneticGuide using English letters only).
 
@@ -397,12 +442,29 @@ Generate lesson activities building on previous steps:
 **DISCUSSION:** 5 speaking questions using Step 3 sentence patterns
 **VOCABULARY PRACTICE:** Interactive activity with Step 1 words
 
-STEP 5: INTEGRATION VALIDATION
+STEP 5: ENHANCED INTEGRATION VALIDATION
 
+**VOCABULARY QUALITY CHECK:**
+✓ Each coreDefinition uses vocabulary 2+ levels below target level
+✓ simpleExplanation expands understanding with familiar concepts
+✓ contextualMeaning clearly connects word to "${params.topic}"
+✓ levelAppropriateExample shows natural, authentic usage
+✓ commonCollocations include high-frequency, useful phrases
+✓ additionalExamples show varied contexts (formal, informal, personal)
+
+**READING TEXT INTEGRATION CHECK:**
+✓ Each vocabulary word appears with 2-3 context clues
+✓ Vocabulary density follows 1 word per 25 words maximum
+✓ Context supports meaning without requiring definitions
+✓ Words are spaced throughout text, not clustered
+✓ Integration sounds natural and authentic
+
+**OVERALL LESSON FLOW CHECK:**
 ✓ Vocabulary appears in reading text and activities
 ✓ Sentence patterns use selected vocabulary  
 ✓ Discussion questions reference reading content
 ✓ All components match ${params.cefrLevel} level
+✓ Enhanced definitions support student comprehension
 ✓ Lesson flows logically from vocabulary to speaking practice
 
 **LESSON GENERATION COMPLETE**
@@ -446,6 +508,20 @@ SPEAKING-LESSON TEXT REQUIREMENTS:
 - DISCUSSION-WORTHY CONTENT that naturally generates opinions, questions, and personal connections
 - CLEAR TALKING POINTS that students can easily reference during conversations
 - RELATABLE SCENARIOS that connect to students' experiences and interests
+
+**ENHANCED VOCABULARY INTEGRATION IN READING TEXT:**
+- Each vocabulary word must appear with NATURAL CONTEXT SUPPORT
+- Provide 2-3 meaning clues around each vocabulary word
+- Use familiar words to support unfamiliar vocabulary
+- Space vocabulary throughout text (max 1 new word per 25 words)
+- Integrate vocabulary into meaningful scenarios, not isolated usage
+
+**CONTEXT SUPPORT EXAMPLES:**
+Instead of: "The restaurant was expensive."
+Better: "The restaurant was expensive, but the food was delicious and the service was excellent, so many customers think it's worth the high prices."
+
+**COGNITIVE LOAD MANAGEMENT:**
+${params.cefrLevel === 'A1' ? 'Average 6-8 words per sentence, simple present/past' : params.cefrLevel === 'A2' ? 'Average 8-10 words per sentence, simple connector words' : params.cefrLevel === 'B1' ? 'Average 10-12 words per sentence, because/so/although' : params.cefrLevel === 'B2' ? 'Average 12-15 words per sentence, complex connectors' : 'Flexible length with sophisticated structures'}
 
 CONTENT APPROPRIATENESS AND ENGAGEMENT VALIDATION
 

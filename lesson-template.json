@@ -39,18 +39,24 @@
         {
           "term": "vocabulary1",
           "partOfSpeech": "noun",
-          "definition": "Clear definition using simpler language.",
+          "definition": "Clear definition using simpler language.", 
+          "coreDefinition": "One clear sentence using vocabulary 2 levels below target CEFR level",
+          "simpleExplanation": "2-3 sentences that expand understanding using familiar concepts and relatable comparisons",
+          "contextualMeaning": "How this word specifically relates to the lesson topic and its importance for discussion",
+          "levelAppropriateExample": "Original sentence showing natural usage (not from reading text)",
+          "commonCollocations": ["common phrase 1", "common phrase 2", "common phrase 3"],
+          "additionalExamples": [
+            "Formal/academic context example sentence",
+            "Informal/everyday context example sentence", 
+            "Personal experience context example sentence"
+          ],
           "example": "Example sentence showing the word in context.",
           "semanticGroup": "Category/Theme",
-          "additionalExamples": [
-            "Additional example 1",
-            "Additional example 2"
-          ],
           "wordFamily": {
             "words": ["related1", "related2"],
             "description": "How these words are related"
           },
-          "collocations": ["common phrase 1", "common phrase 2"],
+          "collocations": ["legacy phrase 1", "legacy phrase 2"],
           "usageNotes": "Important usage information for students.",
           "teachingTips": "Tips for teaching this vocabulary word.",
           "pronunciation": {
