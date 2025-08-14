@@ -411,6 +411,31 @@ ${params.cefrLevel === 'A1' ? `**A1 Definition Standards:**
 
 **SELECT EXACTLY 5 VOCABULARY WORDS** with proper pronunciation guide (syllables, stressIndex, phoneticGuide using English letters only).
 
+**ENHANCED VOCABULARY JSON STRUCTURE:**
+Each vocabulary word MUST include this exact structure:
+{
+  "term": "word",
+  "partOfSpeech": "noun/verb/adjective/etc",
+  "coreDefinition": "One clear sentence using vocabulary 2+ levels below target",
+  "simpleExplanation": "2-3 sentences expanding understanding with familiar concepts",
+  "contextualMeaning": "How this word specifically relates to ${params.topic}",
+  "levelAppropriateExample": "Original sentence showing natural usage",
+  "commonCollocations": ["phrase 1", "phrase 2", "phrase 3"],
+  "additionalExamples": [
+    "Formal/academic context example", 
+    "Informal/everyday context example",
+    "Personal experience context example"
+  ],
+  "definition": "Legacy field for backwards compatibility", 
+  "example": "Legacy example for backwards compatibility",
+  "pronunciation": {
+    "syllables": ["syl", "la", "bles"],
+    "stressIndex": 0,
+    "phoneticGuide": "SYL-uh-buls"
+  },
+  "imagePrompt": "An illustration showing [word meaning] clearly. No text visible."
+}
+
 STEP 2: READING TEXT DEVELOPMENT
 
 Create a conversation catalyst text (${params.cefrLevel === 'A1' ? '80-120 words' : params.cefrLevel === 'A2' ? '100-150 words' : params.cefrLevel === 'B1' ? '120-180 words' : params.cefrLevel === 'B2' ? '150-220 words' : '180-250 words'}) about "${params.topic}" that:
@@ -466,6 +491,16 @@ STEP 5: ENHANCED INTEGRATION VALIDATION
 ✓ All components match ${params.cefrLevel} level
 ✓ Enhanced definitions support student comprehension
 ✓ Lesson flows logically from vocabulary to speaking practice
+
+**CRITICAL VOCABULARY STRUCTURE REQUIREMENT:**
+MUST use the exact enhanced vocabulary JSON structure shown above with ALL new fields:
+- coreDefinition (required)
+- simpleExplanation (required)
+- contextualMeaning (required)
+- levelAppropriateExample (required)
+- commonCollocations (required array)
+- additionalExamples (required 3-item array)
+Plus legacy fields for backwards compatibility.
 
 **LESSON GENERATION COMPLETE**
 
