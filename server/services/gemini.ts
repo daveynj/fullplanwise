@@ -444,13 +444,42 @@ Each vocabulary word MUST include this exact structure:
 
 STEP 2: READING TEXT DEVELOPMENT
 
-Create a conversation catalyst text (${params.cefrLevel === 'A1' ? '80-120 words' : params.cefrLevel === 'A2' ? '100-150 words' : params.cefrLevel === 'B1' ? '120-180 words' : params.cefrLevel === 'B2' ? '150-220 words' : '180-250 words'}) about "${params.topic}" that:
+**READING TEXT ENHANCEMENT REQUIREMENTS:**
 
-✓ Uses vocabulary from Step 1
-✓ Generates discussion opportunities  
-✓ Connects to students' experiences
-✓ Provides clear talking points
-✓ Matches ${params.cefrLevel} cognitive level
+**VOCABULARY INTEGRATION:**
+✓ Each vocabulary word must appear 2-3 times in natural contexts
+✓ First appearance should be in a context that supports understanding
+✓ Subsequent appearances should show different usage patterns
+✓ Include 1-2 related words/synonyms to build semantic networks
+
+**STRUCTURAL REQUIREMENTS:**
+✓ Begin with topic introduction using familiar vocabulary
+✓ Progress logically through 3-4 connected ideas about ${params.topic}
+✓ Include concrete examples and relatable scenarios
+✓ End with a conclusion that connects to students' potential experiences
+
+**CONTEXTUAL CLARITY:**
+✓ Surrounding sentences must support vocabulary comprehension
+✓ Use signal words and transitions appropriate for ${params.cefrLevel}
+✓ Include sufficient context clues for meaning inference
+✓ Balance new vocabulary with familiar supporting language
+
+**ENGAGEMENT FACTORS:**
+✓ Include specific, vivid details rather than general statements
+✓ Connect to universal human experiences when culturally appropriate
+✓ Use storytelling elements (who, what, where, when, why)
+✓ Create natural curiosity gaps that discussion questions can explore
+
+**READING TEXT VALIDATION CHECKLIST:**
+Before finalizing, verify:
+□ Can students infer vocabulary meanings from context alone?
+□ Does each paragraph contribute to overall topic understanding?
+□ Are sentence structures varied but appropriate for ${params.cefrLevel}?
+□ Does the text create genuine discussion opportunities?
+□ Would native speakers find this text natural and engaging?
+□ Does vocabulary appear in high-utility contexts students can replicate?
+
+Create ${params.cefrLevel === 'A1' ? '80-120 words' : params.cefrLevel === 'A2' ? '100-150 words' : params.cefrLevel === 'B1' ? '120-180 words' : params.cefrLevel === 'B2' ? '150-220 words' : '180-250 words'} text following these enhanced requirements.
 
 STEP 3: SENTENCE FRAMES
 
@@ -483,12 +512,44 @@ STEP 5: ENHANCED INTEGRATION VALIDATION
 ✓ commonCollocations include high-frequency, useful phrases
 ✓ additionalExamples show varied contexts (formal, informal, personal)
 
+**ENHANCED INTEGRATION VALIDATION:**
+
+**VOCABULARY-READING CONNECTION:**
+✓ Reading text demonstrates each word's most common usage pattern
+✓ Context clues in reading support definition comprehension
+✓ Vocabulary appears in discussion-worthy contexts within the text
+✓ Text provides models for how students can use these words
+
+**DEFINITION-CONTEXT ALIGNMENT:**
+✓ Definitions match how words actually function in the reading
+✓ Examples in definitions complement (don't repeat) reading usage
+✓ Contextual meaning connects directly to reading content
+✓ Students can return to reading to see definition concepts in action
+
+**DEFINITION COMPLEXITY BY LEVEL:**
+A1-A2: Use only present tense, basic sentence structures, concrete nouns and verbs
+B1-B2: Include past/future tenses, more complex sentences, some abstract concepts with concrete examples  
+C1-C2: Allow sophisticated vocabulary in definitions, complex grammatical structures, nuanced distinctions
+
+**VOCABULARY SELECTION BY LEVEL:**
+A1: Focus on concrete, observable concepts essential for basic communication
+B1: Include abstract concepts that can be explained through familiar experiences
+C2: Select sophisticated terms that unlock academic or professional discourse
+
 **READING TEXT INTEGRATION CHECK:**
 ✓ Each vocabulary word appears with 2-3 context clues
 ✓ Vocabulary density follows 1 word per 25 words maximum
 ✓ Context supports meaning without requiring definitions
 ✓ Words are spaced throughout text, not clustered
 ✓ Integration sounds natural and authentic
+
+**FINAL QUALITY VALIDATION:**
+Ask yourself:
+1. Could a student at ${params.cefrLevel} understand these definitions without additional help?
+2. Does the reading text feel natural while effectively teaching the vocabulary?
+3. Would students be able to use these words confidently after this lesson?
+4. Do the definitions provide enough information for independent learning?
+5. Does the reading create authentic reasons to discuss ${params.topic}?
 
 **OVERALL LESSON FLOW CHECK:**
 ✓ Vocabulary appears in reading text and activities
