@@ -169,12 +169,13 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
   // Define pronunciation data structure with API data or fallbacks
   const wordData = getPronunciationData();
 
-  // Check if we have any expanded content
+  // Check if we have any expanded content - be more defensive about field checks
   const hasExpandedContent = 
-    (word.additionalExamples && word.additionalExamples.length > 0) || 
-    (word.wordFamily && word.wordFamily.words.length > 0) || 
-    (word.collocations && word.collocations.length > 0) ||
-    word.usageNotes;
+    (word.additionalExamples && Array.isArray(word.additionalExamples) && word.additionalExamples.length > 0) || 
+    (word.wordFamily && word.wordFamily.words && Array.isArray(word.wordFamily.words) && word.wordFamily.words.length > 0) || 
+    (word.collocations && Array.isArray(word.collocations) && word.collocations.length > 0) ||
+    (word.commonCollocations && Array.isArray(word.commonCollocations) && word.commonCollocations.length > 0) ||
+    (word.usageNotes && word.usageNotes.trim().length > 0);
 
   return (
     <div className="bg-blue-50 rounded-md p-4 border-2 border-blue-200 shadow-md">

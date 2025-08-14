@@ -428,6 +428,12 @@ Each vocabulary word MUST include this exact structure:
   ],
   "definition": "Legacy field for backwards compatibility", 
   "example": "Legacy example for backwards compatibility",
+  "wordFamily": {
+    "words": ["related1", "related2", "related3"],
+    "description": "Brief explanation of word relationships"
+  },
+  "collocations": ["phrase 1", "phrase 2", "phrase 3"],
+  "usageNotes": "Important usage information or context",
   "pronunciation": {
     "syllables": ["syl", "la", "bles"],
     "stressIndex": 0,
@@ -493,14 +499,23 @@ STEP 5: ENHANCED INTEGRATION VALIDATION
 ✓ Lesson flows logically from vocabulary to speaking practice
 
 **CRITICAL VOCABULARY STRUCTURE REQUIREMENT:**
-MUST use the exact enhanced vocabulary JSON structure shown above with ALL new fields:
+MUST use the exact enhanced vocabulary JSON structure shown above with ALL fields:
+
+ENHANCED FIELDS (required):
 - coreDefinition (required)
 - simpleExplanation (required)
 - contextualMeaning (required)
 - levelAppropriateExample (required)
 - commonCollocations (required array)
 - additionalExamples (required 3-item array)
-Plus legacy fields for backwards compatibility.
+
+LEGACY FIELDS (required for backwards compatibility):
+- definition (required)
+- example (required)
+- wordFamily.words (required array)
+- collocations (required array)
+- usageNotes (required string)
+- pronunciation (required object)
 
 **LESSON GENERATION COMPLETE**
 
