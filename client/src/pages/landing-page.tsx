@@ -31,8 +31,8 @@ export default function LandingPage() {
   return (
     <div className="flex flex-col min-h-screen font-open-sans">
       <SEOHead
-        title="From 50-Hour Weeks to 15-Hour Freedom | AI ESL Lesson Generator"
-        description="Join 2,847 ESL teachers who've eliminated burnout with AI lesson planning. Go from 3-hour prep sessions to 15-minute lessons. Start your transformation today!"
+        title="From 3-Hour Lesson Prep to 3-Minute Freedom | AI ESL Lesson Generator"
+        description="Transform your lesson planning from exhausting to effortless. Go from 3-hour prep sessions to 3-minute lesson generation. Start your transformation today!"
         keywords={[
           "ESL teacher burnout solution",
           "AI ESL lesson generator", 
@@ -79,7 +79,7 @@ export default function LandingPage() {
             {/* Hero Text Column */}
             <div className="text-center lg:text-left lg:w-1/2">
               <h1 className="text-4xl md:text-5xl font-nunito font-bold mb-4">
-                From 3-Hour Lesson Prep to 15-Minute Freedom
+                From 3-Hour Lesson Prep to 3-Minute Freedom
               </h1>
               <p className="text-xl md:text-2xl mb-6 opacity-90">
                 Transform your lesson planning from exhausting to effortless. Go from exhausted to energized—reclaim your weekends and rediscover your passion for teaching.
