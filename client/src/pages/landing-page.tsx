@@ -434,6 +434,11 @@ export default function LandingPage() {
               <CardContent className="text-center space-y-4">
                 <p className="text-4xl font-bold text-brand-navy">5 Free Credits</p>
                 <p className="text-gray-600">Generate your first few lessons on us!</p>
+                <div className="bg-blue-50 rounded-lg p-3 mt-4">
+                  <p className="text-blue-800 font-semibold text-sm">
+                    🎯 Try before you buy - see the magic yourself!
+                  </p>
+                </div>
                  <ul className="text-left text-sm space-y-1 text-gray-600 list-disc list-inside">
                     <li>Access all generation features</li>
                     <li>No credit card required</li>
@@ -458,6 +463,11 @@ export default function LandingPage() {
                  <p className="text-4xl font-bold text-brand-navy">$15</p>
                  <p className="text-xl font-semibold">10 Credits</p>
                  <p className="text-gray-500 text-sm">($1.50 per lesson)</p>
+                 <div className="bg-orange-50 rounded-lg p-3 mt-4">
+                   <p className="text-orange-800 font-semibold text-sm">
+                     ⏰ Saves you 15 hours of prep time
+                   </p>
+                 </div>
                  <p className="text-gray-600 text-sm">Low-cost entry point. Credits never expire.</p>
               </CardContent>
               <CardFooter className="flex justify-center">
@@ -467,8 +477,13 @@ export default function LandingPage() {
               </CardFooter>
             </Card>
 
-            {/* Card 3: Subscription Highlight */}
-            <Card className="shadow-sm">
+            {/* Card 3: Subscription Highlight - MOST POPULAR */}
+            <Card className="shadow-sm border-green-500 border-2 relative">
+              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                <span className="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                  MOST POPULAR
+                </span>
+              </div>
                <div className="bg-brand-yellow text-brand-navy text-center py-1 text-sm font-semibold rounded-t-lg">SUBSCRIPTION</div>
               <CardHeader>
                 <CardTitle className="font-nunito text-center text-brand-navy">Basic Monthly</CardTitle>
@@ -478,11 +493,16 @@ export default function LandingPage() {
                  <p className="text-4xl font-bold text-brand-navy">$19<span className="text-lg font-normal text-gray-500">/month</span></p>
                  <p className="text-xl font-semibold">20 Credits</p>
                  <p className="text-gray-500 text-sm">(~$0.95 per lesson)</p>
+                 <div className="bg-green-50 rounded-lg p-3 mt-4">
+                   <p className="text-green-800 font-semibold text-sm">
+                     💰 Saves you $45-60/week in lesson prep time!
+                   </p>
+                 </div>
                  <p className="text-gray-600 text-sm">Low monthly commitment. Cancel anytime.</p>
               </CardContent>
               <CardFooter className="flex justify-center">
                  <Link href="/buy-credits?tab=subscription"> 
-                   <Button variant="outline" className="w-full border-brand-navy text-brand-navy hover:bg-brand-navy/5">See All Plans</Button>
+                   <Button className="w-full bg-brand-navy hover:bg-brand-navy/90 text-white">Get Subscription</Button>
                 </Link>
               </CardFooter>
             </Card>
