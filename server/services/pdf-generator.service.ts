@@ -550,7 +550,10 @@ export class PDFGeneratorService {
         <body>
           <div class="brand-header">
             <div class="brand-line">
-              <div class="brand-logo">🎯 PlanwiseESL</div>
+              <div class="brand-logo">
+                <img src="/PlanWise_ESL_logo.png" alt="PlanwiseESL Logo" style="height: 32px; width: auto; vertical-align: middle; margin-right: 8px;"/>
+                PlanwiseESL
+              </div>
               <div class="brand-url">planwiseesl.com</div>
             </div>
             <div class="brand-tagline">AI-Powered ESL Lesson Generator</div>
