@@ -552,7 +552,7 @@ export class PDFGeneratorService {
             <div class="brand-line">
               <div class="brand-logo">
                 <a href="https://planwiseesl.com" target="_blank" style="color: inherit; text-decoration: none; display: inline-flex; align-items: center;">
-                  <img src="/PlanWise_ESL_logo.png" alt="PlanwiseESL Logo" style="height: 32px; width: auto; vertical-align: middle; margin-right: 8px;"/>
+                  <img src="/PlanWise_ESL_logo.png" alt="PlanwiseESL Logo" style="height: 80px; width: auto; vertical-align: middle; margin-right: 8px;"/>
                   PlanwiseESL
                 </a>
               </div>

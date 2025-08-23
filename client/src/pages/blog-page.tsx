@@ -3043,7 +3043,7 @@ export default function BlogPage() {
             <div className="flex items-center justify-between">
               <Link href="/">
                 <div className="flex items-center space-x-3">
-                  <img src="/PlanWise_ESL_logo.png" alt="PlanwiseESL Logo" className="h-12 w-auto" />
+                  <img src="/PlanWise_ESL_logo.png" alt="PlanwiseESL Logo" className="h-20 w-auto" />
                   <div>
                     <h1 className="text-xl font-bold text-gray-900">PlanwiseESL</h1>
                     <p className="text-sm text-gray-500">AI-Powered ESL Lessons</p>
@@ -3179,7 +3179,7 @@ export default function BlogPage() {
         <div className="container mx-auto px-4 py-6">
           <Link href="/">
             <div className="flex items-center space-x-3">
-              <img src="/PlanWise_ESL_logo.png" alt="PlanwiseESL Logo" className="h-12 w-auto" />
+              <img src="/PlanWise_ESL_logo.png" alt="PlanwiseESL Logo" className="h-20 w-auto" />
               <div>
                 <h1 className="text-xl font-bold text-gray-900">PlanwiseESL Blog</h1>
                 <p className="text-sm text-gray-500">Expert insights on AI-powered ESL teaching from real teachers</p>
