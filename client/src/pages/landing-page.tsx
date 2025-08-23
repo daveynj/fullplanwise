@@ -713,7 +713,6 @@ export default function LandingPage() {
               <h3 className="text-lg font-semibold mb-4">About</h3>
               <ul className="space-y-2 text-sm text-gray-300">
                 <li>Created by ESL Teacher</li>
-                <li>Trusted by 2,500+ Teachers</li>
                 <li>CEFR-Aligned Content</li>
                 <li>15+ Hours Saved Weekly</li>
               </ul>
