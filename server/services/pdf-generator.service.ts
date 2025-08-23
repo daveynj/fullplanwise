@@ -551,10 +551,14 @@ export class PDFGeneratorService {
           <div class="brand-header">
             <div class="brand-line">
               <div class="brand-logo">
-                <img src="/PlanWise_ESL_logo.png" alt="PlanwiseESL Logo" style="height: 32px; width: auto; vertical-align: middle; margin-right: 8px;"/>
-                PlanwiseESL
+                <a href="https://planwiseesl.com" target="_blank" style="color: inherit; text-decoration: none; display: inline-flex; align-items: center;">
+                  <img src="/PlanWise_ESL_logo.png" alt="PlanwiseESL Logo" style="height: 32px; width: auto; vertical-align: middle; margin-right: 8px;"/>
+                  PlanwiseESL
+                </a>
               </div>
-              <div class="brand-url">planwiseesl.com</div>
+              <div class="brand-url">
+                <a href="https://planwiseesl.com" target="_blank" style="color: #051d40; text-decoration: none; font-weight: 500;">planwiseesl.com</a>
+              </div>
             </div>
             <div class="brand-tagline">AI-Powered ESL Lesson Generator</div>
           </div>
@@ -577,8 +581,8 @@ export class PDFGeneratorService {
             <div class="footer-content">
               <div class="generation-info">Generated on ${new Date().toLocaleDateString()}</div>
               <div class="brand-footer">
-                <div class="powered-by">Powered by <strong>PlanwiseESL.com</strong></div>
-                <div class="footer-tagline">Create your own AI lessons at planwiseesl.com</div>
+                <div class="powered-by">Powered by <strong><a href="https://planwiseesl.com" target="_blank" style="color: #051d40; text-decoration: none;">PlanwiseESL.com</a></strong></div>
+                <div class="footer-tagline">Create your own AI lessons at <a href="https://planwiseesl.com" target="_blank" style="color: #6B7280; text-decoration: underline;">planwiseesl.com</a></div>
               </div>
             </div>
           </div>
