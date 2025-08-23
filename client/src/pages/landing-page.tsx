@@ -82,7 +82,7 @@ export default function LandingPage() {
                 From 3-Hour Lesson Prep to 15-Minute Freedom
               </h1>
               <p className="text-xl md:text-2xl mb-6 opacity-90">
-                Join 2,847 ESL teachers who've eliminated burnout with AI lesson planning. Go from exhausted to energized—reclaim your weekends and rediscover your passion for teaching.
+                Transform your lesson planning from exhausting to effortless. Go from exhausted to energized—reclaim your weekends and rediscover your passion for teaching.
               </p>
               
               {/* Quick benefit list */}
@@ -537,24 +537,24 @@ export default function LandingPage() {
         <div className="container mx-auto max-w-3xl">
           <h2 className="text-3xl md:text-4xl font-nunito font-bold mb-6">Ready to Revolutionize Your Lesson Planning?</h2>
           
-          {/* Social proof stats */}
+          {/* Value proposition stats */}
           <div className="grid grid-cols-3 gap-4 mb-8 max-w-2xl mx-auto">
             <div className="stat">
-              <p className="text-3xl md:text-4xl font-bold text-brand-yellow">500+</p>
-              <p className="text-sm md:text-base">Teachers Using Plan Wise ESL</p>
+              <p className="text-3xl md:text-4xl font-bold text-brand-yellow">3</p>
+              <p className="text-sm md:text-base">Minutes to Create Complete Lessons</p>
             </div>
             <div className="stat">
-              <p className="text-3xl md:text-4xl font-bold text-brand-yellow">5000+</p>
-              <p className="text-sm md:text-base">Lessons Generated</p>
+              <p className="text-3xl md:text-4xl font-bold text-brand-yellow">6+</p>
+              <p className="text-sm md:text-base">Hours Saved Weekly</p>
             </div>
             <div className="stat">
-              <p className="text-3xl md:text-4xl font-bold text-brand-yellow">8000+</p>
-              <p className="text-sm md:text-base">Hours Saved</p>
+              <p className="text-3xl md:text-4xl font-bold text-brand-yellow">A1-C2</p>
+              <p className="text-sm md:text-base">CEFR Levels Supported</p>
             </div>
           </div>
           
           <p className="text-xl mb-8 opacity-90">
-            Join hundreds of teachers already saving <span className="font-bold">6+ hours every week</span> on lesson preparation.
+            Stop spending <span className="font-bold">3+ hours per lesson</span> on preparation. Start teaching more and planning less.
           </p>
           
           <div className="flex flex-col items-center">
