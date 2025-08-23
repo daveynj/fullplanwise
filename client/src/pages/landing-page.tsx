@@ -648,7 +648,7 @@ export default function LandingPage() {
             {/* Brand Section */}
             <div className="md:col-span-2">
               <div className="flex items-center space-x-3 mb-4">
-                <img src="/PlanWise_ESL_logo.png" alt="PlanwiseESL Logo" className="h-15 w-auto" />
+                <img src="/PlanWise_ESL_logo.png" alt="PlanwiseESL Logo" className="h-14 w-auto" />
                 <span className="text-xl font-bold">PlanwiseESL</span>
               </div>
               <p className="text-gray-300 text-sm mb-4 max-w-md">
