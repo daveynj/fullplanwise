@@ -53,7 +53,7 @@ export default function LandingPage() {
         <nav className="container mx-auto px-6 py-3 flex justify-between items-center">
           {/* Combine logo and text */}
           <div className="flex items-center gap-2">
-            <img src="/PlanWise_ESL_logo.png" alt="PlanwiseESL AI-powered ESL lesson generator logo" className="h-8 w-auto" /> 
+            <img src="/PlanWise_ESL_logo.png" alt="PlanwiseESL AI-powered ESL lesson generator logo" className="h-11 w-auto" /> 
             <span className="text-xl font-nunito font-bold text-brand-navy">PLAN WISE ESL</span>
           </div>
           <div className="flex items-center gap-4">
@@ -648,9 +648,7 @@ export default function LandingPage() {
             {/* Brand Section */}
             <div className="md:col-span-2">
               <div className="flex items-center space-x-3 mb-4">
-                <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
-                  <Sparkles className="h-6 w-6 text-white" />
-                </div>
+                <img src="/PlanWise_ESL_logo.png" alt="PlanwiseESL Logo" className="h-10 w-auto" />
                 <span className="text-xl font-bold">PlanwiseESL</span>
               </div>
               <p className="text-gray-300 text-sm mb-4 max-w-md">
