@@ -305,7 +305,7 @@ params.cefrLevel === 'B2' ?
 
 **SELECTION PRIORITY:**
 1. Level appropriateness FIRST (difficulty matching ${params.cefrLevel})
-2. Topic relevance SECOND (useful for discussing "${params.topic}")`
+2. Topic relevance SECOND (useful for discussing "${params.topic}")
 
 **CRITICAL SELECTION PRINCIPLES:**
 1. **Level Appropriateness FIRST** - Choose words that match ${params.cefrLevel} cognitive and linguistic capabilities
