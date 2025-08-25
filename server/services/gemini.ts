@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
 import { LessonGenerateParams } from '@shared/schema';
 import * as fs from 'fs';
-import { stabilityService } from './stability.service';
+import { replicateFluxService } from './replicate-flux.service';
 
 /**
  * Service for interacting with the Google Gemini AI API via OpenRouter
@@ -1522,7 +1522,7 @@ If an example is a simple string, return a string. If it's an object with "compl
                try {
                  // Generate unique ID for logging
                  const requestId = `vocab_${word.term ? word.term.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 15) : 'word'}`;
-                 word.imageBase64 = await stabilityService.generateImage(word.imagePrompt, requestId);
+                 word.imageBase64 = await replicateFluxService.generateImage(word.imagePrompt, requestId);
                  console.log(`Successfully generated image for vocab word: ${word.term}`);
                } catch (imgError) {
                  console.error(`Error generating image for vocab word ${word.term}:`, imgError);
@@ -1579,7 +1579,7 @@ If an example is a simple string, return a string. If it's an object with "compl
                  // Generate unique ID for logging - use part of question text
                  const requestId = `disc_${question.question ? question.question.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 15) : 'question'}`;
                  console.log(`Requesting image generation for discussion question with prompt: "${question.imagePrompt.substring(0, 100)}..."`);
-                 question.imageBase64 = await stabilityService.generateImage(question.imagePrompt, requestId);
+                 question.imageBase64 = await replicateFluxService.generateImage(question.imagePrompt, requestId);
                  console.log(`Successfully generated image for discussion question`);
                } catch (imgError) {
                   console.error(`Error generating image for discussion question:`, imgError);
