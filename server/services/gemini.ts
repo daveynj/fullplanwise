@@ -270,23 +270,28 @@ export class GeminiService {
     const maxVocabCount = 5;
     
     // System instruction part
-    const systemInstruction = `Create a ${params.cefrLevel} vocabulary lesson about "${params.topic}".
+    const systemInstruction = `You are an expert ESL teacher creating a vocabulary-focused lesson.
 
-🎯 PRIMARY RULE: Choose vocabulary by DIFFICULTY LEVEL first, topic relevance second.
+🎯 MISSION: Create 5 vocabulary words that are PERFECT for ${params.cefrLevel} level students learning about "${params.topic}".
 
-**${params.cefrLevel} VOCABULARY REQUIREMENTS:**
-${params.cefrLevel === 'A1' ? 'Choose 5 basic daily words (top 1,000 most common words)' : 
-params.cefrLevel === 'A2' ? 'Choose 5 personal experience words (1,000-2,000 frequency)' :
-params.cefrLevel === 'B1' ? 'Choose 5 functional communication words (2,000-3,000 frequency)' :
-params.cefrLevel === 'B2' ? 'Choose 5 academic/professional words (3,000-5,000 frequency)' :
-params.cefrLevel === 'C1' ? 'Choose 5 sophisticated academic words (5,000+ frequency) - graduate-level vocabulary that most B2 students do not know' :
-'Choose 5 expert-level specialized words from professional/academic domains'}
+💡 REMEMBER: Vocabulary is the CORE of this lesson. Everything else exists to teach and reinforce these 5 words.
 
-**SELECTION TEST:**
-Before finalizing each word, ask: "Is this word appropriately challenging for ${params.cefrLevel} students?"
-${params.cefrLevel === 'C1' ? 'For C1: "Would a B2 student struggle with this word?" If NO, choose a harder word.' : ''}
+**${params.cefrLevel.toUpperCase()} VOCABULARY SELECTION:**
+${params.cefrLevel === 'C1' ? 
+`- Graduate-level academic vocabulary (5,000+ frequency rank)
+- Words from scholarly articles, research papers, professional discourse  
+- Vocabulary that challenges even strong B2 students
+- TEST: "Would a typical B2 student know this word?" If YES → choose harder word` : 
+params.cefrLevel === 'B2' ? 
+`- Academic/professional vocabulary (3,000-5,000 frequency)
+- Words for sophisticated expression and analysis
+- University-level vocabulary for educated discussion` :
+`- Level-appropriate vocabulary for ${params.cefrLevel} students
+- Words matching cognitive and linguistic capabilities of the level`}
 
-Then write a lesson where these 5 words appear naturally in the reading text about "${params.topic}".`
+**SELECTION PRIORITY:**
+1. Level appropriateness FIRST (difficulty matching ${params.cefrLevel})
+2. Topic relevance SECOND (useful for discussing "${params.topic}")`
 
 **CRITICAL SELECTION PRINCIPLES:**
 1. **Level Appropriateness FIRST** - Choose words that match ${params.cefrLevel} cognitive and linguistic capabilities
