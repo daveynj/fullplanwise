@@ -51,12 +51,12 @@ export class GeminiService {
       // Construct the prompt
       const prompt = this.constructLessonPrompt(params);
 
-      console.log('Sending request to OpenRouter API (Qwen 2.5 72B)...');
+      console.log('Sending request to OpenRouter API (Claude Haiku 3.5)...');
 
       try {
-        // Make the request to OpenRouter API using Qwen 2.5 72B
+        // Make the request to OpenRouter API using Claude Haiku 3.5
         const result = await this.client.chat.completions.create({
-          model: 'qwen/qwen-2.5-72b-instruct',
+          model: 'anthropic/claude-3-5-haiku',
           messages: [
             {
               role: 'user',
@@ -70,11 +70,11 @@ export class GeminiService {
 
                 const text = result.choices[0]?.message?.content;
 
-        console.log('Received response from OpenRouter API (Qwen)');
+        console.log('Received response from OpenRouter API (Claude)');
 
         if (!text) {
-          console.error('No content received from Qwen API');
-          throw new Error('Empty response from Qwen API');
+          console.error('No content received from Claude API');
+          throw new Error('Empty response from Claude API');
         }
 
         try {
@@ -126,7 +126,7 @@ export class GeminiService {
                 title: `Lesson on ${params.topic}`,
                 content: "The generated lesson is missing required structure",
                 error: 'Invalid lesson structure',
-                provider: 'qwen',
+                provider: 'claude',
                 sections: [
                   {
                     type: "error",
