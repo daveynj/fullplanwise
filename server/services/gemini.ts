@@ -270,73 +270,23 @@ export class GeminiService {
     const maxVocabCount = 5;
     
     // System instruction part
-    const systemInstruction = `You are an expert ESL teacher creating a vocabulary-focused lesson.
+    const systemInstruction = `Create a ${params.cefrLevel} vocabulary lesson about "${params.topic}".
 
-🎯 MISSION: Create 5 vocabulary words that are PERFECT for ${params.cefrLevel} level students learning about "${params.topic}".
+🎯 PRIMARY RULE: Choose vocabulary by DIFFICULTY LEVEL first, topic relevance second.
 
-💡 REMEMBER: Vocabulary is the CORE of this lesson. Everything else (reading, questions, activities) exists to teach and reinforce these 5 words.
+**${params.cefrLevel} VOCABULARY REQUIREMENTS:**
+${params.cefrLevel === 'A1' ? 'Choose 5 basic daily words (top 1,000 most common words)' : 
+params.cefrLevel === 'A2' ? 'Choose 5 personal experience words (1,000-2,000 frequency)' :
+params.cefrLevel === 'B1' ? 'Choose 5 functional communication words (2,000-3,000 frequency)' :
+params.cefrLevel === 'B2' ? 'Choose 5 academic/professional words (3,000-5,000 frequency)' :
+params.cefrLevel === 'C1' ? 'Choose 5 sophisticated academic words (5,000+ frequency) - graduate-level vocabulary that most B2 students do not know' :
+'Choose 5 expert-level specialized words from professional/academic domains'}
 
-STEP 1: VOCABULARY SELECTION (MOST IMPORTANT!)
+**SELECTION TEST:**
+Before finalizing each word, ask: "Is this word appropriately challenging for ${params.cefrLevel} students?"
+${params.cefrLevel === 'C1' ? 'For C1: "Would a B2 student struggle with this word?" If NO, choose a harder word.' : ''}
 
-**CEFR LEVEL PRIORITY:** ${params.cefrLevel} level appropriateness is MORE important than topic obviousness.
-
-**FOR ${params.cefrLevel.toUpperCase()} LEVEL SPECIFICALLY:**
-
-${params.cefrLevel === 'A1' ? `**A1 VOCABULARY GUIDANCE:**
-- Choose basic daily words students actually need
-- Words should be in top 1,000 most frequent words
-- Students can use these immediately in conversation
-- Example topic approach: For "food" choose "delicious, fresh, healthy" not "cuisine, gourmet"` : 
-
-params.cefrLevel === 'A2' ? `**A2 VOCABULARY GUIDANCE:**
-- Choose words from personal experience domain (1,000-2,000 frequency)
-- Words that help express simple opinions and experiences
-- Students can relate to these in their daily lives
-- Example topic approach: For "travel" choose "exciting, comfortable, disappointed" not "journey, expedition"` :
-
-params.cefrLevel === 'B1' ? `**B1 VOCABULARY GUIDANCE:**
-- Choose functional language for practical communication (2,000-3,000 frequency)
-- Words that solve real communication problems
-- Help students discuss practical aspects of topics
-- Example topic approach: For "environment" choose "effective, concerned, impact" not "sustainability, ecosystem"` :
-
-params.cefrLevel === 'B2' ? `**B2 VOCABULARY GUIDANCE:**
-- Choose words for academic/professional discussions (3,000-5,000 frequency)
-- Words that enable more sophisticated expression
-- Help students sound more educated and precise
-- Example topic approach: For "technology" choose "innovative, revolutionary, integrate" not "gadget, device"` :
-
-params.cefrLevel === 'C1' ? `**C1 DIFFICULTY-FIRST SELECTION:**
-
-🎯 **SELECTION METHOD:** Choose words by difficulty FIRST, topic connection SECOND
-
-**STEP 1 - SELECT BY DIFFICULTY:**
-Choose 5 words that are genuinely challenging for C1 students:
-- Academic/professional register (graduate-level vocabulary)
-- Words from research papers, expert analysis, sophisticated discourse
-- Frequency rank: 5,000+ (avoid top 3,000 common words)
-- Words that require advanced cognitive processing to use correctly
-
-**STEP 2 - CONNECT TO TOPIC:**
-Once you have 5 appropriately difficult words, write about "${params.topic}" in a way that uses these words naturally
-
-**C1 DIFFICULTY INDICATORS:**
-✓ Would appear in academic journals or professional publications
-✓ Requires sophisticated understanding to use correctly  
-✓ Most B2 students have never encountered these words
-✓ Enables precise, nuanced expression of complex ideas
-✓ Part of educated, formal discourse
-
-**COGNITIVE TEST:** Ask yourself:
-"Would a B2 student struggle to understand and use this word even with context?"
-If NO → word is too easy for C1
-If YES → perfect for C1 level` :
-
-`**C2 VOCABULARY GUIDANCE:**
-- Choose specialized/technical vocabulary from expert domains
-- Words from academic papers, professional journals
-- Vocabulary that enables expert-level precision and nuance
-- Think: "What vocabulary would a professor use in a research paper?"`}
+Then write a lesson where these 5 words appear naturally in the reading text about "${params.topic}".`
 
 **CRITICAL SELECTION PRINCIPLES:**
 1. **Level Appropriateness FIRST** - Choose words that match ${params.cefrLevel} cognitive and linguistic capabilities
