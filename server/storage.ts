@@ -17,7 +17,6 @@ export interface IStorage {
   getUsersByEmail(email: string): Promise<User[]>;
   getUserByResetToken(token: string): Promise<User[]>;
   createUser(user: InsertUser): Promise<User>;
-  updateUserCredits(userId: number, credits: number): Promise<User>;
   updateUserStripeInfo(userId: number, stripeInfo: { stripeCustomerId: string, stripeSubscriptionId: string | null }): Promise<User>;
   updateUserAdminStatus(userId: number, isAdmin: boolean): Promise<User>;
   updateUser(userId: number, updates: Partial<User>): Promise<User>;
@@ -102,7 +101,6 @@ export class DatabaseStorage implements IStorage {
       const userToInsert = {
         ...insertUser,
         fullName: insertUser.fullName || insertUser.username,
-        credits: 5,
         isAdmin: false,
         subscriptionTier: "free"
       };
@@ -112,25 +110,6 @@ export class DatabaseStorage implements IStorage {
       return user;
     } catch (error) {
       console.error('Error creating user:', error);
-      throw error;
-    }
-  }
-
-  async updateUserCredits(userId: number, credits: number): Promise<User> {
-    try {
-      const [updatedUser] = await db
-        .update(users)
-        .set({ credits })
-        .where(eq(users.id, userId))
-        .returning();
-      
-      if (!updatedUser) {
-        throw new Error("User not found");
-      }
-      
-      return updatedUser;
-    } catch (error) {
-      console.error('Error updating user credits:', error);
       throw error;
     }
   }
@@ -145,7 +124,7 @@ export class DatabaseStorage implements IStorage {
         .set({ 
           stripeCustomerId: stripeInfo.stripeCustomerId,
           stripeSubscriptionId: stripeInfo.stripeSubscriptionId,
-          subscriptionTier: stripeInfo.stripeSubscriptionId ? "premium" : "free"
+          subscriptionTier: stripeInfo.stripeSubscriptionId ? "unlimited" : "free"
         })
         .where(eq(users.id, userId))
         .returning();

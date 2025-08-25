@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { 
   BookOpen, Users, Clock, BarChart2, ArrowRight, 
-  CheckCircle2, Lightbulb, PenSquare, Award
+  CheckCircle2, Lightbulb, PenSquare, Award, Sparkles
 } from "lucide-react";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
@@ -39,7 +39,7 @@ const FreeTrialBanner = () => {
 export default function DashboardPage() {
   const { user } = useAuth();
   const [showSteps, setShowSteps] = useState(false);
-  const { isFreeTrialActive } = useFreeTrial();
+  const { isFreeTrialActive, freeTrialEndDate } = useFreeTrial();
   
   // Fetch students for quick access
   const { data: students = [] } = useQuery<Student[]>({
@@ -77,10 +77,10 @@ export default function DashboardPage() {
       color: "bg-amber-50" 
     },
     { 
-      title: "Credits", 
-      value: isFreeTrialActive ? "Unlimited" : (user?.credits || 0), 
-      icon: <Clock className="h-10 w-10 text-[#28A745]" />, 
-      trend: isFreeTrialActive ? "Free Trial Active" : (user?.credits ? "Available for lessons" : "Purchase credits"),
+      title: "Subscription", 
+      value: isFreeTrialActive ? "Free Trial" : (user?.subscriptionTier === 'unlimited' ? 'Unlimited' : 'Free'), 
+      icon: <Sparkles className="h-10 w-10 text-[#28A745]" />, 
+      trend: isFreeTrialActive ? `Ends ${freeTrialEndDate ? format(freeTrialEndDate, "MMMM do") : ''}` : "Manage subscription",
       color: "bg-green-50" 
     },
   ];
@@ -238,11 +238,13 @@ export default function DashboardPage() {
                   </Button>
                 </Link>
                 <Link href="/buy-credits">
-                  <Button variant="outline" className="w-full h-auto py-5 text-center" disabled={isFreeTrialActive}>
+                  <Button variant="outline" className="w-full h-auto py-5 text-center" disabled={isFreeTrialActive || user?.subscriptionTier === 'unlimited'}>
                     <div>
-                      <p className="font-bold text-lg">Purchase Credits</p>
+                      <p className="font-bold text-lg">
+                        {user?.subscriptionTier === 'unlimited' ? 'Subscribed' : 'Upgrade to Unlimited'}
+                      </p>
                       <p className="text-sm text-gray-600 mt-1">
-                        {isFreeTrialActive ? "Disabled during trial" : "Add more lesson credits"}
+                        {isFreeTrialActive ? "Manage after trial" : "Get unlimited lessons"}
                       </p>
                     </div>
                   </Button>

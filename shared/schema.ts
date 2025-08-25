@@ -9,7 +9,6 @@ export const users = pgTable("users", {
   password: text("password").notNull(),
   email: text("email").notNull(),
   fullName: text("full_name"),
-  credits: integer("credits").notNull().default(5),
   isAdmin: boolean("is_admin").notNull().default(false),
   stripeCustomerId: text("stripe_customer_id"),
   stripeSubscriptionId: text("stripe_subscription_id"),
@@ -186,16 +185,8 @@ export const lessonGenerateSchema = z.object({
 
 export type LessonGenerateParams = z.infer<typeof lessonGenerateSchema>;
 
-// Credit purchase schema
-export const creditPurchaseSchema = z.object({
-  amount: z.number().positive(),
-  quantity: z.number().int().positive(),
-});
-
-export type CreditPurchase = z.infer<typeof creditPurchaseSchema>;
-
 // Subscription tiers enum
-export const SubscriptionTierEnum = z.enum(['free', 'basic', 'premium', 'annual']);
+export const SubscriptionTierEnum = z.enum(['free', 'unlimited']);
 export type SubscriptionTier = z.infer<typeof SubscriptionTierEnum>;
 
 // Subscription schema for creating subscriptions

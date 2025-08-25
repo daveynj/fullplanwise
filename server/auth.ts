@@ -357,10 +357,7 @@ export function setupAuth(app: Express) {
         let testUser = await storage.getUserByUsername(testUsername);
         
         if (testUser) {
-          // If exists, update credits to ensure they have enough for testing
-          testUser = await storage.updateUserCredits(testUser.id, 10);
-          
-          // Login the user
+          // Login the existing user
           req.login(testUser, (err) => {
             if (err) return next(err);
             // Remove password from the response
