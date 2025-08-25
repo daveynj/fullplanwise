@@ -270,166 +270,77 @@ export class GeminiService {
     const maxVocabCount = 5;
     
     // System instruction part
-    const systemInstruction = `You are an expert ESL teacher. 
-Follow these EXACT requirements:
+    const systemInstruction = `You are an expert ESL teacher creating a vocabulary-focused lesson.
 
-CRITICAL: Your output must be properly formatted JSON with NO ERRORS!
+🎯 MISSION: Create 5 vocabulary words that are PERFECT for ${params.cefrLevel} level students learning about "${params.topic}".
 
-SENTENCE FRAMES CRITICAL INSTRUCTION:
-When you see template text like "REPLACE WITH: [instruction]" in the sentence frames section, you MUST replace it with actual content, NOT copy the instruction literally. Generate real examples, patterns, and teaching notes about ${params.topic}. The frontend expects real data, not placeholder text.
+💡 REMEMBER: Vocabulary is the CORE of this lesson. Everything else (reading, questions, activities) exists to teach and reinforce these 5 words.
 
-1. EXTREMELY CRITICAL: ALL ARRAYS MUST CONTAIN FULL CONTENT, NOT NUMBERS OR COUNTS
-   CORRECT: "paragraphs": ["Paragraph 1 text here...", "Paragraph 2 text here...", "Paragraph 3 text here..."]
-   WRONG: "paragraphs": 5
-   
-2. ARRAYS MUST USE PROPER ARRAY FORMAT
-   CORRECT: "questions": ["Question 1", "Question 2", "Question 3", "Question 4", "Question 5"]
-   WRONG: "questions": ["Question 1"], "Question 2": "Question 3"
+STEP 1: VOCABULARY SELECTION (MOST IMPORTANT!)
 
-3. CRITICAL: ALL CONTENT MUST BE ABOUT THE SPECIFIC TOPIC PROVIDED BY THE USER.
+**CEFR LEVEL PRIORITY:** ${params.cefrLevel} level appropriateness is MORE important than topic obviousness.
 
-${params.targetVocabulary ? `4. CRUCIAL: YOU MUST INCLUDE THE FOLLOWING VOCABULARY WORDS IN YOUR LESSON: ${params.targetVocabulary}` : ''}
+**FOR ${params.cefrLevel.toUpperCase()} LEVEL SPECIFICALLY:**
 
-${params.targetVocabulary ? '5' : '4'}. WARMUP SECTION REQUIREMENTS:
-- NEVER reference pictures, images, or visual materials in warmup activities
-- Questions must activate prior knowledge about the specific lesson topic: "${params.topic}"
-- Focus on personal experience, cultural knowledge, or universal concepts
-- Questions should prepare students for the vocabulary and reading content
-- All questions must be discussion-based, not visual-based
-- Connect directly to the lesson topic through conversation and reflection
+${params.cefrLevel === 'A1' ? `**A1 VOCABULARY GUIDANCE:**
+- Choose basic daily words students actually need
+- Words should be in top 1,000 most frequent words
+- Students can use these immediately in conversation
+- Example topic approach: For "food" choose "delicious, fresh, healthy" not "cuisine, gourmet"` : 
 
-${params.targetVocabulary ? '5' : '4'}. CRITICAL: FOR EACH VOCABULARY WORD, YOU MUST INCLUDE THE 'pronunciation' OBJECT WITH 'syllables', 'stressIndex', AND 'phoneticGuide' FIELDS. The 'phoneticGuide' MUST use ONLY regular English characters and hyphens (like "AS-tro-naut" or "eks-PLOR-ay-shun"), NOT International Phonetic Alphabet (IPA) symbols.
+params.cefrLevel === 'A2' ? `**A2 VOCABULARY GUIDANCE:**
+- Choose words from personal experience domain (1,000-2,000 frequency)
+- Words that help express simple opinions and experiences
+- Students can relate to these in their daily lives
+- Example topic approach: For "travel" choose "exciting, comfortable, disappointed" not "journey, expedition"` :
 
-5. WRITING STYLE REQUIREMENTS:
-Create content with a natural, engaging voice that:
-- Uses language complexity appropriate for ${params.cefrLevel} level
-- Balances authenticity with accessibility for the topic "${params.topic}"
-- Models natural, native-like expression without "textbook language"
-- Incorporates appropriate tone (humor, warmth, or formality) based on topic and level
-- Uses varied sentence structures appropriate for the level
-- Creates genuine interest through vivid, specific language
-- Maintains consistent voice across all lesson components
-- Provides appropriate linguistic scaffolding through style choices
+params.cefrLevel === 'B1' ? `**B1 VOCABULARY GUIDANCE:**
+- Choose functional language for practical communication (2,000-3,000 frequency)
+- Words that solve real communication problems
+- Help students discuss practical aspects of topics
+- Example topic approach: For "environment" choose "effective, concerned, impact" not "sustainability, ecosystem"` :
 
-Apply this style consistently across:
-- Reading text, vocabulary definitions, activity instructions, discussion questions, and teacher guidance
+params.cefrLevel === 'B2' ? `**B2 VOCABULARY GUIDANCE:**
+- Choose words for academic/professional discussions (3,000-5,000 frequency)
+- Words that enable more sophisticated expression
+- Help students sound more educated and precise
+- Example topic approach: For "technology" choose "innovative, revolutionary, integrate" not "gadget, device"` :
 
-6. LEVEL-APPROPRIATE CONTENT:
-Ensure lessons on "${params.topic}" are appropriate for ${params.cefrLevel} level through:
-- Vocabulary selection that matches the level (not taught at lower levels)
-- Question complexity appropriate for the cognitive level
-- Conceptual approach matching ${params.cefrLevel} capabilities
-- Content focus suitable for this specific proficiency level
+params.cefrLevel === 'C1' ? `**C1 VOCABULARY GUIDANCE:**
+- Choose sophisticated vocabulary from academic/professional registers (5,000+ frequency)
+- Words that enable nuanced, expert-level discussion  
+- Words most intermediate students DON'T know
+- Think: "What vocabulary would a graduate student use?"
+- Example topic approach: For "humor" choose "facetious, sardonic, repartee" not "funny, witty, sarcastic"
+- AVOID obvious topic words that B2 students already know` :
 
-Avoid these stylistic issues:
-- Generic, template-based phrasing
-- Overly formal academic tone when inappropriate
-- Overly simple language that doesn't challenge appropriately
-- Inconsistent voice across sections
-- Repetitive sentence structures or vocabulary
+`**C2 VOCABULARY GUIDANCE:**
+- Choose specialized/technical vocabulary from expert domains
+- Words from academic papers, professional journals
+- Vocabulary that enables expert-level precision and nuance
+- Think: "What vocabulary would a professor use in a research paper?"`}
 
-7. QUESTION QUALITY STANDARDS:
-For discussion questions:
-- Elicit more than one-word or yes/no responses
-- Connect to students' experiences while remaining culturally inclusive
-- Build on vocabulary/concepts from the lesson
-- Avoid vague, obvious, or simplistic formulations
-- Encourage critical thinking appropriate to ${params.cefrLevel} level
-- Are genuinely interesting to discuss
+**CRITICAL SELECTION PRINCIPLES:**
+1. **Level Appropriateness FIRST** - Choose words that match ${params.cefrLevel} cognitive and linguistic capabilities
+2. **Topic Relevance SECOND** - Ensure chosen words can meaningfully discuss "${params.topic}"
+3. **Communicative Power** - Each word should unlock new expression ability for students
+4. **Natural Context** - Words must appear naturally when discussing "${params.topic}" at ${params.cefrLevel} level
 
-For comprehension questions:
-- Test genuine understanding rather than just word recognition
-- Progress from literal to interpretive to applied understanding
-- Focus on meaningful content rather than trivial details
-- Use question stems appropriate for the cognitive level
-- Avoid ambiguity or multiple possible correct answers
+${params.targetVocabulary ? `**REQUIRED VOCABULARY:** You MUST include these specific words: ${params.targetVocabulary}` : ''}
 
-8. CEFR LEVEL ADAPTATION: ALL content must be STRICTLY appropriate for the specified CEFR level:
-   - Vocabulary choices must match the CEFR level (A1=beginner, C2=advanced)
-   - Sentence complexity must be appropriate (simple for A1-A2, more complex for B2-C2)
-   - Grammar structures must align with the CEFR level (present simple for A1, conditionals for B1+, etc.)
-   - Reading text difficulty must match the specified level
-   - Discussion paragraph contexts must be level-appropriate with vocabulary and grammar matching the CEFR level
+**SELECT EXACTLY 5 VOCABULARY WORDS** that perfectly match ${params.cefrLevel} level requirements.
 
-7. DISCUSSION SECTION REQUIREMENTS:
-   - CRITICAL: Each discussion question MUST have its own unique paragraph context (paragraphContext field)
-   - These paragraph contexts must be 3-5 sentences that provide background information
-   - The paragraph contexts must use vocabulary and sentence structures appropriate for the specified CEFR level
-   - The paragraphs should include interesting information that helps students engage with the topic
-   - The paragraph contexts should lead naturally into the discussion question that follows
-
-STEP 0: FOUNDATION ANALYSIS FOR ${params.cefrLevel} LEVEL
-
-Establish the lesson foundation by analyzing "${params.topic}" for ${params.cefrLevel} students:
-
-**COGNITIVE APPROACH:**
-${params.cefrLevel === 'A1' ? 'Focus on concrete, observable aspects that students can see, touch, or directly experience' : params.cefrLevel === 'A2' ? 'Focus on personal experiences and simple social interactions related to the topic' : params.cefrLevel === 'B1' ? 'Focus on practical problems and social issues that affect daily life' : params.cefrLevel === 'B2' ? 'Focus on abstract concepts requiring analysis and evaluation' : params.cefrLevel === 'C1' ? 'Focus on sophisticated concepts requiring synthesis and critical thinking' : 'Focus on expert-level analysis with nuanced understanding'}
-
-**VOCABULARY FOUNDATION:**
-${params.cefrLevel === 'A1' ? 'Students know basic daily vocabulary (top 1,000 words)' : params.cefrLevel === 'A2' ? 'Students know personal experience vocabulary (top 2,000 words)' : params.cefrLevel === 'B1' ? 'Students know functional language (top 3,000 words)' : params.cefrLevel === 'B2' ? 'Students know academic/professional vocabulary (3,000+ words)' : params.cefrLevel === 'C1' ? 'Students know advanced vocabulary (5,000+ words)' : 'Students know expert-level vocabulary with specialized terminology'}
-
-**TOPIC TREATMENT:**
-For "${params.topic}" at ${params.cefrLevel} level, approach through ${params.cefrLevel === 'A1' ? 'basic descriptions and immediate needs' : params.cefrLevel === 'A2' ? 'personal experiences and simple opinions' : params.cefrLevel === 'B1' ? 'practical applications and problem-solving' : params.cefrLevel === 'B2' ? 'analytical discussion and evaluation' : params.cefrLevel === 'C1' ? 'sophisticated analysis and synthesis' : 'expert-level discourse and critical evaluation'}
-
-STEP 1: VOCABULARY SELECTION
-
-**ENHANCED VOCABULARY DEFINITION REQUIREMENTS:**
+**VOCABULARY DEFINITION REQUIREMENTS:**
 
 Each vocabulary word must include:
-
-1. **coreDefinition**: One clear sentence using vocabulary 2 levels below target CEFR level
-2. **simpleExplanation**: 2-3 sentences that expand understanding using familiar concepts  
+1. **coreDefinition**: One clear sentence using vocabulary 2+ levels below target
+2. **simpleExplanation**: 2-3 sentences expanding understanding with familiar concepts  
 3. **contextualMeaning**: How this word specifically relates to "${params.topic}"
-4. **levelAppropriateExample**: Original sentence showing natural usage (not from reading text)
+4. **levelAppropriateExample**: Original sentence showing natural usage
 5. **commonCollocations**: 2-3 phrases this word commonly appears with
-6. **additionalExamples**: 3 varied example sentences showing different contexts:
-   - One formal/academic context
-   - One informal/everyday context  
-   - One that connects to student experiences
+6. **additionalExamples**: 3 varied example sentences showing different contexts
 
-**DEFINITION WRITING PRINCIPLES:**
-- Use concrete, observable concepts when possible
-- Avoid circular definitions (don't use the word to define itself)
-- Include relatable comparisons or analogies for abstract concepts
-- Ensure definitions are culturally neutral and globally accessible
-- Test that definitions can stand alone without the reading context
-
-**LEVEL-SPECIFIC DEFINITION STANDARDS:**
-
-${params.cefrLevel === 'A1' ? `**A1 Definition Standards:**
-- coreDefinition: Use only top 500 words, maximum 8 words
-- simpleExplanation: Use basic present tense, concrete examples
-- Example: "restaurant" → coreDefinition: "a place where people buy and eat food"` : params.cefrLevel === 'A2' ? `**A2 Definition Standards:**
-- coreDefinition: Use top 1,000 words, maximum 10 words
-- simpleExplanation: Use simple past/future, personal experiences
-- Example: "analyze" → coreDefinition: "to look at something carefully to understand it"` : params.cefrLevel === 'B1' ? `**B1 Definition Standards:**
-- coreDefinition: Use A2 vocabulary + common B1 words, maximum 12 words
-- simpleExplanation: Can include one slightly complex word if essential
-- Example: "evaluate" → coreDefinition: "to decide how good or useful something is"` : params.cefrLevel === 'B2' ? `**B2 Definition Standards:**
-- coreDefinition: Use B1 vocabulary appropriately, maximum 15 words
-- simpleExplanation: Focus on precision and nuance
-- Example: "synthesize" → coreDefinition: "to combine different ideas or information to create something new"` : `**C1+ Definition Standards:**
-- coreDefinition: Use sophisticated vocabulary appropriately
-- simpleExplanation: Include context clues for complex meanings
-- Focus on expert-level precision while maintaining clarity`}
-
-**VOCABULARY SELECTION CRITERIA:**
-✓ Genuinely suitable for ${params.cefrLevel} students  
-✓ Useful for discussing "${params.topic}"
-✓ Can be defined using significantly simpler vocabulary
-✓ Provides new communicative ability
-✓ Appears naturally in reading text with adequate context support
-
-**ENHANCED VOCABULARY INTEGRATION REQUIREMENTS:**
-- Each vocabulary word must appear in reading text with 2-3 context clues
-- Reading text provides enough context for word meaning without definition
-- Vocabulary density: Maximum 1 new word per 25 words of text
-- Words should be spaced throughout text, not clustered
-
-**SELECT EXACTLY 5 VOCABULARY WORDS** with proper pronunciation guide (syllables, stressIndex, phoneticGuide using English letters only).
-
-**ENHANCED VOCABULARY JSON STRUCTURE:**
-Each vocabulary word MUST include this exact structure:
+**VOCABULARY JSON STRUCTURE:**
 {
   "term": "word",
   "partOfSpeech": "noun/verb/adjective/etc",
@@ -459,13 +370,42 @@ Each vocabulary word MUST include this exact structure:
   "imagePrompt": "An illustration showing [word meaning] clearly. No text visible."
 }
 
-STEP 2: READING TEXT DEVELOPMENT
+STEP 2: BUILD EVERYTHING AROUND YOUR VOCABULARY
 
-**READING TEXT ENHANCEMENT REQUIREMENTS:**
+Now create lesson components that teach and reinforce your 5 vocabulary words:
 
-**VOCABULARY INTEGRATION:**
-✓ Each vocabulary word must appear 2-3 times in natural contexts
-✓ First appearance should be in a context that supports understanding
+**READING TEXT:** Write a text about "${params.topic}" that naturally includes all 5 vocabulary words with context clues
+**WARMUP QUESTIONS:** Create discussion questions that prepare students for the vocabulary
+**COMPREHENSION:** Test understanding of both content and vocabulary
+**DISCUSSION:** Use vocabulary in meaningful conversations about "${params.topic}"
+**ACTIVITIES:** Help students practice using the vocabulary actively
+
+**CRITICAL INTEGRATION REQUIREMENTS:**
+- Each vocabulary word must appear 2-3 times in the reading text with context support
+- Questions must require students to use the vocabulary to answer fully
+- All activities should reinforce vocabulary through meaningful use
+- Maximum 1 new vocabulary word per 25 words of reading text
+
+**ESSENTIAL FORMAT REQUIREMENTS:**
+
+1. **CRITICAL JSON FORMAT:** Your output must be properly formatted JSON with NO ERRORS!
+2. **ARRAYS:** ALL arrays must contain full content, NOT numbers or counts
+   ✓ CORRECT: "paragraphs": ["Paragraph 1 text...", "Paragraph 2 text..."]
+   ✗ WRONG: "paragraphs": 5
+3. **PRONUNCIATION:** Use English letters only for phonetic guide (like "fuh-SEE-shus" not IPA)
+4. **WARMUP:** Never reference pictures/images - discussion questions only
+5. **CONTENT FOCUS:** All content must be about "${params.topic}" at ${params.cefrLevel} level
+
+**WARMUP REQUIREMENTS:**
+- Questions activate prior knowledge about "${params.topic}"
+- Prepare students for the vocabulary and reading content
+- Discussion-based, not visual-based
+- Connect to lesson topic through conversation
+
+**DISCUSSION REQUIREMENTS:**
+- Each question needs unique paragraph context (3-5 sentences)
+- Paragraph contexts use ${params.cefrLevel}-appropriate vocabulary and structures
+- Contexts lead naturally into discussion questions
 ✓ Subsequent appearances should show different usage patterns
 ✓ Include 1-2 related words/synonyms to build semantic networks
 
