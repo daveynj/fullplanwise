@@ -653,7 +653,7 @@ export function LessonContent({ content }: LessonContentProps) {
     },
     "overview": {
       icon: Lightbulb,
-      label: "Overview",
+      label: "Warmup",
       color: "bg-indigo-100",
       textColor: "text-indigo-700",
       description: "Lesson overview and warm-up questions"
@@ -1977,13 +1977,13 @@ export function LessonContent({ content }: LessonContentProps) {
   const renderTree = [
     {
       id: 'overview',
-      label: 'Overview',
+      label: 'Warmup',
       icon: <Compass className="h-5 w-5" />,
       render: <OverviewSection />
     },
     {
       id: 'warmup',
-      label: 'Warm-up',
+      label: 'Vocab Intro',
       icon: <Flame className="h-5 w-5" />,
       render: (
         (() => {
