@@ -17,6 +17,8 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { Wand2, Bot, Sparkles } from "lucide-react";
+import { useFreeTrial } from "@/hooks/use-free-trial";
+import { useAuth } from "@/hooks/use-auth";
 
 // Define CEFR levels
 const cefrLevels = [
@@ -50,11 +52,12 @@ type FormValues = z.infer<typeof formSchema>;
 interface LessonFormProps {
   students: Student[];
   onSubmit: (data: any) => void;
-  credits: number;
 }
 
-export function LessonForm({ students, onSubmit, credits }: LessonFormProps) {
+export function LessonForm({ students, onSubmit }: LessonFormProps) {
   const [selectedCefrLevel, setSelectedCefrLevel] = useState<string>("B1");
+  const { isFreeTrialActive } = useFreeTrial();
+  const { user } = useAuth();
   
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -89,6 +92,8 @@ export function LessonForm({ students, onSubmit, credits }: LessonFormProps) {
     
     onSubmit(parsedValues);
   };
+
+  const canGenerate = isFreeTrialActive || user?.subscriptionTier === 'unlimited' || user?.isAdmin;
 
   return (
     <Card>
@@ -234,17 +239,19 @@ export function LessonForm({ students, onSubmit, credits }: LessonFormProps) {
               <Button 
                 type="submit" 
                 className="bg-primary hover:bg-primary-light text-white font-semibold px-6 py-3 rounded-lg flex items-center transition w-full justify-center"
-                disabled={credits < 1 || form.formState.isSubmitting}
+                disabled={!canGenerate || form.formState.isSubmitting}
               >
                 <Wand2 className="mr-2 text-xl" /> Generate Lesson
-                <span className="bg-white/20 ml-2 px-2 py-0.5 rounded-md text-sm">1 Credit</span>
+                {(isFreeTrialActive || user?.subscriptionTier === 'unlimited') && (
+                  <span className="bg-white/20 ml-2 px-2 py-0.5 rounded-md text-sm">Unlimited</span>
+                )}
               </Button>
             </div>
             
-            {/* Show warning if no credits */}
-            {credits < 1 && (
+            {/* Show warning if cannot generate */}
+            {!canGenerate && (
               <p className="text-destructive text-sm text-center mt-2">
-                You need at least 1 credit to generate a lesson.
+                You need an active subscription to generate lessons.
               </p>
             )}
           </form>

@@ -9,12 +9,14 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { LessonGenerateParams, Student } from "@shared/schema";
 import { useLocation } from "wouter";
+import { useFreeTrial } from "@/hooks/use-free-trial";
 
 export default function LessonGeneratorPage() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [, setLocation] = useLocation();
   const [generatingLesson, setGeneratingLesson] = useState(false);
+  const { isFreeTrialActive } = useFreeTrial();
   
   // Force reset loading state on component mount
   useEffect(() => {
@@ -118,10 +120,13 @@ export default function LessonGeneratorPage() {
       return;
     }
     
-    if (user.credits < 1 && !user.isAdmin) {
+    // Check if user can generate (free trial, subscription, or admin)
+    const canGenerate = isFreeTrialActive || user.subscriptionTier === 'unlimited' || user.isAdmin;
+    
+    if (!canGenerate) {
       toast({
-        title: "Insufficient credits",
-        description: "Please purchase more credits to generate lessons.",
+        title: "Subscription Required",
+        description: "Please subscribe to generate lessons.",
         variant: "destructive",
       });
       return;
@@ -152,7 +157,6 @@ export default function LessonGeneratorPage() {
               <LessonForm 
                 students={students} 
                 onSubmit={handleGenerateLesson} 
-                credits={user?.credits || 0}
               />
             </div>
           </div>

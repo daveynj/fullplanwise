@@ -5,21 +5,17 @@ import { Header } from "@/components/layout/header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
-import { CreditBadge } from "@/components/shared/credit-badge";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
-import { CheckCircle2, ArrowLeft, Calendar, CreditCard } from "lucide-react";
+import { CheckCircle2, ArrowLeft, Calendar, CreditCard, Sparkles } from "lucide-react";
 
 interface SubscriptionDetails {
   tier: string;
   renewalDate?: string;
-  monthlyCredits: number;
 }
 
-const subscriptionTierMap: Record<string, { name: string, monthlyCredits: number }> = {
-  'basic': { name: 'Basic Plan', monthlyCredits: 20 },
-  'premium': { name: 'Premium Plan', monthlyCredits: 60 },
-  'annual': { name: 'Annual Plan', monthlyCredits: 250 }
+const subscriptionTierMap: Record<string, { name: string }> = {
+  'unlimited': { name: 'Unlimited Plan' },
 };
 
 export default function SubscriptionSuccessPage() {
@@ -74,7 +70,7 @@ export default function SubscriptionSuccessPage() {
         // Show success toast
         toast({
           title: "Subscription Activated",
-          description: `Your subscription has been activated and ${response.creditsAdded} credits have been added to your account.`,
+          description: `Your unlimited subscription has been activated.`,
           variant: "default",
         });
         
@@ -127,15 +123,13 @@ export default function SubscriptionSuccessPage() {
       console.log(`Subscription tier: ${tier}, forced tier from params: ${forcedTier}`);
       
       const subscriptionInfo = subscriptionTierMap[tier as string] || {
-        name: 'Subscription',
-        monthlyCredits: forcedTier === "annual_plan" ? 250 : 0
+        name: 'Unlimited Plan',
       };
       
       // Set the subscription details
       setSubscriptionDetails({
         tier: subscriptionInfo.name,
         renewalDate: nextRenewal.toLocaleDateString(),
-        monthlyCredits: subscriptionInfo.monthlyCredits
       });
       
       setIsLoading(false);
@@ -156,7 +150,7 @@ export default function SubscriptionSuccessPage() {
                 <CheckCircle2 className="mx-auto h-16 w-16 text-green-500 mb-2" />
                 <CardTitle className="text-2xl font-nunito">Subscription Activated!</CardTitle>
                 <CardDescription>
-                  Thank you for subscribing. Your credits have been added to your account.
+                  Thank you for subscribing. You now have unlimited access to lesson generation.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6 pt-4">
@@ -182,24 +176,19 @@ export default function SubscriptionSuccessPage() {
                         </div>
                       </div>
                     </div>
-                    
-                    <div className="pt-2 border-t mt-3">
-                      {planTier === 'annual' || searchParams.get("plan") === "annual_plan" ? (
-                        <p className="text-gray-700">You've received <span className="font-semibold">{subscriptionDetails.monthlyCredits} credits</span> with this annual plan.</p>
-                      ) : (
-                        <p className="text-gray-700">You'll receive <span className="font-semibold">{subscriptionDetails.monthlyCredits} credits</span> each billing period with this plan.</p>
-                      )}
-                    </div>
                   </div>
                 )}
                 
                 {/* Credit balance */}
                 <div className="bg-gray-50 p-4 rounded-lg flex justify-between items-center">
                   <div>
-                    <h3 className="font-medium">Current Credit Balance</h3>
-                    <p className="text-gray-600">Use credits to generate AI lessons</p>
+                    <h3 className="font-medium">Subscription Status</h3>
+                    <p className="text-gray-600">You can now generate as many lessons as you need.</p>
                   </div>
-                  <CreditBadge credits={user?.credits || 0} size="large" />
+                  <div className="flex items-center space-x-2 bg-green-100 text-green-800 font-semibold px-3 py-2 rounded-full">
+                    <Sparkles className="h-5 w-5" />
+                    <span>Unlimited Access</span>
+                  </div>
                 </div>
                 
                 {/* Action buttons */}

@@ -36,7 +36,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { User, Settings, Bell, Lock, Loader2, CreditCard, Calendar, Badge, Gift, Check, ExternalLink } from "lucide-react";
-import { CreditBadge } from "@/components/shared/credit-badge";
+import { useFreeTrial } from "@/hooks/use-free-trial";
 
 // Profile update schema
 const profileUpdateSchema = z.object({
@@ -62,6 +62,7 @@ export default function SettingsPage() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [, setLocation] = useLocation();
+  const { isFreeTrialActive, freeTrialEndDate } = useFreeTrial();
   
   // Profile update form
   const profileForm = useForm<ProfileUpdateValues>({
@@ -201,11 +202,10 @@ export default function SettingsPage() {
                         <h3 className="font-semibold text-lg">{user?.fullName}</h3>
                         <p className="text-gray-500">{user?.email}</p>
                         <p className="text-sm text-gray-500 mt-1">
-                          {user?.subscriptionTier === "premium" ? "Premium Account" : 
-                           user?.subscriptionTier === "basic" ? "Basic Account" :
-                           user?.subscriptionTier === "annual" ? "Annual Account" : "Free Account"}
+                          {isFreeTrialActive ? "Free Trial Account" : 
+                           user?.subscriptionTier === "unlimited" ? "Unlimited Account" : "Free Account"}
                         </p>
-                        {user?.subscriptionTier !== "free" && (
+                        {(user?.subscriptionTier === "unlimited" || isFreeTrialActive) && (
                           <div className="mt-1 text-sm text-primary-600 font-medium">
                             Active Subscription
                           </div>
@@ -267,7 +267,7 @@ export default function SettingsPage() {
                   <CardHeader>
                     <CardTitle className="font-nunito">Subscription Details</CardTitle>
                     <CardDescription>
-                      Manage your subscription and view your credit balance
+                      Manage your subscription and billing information
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -281,9 +281,8 @@ export default function SettingsPage() {
                           <div>
                             <p className="font-medium">Subscription Type</p>
                             <p className="text-gray-600">
-                              {user?.subscriptionTier === "premium" ? "Premium Plan" : 
-                               user?.subscriptionTier === "basic" ? "Basic Plan" :
-                               user?.subscriptionTier === "annual" ? "Annual Plan" : "Free Plan"}
+                              {isFreeTrialActive ? "Free Trial" :
+                               user?.subscriptionTier === "unlimited" ? "Unlimited Plan" : "Free Plan"}
                             </p>
                           </div>
                         </div>
@@ -292,10 +291,11 @@ export default function SettingsPage() {
                           <Calendar className="h-5 w-5 text-primary mr-2 mt-0.5 flex-shrink-0" />
                           <div>
                             <p className="font-medium">
-                              {localStorage.getItem('subscriptionEndDate') ? "Subscription Ends" : "Renewal Date"}
+                              {isFreeTrialActive ? "Trial Ends" : (localStorage.getItem('subscriptionEndDate') ? "Subscription Ends" : "Renewal Date")}
                             </p>
                             <p className="text-gray-600">
-                              {user?.subscriptionTier !== "free" ? 
+                              {isFreeTrialActive ? (freeTrialEndDate?.toLocaleDateString()) :
+                               (user?.subscriptionTier !== "free" ? 
                                 (() => {
                                   // Check for a canceled subscription
                                   const endDate = localStorage.getItem('subscriptionEndDate');
@@ -307,99 +307,40 @@ export default function SettingsPage() {
                                   const now = new Date();
                                   const renewalDate = new Date();
                                   
-                                  // Calculate renewal date based on subscription type
-                                  const days = user?.subscriptionTier === "annual" ? 365 : 30;
-                                  renewalDate.setDate(now.getDate() + days);
+                                  renewalDate.setDate(now.getDate() + 30); // Assume monthly for simplicity
                                   
                                   return renewalDate.toLocaleDateString();
                                 })() : 
-                                "No active subscription"
+                                "No active subscription")
                               }
                             </p>
                           </div>
                         </div>
                       </div>
                       
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1">
                         <div className="flex items-start">
                           <Gift className="h-5 w-5 text-primary mr-2 mt-0.5 flex-shrink-0" />
                           <div>
                             <p className="font-medium">Plan Benefits</p>
                             <ul className="mt-1 text-gray-600 text-sm space-y-1">
-                              {user?.subscriptionTier === "premium" && (
+                              {user?.subscriptionTier === "unlimited" || isFreeTrialActive ? (
                                 <>
                                   <li className="flex items-center">
-                                    <Check className="h-4 w-4 text-green-500 mr-1" /> 60 credits per month
+                                    <Check className="h-4 w-4 text-green-500 mr-1" /> Unlimited lesson generations
                                   </li>
                                   <li className="flex items-center">
                                     <Check className="h-4 w-4 text-green-500 mr-1" /> Priority support
                                   </li>
-                                  <li className="flex items-center">
-                                    <Check className="h-4 w-4 text-green-500 mr-1" /> Advanced AI lesson generation
-                                  </li>
                                 </>
-                              )}
-                              
-                              {user?.subscriptionTier === "basic" && (
+                              ) : (
                                 <>
                                   <li className="flex items-center">
-                                    <Check className="h-4 w-4 text-green-500 mr-1" /> 20 credits per month
-                                  </li>
-                                  <li className="flex items-center">
-                                    <Check className="h-4 w-4 text-green-500 mr-1" /> Email support
-                                  </li>
-                                  <li className="flex items-center">
-                                    <Check className="h-4 w-4 text-green-500 mr-1" /> Standard AI lesson generation
-                                  </li>
-                                </>
-                              )}
-                              
-                              {user?.subscriptionTier === "annual" && (
-                                <>
-                                  <li className="flex items-center">
-                                    <Check className="h-4 w-4 text-green-500 mr-1" /> 250 credits per year
-                                  </li>
-                                  <li className="flex items-center">
-                                    <Check className="h-4 w-4 text-green-500 mr-1" /> Priority support
-                                  </li>
-                                  <li className="flex items-center">
-                                    <Check className="h-4 w-4 text-green-500 mr-1" /> Advanced AI lesson generation
-                                  </li>
-                                  <li className="flex items-center">
-                                    <Check className="h-4 w-4 text-green-500 mr-1" /> Best value (save over monthly plans)
-                                  </li>
-                                </>
-                              )}
-                              
-                              {user?.subscriptionTier === "free" && (
-                                <>
-                                  <li className="flex items-center">
-                                    <Check className="h-4 w-4 text-green-500 mr-1" /> 3 free credits
-                                  </li>
-                                  <li className="flex items-center">
-                                    <Check className="h-4 w-4 text-green-500 mr-1" /> Basic lesson generation
+                                    <Check className="h-4 w-4 text-green-500 mr-1" /> Access to public library
                                   </li>
                                 </>
                               )}
                             </ul>
-                          </div>
-                        </div>
-                        
-                        <div className="flex items-start">
-                          <CreditCard className="h-5 w-5 text-primary mr-2 mt-0.5 flex-shrink-0" />
-                          <div>
-                            <p className="font-medium">Current Credit Balance</p>
-                            <div className="mt-2">
-                              <CreditBadge credits={user?.credits || 0} size="large" />
-                            </div>
-                            <p className="text-sm text-gray-500 mt-2">
-                              {user?.subscriptionTier !== "free" ? 
-                                localStorage.getItem('subscriptionEndDate') ? 
-                                "Your subscription has been canceled but remains active until the end date." : 
-                                `Your subscription renews credits automatically each ${user?.subscriptionTier === "annual" ? "year" : "month"}.` : 
-                                "Purchase credits or subscribe to a plan to generate more lessons."
-                              }
-                            </p>
                           </div>
                         </div>
                       </div>
@@ -413,12 +354,13 @@ export default function SettingsPage() {
                         <Button 
                           className="bg-primary hover:bg-primary/90"
                           onClick={() => setLocation("/buy-credits")}
+                          disabled={isFreeTrialActive || user?.subscriptionTier === 'unlimited'}
                         >
                           <Gift className="mr-2 h-4 w-4" />
-                          {user?.subscriptionTier === "free" ? "Subscribe to a Plan" : "Change Plan"}
+                          {user?.subscriptionTier === "free" ? "Upgrade to Unlimited" : "Change Plan"}
                         </Button>
                         
-                        {user?.subscriptionTier !== "free" && !localStorage.getItem('subscriptionEndDate') && (
+                        {user?.subscriptionTier !== "free" && !isFreeTrialActive && !localStorage.getItem('subscriptionEndDate') && (
                           <Button 
                             variant="outline" 
                             className="text-red-600 border-red-200 hover:bg-red-50"
@@ -460,22 +402,6 @@ export default function SettingsPage() {
                             : "Your subscription will remain active until the current billing period ends, even if you cancel."}
                         </p>
                       )}
-                    </div>
-                    
-                    {/* Buy Additional Credits */}
-                    <div className="p-5 border border-gray-200 rounded-lg bg-gray-50">
-                      <h3 className="text-lg font-semibold mb-2">Need More Credits?</h3>
-                      <p className="text-gray-600 mb-4">
-                        You can purchase additional credits at any time without changing your subscription plan.
-                      </p>
-                      
-                      <Button 
-                        variant="outline" 
-                        className="bg-white border-primary text-primary hover:bg-primary/5"
-                        onClick={() => setLocation("/buy-credits")}
-                      >
-                        Buy Additional Credits
-                      </Button>
                     </div>
                   </CardContent>
                 </Card>

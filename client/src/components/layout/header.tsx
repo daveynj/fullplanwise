@@ -1,5 +1,4 @@
 import { useAuth } from "@/hooks/use-auth";
-import { CreditBadge } from "@/components/shared/credit-badge";
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
@@ -52,12 +51,9 @@ export function Header() {
             </Button>
           </a>
           
-          <CreditBadge credits={user?.credits || 0} />
-          
-          {user?.subscriptionTier === "premium" && (
-            <div className="bg-[#28A745] text-white px-3 py-1 rounded-full text-sm flex items-center">
-              <Bell className="mr-1 h-4 w-4" />
-              <span>Premium</span>
+          {user?.subscriptionTier === "unlimited" && (
+            <div className="bg-brand-yellow text-brand-navy px-3 py-1 rounded-full text-sm font-semibold flex items-center">
+              <span>Unlimited</span>
             </div>
           )}
           
@@ -83,7 +79,7 @@ export function Header() {
               </Link>
               <Link href="/buy-credits">
                 <DropdownMenuItem className="cursor-pointer">
-                  Buy Credits
+                  Subscription
                 </DropdownMenuItem>
               </Link>
               <DropdownMenuSeparator />
