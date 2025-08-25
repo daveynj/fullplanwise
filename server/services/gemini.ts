@@ -1,33 +1,30 @@
-import { OpenAI } from 'openai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import { LessonGenerateParams } from '@shared/schema';
 import * as fs from 'fs';
 import { stabilityService } from './stability.service';
 
 /**
- * Service for interacting with OpenRouter AI API using Qwen 2.5 72B
+ * Service for interacting with Google Gemini 2.0 Flash API
  */
 export class GeminiService {
   private apiKey: string;
-  private client: OpenAI;
+  private genAI: GoogleGenerativeAI;
 
   constructor(apiKey: string) {
-    console.log('🔧 OpenRouter Service initializing...');
+    console.log('🔧 Gemini Service initializing...');
     console.log('🔑 API Key provided:', apiKey ? 'YES (length: ' + apiKey.length + ')' : 'NO');
-    console.log('🔍 Environment OPENROUTER_API_KEY:', process.env.OPENROUTER_API_KEY ? 'SET' : 'NOT SET');
+    console.log('🔍 Environment GOOGLE_API_KEY:', process.env.GOOGLE_API_KEY ? 'SET' : 'NOT SET');
 
     if (!apiKey) {
-      console.warn('❌ OpenRouter API key is not provided or is empty');
-      console.warn('💡 Make sure to set OPENROUTER_API_KEY in your environment variables');
-      console.warn('🔧 In Replit: Go to Tools > Secrets and add OPENROUTER_API_KEY');
+      console.warn('❌ Google API key is not provided or is empty');
+      console.warn('💡 Make sure to set GOOGLE_API_KEY in your environment variables');
+      console.warn('🔧 In Replit: Go to Tools > Secrets and add GOOGLE_API_KEY');
     } else {
-      console.log('✅ OpenRouter API key found, initializing client...');
+      console.log('✅ Google API key found, initializing Gemini client...');
     }
 
     this.apiKey = apiKey;
-    this.client = new OpenAI({
-      apiKey: this.apiKey,
-      baseURL: 'https://openrouter.ai/api/v1',
-    });
+    this.genAI = new GoogleGenerativeAI(this.apiKey);
   }
   
   /**
@@ -38,10 +35,10 @@ export class GeminiService {
   async generateLesson(params: LessonGenerateParams): Promise<any> {
     try {
       if (!this.apiKey) {
-        throw new Error('OpenRouter API key is not configured');
+        throw new Error('Google API key is not configured');
       }
 
-      console.log('Starting Qwen AI lesson generation...');
+      console.log('Starting Gemini 2.0 Flash lesson generation...');
 
       // Create unique identifiers for this request (for logging purposes only)
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
@@ -51,30 +48,30 @@ export class GeminiService {
       // Construct the prompt
       const prompt = this.constructLessonPrompt(params);
 
-      console.log('Sending request to OpenRouter API (Claude Haiku 3.5)...');
+      console.log('Sending request to Google Gemini 2.0 Flash...');
 
       try {
-        // Make the request to OpenRouter API using Claude Haiku 3.5
-        const result = await this.client.chat.completions.create({
-          model: 'anthropic/claude-3-5-haiku',
-          messages: [
-            {
-              role: 'user',
-              content: prompt
-            }
-          ],
-          temperature: 0.3,
-          max_tokens: 16384,
-          top_p: 0.9,
+        // Get the Gemini 2.0 Flash model
+        const model = this.genAI.getGenerativeModel({ 
+          model: 'gemini-2.0-flash-exp',
+          generationConfig: {
+            temperature: 0.3,
+            topP: 0.9,
+            maxOutputTokens: 16384,
+            responseMimeType: 'application/json'
+          }
         });
 
-                const text = result.choices[0]?.message?.content;
+        // Make the request to Gemini
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        const text = response.text();
 
-        console.log('Received response from OpenRouter API (Claude)');
+        console.log('Received response from Gemini 2.0 Flash');
 
         if (!text) {
-          console.error('No content received from Claude API');
-          throw new Error('Empty response from Claude API');
+          console.error('No content received from Gemini API');
+          throw new Error('Empty response from Gemini API');
         }
 
         try {
