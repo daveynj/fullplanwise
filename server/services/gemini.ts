@@ -48,26 +48,43 @@ export class GeminiService {
       // Construct the prompt
       const prompt = this.constructLessonPrompt(params);
 
-      console.log('Sending request to Google Gemini 2.0 Flash...');
+      console.log('Sending request to Gemini 2.0 Flash via OpenRouter (FREE)...');
 
       try {
-        // Get the Gemini 2.0 Flash model
-        const model = this.genAI.getGenerativeModel({ 
-          model: 'gemini-2.0-flash-exp',
-          generationConfig: {
+        // Use OpenRouter API with free Gemini model
+        const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+            'Content-Type': 'application/json',
+            'HTTP-Referer': 'https://planwise-esl.replit.app',
+            'X-Title': 'PlanwiseESL'
+          },
+          body: JSON.stringify({
+            model: 'google/gemini-2.0-flash-exp:free',
+            messages: [
+              {
+                role: 'user',
+                content: prompt
+              }
+            ],
             temperature: 0.3,
-            topP: 0.9,
-            maxOutputTokens: 16384,
-            responseMimeType: 'application/json'
-          }
+            top_p: 0.9,
+            max_tokens: 16384,
+            response_format: { type: "json_object" }
+          })
         });
 
-        // Make the request to Gemini
-        const result = await model.generateContent(prompt);
-        const response = await result.response;
-        const text = response.text();
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('OpenRouter API error:', response.status, errorText);
+          throw new Error(`OpenRouter API error: ${response.status} ${errorText}`);
+        }
 
-        console.log('Received response from Gemini 2.0 Flash');
+        const result = await response.json();
+        const text = result.choices?.[0]?.message?.content;
+
+        console.log('✅ Received response from Gemini 2.0 Flash (FREE via OpenRouter)');
 
         if (!text) {
           console.error('No content received from Gemini API');
@@ -1359,7 +1376,7 @@ Return ONLY a JSON array of corrected examples. Each example must perfectly demo
 If an example is a simple string, return a string. If it's an object with "completeSentence" and "breakdown" properties, maintain that structure and ensure the breakdown correctly maps to the pattern components.`;
 
       const result = await this.client.chat.completions.create({
-        model: 'qwen/qwen-2.5-72b-instruct',
+        model: 'google/gemini-2.0-flash-exp:free',
         messages: [
           {
             role: 'user',
