@@ -1,30 +1,20 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import axios, { AxiosResponse } from 'axios';
 import { LessonGenerateParams } from '@shared/schema';
 import * as fs from 'fs';
-import { stabilityService } from './stability.service';
+import { imageGenerationService } from './image-generation.service';
 
 /**
- * Service for interacting with Google Gemini 2.0 Flash API
+ * Service for interacting with the Google Gemini AI API via OpenRouter
  */
 export class GeminiService {
   private apiKey: string;
-  private genAI: GoogleGenerativeAI;
+  private baseURL: string = 'https://openrouter.ai/api/v1';
 
   constructor(apiKey: string) {
-    console.log('🔧 Gemini Service initializing...');
-    console.log('🔑 API Key provided:', apiKey ? 'YES (length: ' + apiKey.length + ')' : 'NO');
-    console.log('🔍 Environment GOOGLE_API_KEY:', process.env.GOOGLE_API_KEY ? 'SET' : 'NOT SET');
-
     if (!apiKey) {
-      console.warn('❌ Google API key is not provided or is empty');
-      console.warn('💡 Make sure to set GOOGLE_API_KEY in your environment variables');
-      console.warn('🔧 In Replit: Go to Tools > Secrets and add GOOGLE_API_KEY');
-    } else {
-      console.log('✅ Google API key found, initializing Gemini client...');
+      console.warn('OpenRouter API key is not provided or is empty');
     }
-
     this.apiKey = apiKey;
-    this.genAI = new GoogleGenerativeAI(this.apiKey);
   }
   
   /**
@@ -35,67 +25,60 @@ export class GeminiService {
   async generateLesson(params: LessonGenerateParams): Promise<any> {
     try {
       if (!this.apiKey) {
-        throw new Error('Google API key is not configured');
+        throw new Error('Gemini API key is not configured');
       }
 
-      console.log('Starting Gemini 2.0 Flash lesson generation...');
-
+      console.log('Starting Gemini AI lesson generation...');
+      
       // Create unique identifiers for this request (for logging purposes only)
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
       const topicSafe = params.topic.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 20);
       const requestId = `${topicSafe}_${timestamp}`;
-
+      
       // Construct the prompt
       const prompt = this.constructLessonPrompt(params);
+      
+      // Configure the request for OpenRouter
+      const requestData = {
+        model: 'google/gemini-2.0-flash-001',
+        messages: [
+          {
+            role: 'user',
+            content: prompt
+          }
+        ],
+        temperature: 0.3,
+        top_p: 0.9,
+        max_tokens: 16384, // Increased token count from 8192 to 16384 for more detailed lessons
+      };
 
-      console.log('Sending request to Gemini 2.0 Flash via OpenRouter (PAID)...');
+      console.log('Sending request to OpenRouter Gemini API...');
 
       try {
-        // Use OpenRouter API with paid Gemini model
-        const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
-            'Content-Type': 'application/json',
-            'HTTP-Referer': 'https://planwise-esl.replit.app',
-            'X-Title': 'PlanwiseESL'
-          },
-          body: JSON.stringify({
-            model: 'google/gemini-2.0-flash-001',
-            messages: [
-              {
-                role: 'user',
-                content: prompt
-              }
-            ],
-            temperature: 0.3,
-            top_p: 0.9,
-            max_tokens: 16384,
-            response_format: { type: "json_object" }
-          })
-        });
+        // Make the request to OpenRouter
+        const response: AxiosResponse = await axios.post(
+          `${this.baseURL}/chat/completions`,
+          requestData,
+          {
+            headers: {
+              'Authorization': `Bearer ${this.apiKey}`,
+              'Content-Type': 'application/json',
+              'HTTP-Referer': 'https://planwiseesl.com',
+              'X-Title': 'PlanwiseESL'
+            },
+            timeout: 60000 // 60 second timeout for lesson generation
+          }
+        );
 
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error('OpenRouter API error:', response.status, errorText);
-          throw new Error(`OpenRouter API error: ${response.status} ${errorText}`);
-        }
-
-        const result = await response.json();
-        const text = result.choices?.[0]?.message?.content;
-
-        console.log('✅ Received response from Gemini 2.0 Flash (PAID via OpenRouter)');
-
-        if (!text) {
-          console.error('No content received from Gemini API');
-          throw new Error('Empty response from Gemini API');
-        }
-
+        const text = response.data.choices[0]?.message?.content;
+        
+        console.log('Received response from Gemini API');
+        
         try {
           // First, attempt to clean up the content and remove markdown code block markers
           let cleanedContent = text;
           
-          // Check if content starts with ` and ends with ` which is common in AI responses
+          // Check if content starts with ` and ends with ` which is common in Gemini responses
           if (text.trim().startsWith('`') && text.trim().endsWith('`')) {
             console.log('Detected markdown code block, cleaning content');
             cleanedContent = text.replace(/`\s*/g, '').replace(/`\s*$/g, '').trim();
@@ -140,7 +123,7 @@ export class GeminiService {
                 title: `Lesson on ${params.topic}`,
                 content: "The generated lesson is missing required structure",
                 error: 'Invalid lesson structure',
-                provider: 'claude',
+                provider: 'gemini',
                 sections: [
                   {
                     type: "error",
@@ -152,7 +135,7 @@ export class GeminiService {
             }
           } catch (jsonError) {
             // If we fail to parse as JSON, try to fix common JSON errors first
-            console.error('Error parsing AI response as JSON:', jsonError);
+            console.error('Error parsing Gemini response as JSON:', jsonError);
             
             // Log the first part of the text and position of error to help with debugging
             const errorMessage = jsonError instanceof Error ? jsonError.message : 'Unknown JSON error';
@@ -231,12 +214,12 @@ export class GeminiService {
             }
           }
         } catch (error) {
-          console.error('Unexpected error processing AI response:', error);
+          console.error('Unexpected error processing Gemini response:', error);
           // Propagate the error to trigger fallback
-          throw new Error(`Error processing AI response: ${error instanceof Error ? error.message : 'Unknown error'}`);
+          throw new Error(`Error processing Gemini response: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
       } catch (error: any) {
-        console.error('Error during AI API request:', error.message);
+        console.error('Error during Gemini API request:', error.message);
         
         // Determine if this is a content policy error
         const isPolicyError = error.message && (
@@ -251,7 +234,7 @@ export class GeminiService {
           return {
             title: `Lesson on ${params.topic}`,
             error: error.message,
-            provider: 'qwen',
+            provider: 'gemini',
             sections: [
               {
                 type: "error",
@@ -266,13 +249,13 @@ export class GeminiService {
         }
       }
     } catch (error: any) {
-      console.error('Error in AI lesson generation:', error.message);
+      console.error('Error in GeminiService.generateLesson:', error.message);
       throw error;
     }
   }
   
   /**
-   * Constructs a structured prompt for the AI model
+   * Constructs a structured prompt for the Gemini AI model
    */
   private constructLessonPrompt(params: LessonGenerateParams): string {
     const { cefrLevel, topic, focus, lessonLength, additionalNotes } = params;
@@ -284,50 +267,166 @@ export class GeminiService {
     const maxVocabCount = 5;
     
     // System instruction part
-    const systemInstruction = `You are an expert ESL teacher creating a vocabulary-focused lesson.
+    const systemInstruction = `You are an expert ESL teacher. 
+Follow these EXACT requirements:
 
-🎯 MISSION: Create 5 vocabulary words that are PERFECT for ${params.cefrLevel} level students learning about "${params.topic}".
+CRITICAL: Your output must be properly formatted JSON with NO ERRORS!
 
-💡 REMEMBER: Vocabulary is the CORE of this lesson. Everything else exists to teach and reinforce these 5 words.
+SENTENCE FRAMES CRITICAL INSTRUCTION:
+When you see template text like "REPLACE WITH: [instruction]" in the sentence frames section, you MUST replace it with actual content, NOT copy the instruction literally. Generate real examples, patterns, and teaching notes about ${params.topic}. The frontend expects real data, not placeholder text.
 
-**${params.cefrLevel.toUpperCase()} VOCABULARY SELECTION:**
-${params.cefrLevel === 'C1' ? 
-`- Graduate-level academic vocabulary (5,000+ frequency rank)
-- Words from scholarly articles, research papers, professional discourse  
-- Vocabulary that challenges even strong B2 students
-- TEST: "Would a typical B2 student know this word?" If YES → choose harder word` : 
-params.cefrLevel === 'B2' ? 
-`- Academic/professional vocabulary (3,000-5,000 frequency)
-- Words for sophisticated expression and analysis
-- University-level vocabulary for educated discussion` :
-`- Level-appropriate vocabulary for ${params.cefrLevel} students
-- Words matching cognitive and linguistic capabilities of the level`}
+1. EXTREMELY CRITICAL: ALL ARRAYS MUST CONTAIN FULL CONTENT, NOT NUMBERS OR COUNTS
+   CORRECT: "paragraphs": ["Paragraph 1 text here...", "Paragraph 2 text here...", "Paragraph 3 text here..."]
+   WRONG: "paragraphs": 5
+   
+2. ARRAYS MUST USE PROPER ARRAY FORMAT
+   CORRECT: "questions": ["Question 1", "Question 2", "Question 3", "Question 4", "Question 5"]
+   WRONG: "questions": ["Question 1"], "Question 2": "Question 3"
 
-**SELECTION PRIORITY:**
-1. Level appropriateness FIRST (difficulty matching ${params.cefrLevel})
-2. Topic relevance SECOND (useful for discussing "${params.topic}")
+3. CRITICAL: ALL CONTENT MUST BE ABOUT THE SPECIFIC TOPIC PROVIDED BY THE USER.
 
-**CRITICAL SELECTION PRINCIPLES:**
-1. **Level Appropriateness FIRST** - Choose words that match ${params.cefrLevel} cognitive and linguistic capabilities
-2. **Topic Relevance SECOND** - Ensure chosen words can meaningfully discuss "${params.topic}"
-3. **Communicative Power** - Each word should unlock new expression ability for students
-4. **Natural Context** - Words must appear naturally when discussing "${params.topic}" at ${params.cefrLevel} level
+${params.targetVocabulary ? `4. CRUCIAL: YOU MUST INCLUDE THE FOLLOWING VOCABULARY WORDS IN YOUR LESSON: ${params.targetVocabulary}` : ''}
 
-${params.targetVocabulary ? `**REQUIRED VOCABULARY:** You MUST include these specific words: ${params.targetVocabulary}` : ''}
+${params.targetVocabulary ? '5' : '4'}. WARMUP SECTION REQUIREMENTS:
+- NEVER reference pictures, images, or visual materials in warmup activities
+- Questions must activate prior knowledge about the specific lesson topic: "${params.topic}"
+- Focus on personal experience, cultural knowledge, or universal concepts
+- Questions should prepare students for the vocabulary and reading content
+- All questions must be discussion-based, not visual-based
+- Connect directly to the lesson topic through conversation and reflection
 
-**SELECT EXACTLY 5 VOCABULARY WORDS** that perfectly match ${params.cefrLevel} level requirements.
+${params.targetVocabulary ? '5' : '4'}. CRITICAL: FOR EACH VOCABULARY WORD, YOU MUST INCLUDE THE 'pronunciation' OBJECT WITH 'syllables', 'stressIndex', AND 'phoneticGuide' FIELDS. The 'phoneticGuide' MUST use ONLY regular English characters and hyphens (like "AS-tro-naut" or "eks-PLOR-ay-shun"), NOT International Phonetic Alphabet (IPA) symbols.
 
-**VOCABULARY DEFINITION REQUIREMENTS:**
+5. WRITING STYLE REQUIREMENTS:
+Create content with a natural, engaging voice that:
+- Uses language complexity appropriate for ${params.cefrLevel} level
+- Balances authenticity with accessibility for the topic "${params.topic}"
+- Models natural, native-like expression without "textbook language"
+- Incorporates appropriate tone (humor, warmth, or formality) based on topic and level
+- Uses varied sentence structures appropriate for the level
+- Creates genuine interest through vivid, specific language
+- Maintains consistent voice across all lesson components
+- Provides appropriate linguistic scaffolding through style choices
+
+Apply this style consistently across:
+- Reading text, vocabulary definitions, activity instructions, discussion questions, and teacher guidance
+
+6. LEVEL-APPROPRIATE CONTENT:
+Ensure lessons on "${params.topic}" are appropriate for ${params.cefrLevel} level through:
+- Vocabulary selection that matches the level (not taught at lower levels)
+- Question complexity appropriate for the cognitive level
+- Conceptual approach matching ${params.cefrLevel} capabilities
+- Content focus suitable for this specific proficiency level
+
+Avoid these stylistic issues:
+- Generic, template-based phrasing
+- Overly formal academic tone when inappropriate
+- Overly simple language that doesn't challenge appropriately
+- Inconsistent voice across sections
+- Repetitive sentence structures or vocabulary
+
+7. QUESTION QUALITY STANDARDS:
+For discussion questions:
+- Elicit more than one-word or yes/no responses
+- Connect to students' experiences while remaining culturally inclusive
+- Build on vocabulary/concepts from the lesson
+- Avoid vague, obvious, or simplistic formulations
+- Encourage critical thinking appropriate to ${params.cefrLevel} level
+- Are genuinely interesting to discuss
+
+For comprehension questions:
+- Test genuine understanding rather than just word recognition
+- Progress from literal to interpretive to applied understanding
+- Focus on meaningful content rather than trivial details
+- Use question stems appropriate for the cognitive level
+- Avoid ambiguity or multiple possible correct answers
+
+8. CEFR LEVEL ADAPTATION: ALL content must be STRICTLY appropriate for the specified CEFR level:
+   - Vocabulary choices must match the CEFR level (A1=beginner, C2=advanced)
+   - Sentence complexity must be appropriate (simple for A1-A2, more complex for B2-C2)
+   - Grammar structures must align with the CEFR level (present simple for A1, conditionals for B1+, etc.)
+   - Reading text difficulty must match the specified level
+   - Discussion paragraph contexts must be level-appropriate with vocabulary and grammar matching the CEFR level
+
+7. DISCUSSION SECTION REQUIREMENTS:
+   - CRITICAL: Each discussion question MUST have its own unique paragraph context (paragraphContext field)
+   - These paragraph contexts must be 3-5 sentences that provide background information
+   - The paragraph contexts must use vocabulary and sentence structures appropriate for the specified CEFR level
+   - The paragraphs should include interesting information that helps students engage with the topic
+   - The paragraph contexts should lead naturally into the discussion question that follows
+
+STEP 0: FOUNDATION ANALYSIS FOR ${params.cefrLevel} LEVEL
+
+Establish the lesson foundation by analyzing "${params.topic}" for ${params.cefrLevel} students:
+
+**COGNITIVE APPROACH:**
+${params.cefrLevel === 'A1' ? 'Focus on concrete, observable aspects that students can see, touch, or directly experience' : params.cefrLevel === 'A2' ? 'Focus on personal experiences and simple social interactions related to the topic' : params.cefrLevel === 'B1' ? 'Focus on practical problems and social issues that affect daily life' : params.cefrLevel === 'B2' ? 'Focus on abstract concepts requiring analysis and evaluation' : params.cefrLevel === 'C1' ? 'Focus on sophisticated concepts requiring synthesis and critical thinking' : 'Focus on expert-level analysis with nuanced understanding'}
+
+**VOCABULARY FOUNDATION:**
+${params.cefrLevel === 'A1' ? 'Students know basic daily vocabulary (top 1,000 words)' : params.cefrLevel === 'A2' ? 'Students know personal experience vocabulary (top 2,000 words)' : params.cefrLevel === 'B1' ? 'Students know functional language (top 3,000 words)' : params.cefrLevel === 'B2' ? 'Students know academic/professional vocabulary (3,000+ words)' : params.cefrLevel === 'C1' ? 'Students know advanced vocabulary (5,000+ words)' : 'Students know expert-level vocabulary with specialized terminology'}
+
+**TOPIC TREATMENT:**
+For "${params.topic}" at ${params.cefrLevel} level, approach through ${params.cefrLevel === 'A1' ? 'basic descriptions and immediate needs' : params.cefrLevel === 'A2' ? 'personal experiences and simple opinions' : params.cefrLevel === 'B1' ? 'practical applications and problem-solving' : params.cefrLevel === 'B2' ? 'analytical discussion and evaluation' : params.cefrLevel === 'C1' ? 'sophisticated analysis and synthesis' : 'expert-level discourse and critical evaluation'}
+
+STEP 1: VOCABULARY SELECTION
+
+**ENHANCED VOCABULARY DEFINITION REQUIREMENTS:**
 
 Each vocabulary word must include:
-1. **coreDefinition**: One clear sentence using vocabulary 2+ levels below target
-2. **simpleExplanation**: 2-3 sentences expanding understanding with familiar concepts  
-3. **contextualMeaning**: How this word specifically relates to "${params.topic}"
-4. **levelAppropriateExample**: Original sentence showing natural usage
-5. **commonCollocations**: 2-3 phrases this word commonly appears with
-6. **additionalExamples**: 3 varied example sentences showing different contexts
 
-**VOCABULARY JSON STRUCTURE:**
+1. **coreDefinition**: One clear sentence using vocabulary 2 levels below target CEFR level
+2. **simpleExplanation**: 2-3 sentences that expand understanding using familiar concepts  
+3. **contextualMeaning**: How this word specifically relates to "${params.topic}"
+4. **levelAppropriateExample**: Original sentence showing natural usage (not from reading text)
+5. **commonCollocations**: 2-3 phrases this word commonly appears with
+6. **additionalExamples**: 3 varied example sentences showing different contexts:
+   - One formal/academic context
+   - One informal/everyday context  
+   - One that connects to student experiences
+
+**DEFINITION WRITING PRINCIPLES:**
+- Use concrete, observable concepts when possible
+- Avoid circular definitions (don't use the word to define itself)
+- Include relatable comparisons or analogies for abstract concepts
+- Ensure definitions are culturally neutral and globally accessible
+- Test that definitions can stand alone without the reading context
+
+**LEVEL-SPECIFIC DEFINITION STANDARDS:**
+
+${params.cefrLevel === 'A1' ? `**A1 Definition Standards:**
+- coreDefinition: Use only top 500 words, maximum 8 words
+- simpleExplanation: Use basic present tense, concrete examples
+- Example: "restaurant" → coreDefinition: "a place where people buy and eat food"` : params.cefrLevel === 'A2' ? `**A2 Definition Standards:**
+- coreDefinition: Use top 1,000 words, maximum 10 words
+- simpleExplanation: Use simple past/future, personal experiences
+- Example: "analyze" → coreDefinition: "to look at something carefully to understand it"` : params.cefrLevel === 'B1' ? `**B1 Definition Standards:**
+- coreDefinition: Use A2 vocabulary + common B1 words, maximum 12 words
+- simpleExplanation: Can include one slightly complex word if essential
+- Example: "evaluate" → coreDefinition: "to decide how good or useful something is"` : params.cefrLevel === 'B2' ? `**B2 Definition Standards:**
+- coreDefinition: Use B1 vocabulary appropriately, maximum 15 words
+- simpleExplanation: Focus on precision and nuance
+- Example: "synthesize" → coreDefinition: "to combine different ideas or information to create something new"` : `**C1+ Definition Standards:**
+- coreDefinition: Use sophisticated vocabulary appropriately
+- simpleExplanation: Include context clues for complex meanings
+- Focus on expert-level precision while maintaining clarity`}
+
+**VOCABULARY SELECTION CRITERIA:**
+✓ Genuinely suitable for ${params.cefrLevel} students  
+✓ Useful for discussing "${params.topic}"
+✓ Can be defined using significantly simpler vocabulary
+✓ Provides new communicative ability
+✓ Appears naturally in reading text with adequate context support
+
+**ENHANCED VOCABULARY INTEGRATION REQUIREMENTS:**
+- Each vocabulary word must appear in reading text with 2-3 context clues
+- Reading text provides enough context for word meaning without definition
+- Vocabulary density: Maximum 1 new word per 25 words of text
+- Words should be spaced throughout text, not clustered
+
+**SELECT EXACTLY 5 VOCABULARY WORDS** with proper pronunciation guide (syllables, stressIndex, phoneticGuide using English letters only).
+
+**ENHANCED VOCABULARY JSON STRUCTURE:**
+Each vocabulary word MUST include this exact structure:
 {
   "term": "word",
   "partOfSpeech": "noun/verb/adjective/etc",
@@ -357,42 +456,13 @@ Each vocabulary word must include:
   "imagePrompt": "An illustration showing [word meaning] clearly. No text visible."
 }
 
-STEP 2: BUILD EVERYTHING AROUND YOUR VOCABULARY
+STEP 2: READING TEXT DEVELOPMENT
 
-Now create lesson components that teach and reinforce your 5 vocabulary words:
+**READING TEXT ENHANCEMENT REQUIREMENTS:**
 
-**READING TEXT:** Write a text about "${params.topic}" that naturally includes all 5 vocabulary words with context clues
-**WARMUP QUESTIONS:** Create discussion questions that prepare students for the vocabulary
-**COMPREHENSION:** Test understanding of both content and vocabulary
-**DISCUSSION:** Use vocabulary in meaningful conversations about "${params.topic}"
-**ACTIVITIES:** Help students practice using the vocabulary actively
-
-**CRITICAL INTEGRATION REQUIREMENTS:**
-- Each vocabulary word must appear 2-3 times in the reading text with context support
-- Questions must require students to use the vocabulary to answer fully
-- All activities should reinforce vocabulary through meaningful use
-- Maximum 1 new vocabulary word per 25 words of reading text
-
-**ESSENTIAL FORMAT REQUIREMENTS:**
-
-1. **CRITICAL JSON FORMAT:** Your output must be properly formatted JSON with NO ERRORS!
-2. **ARRAYS:** ALL arrays must contain full content, NOT numbers or counts
-   ✓ CORRECT: "paragraphs": ["Paragraph 1 text...", "Paragraph 2 text..."]
-   ✗ WRONG: "paragraphs": 5
-3. **PRONUNCIATION:** Use English letters only for phonetic guide (like "fuh-SEE-shus" not IPA)
-4. **WARMUP:** Never reference pictures/images - discussion questions only
-5. **CONTENT FOCUS:** All content must be about "${params.topic}" at ${params.cefrLevel} level
-
-**WARMUP REQUIREMENTS:**
-- Questions activate prior knowledge about "${params.topic}"
-- Prepare students for the vocabulary and reading content
-- Discussion-based, not visual-based
-- Connect to lesson topic through conversation
-
-**DISCUSSION REQUIREMENTS:**
-- Each question needs unique paragraph context (3-5 sentences)
-- Paragraph contexts use ${params.cefrLevel}-appropriate vocabulary and structures
-- Contexts lead naturally into discussion questions
+**VOCABULARY INTEGRATION:**
+✓ Each vocabulary word must appear 2-3 times in natural contexts
+✓ First appearance should be in a context that supports understanding
 ✓ Subsequent appearances should show different usage patterns
 ✓ Include 1-2 related words/synonyms to build semantic networks
 
@@ -1299,7 +1369,7 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
    */
   private async validateAndImproveContent(content: any, params: LessonGenerateParams): Promise<any> {
     try {
-      console.log('Starting quality control validation for AI content...');
+      console.log('Starting quality control validation for Gemini content...');
       
       // Check if we have sentence frames that need validation
       if (content.sections) {
@@ -1331,16 +1401,16 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
         }
       }
       
-      console.log('Quality control validation completed for AI content');
+      console.log('Quality control validation completed for Gemini content');
       return content;
     } catch (error) {
-      console.error('Error in quality control validation for AI:', error);
+      console.error('Error in quality control validation for Gemini:', error);
       return content; // Return original content if validation fails
     }
   }
 
   /**
-   * Validate sentence frame examples for logical coherence using AI
+   * Validate sentence frame examples for logical coherence using Gemini
    */
   private async validateSentenceFrameExamples(examples: any[], pattern: string, topic: string): Promise<any[]> {
     try {
@@ -1375,8 +1445,8 @@ Return ONLY a JSON array of corrected examples. Each example must perfectly demo
 
 If an example is a simple string, return a string. If it's an object with "completeSentence" and "breakdown" properties, maintain that structure and ensure the breakdown correctly maps to the pattern components.`;
 
-      const result = await this.client.chat.completions.create({
-        model: 'google/gemini-2.0-flash-exp:free',
+      const validationRequestData = {
+        model: 'google/gemini-1.5-flash',
         messages: [
           {
             role: 'user',
@@ -1384,15 +1454,24 @@ If an example is a simple string, return a string. If it's an object with "compl
           }
         ],
         temperature: 0.1, // Low temperature for consistency
-        max_tokens: 2000,
-      });
+        max_tokens: 2000
+      };
 
-      const text = result.choices[0]?.message?.content;
+      const result: AxiosResponse = await axios.post(
+        `${this.baseURL}/chat/completions`,
+        validationRequestData,
+        {
+          headers: {
+            'Authorization': `Bearer ${this.apiKey}`,
+            'Content-Type': 'application/json',
+            'HTTP-Referer': 'https://planwiseesl.com',
+            'X-Title': 'PlanwiseESL'
+          },
+          timeout: 30000 // 30 second timeout for validation
+        }
+      );
 
-      if (!text) {
-        console.error('No content received from Qwen API for validation');
-        return examples; // Return original examples if validation fails
-      }
+      const text = result.data.choices[0]?.message?.content;
 
       try {
         // Clean up the response and parse as JSON
@@ -1404,14 +1483,14 @@ If an example is a simple string, return a string. If it's an object with "compl
         }
 
         const validatedExamples = JSON.parse(cleanedContent);
-        console.log('Successfully validated sentence frame examples using AI');
+        console.log('Successfully validated sentence frame examples using Gemini');
         return Array.isArray(validatedExamples) ? validatedExamples : examples;
       } catch (parseError) {
-        console.error('Error parsing AI validation response, using original examples');
+        console.error('Error parsing Gemini validation response, using original examples');
         return examples;
       }
     } catch (error) {
-      console.error('Error validating sentence frame examples with AI:', error);
+      console.error('Error validating sentence frame examples with Gemini:', error);
       return examples; // Return original examples if validation fails
     }
   }
@@ -1423,12 +1502,12 @@ If an example is a simple string, return a string. If it's an object with "compl
     // Add provider identifier to the content
     const lessonContent = {
       ...content,
-      provider: 'qwen'
+      provider: 'gemini'
     };
     
     // Generate images if sections exist
     if (lessonContent.sections && Array.isArray(lessonContent.sections)) {
-      console.log('Starting image generation loop for AI lesson...');
+      console.log('Starting image generation loop for Gemini lesson...');
       for (const section of lessonContent.sections) {
         if (section.type === 'vocabulary' && section.words && Array.isArray(section.words)) {
           console.log(`Found ${section.words.length} vocabulary words, generating images...`);
@@ -1443,7 +1522,7 @@ If an example is a simple string, return a string. If it's an object with "compl
                try {
                  // Generate unique ID for logging
                  const requestId = `vocab_${word.term ? word.term.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 15) : 'word'}`;
-                 word.imageBase64 = await stabilityService.generateImage(word.imagePrompt, requestId);
+                 word.imageBase64 = await imageGenerationService.generateImage(word.imagePrompt, requestId);
                  console.log(`Successfully generated image for vocab word: ${word.term}`);
                } catch (imgError) {
                  console.error(`Error generating image for vocab word ${word.term}:`, imgError);
@@ -1465,7 +1544,7 @@ If an example is a simple string, return a string. If it's an object with "compl
             // This field is already provided in the template - just make sure it's intact
             if (!question.paragraphContext && section.paragraphContext) {
               // If a question is missing individual context but section has a shared one,
-              // copy it to the question (happens in some AI responses)
+              // copy it to the question (happens in some Gemini responses)
               question.paragraphContext = section.paragraphContext;
               console.log("Added section-level paragraphContext to discussion question");
             }
@@ -1500,7 +1579,7 @@ If an example is a simple string, return a string. If it's an object with "compl
                  // Generate unique ID for logging - use part of question text
                  const requestId = `disc_${question.question ? question.question.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 15) : 'question'}`;
                  console.log(`Requesting image generation for discussion question with prompt: "${question.imagePrompt.substring(0, 100)}..."`);
-                 question.imageBase64 = await stabilityService.generateImage(question.imagePrompt, requestId);
+                 question.imageBase64 = await imageGenerationService.generateImage(question.imagePrompt, requestId);
                  console.log(`Successfully generated image for discussion question`);
                } catch (imgError) {
                   console.error(`Error generating image for discussion question:`, imgError);
@@ -1514,7 +1593,7 @@ If an example is a simple string, return a string. If it's an object with "compl
         }
         // Add loops for other sections needing images if necessary (e.g., warmup)
       }
-      console.log('Finished image generation loop for AI lesson.');
+      console.log('Finished image generation loop for Gemini lesson.');
     } else {
         console.log('No sections found or sections is not an array, skipping image generation.');
     }
@@ -1522,5 +1601,42 @@ If an example is a simple string, return a string. If it's an object with "compl
     return lessonContent;
   }
 }
+
+// Test the OpenRouter integration
+export const testOpenRouterConnection = async (): Promise<boolean> => {
+  try {
+    const testService = new GeminiService(process.env.OPENROUTER_API_KEY || '');
+    if (!testService.apiKey) {
+      console.error('OPENROUTER_API_KEY not configured');
+      return false;
+    }
+
+    const testRequest = {
+      model: 'google/gemini-2.0-flash-001',
+      messages: [{ role: 'user', content: 'Hello, can you respond with just "OK"?' }],
+      max_tokens: 10
+    };
+
+    const response = await axios.post(
+      'https://openrouter.ai/api/v1/chat/completions',
+      testRequest,
+      {
+        headers: {
+          'Authorization': `Bearer ${testService.apiKey}`,
+          'Content-Type': 'application/json',
+          'HTTP-Referer': 'https://planwiseesl.com',
+          'X-Title': 'PlanwiseESL'
+        },
+        timeout: 10000
+      }
+    );
+
+    console.log('OpenRouter connection test successful');
+    return true;
+  } catch (error: any) {
+    console.error('OpenRouter connection test failed:', error.response?.data || error.message);
+    return false;
+  }
+};
 
 export const geminiService = new GeminiService(process.env.OPENROUTER_API_KEY || '');

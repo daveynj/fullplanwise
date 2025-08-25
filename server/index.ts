@@ -11,14 +11,6 @@ import { buffer } from "micro";
 
 const app = express();
 
-// Log environment setup for debugging
-console.log('🚀 Starting PlanwiseESL Server...');
-console.log('🔑 API Keys Status:');
-console.log('   OpenRouter: ✅ SET');
-console.log('   Gemini (legacy): ✅ SET');
-console.log('   Stability (legacy): ✅ SET');
-console.log('');
-
 // Remove the rawBodyParser definition (lines 14-24)
 // const rawBodyParser = async (req: Request, res: Response, next: NextFunction) => {
 // ... (removed code)

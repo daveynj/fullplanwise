@@ -149,11 +149,10 @@ export default function LessonGeneratorPage() {
             
             {/* Lesson form container */}
             <div className="max-w-3xl mx-auto">
-              <LessonForm
-                students={students}
-                onSubmit={handleGenerateLesson}
+              <LessonForm 
+                students={students} 
+                onSubmit={handleGenerateLesson} 
                 credits={user?.credits || 0}
-                subscriptionTier={user?.subscriptionTier}
               />
             </div>
           </div>
