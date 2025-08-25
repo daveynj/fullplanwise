@@ -307,12 +307,21 @@ params.cefrLevel === 'B2' ? `**B2 VOCABULARY GUIDANCE:**
 - Example topic approach: For "technology" choose "innovative, revolutionary, integrate" not "gadget, device"` :
 
 params.cefrLevel === 'C1' ? `**C1 VOCABULARY GUIDANCE:**
-- Choose sophisticated vocabulary from academic/professional registers (5,000+ frequency)
-- Words that enable nuanced, expert-level discussion  
-- Words most intermediate students DON'T know
-- Think: "What vocabulary would a graduate student use?"
-- Example topic approach: For "humor" choose "facetious, sardonic, repartee" not "funny, witty, sarcastic"
-- AVOID obvious topic words that B2 students already know` :
+🚫 **FORBIDDEN BASIC WORDS:** Never choose these common words that B2 students already know:
+   For "travel/weekend getaways": accommodation, scenic, tourist, vacation, hotel, restaurant, sightseeing, relaxing, enjoyable, comfortable, popular, beautiful, expensive, cheap
+   For "food": delicious, healthy, nutritious, fresh, organic, spicy, sweet, bitter, cooking, recipe, ingredient, meal, breakfast, lunch, dinner
+   For "technology": computer, internet, website, email, smartphone, application, software, digital, online, modern, advanced, convenient, useful
+
+✅ **CHOOSE SOPHISTICATED WORDS:** Select academic/professional vocabulary (5,000+ frequency):
+   For "travel/weekend getaways": itinerary, secluded, rejuvenate, BUT ALSO: **meticulous, proximity, ambiance, repertoire, indulgent**
+   For "food": BUT CHOOSE: **palatable, culinary, gastronomic, indigenous, procurement**  
+   For "technology": BUT CHOOSE: **paradigm, optimization, proliferation, ubiquitous, infrastructure**
+
+🎯 **C1 SELECTION RULES:**
+- Think: "What vocabulary would a graduate student use in an academic paper?"
+- Choose words that make students sound sophisticated and educated
+- Words that most B2 students have never heard before
+- Academic/professional vocabulary from specialized domains` :
 
 `**C2 VOCABULARY GUIDANCE:**
 - Choose specialized/technical vocabulary from expert domains
