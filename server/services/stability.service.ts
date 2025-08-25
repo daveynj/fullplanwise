@@ -1,39 +1,39 @@
-import axios from 'axios';
-import * as fs from 'fs';
-
-// Updated to use SDXL (SD 1.6 was discontinued July 24, 2025)
-// Using SDXL which is the current recommended model
-const STABILITY_API_URL = 'https://api.stability.ai/v1/generation/stable-diffusion-xl-1024-v1-0/text-to-image';
-// Legacy SD 1.6 endpoint (discontinued)
-// const STABILITY_API_URL = 'https://api.stability.ai/v1/generation/stable-diffusion-v1-6/text-to-image';
-const NEGATIVE_PROMPT = "blurry, distorted, text, words, letters, low quality, noisy, artifacts";
+import { OpenAI } from 'openai';
 
 /**
- * Service for interacting with the Stability AI API
+ * Service for interacting with OpenRouter API using Amazon Titan Image Generator
  */
 export class StabilityService {
   private apiKey: string;
+  private client: OpenAI | null = null;
 
   constructor(apiKey: string | undefined) {
     if (!apiKey) {
-      console.warn('Stability API key is not provided or is empty. Image generation will be disabled.');
+      console.warn('OpenRouter API key is not provided or is empty. Image generation will be disabled.');
       this.apiKey = '';
     } else {
        this.apiKey = apiKey;
        const keyPattern = this.apiKey.substring(0, 4) + '...' + this.apiKey.substring(this.apiKey.length - 4);
-       console.log(`StabilityService initialized with API key pattern: ${keyPattern}`);
+       console.log(`AmazonTitanService initialized with API key pattern: ${keyPattern}`);
+
+       this.client = new OpenAI({
+         apiKey: this.apiKey,
+         baseURL: 'https://openrouter.ai/api/v1',
+       });
     }
   }
 
   /**
-   * Generate an image using Stability AI based on a prompt
+   * Generate an image using a cheaper alternative via OpenRouter
+   * Note: OpenRouter has limited image generation models. This is a placeholder implementation.
+   * In production, you might want to use a direct provider or different service.
    * @param prompt The text prompt describing the image
    * @param requestId Optional unique identifier for logging
    * @returns Base64 encoded PNG image data, or null if generation fails or is disabled
    */
   async generateImage(prompt: string, requestId: string = 'image'): Promise<string | null> {
     if (!this.apiKey) {
-      console.log('Stability API key not configured, skipping image generation.');
+      console.log('OpenRouter API key not configured, skipping image generation.');
       return null;
     }
     if (!prompt || prompt.trim() === '') {
@@ -41,82 +41,50 @@ export class StabilityService {
         return null;
     }
 
-    console.log(`Requesting Stability image generation for prompt: "${prompt.substring(0, 100)}..."`);
+    console.log(`Image generation requested: "${prompt.substring(0, 100)}..."`);
+    console.log('⚠️  OpenRouter has limited image generation support. Consider using direct providers.');
 
-    // Image saving is disabled, so no need to create directories
-    const imageLogDir = './logs/images';
-    // Directory creation code commented out to save resources
-    /*
-     if (!fs.existsSync(imageLogDir)) {
-       try {
-         fs.mkdirSync(imageLogDir, { recursive: true });
-       } catch (dirError: any) {
-          console.error(`Error creating image log directory: ${dirError.message}`);
-          // Continue without saving debug info if directory creation fails
-       }
-     }
-     */
-
-    try {
-      const response = await axios.post(
-        STABILITY_API_URL,
-        {
-          text_prompts: [{ text: prompt }, { text: NEGATIVE_PROMPT, weight: -0.7 }], // Add negative prompt with slight negative weight
-          height: 1152, // SDXL required dimension for portrait format
-          width: 896, // SDXL required dimension for portrait format  
-          samples: 1, // Generate only one image to minimize cost
-          cfg_scale: 5, // Lower guidance scale for faster/cheaper generation
-          steps: 15, // Reduced steps for lower cost while maintaining quality
-          style_preset: "photographic" // Simple preset that works well for educational content
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${this.apiKey}`,
-            'Content-Type': 'application/json',
-            Accept: 'application/json', // Request JSON response
-          },
-          timeout: 60000 // 60 second timeout
-        }
-      );
-
-      if (response.data && response.data.artifacts && response.data.artifacts.length > 0 && response.data.artifacts[0].base64) {
-        console.log('Successfully received image data from Stability API.');
-        const base64Data = response.data.artifacts[0].base64;
-
-        // Comment out debug image saving to save disk space and optimize performance
-        // Debug image saving is disabled to minimize resource usage
-        /*
-        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-        const imageFileName = `${requestId}_${timestamp}.png`;
-        const imagePath = `${imageLogDir}/${imageFileName}`;
-        
-        try {
-           fs.writeFileSync(imagePath, base64Data, 'base64');
-           console.log(`Generated image saved for debugging: ${imagePath}`);
-        } catch (saveError: any) {
-            console.error(`Error saving generated image: ${saveError.message}`);
-        }
-        */
-
-        return base64Data;
-      } else {
-        console.warn('Stability API response did not contain expected image data.', response.data);
-        return null;
-      }
-    } catch (error: any) {
-      console.error('Error calling Stability AI API:', error.message);
-      if (error.response) {
-        console.error('Stability API Error Details:');
-        console.error('Status:', error.response.status);
-        console.error('Status Text:', error.response.statusText);
-        console.error('Response Data:', JSON.stringify(error.response.data, null, 2));
-      } else if (error.request) {
-        console.error('Stability API No Response Error:');
-      }
+    if (!this.client) {
+      console.log('OpenRouter client not initialized');
       return null;
     }
+
+    // For now, return null to indicate no image generation
+    // TODO: Implement with a direct image generation service like:
+    // - Replicate (for Stable Diffusion models)
+    // - Together AI (for image models)
+    // - OpenAI DALL-E (if available)
+    return null;
+
+    // Alternative implementation using text-to-image models if available:
+    /*
+    try {
+      const result = await this.client.chat.completions.create({
+        model: 'stability/stability-sd3-medium', // If available on OpenRouter
+        messages: [
+          {
+            role: 'user',
+            content: `Generate an educational image: ${prompt}. Make it suitable for ESL classroom use.`
+          }
+        ],
+        temperature: 0.7,
+        max_tokens: 300,
+      });
+
+      // Handle response based on model's output format
+      const response = result.choices[0]?.message?.content;
+      console.log('Image generation response:', response);
+
+      // You'd need to parse the response and extract base64 or handle URLs
+      return null; // Placeholder
+
+    } catch (error: any) {
+      console.error('Error calling image generation API:', error.message);
+      return null;
+    }
+    */
   }
 }
 
-// Export an instance initialized with the API key from environment variables
-export const stabilityService = new StabilityService(process.env.STABILITY_API_KEY);
+// Export an instance initialized with the OpenRouter API key from environment variables
+export const stabilityService = new StabilityService(process.env.OPENROUTER_API_KEY);

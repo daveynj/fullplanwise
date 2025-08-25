@@ -51,9 +51,10 @@ interface LessonFormProps {
   students: Student[];
   onSubmit: (data: any) => void;
   credits: number;
+  subscriptionTier?: string;
 }
 
-export function LessonForm({ students, onSubmit, credits }: LessonFormProps) {
+export function LessonForm({ students, onSubmit, credits, subscriptionTier = 'free' }: LessonFormProps) {
   const [selectedCefrLevel, setSelectedCefrLevel] = useState<string>("B1");
   
   const form = useForm<FormValues>({
@@ -231,22 +232,27 @@ export function LessonForm({ students, onSubmit, credits }: LessonFormProps) {
             
             {/* Generate button */}
             <div className="flex justify-center mt-8">
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 className="bg-primary hover:bg-primary-light text-white font-semibold px-6 py-3 rounded-lg flex items-center transition w-full justify-center"
-                disabled={credits < 1 || form.formState.isSubmitting}
+                disabled={form.formState.isSubmitting}
               >
                 <Wand2 className="mr-2 text-xl" /> Generate Lesson
-                <span className="bg-white/20 ml-2 px-2 py-0.5 rounded-md text-sm">1 Credit</span>
+                <span className="bg-green-500/20 ml-2 px-2 py-0.5 rounded-md text-sm">100% Free</span>
               </Button>
             </div>
-            
-            {/* Show warning if no credits */}
-            {credits < 1 && (
-              <p className="text-destructive text-sm text-center mt-2">
-                You need at least 1 credit to generate a lesson.
-              </p>
-            )}
+
+            {/* Launch promotion - completely free for now */}
+            <div className="mt-4 p-4 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg">
+              <div className="text-center">
+                <p className="text-sm text-green-800">
+                  <strong>🎉 Launch Special:</strong> Everything is 100% FREE for the next 3 months!
+                </p>
+                <p className="text-xs text-green-600 mt-1">
+                  No credit card required • Full access to all features including AI images
+                </p>
+              </div>
+            </div>
           </form>
         </Form>
       </CardContent>

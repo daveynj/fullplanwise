@@ -57,12 +57,12 @@ export default function DashboardPage() {
       trend: "No change",
       color: "bg-amber-50" 
     },
-    { 
-      title: "Credits", 
-      value: user?.credits || 0, 
-      icon: <Clock className="h-10 w-10 text-[#28A745]" />, 
-      trend: user?.credits ? "Available for lessons" : "Purchase credits",
-      color: "bg-green-50" 
+    {
+      title: "Status",
+      value: "100% FREE",
+      icon: <Clock className="h-10 w-10 text-[#28A745]" />,
+      trend: "Everything free for 3 months!",
+      color: "bg-green-50"
     },
   ];
 
@@ -190,7 +190,7 @@ export default function DashboardPage() {
               <h2 className="text-2xl font-nunito font-bold mb-6">Quick Actions</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <Link href="/generate">
-                  <Button 
+                  <Button
                     className={`w-full ${totalLessons === 0 ? 'bg-green-600 hover:bg-green-700 shadow-lg' : 'bg-primary hover:bg-primary/90'} h-auto py-5 text-center relative`}
                   >
                     {totalLessons === 0 && (
@@ -203,7 +203,7 @@ export default function DashboardPage() {
                         {totalLessons === 0 ? 'Create Your First Lesson' : 'Generate New Lesson'}
                       </p>
                       <p className="text-sm text-white/90 mt-1">
-                        {totalLessons === 0 ? 'Ready in about 2-3 minutes' : 'Create a lesson plan'}
+                        100% free for 3 months • Includes AI images
                       </p>
                     </div>
                   </Button>

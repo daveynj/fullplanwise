@@ -100,15 +100,15 @@ export function Sidebar() {
         <div className="bg-brand-navy-light p-4 rounded-lg shadow-md">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-brand-light/80">Available Credits</p>
-              <p className="text-2xl font-nunito font-bold text-brand-light">{user?.credits || 0}</p>
+              <p className="text-sm font-medium text-brand-light/80">Status</p>
+              <p className="text-2xl font-nunito font-bold text-brand-light">FREE</p>
             </div>
-            <Button 
+            <Button
               variant="brand"
               className="font-bold px-3 py-2 rounded-lg text-sm shadow-sm"
               onClick={() => setLocation('/buy-credits')}
             >
-              Buy More
+              Pricing
             </Button>
           </div>
         </div>

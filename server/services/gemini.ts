@@ -1,21 +1,33 @@
-import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from '@google/generative-ai';
+import { OpenAI } from 'openai';
 import { LessonGenerateParams } from '@shared/schema';
 import * as fs from 'fs';
 import { stabilityService } from './stability.service';
 
 /**
- * Service for interacting with the Google Gemini AI API
+ * Service for interacting with OpenRouter AI API using Qwen 2.5 72B
  */
 export class GeminiService {
   private apiKey: string;
-  private genAI: GoogleGenerativeAI;
-  
+  private client: OpenAI;
+
   constructor(apiKey: string) {
+    console.log('🔧 OpenRouter Service initializing...');
+    console.log('🔑 API Key provided:', apiKey ? 'YES (length: ' + apiKey.length + ')' : 'NO');
+    console.log('🔍 Environment OPENROUTER_API_KEY:', process.env.OPENROUTER_API_KEY ? 'SET' : 'NOT SET');
+
     if (!apiKey) {
-      console.warn('Gemini API key is not provided or is empty');
+      console.warn('❌ OpenRouter API key is not provided or is empty');
+      console.warn('💡 Make sure to set OPENROUTER_API_KEY in your environment variables');
+      console.warn('🔧 In Replit: Go to Tools > Secrets and add OPENROUTER_API_KEY');
+    } else {
+      console.log('✅ OpenRouter API key found, initializing client...');
     }
+
     this.apiKey = apiKey;
-    this.genAI = new GoogleGenerativeAI(apiKey);
+    this.client = new OpenAI({
+      apiKey: this.apiKey,
+      baseURL: 'https://openrouter.ai/api/v1',
+    });
   }
   
   /**
@@ -26,40 +38,45 @@ export class GeminiService {
   async generateLesson(params: LessonGenerateParams): Promise<any> {
     try {
       if (!this.apiKey) {
-        throw new Error('Gemini API key is not configured');
+        throw new Error('OpenRouter API key is not configured');
       }
 
-      console.log('Starting Gemini AI lesson generation...');
-      
+      console.log('Starting Qwen AI lesson generation...');
+
       // Create unique identifiers for this request (for logging purposes only)
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
       const topicSafe = params.topic.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 20);
       const requestId = `${topicSafe}_${timestamp}`;
-      
+
       // Construct the prompt
       const prompt = this.constructLessonPrompt(params);
-      
-      // Configure the model and features
-      // Using Gemini 2.0 Flash model for improved performance and capabilities
-      const model = this.genAI.getGenerativeModel({ 
-        model: 'gemini-2.0-flash-exp',
-        generationConfig: {
-          temperature: 0.3,
-          topP: 0.9,
-          maxOutputTokens: 16384, // Increased token count from 8192 to 16384 for more detailed lessons
-        },
-      });
-      
-      console.log('Sending request to Gemini API...');
-      
+
+      console.log('Sending request to OpenRouter API (Qwen 2.5 72B)...');
+
       try {
-        // Make the request to the Gemini API
-        const result = await model.generateContent(prompt);
-        const response = result.response;
-        const text = response.text();
-        
-        console.log('Received response from Gemini API');
-        
+        // Make the request to OpenRouter API using Qwen 2.5 72B
+        const result = await this.client.chat.completions.create({
+          model: 'qwen/qwen-2.5-72b-instruct',
+          messages: [
+            {
+              role: 'user',
+              content: prompt
+            }
+          ],
+          temperature: 0.3,
+          max_tokens: 16384,
+          top_p: 0.9,
+        });
+
+                const text = result.choices[0]?.message?.content;
+
+        console.log('Received response from OpenRouter API (Qwen)');
+
+        if (!text) {
+          console.error('No content received from Qwen API');
+          throw new Error('Empty response from Qwen API');
+        }
+
         try {
           // First, attempt to clean up the content and remove markdown code block markers
           let cleanedContent = text;
@@ -1431,17 +1448,24 @@ Return ONLY a JSON array of corrected examples. Each example must perfectly demo
 
 If an example is a simple string, return a string. If it's an object with "completeSentence" and "breakdown" properties, maintain that structure and ensure the breakdown correctly maps to the pattern components.`;
 
-      const model = this.genAI.getGenerativeModel({ 
-        model: 'gemini-1.5-flash',
-        generationConfig: {
-          temperature: 0.1, // Low temperature for consistency
-          maxOutputTokens: 2000
-        }
+      const result = await this.client.chat.completions.create({
+        model: 'qwen/qwen-2.5-72b-instruct',
+        messages: [
+          {
+            role: 'user',
+            content: validationPrompt
+          }
+        ],
+        temperature: 0.1, // Low temperature for consistency
+        max_tokens: 2000,
       });
 
-      const result = await model.generateContent(validationPrompt);
-      const response = result.response;
-      const text = response.text();
+      const text = result.choices[0]?.message?.content;
+
+      if (!text) {
+        console.error('No content received from Qwen API for validation');
+        return examples; // Return original examples if validation fails
+      }
 
       try {
         // Clean up the response and parse as JSON
@@ -1572,4 +1596,4 @@ If an example is a simple string, return a string. If it's an object with "compl
   }
 }
 
-export const geminiService = new GeminiService(process.env.GEMINI_API_KEY || '');
+export const geminiService = new GeminiService(process.env.OPENROUTER_API_KEY || '');

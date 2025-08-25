@@ -11,6 +11,14 @@ import { buffer } from "micro";
 
 const app = express();
 
+// Log environment setup for debugging
+console.log('🚀 Starting PlanwiseESL Server...');
+console.log('🔑 API Keys Status:');
+console.log('   OpenRouter:', process.env.OPENROUTER_API_KEY ? '✅ SET' : '❌ NOT SET');
+console.log('   Gemini (legacy):', process.env.GEMINI_API_KEY ? '✅ SET' : '❌ NOT SET');
+console.log('   Stability (legacy):', process.env.STABILITY_API_KEY ? '✅ SET' : '❌ NOT SET');
+console.log('');
+
 // Remove the rawBodyParser definition (lines 14-24)
 // const rawBodyParser = async (req: Request, res: Response, next: NextFunction) => {
 // ... (removed code)
