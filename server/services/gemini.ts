@@ -81,7 +81,7 @@ export class GeminiService {
           // First, attempt to clean up the content and remove markdown code block markers
           let cleanedContent = text;
           
-          // Check if content starts with ` and ends with ` which is common in Gemini responses
+          // Check if content starts with ` and ends with ` which is common in AI responses
           if (text.trim().startsWith('`') && text.trim().endsWith('`')) {
             console.log('Detected markdown code block, cleaning content');
             cleanedContent = text.replace(/`\s*/g, '').replace(/`\s*$/g, '').trim();
@@ -126,7 +126,7 @@ export class GeminiService {
                 title: `Lesson on ${params.topic}`,
                 content: "The generated lesson is missing required structure",
                 error: 'Invalid lesson structure',
-                provider: 'gemini',
+                provider: 'qwen',
                 sections: [
                   {
                     type: "error",
@@ -138,7 +138,7 @@ export class GeminiService {
             }
           } catch (jsonError) {
             // If we fail to parse as JSON, try to fix common JSON errors first
-            console.error('Error parsing Gemini response as JSON:', jsonError);
+            console.error('Error parsing AI response as JSON:', jsonError);
             
             // Log the first part of the text and position of error to help with debugging
             const errorMessage = jsonError instanceof Error ? jsonError.message : 'Unknown JSON error';
@@ -217,12 +217,12 @@ export class GeminiService {
             }
           }
         } catch (error) {
-          console.error('Unexpected error processing Gemini response:', error);
+          console.error('Unexpected error processing AI response:', error);
           // Propagate the error to trigger fallback
-          throw new Error(`Error processing Gemini response: ${error instanceof Error ? error.message : 'Unknown error'}`);
+          throw new Error(`Error processing AI response: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
       } catch (error: any) {
-        console.error('Error during Gemini API request:', error.message);
+        console.error('Error during AI API request:', error.message);
         
         // Determine if this is a content policy error
         const isPolicyError = error.message && (
@@ -237,7 +237,7 @@ export class GeminiService {
           return {
             title: `Lesson on ${params.topic}`,
             error: error.message,
-            provider: 'gemini',
+            provider: 'qwen',
             sections: [
               {
                 type: "error",
@@ -252,13 +252,13 @@ export class GeminiService {
         }
       }
     } catch (error: any) {
-      console.error('Error in GeminiService.generateLesson:', error.message);
+      console.error('Error in AI lesson generation:', error.message);
       throw error;
     }
   }
   
   /**
-   * Constructs a structured prompt for the Gemini AI model
+   * Constructs a structured prompt for the AI model
    */
   private constructLessonPrompt(params: LessonGenerateParams): string {
     const { cefrLevel, topic, focus, lessonLength, additionalNotes } = params;
@@ -1372,7 +1372,7 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
    */
   private async validateAndImproveContent(content: any, params: LessonGenerateParams): Promise<any> {
     try {
-      console.log('Starting quality control validation for Gemini content...');
+      console.log('Starting quality control validation for AI content...');
       
       // Check if we have sentence frames that need validation
       if (content.sections) {
@@ -1404,16 +1404,16 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
         }
       }
       
-      console.log('Quality control validation completed for Gemini content');
+      console.log('Quality control validation completed for AI content');
       return content;
     } catch (error) {
-      console.error('Error in quality control validation for Gemini:', error);
+      console.error('Error in quality control validation for AI:', error);
       return content; // Return original content if validation fails
     }
   }
 
   /**
-   * Validate sentence frame examples for logical coherence using Gemini
+   * Validate sentence frame examples for logical coherence using AI
    */
   private async validateSentenceFrameExamples(examples: any[], pattern: string, topic: string): Promise<any[]> {
     try {
@@ -1477,14 +1477,14 @@ If an example is a simple string, return a string. If it's an object with "compl
         }
 
         const validatedExamples = JSON.parse(cleanedContent);
-        console.log('Successfully validated sentence frame examples using Gemini');
+        console.log('Successfully validated sentence frame examples using AI');
         return Array.isArray(validatedExamples) ? validatedExamples : examples;
       } catch (parseError) {
-        console.error('Error parsing Gemini validation response, using original examples');
+        console.error('Error parsing AI validation response, using original examples');
         return examples;
       }
     } catch (error) {
-      console.error('Error validating sentence frame examples with Gemini:', error);
+      console.error('Error validating sentence frame examples with AI:', error);
       return examples; // Return original examples if validation fails
     }
   }
@@ -1496,12 +1496,12 @@ If an example is a simple string, return a string. If it's an object with "compl
     // Add provider identifier to the content
     const lessonContent = {
       ...content,
-      provider: 'gemini'
+      provider: 'qwen'
     };
     
     // Generate images if sections exist
     if (lessonContent.sections && Array.isArray(lessonContent.sections)) {
-      console.log('Starting image generation loop for Gemini lesson...');
+      console.log('Starting image generation loop for AI lesson...');
       for (const section of lessonContent.sections) {
         if (section.type === 'vocabulary' && section.words && Array.isArray(section.words)) {
           console.log(`Found ${section.words.length} vocabulary words, generating images...`);
@@ -1538,7 +1538,7 @@ If an example is a simple string, return a string. If it's an object with "compl
             // This field is already provided in the template - just make sure it's intact
             if (!question.paragraphContext && section.paragraphContext) {
               // If a question is missing individual context but section has a shared one,
-              // copy it to the question (happens in some Gemini responses)
+              // copy it to the question (happens in some AI responses)
               question.paragraphContext = section.paragraphContext;
               console.log("Added section-level paragraphContext to discussion question");
             }
@@ -1587,7 +1587,7 @@ If an example is a simple string, return a string. If it's an object with "compl
         }
         // Add loops for other sections needing images if necessary (e.g., warmup)
       }
-      console.log('Finished image generation loop for Gemini lesson.');
+      console.log('Finished image generation loop for AI lesson.');
     } else {
         console.log('No sections found or sections is not an array, skipping image generation.');
     }
