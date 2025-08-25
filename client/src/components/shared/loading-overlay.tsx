@@ -4,6 +4,7 @@ import { Sparkles, BookOpen, MessageSquare, Users, Clock } from "lucide-react";
 interface LoadingOverlayProps {
   isLoading: boolean;
   message?: string;
+  progressText?: string; // Add progressText prop
 }
 
 const PROGRESS_STAGES = [
@@ -11,25 +12,25 @@ const PROGRESS_STAGES = [
     id: 1, 
     text: "Analyzing vocabulary requirements", 
     icon: BookOpen, 
-    duration: 20000 // 20 seconds
+    duration: 35000 // 35 seconds
   },
   { 
     id: 2, 
     text: "Creating reading passages", 
     icon: MessageSquare, 
-    duration: 30000 // 30 seconds
+    duration: 50000 // 50 seconds
   },
   { 
     id: 3, 
     text: "Developing discussion questions", 
     icon: Users, 
-    duration: 25000 // 25 seconds
+    duration: 30000 // 30 seconds
   },
   { 
     id: 4, 
     text: "Generating images and final touches", 
     icon: Sparkles, 
-    duration: 35000 // 35 seconds
+    duration: 20000 // 20 seconds - Total: 135s (2m 15s)
   }
 ];
 
@@ -63,7 +64,8 @@ const COMMUNITY_ACTIVITIES = [
 
 export function LoadingOverlay({ 
   isLoading, 
-  message = "Generating Your Lesson"
+  message = "Generating Your Lesson",
+  progressText = "Your lesson will open automatically when ready..."
 }: LoadingOverlayProps) {
   const [currentStage, setCurrentStage] = useState(0);
   const [progress, setProgress] = useState(0);
@@ -117,7 +119,7 @@ export function LoadingOverlay({
       }
 
       // Update progress (0-100%)
-      const newProgress = Math.min((elapsedTime / totalDuration) * 100, 95);
+      const newProgress = Math.min((elapsedTime / totalDuration) * 100, 98); // Cap at 98%
       setProgress(newProgress);
 
     }, 500);
@@ -143,6 +145,7 @@ export function LoadingOverlay({
         <div className="mb-6">
           <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <h3 className="text-xl font-nunito font-bold mb-2">{message}</h3>
+          <p className="text-sm text-gray-500">{progressText}</p>
         </div>
 
         {/* Progress Stages */}
