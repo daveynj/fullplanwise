@@ -2,13 +2,14 @@ import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
-import { CreditBadge } from "@/components/shared/credit-badge";
-import { LogOut, Home, Wand2, Users, Book, Settings, CreditCard, Shield, Library } from "lucide-react";
+import { LogOut, Home, Wand2, Users, Book, Settings, CreditCard, Shield, Library, Sparkles } from "lucide-react";
+import { useFreeTrial } from "@/hooks/use-free-trial";
 
 export function Sidebar() {
   const [location, setLocation] = useLocation();
   const { user, logoutMutation } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { isFreeTrialActive } = useFreeTrial();
 
   const handleLogout = () => {
     logoutMutation.mutate();
@@ -40,7 +41,7 @@ export function Sidebar() {
 
   const accountItems = [
     { path: "/settings", label: "Settings", icon: <Settings className="mr-3 text-2xl" /> },
-    { path: "/buy-credits", label: "Buy Credits", icon: <CreditCard className="mr-3 text-2xl" /> },
+    { path: "/buy-credits", label: "Subscription", icon: <CreditCard className="mr-3 text-2xl" /> },
   ];
   
   // Admin items - only visible to admin users
@@ -95,22 +96,23 @@ export function Sidebar() {
         </div>
       </nav>
       
-      {/* Credit counter - fixed at bottom */}
+      {/* Subscription status - fixed at bottom */}
       <div className="p-4 mt-auto">
-        <div className="bg-brand-navy-light p-4 rounded-lg shadow-md">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-brand-light/80">Available Credits</p>
-              <p className="text-2xl font-nunito font-bold text-brand-light">{user?.credits || 0}</p>
-            </div>
-            <Button 
+        <div className="bg-brand-navy-light p-4 rounded-lg shadow-md text-center">
+          <Sparkles className="mx-auto text-brand-yellow h-6 w-6 mb-2" />
+          <p className="text-sm font-medium text-brand-light/80">Subscription Status</p>
+          <p className="text-lg font-nunito font-bold text-brand-light">
+            {isFreeTrialActive ? "Free Trial" : (user?.subscriptionTier === 'unlimited' ? 'Unlimited' : 'Free Tier')}
+          </p>
+          {!isFreeTrialActive && user?.subscriptionTier !== 'unlimited' && (
+             <Button 
               variant="brand"
-              className="font-bold px-3 py-2 rounded-lg text-sm shadow-sm"
+              className="font-bold px-3 py-2 rounded-lg text-sm shadow-sm mt-3 w-full"
               onClick={() => setLocation('/buy-credits')}
             >
-              Buy More
+              Upgrade to Unlimited
             </Button>
-          </div>
+          )}
         </div>
       </div>
     </div>
