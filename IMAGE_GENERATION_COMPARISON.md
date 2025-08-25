@@ -158,3 +158,4 @@ const images = await imageGenerationService.generateImagesBatch(prompts, request
 
 **Recommendation**: Start with Fireworks AI for immediate cost savings and performance improvements. The 95% cost reduction and 3x speed improvement make this a no-brainer upgrade for high-volume lesson generation.
 
+

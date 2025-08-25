@@ -11,6 +11,8 @@ import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Lesson, Student } from "@shared/schema";
 import { useState } from "react";
+import { useFreeTrial } from "@/hooks/use-free-trial";
+import { format } from 'date-fns';
 
 // Define interface for paginated lessons
 interface PaginatedLessons {
@@ -18,9 +20,26 @@ interface PaginatedLessons {
   total: number;
 }
 
+const FreeTrialBanner = () => {
+  const { isFreeTrialActive, freeTrialEndDate } = useFreeTrial();
+
+  if (!isFreeTrialActive || !freeTrialEndDate) {
+    return null;
+  }
+
+  const endDate = format(freeTrialEndDate, "MMMM do, yyyy");
+
+  return (
+    <div className="bg-brand-yellow text-brand-navy text-center py-3 px-4 font-semibold rounded-lg mb-6">
+      🎉 <span className="font-bold">Limited Time Offer:</span> Get unlimited lesson generations for FREE until {endDate}!
+    </div>
+  );
+};
+
 export default function DashboardPage() {
   const { user } = useAuth();
   const [showSteps, setShowSteps] = useState(false);
+  const { isFreeTrialActive } = useFreeTrial();
   
   // Fetch students for quick access
   const { data: students = [] } = useQuery<Student[]>({
@@ -59,9 +78,9 @@ export default function DashboardPage() {
     },
     { 
       title: "Credits", 
-      value: user?.credits || 0, 
+      value: isFreeTrialActive ? "Unlimited" : (user?.credits || 0), 
       icon: <Clock className="h-10 w-10 text-[#28A745]" />, 
-      trend: user?.credits ? "Available for lessons" : "Purchase credits",
+      trend: isFreeTrialActive ? "Free Trial Active" : (user?.credits ? "Available for lessons" : "Purchase credits"),
       color: "bg-green-50" 
     },
   ];
@@ -81,6 +100,8 @@ export default function DashboardPage() {
               <p className="text-gray-700 text-xl font-medium">Here's what's happening with your PLAN WISE ESL teaching</p>
             </div>
             
+            <FreeTrialBanner />
+
             {/* Onboarding Widget - Only shown when user has 0 lessons */}
             {totalLessons === 0 && (
               <Card className="mb-8 border-2 border-primary/30 bg-primary/5 shadow-lg">
@@ -217,10 +238,12 @@ export default function DashboardPage() {
                   </Button>
                 </Link>
                 <Link href="/buy-credits">
-                  <Button variant="outline" className="w-full h-auto py-5 text-center">
+                  <Button variant="outline" className="w-full h-auto py-5 text-center" disabled={isFreeTrialActive}>
                     <div>
                       <p className="font-bold text-lg">Purchase Credits</p>
-                      <p className="text-sm text-gray-600 mt-1">Add more lesson credits</p>
+                      <p className="text-sm text-gray-600 mt-1">
+                        {isFreeTrialActive ? "Disabled during trial" : "Add more lesson credits"}
+                      </p>
                     </div>
                   </Button>
                 </Link>

@@ -29,6 +29,8 @@ import {
   CreditCard as CreditCardIcon, 
   Loader2 
 } from "lucide-react";
+import { useFreeTrial } from "@/hooks/use-free-trial";
+import { format } from 'date-fns';
 
 // Import Stripe components only if VITE_STRIPE_PUBLIC_KEY is available
 import { loadStripe } from '@stripe/stripe-js';
@@ -166,6 +168,7 @@ export default function BuyCreditsPage() {
   const [clientSecret, setClientSecret] = useState<string>("");
   const { user } = useAuth();
   const { toast } = useToast();
+  const { isFreeTrialActive, freeTrialEndDate } = useFreeTrial();
   
   // Create payment intent mutation
   const createPaymentIntentMutation = useMutation({
@@ -278,63 +281,193 @@ export default function BuyCreditsPage() {
           <div className="max-w-7xl mx-auto">
             {/* Page header */}
             <div className="mb-8 text-center">
-              <h1 className="text-3xl md:text-4xl font-nunito font-bold">Buy Credits</h1>
-              <p className="text-gray-600 mt-2">Purchase credits to generate AI-powered lessons</p>
+              <h1 className="text-3xl md:text-4xl font-nunito font-bold">
+                {isFreeTrialActive ? "Free Trial Active" : "Buy Credits"}
+              </h1>
+              <p className="text-gray-600 mt-2">
+                {isFreeTrialActive 
+                  ? `All lesson generations are free until ${freeTrialEndDate ? format(freeTrialEndDate, "MMMM do, yyyy") : ''}.`
+                  : "Purchase credits to generate AI-powered lessons"
+                }
+              </p>
               
               <div className="flex justify-center mt-4">
-                <CreditBadge credits={user?.credits || 0} />
+                <CreditBadge credits={isFreeTrialActive ? "Unlimited" : user?.credits || 0} />
               </div>
             </div>
-            
-            {/* Purchase options */}
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="max-w-3xl mx-auto">
-              <TabsList className="grid w-full grid-cols-2 mb-8">
-                <TabsTrigger value="credits" className="text-base py-3">
-                  <CreditCard className="mr-2 h-4 w-4" /> Pay As You Go
-                </TabsTrigger>
-                <TabsTrigger value="subscription" className="text-base py-3">
-                  <Sparkles className="mr-2 h-4 w-4" /> Subscription
-                </TabsTrigger>
-              </TabsList>
-              
-              {/* Pay As You Go Tab */}
-              <TabsContent value="credits" className="mt-0">
-                {!clientSecret ? (
-                  <>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                      {creditPackages.map((pkg) => (
-                        <Card key={pkg.id} className={`overflow-hidden ${
-                          selectedPackage === pkg.id ? 'ring-2 ring-primary' : ''
-                        }`}>
-                          {pkg.popular && (
-                            <div className="bg-primary text-white text-center py-1 text-sm font-semibold">
-                              MOST POPULAR
+
+            {isFreeTrialActive ? (
+              <Card className="max-w-3xl mx-auto text-center py-12">
+                <CardHeader>
+                  <CardTitle className="text-2xl font-nunito">Payments Disabled During Free Trial</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-lg text-gray-700">
+                    You currently have unlimited access to lesson generation. The ability to purchase credits and subscriptions will be enabled after the free trial period ends.
+                  </p>
+                </CardContent>
+              </Card>
+            ) : (
+              <>
+                {/* Purchase options */}
+                <Tabs value={activeTab} onValueChange={setActiveTab} className="max-w-3xl mx-auto">
+                  <TabsList className="grid w-full grid-cols-2 mb-8">
+                    <TabsTrigger value="credits" className="text-base py-3">
+                      <CreditCard className="mr-2 h-4 w-4" /> Pay As You Go
+                    </TabsTrigger>
+                    <TabsTrigger value="subscription" className="text-base py-3">
+                      <Sparkles className="mr-2 h-4 w-4" /> Subscription
+                    </TabsTrigger>
+                  </TabsList>
+                  
+                  {/* Pay As You Go Tab */}
+                  <TabsContent value="credits" className="mt-0">
+                    {!clientSecret ? (
+                      <>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                          {creditPackages.map((pkg) => (
+                            <Card key={pkg.id} className={`overflow-hidden ${
+                              selectedPackage === pkg.id ? 'ring-2 ring-primary' : ''
+                            }`}>
+                              {pkg.popular && (
+                                <div className="bg-primary text-white text-center py-1 text-sm font-semibold">
+                                  MOST POPULAR
+                                </div>
+                              )}
+                              <CardHeader>
+                                <CardTitle className="font-nunito">{pkg.title}</CardTitle>
+                                <CardDescription>
+                                  {pkg.credits} credits
+                                </CardDescription>
+                              </CardHeader>
+                              <CardContent>
+                                <div className="text-3xl font-nunito font-bold mb-4">
+                                  ${pkg.price.toFixed(2)}
+                                </div>
+                                <p className="text-sm text-gray-500">
+                                  That's just ${(pkg.price / pkg.credits).toFixed(2)} per credit
+                                </p>
+                              </CardContent>
+                              <CardFooter>
+                                <Button
+                                  className={`w-full ${
+                                    selectedPackage === pkg.id 
+                                    ? 'bg-primary hover:bg-primary/90' 
+                                    : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
+                                  }`}
+                                  onClick={() => handleSelectPackage(pkg.id)}
+                                >
+                                  {selectedPackage === pkg.id ? (
+                                    <>
+                                      <Check className="mr-2 h-4 w-4" /> Selected
+                                    </>
+                                  ) : "Select"}
+                                </Button>
+                              </CardFooter>
+                            </Card>
+                          ))}
+                        </div>
+                        
+                        <div className="text-center">
+                          <Button 
+                            className="bg-primary hover:bg-primary/90 px-8 py-6 text-lg"
+                            onClick={handleProceedToPayment}
+                            disabled={!selectedPackage || createPaymentIntentMutation.isPending}
+                          >
+                            {createPaymentIntentMutation.isPending ? (
+                              <>
+                                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                                Processing...
+                              </>
+                            ) : (
+                              <>
+                                <CreditCardIcon className="mr-2 h-5 w-5" />
+                                Proceed to Payment
+                              </>
+                            )}
+                          </Button>
+                        </div>
+                      </>
+                    ) : stripePromise && Elements && (
+                      <Card>
+                        <CardHeader>
+                          <CardTitle className="font-nunito">Payment Details</CardTitle>
+                          <CardDescription>
+                            {selectedPackageData ? (
+                              <>
+                                Purchasing {selectedPackageData.credits} credits for ${selectedPackageData.price.toFixed(2)}
+                              </>
+                            ) : 'Complete your payment'}
+                          </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          <Elements
+                            stripe={stripePromise}
+                            options={{ clientSecret, appearance: { theme: 'stripe' } }}
+                          >
+                            <CheckoutForm 
+                              amount={selectedPackageData?.price || 0} 
+                              quantity={selectedPackageData?.credits || 0}
+                              onSuccess={handlePaymentSuccess}
+                            />
+                          </Elements>
+                        </CardContent>
+                        <CardFooter className="flex justify-center border-t pt-4">
+                          <Button 
+                            variant="outline" 
+                            onClick={() => setClientSecret("")}
+                          >
+                            Back to Package Selection
+                          </Button>
+                        </CardFooter>
+                      </Card>
+                    )}
+                  </TabsContent>
+                  
+                  {/* Subscription Tab */}
+                  <TabsContent value="subscription" className="mt-0">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                      {subscriptionPlans.map((plan) => (
+                        <Card key={plan.id} className={`overflow-hidden ${
+                          selectedSubscription === plan.id ? 'ring-2 ring-primary' : ''
+                        } ${plan.recommended ? 'relative' : ''}`}>
+                          {plan.recommended && (
+                            <div className="absolute top-0 right-0">
+                              <Badge className="m-2 bg-amber-400 hover:bg-amber-500">RECOMMENDED</Badge>
                             </div>
                           )}
                           <CardHeader>
-                            <CardTitle className="font-nunito">{pkg.title}</CardTitle>
+                            <CardTitle className="font-nunito">{plan.title}</CardTitle>
                             <CardDescription>
-                              {pkg.credits} credits
+                              {plan.credits} credits per {plan.period}
                             </CardDescription>
                           </CardHeader>
-                          <CardContent>
-                            <div className="text-3xl font-nunito font-bold mb-4">
-                              ${pkg.price.toFixed(2)}
+                          <CardContent className="space-y-4">
+                            <div className="text-3xl font-nunito font-bold">
+                              ${plan.price.toFixed(2)}
+                              <span className="text-sm font-normal text-gray-500 ml-1">
+                                /{plan.period}
+                              </span>
                             </div>
-                            <p className="text-sm text-gray-500">
-                              That's just ${(pkg.price / pkg.credits).toFixed(2)} per credit
-                            </p>
+                            <ul className="space-y-2">
+                              {plan.features.map((feature, index) => (
+                                <li key={index} className="flex items-start">
+                                  <Check className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                                  <span>{feature}</span>
+                                </li>
+                              ))}
+                            </ul>
                           </CardContent>
                           <CardFooter>
                             <Button
                               className={`w-full ${
-                                selectedPackage === pkg.id 
+                                selectedSubscription === plan.id 
                                 ? 'bg-primary hover:bg-primary/90' 
                                 : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
                               }`}
-                              onClick={() => handleSelectPackage(pkg.id)}
+                              onClick={() => handleSelectSubscription(plan.id)}
                             >
-                              {selectedPackage === pkg.id ? (
+                              {selectedSubscription === plan.id ? (
                                 <>
                                   <Check className="mr-2 h-4 w-4" /> Selected
                                 </>
@@ -348,10 +481,26 @@ export default function BuyCreditsPage() {
                     <div className="text-center">
                       <Button 
                         className="bg-primary hover:bg-primary/90 px-8 py-6 text-lg"
-                        onClick={handleProceedToPayment}
-                        disabled={!selectedPackage || createPaymentIntentMutation.isPending}
+                        onClick={() => {
+                          const plan = subscriptionPlans.find(p => p.id === selectedSubscription);
+                          if (plan) {
+                            // Stripe Price IDs mapped to plan IDs
+                            // These IDs match what we configured on the server side
+                            const priceIdMap: Record<string, string> = {
+                              'basic_monthly': 'price_basic_monthly',
+                              'premium_monthly': 'price_premium_monthly',
+                              'annual_plan': 'price_annual_plan'
+                            };
+                            const priceId = priceIdMap[plan.id] || `price_${plan.id}`;
+                            createSubscriptionMutation.mutate({ 
+                              planId: plan.id, 
+                              priceId 
+                            });
+                          }
+                        }}
+                        disabled={!selectedSubscription || createSubscriptionMutation.isPending}
                       >
-                        {createPaymentIntentMutation.isPending ? (
+                        {createSubscriptionMutation.isPending ? (
                           <>
                             <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                             Processing...
@@ -359,142 +508,18 @@ export default function BuyCreditsPage() {
                         ) : (
                           <>
                             <CreditCardIcon className="mr-2 h-5 w-5" />
-                            Proceed to Payment
+                            Subscribe Now
                           </>
                         )}
                       </Button>
+                      <p className="text-sm text-gray-500 mt-2">
+                        Cancel anytime from your account settings
+                      </p>
                     </div>
-                  </>
-                ) : stripePromise && Elements && (
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="font-nunito">Payment Details</CardTitle>
-                      <CardDescription>
-                        {selectedPackageData ? (
-                          <>
-                            Purchasing {selectedPackageData.credits} credits for ${selectedPackageData.price.toFixed(2)}
-                          </>
-                        ) : 'Complete your payment'}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <Elements
-                        stripe={stripePromise}
-                        options={{ clientSecret, appearance: { theme: 'stripe' } }}
-                      >
-                        <CheckoutForm 
-                          amount={selectedPackageData?.price || 0} 
-                          quantity={selectedPackageData?.credits || 0}
-                          onSuccess={handlePaymentSuccess}
-                        />
-                      </Elements>
-                    </CardContent>
-                    <CardFooter className="flex justify-center border-t pt-4">
-                      <Button 
-                        variant="outline" 
-                        onClick={() => setClientSecret("")}
-                      >
-                        Back to Package Selection
-                      </Button>
-                    </CardFooter>
-                  </Card>
-                )}
-              </TabsContent>
-              
-              {/* Subscription Tab */}
-              <TabsContent value="subscription" className="mt-0">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                  {subscriptionPlans.map((plan) => (
-                    <Card key={plan.id} className={`overflow-hidden ${
-                      selectedSubscription === plan.id ? 'ring-2 ring-primary' : ''
-                    } ${plan.recommended ? 'relative' : ''}`}>
-                      {plan.recommended && (
-                        <div className="absolute top-0 right-0">
-                          <Badge className="m-2 bg-amber-400 hover:bg-amber-500">RECOMMENDED</Badge>
-                        </div>
-                      )}
-                      <CardHeader>
-                        <CardTitle className="font-nunito">{plan.title}</CardTitle>
-                        <CardDescription>
-                          {plan.credits} credits per {plan.period}
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent className="space-y-4">
-                        <div className="text-3xl font-nunito font-bold">
-                          ${plan.price.toFixed(2)}
-                          <span className="text-sm font-normal text-gray-500 ml-1">
-                            /{plan.period}
-                          </span>
-                        </div>
-                        <ul className="space-y-2">
-                          {plan.features.map((feature, index) => (
-                            <li key={index} className="flex items-start">
-                              <Check className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                              <span>{feature}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </CardContent>
-                      <CardFooter>
-                        <Button
-                          className={`w-full ${
-                            selectedSubscription === plan.id 
-                            ? 'bg-primary hover:bg-primary/90' 
-                            : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
-                          }`}
-                          onClick={() => handleSelectSubscription(plan.id)}
-                        >
-                          {selectedSubscription === plan.id ? (
-                            <>
-                              <Check className="mr-2 h-4 w-4" /> Selected
-                            </>
-                          ) : "Select"}
-                        </Button>
-                      </CardFooter>
-                    </Card>
-                  ))}
-                </div>
-                
-                <div className="text-center">
-                  <Button 
-                    className="bg-primary hover:bg-primary/90 px-8 py-6 text-lg"
-                    onClick={() => {
-                      const plan = subscriptionPlans.find(p => p.id === selectedSubscription);
-                      if (plan) {
-                        // Stripe Price IDs mapped to plan IDs
-                        // These IDs match what we configured on the server side
-                        const priceIdMap: Record<string, string> = {
-                          'basic_monthly': 'price_basic_monthly',
-                          'premium_monthly': 'price_premium_monthly',
-                          'annual_plan': 'price_annual_plan'
-                        };
-                        const priceId = priceIdMap[plan.id] || `price_${plan.id}`;
-                        createSubscriptionMutation.mutate({ 
-                          planId: plan.id, 
-                          priceId 
-                        });
-                      }
-                    }}
-                    disabled={!selectedSubscription || createSubscriptionMutation.isPending}
-                  >
-                    {createSubscriptionMutation.isPending ? (
-                      <>
-                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                        Processing...
-                      </>
-                    ) : (
-                      <>
-                        <CreditCardIcon className="mr-2 h-5 w-5" />
-                        Subscribe Now
-                      </>
-                    )}
-                  </Button>
-                  <p className="text-sm text-gray-500 mt-2">
-                    Cancel anytime from your account settings
-                  </p>
-                </div>
-              </TabsContent>
-            </Tabs>
+                  </TabsContent>
+                </Tabs>
+              </>
+            )}
             
             {/* FAQ section */}
             <div className="max-w-3xl mx-auto mt-16">

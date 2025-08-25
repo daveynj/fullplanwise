@@ -2,6 +2,8 @@ import React from 'react';
 import { Link } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { SEOHead } from '@/components/SEOHead';
+import { useFreeTrial } from '@/hooks/use-free-trial';
+import { format } from 'date-fns';
 // Import Card components
 import { 
   Card, 
@@ -27,7 +29,25 @@ import {
 
 // Screenshots are served from public directory
 
+const FreeTrialBanner = () => {
+  const { isFreeTrialActive, freeTrialEndDate } = useFreeTrial();
+
+  if (!isFreeTrialActive || !freeTrialEndDate) {
+    return null;
+  }
+
+  const endDate = format(freeTrialEndDate, "MMMM do, yyyy");
+
+  return (
+    <div className="bg-brand-yellow text-brand-navy text-center py-3 px-4 font-semibold">
+      🎉 <span className="font-bold">Limited Time Offer:</span> Get unlimited lesson generations for FREE until {endDate}!
+    </div>
+  );
+};
+
 export default function LandingPage() {
+  const { isFreeTrialActive, freeTrialEndDate } = useFreeTrial();
+  const endDate = freeTrialEndDate ? format(freeTrialEndDate, "MMMM do") : '';
   return (
     <div className="flex flex-col min-h-screen font-open-sans">
       <SEOHead
@@ -48,6 +68,7 @@ export default function LandingPage() {
         ]}
         canonicalUrl="https://planwiseesl.com"
       />
+      <FreeTrialBanner />
       {/* Header/Navigation */}
       <header className="bg-brand-light shadow-sm sticky top-0 z-10">
         <nav className="container mx-auto px-6 py-3 flex justify-between items-center">
@@ -109,7 +130,11 @@ export default function LandingPage() {
                   </Link>
                   <div className="flex items-center mt-2 text-brand-light/90 text-sm">
                     <LockIcon className="h-3 w-3 mr-1" />
-                    <span>No credit card required • 5 free lessons</span>
+                    {isFreeTrialActive ? (
+                      <span>No credit card required • Unlimited lessons until {endDate}</span>
+                    ) : (
+                      <span>No credit card required • 5 free lessons</span>
+                    )}
                   </div>
                 </div>
                 <a href="#features"> {/* Use standard anchor for in-page scroll */}
@@ -420,23 +445,38 @@ export default function LandingPage() {
             Simple, Flexible Pricing
           </h2>
           <p className="text-lg text-gray-600 text-center mb-12 max-w-3xl mx-auto">
-            Try Plan Wise ESL completely free with 5 credits (that's 5 full lessons!). See the time-saving power for yourself. 
-            After your trial, choose a flexible plan or buy credits as you go – purchased credits never expire.
+            {isFreeTrialActive ? (
+              <>
+                <span className="font-bold text-brand-navy">Special Launch Offer:</span> Enjoy completely free and unlimited access to all features until <span className="font-bold">{endDate}</span>. No credit card required.
+              </>
+            ) : (
+              <>
+                Try Plan Wise ESL completely free with 5 credits (that's 5 full lessons!). See the time-saving power for yourself. After your trial, choose a flexible plan or buy credits as you go – purchased credits never expire.
+              </>
+            )}
           </p>
           
           <div className="grid md:grid-cols-1 lg:grid-cols-3 gap-8 items-start"> 
             {/* Card 1: Free Trial */}
             <Card className="border-brand-yellow border-2 shadow-lg"> 
               <CardHeader>
-                <CardTitle className="font-nunito text-center text-brand-navy">Try Us For Free</CardTitle>
-                <CardDescription className="text-center">Get started without any commitment.</CardDescription>
+                <CardTitle className="font-nunito text-center text-brand-navy">
+                  {isFreeTrialActive ? "Unlimited Free Access" : "Try Us For Free"}
+                </CardTitle>
+                <CardDescription className="text-center">
+                  {isFreeTrialActive ? `Limited time offer until ${endDate}` : "Get started without any commitment."}
+                </CardDescription>
               </CardHeader>
               <CardContent className="text-center space-y-4">
-                <p className="text-4xl font-bold text-brand-navy">5 Free Credits</p>
-                <p className="text-gray-600">Generate your first few lessons on us!</p>
+                <p className="text-4xl font-bold text-brand-navy">
+                  {isFreeTrialActive ? "100% Free" : "5 Free Credits"}
+                </p>
+                <p className="text-gray-600">
+                  {isFreeTrialActive ? "Generate unlimited lessons on us!" : "Generate your first few lessons on us!"}
+                </p>
                 <div className="bg-blue-50 rounded-lg p-3 mt-4">
                   <p className="text-blue-800 font-semibold text-sm">
-                    🎯 Try before you buy - see the magic yourself!
+                    🎯 {isFreeTrialActive ? "Get full access to all features now!" : "Try before you buy - see the magic yourself!"}
                   </p>
                 </div>
                  <ul className="text-left text-sm space-y-1 text-gray-600 list-disc list-inside">
@@ -447,13 +487,15 @@ export default function LandingPage() {
               </CardContent>
               <CardFooter className="flex justify-center">
                 <Link href="/auth?register=true">
-                  <Button variant="brand" className="w-full">Start Free Trial</Button>
+                  <Button variant="brand" className="w-full">
+                    {isFreeTrialActive ? "Sign Up & Get Unlimited Access" : "Start Free Trial"}
+                  </Button>
                 </Link>
               </CardFooter>
             </Card>
 
             {/* Card 2: Pay As You Go Highlight */}
-            <Card className="shadow-sm">
+            <Card className={`shadow-sm ${isFreeTrialActive ? 'opacity-50' : ''}`}>
               <div className="bg-brand-navy text-brand-light text-center py-1 text-sm font-semibold rounded-t-lg">PAY AS YOU GO</div>
               <CardHeader>
                 <CardTitle className="font-nunito text-center text-brand-navy">Starter Pack</CardTitle>
@@ -472,13 +514,13 @@ export default function LandingPage() {
               </CardContent>
               <CardFooter className="flex justify-center">
                  <Link href="/buy-credits">
-                   <Button variant="outline" className="w-full border-brand-navy text-brand-navy hover:bg-brand-navy/5">See All Packs</Button>
+                   <Button variant="outline" className="w-full border-brand-navy text-brand-navy hover:bg-brand-navy/5" disabled={isFreeTrialActive}>See All Packs</Button>
                 </Link>
               </CardFooter>
             </Card>
 
             {/* Card 3: Subscription Highlight - MOST POPULAR */}
-            <Card className="shadow-sm border-green-500 border-2 relative">
+            <Card className={`shadow-sm border-green-500 border-2 relative ${isFreeTrialActive ? 'opacity-50' : ''}`}>
               <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                 <span className="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
                   MOST POPULAR
@@ -502,7 +544,7 @@ export default function LandingPage() {
               </CardContent>
               <CardFooter className="flex justify-center">
                  <Link href="/buy-credits?tab=subscription"> 
-                   <Button className="w-full bg-brand-navy hover:bg-brand-navy/90 text-white">Get Subscription</Button>
+                   <Button className="w-full bg-brand-navy hover:bg-brand-navy/90 text-white" disabled={isFreeTrialActive}>Get Subscription</Button>
                 </Link>
               </CardFooter>
             </Card>
@@ -510,7 +552,13 @@ export default function LandingPage() {
           
           {/* Link to full pricing */}
           <p className="text-center text-gray-500 mt-8 text-sm">
-             Want bigger packs or our best-value annual plan? <Link href="/buy-credits" className="text-brand-navy hover:underline font-semibold">View full pricing details</Link>.
+             {isFreeTrialActive ? (
+                "Pricing will be enabled after the free trial period ends."
+             ) : (
+                <>
+                  Want bigger packs or our best-value annual plan? <Link href="/buy-credits" className="text-brand-navy hover:underline font-semibold">View full pricing details</Link>.
+                </>
+             )}
           </p>
         </div>
       </section>
@@ -565,7 +613,11 @@ export default function LandingPage() {
             </Link>
             <p className="text-sm mt-3 opacity-90 flex items-center justify-center">
               <LockIcon className="h-3 w-3 mr-1" />
-              <span>No credit card required • 5 free lessons included</span>
+              {isFreeTrialActive ? (
+                <span>No credit card required • Unlimited lessons until {endDate}</span>
+              ) : (
+                <span>No credit card required • 5 free lessons included</span>
+              )}
             </p>
           </div>
         </div>
