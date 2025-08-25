@@ -61,7 +61,7 @@ export class GeminiService {
             'X-Title': 'PlanwiseESL'
           },
           body: JSON.stringify({
-            model: 'google/gemini-2.0-flash-exp',
+            model: 'google/gemini-2.0-flash-001',
             messages: [
               {
                 role: 'user',
