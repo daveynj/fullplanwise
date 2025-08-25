@@ -48,10 +48,10 @@ export class GeminiService {
       // Construct the prompt
       const prompt = this.constructLessonPrompt(params);
 
-      console.log('Sending request to Gemini 2.0 Flash via OpenRouter (FREE)...');
+      console.log('Sending request to Gemini 2.0 Flash via OpenRouter (PAID)...');
 
       try {
-        // Use OpenRouter API with free Gemini model
+        // Use OpenRouter API with paid Gemini model
         const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
           method: 'POST',
           headers: {
@@ -61,7 +61,7 @@ export class GeminiService {
             'X-Title': 'PlanwiseESL'
           },
           body: JSON.stringify({
-            model: 'google/gemini-2.0-flash-exp:free',
+            model: 'google/gemini-2.0-flash-exp',
             messages: [
               {
                 role: 'user',
@@ -84,7 +84,7 @@ export class GeminiService {
         const result = await response.json();
         const text = result.choices?.[0]?.message?.content;
 
-        console.log('✅ Received response from Gemini 2.0 Flash (FREE via OpenRouter)');
+        console.log('✅ Received response from Gemini 2.0 Flash (PAID via OpenRouter)');
 
         if (!text) {
           console.error('No content received from Gemini API');
