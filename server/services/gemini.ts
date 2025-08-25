@@ -306,22 +306,31 @@ params.cefrLevel === 'B2' ? `**B2 VOCABULARY GUIDANCE:**
 - Help students sound more educated and precise
 - Example topic approach: For "technology" choose "innovative, revolutionary, integrate" not "gadget, device"` :
 
-params.cefrLevel === 'C1' ? `**C1 VOCABULARY GUIDANCE:**
-🚫 **FORBIDDEN BASIC WORDS:** Never choose these common words that B2 students already know:
-   For "travel/weekend getaways": accommodation, scenic, tourist, vacation, hotel, restaurant, sightseeing, relaxing, enjoyable, comfortable, popular, beautiful, expensive, cheap
-   For "food": delicious, healthy, nutritious, fresh, organic, spicy, sweet, bitter, cooking, recipe, ingredient, meal, breakfast, lunch, dinner
-   For "technology": computer, internet, website, email, smartphone, application, software, digital, online, modern, advanced, convenient, useful
+params.cefrLevel === 'C1' ? `**C1 DIFFICULTY-FIRST SELECTION:**
 
-✅ **CHOOSE SOPHISTICATED WORDS:** Select academic/professional vocabulary (5,000+ frequency):
-   For "travel/weekend getaways": itinerary, secluded, rejuvenate, BUT ALSO: **meticulous, proximity, ambiance, repertoire, indulgent**
-   For "food": BUT CHOOSE: **palatable, culinary, gastronomic, indigenous, procurement**  
-   For "technology": BUT CHOOSE: **paradigm, optimization, proliferation, ubiquitous, infrastructure**
+🎯 **SELECTION METHOD:** Choose words by difficulty FIRST, topic connection SECOND
 
-🎯 **C1 SELECTION RULES:**
-- Think: "What vocabulary would a graduate student use in an academic paper?"
-- Choose words that make students sound sophisticated and educated
-- Words that most B2 students have never heard before
-- Academic/professional vocabulary from specialized domains` :
+**STEP 1 - SELECT BY DIFFICULTY:**
+Choose 5 words that are genuinely challenging for C1 students:
+- Academic/professional register (graduate-level vocabulary)
+- Words from research papers, expert analysis, sophisticated discourse
+- Frequency rank: 5,000+ (avoid top 3,000 common words)
+- Words that require advanced cognitive processing to use correctly
+
+**STEP 2 - CONNECT TO TOPIC:**
+Once you have 5 appropriately difficult words, write about "${params.topic}" in a way that uses these words naturally
+
+**C1 DIFFICULTY INDICATORS:**
+✓ Would appear in academic journals or professional publications
+✓ Requires sophisticated understanding to use correctly  
+✓ Most B2 students have never encountered these words
+✓ Enables precise, nuanced expression of complex ideas
+✓ Part of educated, formal discourse
+
+**COGNITIVE TEST:** Ask yourself:
+"Would a B2 student struggle to understand and use this word even with context?"
+If NO → word is too easy for C1
+If YES → perfect for C1 level` :
 
 `**C2 VOCABULARY GUIDANCE:**
 - Choose specialized/technical vocabulary from expert domains
