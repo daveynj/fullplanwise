@@ -23,6 +23,41 @@ import {
 // Blog post data - optimized for SEO and AI discoverability
 const blogPosts = [
   {
+    id: 20,
+    title: "Revolutionize Your Teaching: Get Unlimited, AI-Powered Lesson Plans for Free!",
+    excerpt: "For a limited time, get unlimited access to our AI lesson generator. Stop searching for free ESL resources and start creating custom, CEFR-aligned lessons in minutes.",
+    content: `Are you an online English teacher constantly searching for high-quality, <strong>free ESL lesson plans</strong>? Do you spend hours every week creating materials from scratch, trying to find the perfect reading passage or the most engaging discussion questions? What if you could reclaim that time and get customized, CEFR-aligned lesson plans in under three minutes, <em>completely for free</em>?
+
+At Plan Wise ESL, we understand the incredible dedication it takes to be a great teacher. We also know that your time is your most valuable resource. That's why, for a limited time, we're making our powerful <strong>AI lesson generator completely free to use</strong>.
+
+## Unlock Unlimited Lesson Planning—On Us!
+
+For the next three months, we are offering <strong>unlimited access</strong> to our entire suite of lesson planning tools at no cost. That's right. You can generate as many lessons as you need for your students without ever reaching for your wallet. We believe that once you experience the power and convenience of AI-assisted lesson planning, you'll wonder how you ever taught without it.
+
+### What You Get with Our Free AI Lesson Generator:
+
+*   <strong>Effortless Customization:</strong> Simply enter a topic—from "Space Exploration" for your C1 adults to "My Favorite Animal" for your A2 kids—and our AI does the rest.
+*   <strong>CEFR-Aligned Content:</strong> All materials, from reading passages to vocabulary lists, are perfectly matched to your students' proficiency levels (A1-C2).
+*   <strong>Comprehensive & Engaging:</strong> Each lesson plan is packed with components like warm-ups, vocabulary sections, reading comprehension, discussion questions, and even AI-generated images.
+*   <strong>Save Precious Time:</strong> Stop scouring the internet for "free esl resources" or "printable english worksheets." Generate a complete, ready-to-teach lesson in the time it takes to make a cup of coffee.
+
+## Why Are We Making This Free?
+
+We're on a mission to empower online English teachers. We want to build a community of educators who can spend less time on admin and more time doing what they do best—teaching. By offering this extended free trial, we hope to get Plan Wise ESL into the hands of as many teachers as possible. Your feedback will be invaluable as we continue to build the ultimate tool for ESL and EFL professionals.
+        
+## Ready to Get Started?
+
+Your search for free, high-quality lesson plans is over. Click the link below to sign up and start generating your first lesson in minutes.
+[Sign Up and Start Generating Free Lessons Today!](/register)`,
+    author: "The Plan Wise ESL Team",
+    date: "October 26, 2024",
+    category: "Announcement",
+    tags: ["free esl lesson plans", "ai lesson generator", "teacher tools", "save time", "free trial"],
+    readingTime: 3,
+    image: "/blog/free-trial-announcement.png",
+    featured: true,
+  },
+  {
     id: 19,
     title: "Instantly Generate Niche ESL: Business, Medical, Tech English & More with AI Power",
     excerpt: "Dr. Patricia Wong lost three medical English students because her generic materials couldn't handle specialized terminology. Then she discovered how to create industry-specific lessons in minutes. Now she's the go-to teacher for healthcare professionals.",
