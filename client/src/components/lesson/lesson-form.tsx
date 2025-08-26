@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -16,9 +16,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
-import { Wand2, Bot, Sparkles } from "lucide-react";
+import { Wand2, Bot, Sparkles, Info } from "lucide-react";
 import { useFreeTrial } from "@/hooks/use-free-trial";
 import { useAuth } from "@/hooks/use-auth";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 // Define CEFR levels
 const cefrLevels = [
@@ -54,11 +55,30 @@ interface LessonFormProps {
   onSubmit: (data: any) => void;
 }
 
+const placeholders = [
+  "e.g., The future of space exploration",
+  "e.g., Different cultural holidays around the world",
+  "e.g., The benefits of learning a new skill",
+  "e.g., How technology has changed our daily lives",
+  "e.g., My favorite type of food and why",
+];
+
 export function LessonForm({ students, onSubmit }: LessonFormProps) {
   const [selectedCefrLevel, setSelectedCefrLevel] = useState<string>("B1");
+  const [placeholder, setPlaceholder] = useState(placeholders[0]);
   const { isFreeTrialActive } = useFreeTrial();
   const { user } = useAuth();
   
+  useEffect(() => {
+    let index = 0;
+    const intervalId = setInterval(() => {
+      index = (index + 1) % placeholders.length;
+      setPlaceholder(placeholders[index]);
+    }, 3000); // Change placeholder every 3 seconds
+
+    return () => clearInterval(intervalId); // Cleanup on component unmount
+  }, []);
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -189,11 +209,25 @@ export function LessonForm({ students, onSubmit }: LessonFormProps) {
               name="topic"
               render={({ field }) => (
                 <FormItem className="py-3 bg-blue-50 rounded-lg p-5 border-2 border-blue-200 shadow-md">
-                  <FormLabel className="font-bold text-lg text-blue-800">Topic or Subject</FormLabel>
+                  <div className="flex items-center gap-2">
+                    <FormLabel className="font-bold text-lg text-blue-800">Enter a Conversation Topic</FormLabel>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button type="button" className="text-blue-500 hover:text-blue-700">
+                            <Info className="h-4 w-4" />
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-xs">
+                          <p>Enter a real-world topic for a conversation lesson. Our AI will automatically identify a relevant grammar point and explain it in the 'Grammar Spotlight' section!</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
                   <p className="text-sm text-blue-600 mb-2">Enter the main topic for your lesson</p>
                   <FormControl>
                     <Textarea 
-                      placeholder="e.g. Environmental issues, Space travel, European history" 
+                      placeholder={placeholder} 
                       {...field} 
                       className="min-h-32 text-lg px-4 py-3 shadow-sm border-2 border-blue-300 focus:border-primary focus:ring-2 focus:ring-primary/20 resize-none"
                     />
