@@ -803,6 +803,24 @@ C2 STUDENTS: Can engage in expert-level discussions with subtle distinctions
 - Highly sophisticated concepts requiring advanced critical thinking
 - Can handle nuanced argumentation and complex interdisciplinary topics
 
+QUESTION TONE AND STYLE:
+For C1 and C2 levels, avoid overly academic or verbose questions. Rephrase complex questions to be more direct and conversational. The goal is to spark discussion, not to sound like a research paper.
+
+**Example of a verbose, academic question:**
+"How do cultural norms and societal expectations influence the way ambition is perceived and expressed in different parts of the world?"
+
+**Better, more conversational versions:**
+- "Does 'ambition' mean the same thing in every culture? What are some differences you've noticed?"
+- "How might a person's culture affect their goals or ambitions? Can you think of an example?"
+
+**Another example of a verbose question:**
+"Can you recall a time when you witnessed someone displaying remarkable ambition? What were the key characteristics of their behavior?"
+
+**Better, more conversational version:**
+- "Think of someone you know who is very ambitious. What do they do that shows their ambition?"
+
+Apply this conversational and direct style to all warm-up and discussion questions for higher levels.
+
 LINGUISTIC SCAFFOLDING REQUIREMENTS BY LEVEL:
 
 A1/A2 SCAFFOLDING NEEDS:
