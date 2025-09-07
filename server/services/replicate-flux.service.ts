@@ -1,10 +1,10 @@
 import axios, { AxiosResponse } from 'axios';
 
 /**
- * Replicate FLUX Schnell image generation service
- * Fast, high-quality image generation using black-forest-labs/flux-schnell
+ * Replicate Google Imagen-4-Fast image generation service
+ * Fast, high-quality image generation using google/imagen-4-fast
  */
-export class ReplicateFluxService {
+export class ReplicateImagenService {
   private apiKey: string;
   private baseURL: string = 'https://api.replicate.com/v1';
 
@@ -15,12 +15,12 @@ export class ReplicateFluxService {
     } else {
       this.apiKey = apiKey;
       const keyPattern = this.apiKey.substring(0, 8) + '...' + this.apiKey.substring(this.apiKey.length - 4);
-      console.log(`ReplicateFluxService initialized with API key pattern: ${keyPattern}`);
+      console.log(`ReplicateImagenService initialized with API key pattern: ${keyPattern}`);
     }
   }
 
   /**
-   * Generate an image using FLUX Schnell model
+   * Generate an image using Google Imagen-4-Fast model
    * @param prompt The text prompt describing the image
    * @param requestId Optional unique identifier for logging
    * @returns Base64 encoded PNG image data, or null if generation fails
@@ -35,20 +35,19 @@ export class ReplicateFluxService {
       return null;
     }
 
-    console.log(`Requesting FLUX image generation for prompt: "${prompt.substring(0, 100)}..."`);
+    console.log(`Requesting Imagen-4-Fast image generation for prompt: "${prompt.substring(0, 100)}..."`);
 
     try {
       // Start the prediction
       const response: AxiosResponse = await axios.post(
-        `${this.baseURL}/models/black-forest-labs/flux-schnell/predictions`,
+        `${this.baseURL}/models/google/imagen-4-fast/predictions`,
         {
           input: {
             prompt: prompt,
             num_outputs: 1,
-            aspect_ratio: "1:1",
-            output_format: "png",
-            output_quality: 80,
-            go_fast: true
+            width: 1024,
+            height: 1024,
+            output_format: "png"
           }
         },
         {
@@ -61,17 +60,17 @@ export class ReplicateFluxService {
       );
 
       if (response.data && response.data.id) {
-        console.log(`FLUX prediction started (${requestId}): ${response.data.id}`);
+        console.log(`Imagen prediction started (${requestId}): ${response.data.id}`);
         
         // Wait for completion and return base64
         const result = await this.waitForPrediction(response.data.id, requestId);
         return result;
       } else {
-        console.warn('FLUX API response did not contain prediction ID');
+        console.warn('Imagen API response did not contain prediction ID');
         return null;
       }
     } catch (error: any) {
-      console.error('Error calling FLUX via Replicate:', error.message);
+      console.error('Error calling Imagen-4-Fast via Replicate:', error.message);
       if (error.response) {
         console.error('Replicate Error Details:', error.response.data);
       }
@@ -102,7 +101,7 @@ export class ReplicateFluxService {
         const prediction = response.data;
         
         if (prediction.status === 'succeeded') {
-          console.log(`Successfully received image data from FLUX API.`);
+          console.log(`Successfully received image data from Imagen-4-Fast API.`);
           
           // Convert image URL to base64
           if (prediction.output && prediction.output.length > 0) {
@@ -111,11 +110,11 @@ export class ReplicateFluxService {
           }
           return null;
         } else if (prediction.status === 'failed') {
-          console.error(`FLUX prediction failed (${requestId}):`, prediction.error);
+          console.error(`Imagen prediction failed (${requestId}):`, prediction.error);
           return null;
         } else {
           // Still processing, wait and retry
-          console.log(`FLUX prediction ${prediction.status} (${requestId}), waiting...`);
+          console.log(`Imagen prediction ${prediction.status} (${requestId}), waiting...`);
           await new Promise(resolve => setTimeout(resolve, 6000)); // Wait 6 seconds
           attempts++;
         }
@@ -126,7 +125,7 @@ export class ReplicateFluxService {
       }
     }
 
-    console.error(`FLUX prediction timed out after ${maxAttempts} attempts (${requestId})`);
+    console.error(`Imagen prediction timed out after ${maxAttempts} attempts (${requestId})`);
     return null;
   }
 
@@ -155,7 +154,7 @@ export class ReplicateFluxService {
    * Generate multiple images for batch processing
    */
   async generateImagesBatch(prompts: string[], requestIds?: string[]): Promise<(string | null)[]> {
-    console.log(`Starting batch FLUX image generation for ${prompts.length} images`);
+    console.log(`Starting batch Imagen-4-Fast image generation for ${prompts.length} images`);
 
     const results = await Promise.all(
       prompts.map((prompt, index) => {
@@ -165,11 +164,11 @@ export class ReplicateFluxService {
     );
 
     const successful = results.filter(result => result !== null).length;
-    console.log(`Batch FLUX generation complete: ${successful}/${results.length} successful`);
+    console.log(`Batch Imagen-4-Fast generation complete: ${successful}/${results.length} successful`);
 
     return results;
   }
 }
 
 // Export an instance initialized with the Replicate API key
-export const replicateFluxService = new ReplicateFluxService(process.env.REPLICATE_API_TOKEN || '');
+export const replicateFluxService = new ReplicateImagenService(process.env.REPLICATE_API_TOKEN || '');
