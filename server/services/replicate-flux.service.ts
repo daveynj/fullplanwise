@@ -102,10 +102,12 @@ export class ReplicateImagenService {
         
         if (prediction.status === 'succeeded') {
           console.log(`Successfully received image data from Imagen-4-Fast API.`);
+          console.log(`Imagen output structure (${requestId}):`, JSON.stringify(prediction.output, null, 2));
           
           // Convert image URL to base64
           if (prediction.output && prediction.output.length > 0) {
             const imageUrl = prediction.output[0];
+            console.log(`Extracted image URL (${requestId}): ${imageUrl}`);
             return await this.downloadImageAsBase64(imageUrl, requestId);
           }
           return null;
