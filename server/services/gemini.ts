@@ -73,6 +73,15 @@ export class GeminiService {
         const text = response.data.choices[0]?.message?.content;
         
         console.log('Received response from Gemini API');
+        console.log(`Response length: ${text ? text.length : 0} characters`);
+        
+        if (!text) {
+          throw new Error('Empty response from Gemini API');
+        }
+        
+        // Log first and last 200 characters for debugging
+        console.log('Response preview (first 200 chars):', text.substring(0, 200));
+        console.log('Response preview (last 200 chars):', text.substring(Math.max(0, text.length - 200)));
         
         try {
           // First, attempt to clean up the content and remove markdown code block markers
@@ -99,6 +108,10 @@ export class GeminiService {
             console.log('Removing wrapping quotes');
             cleanedContent = cleanedContent.slice(1, -1);
           }
+          
+          console.log(`Cleaned content length: ${cleanedContent.length} characters`);
+          console.log('Cleaned content preview (first 300 chars):', cleanedContent.substring(0, 300));
+          console.log('Cleaned content preview (last 300 chars):', cleanedContent.substring(Math.max(0, cleanedContent.length - 300)));
           
           // Now try to parse the cleaned content
           try {
@@ -134,83 +147,27 @@ export class GeminiService {
               };
             }
           } catch (jsonError) {
-            // If we fail to parse as JSON, try to fix common JSON errors first
+            // If we fail to parse as JSON, use comprehensive JSON repair
             console.error('Error parsing Gemini response as JSON:', jsonError);
             
-            // Log the first part of the text and position of error to help with debugging
-            const errorMessage = jsonError instanceof Error ? jsonError.message : 'Unknown JSON error';
-            const errorPosition = errorMessage.match(/position (\d+)/)?.[1];
-            
-            const textPreview = errorPosition 
-              ? `${cleanedContent.substring(Math.max(0, parseInt(errorPosition) - 50), parseInt(errorPosition))}[ERROR HERE]${cleanedContent.substring(parseInt(errorPosition), parseInt(errorPosition) + 50)}`
-              : cleanedContent.substring(0, 200) + (cleanedContent.length > 200 ? '...' : '');
-            
-            console.warn('Response text around error:', textPreview);
-            
-            // Attempt to fix common JSON errors
-            console.log('Attempting to fix common JSON formatting errors...');
-            
             try {
-              // Common JSON fixes
-              let fixedContent = cleanedContent
-                .replace(/,\s*}/g, '}')           // Remove trailing commas in objects
-                .replace(/,\s*\]/g, ']')          // Remove trailing commas in arrays
-                .replace(/,(\s*["']?\s*[}\]])/g, '$1') // More aggressive trailing comma removal
-                .replace(/([^\\])(\\)([^"\\\/bfnrtu])/g, '$1\\\\$3')  // Fix unescaped backslashes
-                .replace(/([^\\])\\'/g, "$1'")    // Remove escaping from single quotes
-                .replace(/\r?\n|\r/g, ' ')        // Replace newlines with spaces
-                .replace(/"\s+([^"]*)\s+"/g, '"$1"') // Fix spaces in JSON keys
-                .replace(/(['"])([\w]+)(['"]):/g, '"$2":') // Ensure property names use double quotes
-                .replace(/,\s*,/g, ',')           // Fix double commas
-                .replace(/"\s*"([^"]*)\s*"/g, '"$1"') // Fix broken quoted strings
-                .replace(/,\s*"([^"]*)",\s*"can\s+lea/g, '", "can lea'); // Fix the specific error pattern from logs
-                
-              // Handle other common errors
-              let inString = false;
-              let escaped = false;
-              let fixedChars = [];
+              const repairedContent = await this.comprehensiveJsonRepair(cleanedContent, jsonError);
+              const jsonContent = JSON.parse(repairedContent);
+              console.log('Successfully parsed JSON after comprehensive repair!');
               
-              for (let i = 0; i < fixedContent.length; i++) {
-                const char = fixedContent[i];
-                
-                if (escaped) {
-                  // Handle escaped characters
-                  escaped = false;
-                  fixedChars.push(char);
-                } else if (char === '\\') {
-                  escaped = true;
-                  fixedChars.push(char);
-                } else if (char === '"') {
-                  inString = !inString;
-                  fixedChars.push(char);
-                } else if (!inString && (char === ' ' || char === '\t' || char === '\n' || char === '\r')) {
-                  // Skip extra whitespace outside strings
-                  continue;
-                } else {
-                  fixedChars.push(char);
-                }
-              }
-              
-              // Create final fixed content
-              const finalFixedContent = fixedChars.join('');
-              
-              // Try parsing again with fixed content
-              const jsonContent = JSON.parse(finalFixedContent);
-              console.log('Successfully parsed JSON after applying fixes!');
-              
-              // Validate structure after fixing
+              // Validate structure after repair
               if (jsonContent.title && jsonContent.sections && Array.isArray(jsonContent.sections)) {
-                console.log('Fixed content has valid structure, applying quality control...');
+                console.log('Repaired content has valid structure, applying quality control...');
                 const validatedContent = await this.validateAndImproveContent(jsonContent, params);
                 return await this.formatLessonContent(validatedContent);
               } else {
-                throw new Error('Fixed JSON still missing required structure');
+                throw new Error('Repaired JSON still missing required structure');
               }
-            } catch (fixError) {
-              console.error('Error parsing even after fixes:', fixError);
+            } catch (repairError) {
+              console.error('Error parsing even after comprehensive repair:', repairError);
               
               // If still failing, throw error to trigger fallback
-              throw new Error(`JSON parsing failed even after attempted fixes: ${errorMessage}`);
+              throw new Error(`JSON parsing failed even after comprehensive repair: ${jsonError instanceof Error ? jsonError.message : 'Unknown error'}`);
             }
           }
         } catch (error) {
@@ -254,6 +211,254 @@ export class GeminiService {
     }
   }
   
+  /**
+   * Comprehensive JSON repair system for handling malformed Gemini responses
+   */
+  private async comprehensiveJsonRepair(content: string, originalError: any): Promise<string> {
+    console.log('Starting comprehensive JSON repair...');
+    
+    const errorMessage = originalError instanceof Error ? originalError.message : 'Unknown JSON error';
+    const errorPosition = errorMessage.match(/position (\d+)/)?.[1];
+    
+    // Log detailed diagnostic information
+    if (errorPosition) {
+      const pos = parseInt(errorPosition);
+      const contextBefore = content.substring(Math.max(0, pos - 100), pos);
+      const contextAfter = content.substring(pos, Math.min(content.length, pos + 100));
+      console.log(`JSON Error at position ${pos}:`);
+      console.log('Context before error:', JSON.stringify(contextBefore));
+      console.log('Context after error:', JSON.stringify(contextAfter));
+    }
+    
+    let repairedContent = content;
+    
+    // Step 1: Basic cleanup
+    console.log('Step 1: Basic cleanup');
+    repairedContent = this.basicJsonCleanup(repairedContent);
+    
+    // Step 2: Fix common structural issues
+    console.log('Step 2: Fixing structural issues');
+    repairedContent = this.fixStructuralIssues(repairedContent);
+    
+    // Step 3: Fix string-related issues
+    console.log('Step 3: Fixing string issues');
+    repairedContent = this.fixStringIssues(repairedContent);
+    
+    // Step 4: Fix array and object issues
+    console.log('Step 4: Fixing array/object issues');
+    repairedContent = this.fixArrayObjectIssues(repairedContent);
+    
+    // Step 5: Advanced repair for specific patterns
+    console.log('Step 5: Advanced pattern repair');
+    repairedContent = this.advancedPatternRepair(repairedContent);
+    
+    // Step 6: Final validation and emergency fixes
+    console.log('Step 6: Final validation');
+    repairedContent = this.finalValidationAndRepair(repairedContent);
+    
+    console.log(`JSON repair completed. Original length: ${content.length}, Repaired length: ${repairedContent.length}`);
+    
+    return repairedContent;
+  }
+  
+  /**
+   * Basic JSON cleanup - removes obvious formatting issues
+   */
+  private basicJsonCleanup(content: string): string {
+    return content
+      // Remove BOM and other invisible characters
+      .replace(/^\uFEFF/, '')
+      .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, '')
+      // Remove JavaScript-style comments (// comments)
+      .replace(/\/\/.*$/gm, '')
+      // Remove C-style comments (/* comments */)
+      .replace(/\/\*[\s\S]*?\*\//g, '')
+      // Fix line breaks and normalize whitespace
+      .replace(/\r\n/g, '\n')
+      .replace(/\r/g, '\n')
+      // Remove trailing whitespace from lines
+      .split('\n').map(line => line.trimEnd()).join('\n')
+      // Remove empty lines that may have been created by comment removal
+      .split('\n').filter(line => line.trim().length > 0).join('\n')
+      // Normalize multiple spaces
+      .replace(/[ \t]+/g, ' ');
+  }
+  
+  /**
+   * Fix structural JSON issues
+   */
+  private fixStructuralIssues(content: string): string {
+    return content
+      // Fix trailing commas
+      .replace(/,(\s*[}\]])/g, '$1')
+      // Fix missing commas between array elements
+      .replace(/(\]|\})\s*(\[|\{)/g, '$1,$2')
+      // Fix missing commas between object properties
+      .replace(/("\s*:\s*"[^"]*")\s*(")/g, '$1,$2')
+      .replace(/("\s*:\s*\d+)\s*(")/g, '$1,$2')
+      .replace(/("\s*:\s*true|false)\s*(")/g, '$1,$2')
+      .replace(/("\s*:\s*null)\s*(")/g, '$1,$2')
+      // Fix double commas
+      .replace(/,\s*,/g, ',')
+      // Fix comma before closing brackets
+      .replace(/,(\s*[\}\]])/g, '$1');
+  }
+  
+  /**
+   * Fix string-related JSON issues
+   */
+  private fixStringIssues(content: string): string {
+    // Handle unescaped quotes and other string issues
+    let result = content;
+    
+    // Fix unescaped quotes inside strings
+    result = result.replace(/"([^"]*)"([^"]*)"([^"]*)":/g, (match, p1, p2, p3) => {
+      // If this looks like a property name with unescaped quotes, escape them
+      if (p2.includes('"')) {
+        return `"${p1}${p2.replace(/"/g, '\\"')}${p3}":`;
+      }
+      return match;
+    });
+    
+    // Fix broken escape sequences
+    result = result.replace(/\\(?!["\\/bfnrtu])/g, '\\\\');
+    
+    // Fix strings that are accidentally split
+    result = result.replace(/"(\s*)\n(\s*)"([^"]*")/g, '"$3');
+    
+    // Fix concatenated strings that should be one string
+    result = result.replace(/"([^"]*)",\s*"([^"]*)"(\s*:)/g, '"$1$2"$3');
+    
+    return result;
+  }
+  
+  /**
+   * Fix array and object structure issues
+   */
+  private fixArrayObjectIssues(content: string): string {
+    let result = content;
+    
+    // Fix malformed arrays
+    result = result.replace(/\[\s*,/g, '[');
+    result = result.replace(/,\s*\]/g, ']');
+    
+    // Fix malformed objects
+    result = result.replace(/\{\s*,/g, '{');
+    result = result.replace(/,\s*\}/g, '}');
+    
+    // Fix missing brackets
+    result = this.fixMissingBrackets(result);
+    
+    return result;
+  }
+  
+  /**
+   * Fix missing or mismatched brackets
+   */
+  private fixMissingBrackets(content: string): string {
+    let openBraces = 0;
+    let openBrackets = 0;
+    let inString = false;
+    let escaped = false;
+    
+    for (let i = 0; i < content.length; i++) {
+      const char = content[i];
+      
+      if (escaped) {
+        escaped = false;
+        continue;
+      }
+      
+      if (char === '\\') {
+        escaped = true;
+        continue;
+      }
+      
+      if (char === '"') {
+        inString = !inString;
+        continue;
+      }
+      
+      if (!inString) {
+        if (char === '{') openBraces++;
+        else if (char === '}') openBraces--;
+        else if (char === '[') openBrackets++;
+        else if (char === ']') openBrackets--;
+      }
+    }
+    
+    // Add missing closing brackets
+    let result = content;
+    for (let i = 0; i < openBrackets; i++) {
+      result += ']';
+    }
+    for (let i = 0; i < openBraces; i++) {
+      result += '}';
+    }
+    
+    return result;
+  }
+  
+  /**
+   * Advanced pattern repair for specific known issues
+   */
+  private advancedPatternRepair(content: string): string {
+    let result = content;
+    
+    // Fix the specific pattern mentioned in the logs
+    result = result.replace(/,\s*"([^"]*)",\s*"can\s+lea/g, '", "can lea');
+    
+    // Fix broken property-value pairs
+    result = result.replace(/"([^"]*)":\s*"([^"]*)\n([^"]*)"([^"]*)":/g, '"$1": "$2$3", "$4":');
+    
+    // Fix arrays with mixed value types
+    result = result.replace(/\[\s*"([^"]*)",\s*(\d+),\s*"([^"]*)"\s*\]/g, '["$1", "$2", "$3"]');
+    
+    // Fix boolean values that are strings
+    result = result.replace(/:\s*"(true|false)"/g, ': $1');
+    
+    // Fix null values that are strings
+    result = result.replace(/:\s*"null"/g, ': null');
+    
+    // Fix number values that are malformed
+    result = result.replace(/:\s*"(\d+)"/g, ': $1');
+    
+    return result;
+  }
+  
+  /**
+   * Final validation and emergency repair
+   */
+  private finalValidationAndRepair(content: string): string {
+    let result = content.trim();
+    
+    // Ensure it starts and ends with proper brackets
+    if (!result.startsWith('{') && !result.startsWith('[')) {
+      // Try to find the first { or [
+      const firstBrace = result.indexOf('{');
+      const firstBracket = result.indexOf('[');
+      
+      if (firstBrace !== -1 && (firstBracket === -1 || firstBrace < firstBracket)) {
+        result = result.substring(firstBrace);
+      } else if (firstBracket !== -1) {
+        result = result.substring(firstBracket);
+      }
+    }
+    
+    // Emergency repair: if still doesn't start with { or [, wrap it
+    if (!result.startsWith('{') && !result.startsWith('[')) {
+      result = '{' + result + '}';
+    }
+    
+    // Final cleanup
+    result = result
+      .replace(/,(\s*[\}\]])/g, '$1') // Remove trailing commas
+      .replace(/[\}\]]\s*[\}\]]/g, (match) => match.trim().slice(0, 1)) // Remove duplicate closing brackets
+      .replace(/[\{\[]\s*[\{\[]/g, (match) => match.trim().slice(-1)); // Remove duplicate opening brackets
+    
+    return result;
+  }
+
   /**
    * Constructs a structured prompt for the Gemini AI model
    */
