@@ -39,7 +39,7 @@ export function TeachingGuidanceOverlay({
           <div className="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-400">
             <h4 className="font-semibold text-blue-800 mb-2">Key Difference</h4>
             <p className="text-blue-700">
-              This isn't a grammar drill or textbook exercise. It's a <strong>conversation catalyst</strong> 
+              This isn't a grammar drill or textbook exercise. It's a <strong>conversation catalyst</strong>{' '}
               that uses {lessonTopic} to naturally practice {cefrLevel} level English.
             </p>
           </div>

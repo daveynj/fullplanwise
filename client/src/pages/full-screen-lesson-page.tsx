@@ -32,7 +32,7 @@ export default function FullScreenLessonPage() {
   });
 
   // Fetch user's lessons to determine if guidance overlay should show (returns paginated response)
-  const { data: userLessonsData } = useQuery({
+  const { data: userLessonsData } = useQuery<{ lessons: Lesson[]; total: number }>({
     queryKey: ["/api/lessons"],
     retry: false,
     enabled: !!user, // Only fetch if user is authenticated
@@ -138,22 +138,8 @@ export default function FullScreenLessonPage() {
 
   // Check if we should show the teaching guidance overlay
   useEffect(() => {
-    console.log("🎯 OVERLAY DEBUG:", {
-      hasLesson: !!lesson,
-      hasParsedContent: !!parsedContent,
-      hasUserLessons: !!userLessons,
-      hasUser: !!user,
-      userLessonsLength: userLessons?.length,
-      userId: user?.id
-    });
-    
     if (lesson && parsedContent && userLessons && user) {
       const totalLessons = userLessons.length;
-      console.log("🎯 OVERLAY CONDITIONS:", {
-        totalLessons,
-        lessonId: lesson.id,
-        userLessonsStructure: userLessons?.slice(0, 3)
-      });
       
       // Show guidance overlay for users with 3 or fewer lessons
       // and only if this is their first time seeing a lesson (prevent showing on refresh)
@@ -161,17 +147,9 @@ export default function FullScreenLessonPage() {
         const hasSeenGuidanceKey = `guidance_seen_${user.id}`;
         const hasSeenGuidance = localStorage.getItem(hasSeenGuidanceKey);
         
-        console.log("🎯 OVERLAY FINAL CHECK:", {
-          hasSeenGuidance,
-          hasSeenGuidanceKey,
-          willShowOverlay: !hasSeenGuidance
-        });
-        
         if (!hasSeenGuidance) {
-          console.log("🎯 SHOWING OVERLAY in 800ms...");
           // Small delay to let the lesson content render first
           setTimeout(() => {
-            console.log("🎯 ACTUALLY SHOWING OVERLAY NOW!");
             setShowTeachingGuidance(true);
             localStorage.setItem(hasSeenGuidanceKey, "true");
           }, 800);
