@@ -10,12 +10,14 @@ import { Lesson } from "@shared/schema";
 import { queryClient } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/use-auth";
 import { SEOHead } from "@/components/SEOHead";
+import { TeachingGuidanceOverlay } from "@/components/lesson/teaching-guidance-overlay";
 
 export default function FullScreenLessonPage() {
   const [location] = useLocation();
   const { toast } = useToast();
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [activeTab, setActiveTab] = useState("lesson");
+  const [showTeachingGuidance, setShowTeachingGuidance] = useState(false);
   const { user } = useAuth();
   
   // Extract lesson ID from URL
@@ -27,6 +29,13 @@ export default function FullScreenLessonPage() {
     retry: false,
     staleTime: 5 * 60 * 1000, // Cache for 5 minutes
     gcTime: 10 * 60 * 1000, // Keep in cache for 10 minutes
+  });
+
+  // Fetch user's lessons to determine if guidance overlay should show
+  const { data: userLessons } = useQuery<Lesson[]>({
+    queryKey: ["/api/lessons"],
+    retry: false,
+    enabled: !!user, // Only fetch if user is authenticated
   });
   
   // Parse the content if it's a string (from database)
@@ -123,6 +132,28 @@ export default function FullScreenLessonPage() {
       }
     }
   }, [lesson]);
+
+  // Check if we should show the teaching guidance overlay
+  useEffect(() => {
+    if (lesson && parsedContent && userLessons && user) {
+      const totalLessons = userLessons.length;
+      
+      // Show guidance overlay for users with 3 or fewer lessons
+      // and only if this is their first time seeing a lesson (prevent showing on refresh)
+      if (totalLessons <= 3) {
+        const hasSeenGuidanceKey = `guidance_seen_${user.id}`;
+        const hasSeenGuidance = localStorage.getItem(hasSeenGuidanceKey);
+        
+        if (!hasSeenGuidance) {
+          // Small delay to let the lesson content render first
+          setTimeout(() => {
+            setShowTeachingGuidance(true);
+            localStorage.setItem(hasSeenGuidanceKey, "true");
+          }, 800);
+        }
+      }
+    }
+  }, [lesson, parsedContent, userLessons, user]);
   
   // Toggle fullscreen
   const toggleFullScreen = () => {
@@ -352,6 +383,14 @@ export default function FullScreenLessonPage() {
         </Tabs>
       </main>
     </div>
+
+    {/* Teaching Guidance Overlay for new users */}
+    <TeachingGuidanceOverlay
+      isOpen={showTeachingGuidance}
+      onClose={() => setShowTeachingGuidance(false)}
+      lessonTopic={lesson?.topic}
+      cefrLevel={lesson?.cefrLevel}
+    />
     </>
   );
 }
