@@ -148,65 +148,23 @@ export default function FullScreenLessonPage() {
       isAuthenticated: !!user
     });
     
-    // Show overlay if lesson and content are loaded
+    // TESTING: Force show tutorial for all lessons to test if it works
     if (lesson && parsedContent) {
-      console.log("🔥 LESSON AND CONTENT READY");
+      console.log("🔥 LESSON AND CONTENT READY - FORCING TUTORIAL FOR TESTING");
       
-      // For authenticated users, check lesson count
-      if (user && userLessons) {
-        const totalLessons = userLessons.length;
-        console.log("🔥 AUTHENTICATED USER - TOTAL LESSONS:", totalLessons);
-        
-        // Show guidance overlay for users with 3 or fewer lessons
-        if (totalLessons <= 3) {
-          const hasSeenGuidanceKey = `guidance_seen_${user.id}`;
-          const hasSeenGuidance = localStorage.getItem(hasSeenGuidanceKey);
-          
-          console.log("🔥 GUIDANCE CHECK:", {
-            hasSeenGuidance,
-            hasSeenGuidanceKey,
-            willShowOverlay: !hasSeenGuidance
-          });
-          
-          if (!hasSeenGuidance) {
-            console.log("🔥 SHOWING OVERLAY FOR AUTHENTICATED USER!");
-            setTimeout(() => {
-              console.log("🔥 SETTING OVERLAY STATE TO TRUE");
-              setShowTeachingGuidance(true);
-              localStorage.setItem(hasSeenGuidanceKey, "true");
-            }, 800);
-          } else {
-            console.log("🔥 USER HAS ALREADY SEEN GUIDANCE");
-          }
-        } else {
-          console.log("🔥 USER HAS TOO MANY LESSONS:", totalLessons);
-        }
-      } else {
-        // For non-authenticated users or when userLessons isn't loaded yet,
-        // show overlay if they haven't seen it (using generic key)
-        console.log("🔥 NON-AUTHENTICATED OR LESSONS NOT LOADED");
-        const hasSeenGuidanceKey = user ? `guidance_seen_${user.id}` : "guidance_seen_guest";
-        const hasSeenGuidance = localStorage.getItem(hasSeenGuidanceKey);
-        
-        console.log("🔥 GUEST/UNAUTHENTICATED GUIDANCE CHECK:", {
-          hasSeenGuidance,
-          hasSeenGuidanceKey,
-          willShowOverlay: !hasSeenGuidance
-        });
-        
-        if (!hasSeenGuidance) {
-          console.log("🔥 SHOWING OVERLAY FOR GUEST/UNAUTHENTICATED USER!");
-          setTimeout(() => {
-            console.log("🔥 SETTING OVERLAY STATE TO TRUE (GUEST)");
-            setShowTeachingGuidance(true);
-            localStorage.setItem(hasSeenGuidanceKey, "true");
-          }, 800);
-        }
-      }
+      // Clear any existing guidance key to force it to show
+      const testKey = "guidance_test_force";
+      localStorage.removeItem(testKey);
+      
+      console.log("🔥 FORCING TUTORIAL TO SHOW!");
+      setTimeout(() => {
+        console.log("🔥 SETTING OVERLAY STATE TO TRUE (FORCED TEST)");
+        setShowTeachingGuidance(true);
+      }, 1000);
     } else {
       console.log("🔥 WAITING FOR LESSON/CONTENT TO LOAD");
     }
-  }, [lesson, parsedContent, userLessons, user]);
+  }, [lesson, parsedContent]);
   
   // Toggle fullscreen
   const toggleFullScreen = () => {
