@@ -984,6 +984,7 @@ export function LessonContent({ content }: LessonContentProps) {
               onClick={goToPrevWord}
               className="p-1 text-amber-700 hover:bg-amber-100 rounded-full"
               aria-label="Previous vocabulary word"
+              data-testid="vocab-nav-previous"
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
@@ -996,6 +997,7 @@ export function LessonContent({ content }: LessonContentProps) {
               onClick={goToNextWord}
               className="p-1 text-amber-700 hover:bg-amber-100 rounded-full"
               aria-label="Next vocabulary word"
+              data-testid="vocab-nav-next"
             >
               <ChevronRight className="h-5 w-5" />
             </button>
@@ -2295,6 +2297,7 @@ export function LessonContent({ content }: LessonContentProps) {
                 <TabsTrigger 
                 key={item.id} 
                 value={item.id}
+                data-testid={`tab-${item.id}`}
                   className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all
                     text-gray-500 hover:text-gray-800
                     data-[state=active]:bg-green-100 
@@ -2326,6 +2329,7 @@ export function LessonContent({ content }: LessonContentProps) {
           disabled={currentIndex === 0}
           aria-label="Previous Section"
           className="flex items-center"
+          data-testid="section-nav-previous"
         >
           <ChevronLeft className="h-5 w-5 mr-2" />
           Previous
@@ -2339,6 +2343,7 @@ export function LessonContent({ content }: LessonContentProps) {
           disabled={currentIndex === availableRenderTree.length - 1}
           aria-label="Next Section"
           className="flex items-center"
+          data-testid="section-nav-next"
         >
           Next
           <ChevronRight className="h-5 w-5 ml-2" />

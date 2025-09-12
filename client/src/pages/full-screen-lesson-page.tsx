@@ -10,7 +10,7 @@ import { Lesson } from "@shared/schema";
 import { queryClient } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/use-auth";
 import { SEOHead } from "@/components/SEOHead";
-import { TeachingGuidanceOverlay } from "@/components/lesson/teaching-guidance-overlay";
+import { InteractiveTutorial } from "@/components/lesson/interactive-tutorial";
 
 export default function FullScreenLessonPage() {
   const [location] = useLocation();
@@ -437,8 +437,8 @@ export default function FullScreenLessonPage() {
       </main>
     </div>
 
-    {/* Teaching Guidance Overlay for new users */}
-    <TeachingGuidanceOverlay
+    {/* Interactive Tutorial for new users */}
+    <InteractiveTutorial
       isOpen={showTeachingGuidance}
       onClose={() => setShowTeachingGuidance(false)}
       lessonTopic={lesson?.topic}
