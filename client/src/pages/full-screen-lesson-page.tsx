@@ -31,12 +31,15 @@ export default function FullScreenLessonPage() {
     gcTime: 10 * 60 * 1000, // Keep in cache for 10 minutes
   });
 
-  // Fetch user's lessons to determine if guidance overlay should show
-  const { data: userLessons } = useQuery<Lesson[]>({
+  // Fetch user's lessons to determine if guidance overlay should show (returns paginated response)
+  const { data: userLessonsData } = useQuery({
     queryKey: ["/api/lessons"],
     retry: false,
     enabled: !!user, // Only fetch if user is authenticated
   });
+
+  // Extract lessons array from paginated response
+  const userLessons = userLessonsData?.lessons || [];
   
   // Parse the content if it's a string (from database)
   const [parsedContent, setParsedContent] = useState<any>(null);
@@ -135,8 +138,22 @@ export default function FullScreenLessonPage() {
 
   // Check if we should show the teaching guidance overlay
   useEffect(() => {
+    console.log("🎯 OVERLAY DEBUG:", {
+      hasLesson: !!lesson,
+      hasParsedContent: !!parsedContent,
+      hasUserLessons: !!userLessons,
+      hasUser: !!user,
+      userLessonsLength: userLessons?.length,
+      userId: user?.id
+    });
+    
     if (lesson && parsedContent && userLessons && user) {
       const totalLessons = userLessons.length;
+      console.log("🎯 OVERLAY CONDITIONS:", {
+        totalLessons,
+        lessonId: lesson.id,
+        userLessonsStructure: userLessons?.slice(0, 3)
+      });
       
       // Show guidance overlay for users with 3 or fewer lessons
       // and only if this is their first time seeing a lesson (prevent showing on refresh)
@@ -144,9 +161,17 @@ export default function FullScreenLessonPage() {
         const hasSeenGuidanceKey = `guidance_seen_${user.id}`;
         const hasSeenGuidance = localStorage.getItem(hasSeenGuidanceKey);
         
+        console.log("🎯 OVERLAY FINAL CHECK:", {
+          hasSeenGuidance,
+          hasSeenGuidanceKey,
+          willShowOverlay: !hasSeenGuidance
+        });
+        
         if (!hasSeenGuidance) {
+          console.log("🎯 SHOWING OVERLAY in 800ms...");
           // Small delay to let the lesson content render first
           setTimeout(() => {
+            console.log("🎯 ACTUALLY SHOWING OVERLAY NOW!");
             setShowTeachingGuidance(true);
             localStorage.setItem(hasSeenGuidanceKey, "true");
           }, 800);
