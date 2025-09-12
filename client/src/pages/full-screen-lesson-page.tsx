@@ -138,8 +138,18 @@ export default function FullScreenLessonPage() {
 
   // Check if we should show the teaching guidance overlay
   useEffect(() => {
+    console.log("🔥 OVERLAY DEBUG:", {
+      hasLesson: !!lesson,
+      hasParsedContent: !!parsedContent,
+      hasUserLessons: !!userLessons,
+      hasUser: !!user,
+      userLessonsLength: userLessons?.length,
+      userId: user?.id
+    });
+    
     if (lesson && parsedContent && userLessons && user) {
       const totalLessons = userLessons.length;
+      console.log("🔥 TOTAL LESSONS:", totalLessons);
       
       // Show guidance overlay for users with 3 or fewer lessons
       // and only if this is their first time seeing a lesson (prevent showing on refresh)
@@ -147,13 +157,25 @@ export default function FullScreenLessonPage() {
         const hasSeenGuidanceKey = `guidance_seen_${user.id}`;
         const hasSeenGuidance = localStorage.getItem(hasSeenGuidanceKey);
         
+        console.log("🔥 GUIDANCE CHECK:", {
+          hasSeenGuidance,
+          hasSeenGuidanceKey,
+          willShowOverlay: !hasSeenGuidance
+        });
+        
         if (!hasSeenGuidance) {
+          console.log("🔥 SHOWING OVERLAY NOW!");
           // Small delay to let the lesson content render first
           setTimeout(() => {
+            console.log("🔥 SETTING OVERLAY STATE TO TRUE");
             setShowTeachingGuidance(true);
             localStorage.setItem(hasSeenGuidanceKey, "true");
           }, 800);
+        } else {
+          console.log("🔥 USER HAS ALREADY SEEN GUIDANCE");
         }
+      } else {
+        console.log("🔥 USER HAS TOO MANY LESSONS:", totalLessons);
       }
     }
   }, [lesson, parsedContent, userLessons, user]);
