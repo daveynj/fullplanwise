@@ -2255,24 +2255,6 @@ export function LessonContent({ content }: LessonContentProps) {
     }
   ];
   
-  // Filter out tabs with null content
-  const availableRenderTree = renderTree.filter(item => item.render !== null);
-  
-  // Navigation logic using filtered tree
-  const currentIndex = availableRenderTree.findIndex(item => item.id === activeTab);
-  
-  const handlePrev = () => {
-    if (currentIndex > 0) {
-      setActiveTab(availableRenderTree[currentIndex - 1].id);
-    }
-  };
-  
-  const handleNext = () => {
-    if (currentIndex < availableRenderTree.length - 1) {
-      setActiveTab(availableRenderTree[currentIndex + 1].id);
-    }
-  };
-  
   return (
     <div className="lesson-content w-[95%] max-w-[1800px] mx-auto"> {/* Increased width for better screen space utilization */}
       {/* Lesson header */}
