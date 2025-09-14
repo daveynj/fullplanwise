@@ -18,6 +18,7 @@ export default function FullScreenLessonPage() {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [activeTab, setActiveTab] = useState("lesson");
   const [showTeachingGuidance, setShowTeachingGuidance] = useState(false);
+  const [availableTabs, setAvailableTabs] = useState<{ id: string; label: string }[]>([]);
   const { user } = useAuth();
   
   // Extract lesson ID from URL
@@ -401,6 +402,7 @@ export default function FullScreenLessonPage() {
       onClose={() => setShowTeachingGuidance(false)}
       lessonTopic={lesson?.topic}
       cefrLevel={lesson?.cefrLevel}
+      lessonContent={parsedContent}
     />
     </>
   );

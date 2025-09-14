@@ -22,6 +22,7 @@ interface InteractiveTutorialProps {
   onClose: () => void;
   lessonTopic?: string;
   cefrLevel?: string;
+  lessonContent: any;
 }
 
 interface TutorialStep {
@@ -35,108 +36,137 @@ interface TutorialStep {
   position: 'top' | 'bottom' | 'left' | 'right' | 'center';
   waitForClick: boolean;
   skipToTab?: string; // Optional: which tab to switch to before showing this step
+  onBefore?: () => void; // Optional: function to run before showing this step
 }
 
 export function InteractiveTutorial({ 
   isOpen, 
   onClose, 
   lessonTopic,
-  cefrLevel 
+  cefrLevel,
+  lessonContent
 }: InteractiveTutorialProps) {
   const [currentStep, setCurrentStep] = useState(0);
-  const [tutorialSteps] = useState<TutorialStep[]>([
-    {
-      id: 'welcome',
-      title: 'Welcome to Your Interactive Lesson!',
-      description: 'Let me show you how to navigate and teach with this lesson interface.',
-      targetSelector: '',
-      instruction: 'Click "Start Tour" to begin the interactive guide.',
-      icon: <Play className="h-6 w-6" />,
-      color: 'blue',
-      position: 'center',
-      waitForClick: false
-    },
-    {
-      id: 'warmup-tab',
-      title: 'Start with Warmup Questions',
-      description: 'Always begin lessons with warmup to activate prior knowledge.',
-      targetSelector: '[data-testid="tab-warmup"]',
-      instruction: 'Click the "Warmup" tab to see the lesson warmup questions.',
-      icon: <MessageCircle className="h-6 w-6" />,
-      color: 'green',
-      position: 'bottom',
-      waitForClick: true
-    },
-    {
-      id: 'vocab-tab',
-      title: 'Introduce New Vocabulary',
-      description: 'Move to vocabulary after warmup to pre-teach essential words.',
-      targetSelector: '[data-testid="tab-vocabulary"]',
-      instruction: 'Click the "Vocabulary" tab to view the vocabulary introduction.',
-      icon: <BookOpen className="h-6 w-6" />,
-      color: 'amber',
-      position: 'bottom',
-      waitForClick: true,
-      skipToTab: 'vocabulary'
-    },
-    {
-      id: 'vocab-navigation',
-      title: 'Navigate Through Vocabulary Words',
-      description: 'Use the arrows to go through each vocabulary word with your student.',
-      targetSelector: '[data-testid="vocab-nav-next"]',
-      instruction: 'Click the right arrow to move to the next vocabulary word.',
-      icon: <ChevronRight className="h-6 w-6" />,
-      color: 'amber',
-      position: 'top',
-      waitForClick: true
-    },
-    {
-      id: 'reading-tab',
-      title: 'Practice Reading Together',
-      description: 'After vocabulary, move to reading to see words in context.',
-      targetSelector: '[data-testid="tab-reading"]',
-      instruction: 'Click the "Reading" tab to access the reading passage.',
-      icon: <BookOpen className="h-6 w-6" />,
-      color: 'blue',
-      position: 'bottom',
-      waitForClick: true
-    },
-    {
-      id: 'discussion-tab',
-      title: 'Encourage Discussion',
-      description: 'End with discussion questions to promote critical thinking.',
-      targetSelector: '[data-testid="tab-discussion"]',
-      instruction: 'Click the "Discussion" tab to see conversation questions.',
-      icon: <MessageCircle className="h-6 w-6" />,
-      color: 'purple',
-      position: 'bottom',
-      waitForClick: true
-    },
-    {
-      id: 'bottom-navigation',
-      title: 'Use Bottom Navigation',
-      description: 'Bottom arrows help students focus on current section content.',
-      targetSelector: '[data-testid="section-nav-next"]',
-      instruction: 'Click "Next" to guide students step-by-step through sections.',
-      icon: <Navigation className="h-6 w-6" />,
-      color: 'gray',
-      position: 'top',
-      waitForClick: true
-    },
-    {
-      id: 'complete',
-      title: 'You\'re Ready to Teach!',
-      description: 'Remember: Let students do most of the talking. Guide, correct pronunciation, and ask "Why?" or "Can you tell me more?"',
-      targetSelector: '',
-      instruction: 'You now know how to navigate the lesson interface effectively.',
-      icon: <Target className="h-6 w-6" />,
-      color: 'green',
-      position: 'center',
-      waitForClick: false
-    }
-  ]);
+  const [tutorialSteps, setTutorialSteps] = useState<TutorialStep[]>([]);
 
+  useEffect(() => {
+    const allPossibleSteps: TutorialStep[] = [
+      {
+        id: 'welcome',
+        title: 'Welcome to Your Interactive Lesson!',
+        description: 'Let me show you how to navigate and teach with this lesson interface.',
+        targetSelector: '',
+        instruction: 'Click "Start Tour" to begin the interactive guide.',
+        icon: <Play className="h-6 w-6" />,
+        color: 'blue',
+        position: 'center',
+        waitForClick: false
+      },
+      {
+        id: 'tabs-intro',
+        title: 'Lesson Tab Navigation',
+        description: 'Use the tabs at the top to jump to any section of your lesson.',
+        targetSelector: '[data-testid="lesson-tabs-list"]',
+        instruction: 'These tabs let you control the lesson flow. Let\'s start by going to the "Warmup" section.',
+        icon: <Navigation className="h-6 w-6" />,
+        color: 'blue',
+        position: 'bottom',
+        waitForClick: false,
+      },
+      {
+        id: 'warmup-tab',
+        title: 'Go to the Warmup Section',
+        description: 'Lessons always start with a warmup to engage students.',
+        targetSelector: '[data-testid="tab-warmup"]',
+        instruction: 'Click the "Warmup" tab to begin.',
+        icon: <MessageCircle className="h-6 w-6" />,
+        color: 'green',
+        position: 'bottom',
+        waitForClick: true
+      },
+      {
+        id: 'bottom-nav-intro',
+        title: 'Step-by-Step Navigation',
+        description: 'You can also move through the lesson sequentially using the arrows at the bottom.',
+        targetSelector: '[data-testid="section-nav-next"]',
+        instruction: 'This is great for keeping students focused. Click "Next" to proceed to the vocabulary section.',
+        icon: <ChevronRight className="h-6 w-6" />,
+        color: 'gray',
+        position: 'top',
+        waitForClick: true,
+      },
+      {
+        id: 'vocab-intro',
+        title: 'Vocabulary Section',
+        description: 'This section introduces key vocabulary. You can navigate through words here.',
+        targetSelector: '[data-testid="vocab-card"]',
+        instruction: 'Use the small arrows on the vocabulary card to see each word.',
+        icon: <BookOpen className="h-6 w-6" />,
+        color: 'amber',
+        position: 'bottom',
+        waitForClick: false,
+      },
+      {
+        id: 'vocab-navigation',
+        title: 'Navigate Through Vocabulary',
+        description: 'Let\'s try moving to the next word.',
+        targetSelector: '[data-testid="vocab-nav-next"]',
+        instruction: 'Click the right arrow to see the next word.',
+        icon: <ChevronRight className="h-6 w-6" />,
+        color: 'amber',
+        position: 'right',
+        waitForClick: true,
+      },
+      {
+        id: 'freestyle-nav',
+        title: 'You\'re in Control',
+        description: 'Now you know the two ways to navigate your lesson!',
+        targetSelector: '[data-testid="lesson-tabs-list"]',
+        instruction: 'Feel free to use the tabs to jump to any section, or the arrows to move step-by-step.',
+        icon: <MousePointer className="h-6 w-6" />,
+        color: 'purple',
+        position: 'bottom',
+        waitForClick: false,
+      },
+      {
+        id: 'complete',
+        title: 'You\'re Ready to Teach!',
+        description: 'Remember: Let students do most of the talking. Guide, correct pronunciation, and ask "Why?" or "Can you tell me more?"',
+        targetSelector: '',
+        instruction: 'You now know how to navigate the lesson interface effectively.',
+        icon: <Target className="h-6 w-6" />,
+        color: 'green',
+        position: 'center',
+        waitForClick: false
+      }
+    ];
+
+    if (!lessonContent || !lessonContent.sections) {
+      setTutorialSteps(allPossibleSteps);
+      return;
+    }
+
+    const availableTabIds = lessonContent.sections.map((s: any) => s.type);
+
+    const dynamicSteps = allPossibleSteps.filter(step => {
+      if (step.id === 'warmup-tab') {
+        return availableTabIds.includes('warmup') || availableTabIds.includes('warm-up');
+      }
+      if (step.id === 'vocab-intro' || step.id === 'vocab-navigation') {
+        return availableTabIds.includes('vocabulary');
+      }
+      if (step.id.endsWith('-tab')) {
+        const tabId = step.id.replace('-tab', '');
+        return availableTabIds.includes(tabId);
+      }
+      return true;
+    });
+
+    setTutorialSteps(dynamicSteps);
+  }, [lessonContent]);
+  
   const [highlightedElement, setHighlightedElement] = useState<HTMLElement | null>(null);
+  const [highlightStyle, setHighlightStyle] = useState({});
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
   const tutorialRef = useRef<HTMLDivElement>(null);
 
@@ -152,53 +182,92 @@ export function InteractiveTutorial({
     const element = document.querySelector(selector) as HTMLElement;
     if (element) {
       setHighlightedElement(element);
-      
-      // Calculate tooltip position based on element position and step position preference
-      const rect = element.getBoundingClientRect();
-      const tooltipOffset = 20;
-      
-      let x = 0, y = 0;
-      
-      switch (currentStepData.position) {
-        case 'top':
-          x = rect.left + (rect.width / 2);
-          y = rect.top - tooltipOffset;
-          break;
-        case 'bottom':
-          x = rect.left + (rect.width / 2);
-          y = rect.bottom + tooltipOffset;
-          break;
-        case 'left':
-          x = rect.left - tooltipOffset;
-          y = rect.top + (rect.height / 2);
-          break;
-        case 'right':
-          x = rect.right + tooltipOffset;
-          y = rect.top + (rect.height / 2);
-          break;
-        case 'center':
-        default:
-          x = window.innerWidth / 2;
-          y = window.innerHeight / 2;
-          break;
-      }
-      
-      setTooltipPosition({ x, y });
     } else {
       console.warn(`Tutorial: Could not find element with selector: ${selector}`);
       setHighlightedElement(null);
     }
   };
 
+  const updatePositions = () => {
+    if (!highlightedElement || !currentStepData) {
+      setHighlightStyle({ display: 'none' });
+      return;
+    }
+
+    const rect = highlightedElement.getBoundingClientRect();
+    
+    setHighlightStyle({
+      left: rect.left - 8,
+      top: rect.top - 8,
+      width: rect.width + 16,
+      height: rect.height + 16,
+    });
+
+    const tooltipOffset = 20;
+    
+    let x = 0, y = 0;
+    
+    switch (currentStepData.position) {
+      case 'top':
+        x = rect.left + (rect.width / 2);
+        y = rect.top - tooltipOffset;
+        break;
+      case 'bottom':
+        x = rect.left + (rect.width / 2);
+        y = rect.bottom + tooltipOffset;
+        break;
+      case 'left':
+        x = rect.left - tooltipOffset;
+        y = rect.top + (rect.height / 2);
+        break;
+      case 'right':
+        x = rect.right + tooltipOffset;
+        y = rect.top + (rect.height / 2);
+        break;
+      case 'center':
+      default:
+        x = window.innerWidth / 2;
+        y = window.innerHeight / 2;
+        break;
+    }
+    
+    setTooltipPosition({ x, y });
+  };
+
+
   // Effect to highlight the current step's target
   useEffect(() => {
     if (isOpen && currentStepData) {
-      // Small delay to ensure DOM is ready
-      setTimeout(() => {
-        highlightTarget(currentStepData.targetSelector);
-      }, 300);
+      if (currentStepData.onBefore) {
+        currentStepData.onBefore();
+      }
+      // Use rAF to wait for layout to be stable
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          highlightTarget(currentStepData.targetSelector);
+        }, 100); // A small extra delay after click seems to help
+      });
     }
   }, [currentStep, isOpen, currentStepData]);
+
+  // Effect to update tooltip on element or window change
+  useEffect(() => {
+    if (!highlightedElement) {
+      setHighlightStyle({ display: 'none' });
+      return;
+    };
+    updatePositions();
+
+    const handleResize = () => updatePositions();
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('scroll', handleResize, true); // Use capture to get all scroll events
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('scroll', handleResize, true);
+    };
+  }, [highlightedElement, currentStepData]);
+
 
   // Effect to handle clicks on highlighted elements
   useEffect(() => {
@@ -242,7 +311,7 @@ export function InteractiveTutorial({
     onClose();
   };
 
-  if (!isOpen) return null;
+  if (!isOpen || tutorialSteps.length === 0) return null;
 
   return (
     <>
@@ -262,10 +331,7 @@ export function InteractiveTutorial({
             transition={{ duration: 0.3 }}
             className="absolute border-4 border-white rounded-lg shadow-lg pointer-events-none"
             style={{
-              left: highlightedElement.getBoundingClientRect().left - 8,
-              top: highlightedElement.getBoundingClientRect().top - 8,
-              width: highlightedElement.getBoundingClientRect().width + 16,
-              height: highlightedElement.getBoundingClientRect().height + 16,
+              ...highlightStyle,
               boxShadow: `0 0 0 9999px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 255, 255, 0.8)`,
             }}
           />

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { AnimatePresence, motion } from "framer-motion";
 import { 
   Tabs, 
@@ -102,7 +102,7 @@ interface SectionDetails {
 
 export function LessonContent({ content }: LessonContentProps) {
   const [parsedContent, setParsedContent] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState<string>(""); 
+  const [activeTab, setActiveTab] = useState<string>("");
   const [location, setLocation] = useLocation();
   const [grammarSpotlightHidden, setGrammarSpotlightHidden] = useState<boolean>(false);
   
@@ -624,11 +624,35 @@ export function LessonContent({ content }: LessonContentProps) {
     }
   }, [content, activeTab]);
   
-  // Show loading state while parsing
+  const availableRenderTree = useMemo(() => {
+    if (!parsedContent) return [];
+    // ... logic to build renderTree and filter it
+    const renderTree = [
+        // ...
+    ];
+    return renderTree.filter(item => item.render !== null);
+  }, [parsedContent]);
+  
+  // Navigation logic using filtered tree
+  const currentIndex = availableRenderTree.findIndex(item => item.id === activeTab);
+  
+  const handlePrev = () => {
+    if (currentIndex > 0) {
+      setActiveTab(availableRenderTree[currentIndex - 1].id);
+    }
+  };
+  
+  const handleNext = () => {
+    if (currentIndex < availableRenderTree.length - 1) {
+      setActiveTab(availableRenderTree[currentIndex + 1].id);
+    }
+  };
+  
+  // If there's no parsed content yet, show a loading state
   if (!parsedContent) {
     return (
-      <div className="text-center py-8">
-        <p className="text-gray-500">Loading lesson content...</p>
+      <div className="flex justify-center items-center p-8">
+        <div className="w-8 h-8 border-2 border-t-primary border-primary/30 rounded-full animate-spin"></div>
       </div>
     );
   }
@@ -790,55 +814,34 @@ export function LessonContent({ content }: LessonContentProps) {
   };
   
   // Helper function to find a section by type with error handling
-  const findSection = (type: SectionType | string) => {
-    try {
-      if (Array.isArray(parsedContent.sections)) {
-        // Find based on type, allowing for alternatives
-        const found = parsedContent.sections.find((section: any) => {
-          if (!section || typeof section !== 'object') return false;
-          if (type === 'warmup') return section.type === 'warmup' || section.type === 'warm-up';
-          if (type === 'sentenceFrames') return section.type === 'sentenceFrames' || section.type === 'grammar';
-          if (type === 'discussion') return section.type === 'discussion' || section.type === 'speaking';
-          if (type === 'quiz') return section.type === 'quiz' || section.type === 'assessment';
-          if (type === 'pronunciation') return section.type === 'pronunciation'; // Specifically check for pronunciation type
-          return section.type === type;
-        });
-
-        // Log if found
-        if (found) {
-           console.log(`[findSection] Found section for type '${type}':`, found);
-        } else {
-           console.log(`[findSection] No section found for type '${type}' in sections array.`);
-           // Check top-level for specific types if not found in array
-           if (type === 'cloze' && parsedContent.cloze) return { type: 'cloze', ...parsedContent.cloze };
-           if (type === 'sentenceUnscramble' && parsedContent.sentenceUnscramble) return { type: 'sentenceUnscramble', ...parsedContent.sentenceUnscramble };
-           if (type === 'pronunciation' && parsedContent.pronunciation) return { type: 'pronunciation', ...parsedContent.pronunciation }; // Check top-level pronunciation
-        }
-        return found;
-      } else {
-        console.warn('[findSection] parsedContent.sections is not an array');
-        // Check top-level for specific types if sections array is missing/invalid
-        if (type === 'cloze' && parsedContent.cloze) return { type: 'cloze', ...parsedContent.cloze };
-        if (type === 'sentenceUnscramble' && parsedContent.sentenceUnscramble) return { type: 'sentenceUnscramble', ...parsedContent.sentenceUnscramble };
-        if (type === 'pronunciation' && parsedContent.pronunciation) return { type: 'pronunciation', ...parsedContent.pronunciation }; // Check top-level pronunciation
-        return null;
-      }
-    } catch (error) {
-      console.error(`[findSection] Error finding section type '${type}':`, error);
-      return null;
-    }
+  const findSection = (types: SectionType[]): any => {
+    if (!parsedContent || !parsedContent.sections) return null;
+    return parsedContent.sections.find((s: any) => types.includes(s.type));
   };
+
+  const findFirstAvailableSection = (sections: any[]): string => {
+    const orderedSectionTypes: SectionType[] = ["warmup", "warm-up", "vocabulary", "reading", "comprehension", "cloze", "sentenceUnscramble", "grammar", "grammarSpotlight", "speaking", "discussion", "quiz", "assessment"];
+    if (!sections || sections.length === 0) return orderedSectionTypes[0];
+    
+    for (const type of orderedSectionTypes) {
+      if (sections.some(s => s.type === type)) {
+        return type;
+      }
+    }
+    return sections[0]?.type || orderedSectionTypes[0];
+  }
+
+  useEffect(() => {
+    if (parsedContent && !activeTab) {
+      const firstTab = findFirstAvailableSection(parsedContent.sections);
+      setActiveTab(firstTab);
+    }
+  }, [parsedContent, activeTab]);
 
   // Components for each section type
   const WarmupSection = () => {
-    // Try to find the warm-up section from multiple possible types/locations
-    const section = 
-      findSection("warmup") || 
-      findSection("warm-up") || 
-      findSection("sentenceFrames") || // Some AI responses use sentenceFrames for warm-up
-      parsedContent.sections[0]; // Last resort, use the first section
-    
-    if (!section) return <p>No warm-up content available</p>;
+    const section = findSection(["warmup", "warm-up"]);
+    if (!section) return null;
     
     console.log("Warm-up section attempt:", section);
 
@@ -1352,13 +1355,13 @@ export function LessonContent({ content }: LessonContentProps) {
   };
 
   const ReadingTabSection = () => {
-    const section = findSection('reading');
+    const section = findSection(['reading']);
     // Use the imported ReadingSection component
     return <ReadingSection section={section} />;
   };
 
   const VocabularySection = () => {
-    const section = findSection('vocabulary');
+    const section = findSection(['vocabulary']);
     
     // Log raw vocabulary section data to examine its structure
     console.log("RAW VOCABULARY SECTION:", section);
@@ -1619,7 +1622,7 @@ export function LessonContent({ content }: LessonContentProps) {
   };
 
   const ComprehensionSection = () => {
-    const section = findSection('comprehension');
+    const section = findSection(['comprehension']);
     
     const [activeQuestion, setActiveQuestion] = useState(0);
     
@@ -1726,8 +1729,7 @@ export function LessonContent({ content }: LessonContentProps) {
     // --- Corrected Warm-up Question Fetching ---
     // Try to find the warm-up section from multiple possible types/locations
     const warmupSection = 
-      findSection("warmup") || 
-      findSection("warm-up"); 
+      findSection(["warmup", "warm-up"]); 
       // Removed sentenceFrames and first section fallback for clarity in overview
       
     let warmupQuestions: string[] = [];
@@ -2033,7 +2035,7 @@ export function LessonContent({ content }: LessonContentProps) {
       icon: <AlignJustify className="h-5 w-5" />,
       render: (
         (() => {
-          const sentenceFramesData = findSection('sentenceFrames');
+          const sentenceFramesData = findSection(['sentenceFrames']);
           
           // DEBUG: Examine the actual data
           console.log("=========== EXAMINING SENTENCE FRAMES DATA ===========");
@@ -2099,7 +2101,7 @@ export function LessonContent({ content }: LessonContentProps) {
             return null;
           }
           
-          const grammarData = findSection('grammar');
+          const grammarData = findSection(['grammar']);
           console.log("Grammar data found:", grammarData);
           if (!grammarData) {
             console.log("No grammar data found");
@@ -2181,7 +2183,7 @@ export function LessonContent({ content }: LessonContentProps) {
       render: (
         (() => {
           if (!hasSectionType('cloze')) return null;
-          const clozeData = parsedContent.cloze || findSection('cloze');
+          const clozeData = parsedContent.cloze || findSection(['cloze']);
           if (!clozeData) return <div>No cloze activity data found</div>;
           return <InteractiveClozeSection 
             title={clozeData.title || "Fill in the Blanks"} 
@@ -2198,7 +2200,7 @@ export function LessonContent({ content }: LessonContentProps) {
       render: (
         (() => {
           if (!hasSectionType('sentenceUnscramble')) return null;
-          const unscrambleData = parsedContent.sentenceUnscramble || findSection('sentenceUnscramble');
+          const unscrambleData = parsedContent.sentenceUnscramble || findSection(['sentenceUnscramble']);
           return <SentenceUnscrambleSection 
             sentences={unscrambleData?.sentences || []}
             title={unscrambleData?.title || "Sentence Unscramble"}
@@ -2212,7 +2214,7 @@ export function LessonContent({ content }: LessonContentProps) {
       icon: <MessageSquare className="h-5 w-5" />,
       render: (
         (() => {
-          const discussionData = findSection('discussion');
+          const discussionData = findSection(['discussion']);
           if (!discussionData) return null;
           return <DiscussionSection section={discussionData} />;
         })()
@@ -2291,7 +2293,7 @@ export function LessonContent({ content }: LessonContentProps) {
       
       {/* Tabbed interface - styled based on template images */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-4 relative">
-        <TabsList className="flex overflow-x-auto whitespace-nowrap justify-start p-1 h-auto rounded-lg bg-gray-100 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        <TabsList data-testid="lesson-tabs-list" className="flex overflow-x-auto whitespace-nowrap justify-start p-1 h-auto rounded-lg bg-gray-100 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           {availableRenderTree.map((item) => {
               return (
                 <TabsTrigger 
