@@ -507,9 +507,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         console.log(`Using AI provider: ${primaryProvider}`);
         
+        // Fetch student vocabulary if studentId is provided
+        let studentVocabulary: string[] = [];
+        if (validatedData.studentId && validatedData.useStudentHistory !== false) {
+          try {
+            const vocabRecords = await storage.getStudentVocabulary(validatedData.studentId, 50);
+            studentVocabulary = vocabRecords.map(v => v.word).filter(Boolean);
+            if (studentVocabulary.length > 0) {
+              console.log(`Found ${studentVocabulary.length} learned vocabulary words for student ${validatedData.studentId}`);
+            }
+          } catch (vocabError) {
+            console.error('Error fetching student vocabulary:', vocabError);
+          }
+        }
+        
         // Generate lesson using Gemini
         const gemini = await getGeminiService();
-        generatedContent = await gemini.generateLesson(validatedData);
+        generatedContent = await gemini.generateLesson(validatedData, studentVocabulary);
           
         // No fallback needed since we're only using Gemini
         

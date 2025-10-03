@@ -20,9 +20,10 @@ export class GeminiService {
   /**
    * Generate a complete ESL lesson based on the provided parameters
    * @param params Lesson generation parameters
+   * @param studentVocabulary Optional array of previously learned vocabulary words
    * @returns Generated lesson content
    */
-  async generateLesson(params: LessonGenerateParams): Promise<any> {
+  async generateLesson(params: LessonGenerateParams, studentVocabulary: string[] = []): Promise<any> {
     try {
       if (!this.apiKey) {
         throw new Error('Gemini API key is not configured');
@@ -36,7 +37,7 @@ export class GeminiService {
       const requestId = `${topicSafe}_${timestamp}`;
       
       // Construct the prompt
-      const prompt = this.constructLessonPrompt(params);
+      const prompt = this.constructLessonPrompt(params, studentVocabulary);
       
       // Configure the request for OpenRouter
       const requestData = {
@@ -257,7 +258,7 @@ export class GeminiService {
   /**
    * Constructs a structured prompt for the Gemini AI model
    */
-  private constructLessonPrompt(params: LessonGenerateParams): string {
+  private constructLessonPrompt(params: LessonGenerateParams, studentVocabulary: string[] = []): string {
     const { cefrLevel, topic, focus, lessonLength, additionalNotes } = params;
     
     // We'll set some variables to match what the system prompt expects
@@ -265,6 +266,19 @@ export class GeminiService {
     const text = topic;
     const minVocabCount = 5;
     const maxVocabCount = 5;
+    
+    // Build vocabulary instruction
+    const vocabularyInstruction = studentVocabulary.length > 0 
+      ? `\n\n🎯 STUDENT VOCABULARY HISTORY:
+This student has already learned the following vocabulary words in previous lessons:
+${studentVocabulary.join(', ')}
+
+IMPORTANT: When selecting vocabulary for this lesson, AVOID these words that the student already knows. Choose NEW vocabulary words that:
+- Build upon their existing knowledge
+- Are appropriately challenging for ${params.cefrLevel} level
+- Are relevant to the topic "${params.topic}"
+- Help the student progress in their language learning journey`
+      : '';
     
     // System instruction part
     const systemInstruction = `You are an expert ESL teacher. 
@@ -284,6 +298,8 @@ When you see template text like "REPLACE WITH: [instruction]" in the sentence fr
    WRONG: "questions": ["Question 1"], "Question 2": "Question 3"
 
 3. CRITICAL: ALL CONTENT MUST BE ABOUT THE SPECIFIC TOPIC PROVIDED BY THE USER.
+
+${vocabularyInstruction}
 
 ${params.targetVocabulary ? `4. CRUCIAL: YOU MUST INCLUDE THE FOLLOWING VOCABULARY WORDS IN YOUR LESSON: ${params.targetVocabulary}` : ''}
 
