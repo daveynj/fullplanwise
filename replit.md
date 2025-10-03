@@ -27,9 +27,10 @@ Social media: LinkedIn - www.linkedin.com/in/davidjackson113, X (Twitter) - @Dav
 - **Build Tools**: Vite (frontend), esbuild (backend)
 
 ### Feature Specifications
-- **AI Service Integration**: Primary AI (xAI Grok-4 Fast via OpenRouter) for lesson generation, AI-powered grammar validation for reading texts, dynamic loading.
+- **AI Service Integration**: Primary AI (xAI Grok-4 Fast via OpenRouter) for lesson generation with trusted output (no post-generation validation), dynamic loading.
 - **Lesson Generation**: Supports CEFR levels A1-C2, various component types (warm-ups, vocabulary, reading, questions, discussion), Grammar Spotlight visualizations, and Semantic Maps.
 - **Enhanced Image Generation**: Contextual, detailed image prompts (40-80 words for vocabulary, 50-80 words for discussion) that include specific settings, diverse characters, environmental context, visual style guidance, and pedagogical alignment with lesson objectives.
+- **Performance Optimization**: Streamlined generation pipeline trusting Grok-4 Fast quality, eliminating validation overhead for faster lesson delivery (~2 minutes vs. previous 4+ minutes).
 - **User Management**: Role-based access (Teacher, Admin), credit system, subscription support (Stripe integration), password reset.
 - **Content Enhancement**: Vocabulary downloads (HTML), PDF generation, interactive elements.
 - **Lesson Sharing**: Teachers can share lessons via public URLs without student registration.

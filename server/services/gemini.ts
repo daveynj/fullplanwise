@@ -1423,58 +1423,11 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
   
   /**
    * Validate and improve the generated content for quality control
+   * NOTE: Validations removed to improve speed - trusting Grok-4 Fast to generate high-quality content
    */
   private async validateAndImproveContent(content: any, params: LessonGenerateParams): Promise<any> {
-    try {
-      console.log('Starting quality control validation for Gemini content...');
-      
-      // Check if we have sentence frames that need validation
-      if (content.sections) {
-        for (let section of content.sections) {
-          if (section.type === 'sentenceFrames') {
-            // Handle both old and new formats
-            if (section.frames && Array.isArray(section.frames)) {
-              // New format with frames array
-              for (let frame of section.frames) {
-                if (frame.examples && Array.isArray(frame.examples)) {
-                  const validatedExamples = await this.validateSentenceFrameExamples(
-                    frame.examples,
-                    frame.pattern || frame.patternTemplate,
-                    params.topic
-                  );
-                  frame.examples = validatedExamples;
-                }
-              }
-            } else if (section.examples && Array.isArray(section.examples)) {
-              // Legacy format with examples directly in section
-              const validatedExamples = await this.validateSentenceFrameExamples(
-                section.examples,
-                section.pattern || 'sentence pattern',
-                params.topic
-              );
-              section.examples = validatedExamples;
-            }
-          }
-          
-          // Validate reading text for grammar errors
-          if (section.type === 'reading' && section.paragraphs && Array.isArray(section.paragraphs)) {
-            console.log('Validating reading text for grammar correctness...');
-            const validatedParagraphs = await this.validateReadingTextGrammar(
-              section.paragraphs,
-              params.cefrLevel,
-              params.topic
-            );
-            section.paragraphs = validatedParagraphs;
-          }
-        }
-      }
-      
-      console.log('Quality control validation completed for Gemini content');
-      return content;
-    } catch (error) {
-      console.error('Error in quality control validation for Gemini:', error);
-      return content; // Return original content if validation fails
-    }
+    console.log('Skipping quality control validation - trusting Grok-4 Fast for high-quality output');
+    return content;
   }
 
   /**
