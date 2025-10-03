@@ -71,7 +71,7 @@ export function PedagogicalSentenceFramesSection({ section }: PedagogicalSentenc
         <SectionHeader 
           icon={MessageSquare}
           title={section.title || "Sentence Frames"}
-          iconColor="text-purple-600"
+          color="purple"
         />
         <Alert>
           <AlertDescription>
@@ -87,7 +87,7 @@ export function PedagogicalSentenceFramesSection({ section }: PedagogicalSentenc
       <SectionHeader 
         icon={MessageSquare}
         title={section.title || "Structured Language Practice"}
-        iconColor="text-purple-600"
+        color="purple"
       />
       
       {section.introduction && (
