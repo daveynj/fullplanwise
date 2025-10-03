@@ -1,130 +1,52 @@
-# replit.md
+# ESL Teaching Platform
 
 ## Overview
 
-This is a full-stack ESL (English as a Second Language) teaching platform built for creating and managing customized language lessons. The application uses React for the frontend, Express.js for the backend, and PostgreSQL for data persistence. It integrates multiple AI services for intelligent lesson generation and includes features like grammar analysis, vocabulary enhancement, and lesson management.
-
-## System Architecture
-
-### Frontend Architecture
-- **Framework**: React with TypeScript
-- **Styling**: Tailwind CSS with shadcn/ui components
-- **Build Tool**: Vite for fast development and optimized production builds
-- **State Management**: React hooks and context
-- **UI Components**: Radix UI primitives for accessibility
-
-### Backend Architecture
-- **Framework**: Express.js with TypeScript
-- **Runtime**: Node.js 20
-- **API Design**: RESTful endpoints with JSON responses
-- **Authentication**: Passport.js with local strategy and session management
-- **Database ORM**: Drizzle ORM for type-safe database operations
-
-### Data Storage Solutions
-- **Primary Database**: PostgreSQL (Neon serverless)
-- **Connection Pooling**: @neondatabase/serverless with WebSocket support
-- **Session Storage**: PostgreSQL-based session store
-- **Schema Management**: Drizzle Kit for migrations
-
-## Key Components
-
-### AI Service Integration
-- **Multi-Provider Support**: OpenAI, Google Gemini, and Qwen services
-- **Dynamic Loading**: AI services loaded on-demand to improve startup performance
-- **Grammar Analysis**: Automated grammar pattern detection in lesson content
-- **Cross-Component Integration**: Validates vocabulary, reading text, and discussion questions work synergistically
-
-### Lesson Generation System
-- **CEFR Level Support**: A1-C2 level appropriate content generation
-- **Component Types**: Warm-up activities, vocabulary cards, reading texts, comprehension questions, discussion prompts
-- **Grammar Spotlight**: Interactive grammar visualizations (Timeline, Decision Tree, Scale, Pattern Recognition, Transformation)
-- **Semantic Maps**: Visual vocabulary relationship mapping
-
-### User Management
-- **Role-Based Access**: Teacher and admin roles
-- **Credit System**: Consumption-based lesson generation
-- **Subscription Support**: Stripe integration for premium features
-- **Password Reset**: Token-based password recovery with email integration
-
-### Content Enhancement Features
-- **Vocabulary Downloads**: HTML export functionality for offline use
-- **PDF Generation**: Lesson export capabilities
-- **Interactive Components**: Drag-and-drop activities, visual grammar explanations
-- **Responsive Design**: Mobile-friendly interface
-
-## Data Flow
-
-1. **User Authentication**: Login/registration through Passport.js local strategy
-2. **Lesson Creation**: Teacher selects topic, CEFR level, and preferences
-3. **AI Processing**: Selected AI service generates comprehensive lesson content
-4. **Grammar Analysis**: Automated detection of grammar patterns in reading text
-5. **Content Storage**: Lesson data persisted to PostgreSQL with JSON fields
-6. **Interactive Display**: React components render lesson with interactive elements
-7. **Export Options**: HTML/PDF generation for offline use
-
-## External Dependencies
-
-### AI Services
-- **OpenAI API**: Primary lesson generation service
-- **Google Generative AI**: Alternative content generation
-- **Anthropic Claude**: Additional AI service option
-
-### Payment & Communication
-- **Stripe**: Subscription and payment processing
-- **Mailchimp**: Email marketing and user communication
-
-### Infrastructure
-- **Neon Database**: Serverless PostgreSQL hosting
-- **WebSocket Support**: Real-time database connections
-
-## Deployment Strategy
-
-### Build Process
-- **Frontend**: Vite builds React app to `dist/public`
-- **Backend**: esbuild bundles server code to `dist/index.js`
-- **Assets**: Static files served from public directory
-
-### Environment Configuration
-- **Secrets Management**: Replit Secrets for sensitive data
-- **Database Credentials**: Separate configuration for development/production
-- **API Keys**: Secure storage of third-party service keys
-
-### Scaling Considerations
-- **Autoscale Deployment**: Configured for automatic scaling based on traffic
-- **Connection Pooling**: Database connections optimized for concurrent users
-- **Lazy Loading**: AI services loaded on-demand to reduce memory footprint
-
-## Changelog
-
-- June 25, 2025: Initial setup
-- June 25, 2025: Implemented comprehensive industry/domain category system with 12 subject areas
-- June 25, 2025: Added post-generation category editing and filtering capabilities  
-- June 25, 2025: Removed Qwen AI provider due to persistent timeout issues with comprehensive prompts, simplified to use only Google Gemini for reliable lesson generation
-- June 25, 2025: Fixed deployment error by cleaning up all Qwen service references and imports that were causing build failures
-- June 25, 2025: Enhanced admin dashboard with comprehensive marketing analytics including MAU, lesson creation trends, category distribution, CEFR analytics, user activity metrics, and platform-wide lesson browsing capabilities
-- June 25, 2025: Implemented Public Lesson Library system - admin-curated lessons organized by specialized categories (Business English, IELTS Prep, etc.) that users can browse and copy to their personal library at no credit cost
-- June 25, 2025: Created comprehensive SEO-optimized blog system accessible from homepage with 5 in-depth articles covering AI in ESL teaching, CEFR levels, student engagement strategies, vocabulary acquisition research, and inclusive teaching practices - designed to improve AI search visibility and establish domain authority
-- June 25, 2025: Enhanced blog system with 8 additional persona-targeted articles and comprehensive on-page SEO optimization including meta descriptions, structured data, internal linking, keyword integration, and mobile-responsive design optimized for Google search rankings
-- June 25, 2025: Fixed react-helmet Symbol conversion error by implementing custom SEO component, corrected all brand references from LinguaBoost to PlanwiseESL throughout blog content and SEO metadata
-- June 25, 2025: Implemented expert copywriting improvements based on comprehensive analysis: shortened articles to 6-9 minutes, added emotional storytelling with real teacher success stories, improved headlines with problem-focused hooks, enhanced CTAs with social proof, added 3 new persona-specific articles addressing teacher burnout and financial impact, optimized for long-tail keywords like "ESL teacher burnout solution" and "lesson planning takes too long"
-- June 26, 2025: Completed comprehensive copywriting overhaul with authentic voice as Dave, the ESL teacher founder - rewrote major blog posts with personal Bangkok breakdown story, undercover teacher research, and 47-teacher income study, enhanced headlines for better conversion psychology, added specific objection handling sections, improved CTAs with demonstration focus, fixed database connection issues for stable application performance
-- June 26, 2025: Implemented comprehensive on-page SEO optimization for AI chatbot discoverability - enhanced structured data markup with detailed schema.org implementation, improved meta tags for AI training data, added semantic HTML5 elements, created XML sitemap and robots.txt for optimal crawling, enhanced internal linking structure, implemented FAQ schema markup, added accessibility improvements with ARIA labels, optimized for voice search and featured snippets
-- June 26, 2025: Added Dave Jackson's social media profiles (LinkedIn and X/Twitter) to homepage footer with proper SEO markup, created comprehensive founder story blog post based on user's draft covering journey from finance to ESL teaching to building PlanwiseESL, fixed broken internal links to point to correct founder story page, updated sitemap with new content
-- June 29, 2025: Implemented simple lesson sharing system - teachers can now share lessons with students via clean URLs (yoursite.com/lessons/123) without requiring student registration, added Share buttons to lesson preview and history pages with clipboard copying functionality, configured public lesson viewing route without authentication requirement, implemented smart exit button behavior for shared vs. authenticated lesson viewing
-- June 29, 2025: Completed comprehensive SEO quick wins implementation - added meta descriptions to all key pages including auth page, created comprehensive FAQ section with 6 key questions on homepage for improved search visibility, enhanced image alt text optimization, added strategic internal linking between blog posts, expanded target keyword coverage including "AI lesson planning", "CEFR lesson generator", and "ESL teacher productivity", updated sitemap with current dates
-- January 1, 2025: Implemented topic-essential vocabulary visualization system - added topicEssential field to VocabularyWord interface, created red "Topic Essential" badges that appear on vocabulary words that are outside typical frequency ranges but critical for topic discussion, integrated display across all vocabulary card components and lesson content sections, enhanced user experience by clearly marking when vocabulary goes beyond normal CEFR level requirements for pedagogical reasons
-- January 4, 2025: Completed comprehensive AI prompt optimization achieving 73% reduction in prompt complexity (130 lines → 35 lines) - eliminated meta-analysis instructions that don't improve content quality, consolidated redundant style sections while preserving all essential pedagogical requirements, streamlined question quality standards without losing educational value, maintained all quality safeguards for vocabulary selection and CEFR appropriateness, achieved expected 15-25% speed improvement in lesson generation while maintaining content quality
-- January 4, 2025: Implemented response-first pattern optimization for lesson generation - backend now sends immediate response with lesson content using temporary ID while database save happens asynchronously in background, frontend pre-caches lesson data to eliminate second database query, expected improvement of 3-7 seconds faster lesson loading by removing blocking database operations
-- January 4, 2025: Updated Twitter card design with modern brand-aligned visual using proper design principles - blue gradient background (#051d40 to #0a2854), yellow text (#edc437) for headlines and CTAs, white text for subheadings, improved typography hierarchy, subtle glow effects, modern laptop illustration, better spacing and contrast, updated social media handles to @PlanwiseESL and @DaveTeacher1
-- January 18, 2025: Fixed Stability AI image generation by updating API endpoint from deprecated SD 1.6 to current SDXL model (stable-diffusion-xl-1024-v1-0) - API was discontinued July 24, 2025 causing image generation failures, updated parameters for SDXL requirements (896x1152 dimensions, adjusted cfg_scale and steps), verified functionality with successful test generation
-- January 29, 2025: Resolved lesson library database query performance issues caused by large base64 image data - modified getLessons queries to exclude heavy content field from list views while maintaining all necessary metadata, fixed dimension error in Stability AI service (corrected from 512x512 to required 896x1152 dimensions for SDXL model)
-- January 30, 2025: Upgraded AI lesson generation from Gemini 1.5 Pro to Gemini 2.0 Flash Experimental for faster response times, improved reasoning capabilities, and more reliable JSON output while maintaining same quality educational content generation
-- January 30, 2025: Implemented comprehensive enhanced vocabulary definition system with backwards compatibility - added 6 new vocabulary fields (coreDefinition, simpleExplanation, contextualMeaning, levelAppropriateExample, commonCollocations, structured additionalExamples), updated warmup vocabulary display to show progressive understanding layers, enhanced AI prompt with CEFR-appropriate definition standards, vocabulary density controls (1 word per 25 words), and natural context integration requirements for reading texts
-- January 30, 2025: Implemented comprehensive reading text enhancement system - added sophisticated vocabulary integration requirements (2-3 contextual appearances per word), structural requirements for logical progression, contextual clarity standards with CEFR-appropriate transitions, engagement factors including storytelling elements, definition-context alignment validation ensuring vocabulary usage matches definitions, CEFR-level complexity standards for definitions, and comprehensive quality validation checklist for authentic language use
-- January 31, 2025: Enhanced AI prompt with conversational tone guidelines for C1/C2 warmup and discussion questions - added specific instructions to avoid overly academic or verbose questions, included concrete examples showing how to transform research-paper-style questions into direct, conversational alternatives that better engage students and spark meaningful discussion while maintaining appropriate challenge level
+This is a full-stack ESL (English as a Second Language) teaching platform designed for creating and managing customized language lessons. The platform integrates multiple AI services for intelligent lesson generation, grammar analysis, vocabulary enhancement, and comprehensive lesson management, targeting both teachers and administrators. The business vision is to provide an efficient and intelligent tool to streamline lesson planning and improve the quality of ESL education.
 
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
 User name: Dave Jackson (prefers Dave, not David).
 Social media: LinkedIn - www.linkedin.com/in/davidjackson113, X (Twitter) - @DaveTeacher1
+
+## System Architecture
+
+### UI/UX Decisions
+- **Frontend**: React with TypeScript
+- **Styling**: Tailwind CSS with shadcn/ui components
+- **UI Components**: Radix UI primitives for accessibility
+- **Responsive Design**: Mobile-friendly interface
+- **Interactive Components**: Drag-and-drop activities, visual grammar explanations
+
+### Technical Implementations
+- **Backend**: Express.js with TypeScript on Node.js 20
+- **API Design**: RESTful endpoints with JSON responses
+- **Authentication**: Passport.js with local strategy and session management
+- **Database ORM**: Drizzle ORM for type-safe PostgreSQL operations
+- **Build Tools**: Vite (frontend), esbuild (backend)
+
+### Feature Specifications
+- **AI Service Integration**: Primary AI for lesson generation, grammar validation, dynamic loading.
+- **Lesson Generation**: Supports CEFR levels A1-C2, various component types (warm-ups, vocabulary, reading, questions, discussion), Grammar Spotlight visualizations, and Semantic Maps.
+- **User Management**: Role-based access (Teacher, Admin), credit system, subscription support (Stripe integration), password reset.
+- **Content Enhancement**: Vocabulary downloads (HTML), PDF generation, interactive elements.
+- **Lesson Sharing**: Teachers can share lessons via public URLs without student registration.
+- **SEO**: Comprehensive on-page SEO, structured data, sitemaps, and optimized content for discoverability.
+
+### System Design Choices
+- **Data Flow**: User authentication, AI-powered lesson creation, grammar analysis, content storage, interactive display, and export options.
+- **Deployment**: Frontend builds to `dist/public`, backend bundles to `dist/index.js`, static file serving.
+- **Environment**: Replit Secrets for sensitive data, separate configs for dev/prod, secure API key storage.
+- **Scaling**: Autoscale deployment, connection pooling, lazy loading of AI services.
+- **Performance Optimization**: Response-first pattern for lesson generation, pre-caching lesson data.
+
+## External Dependencies
+
+- **AI Services**:
+    - xAI Grok-4 Fast (via OpenRouter)
+- **Payment & Communication**:
+    - Stripe (Subscription and payment processing)
+- **Infrastructure**:
+    - Neon Database (Serverless PostgreSQL hosting)
+    - @neondatabase/serverless (WebSocket support for database connections)
