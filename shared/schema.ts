@@ -46,6 +46,28 @@ export const lessons = pgTable("lessons", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
+// Student-Lesson association table
+export const studentLessons = pgTable("student_lessons", {
+  id: serial("id").primaryKey(),
+  studentId: integer("student_id").notNull(),
+  lessonId: integer("lesson_id").notNull(),
+  teacherId: integer("teacher_id").notNull(),
+  assignedAt: timestamp("assigned_at").notNull().defaultNow(),
+  status: text("status").default("assigned"), // assigned, completed, in-progress
+  notes: text("notes"),
+});
+
+// Student vocabulary tracking table
+export const studentVocabulary = pgTable("student_vocabulary", {
+  id: serial("id").primaryKey(),
+  studentId: integer("student_id").notNull(),
+  lessonId: integer("lesson_id").notNull(),
+  word: text("word").notNull(),
+  definition: text("definition"),
+  cefrLevel: text("cefr_level"),
+  learnedAt: timestamp("learned_at").notNull().defaultNow(),
+});
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
@@ -77,15 +99,35 @@ export const insertLessonSchema = createInsertSchema(lessons).pick({
   tags: true,
 });
 
+export const insertStudentLessonSchema = createInsertSchema(studentLessons).pick({
+  studentId: true,
+  lessonId: true,
+  teacherId: true,
+  status: true,
+  notes: true,
+});
+
+export const insertStudentVocabularySchema = createInsertSchema(studentVocabulary).pick({
+  studentId: true,
+  lessonId: true,
+  word: true,
+  definition: true,
+  cefrLevel: true,
+});
+
 // Types for inserts
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type InsertStudent = z.infer<typeof insertStudentSchema>;
 export type InsertLesson = z.infer<typeof insertLessonSchema>;
+export type InsertStudentLesson = z.infer<typeof insertStudentLessonSchema>;
+export type InsertStudentVocabulary = z.infer<typeof insertStudentVocabularySchema>;
 
 // Types for selects
 export type User = typeof users.$inferSelect;
 export type Student = typeof students.$inferSelect;
 export type Lesson = typeof lessons.$inferSelect;
+export type StudentLesson = typeof studentLessons.$inferSelect;
+export type StudentVocabulary = typeof studentVocabulary.$inferSelect;
 
 // AI provider enum
 export const AIProviderEnum = z.enum(['gemini']);
