@@ -173,6 +173,49 @@ export interface LowerLevelScaffolding {
 }
 
 /**
+ * NEW: Pedagogically-Sound Sentence Frames (v2) - Following Best Practices
+ * Based on research-backed tiered scaffolding approach
+ */
+export interface PedagogicalSentenceFrame {
+  /** The communicative/language function this frame supports */
+  languageFunction: string;
+  /** Grammar focus areas this pattern teaches */
+  grammarFocus: string[];
+  /** Tiered frames by proficiency level - following differentiation best practices */
+  tieredFrames: {
+    /** Simple structure for Emerging learners (basic reporting/description) */
+    emerging: {
+      frame: string;
+      description: string;
+    };
+    /** Mid-complexity for Developing learners (adding causation/reasoning) */
+    developing: {
+      frame: string;
+      description: string;
+    };
+    /** High complexity for Expanding learners (inference/justification) */
+    expanding: {
+      frame: string;
+      description: string;
+    };
+  };
+  /** Model responses - complete examples for each tier (reverse-engineered approach) */
+  modelResponses: {
+    emerging: string[];
+    developing: string[];
+    expanding: string[];
+  };
+  /** Simple teaching guidance following I Do / We Do / You Do model */
+  teachingNotes: {
+    modelingTips: string; // How to model ("I Do")
+    guidedPractice: string; // Collaborative practice ("We Do")
+    independentUse: string; // Transition to independence ("You Do")
+    fadingStrategy: string; // How to gradually remove scaffold
+  };
+}
+
+/**
+ * OLD: Legacy Sentence Frame Pattern (for backward compatibility with existing lessons)
  * Represents the complete data structure for the enhanced
  * Sentence Frame section within a lesson.
  */
