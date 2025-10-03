@@ -1603,7 +1603,7 @@ If an example is a simple string, return a string. If it's an object with "compl
   }
 
   /**
-   * Format and process the lesson content, adding image data
+   * Format and process the lesson content, adding image data IN PARALLEL for speed
    */
   private async formatLessonContent(content: any): Promise<any> {
     // Add provider identifier to the content
@@ -1612,12 +1612,17 @@ If an example is a simple string, return a string. If it's an object with "compl
       provider: 'gemini'
     };
     
-    // Generate images if sections exist
+    // Generate ALL images in parallel if sections exist
     if (lessonContent.sections && Array.isArray(lessonContent.sections)) {
-      console.log('Starting image generation loop for Gemini lesson...');
+      console.log('Starting PARALLEL image generation for Gemini lesson...');
+      
+      // Collect all image generation tasks
+      const imageGenerationTasks: Promise<void>[] = [];
+      
       for (const section of lessonContent.sections) {
+        // Vocabulary images
         if (section.type === 'vocabulary' && section.words && Array.isArray(section.words)) {
-          console.log(`Found ${section.words.length} vocabulary words, generating images...`);
+          console.log(`Found ${section.words.length} vocabulary words, queueing parallel image generation...`);
           for (const word of section.words) {
             // Generate fallback imagePrompt if missing
             if (!word.imagePrompt && word.term) {
@@ -1626,51 +1631,40 @@ If an example is a simple string, return a string. If it's an object with "compl
             }
             
             if (word.imagePrompt) {
-               try {
-                 // Generate unique ID for logging
-                 const requestId = `vocab_${word.term ? word.term.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 15) : 'word'}`;
-                 word.imageBase64 = await replicateFluxService.generateImage(word.imagePrompt, requestId);
-                 console.log(`Successfully generated image for vocab word: ${word.term}`);
-               } catch (imgError) {
-                 console.error(`Error generating image for vocab word ${word.term}:`, imgError);
-                 word.imageBase64 = null; // Ensure field exists even on error
-               }
+              // Queue parallel image generation
+              const task = (async () => {
+                try {
+                  const requestId = `vocab_${word.term ? word.term.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 15) : 'word'}`;
+                  word.imageBase64 = await replicateFluxService.generateImage(word.imagePrompt, requestId);
+                  console.log(`✓ Generated image for vocab: ${word.term}`);
+                } catch (imgError) {
+                  console.error(`✗ Error generating image for vocab ${word.term}:`, imgError);
+                  word.imageBase64 = null;
+                }
+              })();
+              imageGenerationTasks.push(task);
             } else {
-              console.log(`No imagePrompt available for vocab word: "${word.term}"`);
-              word.imageBase64 = null; // Ensure field exists
+              console.log(`No imagePrompt for vocab: "${word.term}"`);
+              word.imageBase64 = null;
             }
           }
         }
+        
+        // Discussion images
         if (section.type === 'discussion' && section.questions && Array.isArray(section.questions)) {
-            console.log(`Found ${section.questions.length} discussion questions, generating images...`);
+          console.log(`Found ${section.questions.length} discussion questions, queueing parallel image generation...`);
           for (const question of section.questions) {
-            // Debug: Log the actual question structure
-            console.log(`Processing discussion question:`, JSON.stringify(question, null, 2));
-            
-            // Ensure each question has its own paragraphContext
-            // This field is already provided in the template - just make sure it's intact
+            // Ensure paragraphContext exists
             if (!question.paragraphContext && section.paragraphContext) {
-              // If a question is missing individual context but section has a shared one,
-              // copy it to the question (happens in some Gemini responses)
               question.paragraphContext = section.paragraphContext;
-              console.log("Added section-level paragraphContext to discussion question");
             }
-            
-            // If still no paragraphContext, look for other fields that might contain it
             if (!question.paragraphContext) {
-              if (question.introduction && typeof question.introduction === 'string') {
-                // If the introduction field looks like a paragraph (multiple sentences, no question marks)
-                // then we store it as paragraphContext for the UI to render properly
-                if (question.introduction.includes('.') && !question.introduction.includes('?')) {
-                  question.paragraphContext = question.introduction;
-                  console.log("Setting paragraphContext from introduction field");
-                }
-              } else if (question.context && typeof question.context === 'string') {
+              if (question.introduction?.includes('.') && !question.introduction?.includes('?')) {
+                question.paragraphContext = question.introduction;
+              } else if (question.context) {
                 question.paragraphContext = question.context;
-                console.log("Setting paragraphContext from context field");
-              } else if (question.paragraph && typeof question.paragraph === 'string') {
+              } else if (question.paragraph) {
                 question.paragraphContext = question.paragraph;
-                console.log("Setting paragraphContext from paragraph field");
               }
             }
             
@@ -1678,32 +1672,38 @@ If an example is a simple string, return a string. If it's an object with "compl
             if (!question.imagePrompt && question.question) {
               const contextSnippet = question.paragraphContext ? question.paragraphContext.substring(0, 150) : question.question;
               question.imagePrompt = `A realistic illustration showing a scenario related to: "${question.question.substring(0, 100)}". Scene includes diverse people in a relatable situation that embodies this question. ${contextSnippet.includes('work') ? 'Professional setting' : contextSnippet.includes('school') || contextSnippet.includes('student') ? 'Educational environment' : contextSnippet.includes('family') || contextSnippet.includes('home') ? 'Home or family setting' : 'Contemporary setting'} with natural lighting and clear visual storytelling. Characters showing emotions or actions relevant to the topic. Realistic illustration, warm natural lighting, engaging composition. No text visible.`;
-              console.log(`Generated enhanced fallback imagePrompt for question: "${question.question.substring(0, 50)}..."`);
             }
             
-            // Generate image if prompt exists
             if (question.imagePrompt) {
-               try {
-                 // Generate unique ID for logging - use part of question text
-                 const requestId = `disc_${question.question ? question.question.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 15) : 'question'}`;
-                 console.log(`Requesting image generation for discussion question with prompt: "${question.imagePrompt.substring(0, 100)}..."`);
-                 question.imageBase64 = await replicateFluxService.generateImage(question.imagePrompt, requestId);
-                 console.log(`Successfully generated image for discussion question`);
-               } catch (imgError) {
-                  console.error(`Error generating image for discussion question:`, imgError);
-                  question.imageBase64 = null; // Ensure field exists even on error
-               }
+              // Queue parallel image generation
+              const task = (async () => {
+                try {
+                  const requestId = `disc_${question.question ? question.question.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 15) : 'question'}`;
+                  question.imageBase64 = await replicateFluxService.generateImage(question.imagePrompt, requestId);
+                  console.log(`✓ Generated image for discussion question`);
+                } catch (imgError) {
+                  console.error(`✗ Error generating discussion image:`, imgError);
+                  question.imageBase64 = null;
+                }
+              })();
+              imageGenerationTasks.push(task);
             } else {
-              console.log(`No imagePrompt found for discussion question: "${question.question || 'unknown'}"`);
-              question.imageBase64 = null; // Ensure field exists
+              question.imageBase64 = null;
             }
           }
         }
-        // Add loops for other sections needing images if necessary (e.g., warmup)
       }
-      console.log('Finished image generation loop for Gemini lesson.');
+      
+      // Wait for ALL images to generate in parallel
+      if (imageGenerationTasks.length > 0) {
+        console.log(`⚡ Generating ${imageGenerationTasks.length} images in parallel...`);
+        await Promise.all(imageGenerationTasks);
+        console.log(`✓ All ${imageGenerationTasks.length} images generated in parallel!`);
+      }
+      
+      console.log('Finished parallel image generation for Gemini lesson.');
     } else {
-        console.log('No sections found or sections is not an array, skipping image generation.');
+        console.log('No sections found, skipping image generation.');
     }
     
     return lessonContent;
