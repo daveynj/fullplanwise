@@ -53,6 +53,7 @@ type FormValues = z.infer<typeof formSchema>;
 interface LessonFormProps {
   students: Student[];
   onSubmit: (data: any) => void;
+  initialStudentId?: string;
 }
 
 const placeholders = [
@@ -63,7 +64,7 @@ const placeholders = [
   "e.g., My favorite type of food and why",
 ];
 
-export function LessonForm({ students, onSubmit }: LessonFormProps) {
+export function LessonForm({ students, onSubmit, initialStudentId }: LessonFormProps) {
   const [selectedCefrLevel, setSelectedCefrLevel] = useState<string>("B1");
   const [placeholder, setPlaceholder] = useState(placeholders[0]);
   const { isFreeTrialActive } = useFreeTrial();
@@ -82,7 +83,7 @@ export function LessonForm({ students, onSubmit }: LessonFormProps) {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      studentId: "none",
+      studentId: initialStudentId || "none",
       cefrLevel: "B1",
       topic: "",
       targetVocabulary: "",

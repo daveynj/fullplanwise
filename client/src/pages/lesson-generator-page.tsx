@@ -18,6 +18,10 @@ export default function LessonGeneratorPage() {
   const [generatingLesson, setGeneratingLesson] = useState(false);
   const { isFreeTrialActive } = useFreeTrial();
   
+  // Read studentId from URL parameters
+  const urlParams = new URLSearchParams(window.location.search);
+  const studentIdFromUrl = urlParams.get('studentId');
+  
   // Force reset loading state on component mount
   useEffect(() => {
     setGeneratingLesson(false);
@@ -156,7 +160,8 @@ export default function LessonGeneratorPage() {
             <div className="max-w-3xl mx-auto">
               <LessonForm 
                 students={students} 
-                onSubmit={handleGenerateLesson} 
+                onSubmit={handleGenerateLesson}
+                initialStudentId={studentIdFromUrl || undefined}
               />
             </div>
           </div>
