@@ -1416,6 +1416,17 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
               section.examples = validatedExamples;
             }
           }
+          
+          // Validate reading text for grammar errors
+          if (section.type === 'reading' && section.paragraphs && Array.isArray(section.paragraphs)) {
+            console.log('Validating reading text for grammar correctness...');
+            const validatedParagraphs = await this.validateReadingTextGrammar(
+              section.paragraphs,
+              params.cefrLevel,
+              params.topic
+            );
+            section.paragraphs = validatedParagraphs;
+          }
         }
       }
       
@@ -1424,6 +1435,92 @@ Ensure the entire output is a single, valid JSON object starting with { and endi
     } catch (error) {
       console.error('Error in quality control validation for Gemini:', error);
       return content; // Return original content if validation fails
+    }
+  }
+
+  /**
+   * Validate reading text paragraphs for grammar correctness using AI
+   */
+  private async validateReadingTextGrammar(paragraphs: string[], cefrLevel: string, topic: string): Promise<string[]> {
+    try {
+      const validationPrompt = `You are a grammar quality control expert for ESL lesson content.
+
+CRITICAL TASK: Review these reading text paragraphs and ensure they are grammatically PERFECT. Fix any grammar errors while maintaining the meaning and appropriate CEFR level.
+
+CEFR LEVEL: ${cefrLevel}
+LESSON TOPIC: ${topic}
+PARAGRAPHS TO CHECK: ${JSON.stringify(paragraphs)}
+
+VALIDATION CRITERIA (ALL must be met):
+1. **PERFECT GRAMMAR**: Every sentence must be grammatically correct
+2. **VERB FORMS**: Correct tense, aspect, and agreement (e.g., "is imagining" not "is imagine")
+3. **SUBJECT-VERB AGREEMENT**: Singular/plural subjects match their verbs
+4. **ARTICLE USAGE**: Correct use of a/an/the
+5. **PREPOSITIONS**: Appropriate prepositions in context
+6. **WORD ORDER**: Standard English word order maintained
+7. **LEVEL APPROPRIATENESS**: Language complexity matches ${cefrLevel} level
+
+COMMON GRAMMAR ERRORS TO FIX:
+❌ "She is imagine" → ✅ "She is imagining" (incorrect verb form)
+❌ "He like pizza" → ✅ "He likes pizza" (subject-verb agreement)
+❌ "They was happy" → ✅ "They were happy" (verb agreement)
+❌ "I go to school yesterday" → ✅ "I went to school yesterday" (tense)
+❌ "She is very good in math" → ✅ "She is very good at math" (preposition)
+
+IMPORTANT: 
+- Preserve the MEANING and VOCABULARY of the original text
+- Keep sentences at the appropriate ${cefrLevel} complexity level
+- Only fix grammar - don't rewrite content or add new information
+- Maintain bold markdown formatting for vocabulary words (e.g., **achieve**)
+
+Return ONLY a JSON array of corrected paragraphs as strings. Each paragraph must be grammatically perfect.`;
+
+      const validationRequestData = {
+        model: 'google/gemini-1.5-flash',
+        messages: [
+          {
+            role: 'user',
+            content: validationPrompt
+          }
+        ],
+        temperature: 0.1,
+        max_tokens: 3000
+      };
+
+      const result: AxiosResponse = await axios.post(
+        `${this.baseURL}/chat/completions`,
+        validationRequestData,
+        {
+          headers: {
+            'Authorization': `Bearer ${this.apiKey}`,
+            'Content-Type': 'application/json',
+            'HTTP-Referer': 'https://planwiseesl.com',
+            'X-Title': 'PlanwiseESL'
+          },
+          timeout: 30000
+        }
+      );
+
+      const text = result.data.choices[0]?.message?.content;
+
+      try {
+        let cleanedContent = text.trim();
+        if (cleanedContent.startsWith('```json')) {
+          cleanedContent = cleanedContent.replace(/```json\s*/g, '').replace(/```\s*$/g, '').trim();
+        } else if (cleanedContent.startsWith('```')) {
+          cleanedContent = cleanedContent.replace(/```\s*/g, '').replace(/```\s*$/g, '').trim();
+        }
+
+        const validatedParagraphs = JSON.parse(cleanedContent);
+        console.log('Successfully validated reading text grammar using AI');
+        return Array.isArray(validatedParagraphs) ? validatedParagraphs : paragraphs;
+      } catch (parseError) {
+        console.error('Error parsing grammar validation response, using original paragraphs');
+        return paragraphs;
+      }
+    } catch (error) {
+      console.error('Error validating reading text grammar:', error);
+      return paragraphs;
     }
   }
 
