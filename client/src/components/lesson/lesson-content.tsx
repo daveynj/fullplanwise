@@ -48,6 +48,7 @@ import { AudioPlayer } from "@/components/shared/audio-player";
 import { handleMessageWithAPI } from '@/lib/api-helpers';
 import { DiscussionSection } from './discussion-section';
 import { SentenceFramesSection } from './sentence-frames-section';
+import { PedagogicalSentenceFramesSection } from './pedagogical-sentence-frames';
 import { ReadingSection } from './reading-section';
 import { SectionHeader } from './shared/section-header';
 import { InteractiveClozeSection } from './interactive-cloze-section';
@@ -2073,7 +2074,10 @@ export function LessonContent({ content }: LessonContentProps) {
           // Create a properly formatted section for rendering
           const formattedSection = {
             type: 'sentenceFrames',
+            version: sentenceFramesData.version,
             title: sentenceFramesData.title || 'Sentence Frames',
+            introduction: sentenceFramesData.introduction,
+            pedagogicalFrames: sentenceFramesData.pedagogicalFrames,
             frames: Array.isArray(sentenceFramesData.frames) 
               ? sentenceFramesData.frames 
               : sentenceFramesData.content && typeof sentenceFramesData.content === 'object'
@@ -2081,7 +2085,12 @@ export function LessonContent({ content }: LessonContentProps) {
                 : []
           };
           
-          return <SentenceFramesSection section={formattedSection} />;
+          // Detect version and use appropriate component
+          if (sentenceFramesData.version === 'v2_pedagogical' && sentenceFramesData.pedagogicalFrames) {
+            return <PedagogicalSentenceFramesSection section={formattedSection} />;
+          } else {
+            return <SentenceFramesSection section={formattedSection} />;
+          }
         })()
       )
     },
