@@ -23,7 +23,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { StudentForm } from "@/components/student/student-form";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, BookOpen, Edit, ArrowLeft, Plus, User, AlertTriangle, LogOut } from "lucide-react";
+import { Loader2, BookOpen, Edit, ArrowLeft, Plus, User, AlertTriangle, LogOut, BookMarked, Library } from "lucide-react";
 import { Student, Lesson } from "@shared/schema";
 import { useAuth } from "@/hooks/use-auth";
 
@@ -48,12 +48,22 @@ export default function StudentDetailPage() {
     retry: false,
   });
   
-  // Fetch student's lessons
+  // Fetch student's lessons (from student-lesson associations)
   const { 
-    data: lessons = [],
+    data: studentLessons = [],
     isLoading: isLessonsLoading
   } = useQuery({
-    queryKey: [`/api/lessons/student/${studentId}`],
+    queryKey: [`/api/students/${studentId}/lessons`],
+    enabled: !!studentId,
+    retry: false,
+  });
+  
+  // Fetch student's vocabulary
+  const { 
+    data: vocabulary = [],
+    isLoading: isVocabularyLoading
+  } = useQuery({
+    queryKey: [`/api/students/${studentId}/vocabulary`],
     enabled: !!studentId,
     retry: false,
   });
@@ -85,15 +95,15 @@ export default function StudentDetailPage() {
   // Unassign lesson mutation
   const unassignLessonMutation = useMutation({
     mutationFn: async (lessonId: number) => {
-      await apiRequest("PUT", `/api/lessons/${lessonId}/unassign`);
+      await apiRequest("DELETE", `/api/students/${studentId}/lessons/${lessonId}`);
     },
     onSuccess: (_, lessonId) => {
       toast({
         title: "Lesson Unassigned",
-        description: `Lesson #${lessonId} has been removed from this student's profile.`,
+        description: `Lesson has been removed from this student's profile.`,
       });
-      queryClient.invalidateQueries({ queryKey: [`/api/lessons/student/${studentId}`] });
-      queryClient.invalidateQueries({ queryKey: ["/api/lessons"] }); 
+      queryClient.invalidateQueries({ queryKey: [`/api/students/${studentId}/lessons`] });
+      queryClient.invalidateQueries({ queryKey: [`/api/students/${studentId}/vocabulary`] });
       setIsUnassignDialogOpen(false);
       setLessonToUnassign(null);
     },
@@ -276,11 +286,14 @@ export default function StudentDetailPage() {
             {student && (
               <Tabs value={activeTab} onValueChange={setActiveTab}>
                 <TabsList className="mb-6">
-                  <TabsTrigger value="info" className="text-base px-6">
+                  <TabsTrigger value="info" className="text-base px-6" data-testid="tab-student-info">
                     <User className="mr-2 h-4 w-4" /> Student Info
                   </TabsTrigger>
-                  <TabsTrigger value="lessons" className="text-base px-6">
-                    <BookOpen className="mr-2 h-4 w-4" /> Lesson History
+                  <TabsTrigger value="lessons" className="text-base px-6" data-testid="tab-lessons">
+                    <BookOpen className="mr-2 h-4 w-4" /> Lessons
+                  </TabsTrigger>
+                  <TabsTrigger value="vocabulary" className="text-base px-6" data-testid="tab-vocabulary">
+                    <BookMarked className="mr-2 h-4 w-4" /> Vocabulary
                   </TabsTrigger>
                 </TabsList>
                 
@@ -353,40 +366,43 @@ export default function StudentDetailPage() {
                         <div className="flex justify-center py-8">
                           <Loader2 className="h-8 w-8 animate-spin text-primary" />
                         </div>
-                      ) : lessons.length > 0 ? (
+                      ) : studentLessons.length > 0 ? (
                         <div className="space-y-4">
-                          {lessons.map((lesson: any) => (
-                            <div key={lesson.id} className="flex items-center p-4 bg-gray-50 rounded-lg">
-                              <div className="bg-primary/10 p-2 rounded-lg mr-4">
-                                <BookOpen className="h-6 w-6 text-primary" />
-                              </div>
-                              <div className="flex-1">
-                                <h4 className="font-semibold">{lesson.title}</h4>
-                                <div className="flex items-center mt-1">
-                                  <Badge variant="outline" className="mr-2 bg-blue-100 text-blue-800">
-                                    CEFR {lesson.cefrLevel}
-                                  </Badge>
-                                  <span className="text-sm text-gray-500">
-                                    {formatDate(lesson.createdAt)}
-                                  </span>
+                          {studentLessons.map((sl: any) => {
+                            const lesson = sl.lesson;
+                            return (
+                              <div key={lesson.id} className="flex items-center p-4 bg-gray-50 rounded-lg">
+                                <div className="bg-primary/10 p-2 rounded-lg mr-4">
+                                  <BookOpen className="h-6 w-6 text-primary" />
+                                </div>
+                                <div className="flex-1">
+                                  <h4 className="font-semibold">{lesson.title}</h4>
+                                  <div className="flex items-center mt-1">
+                                    <Badge variant="outline" className="mr-2 bg-blue-100 text-blue-800">
+                                      CEFR {lesson.cefrLevel}
+                                    </Badge>
+                                    <span className="text-sm text-gray-500">
+                                      {formatDate(lesson.createdAt)}
+                                    </span>
+                                  </div>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <Link href={`/history/${lesson.id}`}>
+                                    <Button variant="outline" size="sm">View</Button>
+                                  </Link>
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm" 
+                                    className="text-orange-600 border-orange-200 hover:bg-orange-100 hover:text-orange-700"
+                                    onClick={() => handleUnassignLesson(lesson as Lesson)}
+                                    disabled={unassignLessonMutation.isPending}
+                                  >
+                                    <LogOut className="mr-1 h-4 w-4" /> Unassign
+                                  </Button>
                                 </div>
                               </div>
-                              <div className="flex items-center space-x-2">
-                                <Link href={`/history/${lesson.id}`}>
-                                  <Button variant="outline" size="sm">View</Button>
-                                </Link>
-                                <Button 
-                                  variant="outline" 
-                                  size="sm" 
-                                  className="text-orange-600 border-orange-200 hover:bg-orange-100 hover:text-orange-700"
-                                  onClick={() => handleUnassignLesson(lesson as Lesson)}
-                                  disabled={unassignLessonMutation.isPending}
-                                >
-                                  <LogOut className="mr-1 h-4 w-4" /> Unassign
-                                </Button>
-                              </div>
-                            </div>
-                          ))}
+                            );
+                          })}
                         </div>
                       ) : (
                         <div className="text-center py-12">
@@ -398,6 +414,60 @@ export default function StudentDetailPage() {
                           <Link href={`/generate?studentId=${student.id}`}>
                             <Button className="bg-primary hover:bg-primary/90">
                               <Plus className="mr-2 h-4 w-4" /> Create First Lesson
+                            </Button>
+                          </Link>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+                
+                {/* Vocabulary Tab */}
+                <TabsContent value="vocabulary" className="mt-0">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="font-nunito">Learned Vocabulary</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      {isVocabularyLoading ? (
+                        <div className="flex justify-center py-8">
+                          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                        </div>
+                      ) : vocabulary.length > 0 ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {vocabulary.map((vocab: any) => (
+                            <div key={vocab.id} className="p-4 bg-gray-50 rounded-lg border border-gray-200" data-testid={`vocabulary-${vocab.id}`}>
+                              <div className="flex items-start justify-between">
+                                <div className="flex-1">
+                                  <h4 className="font-semibold text-lg" data-testid={`vocab-word-${vocab.id}`}>{vocab.word}</h4>
+                                  {vocab.definition && (
+                                    <p className="text-gray-600 mt-1" data-testid={`vocab-definition-${vocab.id}`}>{vocab.definition}</p>
+                                  )}
+                                  <div className="flex items-center gap-2 mt-2">
+                                    {vocab.cefrLevel && (
+                                      <Badge variant="outline" className="text-xs bg-purple-100 text-purple-800">
+                                        {vocab.cefrLevel}
+                                      </Badge>
+                                    )}
+                                    <span className="text-xs text-gray-500">
+                                      {formatDate(vocab.learnedAt)}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="text-center py-12">
+                          <BookMarked className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+                          <h3 className="text-lg font-semibold mb-2">No vocabulary yet</h3>
+                          <p className="text-gray-500 mb-6">
+                            Vocabulary will appear here once lessons are assigned to this student.
+                          </p>
+                          <Link href={`/generate?studentId=${student.id}`}>
+                            <Button className="bg-primary hover:bg-primary/90">
+                              <Plus className="mr-2 h-4 w-4" /> Create Lesson
                             </Button>
                           </Link>
                         </div>
