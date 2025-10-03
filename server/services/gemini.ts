@@ -1124,109 +1124,149 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
         {"question": "Complete Question 5?", "options": ["True", "False"], "answer": "False", "correctAnswer": "False", "explanation": "Complete explanation..."}
       ]
     },
-    // SENTENCE FRAMES SECTION - GENERATE CUSTOM CONTENT FOR THE TOPIC "${params.topic}"
-    // CRITICAL: Replace ALL placeholder text with REAL content. Generate actual examples, patterns, and teaching notes.
-    // Do NOT copy the template literally - generate real sentences about ${params.topic}.
+    // PEDAGOGICAL SENTENCE FRAMES (v2) - Research-Backed Tiered Scaffolding
+    // Following best practices: tiered by proficiency, purpose-driven, with model responses
+    // Based on Vygotsky's ZPD and Gradual Release of Responsibility model
     {
-      "type": "sentenceFrames", 
-      "title": "REPLACE WITH: engaging title about ${params.topic}",
-      "introduction": "REPLACE WITH: how these patterns help students discuss ${params.topic}",
-      "frames": [
+      "type": "sentenceFrames",
+      "version": "v2_pedagogical", 
+      "title": "Structured Language Practice for ${params.topic}",
+      "introduction": "These scaffolded sentence frames help you express ideas about ${params.topic} with increasing complexity. Choose the level that challenges you appropriately.",
+      "pedagogicalFrames": [
         {
-          "patternTemplate": "REPLACE WITH: sentence pattern using _____ blanks for ${params.topic}",
-          "languageFunction": "REPLACE WITH: communication purpose for ${params.topic}",
-          "title": "REPLACE WITH: clear pattern title for ${params.topic}",
-          "level": "${params.cefrLevel.toLowerCase()}",
+          "languageFunction": "Describing and Explaining ${params.topic}",
           "grammarFocus": [
-            "REPLACE WITH: grammar points students will practice",
-            "REPLACE WITH: additional grammar features",
-            "REPLACE WITH: language structures to highlight"
+            "Subject-verb agreement",
+            "Because-clauses for causation", 
+            "Present simple for general truths"
           ],
-          "structureComponents": [
-            {
-              "label": "Opinion Verb",
-              "description": "A verb that expresses your feeling or opinion",
-              "examples": ["like", "love", "enjoy", "prefer", "appreciate", "admire"],
-              "inSentenceExample": "I [Opinion Verb] ${params.topic} because..."
+          "tieredFrames": {
+            "emerging": {
+              "frame": "${params.topic} is _____.",
+              "description": "Simple description - state basic facts or observations"
             },
-            {
-              "label": "Reason", 
-              "description": "The explanation for your opinion",
-              "examples": ["it makes me happy", "it's interesting", "it's important", "it helps people", "it's beautiful", "it's useful"],
-              "inSentenceExample": "...because [Reason]."
+            "developing": {
+              "frame": "I think ${params.topic} is _____ because _____.",
+              "description": "Add your opinion with a reason - connect ideas using 'because'"
+            },
+            "expanding": {
+              "frame": "I can infer that ${params.topic} is _____, since _____.",
+              "description": "Make inferences and justify - use 'since' to show sophisticated reasoning"
             }
-          ],
-          "examples": [
-            {
-              "completeSentence": "I love ${params.topic} because it makes me happy.",
-              "breakdown": {
-                "Opinion Verb": "love",
-                "Reason": "it makes me happy"
-              }
-            },
-            {
-              "completeSentence": "I appreciate ${params.topic} because it's important.", 
-              "breakdown": {
-                "Opinion Verb": "appreciate",
-                "Reason": "it's important"
-              }
-            },
-            {
-              "completeSentence": "I enjoy ${params.topic} because it's interesting.",
-              "breakdown": {
-                "Opinion Verb": "enjoy", 
-                "Reason": "it's interesting"
-              }
-            }
-          ],
-          "teachingNotes": [
-            "Start with familiar opinion verbs like 'like' and 'love'",
-            "Help students give specific reasons, not just 'it's good'", 
-            "Practice with topics students care about personally"
-          ]${params.cefrLevel === 'A1' || params.cefrLevel === 'A2' || params.cefrLevel === 'B1' ? `,
-          "lowerLevelScaffolding": {
-            "sentenceWorkshop": [
-              {
-                "name": "Building Step by Step",
-                "steps": [
-                  {
-                    "level": "word",
-                    "example": "[simple starting word]",
-                    "explanation": "[explain first step]"
-                  },
-                  {
-                    "level": "phrase", 
-                    "example": "[simple phrase using the word]",
-                    "explanation": "[explain second step]"
-                  },
-                  {
-                    "level": "sentence",
-                    "example": "[complete simple sentence about '${params.topic}']",
-                    "explanation": "[explain final step]"
-                  }
-                ],
-                "teachingNotes": "[guidance for teachers using this scaffolding]"
-              }
+          },
+          "modelResponses": {
+            "emerging": [
+              "${params.topic.charAt(0).toUpperCase() + params.topic.slice(1)} is interesting.",
+              "${params.topic.charAt(0).toUpperCase() + params.topic.slice(1)} is important to many people.",
+              "${params.topic.charAt(0).toUpperCase() + params.topic.slice(1)} is common in modern life."
             ],
-            "patternTrainer": {
-              "pattern": "[simplified version of the main pattern]",
-              "title": "Pattern Practice Tool",
-              "scaffolding": {
-                "component1": ["[word1]", "[word2]", "[word3]", "[word4]", "[word5]", "[word6]", "[word7]"],
-                "component2": ["[word1]", "[word2]", "[word3]", "[word4]", "[word5]", "[word6]", "[word7]"],
-                "component3": ["[phrase1]", "[phrase2]", "[phrase3]", "[phrase4]"]
-              },
-              "examples": [
-                "[Example sentence using pattern trainer words about '${params.topic}']",
-                "[Another example sentence using pattern trainer words about '${params.topic}']"
-              ],
-              "instructions": [
-                "[Step 1 instruction for students]",
-                "[Step 2 instruction for students]", 
-                "[Step 3 instruction for students]"
-              ]
+            "developing": [
+              "I think ${params.topic} is fascinating because it affects our daily routines.",
+              "I believe ${params.topic} is valuable because it connects people across distances.",
+              "I think ${params.topic} is complex because it involves many different factors."
+            ],
+            "expanding": [
+              "I can infer that ${params.topic} is transformative, since it has changed how we communicate with each other.",
+              "I would argue that ${params.topic} is essential in contemporary society, since most professional work now depends on it.",
+              "One could deduce that ${params.topic} is a double-edged phenomenon, since it brings both benefits and challenges to users."
+            ]
+          },
+          "teachingNotes": {
+            "modelingTips": "Model each tier explicitly. Show students how the sentence structure becomes more complex at each level. Think aloud about your word choices and how you build the reasoning.",
+            "guidedPractice": "Practice collaboratively in pairs. Have students try the emerging frame first, then progress to developing. Use 'Turn and Talk' to rehearse before sharing with the class.",
+            "independentUse": "Students choose their level of support. Post frames on the board for reference. Encourage students to attempt the expanding frame even if challenging - scaffold as needed.",
+            "fadingStrategy": "Gradually make frames optional rather than required. Track when students can produce similar structures independently. Withdraw scaffold when students consistently succeed without it."
+          }
+        },
+        {
+          "languageFunction": "Comparing Aspects of ${params.topic}",
+          "grammarFocus": [
+            "Comparative structures",
+            "Transition words (like, however, whereas)",
+            "Parallel structure"
+          ],
+          "tieredFrames": {
+            "emerging": {
+              "frame": "_____ and _____ both have _____.",
+              "description": "Identify one simple similarity between two things"
+            },
+            "developing": {
+              "frame": "Like _____, _____ also contains _____. However, _____ differs in that _____.",
+              "description": "Show both similarity and difference using transition words"
+            },
+            "expanding": {
+              "frame": "While _____ and _____ share _____, the key distinction lies in _____.",
+              "description": "Present nuanced comparison with sophisticated subordination"
             }
-          }` : ''}
+          },
+          "modelResponses": {
+            "emerging": [
+              "Traditional methods and modern approaches both have advantages.",
+              "${params.topic.charAt(0).toUpperCase() + params.topic.slice(1)} and older systems both have users.",
+              "Online and offline versions both have their place."
+            ],
+            "developing": [
+              "Like traditional methods, modern ${params.topic} also contains core principles. However, modern approaches differ in that they incorporate technology.",
+              "Like earlier versions, current ${params.topic} also contains the same basic purpose. However, it differs in that it reaches a global audience.",
+              "Like face-to-face interaction, ${params.topic} also contains elements of human connection. However, it differs in that it removes physical presence."
+            ],
+            "expanding": [
+              "While traditional and digital forms of ${params.topic} share the fundamental goal of communication, the key distinction lies in the immediacy and scale of reach that digital platforms provide.",
+              "While ${params.topic} and conventional methods share certain benefits, the key distinction lies in how each approach manages time and accessibility constraints.",
+              "While both emerging and established aspects of ${params.topic} share similar user bases, the key distinction lies in the level of technological literacy required for engagement."
+            ]
+          },
+          "teachingNotes": {
+            "modelingTips": "Display examples side by side. Highlight the transition words and show how sentence complexity increases. Point out how 'while' creates subordination in the expanding frame.",
+            "guidedPractice": "Create a Venn diagram together as a class about ${params.topic}. Use the visual to practice the frames orally before writing. Partners practice filling frames with their own ideas.",
+            "independentUse": "Students write comparisons independently, choosing their frame level. Provide sentence starters on sticky notes or in notebooks for easy reference during writing tasks.",
+            "fadingStrategy": "First make frame selection optional. Then provide only the transition words. Finally, remove all support and monitor if students maintain the comparison structure independently."
+          }
+        },
+        {
+          "languageFunction": "Explaining Processes Related to ${params.topic}",
+          "grammarFocus": [
+            "Sequence markers (first, then, finally)",
+            "Purpose clauses (in order to)",
+            "Past tense for completed actions"
+          ],
+          "tieredFrames": {
+            "emerging": {
+              "frame": "First, I _____. Then, I _____. Finally, I _____.",
+              "description": "List steps in simple sequence"
+            },
+            "developing": {
+              "frame": "I solved this by _____. After that, I _____.",
+              "description": "Explain your method with temporal connections"
+            },
+            "expanding": {
+              "frame": "My first step was to _____. Then I _____, in order to _____. To achieve the result, I _____.",
+              "description": "Articulate complex process with purpose clauses"
+            }
+          },
+          "modelResponses": {
+            "emerging": [
+              "First, I open the application. Then, I enter my information. Finally, I click submit.",
+              "First, I read the instructions. Then, I gather materials. Finally, I complete the task.",
+              "First, I check the requirements. Then, I prepare my response. Finally, I review everything."
+            ],
+            "developing": [
+              "I solved this by researching ${params.topic} online. After that, I compared different perspectives.",
+              "I approached ${params.topic} by starting with basic concepts. After that, I explored more advanced applications.",
+              "I engaged with ${params.topic} by observing real examples. After that, I practiced applying the principles."
+            ],
+            "expanding": [
+              "My first step was to identify the core components of ${params.topic}. Then I analyzed each element carefully, in order to understand their relationships. To achieve a comprehensive understanding, I synthesized the information into a coherent framework.",
+              "My initial approach was to examine how ${params.topic} functions in practice. Then I studied the underlying principles, in order to grasp the theoretical foundation. To reach my conclusion, I integrated both practical and theoretical perspectives.",
+              "My first step was to gather diverse sources about ${params.topic}. Then I evaluated their credibility, in order to ensure reliable information. To form my analysis, I compared the key findings and drew evidence-based conclusions."
+            ]
+          },
+          "teachingNotes": {
+            "modelingTips": "Model the process explanation while performing an action. Use gestures to show sequence. Emphasize how 'in order to' adds purpose in the expanding frame.",
+            "guidedPractice": "Students work in groups to explain a simple process about ${params.topic} using the frames. Each group member uses a different tier. Groups present to class.",
+            "independentUse": "Students write individual process explanations. Frames remain visible for reference but become optional. Encourage trying the expanding frame even if it's challenging.",
+            "fadingStrategy": "Remove frames but keep sequence markers visible. Then remove markers too. Monitor if students independently use temporal/purpose language when explaining processes."
+          }
         }
       ]
     },
