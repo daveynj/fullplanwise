@@ -361,25 +361,25 @@ Create detailed, scenario-based image prompts for each discussion question that 
 
 **REQUIRED ELEMENTS:**
 1. **Specific Scenario**: Concrete situation related to the discussion question and "${params.topic}"
-2. **Character Context**: Diverse people in a situation that prompts the question being asked
+2. **Character Context**: People in a situation that prompts the question being asked
 3. **Visual Narrative**: Clear story or situation that students can relate to
 4. **Emotional/Social Context**: Mood, relationships, or social dynamics relevant to the question
 5. **Environmental Details**: Setting details that enrich the scenario
 6. **Style Specification**: "Realistic illustration, natural lighting, engaging composition, clear storytelling"
 
 **FORMULA:**
-"[Specific scenario from paragraphContext]. [Diverse characters in situation]. [Action or moment that embodies the question]. [Environmental and emotional context]. Realistic illustration, natural lighting, engaging composition, clear storytelling. No text visible."
+"[Specific scenario from paragraphContext]. [Characters in situation]. [Action or moment that embodies the question]. [Environmental and emotional context]. Realistic illustration, natural lighting, engaging composition, clear storytelling. No text visible."
 
 **EXAMPLES:**
 
 For question "How do you balance work and personal life?":
-"Modern city apartment at evening. A diverse professional sits at laptop with work documents, while family photos and dinner plates sit nearby untouched. Person looking thoughtfully between work screen and personal items, showing the tension between responsibilities. Warm indoor lighting creating contrast between work area and personal space. Realistic illustration, natural lighting, engaging composition, clear storytelling. No text visible."
+"Modern city apartment at evening. A professional sits at laptop with work documents, while family photos and dinner plates sit nearby untouched. Person looking thoughtfully between work screen and personal items, showing the tension between responsibilities. Warm indoor lighting creating contrast between work area and personal space. Realistic illustration, natural lighting, engaging composition, clear storytelling. No text visible."
 
 For question "What makes a good team leader?":
-"Contemporary office workspace during team meeting. A diverse leader facilitating discussion, making eye contact with team members, gesturing inclusively. Team members of various backgrounds actively engaged, some taking notes, others contributing ideas. Collaborative atmosphere with open body language and positive energy. Realistic illustration, natural lighting, engaging composition, clear storytelling. No text visible."
+"Contemporary office workspace during team meeting. A leader facilitating discussion, making eye contact with team members, gesturing inclusively. Team members actively engaged, some taking notes, others contributing ideas. Collaborative atmosphere with open body language and positive energy. Realistic illustration, natural lighting, engaging composition, clear storytelling. No text visible."
 
 For question "How has technology changed communication?":
-"Split scene showing contrast. Left side: diverse family members each absorbed in their phones, physically together but disconnected. Right side: same family using video call to connect with distant relatives, showing engaged interaction. Modern home setting highlighting both isolation and connection technology brings. Realistic illustration, natural lighting, engaging composition, clear storytelling. No text visible."
+"Split scene showing contrast. Left side: family members each absorbed in their phones, physically together but disconnected. Right side: same family using video call to connect with distant relatives, showing engaged interaction. Modern home setting highlighting both isolation and connection technology brings. Realistic illustration, natural lighting, engaging composition, clear storytelling. No text visible."
 
 STEP 0: FOUNDATION ANALYSIS FOR ${params.cefrLevel} LEVEL
 
@@ -737,19 +737,18 @@ Create detailed, contextual image prompts that help ${params.cefrLevel} students
 
 **REQUIRED ELEMENTS:**
 1. **Core Scene**: Specific setting/situation related to "${params.topic}"
-2. **Characters**: Diverse people (if applicable) performing the action/showing the concept
+2. **Characters**: People (if applicable) performing the action/showing the concept
 3. **Action/State**: Clear visual demonstration of the word meaning
 4. **Context Clues**: Environmental details that reinforce understanding
 5. **Visual Style**: "Realistic educational illustration, warm natural lighting, clear composition"
-6. **Cultural Sensitivity**: Represent diversity appropriately for ${params.cefrLevel} learners
 
 **FORMULA:**
-"[Specific setting related to ${params.topic}]. [Diverse character(s)] [performing action/showing state]. [Environmental context clues]. [Mood/atmosphere]. Realistic educational illustration, warm natural lighting, clear focal point. No text visible."
+"[Specific setting related to ${params.topic}]. [Character(s)] [performing action/showing state]. [Environmental context clues]. [Mood/atmosphere]. Realistic educational illustration, warm natural lighting, clear focal point. No text visible."
 
 **EXAMPLES FOR ${params.topic}:**
-- "negotiate" → "Modern office meeting room with diverse business professionals around a conference table. A woman gesturing thoughtfully while presenting ideas, others listening attentively with documents spread out. Professional atmosphere showing collaboration and discussion. Realistic educational illustration, warm natural lighting, clear focal point. No text visible."
+- "negotiate" → "Modern office meeting room with business professionals around a conference table. A woman gesturing thoughtfully while presenting ideas, others listening attentively with documents spread out. Professional atmosphere showing collaboration and discussion. Realistic educational illustration, warm natural lighting, clear focal point. No text visible."
 
-- "excited" → "Bright classroom setting where a diverse group of students just received good news. A young person with wide eyes and big smile, hands raised in joy, surrounded by happy classmates. Energy and positive emotion clearly visible through body language and expressions. Realistic educational illustration, warm natural lighting, clear focal point. No text visible."
+- "excited" → "Bright classroom setting where a group of students just received good news. A young person with wide eyes and big smile, hands raised in joy, surrounded by happy classmates. Energy and positive emotion clearly visible through body language and expressions. Realistic educational illustration, warm natural lighting, clear focal point. No text visible."
 
 - "compare" → "Shopping context showing a person examining two similar products side by side. Clear contrast between the items, person studying labels and features carefully. Clean store environment with good lighting highlighting the comparison process. Realistic educational illustration, warm natural lighting, clear focal point. No text visible."
 
@@ -794,7 +793,7 @@ CULTURAL ADAPTABILITY APPROACH:
 First, analyze cultural learning considerations for ${params.cefrLevel} level:
 - Research how cultural awareness is developed at different language proficiency levels
 - Identify appropriate cultural content complexity for ${params.cefrLevel} level
-- Determine how to present culturally diverse perspectives at this level
+- Determine how to present multiple cultural perspectives at this level
 - Consider potential cultural sensitivities related to the lesson topic "${params.topic}"
 - Analyze how to balance cultural specificity with universal accessibility
 
@@ -804,7 +803,7 @@ Based on your analysis, ensure your lesson content:
 - Offers multiple cultural perspectives when relevant
 - Avoids culturally inappropriate content for global classroom use
 - Creates authentic but accessible cultural learning opportunities
-- Respects diverse backgrounds while expanding cultural awareness
+- Respects different backgrounds while expanding cultural awareness
 
 STEP 5: ACTIVITY & QUESTION GENERATION
 
@@ -1711,7 +1710,7 @@ If an example is a simple string, return a string. If it's an object with "compl
             // Generate enhanced fallback imagePrompt if missing
             if (!question.imagePrompt && question.question) {
               const contextSnippet = question.paragraphContext ? question.paragraphContext.substring(0, 150) : question.question;
-              question.imagePrompt = `A realistic illustration showing a scenario related to: "${question.question.substring(0, 100)}". Scene includes diverse people in a relatable situation that embodies this question. ${contextSnippet.includes('work') ? 'Professional setting' : contextSnippet.includes('school') || contextSnippet.includes('student') ? 'Educational environment' : contextSnippet.includes('family') || contextSnippet.includes('home') ? 'Home or family setting' : 'Contemporary setting'} with natural lighting and clear visual storytelling. Characters showing emotions or actions relevant to the topic. Realistic illustration, warm natural lighting, engaging composition. No text visible.`;
+              question.imagePrompt = `A realistic illustration showing a scenario related to: "${question.question.substring(0, 100)}". Scene includes people in a relatable situation that embodies this question. ${contextSnippet.includes('work') ? 'Professional setting' : contextSnippet.includes('school') || contextSnippet.includes('student') ? 'Educational environment' : contextSnippet.includes('family') || contextSnippet.includes('home') ? 'Home or family setting' : 'Contemporary setting'} with natural lighting and clear visual storytelling. Characters showing emotions or actions relevant to the topic. Realistic illustration, warm natural lighting, engaging composition. No text visible.`;
             }
             
             if (question.imagePrompt) {
