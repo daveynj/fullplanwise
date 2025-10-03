@@ -169,6 +169,91 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Student-Lesson Association Routes
+  app.post("/api/students/:id/lessons", ensureAuthenticated, async (req, res) => {
+    try {
+      const studentId = parseInt(req.params.id);
+      const { lessonId, notes } = req.body;
+      
+      const student = await storage.getStudent(studentId);
+      if (!student || student.teacherId !== req.user!.id) {
+        return res.status(403).json({ message: "Unauthorized" });
+      }
+      
+      const studentLesson = await storage.assignLessonToStudent(
+        studentId,
+        lessonId,
+        req.user!.id,
+        notes
+      );
+      res.json(studentLesson);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.get("/api/students/:id/lessons", ensureAuthenticated, async (req, res) => {
+    try {
+      const studentId = parseInt(req.params.id);
+      
+      const student = await storage.getStudent(studentId);
+      if (!student || student.teacherId !== req.user!.id) {
+        return res.status(403).json({ message: "Unauthorized" });
+      }
+      
+      const lessons = await storage.getStudentLessons(studentId);
+      res.json(lessons);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.delete("/api/students/:studentId/lessons/:lessonId", ensureAuthenticated, async (req, res) => {
+    try {
+      const studentId = parseInt(req.params.studentId);
+      const lessonId = parseInt(req.params.lessonId);
+      
+      const student = await storage.getStudent(studentId);
+      if (!student || student.teacherId !== req.user!.id) {
+        return res.status(403).json({ message: "Unauthorized" });
+      }
+      
+      await storage.removeStudentLesson(studentId, lessonId);
+      res.status(204).send();
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.get("/api/students/:id/vocabulary", ensureAuthenticated, async (req, res) => {
+    try {
+      const studentId = parseInt(req.params.id);
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
+      
+      const student = await storage.getStudent(studentId);
+      if (!student || student.teacherId !== req.user!.id) {
+        return res.status(403).json({ message: "Unauthorized" });
+      }
+      
+      const vocabulary = await storage.getStudentVocabulary(studentId, limit);
+      res.json(vocabulary);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.put("/api/students/lessons/:id/status", ensureAuthenticated, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { status } = req.body;
+      
+      const updated = await storage.updateStudentLessonStatus(id, status);
+      res.json(updated);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   // Lesson Routes
   app.get("/api/lessons", ensureAuthenticated, async (req, res) => {
     try {
