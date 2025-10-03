@@ -507,47 +507,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // TEST ENDPOINT FOR DEVELOPMENT ONLY - REMOVE IN PRODUCTION
-  app.post("/api/test/lessons/generate", async (req, res) => {
-    if (process.env.NODE_ENV === 'production') {
-      return res.status(404).json({ error: "Not found" });
-    }
-    
-    try {
-      console.log('TEST: Lesson generation request received:', req.body);
-      
-      const validatedData = lessonGenerateSchema.parse(req.body);
-      console.log('TEST: Starting lesson generation with Gemini...');
-      
-      // Generate the lesson using Gemini
-      const gemini = await getGeminiService();
-      const generatedLesson = await gemini.generateLesson(validatedData);
-      
-      if (!generatedLesson) {
-        console.error('TEST: Failed to generate lesson: No content returned');
-        return res.status(500).json({ error: "Failed to generate lesson content" });
-      }
-      
-      console.log('TEST: Lesson generated successfully');
-      res.json(generatedLesson);
-      
-    } catch (error: any) {
-      console.error('TEST: Error in lesson generation:', error);
-      
-      if (error.message?.includes('JSON parsing')) {
-        res.status(503).json({ 
-          error: "TEST: JSON parsing failed - this indicates our repair logic needs improvement",
-          details: error.message 
-        });
-      } else {
-        res.status(500).json({ 
-          error: "TEST: Error during lesson generation",
-          details: error.message || "Unknown error occurred"
-        });
-      }
-    }
-  });
-
   app.post("/api/lessons", ensureAuthenticated, async (req, res) => {
     try {
       const validatedData = insertLessonSchema.parse({

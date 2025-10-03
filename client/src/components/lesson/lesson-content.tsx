@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from "framer-motion";
 import { 
   Tabs, 
@@ -102,7 +102,7 @@ interface SectionDetails {
 
 export function LessonContent({ content }: LessonContentProps) {
   const [parsedContent, setParsedContent] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState<string>("");
+  const [activeTab, setActiveTab] = useState<string>(""); 
   const [location, setLocation] = useLocation();
   const [grammarSpotlightHidden, setGrammarSpotlightHidden] = useState<boolean>(false);
   
@@ -616,296 +616,19 @@ export function LessonContent({ content }: LessonContentProps) {
           orderedAvailableSections.push('notes');
       }
       
-      // Initial active tab is set in a dedicated effect after content is processed
+      if (orderedAvailableSections.length > 0 && !activeTab) { // Set only if not already set
+          console.log("Setting initial active tab to:", orderedAvailableSections[0]);
+          setActiveTab(orderedAvailableSections[0]);
+      }
       // --- END EDIT ---
     }
-  }, [content]);
+  }, [content, activeTab]);
   
-  const availableRenderTree = useMemo(() => {
-    if (!parsedContent) return [];
-    
-    // Helper function to check if a section type exists
-    const hasSectionType = (type: string): boolean => {
-      return parsedContent.sections.some((s: any) => s && s.type === type);
-    };
-    
-    // Creating the main render tree for the lesson
-    const renderTree = [
-      {
-        id: 'overview',
-        label: 'Warmup',
-        icon: <Compass className="h-5 w-5" />,
-        render: (
-          (() => {
-            return <OverviewSection />;
-          })()
-        )
-      },
-      {
-        id: 'warmup',
-        label: 'Vocab Intro',
-        icon: <Flame className="h-5 w-5" />,
-        render: (
-          (() => {
-            if (!(hasSectionType('warmup') || hasSectionType('warm-up'))) return null;
-            return <WarmupSection />;
-          })()
-        )
-      },
-      {
-        id: 'reading',
-        label: 'Reading',
-        icon: <BookOpen className="h-5 w-5" />,
-        render: (
-          (() => {
-            if (!hasSectionType('reading')) return null;
-            return <ReadingTabSection />;
-          })()
-        )
-      },
-      {
-        id: 'vocabulary',
-        label: 'Vocabulary',
-        icon: <Library className="h-5 w-5" />,
-        render: (
-          (() => {
-            if (!hasSectionType('vocabulary')) return null;
-            return <VocabularySection />;
-          })()
-        )
-      },
-      {
-        id: 'comprehension',
-        label: 'Comprehension',
-        icon: <CheckCircle className="h-5 w-5" />,
-        render: (
-          (() => {
-            if (!hasSectionType('comprehension')) return null;
-            return <ComprehensionExtractor content={parsedContent} />;
-          })()
-        )
-      },
-      {
-        id: 'sentenceFrames',
-        label: 'Sentence Frames',
-        icon: <AlignJustify className="h-5 w-5" />,
-        render: (
-          (() => {
-            const sentenceFramesData = findSection(['sentenceFrames']);
-            
-            if (!sentenceFramesData) {
-              return null;
-            }
-            
-            // Create a properly formatted section for rendering
-            const formattedSection = {
-              type: 'sentenceFrames',
-              title: sentenceFramesData.title || 'Sentence Frames',
-              frames: Array.isArray(sentenceFramesData.frames) 
-                ? sentenceFramesData.frames 
-                : sentenceFramesData.content && typeof sentenceFramesData.content === 'object'
-                  ? [sentenceFramesData.content]
-                  : []
-            };
-            
-            return <SentenceFramesSection section={formattedSection} />;
-          })()
-        )
-      },
-      {
-        id: 'grammar',
-        label: 'Grammar',
-        icon: <AlignLeft className="h-5 w-5" />,
-        render: (
-          (() => {
-            // If there's a Grammar Spotlight available, don't show this regular grammar section
-            if (content?.grammarSpotlight) {
-              return null;
-            }
-            
-            const grammarData = findSection(['grammar']);
-            if (!grammarData) {
-              return null;
-            }
-            
-            // Create a properly formatted section object if needed
-            const formattedSection = {
-              type: 'grammar',
-              title: grammarData.title || 'Grammar',
-              frames: Array.isArray(grammarData.frames) 
-                ? grammarData.frames 
-                : grammarData.content && typeof grammarData.content === 'object'
-                  ? [grammarData.content]
-                  : []
-            };
-            
-            return <SentenceFramesSection section={formattedSection} />;
-          })()
-        )
-      },
-      {
-        id: 'grammarSpotlight',
-        label: 'Grammar Spotlight',
-        icon: <Target className="h-5 w-5" />,
-        render: (
-          (() => {
-            if (!content?.grammarSpotlight) {
-              return null; // Don't show tab at all if no data
-            }
-            
-            if (grammarSpotlightHidden) {
-              return <div className="p-8 text-center">
-                <div className="bg-green-50 border border-green-200 rounded-lg p-6">
-                  <h3 className="text-green-800 font-semibold mb-2">Grammar Spotlight Completed!</h3>
-                  <p className="text-green-700 mb-4">You can continue with the rest of the lesson.</p>
-                  <Button
-                    variant="outline"
-                    onClick={() => setGrammarSpotlightHidden(false)}
-                    className="flex items-center gap-2 mx-auto"
-                  >
-                    <RotateCcw className="h-4 w-4" />
-                    Review Again
-                  </Button>
-                </div>
-              </div>;
-            }
-            
-            return (
-              <GrammarSpotlight 
-                grammarData={content.grammarSpotlight}
-                onSkip={() => {
-                  setGrammarSpotlightHidden(true);
-                }}
-                onComplete={() => {
-                  setGrammarSpotlightHidden(true);
-                }}
-              />
-            );
-          })()
-        )
-      },
-      {
-        id: 'cloze',
-        label: 'Fill in the Blanks',
-        icon: <Pencil className="h-5 w-5" />,
-        render: (
-          (() => {
-            if (!hasSectionType('cloze')) return null;
-            const clozeData = parsedContent.cloze || findSection(['cloze']);
-            if (!clozeData) return null;
-            return <InteractiveClozeSection 
-              title={clozeData.title || "Fill in the Blanks"} 
-              text={clozeData.text || ""} 
-              wordBank={clozeData.wordBank || []} 
-            />;
-          })()
-        )
-      },
-      {
-        id: 'sentenceUnscramble',
-        label: 'Sentence Unscramble',
-        icon: <Shuffle className="h-5 w-5" />,
-        render: (
-          (() => {
-            if (!hasSectionType('sentenceUnscramble')) return null;
-            const unscrambleData = parsedContent.sentenceUnscramble || findSection(['sentenceUnscramble']);
-            return <SentenceUnscrambleSection 
-              sentences={unscrambleData?.sentences || []}
-              title={unscrambleData?.title || "Sentence Unscramble"}
-            />;
-          })()
-        )
-      },
-      {
-        id: 'discussion',
-        label: 'Discussion',
-        icon: <MessageSquare className="h-5 w-5" />,
-        render: (
-          (() => {
-            const discussionData = findSection(['discussion']);
-            if (!discussionData) return null;
-            return <DiscussionSection section={discussionData} />;
-          })()
-        )
-      },
-      {
-        id: 'pronunciation',
-        label: 'Pronunciation',
-        icon: <Volume2 className="h-5 w-5" />,
-        render: (
-          (() => {
-            if (!hasSectionType('pronunciation')) return null;
-            return <div className="p-4">Pronunciation practice integrated in vocabulary warm-up</div>;
-          })()
-        )
-      },
-      {
-        id: 'quiz',
-        label: 'Quiz',
-        icon: <HelpCircle className="h-5 w-5" />,
-        render: (
-          (() => {
-            if (!hasSectionType('quiz')) return null;
-            return <QuizExtractor content={parsedContent} />;
-          })()
-        )
-      },
-      {
-        id: 'notes',
-        label: 'Teacher Notes',
-        icon: <FileText className="h-5 w-5" />,
-        render: (
-          (() => {
-            if (!hasSectionType('notes')) return null;
-            return <TeacherNotesSection />;
-          })()
-        )
-      }
-    ];
-    
-    return renderTree.filter(item => item.render !== null);
-  }, [parsedContent, content, grammarSpotlightHidden]);
-
-  // Initialize active tab once parsed content is available
-  useEffect(() => {
-    if (parsedContent && !activeTab) {
-      const firstTab = findFirstAvailableSection(parsedContent.sections);
-      setActiveTab(firstTab);
-    }
-  }, [parsedContent, activeTab]);
-
-  // Keep activeTab in sync with availableRenderTree
-  useEffect(() => {
-    if (!availableRenderTree || availableRenderTree.length === 0) return;
-    const isActiveTabValid = availableRenderTree.some(item => item.id === activeTab);
-    if (!isActiveTabValid) {
-      setActiveTab(availableRenderTree[0].id);
-    }
-  }, [availableRenderTree, activeTab]);
-
-  // Ensure initial active tab is set before any early returns to keep hook order stable
-  // Removed duplicate initial activeTab setter; initialization handled by earlier effect
-  
-  // Navigation logic using filtered tree
-  const currentIndex = availableRenderTree.findIndex(item => item.id === activeTab);
-  
-  const handlePrev = () => {
-    if (currentIndex > 0) {
-      setActiveTab(availableRenderTree[currentIndex - 1].id);
-    }
-  };
-  
-  const handleNext = () => {
-    if (currentIndex < availableRenderTree.length - 1) {
-      setActiveTab(availableRenderTree[currentIndex + 1].id);
-    }
-  };
-  
-  // If there's no parsed content yet, show a loading state
+  // Show loading state while parsing
   if (!parsedContent) {
     return (
-      <div className="flex justify-center items-center p-8">
-        <div className="w-8 h-8 border-2 border-t-primary border-primary/30 rounded-full animate-spin"></div>
+      <div className="text-center py-8">
+        <p className="text-gray-500">Loading lesson content...</p>
       </div>
     );
   }
@@ -1067,29 +790,55 @@ export function LessonContent({ content }: LessonContentProps) {
   };
   
   // Helper function to find a section by type with error handling
-  const findSection = (types: SectionType[]): any => {
-    if (!parsedContent || !parsedContent.sections) return null;
-    return parsedContent.sections.find((s: any) => types.includes(s.type));
-  };
+  const findSection = (type: SectionType | string) => {
+    try {
+      if (Array.isArray(parsedContent.sections)) {
+        // Find based on type, allowing for alternatives
+        const found = parsedContent.sections.find((section: any) => {
+          if (!section || typeof section !== 'object') return false;
+          if (type === 'warmup') return section.type === 'warmup' || section.type === 'warm-up';
+          if (type === 'sentenceFrames') return section.type === 'sentenceFrames' || section.type === 'grammar';
+          if (type === 'discussion') return section.type === 'discussion' || section.type === 'speaking';
+          if (type === 'quiz') return section.type === 'quiz' || section.type === 'assessment';
+          if (type === 'pronunciation') return section.type === 'pronunciation'; // Specifically check for pronunciation type
+          return section.type === type;
+        });
 
-  const findFirstAvailableSection = (sections: any[]): string => {
-    const orderedSectionTypes: SectionType[] = ["warmup", "warm-up", "vocabulary", "reading", "comprehension", "cloze", "sentenceUnscramble", "grammar", "grammarSpotlight", "speaking", "discussion", "quiz", "assessment"];
-    if (!sections || sections.length === 0) return orderedSectionTypes[0];
-    
-    for (const type of orderedSectionTypes) {
-      if (sections.some(s => s.type === type)) {
-        return type;
+        // Log if found
+        if (found) {
+           console.log(`[findSection] Found section for type '${type}':`, found);
+        } else {
+           console.log(`[findSection] No section found for type '${type}' in sections array.`);
+           // Check top-level for specific types if not found in array
+           if (type === 'cloze' && parsedContent.cloze) return { type: 'cloze', ...parsedContent.cloze };
+           if (type === 'sentenceUnscramble' && parsedContent.sentenceUnscramble) return { type: 'sentenceUnscramble', ...parsedContent.sentenceUnscramble };
+           if (type === 'pronunciation' && parsedContent.pronunciation) return { type: 'pronunciation', ...parsedContent.pronunciation }; // Check top-level pronunciation
+        }
+        return found;
+      } else {
+        console.warn('[findSection] parsedContent.sections is not an array');
+        // Check top-level for specific types if sections array is missing/invalid
+        if (type === 'cloze' && parsedContent.cloze) return { type: 'cloze', ...parsedContent.cloze };
+        if (type === 'sentenceUnscramble' && parsedContent.sentenceUnscramble) return { type: 'sentenceUnscramble', ...parsedContent.sentenceUnscramble };
+        if (type === 'pronunciation' && parsedContent.pronunciation) return { type: 'pronunciation', ...parsedContent.pronunciation }; // Check top-level pronunciation
+        return null;
       }
+    } catch (error) {
+      console.error(`[findSection] Error finding section type '${type}':`, error);
+      return null;
     }
-    return sections[0]?.type || orderedSectionTypes[0];
-  }
-
-  
+  };
 
   // Components for each section type
   const WarmupSection = () => {
-    const section = findSection(["warmup", "warm-up"]);
-    if (!section) return null;
+    // Try to find the warm-up section from multiple possible types/locations
+    const section = 
+      findSection("warmup") || 
+      findSection("warm-up") || 
+      findSection("sentenceFrames") || // Some AI responses use sentenceFrames for warm-up
+      parsedContent.sections[0]; // Last resort, use the first section
+    
+    if (!section) return <p>No warm-up content available</p>;
     
     console.log("Warm-up section attempt:", section);
 
@@ -1235,7 +984,6 @@ export function LessonContent({ content }: LessonContentProps) {
               onClick={goToPrevWord}
               className="p-1 text-amber-700 hover:bg-amber-100 rounded-full"
               aria-label="Previous vocabulary word"
-              data-testid="vocab-nav-previous"
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
@@ -1248,7 +996,6 @@ export function LessonContent({ content }: LessonContentProps) {
               onClick={goToNextWord}
               className="p-1 text-amber-700 hover:bg-amber-100 rounded-full"
               aria-label="Next vocabulary word"
-              data-testid="vocab-nav-next"
             >
               <ChevronRight className="h-5 w-5" />
             </button>
@@ -1603,13 +1350,13 @@ export function LessonContent({ content }: LessonContentProps) {
   };
 
   const ReadingTabSection = () => {
-    const section = findSection(['reading']);
+    const section = findSection('reading');
     // Use the imported ReadingSection component
     return <ReadingSection section={section} />;
   };
 
   const VocabularySection = () => {
-    const section = findSection(['vocabulary']);
+    const section = findSection('vocabulary');
     
     // Log raw vocabulary section data to examine its structure
     console.log("RAW VOCABULARY SECTION:", section);
@@ -1870,7 +1617,7 @@ export function LessonContent({ content }: LessonContentProps) {
   };
 
   const ComprehensionSection = () => {
-    const section = findSection(['comprehension']);
+    const section = findSection('comprehension');
     
     const [activeQuestion, setActiveQuestion] = useState(0);
     
@@ -1977,7 +1724,8 @@ export function LessonContent({ content }: LessonContentProps) {
     // --- Corrected Warm-up Question Fetching ---
     // Try to find the warm-up section from multiple possible types/locations
     const warmupSection = 
-      findSection(["warmup", "warm-up"]); 
+      findSection("warmup") || 
+      findSection("warm-up"); 
       // Removed sentenceFrames and first section fallback for clarity in overview
       
     let warmupQuestions: string[] = [];
@@ -2225,6 +1973,301 @@ export function LessonContent({ content }: LessonContentProps) {
   
   // Navigation logic will be updated after filtering
   
+  // Creating the main render tree for the lesson
+  const renderTree = [
+    {
+      id: 'overview',
+      label: 'Warmup',
+      icon: <Compass className="h-5 w-5" />,
+      render: <OverviewSection />
+    },
+    {
+      id: 'warmup',
+      label: 'Vocab Intro',
+      icon: <Flame className="h-5 w-5" />,
+      render: (
+        (() => {
+          if (!(hasSectionType('warmup') || hasSectionType('warm-up'))) return null;
+          return <WarmupSection />;
+        })()
+      )
+    },
+    {
+      id: 'reading',
+      label: 'Reading',
+      icon: <BookOpen className="h-5 w-5" />,
+      render: (
+        (() => {
+          if (!hasSectionType('reading')) return null;
+          return <ReadingTabSection />;
+        })()
+      )
+    },
+    {
+      id: 'vocabulary',
+      label: 'Vocabulary',
+      icon: <Library className="h-5 w-5" />,
+      render: (
+        (() => {
+          if (!hasSectionType('vocabulary')) return null;
+          return <VocabularySection />;
+        })()
+      )
+    },
+    {
+      id: 'comprehension',
+      label: 'Comprehension',
+      icon: <CheckCircle className="h-5 w-5" />,
+      render: (
+        (() => {
+          if (!hasSectionType('comprehension')) return null;
+          return <ComprehensionExtractor content={parsedContent} />;
+        })()
+      )
+    },
+    {
+      id: 'sentenceFrames',
+      label: 'Sentence Frames',
+      icon: <AlignJustify className="h-5 w-5" />,
+      render: (
+        (() => {
+          const sentenceFramesData = findSection('sentenceFrames');
+          
+          // DEBUG: Examine the actual data
+          console.log("=========== EXAMINING SENTENCE FRAMES DATA ===========");
+          console.log("1. Direct section data:", sentenceFramesData);
+          console.log("2. Available section types:", 
+            JSON.stringify(parsedContent.sections?.map((s: any) => s.type))
+          );
+          
+          // Just log the sentence frames to understand what we're dealing with
+          if (!sentenceFramesData) {
+            console.log("No sentenceFrames data found");
+            return <div className="p-4">Sentence frames data not available or could not be found. 
+              <div className="mt-2 text-sm text-gray-500">Examining data structure for future fixes.</div>
+            </div>;
+          }
+          
+          console.log("3. Structure of sentenceFramesData:", 
+            JSON.stringify({
+              keys: Object.keys(sentenceFramesData),
+              hasFrames: Array.isArray(sentenceFramesData.frames),
+              framesCount: Array.isArray(sentenceFramesData.frames) ? sentenceFramesData.frames.length : 0,
+              hasContent: sentenceFramesData.content !== undefined,
+              contentType: sentenceFramesData.content ? typeof sentenceFramesData.content : "n/a",
+              hasPattern: sentenceFramesData.pattern !== undefined,
+              hasPatterns: sentenceFramesData.patterns !== undefined
+            })
+          );
+          
+          if (Array.isArray(sentenceFramesData.frames) && sentenceFramesData.frames.length > 0) {
+            console.log("4. First frame structure:", 
+              JSON.stringify({
+                keys: Object.keys(sentenceFramesData.frames[0]),
+                hasTemplate: sentenceFramesData.frames[0].patternTemplate !== undefined,
+                hasComponents: Array.isArray(sentenceFramesData.frames[0].structureComponents)
+              })
+            );
+          }
+          
+          // Create a properly formatted section for rendering
+          const formattedSection = {
+            type: 'sentenceFrames',
+            title: sentenceFramesData.title || 'Sentence Frames',
+            frames: Array.isArray(sentenceFramesData.frames) 
+              ? sentenceFramesData.frames 
+              : sentenceFramesData.content && typeof sentenceFramesData.content === 'object'
+                ? [sentenceFramesData.content]
+                : []
+          };
+          
+          return <SentenceFramesSection section={formattedSection} />;
+        })()
+      )
+    },
+    {
+      id: 'grammar',
+      label: 'Grammar',
+      icon: <AlignLeft className="h-5 w-5" />,
+      render: (
+        (() => {
+          // If there's a Grammar Spotlight available, don't show this regular grammar section
+          if (content?.grammarSpotlight) {
+            console.log("Grammar Spotlight available, hiding regular grammar section");
+            return null;
+          }
+          
+          const grammarData = findSection('grammar');
+          console.log("Grammar data found:", grammarData);
+          if (!grammarData) {
+            console.log("No grammar data found");
+            return <div className="p-4">Grammar data not available</div>;
+          }
+          
+          // Create a properly formatted section object if needed
+          const formattedSection = {
+            type: 'grammar',
+            title: grammarData.title || 'Grammar',
+            frames: Array.isArray(grammarData.frames) 
+              ? grammarData.frames 
+              : grammarData.content && typeof grammarData.content === 'object'
+                ? [grammarData.content]
+                : []
+          };
+          
+          console.log("Formatted grammar section:", formattedSection);
+          return <SentenceFramesSection section={formattedSection} />;
+        })()
+      )
+    },
+    {
+      id: 'grammarSpotlight',
+      label: 'Grammar Spotlight',
+      icon: <Target className="h-5 w-5" />,
+      render: (
+        (() => {
+          // Check if grammar spotlight data exists in the content
+          console.log("=== GRAMMAR SPOTLIGHT DEBUG ===");
+          console.log("content object keys:", Object.keys(content || {}));
+          console.log("content.grammarSpotlight:", content?.grammarSpotlight);
+          console.log("typeof content.grammarSpotlight:", typeof content?.grammarSpotlight);
+          
+          if (!content?.grammarSpotlight) {
+            console.log("No grammar spotlight data found - tab will not be shown");
+            return null; // Don't show tab at all if no data
+          }
+          
+          if (grammarSpotlightHidden) {
+            console.log("Grammar spotlight hidden by user");
+            return <div className="p-8 text-center">
+              <div className="bg-green-50 border border-green-200 rounded-lg p-6">
+                <h3 className="text-green-800 font-semibold mb-2">Grammar Spotlight Completed!</h3>
+                <p className="text-green-700 mb-4">You can continue with the rest of the lesson.</p>
+                <Button
+                  variant="outline"
+                  onClick={() => setGrammarSpotlightHidden(false)}
+                  className="flex items-center gap-2 mx-auto"
+                >
+                  <RotateCcw className="h-4 w-4" />
+                  Review Again
+                </Button>
+              </div>
+            </div>;
+          }
+          
+          console.log("Grammar spotlight data found:", content.grammarSpotlight);
+          return (
+            <GrammarSpotlight 
+              grammarData={content.grammarSpotlight}
+              onSkip={() => {
+                // Hide the grammar spotlight
+                setGrammarSpotlightHidden(true);
+              }}
+              onComplete={() => {
+                // Hide the grammar spotlight
+                setGrammarSpotlightHidden(true);
+              }}
+            />
+          );
+        })()
+      )
+    },
+    {
+      id: 'cloze',
+      label: 'Fill in the Blanks',
+      icon: <Pencil className="h-5 w-5" />,
+      render: (
+        (() => {
+          if (!hasSectionType('cloze')) return null;
+          const clozeData = parsedContent.cloze || findSection('cloze');
+          if (!clozeData) return <div>No cloze activity data found</div>;
+          return <InteractiveClozeSection 
+            title={clozeData.title || "Fill in the Blanks"} 
+            text={clozeData.text || ""} 
+            wordBank={clozeData.wordBank || []} 
+          />;
+        })()
+      )
+    },
+    {
+      id: 'sentenceUnscramble',
+      label: 'Sentence Unscramble',
+      icon: <Shuffle className="h-5 w-5" />,
+      render: (
+        (() => {
+          if (!hasSectionType('sentenceUnscramble')) return null;
+          const unscrambleData = parsedContent.sentenceUnscramble || findSection('sentenceUnscramble');
+          return <SentenceUnscrambleSection 
+            sentences={unscrambleData?.sentences || []}
+            title={unscrambleData?.title || "Sentence Unscramble"}
+          />;
+        })()
+      )
+    },
+    {
+      id: 'discussion',
+      label: 'Discussion',
+      icon: <MessageSquare className="h-5 w-5" />,
+      render: (
+        (() => {
+          const discussionData = findSection('discussion');
+          if (!discussionData) return null;
+          return <DiscussionSection section={discussionData} />;
+        })()
+      )
+    },
+    {
+      id: 'pronunciation',
+      label: 'Pronunciation',
+      icon: <Volume2 className="h-5 w-5" />,
+      render: (
+        (() => {
+          if (!hasSectionType('pronunciation')) return null;
+          return <div className="p-4">Pronunciation practice integrated in vocabulary warm-up</div>;
+        })()
+      )
+    },
+    {
+      id: 'quiz',
+      label: 'Quiz',
+      icon: <HelpCircle className="h-5 w-5" />,
+      render: (
+        (() => {
+          if (!hasSectionType('quiz')) return null;
+          return <QuizExtractor content={parsedContent} />;
+        })()
+      )
+    },
+    {
+      id: 'notes',
+      label: 'Teacher Notes',
+      icon: <FileText className="h-5 w-5" />,
+      render: (
+        (() => {
+          if (!hasSectionType('notes')) return null;
+          return <TeacherNotesSection />;
+        })()
+      )
+    }
+  ];
+  
+  // Filter out tabs with null content
+  const availableRenderTree = renderTree.filter(item => item.render !== null);
+  
+  // Navigation logic using filtered tree
+  const currentIndex = availableRenderTree.findIndex(item => item.id === activeTab);
+  
+  const handlePrev = () => {
+    if (currentIndex > 0) {
+      setActiveTab(availableRenderTree[currentIndex - 1].id);
+    }
+  };
+  
+  const handleNext = () => {
+    if (currentIndex < availableRenderTree.length - 1) {
+      setActiveTab(availableRenderTree[currentIndex + 1].id);
+    }
+  };
   
   return (
     <div className="lesson-content w-[95%] max-w-[1800px] mx-auto"> {/* Increased width for better screen space utilization */}
@@ -2246,13 +2289,12 @@ export function LessonContent({ content }: LessonContentProps) {
       
       {/* Tabbed interface - styled based on template images */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-4 relative">
-        <TabsList data-testid="lesson-tabs-list" className="flex overflow-x-auto whitespace-nowrap justify-start p-1 h-auto rounded-lg bg-gray-100 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        <TabsList className="flex overflow-x-auto whitespace-nowrap justify-start p-1 h-auto rounded-lg bg-gray-100 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           {availableRenderTree.map((item) => {
               return (
                 <TabsTrigger 
                 key={item.id} 
                 value={item.id}
-                data-testid={`tab-${item.id}`}
                   className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all
                     text-gray-500 hover:text-gray-800
                     data-[state=active]:bg-green-100 
@@ -2284,7 +2326,6 @@ export function LessonContent({ content }: LessonContentProps) {
           disabled={currentIndex === 0}
           aria-label="Previous Section"
           className="flex items-center"
-          data-testid="section-nav-previous"
         >
           <ChevronLeft className="h-5 w-5 mr-2" />
           Previous
@@ -2298,7 +2339,6 @@ export function LessonContent({ content }: LessonContentProps) {
           disabled={currentIndex === availableRenderTree.length - 1}
           aria-label="Next Section"
           className="flex items-center"
-          data-testid="section-nav-next"
         >
           Next
           <ChevronRight className="h-5 w-5 ml-2" />

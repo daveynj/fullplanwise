@@ -10,15 +10,12 @@ import { Lesson } from "@shared/schema";
 import { queryClient } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/use-auth";
 import { SEOHead } from "@/components/SEOHead";
-import { InteractiveTutorial } from "@/components/lesson/interactive-tutorial";
 
 export default function FullScreenLessonPage() {
   const [location] = useLocation();
   const { toast } = useToast();
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [activeTab, setActiveTab] = useState("lesson");
-  const [showTeachingGuidance, setShowTeachingGuidance] = useState(false);
-  const [availableTabs, setAvailableTabs] = useState<{ id: string; label: string }[]>([]);
   const { user } = useAuth();
   
   // Extract lesson ID from URL
@@ -31,16 +28,6 @@ export default function FullScreenLessonPage() {
     staleTime: 5 * 60 * 1000, // Cache for 5 minutes
     gcTime: 10 * 60 * 1000, // Keep in cache for 10 minutes
   });
-
-  // Fetch user's lessons to determine if guidance overlay should show (returns paginated response)
-  const { data: userLessonsData } = useQuery<{ lessons: Lesson[]; total: number }>({
-    queryKey: ["/api/lessons"],
-    retry: false,
-    enabled: !!user, // Only fetch if user is authenticated
-  });
-
-  // Extract lessons array from paginated response
-  const userLessons = userLessonsData?.lessons || [];
   
   // Parse the content if it's a string (from database)
   const [parsedContent, setParsedContent] = useState<any>(null);
@@ -136,36 +123,6 @@ export default function FullScreenLessonPage() {
       }
     }
   }, [lesson]);
-
-  // Check if we should show the teaching guidance overlay
-  useEffect(() => {
-    console.log("🔥 OVERLAY DEBUG:", {
-      hasLesson: !!lesson,
-      hasParsedContent: !!parsedContent,
-      hasUserLessons: !!userLessons,
-      hasUser: !!user,
-      userLessonsLength: userLessons?.length,
-      userId: user?.id,
-      isAuthenticated: !!user
-    });
-    
-    // TESTING: Force show tutorial for all lessons to test if it works
-    if (lesson && parsedContent) {
-      console.log("🔥 LESSON AND CONTENT READY - FORCING TUTORIAL FOR TESTING");
-      
-      // Clear any existing guidance key to force it to show
-      const testKey = "guidance_test_force";
-      localStorage.removeItem(testKey);
-      
-      console.log("🔥 FORCING TUTORIAL TO SHOW!");
-      setTimeout(() => {
-        console.log("🔥 SETTING OVERLAY STATE TO TRUE (FORCED TEST)");
-        setShowTeachingGuidance(true);
-      }, 1000);
-    } else {
-      console.log("🔥 WAITING FOR LESSON/CONTENT TO LOAD");
-    }
-  }, [lesson, parsedContent]);
   
   // Toggle fullscreen
   const toggleFullScreen = () => {
@@ -395,15 +352,6 @@ export default function FullScreenLessonPage() {
         </Tabs>
       </main>
     </div>
-
-    {/* Interactive Tutorial for new users */}
-    <InteractiveTutorial
-      isOpen={showTeachingGuidance}
-      onClose={() => setShowTeachingGuidance(false)}
-      lessonTopic={lesson?.topic}
-      cefrLevel={lesson?.cefrLevel}
-      lessonContent={parsedContent}
-    />
     </>
   );
 }

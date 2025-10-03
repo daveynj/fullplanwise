@@ -178,7 +178,7 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
     (word.usageNotes && word.usageNotes.trim().length > 0);
 
   return (
-    <div data-testid="vocab-card" className="bg-blue-50 rounded-md p-4 border-2 border-blue-200 shadow-md">
+    <div className="bg-blue-50 rounded-md p-4 border-2 border-blue-200 shadow-md">
       {/* Header with Word and Part of Speech - Larger and bolder */}
       <div className="flex justify-between items-center border-b-2 border-blue-200 pb-3 mb-3">
         <div>
