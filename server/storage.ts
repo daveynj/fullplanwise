@@ -1,4 +1,9 @@
-import { users, students, lessons, type User, type InsertUser, type Student, type InsertStudent, type Lesson, type InsertLesson } from "@shared/schema";
+import { 
+  users, students, lessons, studentLessons, studentVocabulary,
+  type User, type InsertUser, type Student, type InsertStudent, 
+  type Lesson, type InsertLesson, type StudentLesson, type InsertStudentLesson,
+  type StudentVocabulary, type InsertStudentVocabulary 
+} from "@shared/schema";
 import createMemoryStore from "memorystore";
 import session from "express-session";
 import { Store } from "express-session";
@@ -56,6 +61,17 @@ export interface IStorage {
     topUsers: Array<{username: string, lessonCount: number, lastActive: string}>;
   }>;
   getAllLessonsForAdmin(page?: number, pageSize?: number, search?: string, category?: string, cefrLevel?: string): Promise<{lessons: any[], total: number}>;
+  
+  // Student-Lesson association methods
+  assignLessonToStudent(studentId: number, lessonId: number, teacherId: number, notes?: string): Promise<StudentLesson>;
+  getStudentLessons(studentId: number): Promise<Array<StudentLesson & { lesson: Lesson }>>;
+  removeStudentLesson(studentId: number, lessonId: number): Promise<boolean>;
+  updateStudentLessonStatus(id: number, status: string): Promise<StudentLesson>;
+  
+  // Student vocabulary methods
+  addStudentVocabulary(vocabulary: InsertStudentVocabulary[]): Promise<StudentVocabulary[]>;
+  getStudentVocabulary(studentId: number, limit?: number): Promise<StudentVocabulary[]>;
+  extractAndSaveVocabulary(studentId: number, lessonId: number): Promise<number>;
   
   // Session store
   sessionStore: Store;
@@ -1029,6 +1045,141 @@ export class DatabaseStorage implements IStorage {
       return newLesson;
     } catch (error) {
       console.error('Error copying lesson:', error);
+      throw error;
+    }
+  }
+
+  // Student-Lesson association methods
+  async assignLessonToStudent(studentId: number, lessonId: number, teacherId: number, notes?: string): Promise<StudentLesson> {
+    try {
+      const [studentLesson] = await db.insert(studentLessons).values({
+        studentId,
+        lessonId,
+        teacherId,
+        notes: notes || null,
+        status: 'assigned'
+      }).returning();
+      
+      // Extract and save vocabulary from this lesson
+      await this.extractAndSaveVocabulary(studentId, lessonId);
+      
+      return studentLesson;
+    } catch (error) {
+      console.error('Error assigning lesson to student:', error);
+      throw error;
+    }
+  }
+
+  async getStudentLessons(studentId: number): Promise<Array<StudentLesson & { lesson: Lesson }>> {
+    try {
+      const result = await db
+        .select()
+        .from(studentLessons)
+        .leftJoin(lessons, eq(studentLessons.lessonId, lessons.id))
+        .where(eq(studentLessons.studentId, studentId))
+        .orderBy(desc(studentLessons.assignedAt));
+      
+      return result.map(row => ({
+        ...row.student_lessons,
+        lesson: row.lessons!
+      })) as Array<StudentLesson & { lesson: Lesson }>;
+    } catch (error) {
+      console.error('Error getting student lessons:', error);
+      throw error;
+    }
+  }
+
+  async removeStudentLesson(studentId: number, lessonId: number): Promise<boolean> {
+    try {
+      await db.delete(studentLessons)
+        .where(and(
+          eq(studentLessons.studentId, studentId),
+          eq(studentLessons.lessonId, lessonId)
+        ));
+      return true;
+    } catch (error) {
+      console.error('Error removing student lesson:', error);
+      throw error;
+    }
+  }
+
+  async updateStudentLessonStatus(id: number, status: string): Promise<StudentLesson> {
+    try {
+      const [updated] = await db
+        .update(studentLessons)
+        .set({ status })
+        .where(eq(studentLessons.id, id))
+        .returning();
+      return updated;
+    } catch (error) {
+      console.error('Error updating student lesson status:', error);
+      throw error;
+    }
+  }
+
+  // Student vocabulary methods
+  async addStudentVocabulary(vocabulary: InsertStudentVocabulary[]): Promise<StudentVocabulary[]> {
+    try {
+      if (vocabulary.length === 0) return [];
+      const result = await db.insert(studentVocabulary).values(vocabulary).returning();
+      return result;
+    } catch (error) {
+      console.error('Error adding student vocabulary:', error);
+      throw error;
+    }
+  }
+
+  async getStudentVocabulary(studentId: number, limit?: number): Promise<StudentVocabulary[]> {
+    try {
+      let query = db
+        .select()
+        .from(studentVocabulary)
+        .where(eq(studentVocabulary.studentId, studentId))
+        .orderBy(desc(studentVocabulary.learnedAt));
+      
+      if (limit) {
+        query = query.limit(limit);
+      }
+      
+      return await query;
+    } catch (error) {
+      console.error('Error getting student vocabulary:', error);
+      throw error;
+    }
+  }
+
+  async extractAndSaveVocabulary(studentId: number, lessonId: number): Promise<number> {
+    try {
+      const lesson = await this.getLesson(lessonId);
+      if (!lesson || !lesson.content) return 0;
+
+      const vocabularyToAdd: InsertStudentVocabulary[] = [];
+      const content = lesson.content as any;
+
+      // Extract vocabulary from lesson sections
+      if (content.sections && Array.isArray(content.sections)) {
+        for (const section of content.sections) {
+          if (section.type === 'vocabulary' && section.words && Array.isArray(section.words)) {
+            for (const word of section.words) {
+              vocabularyToAdd.push({
+                studentId,
+                lessonId,
+                word: word.term || word.word || '',
+                definition: word.coreDefinition || word.definition || '',
+                cefrLevel: lesson.cefrLevel
+              });
+            }
+          }
+        }
+      }
+
+      if (vocabularyToAdd.length > 0) {
+        await this.addStudentVocabulary(vocabularyToAdd);
+      }
+
+      return vocabularyToAdd.length;
+    } catch (error) {
+      console.error('Error extracting and saving vocabulary:', error);
       throw error;
     }
   }
