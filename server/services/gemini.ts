@@ -355,6 +355,32 @@ For comprehension questions:
    - The paragraphs should include interesting information that helps students engage with the topic
    - The paragraph contexts should lead naturally into the discussion question that follows
 
+🎯 DISCUSSION QUESTION IMAGE PROMPT INSTRUCTIONS:
+
+Create detailed, scenario-based image prompts for each discussion question that visually represent the situation being discussed. Each prompt should be 50-80 words and include:
+
+**REQUIRED ELEMENTS:**
+1. **Specific Scenario**: Concrete situation related to the discussion question and "${params.topic}"
+2. **Character Context**: Diverse people in a situation that prompts the question being asked
+3. **Visual Narrative**: Clear story or situation that students can relate to
+4. **Emotional/Social Context**: Mood, relationships, or social dynamics relevant to the question
+5. **Environmental Details**: Setting details that enrich the scenario
+6. **Style Specification**: "Realistic illustration, natural lighting, engaging composition, clear storytelling"
+
+**FORMULA:**
+"[Specific scenario from paragraphContext]. [Diverse characters in situation]. [Action or moment that embodies the question]. [Environmental and emotional context]. Realistic illustration, natural lighting, engaging composition, clear storytelling. No text visible."
+
+**EXAMPLES:**
+
+For question "How do you balance work and personal life?":
+"Modern city apartment at evening. A diverse professional sits at laptop with work documents, while family photos and dinner plates sit nearby untouched. Person looking thoughtfully between work screen and personal items, showing the tension between responsibilities. Warm indoor lighting creating contrast between work area and personal space. Realistic illustration, natural lighting, engaging composition, clear storytelling. No text visible."
+
+For question "What makes a good team leader?":
+"Contemporary office workspace during team meeting. A diverse leader facilitating discussion, making eye contact with team members, gesturing inclusively. Team members of various backgrounds actively engaged, some taking notes, others contributing ideas. Collaborative atmosphere with open body language and positive energy. Realistic illustration, natural lighting, engaging composition, clear storytelling. No text visible."
+
+For question "How has technology changed communication?":
+"Split scene showing contrast. Left side: diverse family members each absorbed in their phones, physically together but disconnected. Right side: same family using video call to connect with distant relatives, showing engaged interaction. Modern home setting highlighting both isolation and connection technology brings. Realistic illustration, natural lighting, engaging composition, clear storytelling. No text visible."
+
 STEP 0: FOUNDATION ANALYSIS FOR ${params.cefrLevel} LEVEL
 
 Establish the lesson foundation by analyzing "${params.topic}" for ${params.cefrLevel} students:
@@ -706,13 +732,26 @@ PATTERN SELECTION STRATEGY:
 I will count the total number of vocabulary items. If you don't include EXACTLY ${minVocabCount} complete vocabulary items, your response will be rejected.
 
 🎯 VOCABULARY IMAGE PROMPT INSTRUCTIONS:
-For each vocabulary word, create a simple imagePrompt that clearly shows the word meaning:
-"An illustration showing [word meaning] in a clear, educational way. No text visible."
 
-EXAMPLES:
-- "restaurant" → "An illustration showing a restaurant with people dining. No text visible."
-- "excited" → "An illustration showing someone feeling excited and happy. No text visible."
-- "compare" → "An illustration showing two items being compared side by side. No text visible."
+Create detailed, contextual image prompts that help ${params.cefrLevel} students understand vocabulary in the context of "${params.topic}". Each prompt should be 40-80 words and include:
+
+**REQUIRED ELEMENTS:**
+1. **Core Scene**: Specific setting/situation related to "${params.topic}"
+2. **Characters**: Diverse people (if applicable) performing the action/showing the concept
+3. **Action/State**: Clear visual demonstration of the word meaning
+4. **Context Clues**: Environmental details that reinforce understanding
+5. **Visual Style**: "Realistic educational illustration, warm natural lighting, clear composition"
+6. **Cultural Sensitivity**: Represent diversity appropriately for ${params.cefrLevel} learners
+
+**FORMULA:**
+"[Specific setting related to ${params.topic}]. [Diverse character(s)] [performing action/showing state]. [Environmental context clues]. [Mood/atmosphere]. Realistic educational illustration, warm natural lighting, clear focal point. No text visible."
+
+**EXAMPLES FOR ${params.topic}:**
+- "negotiate" → "Modern office meeting room with diverse business professionals around a conference table. A woman gesturing thoughtfully while presenting ideas, others listening attentively with documents spread out. Professional atmosphere showing collaboration and discussion. Realistic educational illustration, warm natural lighting, clear focal point. No text visible."
+
+- "excited" → "Bright classroom setting where a diverse group of students just received good news. A young person with wide eyes and big smile, hands raised in joy, surrounded by happy classmates. Energy and positive emotion clearly visible through body language and expressions. Realistic educational illustration, warm natural lighting, clear focal point. No text visible."
+
+- "compare" → "Shopping context showing a person examining two similar products side by side. Clear contrast between the items, person studying labels and features carefully. Clean store environment with good lighting highlighting the comparison process. Realistic educational illustration, warm natural lighting, clear focal point. No text visible."
 
 🎯 VOCABULARY SELECTION SUCCESS CRITERIA:
 ✓ Words selected through the 5-step analysis process above
@@ -1682,10 +1721,11 @@ If an example is a simple string, return a string. If it's an object with "compl
               }
             }
             
-            // Generate fallback imagePrompt if missing
+            // Generate enhanced fallback imagePrompt if missing
             if (!question.imagePrompt && question.question) {
-              question.imagePrompt = `An illustration representing the discussion topic: "${question.question.substring(0, 100)}". The image should be visually engaging and help students think about the topic. No text or words should appear in the image.`;
-              console.log(`Generated fallback imagePrompt for question: "${question.question.substring(0, 50)}..."`);
+              const contextSnippet = question.paragraphContext ? question.paragraphContext.substring(0, 150) : question.question;
+              question.imagePrompt = `A realistic illustration showing a scenario related to: "${question.question.substring(0, 100)}". Scene includes diverse people in a relatable situation that embodies this question. ${contextSnippet.includes('work') ? 'Professional setting' : contextSnippet.includes('school') || contextSnippet.includes('student') ? 'Educational environment' : contextSnippet.includes('family') || contextSnippet.includes('home') ? 'Home or family setting' : 'Contemporary setting'} with natural lighting and clear visual storytelling. Characters showing emotions or actions relevant to the topic. Realistic illustration, warm natural lighting, engaging composition. No text visible.`;
+              console.log(`Generated enhanced fallback imagePrompt for question: "${question.question.substring(0, 50)}..."`);
             }
             
             // Generate image if prompt exists
