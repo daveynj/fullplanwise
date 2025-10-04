@@ -372,7 +372,9 @@ export default function StudentDetailPage() {
                         </div>
                       ) : studentLessons.length > 0 ? (
                         <div className="space-y-4">
-                          {studentLessons.map((sl: any) => {
+                          {studentLessons
+                            .filter((sl: any) => sl.lesson && sl.lesson.title)
+                            .map((sl: any) => {
                             const lesson = sl.lesson;
                             const assignmentId = sl.id;
                             return (
