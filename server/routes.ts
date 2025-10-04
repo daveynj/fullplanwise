@@ -536,14 +536,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         let studentVocabulary: string[] = [];
         if (validatedData.studentId && validatedData.useStudentHistory !== false) {
           try {
+            console.log(`🔍 Fetching vocabulary for student ${validatedData.studentId}...`);
             const vocabRecords = await storage.getStudentVocabulary(validatedData.studentId, 50);
             studentVocabulary = vocabRecords.map(v => v.word).filter(Boolean);
+            console.log(`📚 Found ${studentVocabulary.length} learned vocabulary words for student ${validatedData.studentId}`);
             if (studentVocabulary.length > 0) {
-              console.log(`Found ${studentVocabulary.length} learned vocabulary words for student ${validatedData.studentId}`);
+              console.log(`📝 Student's learned words: ${studentVocabulary.join(', ')}`);
             }
           } catch (vocabError) {
-            console.error('Error fetching student vocabulary:', vocabError);
+            console.error('❌ Error fetching student vocabulary:', vocabError);
           }
+        } else {
+          console.log(`ℹ️  No student ID provided or student history disabled - generating lesson without vocabulary constraints`);
         }
         
         // Generate lesson using Gemini
