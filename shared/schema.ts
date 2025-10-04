@@ -61,11 +61,13 @@ export const studentLessons = pgTable("student_lessons", {
 export const studentVocabulary = pgTable("student_vocabulary", {
   id: serial("id").primaryKey(),
   studentId: integer("student_id").notNull(),
-  lessonId: integer("lesson_id").notNull(),
+  lessonId: integer("lesson_id"), // Now nullable - allows vocabulary to exist without lesson
   word: text("word").notNull(),
   definition: text("definition"),
   cefrLevel: text("cefr_level"),
   learnedAt: timestamp("learned_at").notNull().defaultNow(),
+  source: text("source").default("lesson"), // "lesson" or "manual" - tracks origin
+  originLessonTitle: text("origin_lesson_title"), // Preserves lesson title if lesson is deleted
 });
 
 // Insert schemas

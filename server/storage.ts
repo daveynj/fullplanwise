@@ -40,6 +40,8 @@ export interface IStorage {
   createLesson(lesson: InsertLesson): Promise<Lesson>;
   updateLesson(id: number, lessonUpdate: Partial<Lesson>): Promise<Lesson>;
   deleteLesson(id: number): Promise<boolean>;
+  getLessonDeletionInfo(id: number): Promise<{assignmentCount: number, affectedStudentIds: number[], lessonTitle: string}>;
+  deleteLessonWithStrategy(id: number, strategy: 'delete_all' | 'keep_vocabulary'): Promise<boolean>;
   
   // Public library methods
   getPublicLessons(page?: number, pageSize?: number, search?: string, cefrLevel?: string, category?: string): Promise<{lessons: Lesson[], total: number}>;
@@ -602,6 +604,89 @@ export class DatabaseStorage implements IStorage {
       return result.length > 0;
     } catch (error) {
       console.error('Error deleting lesson:', error);
+      throw error;
+    }
+  }
+
+  async getLessonDeletionInfo(id: number): Promise<{assignmentCount: number, affectedStudentIds: number[], lessonTitle: string}> {
+    try {
+      // Get lesson title
+      const [lesson] = await db.select({ title: lessons.title })
+        .from(lessons)
+        .where(eq(lessons.id, id));
+      
+      if (!lesson) {
+        throw new Error('Lesson not found');
+      }
+
+      // Get all assignments for this lesson
+      const assignments = await db.select({ studentId: studentLessons.studentId })
+        .from(studentLessons)
+        .where(eq(studentLessons.lessonId, id));
+      
+      const affectedStudentIds = [...new Set(assignments.map(a => a.studentId))];
+      
+      return {
+        assignmentCount: assignments.length,
+        affectedStudentIds,
+        lessonTitle: lesson.title
+      };
+    } catch (error) {
+      console.error('Error getting lesson deletion info:', error);
+      throw error;
+    }
+  }
+
+  async deleteLessonWithStrategy(id: number, strategy: 'delete_all' | 'keep_vocabulary'): Promise<boolean> {
+    try {
+      // Get lesson info first
+      const { lessonTitle } = await this.getLessonDeletionInfo(id);
+      
+      // Use transaction to ensure all operations succeed or fail together
+      await db.transaction(async (tx) => {
+        if (strategy === 'delete_all') {
+          // Strategy A: Delete everything (assignments + vocabulary + lesson)
+          console.log(`Deleting lesson ${id} with all associated data`);
+          
+          // Delete vocabulary
+          await tx.delete(studentVocabulary)
+            .where(eq(studentVocabulary.lessonId, id));
+          
+          // Delete assignments
+          await tx.delete(studentLessons)
+            .where(eq(studentLessons.lessonId, id));
+          
+          // Delete lesson
+          await tx.delete(lessons)
+            .where(eq(lessons.id, id));
+            
+        } else {
+          // Strategy B: Keep vocabulary as standalone (delete lesson but preserve vocabulary)
+          console.log(`Deleting lesson ${id} but keeping vocabulary as standalone`);
+          
+          // Update vocabulary to be standalone (null lessonId, mark as manual, preserve origin)
+          await tx.update(studentVocabulary)
+            .set({
+              lessonId: null,
+              source: 'manual',
+              originLessonTitle: lessonTitle
+            })
+            .where(eq(studentVocabulary.lessonId, id));
+          
+          // Delete assignments
+          await tx.delete(studentLessons)
+            .where(eq(studentLessons.lessonId, id));
+          
+          // Delete lesson
+          await tx.delete(lessons)
+            .where(eq(lessons.id, id));
+        }
+      });
+      
+      console.log(`Successfully deleted lesson ${id} with strategy: ${strategy}`);
+      return true;
+    } catch (error) {
+      console.error(`Error deleting lesson with strategy ${strategy}:`, error);
       throw error;
     }
   }
