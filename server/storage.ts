@@ -1097,11 +1097,22 @@ export class DatabaseStorage implements IStorage {
 
   async removeStudentLesson(studentId: number, lessonId: number): Promise<boolean> {
     try {
+      // First, remove vocabulary associated with this lesson
+      await db.delete(studentVocabulary)
+        .where(and(
+          eq(studentVocabulary.studentId, studentId),
+          eq(studentVocabulary.lessonId, lessonId)
+        ));
+      console.log(`Removed vocabulary for student ${studentId}, lesson ${lessonId}`);
+      
+      // Then remove the lesson association
       await db.delete(studentLessons)
         .where(and(
           eq(studentLessons.studentId, studentId),
           eq(studentLessons.lessonId, lessonId)
         ));
+      console.log(`Removed lesson association for student ${studentId}, lesson ${lessonId}`);
+      
       return true;
     } catch (error) {
       console.error('Error removing student lesson:', error);

@@ -273,11 +273,18 @@ export class GeminiService {
 This student has already learned the following vocabulary words in previous lessons:
 ${studentVocabulary.join(', ')}
 
-IMPORTANT: When selecting vocabulary for this lesson, AVOID these words that the student already knows. Choose NEW vocabulary words that:
+IMPORTANT INSTRUCTIONS:
+✅ DO: Use these words FREELY throughout the lesson (reading texts, discussion questions, comprehension questions, etc.) since the student knows them and this provides valuable reinforcement and natural usage examples.
+
+❌ DON'T: Include these words as the FOCUS VOCABULARY words for this lesson - they've already been taught.
+
+Instead, choose NEW vocabulary words that:
 - Build upon their existing knowledge
 - Are appropriately challenging for ${params.cefrLevel} level
 - Are relevant to the topic "${params.topic}"
-- Help the student progress in their language learning journey`
+- Help the student progress in their language learning journey
+
+Think of it this way: The student's learned vocabulary is their toolkit - use it naturally in the lesson content to help them understand and engage with the material, but teach them NEW words to expand their toolkit.`
       : '';
     
     // System instruction part
