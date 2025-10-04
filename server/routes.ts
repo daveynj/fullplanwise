@@ -751,6 +751,61 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get deletion info for a lesson (check assignments before deleting)
+  app.get("/api/lessons/:id/deletion-info", ensureAuthenticated, async (req, res) => {
+    try {
+      const lessonId = parseInt(req.params.id);
+      const lesson = await storage.getLesson(lessonId);
+      
+      if (!lesson) {
+        return res.status(404).json({ message: "Lesson not found" });
+      }
+      
+      if (lesson.teacherId !== req.user!.id) {
+        return res.status(403).json({ message: "Unauthorized access to lesson" });
+      }
+      
+      const deletionInfo = await storage.getLessonDeletionInfo(lessonId);
+      res.json(deletionInfo);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Delete lesson with vocabulary strategy choice
+  app.post("/api/lessons/:id/delete-with-strategy", ensureAuthenticated, async (req, res) => {
+    try {
+      const lessonId = parseInt(req.params.id);
+      const { strategy } = req.body;
+      
+      // Validate strategy
+      if (!strategy || !['delete_all', 'keep_vocabulary'].includes(strategy)) {
+        return res.status(400).json({ message: "Invalid strategy. Must be 'delete_all' or 'keep_vocabulary'" });
+      }
+      
+      const lesson = await storage.getLesson(lessonId);
+      
+      if (!lesson) {
+        return res.status(404).json({ message: "Lesson not found" });
+      }
+      
+      if (lesson.teacherId !== req.user!.id) {
+        return res.status(403).json({ message: "Unauthorized access to lesson" });
+      }
+      
+      await storage.deleteLessonWithStrategy(lessonId, strategy);
+      
+      // Return strategy in response so frontend can use it for toast message
+      const message = strategy === 'keep_vocabulary' 
+        ? "Lesson deleted, vocabulary preserved in student profiles"
+        : "Lesson and vocabulary deleted successfully";
+      
+      res.status(200).json({ message, strategy });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   // Generate vocabulary review PDF for a lesson
   app.get("/api/lessons/:id/pdf", async (req, res) => {
     try {

@@ -640,7 +640,13 @@ export class DatabaseStorage implements IStorage {
   async deleteLessonWithStrategy(id: number, strategy: 'delete_all' | 'keep_vocabulary'): Promise<boolean> {
     try {
       // Get lesson info first
-      const { lessonTitle } = await this.getLessonDeletionInfo(id);
+      const { lessonTitle, assignmentCount } = await this.getLessonDeletionInfo(id);
+      
+      // If no assignments, just do a simple delete (shouldn't happen from UI, but safety check)
+      if (assignmentCount === 0) {
+        console.log(`Lesson ${id} has no assignments, performing simple delete`);
+        return await this.deleteLesson(id);
+      }
       
       // Use transaction to ensure all operations succeed or fail together
       await db.transaction(async (tx) => {
@@ -664,14 +670,20 @@ export class DatabaseStorage implements IStorage {
           // Strategy B: Keep vocabulary as standalone (delete lesson but preserve vocabulary)
           console.log(`Deleting lesson ${id} but keeping vocabulary as standalone`);
           
-          // Update vocabulary to be standalone (null lessonId, mark as manual, preserve origin)
+          // Only update vocabulary that came from this lesson (source='lesson')
+          // Preserve originLessonTitle if already set (for words migrated from multiple deleted lessons)
           await tx.update(studentVocabulary)
             .set({
               lessonId: null,
               source: 'manual',
-              originLessonTitle: lessonTitle
+              originLessonTitle: sql`COALESCE(origin_lesson_title, ${lessonTitle})`
             })
-            .where(eq(studentVocabulary.lessonId, id));
+            .where(
+              and(
+                eq(studentVocabulary.lessonId, id),
+                eq(studentVocabulary.source, 'lesson')
+              )
+            );
           
           // Delete assignments
           await tx.delete(studentLessons)

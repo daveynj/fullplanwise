@@ -33,6 +33,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 import {
   Dialog,
   DialogContent,
@@ -67,6 +69,8 @@ export default function LessonHistoryPage() {
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [lessonToDelete, setLessonToDelete] = useState<Lesson | null>(null);
+  const [deletionInfo, setDeletionInfo] = useState<{assignmentCount: number, affectedStudentIds: number[], lessonTitle: string} | null>(null);
+  const [deletionStrategy, setDeletionStrategy] = useState<'delete_all' | 'keep_vocabulary'>('delete_all');
   const [assignDialogOpen, setAssignDialogOpen] = useState(false);
   const [lessonToAssign, setLessonToAssign] = useState<Lesson | null>(null);
   const [selectedStudentId, setSelectedStudentId] = useState<number | null>(null);
@@ -210,12 +214,39 @@ export default function LessonHistoryPage() {
     retry: false,
   });
   
-  // Delete lesson mutation
-  const deleteLessonMutation = useMutation({
+  // Check deletion info (assignments) mutation
+  const checkDeletionInfoMutation = useMutation({
     mutationFn: async (lessonId: number) => {
-      await apiRequest("DELETE", `/api/lessons/${lessonId}`);
+      const response = await apiRequest("GET", `/api/lessons/${lessonId}/deletion-info`);
+      return await response.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      setDeletionInfo(data);
+      setDeleteDialogOpen(true);
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error checking lesson",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  });
+
+  // Delete lesson mutation with strategy
+  const deleteLessonMutation = useMutation({
+    mutationFn: async ({ lessonId, strategy }: { lessonId: number, strategy: 'delete_all' | 'keep_vocabulary' }) => {
+      // If no assignments, use simple delete
+      if (!deletionInfo || deletionInfo.assignmentCount === 0) {
+        await apiRequest("DELETE", `/api/lessons/${lessonId}`);
+        return { strategy: null, message: "Lesson deleted successfully" };
+      } else {
+        // If assignments exist, use strategy-based delete
+        const response = await apiRequest("POST", `/api/lessons/${lessonId}/delete-with-strategy`, { strategy });
+        return await response.json();
+      }
+    },
+    onSuccess: (data) => {
       // Invalidate lessons query to refresh the list - use precise query parameters
       queryClient.invalidateQueries({ 
         queryKey: [
@@ -229,13 +260,23 @@ export default function LessonHistoryPage() {
         ] 
       });
       
+      // Also invalidate student queries if lesson had assignments
+      if (deletionInfo && deletionInfo.affectedStudentIds.length > 0) {
+        deletionInfo.affectedStudentIds.forEach(studentId => {
+          queryClient.invalidateQueries({ queryKey: [`/api/students/${studentId}`] });
+        });
+      }
+      
+      // Use message from server response instead of stale state
       toast({
         title: "Lesson deleted",
-        description: "The lesson has been permanently removed.",
+        description: data.message,
       });
       
       // Reset state
       setLessonToDelete(null);
+      setDeletionInfo(null);
+      setDeletionStrategy('delete_all');
     },
     onError: (error: Error) => {
       toast({
@@ -291,14 +332,21 @@ export default function LessonHistoryPage() {
   
   // Handle delete confirmation
   const handleDeleteLesson = (lesson: Lesson) => {
+    // Reset state to ensure fresh data
     setLessonToDelete(lesson);
-    setDeleteDialogOpen(true);
+    setDeletionInfo(null); // Clear any stale deletion info
+    setDeletionStrategy('delete_all'); // Reset to default
+    // Check if lesson has assignments
+    checkDeletionInfoMutation.mutate(lesson.id);
   };
   
   // Confirm deletion
   const confirmDelete = () => {
     if (lessonToDelete) {
-      deleteLessonMutation.mutate(lessonToDelete.id);
+      deleteLessonMutation.mutate({ 
+        lessonId: lessonToDelete.id, 
+        strategy: deletionStrategy 
+      });
     }
     setDeleteDialogOpen(false);
   };
@@ -762,29 +810,77 @@ export default function LessonHistoryPage() {
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
+        <AlertDialogContent className="max-w-2xl">
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center">
               <AlertTriangle className="h-5 w-5 text-yellow-500 mr-2" />
               Confirm Deletion
             </AlertDialogTitle>
-            <AlertDialogDescription>
-              {lessonToDelete ? (
+            <AlertDialogDescription className="space-y-4">
+              {lessonToDelete && deletionInfo ? (
                 <>
-                  Are you sure you want to delete the lesson <span className="font-semibold">"{lessonToDelete.title}"</span>?
-                  <br />
-                  <br />
-                  This action cannot be undone and all lesson content will be permanently removed.
+                  <div>
+                    Are you sure you want to delete the lesson <span className="font-semibold">"{lessonToDelete.title}"</span>?
+                  </div>
+                  
+                  {deletionInfo.assignmentCount > 0 ? (
+                    <>
+                      <div className="bg-amber-50 border border-amber-200 rounded-md p-4">
+                        <p className="text-sm text-amber-800 font-medium">
+                          ⚠️ This lesson is assigned to {deletionInfo.assignmentCount} student{deletionInfo.assignmentCount > 1 ? 's' : ''}
+                        </p>
+                        <p className="text-sm text-amber-700 mt-1">
+                          Please choose what happens to their vocabulary:
+                        </p>
+                      </div>
+                      
+                      <RadioGroup 
+                        value={deletionStrategy} 
+                        onValueChange={(value) => setDeletionStrategy(value as 'delete_all' | 'keep_vocabulary')}
+                        className="space-y-3 mt-4"
+                      >
+                        <div className="flex items-start space-x-3 p-3 rounded-lg border-2 border-gray-200 hover:border-primary/50 transition-colors">
+                          <RadioGroupItem value="delete_all" id="delete_all" className="mt-1" />
+                          <Label htmlFor="delete_all" className="cursor-pointer flex-1">
+                            <div className="font-semibold text-sm">Delete lesson and vocabulary</div>
+                            <div className="text-xs text-gray-600 mt-1">
+                              Remove the lesson from library and delete all vocabulary words from student profiles. 
+                              Use this for a complete cleanup.
+                            </div>
+                          </Label>
+                        </div>
+                        
+                        <div className="flex items-start space-x-3 p-3 rounded-lg border-2 border-gray-200 hover:border-primary/50 transition-colors">
+                          <RadioGroupItem value="keep_vocabulary" id="keep_vocabulary" className="mt-1" />
+                          <Label htmlFor="keep_vocabulary" className="cursor-pointer flex-1">
+                            <div className="font-semibold text-sm">Delete lesson, keep vocabulary</div>
+                            <div className="text-xs text-gray-600 mt-1">
+                              Remove the lesson from library but preserve vocabulary in student profiles as standalone words.
+                              Students keep their progress.
+                            </div>
+                          </Label>
+                        </div>
+                      </RadioGroup>
+                    </>
+                  ) : (
+                    <div className="text-sm text-gray-600">
+                      This lesson has no student assignments and will be permanently removed from your library.
+                    </div>
+                  )}
                 </>
               ) : (
-                <>Confirm lesson deletion</>
+                <div className="flex items-center justify-center py-4">
+                  <Loader2 className="h-5 w-5 animate-spin mr-2" />
+                  <span>Checking lesson assignments...</span>
+                </div>
               )}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={checkDeletionInfoMutation.isPending}>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={confirmDelete}
+              disabled={!deletionInfo || checkDeletionInfoMutation.isPending}
               className="bg-red-600 hover:bg-red-700 text-white"
             >
               {deleteLessonMutation.isPending ? (
