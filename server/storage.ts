@@ -1110,10 +1110,15 @@ export class DatabaseStorage implements IStorage {
         .orderBy(desc(studentLessons.assignedAt));
       
       console.log(`[getStudentLessons] Found ${result.length} lesson assignments`);
+      if (result.length > 0) {
+        console.log(`[getStudentLessons] First row structure:`, JSON.stringify(result[0], null, 2).substring(0, 500));
+      }
       
       // Filter out orphaned assignments where lesson doesn't exist
       // With LEFT JOIN, row.lesson is an object with null values when no match
-      const validLessons = result.filter(row => row.lesson.id !== null);
+      const validLessons = result.filter(row => {
+        return row && row.lesson && row.lesson.id !== null;
+      });
       
       if (validLessons.length < result.length) {
         console.log(`[getStudentLessons] Warning: Filtered out ${result.length - validLessons.length} orphaned lesson assignments`);
