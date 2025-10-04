@@ -1244,6 +1244,11 @@ export class DatabaseStorage implements IStorage {
         }
       }
 
+      // Get existing vocabulary for this student to avoid duplicates
+      const existingVocab = await this.getStudentVocabulary(studentId);
+      const existingWords = new Set(existingVocab.map(v => v.word.toLowerCase()));
+      console.log(`[extractAndSaveVocabulary] Student already knows ${existingWords.size} unique words`);
+
       // Extract vocabulary from lesson sections
       if (content.sections && Array.isArray(content.sections)) {
         console.log(`[extractAndSaveVocabulary] Found ${content.sections.length} sections`);
@@ -1251,13 +1256,20 @@ export class DatabaseStorage implements IStorage {
           if (section.type === 'vocabulary' && section.words && Array.isArray(section.words)) {
             console.log(`[extractAndSaveVocabulary] Found vocabulary section with ${section.words.length} words`);
             for (const word of section.words) {
-              vocabularyToAdd.push({
-                studentId,
-                lessonId,
-                word: word.term || word.word || '',
-                definition: word.coreDefinition || word.definition || '',
-                cefrLevel: lesson.cefrLevel
-              });
+              const wordTerm = (word.term || word.word || '').toLowerCase();
+              
+              // Only add if student doesn't already know this word
+              if (wordTerm && !existingWords.has(wordTerm)) {
+                vocabularyToAdd.push({
+                  studentId,
+                  lessonId,
+                  word: word.term || word.word || '',
+                  definition: word.coreDefinition || word.definition || '',
+                  cefrLevel: lesson.cefrLevel
+                });
+              } else if (wordTerm) {
+                console.log(`[extractAndSaveVocabulary] Skipping duplicate word: ${wordTerm}`);
+              }
             }
           }
         }
@@ -1265,10 +1277,12 @@ export class DatabaseStorage implements IStorage {
         console.log(`[extractAndSaveVocabulary] No sections found in content or sections is not an array`);
       }
 
-      console.log(`[extractAndSaveVocabulary] Extracted ${vocabularyToAdd.length} vocabulary words`);
+      console.log(`[extractAndSaveVocabulary] Extracted ${vocabularyToAdd.length} NEW vocabulary words (skipped duplicates)`);
       if (vocabularyToAdd.length > 0) {
         await this.addStudentVocabulary(vocabularyToAdd);
         console.log(`[extractAndSaveVocabulary] ✅ Saved ${vocabularyToAdd.length} vocabulary items to database`);
+      } else {
+        console.log(`[extractAndSaveVocabulary] ℹ️  No new vocabulary to save (all words already known)`);
       }
 
       return vocabularyToAdd.length;
