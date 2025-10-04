@@ -1076,16 +1076,33 @@ export class DatabaseStorage implements IStorage {
     try {
       console.log(`[getStudentLessons] Fetching lessons for student ${studentId}`);
       const result = await db
-        .select()
+        .select({
+          // Select all fields from student_lessons
+          student_lessons: studentLessons,
+          // Select only metadata from lessons, EXCLUDE the massive content field
+          lessons: {
+            id: lessons.id,
+            teacherId: lessons.teacherId,
+            studentId: lessons.studentId,
+            title: lessons.title,
+            topic: lessons.topic,
+            cefrLevel: lessons.cefrLevel,
+            notes: lessons.notes,
+            grammarSpotlight: lessons.grammarSpotlight,
+            category: lessons.category,
+            tags: lessons.tags,
+            isPublic: lessons.isPublic,
+            publicCategory: lessons.publicCategory,
+            createdAt: lessons.createdAt,
+            // Explicitly EXCLUDE content field to prevent 67MB response
+          }
+        })
         .from(studentLessons)
         .leftJoin(lessons, eq(studentLessons.lessonId, lessons.id))
         .where(eq(studentLessons.studentId, studentId))
         .orderBy(desc(studentLessons.assignedAt));
       
       console.log(`[getStudentLessons] Raw result count: ${result.length}`);
-      if (result.length > 0) {
-        console.log(`[getStudentLessons] First row keys:`, Object.keys(result[0]));
-      }
       
       // Filter out any assignments where the lesson doesn't exist (orphaned records)
       const validLessons = result
