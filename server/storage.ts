@@ -1072,12 +1072,18 @@ export class DatabaseStorage implements IStorage {
 
   async getStudentLessons(studentId: number): Promise<Array<StudentLesson & { lesson: Lesson }>> {
     try {
+      console.log(`[getStudentLessons] Fetching lessons for student ${studentId}`);
       const result = await db
         .select()
         .from(studentLessons)
         .leftJoin(lessons, eq(studentLessons.lessonId, lessons.id))
         .where(eq(studentLessons.studentId, studentId))
         .orderBy(desc(studentLessons.assignedAt));
+      
+      console.log(`[getStudentLessons] Raw result count: ${result.length}`);
+      if (result.length > 0) {
+        console.log(`[getStudentLessons] First row keys:`, Object.keys(result[0]));
+      }
       
       return result.map(row => ({
         ...row.student_lessons,
