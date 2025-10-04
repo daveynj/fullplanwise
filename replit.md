@@ -47,6 +47,34 @@ Social media: LinkedIn - www.linkedin.com/in/davidjackson113, X (Twitter) - @Dav
 
 ## Recent Changes (October 4, 2025)
 
+### Interactive Lesson Deletion with Vocabulary Control
+**Feature**: Added intelligent lesson deletion system that gives teachers control over student vocabulary when removing lessons from their library.
+
+**Implementation**:
+1. **Schema Updates**: Extended `student_vocabulary` table to support standalone vocabulary:
+   - `lessonId` now nullable (allows vocabulary to exist independently)
+   - `source` field tracks origin ("lesson" or "manual")
+   - `originLessonTitle` preserves the original lesson name for reference
+
+2. **Deletion Strategies**:
+   - **No Assignments**: Simple deletion (lesson removed immediately)
+   - **With Assignments**: Teacher chooses between:
+     - **Delete All**: Removes lesson + all vocabulary from student profiles (complete cleanup)
+     - **Keep Vocabulary**: Removes lesson but preserves vocabulary as standalone words (students retain their progress)
+
+3. **Technical Details**:
+   - Transaction-based deletion ensures data consistency
+   - Vocabulary updates only affect words with `source='lesson'` to preserve manually added words
+   - Uses SQL COALESCE to protect existing `originLessonTitle` if lesson already migrated
+   - Server returns strategy-specific success messages to avoid stale UI state
+   - Frontend clears deletion info on each dialog open to prevent stale assignment counts
+
+4. **User Experience**:
+   - Interactive modal shows assignment count and affected students
+   - Radio button selection with clear descriptions of each option
+   - Loading states during assignment checks and deletion
+   - Toast notifications with strategy-specific feedback
+
 ### Vocabulary Tracking Bug Fix
 **Problem**: AI was generating duplicate vocabulary words for students despite having a vocabulary tracking system.
 
