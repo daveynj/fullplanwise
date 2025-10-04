@@ -500,6 +500,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const validatedData = lessonGenerateSchema.parse(req.body);
       
+      console.log(`📋 Generation Request - studentId: ${validatedData.studentId}, useStudentHistory: ${validatedData.useStudentHistory}`);
+      
       // Check if user has enough credits (skip for admin users and during free trial)
       const user = await storage.getUser(req.user!.id);
       if (!user) {
