@@ -66,6 +66,8 @@ export interface IStorage {
   assignLessonToStudent(studentId: number, lessonId: number, teacherId: number, notes?: string): Promise<StudentLesson>;
   getStudentLessons(studentId: number): Promise<Array<StudentLesson & { lesson: Lesson }>>;
   removeStudentLesson(studentId: number, lessonId: number): Promise<boolean>;
+  removeStudentLessonByAssignmentId(assignmentId: number, studentId: number): Promise<boolean>;
+  checkLessonAssignment(studentId: number, lessonId: number): Promise<StudentLesson | undefined>;
   updateStudentLessonStatus(id: number, status: string): Promise<StudentLesson>;
   
   // Student vocabulary methods
@@ -1116,6 +1118,59 @@ export class DatabaseStorage implements IStorage {
       return true;
     } catch (error) {
       console.error('Error removing student lesson:', error);
+      throw error;
+    }
+  }
+
+  async removeStudentLessonByAssignmentId(assignmentId: number, studentId: number): Promise<boolean> {
+    try {
+      // First, get the lesson ID from the assignment
+      const [assignment] = await db
+        .select()
+        .from(studentLessons)
+        .where(and(
+          eq(studentLessons.id, assignmentId),
+          eq(studentLessons.studentId, studentId)
+        ));
+      
+      if (!assignment) {
+        console.log(`No assignment found for ID ${assignmentId}`);
+        return false;
+      }
+      
+      // Remove vocabulary associated with this specific assignment
+      await db.delete(studentVocabulary)
+        .where(and(
+          eq(studentVocabulary.studentId, studentId),
+          eq(studentVocabulary.lessonId, assignment.lessonId)
+        ));
+      console.log(`Removed vocabulary for student ${studentId}, lesson ${assignment.lessonId} (assignment ${assignmentId})`);
+      
+      // Remove the specific lesson assignment
+      await db.delete(studentLessons)
+        .where(eq(studentLessons.id, assignmentId));
+      console.log(`Removed lesson assignment ${assignmentId} for student ${studentId}`);
+      
+      return true;
+    } catch (error) {
+      console.error('Error removing student lesson by assignment ID:', error);
+      throw error;
+    }
+  }
+
+  async checkLessonAssignment(studentId: number, lessonId: number): Promise<StudentLesson | undefined> {
+    try {
+      const [assignment] = await db
+        .select()
+        .from(studentLessons)
+        .where(and(
+          eq(studentLessons.studentId, studentId),
+          eq(studentLessons.lessonId, lessonId)
+        ))
+        .limit(1);
+      return assignment;
+    } catch (error) {
+      console.error('Error checking lesson assignment:', error);
       throw error;
     }
   }

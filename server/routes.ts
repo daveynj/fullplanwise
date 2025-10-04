@@ -180,6 +180,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Unauthorized" });
       }
       
+      // Check if this lesson is already assigned to this student
+      const existingAssignment = await storage.checkLessonAssignment(studentId, lessonId);
+      if (existingAssignment) {
+        return res.status(409).json({ message: "This lesson is already assigned to this student" });
+      }
+      
       const studentLesson = await storage.assignLessonToStudent(
         studentId,
         lessonId,
@@ -208,6 +214,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Delete lesson assignment by assignment ID (prevents duplicate deletion)
+  app.delete("/api/students/:studentId/lessons/assignment/:assignmentId", ensureAuthenticated, async (req, res) => {
+    try {
+      const studentId = parseInt(req.params.studentId);
+      const assignmentId = parseInt(req.params.assignmentId);
+      
+      const student = await storage.getStudent(studentId);
+      if (!student || student.teacherId !== req.user!.id) {
+        return res.status(403).json({ message: "Unauthorized" });
+      }
+      
+      await storage.removeStudentLessonByAssignmentId(assignmentId, studentId);
+      res.status(204).send();
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Legacy endpoint - kept for backward compatibility
   app.delete("/api/students/:studentId/lessons/:lessonId", ensureAuthenticated, async (req, res) => {
     try {
       const studentId = parseInt(req.params.studentId);

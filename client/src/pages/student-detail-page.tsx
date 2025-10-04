@@ -94,10 +94,10 @@ export default function StudentDetailPage() {
 
   // Unassign lesson mutation
   const unassignLessonMutation = useMutation({
-    mutationFn: async (lessonId: number) => {
-      await apiRequest("DELETE", `/api/students/${studentId}/lessons/${lessonId}`);
+    mutationFn: async (assignmentId: number) => {
+      await apiRequest("DELETE", `/api/students/${studentId}/lessons/assignment/${assignmentId}`);
     },
-    onSuccess: (_, lessonId) => {
+    onSuccess: (_, assignmentId) => {
       toast({
         title: "Lesson Unassigned",
         description: `Lesson has been removed from this student's profile.`,
@@ -124,15 +124,19 @@ export default function StudentDetailPage() {
   };
 
   // Handle opening the unassign dialog
-  const handleUnassignLesson = (lesson: Lesson) => {
-    setLessonToUnassign(lesson);
+  const handleUnassignLesson = (assignmentData: { assignmentId: number, lesson: Lesson }) => {
+    setLessonToUnassign(assignmentData.lesson);
     setIsUnassignDialogOpen(true);
+    // Store the assignment ID for deletion
+    (window as any).__currentAssignmentId = assignmentData.assignmentId;
   };
 
   // Confirm unassignment
   const confirmUnassign = () => {
-    if (lessonToUnassign) {
-      unassignLessonMutation.mutate(lessonToUnassign.id);
+    const assignmentId = (window as any).__currentAssignmentId;
+    if (assignmentId) {
+      unassignLessonMutation.mutate(assignmentId);
+      delete (window as any).__currentAssignmentId;
     }
   };
 
@@ -370,8 +374,9 @@ export default function StudentDetailPage() {
                         <div className="space-y-4">
                           {studentLessons.map((sl: any) => {
                             const lesson = sl.lesson;
+                            const assignmentId = sl.id;
                             return (
-                              <div key={lesson.id} className="flex items-center p-4 bg-gray-50 rounded-lg">
+                              <div key={assignmentId} className="flex items-center p-4 bg-gray-50 rounded-lg">
                                 <div className="bg-primary/10 p-2 rounded-lg mr-4">
                                   <BookOpen className="h-6 w-6 text-primary" />
                                 </div>
@@ -394,7 +399,7 @@ export default function StudentDetailPage() {
                                     variant="outline" 
                                     size="sm" 
                                     className="text-orange-600 border-orange-200 hover:bg-orange-100 hover:text-orange-700"
-                                    onClick={() => handleUnassignLesson(lesson as Lesson)}
+                                    onClick={() => handleUnassignLesson({ assignmentId, lesson: lesson as Lesson })}
                                     disabled={unassignLessonMutation.isPending}
                                   >
                                     <LogOut className="mr-1 h-4 w-4" /> Unassign
