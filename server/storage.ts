@@ -1072,51 +1072,33 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
-  async getStudentLessons(studentId: number): Promise<Array<StudentLesson & { lesson: Lesson }>> {
+  async getStudentLessons(studentId: number): Promise<Array<StudentLesson & { lesson: any }>> {
     try {
       console.log(`[getStudentLessons] Fetching lessons for student ${studentId}`);
-      const result = await db
-        .select({
-          // Select all fields from student_lessons
-          student_lessons: studentLessons,
-          // Select only metadata from lessons, EXCLUDE the massive content field
-          lessons: {
-            id: lessons.id,
-            teacherId: lessons.teacherId,
-            studentId: lessons.studentId,
-            title: lessons.title,
-            topic: lessons.topic,
-            cefrLevel: lessons.cefrLevel,
-            notes: lessons.notes,
-            grammarSpotlight: lessons.grammarSpotlight,
-            category: lessons.category,
-            tags: lessons.tags,
-            isPublic: lessons.isPublic,
-            publicCategory: lessons.publicCategory,
-            createdAt: lessons.createdAt,
-            // Explicitly EXCLUDE content field to prevent 67MB response
-          }
-        })
-        .from(studentLessons)
-        .leftJoin(lessons, eq(studentLessons.lessonId, lessons.id))
-        .where(eq(studentLessons.studentId, studentId))
-        .orderBy(desc(studentLessons.assignedAt));
       
-      console.log(`[getStudentLessons] Raw result count: ${result.length}`);
+      // Use Drizzle query builder with explicit column exclusion
+      const result = await db.query.studentLessons.findMany({
+        where: eq(studentLessons.studentId, studentId),
+        with: {
+          lesson: {
+            columns: {
+              content: false, // Explicitly exclude the massive content field
+            }
+          }
+        },
+        orderBy: [desc(studentLessons.assignedAt)]
+      });
+      
+      console.log(`[getStudentLessons] Found ${result.length} lesson assignments`);
       
       // Filter out any assignments where the lesson doesn't exist (orphaned records)
-      const validLessons = result
-        .filter(row => row.lessons !== null)
-        .map(row => ({
-          ...row.student_lessons,
-          lesson: row.lessons!
-        })) as Array<StudentLesson & { lesson: Lesson }>;
+      const validLessons = result.filter(assignment => assignment.lesson !== null);
       
       if (validLessons.length < result.length) {
         console.log(`[getStudentLessons] Warning: Filtered out ${result.length - validLessons.length} orphaned lesson assignments`);
       }
       
-      return validLessons;
+      return validLessons as Array<StudentLesson & { lesson: any }>;
     } catch (error) {
       console.error('Error getting student lessons:', error);
       throw error;
