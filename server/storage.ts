@@ -1112,7 +1112,8 @@ export class DatabaseStorage implements IStorage {
       console.log(`[getStudentLessons] Found ${result.length} lesson assignments`);
       
       // Filter out orphaned assignments where lesson doesn't exist
-      const validLessons = result.filter(row => row.lesson && row.lesson.id !== null);
+      // With LEFT JOIN, row.lesson is an object with null values when no match
+      const validLessons = result.filter(row => row.lesson.id !== null);
       
       if (validLessons.length < result.length) {
         console.log(`[getStudentLessons] Warning: Filtered out ${result.length - validLessons.length} orphaned lesson assignments`);
