@@ -1087,10 +1087,19 @@ export class DatabaseStorage implements IStorage {
         console.log(`[getStudentLessons] First row keys:`, Object.keys(result[0]));
       }
       
-      return result.map(row => ({
-        ...row.student_lessons,
-        lesson: row.lessons!
-      })) as Array<StudentLesson & { lesson: Lesson }>;
+      // Filter out any assignments where the lesson doesn't exist (orphaned records)
+      const validLessons = result
+        .filter(row => row.lessons !== null)
+        .map(row => ({
+          ...row.student_lessons,
+          lesson: row.lessons!
+        })) as Array<StudentLesson & { lesson: Lesson }>;
+      
+      if (validLessons.length < result.length) {
+        console.log(`[getStudentLessons] Warning: Filtered out ${result.length - validLessons.length} orphaned lesson assignments`);
+      }
+      
+      return validLessons;
     } catch (error) {
       console.error('Error getting student lessons:', error);
       throw error;
