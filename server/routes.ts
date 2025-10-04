@@ -580,9 +580,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Asynchronous save - don't await, let it run in background
         console.log(`Starting async lesson save to database for temp ID: ${tempId}...`);
         storage.createLesson(lessonToSave)
-          .then(savedLesson => {
+          .then(async savedLesson => {
             console.log(`✅ Lesson successfully saved with permanent ID: ${savedLesson.id} (was temp: ${tempId})`);
-            // TODO: Optionally notify frontend of permanent ID via websocket/polling
+            
+            // If lesson was generated for a specific student, create the association and extract vocabulary
+            if (validatedData.studentId) {
+              try {
+                console.log(`Creating student-lesson association for student ${validatedData.studentId} and lesson ${savedLesson.id}`);
+                await storage.assignLessonToStudent(
+                  validatedData.studentId,
+                  savedLesson.id,
+                  req.user!.id
+                );
+                console.log(`✅ Student-lesson association created and vocabulary extracted`);
+              } catch (assocError) {
+                console.error(`❌ Error creating student-lesson association:`, assocError);
+              }
+            }
           })
           .catch(saveError => {
             console.error(`❌ Error saving lesson with temp ID ${tempId}:`, saveError);
@@ -619,6 +633,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ message: "Invalid lesson data", errors: error.errors });
       }
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Assign lesson to student (PUT /api/lessons/:id/assign)
+  app.put("/api/lessons/:id/assign", ensureAuthenticated, async (req, res) => {
+    try {
+      const lessonId = parseInt(req.params.id);
+      const { studentId } = req.body;
+      
+      if (!studentId) {
+        return res.status(400).json({ message: "Student ID is required" });
+      }
+      
+      // Verify lesson exists and belongs to the teacher
+      const lesson = await storage.getLesson(lessonId);
+      if (!lesson) {
+        return res.status(404).json({ message: "Lesson not found" });
+      }
+      
+      if (lesson.teacherId !== req.user!.id) {
+        return res.status(403).json({ message: "Unauthorized access to lesson" });
+      }
+      
+      // Verify student exists and belongs to the teacher
+      const student = await storage.getStudent(studentId);
+      if (!student || student.teacherId !== req.user!.id) {
+        return res.status(403).json({ message: "Unauthorized access to student" });
+      }
+      
+      // Create the student-lesson association and extract vocabulary
+      console.log(`Assigning lesson ${lessonId} to student ${studentId}`);
+      const studentLesson = await storage.assignLessonToStudent(
+        studentId,
+        lessonId,
+        req.user!.id
+      );
+      console.log(`✅ Assignment successful:`, studentLesson);
+      
+      res.json(studentLesson);
+    } catch (error: any) {
+      console.error('Error assigning lesson:', error);
       res.status(500).json({ message: error.message });
     }
   });

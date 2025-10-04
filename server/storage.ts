@@ -1150,16 +1150,23 @@ export class DatabaseStorage implements IStorage {
 
   async extractAndSaveVocabulary(studentId: number, lessonId: number): Promise<number> {
     try {
+      console.log(`[extractAndSaveVocabulary] Starting extraction for student ${studentId}, lesson ${lessonId}`);
       const lesson = await this.getLesson(lessonId);
-      if (!lesson || !lesson.content) return 0;
+      if (!lesson || !lesson.content) {
+        console.log(`[extractAndSaveVocabulary] Lesson ${lessonId} not found or has no content`);
+        return 0;
+      }
 
       const vocabularyToAdd: InsertStudentVocabulary[] = [];
       const content = lesson.content as any;
+      console.log(`[extractAndSaveVocabulary] Content type: ${typeof content}`);
 
       // Extract vocabulary from lesson sections
       if (content.sections && Array.isArray(content.sections)) {
+        console.log(`[extractAndSaveVocabulary] Found ${content.sections.length} sections`);
         for (const section of content.sections) {
           if (section.type === 'vocabulary' && section.words && Array.isArray(section.words)) {
+            console.log(`[extractAndSaveVocabulary] Found vocabulary section with ${section.words.length} words`);
             for (const word of section.words) {
               vocabularyToAdd.push({
                 studentId,
@@ -1171,10 +1178,14 @@ export class DatabaseStorage implements IStorage {
             }
           }
         }
+      } else {
+        console.log(`[extractAndSaveVocabulary] No sections found in content or sections is not an array`);
       }
 
+      console.log(`[extractAndSaveVocabulary] Extracted ${vocabularyToAdd.length} vocabulary words`);
       if (vocabularyToAdd.length > 0) {
         await this.addStudentVocabulary(vocabularyToAdd);
+        console.log(`[extractAndSaveVocabulary] ✅ Saved ${vocabularyToAdd.length} vocabulary items to database`);
       }
 
       return vocabularyToAdd.length;
