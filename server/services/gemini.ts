@@ -74,16 +74,9 @@ export class GeminiService {
 
         console.log('Received response from OpenRouter');
         console.log('Response status:', response.status);
-        console.log('Response data type:', typeof response.data);
-        
-        // Check if response.data is valid JSON
-        if (typeof response.data !== 'object' || response.data === null) {
-          console.error('Response is not a valid JSON object:', response.data);
-          throw new Error(`API returned non-JSON response: ${typeof response.data}`);
-        }
         
         // Check if response has expected structure
-        if (!response.data.choices || !Array.isArray(response.data.choices) || response.data.choices.length === 0) {
+        if (!response.data || !response.data.choices || !Array.isArray(response.data.choices) || response.data.choices.length === 0) {
           console.error('Unexpected API response structure:', JSON.stringify(response.data, null, 2).substring(0, 1000));
           throw new Error(`Invalid API response structure. Expected 'choices' array but got: ${JSON.stringify(response.data).substring(0, 500)}`);
         }
@@ -94,6 +87,8 @@ export class GeminiService {
           console.error('No content in API response');
           throw new Error('API response missing content');
         }
+        
+        console.log('Successfully extracted content from API response');
         
         console.log('Received response from Gemini API');
         
