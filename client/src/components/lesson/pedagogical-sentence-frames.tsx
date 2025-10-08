@@ -153,9 +153,13 @@ export function PedagogicalSentenceFramesSection({ section }: PedagogicalSentenc
                         "{response}"
                       </p>
                     ))
-                  ) : (
+                  ) : typeof frame.modelResponses.emerging === 'string' ? (
                     <p className="text-sm text-gray-700 bg-white border border-green-200 rounded p-2">
                       "{frame.modelResponses.emerging}"
+                    </p>
+                  ) : (
+                    <p className="text-sm text-gray-700 bg-white border border-green-200 rounded p-2">
+                      {JSON.stringify(frame.modelResponses.emerging)}
                     </p>
                   )}
                 </div>
@@ -189,9 +193,13 @@ export function PedagogicalSentenceFramesSection({ section }: PedagogicalSentenc
                         "{response}"
                       </p>
                     ))
-                  ) : (
+                  ) : typeof frame.modelResponses.developing === 'string' ? (
                     <p className="text-sm text-gray-700 bg-white border border-blue-200 rounded p-2">
                       "{frame.modelResponses.developing}"
+                    </p>
+                  ) : (
+                    <p className="text-sm text-gray-700 bg-white border border-blue-200 rounded p-2">
+                      {JSON.stringify(frame.modelResponses.developing)}
                     </p>
                   )}
                 </div>
@@ -225,9 +233,13 @@ export function PedagogicalSentenceFramesSection({ section }: PedagogicalSentenc
                         "{response}"
                       </p>
                     ))
-                  ) : (
+                  ) : typeof frame.modelResponses.expanding === 'string' ? (
                     <p className="text-sm text-gray-700 bg-white border border-purple-200 rounded p-2">
                       "{frame.modelResponses.expanding}"
+                    </p>
+                  ) : (
+                    <p className="text-sm text-gray-700 bg-white border border-purple-200 rounded p-2">
+                      {JSON.stringify(frame.modelResponses.expanding)}
                     </p>
                   )}
                 </div>
