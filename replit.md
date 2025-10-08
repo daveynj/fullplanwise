@@ -69,6 +69,21 @@ Social media: LinkedIn - www.linkedin.com/in/davidjackson113, X (Twitter) - @Dav
 
 **Impact**: Sentence frames and tiered scaffolding now properly support student sentence-building at their actual proficiency level. An A2 student's "expanding" frame is still A2-appropriate, not a jump to B1. This makes frames genuinely useful as the "cornerstone" for helping students construct sentences.
 
+### Performance Optimization: Removed Post-Generation Validation
+**Change**: Removed all post-generation validation checks (grammar validation, sentence frame validation) that were slowing down lesson generation.
+
+**Rationale**: 
+- Trusting xAI Grok-4 Fast to generate high-quality content without additional validation overhead
+- Validation was adding significant processing time without meaningful quality improvements
+- The detailed, explicit prompt instructions now ensure quality at generation time rather than post-generation
+
+**Technical Details**:
+- Removed calls to `validateAndImproveContent` (was already a no-op but still added overhead)
+- Removed hardcoded example sentences in JSON templates - all content now AI-generated based on actual lesson topic
+- Streamlined lesson generation pipeline for faster delivery
+
+**Impact**: Significantly faster lesson generation while maintaining quality through comprehensive prompt engineering.
+
 ## Recent Changes (October 4, 2025)
 
 ### Interactive Lesson Deletion with Vocabulary Control

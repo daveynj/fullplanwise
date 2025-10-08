@@ -108,9 +108,8 @@ export class GeminiService {
             
             // Check if jsonContent has required structure
             if (jsonContent.title && jsonContent.sections && Array.isArray(jsonContent.sections)) {
-              console.log('Lesson content has valid structure, applying quality control...');
-              const validatedContent = await this.validateAndImproveContent(jsonContent, params);
-              return await this.formatLessonContent(validatedContent);
+              console.log('Lesson content has valid structure, formatting...');
+              return await this.formatLessonContent(jsonContent);
             } else {
               // Log more detailed diagnostic information 
               console.warn('Parsed JSON is missing required structure', JSON.stringify({
@@ -201,9 +200,8 @@ export class GeminiService {
               
               // Validate structure after fixing
               if (jsonContent.title && jsonContent.sections && Array.isArray(jsonContent.sections)) {
-                console.log('Fixed content has valid structure, applying quality control...');
-                const validatedContent = await this.validateAndImproveContent(jsonContent, params);
-                return await this.formatLessonContent(validatedContent);
+                console.log('Fixed content has valid structure, formatting...');
+                return await this.formatLessonContent(jsonContent);
               } else {
                 throw new Error('Fixed JSON still missing required structure');
               }
@@ -1386,21 +1384,9 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
             }
           },
           "modelResponses": {
-            "emerging": [
-              "${params.topic.charAt(0).toUpperCase() + params.topic.slice(1)} is interesting.",
-              "${params.topic.charAt(0).toUpperCase() + params.topic.slice(1)} is important to many people.",
-              "${params.topic.charAt(0).toUpperCase() + params.topic.slice(1)} is common in modern life."
-            ],
-            "developing": [
-              "I think ${params.topic} is fascinating because it affects our daily routines.",
-              "I believe ${params.topic} is valuable because it connects people across distances.",
-              "I think ${params.topic} is complex because it involves many different factors."
-            ],
-            "expanding": [
-              "I can infer that ${params.topic} is transformative, since it has changed how we communicate with each other.",
-              "I would argue that ${params.topic} is essential in contemporary society, since most professional work now depends on it.",
-              "One could deduce that ${params.topic} is a double-edged phenomenon, since it brings both benefits and challenges to users."
-            ]
+            "emerging": ["Generate 3 complete example sentences using the emerging frame about ${params.topic}"],
+            "developing": ["Generate 3 complete example sentences using the developing frame about ${params.topic}"],
+            "expanding": ["Generate 3 complete example sentences using the expanding frame about ${params.topic}"]
           },
           "teachingNotes": {
             "modelingTips": "Model each tier explicitly. Show students how the sentence structure becomes more complex at each level. Think aloud about your word choices and how you build the reasoning.",
@@ -1431,21 +1417,9 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
             }
           },
           "modelResponses": {
-            "emerging": [
-              "Traditional methods and modern approaches both have advantages.",
-              "${params.topic.charAt(0).toUpperCase() + params.topic.slice(1)} and older systems both have users.",
-              "Online and offline versions both have their place."
-            ],
-            "developing": [
-              "Like traditional methods, modern ${params.topic} also contains core principles. However, modern approaches differ in that they incorporate technology.",
-              "Like earlier versions, current ${params.topic} also contains the same basic purpose. However, it differs in that it reaches a global audience.",
-              "Like face-to-face interaction, ${params.topic} also contains elements of human connection. However, it differs in that it removes physical presence."
-            ],
-            "expanding": [
-              "While traditional and digital forms of ${params.topic} share the fundamental goal of communication, the key distinction lies in the immediacy and scale of reach that digital platforms provide.",
-              "While ${params.topic} and conventional methods share certain benefits, the key distinction lies in how each approach manages time and accessibility constraints.",
-              "While both emerging and established aspects of ${params.topic} share similar user bases, the key distinction lies in the level of technological literacy required for engagement."
-            ]
+            "emerging": ["Generate 3 complete example sentences using the emerging comparison frame about ${params.topic}"],
+            "developing": ["Generate 3 complete example sentences using the developing comparison frame about ${params.topic}"],
+            "expanding": ["Generate 3 complete example sentences using the expanding comparison frame about ${params.topic}"]
           },
           "teachingNotes": {
             "modelingTips": "Display examples side by side. Highlight the transition words and show how sentence complexity increases. Point out how 'while' creates subordination in the expanding frame.",
@@ -1476,21 +1450,9 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
             }
           },
           "modelResponses": {
-            "emerging": [
-              "First, I open the application. Then, I enter my information. Finally, I click submit.",
-              "First, I read the instructions. Then, I gather materials. Finally, I complete the task.",
-              "First, I check the requirements. Then, I prepare my response. Finally, I review everything."
-            ],
-            "developing": [
-              "I solved this by researching ${params.topic} online. After that, I compared different perspectives.",
-              "I approached ${params.topic} by starting with basic concepts. After that, I explored more advanced applications.",
-              "I engaged with ${params.topic} by observing real examples. After that, I practiced applying the principles."
-            ],
-            "expanding": [
-              "My first step was to identify the core components of ${params.topic}. Then I analyzed each element carefully, in order to understand their relationships. To achieve a comprehensive understanding, I synthesized the information into a coherent framework.",
-              "My initial approach was to examine how ${params.topic} functions in practice. Then I studied the underlying principles, in order to grasp the theoretical foundation. To reach my conclusion, I integrated both practical and theoretical perspectives.",
-              "My first step was to gather diverse sources about ${params.topic}. Then I evaluated their credibility, in order to ensure reliable information. To form my analysis, I compared the key findings and drew evidence-based conclusions."
-            ]
+            "emerging": ["Generate 3 complete example sentences using the emerging process frame about ${params.topic}"],
+            "developing": ["Generate 3 complete example sentences using the developing process frame about ${params.topic}"],
+            "expanding": ["Generate 3 complete example sentences using the expanding process frame about ${params.topic}"]
           },
           "teachingNotes": {
             "modelingTips": "Model the process explanation while performing an action. Use gestures to show sequence. Emphasize how 'in order to' adds purpose in the expanding frame.",
