@@ -1371,22 +1371,22 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
           ],
           "tieredFrames": {
             "emerging": {
-              "frame": "${params.topic} is _____.",
-              "description": "Simple description - state basic facts or observations"
+              "frame": "Generate appropriate emerging-tier frame for ${params.cefrLevel} level",
+              "description": "Simplest frame within ${params.cefrLevel} level"
             },
             "developing": {
-              "frame": "I think ${params.topic} is _____ because _____.",
-              "description": "Add your opinion with a reason - connect ideas using 'because'"
+              "frame": "Generate appropriate developing-tier frame for ${params.cefrLevel} level",
+              "description": "Middle-tier frame within ${params.cefrLevel} level"
             },
             "expanding": {
-              "frame": "I can infer that ${params.topic} is _____, since _____.",
-              "description": "Make inferences and justify - use 'since' to show sophisticated reasoning"
+              "frame": "Generate appropriate expanding-tier frame for ${params.cefrLevel} level",
+              "description": "Most complex frame within ${params.cefrLevel} level"
             }
           },
           "modelResponses": {
-            "emerging": ["Generate 3 complete example sentences using the emerging frame about ${params.topic}"],
-            "developing": ["Generate 3 complete example sentences using the developing frame about ${params.topic}"],
-            "expanding": ["Generate 3 complete example sentences using the expanding frame about ${params.topic}"]
+            "emerging": ["Example 1", "Example 2", "Example 3"],
+            "developing": ["Example 1", "Example 2", "Example 3"],
+            "expanding": ["Example 1", "Example 2", "Example 3"]
           },
           "teachingNotes": {
             "modelingTips": "Model each tier explicitly. Show students how the sentence structure becomes more complex at each level. Think aloud about your word choices and how you build the reasoning.",
@@ -1404,22 +1404,22 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
           ],
           "tieredFrames": {
             "emerging": {
-              "frame": "_____ and _____ both have _____.",
-              "description": "Identify one simple similarity between two things"
+              "frame": "Generate appropriate emerging-tier comparison frame for ${params.cefrLevel} level",
+              "description": "Simplest comparison frame within ${params.cefrLevel} level"
             },
             "developing": {
-              "frame": "Like _____, _____ also contains _____. However, _____ differs in that _____.",
-              "description": "Show both similarity and difference using transition words"
+              "frame": "Generate appropriate developing-tier comparison frame for ${params.cefrLevel} level",
+              "description": "Middle-tier comparison frame within ${params.cefrLevel} level"
             },
             "expanding": {
-              "frame": "While _____ and _____ share _____, the key distinction lies in _____.",
-              "description": "Present nuanced comparison with sophisticated subordination"
+              "frame": "Generate appropriate expanding-tier comparison frame for ${params.cefrLevel} level",
+              "description": "Most complex comparison frame within ${params.cefrLevel} level"
             }
           },
           "modelResponses": {
-            "emerging": ["Generate 3 complete example sentences using the emerging comparison frame about ${params.topic}"],
-            "developing": ["Generate 3 complete example sentences using the developing comparison frame about ${params.topic}"],
-            "expanding": ["Generate 3 complete example sentences using the expanding comparison frame about ${params.topic}"]
+            "emerging": ["Example 1", "Example 2", "Example 3"],
+            "developing": ["Example 1", "Example 2", "Example 3"],
+            "expanding": ["Example 1", "Example 2", "Example 3"]
           },
           "teachingNotes": {
             "modelingTips": "Display examples side by side. Highlight the transition words and show how sentence complexity increases. Point out how 'while' creates subordination in the expanding frame.",
@@ -1437,22 +1437,22 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
           ],
           "tieredFrames": {
             "emerging": {
-              "frame": "First, I _____. Then, I _____. Finally, I _____.",
-              "description": "List steps in simple sequence"
+              "frame": "Generate appropriate emerging-tier process frame for ${params.cefrLevel} level",
+              "description": "Simplest process frame within ${params.cefrLevel} level"
             },
             "developing": {
-              "frame": "I solved this by _____. After that, I _____.",
-              "description": "Explain your method with temporal connections"
+              "frame": "Generate appropriate developing-tier process frame for ${params.cefrLevel} level",
+              "description": "Middle-tier process frame within ${params.cefrLevel} level"
             },
             "expanding": {
-              "frame": "My first step was to _____. Then I _____, in order to _____. To achieve the result, I _____.",
-              "description": "Articulate complex process with purpose clauses"
+              "frame": "Generate appropriate expanding-tier process frame for ${params.cefrLevel} level",
+              "description": "Most complex process frame within ${params.cefrLevel} level"
             }
           },
           "modelResponses": {
-            "emerging": ["Generate 3 complete example sentences using the emerging process frame about ${params.topic}"],
-            "developing": ["Generate 3 complete example sentences using the developing process frame about ${params.topic}"],
-            "expanding": ["Generate 3 complete example sentences using the expanding process frame about ${params.topic}"]
+            "emerging": ["Example 1", "Example 2", "Example 3"],
+            "developing": ["Example 1", "Example 2", "Example 3"],
+            "expanding": ["Example 1", "Example 2", "Example 3"]
           },
           "teachingNotes": {
             "modelingTips": "Model the process explanation while performing an action. Use gestures to show sequence. Emphasize how 'in order to' adds purpose in the expanding frame.",
