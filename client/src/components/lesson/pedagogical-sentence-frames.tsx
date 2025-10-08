@@ -143,15 +143,21 @@ export function PedagogicalSentenceFramesSection({ section }: PedagogicalSentenc
 
                 <div className="space-y-2">
                   <p className="text-xs font-semibold text-green-800 uppercase">Model Responses:</p>
-                  {frame.modelResponses.emerging.slice(0, 2).map((response, idx) => (
-                    <p 
-                      key={idx} 
-                      className="text-sm text-gray-700 bg-white border border-green-200 rounded p-2"
-                      data-testid={`model-emerging-${frameIndex}-${idx}`}
-                    >
-                      "{response}"
+                  {Array.isArray(frame.modelResponses.emerging) ? (
+                    frame.modelResponses.emerging.slice(0, 2).map((response, idx) => (
+                      <p 
+                        key={idx} 
+                        className="text-sm text-gray-700 bg-white border border-green-200 rounded p-2"
+                        data-testid={`model-emerging-${frameIndex}-${idx}`}
+                      >
+                        "{response}"
+                      </p>
+                    ))
+                  ) : (
+                    <p className="text-sm text-gray-700 bg-white border border-green-200 rounded p-2">
+                      "{frame.modelResponses.emerging}"
                     </p>
-                  ))}
+                  )}
                 </div>
               </div>
 
@@ -173,15 +179,21 @@ export function PedagogicalSentenceFramesSection({ section }: PedagogicalSentenc
 
                 <div className="space-y-2">
                   <p className="text-xs font-semibold text-blue-800 uppercase">Model Responses:</p>
-                  {frame.modelResponses.developing.slice(0, 2).map((response, idx) => (
-                    <p 
-                      key={idx} 
-                      className="text-sm text-gray-700 bg-white border border-blue-200 rounded p-2"
-                      data-testid={`model-developing-${frameIndex}-${idx}`}
-                    >
-                      "{response}"
+                  {Array.isArray(frame.modelResponses.developing) ? (
+                    frame.modelResponses.developing.slice(0, 2).map((response, idx) => (
+                      <p 
+                        key={idx} 
+                        className="text-sm text-gray-700 bg-white border border-blue-200 rounded p-2"
+                        data-testid={`model-developing-${frameIndex}-${idx}`}
+                      >
+                        "{response}"
+                      </p>
+                    ))
+                  ) : (
+                    <p className="text-sm text-gray-700 bg-white border border-blue-200 rounded p-2">
+                      "{frame.modelResponses.developing}"
                     </p>
-                  ))}
+                  )}
                 </div>
               </div>
 
@@ -203,15 +215,21 @@ export function PedagogicalSentenceFramesSection({ section }: PedagogicalSentenc
 
                 <div className="space-y-2">
                   <p className="text-xs font-semibold text-purple-800 uppercase">Model Responses:</p>
-                  {frame.modelResponses.expanding.slice(0, 2).map((response, idx) => (
-                    <p 
-                      key={idx} 
-                      className="text-sm text-gray-700 bg-white border border-purple-200 rounded p-2"
-                      data-testid={`model-expanding-${frameIndex}-${idx}`}
-                    >
-                      "{response}"
+                  {Array.isArray(frame.modelResponses.expanding) ? (
+                    frame.modelResponses.expanding.slice(0, 2).map((response, idx) => (
+                      <p 
+                        key={idx} 
+                        className="text-sm text-gray-700 bg-white border border-purple-200 rounded p-2"
+                        data-testid={`model-expanding-${frameIndex}-${idx}`}
+                      >
+                        "{response}"
+                      </p>
+                    ))
+                  ) : (
+                    <p className="text-sm text-gray-700 bg-white border border-purple-200 rounded p-2">
+                      "{frame.modelResponses.expanding}"
                     </p>
-                  ))}
+                  )}
                 </div>
               </div>
             </div>
