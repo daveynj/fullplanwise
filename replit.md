@@ -48,18 +48,26 @@ Social media: LinkedIn - www.linkedin.com/in/davidjackson113, X (Twitter) - @Dav
 ## Recent Changes (October 8, 2025)
 
 ### CEFR-Level Appropriate Sentence Frames Enhancement
-**Issue**: Sentence frames were not appropriately leveled - A2 lessons were receiving complex sentence structures suitable for B1/B2, making them difficult for beginners to use.
+**Issue**: Sentence frames were not appropriately leveled - A2 lessons were receiving complex sentence structures suitable for B1/B2, making them difficult for beginners to use. The tiered frames (emerging/developing/expanding) were also the same across all CEFR levels instead of being level-specific.
 
-**Root Cause**: AI prompt provided vague guidance ("Focus on personal experiences") without concrete structural constraints for each CEFR level.
+**Root Cause**: AI prompt provided vague guidance ("Focus on personal experiences") without concrete structural constraints for each CEFR level. Tiered scaffolding didn't account for base level differences.
 
-**Solution**: Enhanced AI prompt with explicit level-specific requirements for sentence frames:
+**Solution**: Enhanced AI prompt with explicit level-specific requirements for both sentence frames AND tiered frames:
+
+**Sentence Frames (Overall):**
 - **Structural Constraints**: Word count limits (A1: 6-8 words, A2: 8-10, B1: 12-15, B2: 15-18, C1: 20-25, C2: unlimited)
 - **Grammatical Restrictions**: Specific tenses and clause types allowed at each level (e.g., A1: only simple present, no subordinate clauses; A2: can use "because" but no relative clauses)
 - **Concrete Examples**: Provided CORRECT examples showing appropriate complexity and INCORRECT examples showing overly complex structures to avoid
 - **Language Functions**: Clear guidance on communicative functions appropriate for each level
-- **Validation Checklist**: Final checks to ensure frames match level requirements
 
-**Impact**: Sentence frames now properly scaffold student sentence-building at their actual proficiency level, making them genuinely useful as the "cornerstone" for helping students construct sentences.
+**Tiered Frames (Emerging/Developing/Expanding):**
+- Each tier now scaffolds WITHIN the student's CEFR level, not across levels
+- A1 tiers: All tiers use 3-8 words max, simple present only (e.g., emerging: "I like _____", expanding: "I like _____ because _____")
+- A2 tiers: All tiers use 4-10 words max, simple tenses (e.g., emerging: "I think _____ is _____", expanding: "I usually _____ when I _____")
+- B1+ tiers: Appropriately scaled complexity within level constraints
+- **Validation Checklist**: Ensures all three tiers stay within the target CEFR level
+
+**Impact**: Sentence frames and tiered scaffolding now properly support student sentence-building at their actual proficiency level. An A2 student's "expanding" frame is still A2-appropriate, not a jump to B1. This makes frames genuinely useful as the "cornerstone" for helping students construct sentences.
 
 ## Recent Changes (October 4, 2025)
 

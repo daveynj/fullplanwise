@@ -1153,6 +1153,67 @@ REJECTION CRITERIA - REJECT LESSONS WHERE:
 WARM-UP SECTION CLARIFICATION:
 The "targetVocabulary" field in the warm-up section should contain the key vocabulary words from the lesson's main vocabulary section. These are the same 5 words that will be featured in the vocabulary section, allowing students to preview and discuss them before formal introduction.
 
+🎯 CRITICAL: TIERED FRAMES MUST BE CEFR-LEVEL APPROPRIATE
+
+The tieredFrames (emerging/developing/expanding) scaffold students WITHIN their ${params.cefrLevel} level. Each tier must follow the structural constraints for ${params.cefrLevel}.
+
+${params.cefrLevel === 'A1' ? `**A1 TIERED FRAMES - ALL TIERS MUST BE SIMPLE:**
+- EMERGING: 3-4 words max, simple present only
+  Example: "I like _____." or "_____ is fun."
+- DEVELOPING: 5-6 words, can add one simple connector
+  Example: "I like _____ and _____." or "My _____ is _____."
+- EXPANDING: 6-8 words max, can use basic "because"
+  Example: "I like _____ because _____." or "My favorite _____ is _____."
+
+ALL A1 tiers: NO subordinate clauses, NO complex tenses, ONLY simple present/continuous` : params.cefrLevel === 'A2' ? `**A2 TIERED FRAMES - SIMPLE TO MODERATE COMPLEXITY:**
+- EMERGING: 4-6 words, simple present/past
+  Example: "I think _____ is _____." or "I usually _____."
+- DEVELOPING: 7-9 words, can use "because" for one reason
+  Example: "I like _____ because it is _____." or "In my opinion, _____ are _____."
+- EXPANDING: 8-10 words max, simple "when" clauses allowed
+  Example: "I usually _____ when I _____." or "I think _____ because it helps _____."
+
+ALL A2 tiers: NO relative clauses, NO complex conjunctions, simple tenses only` : params.cefrLevel === 'B1' ? `**B1 TIERED FRAMES - MODERATE COMPLEXITY:**
+- EMERGING: 6-9 words, simple structures
+  Example: "I think _____ is important." or "One advantage is _____."
+- DEVELOPING: 10-12 words, one subordinate clause
+  Example: "I believe _____ is important because it helps us _____." or "People who _____ often _____."
+- EXPANDING: 12-15 words max, can use relative clauses
+  Example: "One advantage of _____ is that it _____." or "If we _____, we can achieve _____."
+
+ALL B1 tiers: Can use "because/when/if/although", basic relative clauses, NO passive voice` : params.cefrLevel === 'B2' ? `**B2 TIERED FRAMES - SOPHISTICATED STRUCTURES:**
+- EMERGING: 8-11 words, clear main idea
+  Example: "It is important to _____." or "This suggests that _____."
+- DEVELOPING: 12-15 words, analytical language
+  Example: "It is essential to _____ in order to _____." or "This suggests that _____ may impact _____."
+- EXPANDING: 15-18 words max, complex reasoning
+  Example: "While some argue _____, I believe that _____." or "This may indicate that _____, though further research is needed."
+
+ALL B2 tiers: Can use purpose clauses, passive voice, modal speculation, NO inverted conditionals` : params.cefrLevel === 'C1' ? `**C1 TIERED FRAMES - ADVANCED DISCOURSE:**
+- EMERGING: 10-13 words, sophisticated vocabulary
+  Example: "It could be argued that _____." or "The extent to which _____ remains debatable."
+- DEVELOPING: 14-18 words, nuanced arguments
+  Example: "It could be argued that _____, though this fails to account for _____."
+- EXPANDING: 19-25 words, complex hedging
+  Example: "While proponents maintain that _____, critics contend that _____, suggesting a need for _____."
+
+ALL C1 tiers: Advanced modality, hedging, complex conditionals allowed` : `**C2 TIERED FRAMES - EXPERT-LEVEL:**
+- EMERGING: Natural academic language (12-15 words)
+  Example: "Were we to consider _____, certain implications emerge." 
+- DEVELOPING: Sophisticated discourse (16-20 words)
+  Example: "Notwithstanding the aforementioned considerations, one might posit that _____."
+- EXPANDING: Expert-level complexity (20+ words)
+  Example: "Insofar as _____ is concerned, one might posit that _____, though this perspective warrants careful scrutiny."
+
+ALL C2 tiers: Full range of structures, inverted conditionals, subjunctive mood`}
+
+**VALIDATION FOR TIERED FRAMES:**
+□ Does the "emerging" tier follow ${params.cefrLevel} word limits?
+□ Does the "developing" tier use only ${params.cefrLevel}-appropriate grammar?
+□ Does the "expanding" tier stay within ${params.cefrLevel} complexity?
+□ Would a ${params.cefrLevel} student understand ALL three tiers?
+□ Do tiers scaffold WITHIN the level, not jump to higher levels?
+
 FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure all fields contain complete content. Do not use placeholders.
 
 {
