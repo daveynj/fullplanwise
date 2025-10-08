@@ -54,6 +54,7 @@ export class GeminiService {
       };
 
       console.log('Sending request to OpenRouter API (Grok-4 Fast)...');
+      console.log('Request payload:', JSON.stringify(requestData, null, 2).substring(0, 300));
 
       try {
         // Make the request to OpenRouter
@@ -71,16 +72,28 @@ export class GeminiService {
           }
         );
 
-        // Log the response structure for debugging
-        console.log('OpenRouter API response structure:', JSON.stringify(response.data, null, 2).substring(0, 500));
+        console.log('Received response from OpenRouter');
+        console.log('Response status:', response.status);
+        console.log('Response data type:', typeof response.data);
+        
+        // Check if response.data is valid JSON
+        if (typeof response.data !== 'object' || response.data === null) {
+          console.error('Response is not a valid JSON object:', response.data);
+          throw new Error(`API returned non-JSON response: ${typeof response.data}`);
+        }
         
         // Check if response has expected structure
         if (!response.data.choices || !Array.isArray(response.data.choices) || response.data.choices.length === 0) {
-          console.error('Unexpected API response structure:', response.data);
-          throw new Error(`Invalid API response: ${JSON.stringify(response.data)}`);
+          console.error('Unexpected API response structure:', JSON.stringify(response.data, null, 2).substring(0, 1000));
+          throw new Error(`Invalid API response structure. Expected 'choices' array but got: ${JSON.stringify(response.data).substring(0, 500)}`);
         }
 
         const text = response.data.choices[0]?.message?.content;
+        
+        if (!text) {
+          console.error('No content in API response');
+          throw new Error('API response missing content');
+        }
         
         console.log('Received response from Gemini API');
         
@@ -229,6 +242,23 @@ export class GeminiService {
           throw new Error(`Error processing Gemini response: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
       } catch (error: any) {
+        // Enhanced error logging for axios errors
+        if (error.response) {
+          // The request was made and the server responded with a status code outside 2xx
+          console.error('OpenRouter API Error Response:');
+          console.error('Status:', error.response.status);
+          console.error('Status Text:', error.response.statusText);
+          console.error('Headers:', JSON.stringify(error.response.headers, null, 2).substring(0, 500));
+          console.error('Data:', JSON.stringify(error.response.data, null, 2).substring(0, 1000));
+        } else if (error.request) {
+          // The request was made but no response was received
+          console.error('No response received from OpenRouter API');
+          console.error('Request details:', error.request);
+        } else {
+          // Something happened in setting up the request
+          console.error('Error setting up request:', error.message);
+        }
+        
         console.error('Error during Gemini API request:', error.message);
         
         // Determine if this is a content policy error
