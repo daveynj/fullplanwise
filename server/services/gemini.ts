@@ -240,18 +240,25 @@ export class GeminiService {
         // Enhanced error logging for axios errors
         if (error.response) {
           // The request was made and the server responded with a status code outside 2xx
-          console.error('OpenRouter API Error Response:');
+          console.error('❌ OpenRouter API Error Response:');
           console.error('Status:', error.response.status);
           console.error('Status Text:', error.response.statusText);
           console.error('Headers:', JSON.stringify(error.response.headers, null, 2).substring(0, 500));
-          console.error('Data:', JSON.stringify(error.response.data, null, 2).substring(0, 1000));
+          console.error('Response Data Type:', typeof error.response.data);
+          console.error('Response Data Preview:', JSON.stringify(error.response.data).substring(0, 500));
+          
+          // Check if it's an authentication error
+          if (error.response.status === 401 || error.response.status === 403) {
+            console.error('⚠️ AUTHENTICATION ERROR - Check OPENROUTER_API_KEY');
+          }
         } else if (error.request) {
           // The request was made but no response was received
-          console.error('No response received from OpenRouter API');
-          console.error('Request details:', error.request);
+          console.error('❌ No response received from OpenRouter API');
+          console.error('Request URL:', error.config?.url);
+          console.error('Request Method:', error.config?.method);
         } else {
           // Something happened in setting up the request
-          console.error('Error setting up request:', error.message);
+          console.error('❌ Error setting up request:', error.message);
         }
         
         console.error('Error during Gemini API request:', error.message);
