@@ -460,6 +460,48 @@ For "${params.topic}" at ${params.cefrLevel} level, approach through ${params.ce
 
 STEP 1: VOCABULARY SELECTION
 
+**CRITICAL: USE CAMBRIDGE ENGLISH VOCABULARY PROFILE (EVP) STANDARDS**
+
+You MUST select vocabulary words according to the Cambridge English Vocabulary Profile (EVP), which is the authoritative CEFR-aligned vocabulary database. Reference your training knowledge of EVP to ensure accuracy.
+
+**CAMBRIDGE EVP LEVEL VERIFICATION:**
+Before selecting any vocabulary word, verify it meets Cambridge EVP standards for ${params.cefrLevel}:
+
+${params.cefrLevel === 'A1' ? `**A1 EVP Standards (Beginner):**
+- Words from Cambridge A1 vocabulary list (basic daily needs)
+- Examples: happy, work, eat, go, friend, time, help, need
+- Avoid: challenge, opportunity, achieve, develop (these are B1+)
+- Context: Words for immediate survival needs and basic personal information` : params.cefrLevel === 'A2' ? `**A2 EVP Standards (Elementary):**
+- Words from Cambridge A2 vocabulary list (personal experiences)
+- Examples: prefer, remember, decide, enjoy, worry, invite
+- Avoid: evaluate, analyze, implement, demonstrate (these are B2+)
+- Context: Words for describing personal experiences and simple social situations` : params.cefrLevel === 'B1' ? `**B1 EVP Standards (Intermediate):**
+- Words from Cambridge B1 Preliminary vocabulary list (functional language)
+- Examples: challenge, opportunity, achieve, compare, improve, affect
+- Avoid: synthesize, contemplate, facilitate, cultivate (these are B2/C1)
+- Context: Words for practical problem-solving and expressing opinions with reasons
+- Test: Would an intermediate student understand this in everyday conversation or news articles?` : params.cefrLevel === 'B2' ? `**B2 EVP Standards (Upper-Intermediate):**
+- Words from Cambridge B2 First vocabulary list (academic/professional)
+- Examples: analyze, evaluate, substantial, compelling, implement, diverse
+- Avoid: elucidate, juxtapose, paradigm, ubiquitous (these are C1/C2)
+- Context: Words for academic discussion and professional contexts
+- Test: Would this appear in academic texts or business communications?` : params.cefrLevel === 'C1' ? `**C1 EVP Standards (Advanced):**
+- Words from Cambridge C1 Advanced vocabulary list (sophisticated language)
+- Examples: elucidate, nuanced, paradigm, multifaceted, inherent, intrinsic
+- Context: Words for sophisticated analysis and expert-level discussion
+- Test: Would this appear in academic research or specialized professional writing?` : `**C2 EVP Standards (Mastery):**
+- Words from Cambridge C2 Proficiency vocabulary list (mastery level)
+- Examples: ubiquitous, ephemeral, quintessential, conundrum, propensity
+- Context: Words showing complete mastery of English vocabulary
+- Test: Would a native speaker with higher education use this?`}
+
+**EVP VALIDATION CHECKLIST:**
+For each word you select, confirm:
+✓ This word appears in Cambridge EVP at ${params.cefrLevel} level or below
+✓ This word is NOT from a higher CEFR level (check one level above to avoid)
+✓ This word serves a genuine communicative function for ${params.cefrLevel} learners
+✓ Similar meaning words from lower levels are already known (justify why this word now)
+
 **ENHANCED VOCABULARY DEFINITION REQUIREMENTS:**
 
 Each vocabulary word must include:
