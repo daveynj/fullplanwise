@@ -698,112 +698,29 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
     },
     {
       "type": "sentenceFrames",
-      "title": "Sentence Practice",
-      "introduction": "Master key sentence patterns to express your ideas clearly and naturally.",
-      "frames": [
-        {
-          "patternTemplate": "I think _____ is _____ because _____.",
-          "languageFunction": "Expressing and justifying opinions",
-          "title": "Opinion Expression with Reasoning",
-          "level": "intermediate",
-          "grammarFocus": [
-            "Structure: I think + [subject] + is + [adjective] + because + [reason]",
-            "Use of 'because' to provide justification",
-            "Expressing personal opinions with evidence"
-          ],
-          "structureComponents": [
-            {
-              "label": "Opinion Topic",
-              "description": "The subject or topic you have an opinion about",
-              "examples": ["learning English", "healthy eating", "traveling", "technology", "education", "sports"],
-              "inSentenceExample": "I think [Opinion Topic] is..."
-            },
-            {
-              "label": "Evaluative Adjective",
-              "description": "Your judgment or evaluation of the topic",
-              "examples": ["important", "useful", "difficult", "enjoyable", "necessary", "challenging"],
-              "inSentenceExample": "...is [Evaluative Adjective] because..."
-            },
-            {
-              "label": "Justification",
-              "description": "The reason or evidence supporting your opinion",
-              "examples": ["it helps with communication", "it improves health", "it expands your worldview", "it connects people"],
-              "inSentenceExample": "...because [Justification]."
-            }
-          ],
-          "examples": [
-            {
-              "completeSentence": "I think learning English is important because it helps with international communication.",
-              "breakdown": {
-                "Opinion Topic": "learning English",
-                "Evaluative Adjective": "important",
-                "Justification": "it helps with international communication"
-              }
-            },
-            {
-              "completeSentence": "I think healthy eating is necessary because it prevents many diseases.",
-              "breakdown": {
-                "Opinion Topic": "healthy eating",
-                "Evaluative Adjective": "necessary", 
-                "Justification": "it prevents many diseases"
-              }
-            }
-          ],
-          "teachingNotes": [
-            "Start with familiar topics before moving to more abstract concepts",
-            "Encourage students to use lesson vocabulary in their opinions",
-            "Practice both positive and negative opinions for balance"
-          ]
-        },
-        {
-          "patternTemplate": "One way to _____ is to _____.",
-          "languageFunction": "Suggesting solutions and giving advice",
-          "title": "Solution Suggestions",
-          "level": "intermediate",
-          "grammarFocus": [
-            "Structure: One way + infinitive + is + infinitive",
-            "Using infinitives to express purpose and method",
-            "Giving practical advice"
-          ],
-          "structureComponents": [
-            {
-              "label": "Goal/Problem",
-              "description": "What someone wants to achieve or solve",
-              "examples": ["improve vocabulary", "stay healthy", "save money", "learn faster", "reduce stress"],
-              "inSentenceExample": "One way to [Goal/Problem] is..."
-            },
-            {
-              "label": "Solution Method",
-              "description": "The specific action or strategy to achieve the goal",
-              "examples": ["read regularly", "exercise daily", "cook at home", "practice speaking", "take breaks"],
-              "inSentenceExample": "...is to [Solution Method]."
-            }
-          ],
-          "examples": [
-            {
-              "completeSentence": "One way to improve vocabulary is to read regularly.",
-              "breakdown": {
-                "Goal/Problem": "improve vocabulary",
-                "Solution Method": "read regularly"
-              }
-            },
-            {
-              "completeSentence": "One way to stay healthy is to exercise daily.",
-              "breakdown": {
-                "Goal/Problem": "stay healthy",
-                "Solution Method": "exercise daily"
-              }
-            }
-          ],
-          "teachingNotes": [
-            "Have students brainstorm multiple solutions for the same problem",
-            "Connect to practical situations from the lesson topic",
-            "Practice with both personal and general advice"
-          ]
-        }
-      ],
-      "timeAllocation": "10 minutes",
-      "teacherNotes": "Model each sentence frame first, then have students create their own sentences using the vocabulary from the lesson."
+      "version": "v2_pedagogical",
+      "title": "Language Practice for ${topic}",
+      "introduction": "Practice expressing ideas about ${topic} with these sentence patterns designed for ${cefrLevel} students.",
+      "pedagogicalFrames": [
+        // GENERATE 3 UNIQUE SENTENCE FRAMES appropriate for ${cefrLevel} level
+        // 
+        // CEFR-SPECIFIC REQUIREMENTS:
+        // A1: Simple present patterns, basic descriptions (e.g., "___ is ___", "I like ___")
+        // A2: Simple past/present, basic comparisons (e.g., "I think ___ is ___", "___ is more ___ than ___")
+        // B1: Opinions with reasons, cause-effect (e.g., "I believe ___ because ___", "___ leads to ___")
+        // B2: Analytical statements, contrasting views (e.g., "One could argue ___", "While ___, on the other hand ___")
+        // C1: Sophisticated analysis, nuanced arguments (e.g., "___ demonstrates that ___", "Despite ___, it is evident ___")
+        // C2: Expert discourse, critical evaluation (e.g., "The implications of ___", "Notwithstanding ___, the prevailing view ___")
+        //
+        // Each frame must include:
+        // - languageFunction: Communication purpose (e.g., "Describing aspects of ${topic}")
+        // - grammarFocus: Array of 2-3 grammar points for ${cefrLevel}
+        // - tieredFrames: {emerging, developing, expanding} - each with frame pattern and description
+        // - modelResponses: {emerging, developing, expanding} - each with 3 examples about ${topic}
+        // - teachingNotes: {modelingTips, guidedPractice, independentUse, fadingStrategy}
+        //
+        // IMPORTANT: NO hard-coded examples - create unique content for "${topic}" at ${cefrLevel} level
+      ]
     },
     {
       "type": "discussion",

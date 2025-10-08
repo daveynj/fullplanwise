@@ -697,62 +697,64 @@ Better: "The restaurant was expensive, but the food was delicious and the servic
 **COGNITIVE LOAD MANAGEMENT:**
 ${params.cefrLevel === 'A1' ? 'Average 6-8 words per sentence, simple present/past' : params.cefrLevel === 'A2' ? 'Average 8-10 words per sentence, simple connector words' : params.cefrLevel === 'B1' ? 'Average 10-12 words per sentence, because/so/although' : params.cefrLevel === 'B2' ? 'Average 12-15 words per sentence, complex connectors' : 'Flexible length with sophisticated structures'}
 
-CONTENT APPROPRIATENESS AND ENGAGEMENT VALIDATION
 
-Before finalizing content, verify it meets speaking-lesson requirements:
+STEP 4: SENTENCE FRAME GENERATION
 
-CONTENT VALIDATION CHECKLIST:
-✓ PERSONAL RELEVANCE: Can students connect this to their own experiences or opinions?
-✓ DISCUSSION POTENTIAL: Does this content naturally generate questions, reactions, and responses?
-✓ OPINION-WORTHY: Are there aspects students can agree/disagree with or have personal views about?
-✓ ACCESSIBLE COMPLEXITY: Can students understand this quickly to focus on speaking practice?
-✓ CONVERSATION STARTERS: Does this provide clear talking points for pair/group discussions?
+**SENTENCE FRAMES MUST BE DYNAMICALLY GENERATED FOR ${params.cefrLevel} LEVEL**
 
-STEP 4: SENTENCE FRAME SELECTION
+Generate 3 pedagogical sentence frames that are SPECIFICALLY appropriate for ${params.cefrLevel} level students discussing "${params.topic}". Each frame must have tiered scaffolding (emerging, developing, expanding) that matches the ${params.cefrLevel} capabilities.
 
-COMMUNICATIVE NEED ANALYSIS FOR ${params.cefrLevel} STUDENTS:
+**CEFR-SPECIFIC SENTENCE FRAME REQUIREMENTS:**
 
-Before selecting sentence patterns, analyze what communication needs ${params.cefrLevel} students actually have:
+A1 LEVEL FRAMES:
+- Emerging: Simple present tense patterns (e.g., "___ is ___", "I like ___")
+- Developing: Basic connectors (e.g., "___ and ___", "I have ___ because ___")
+- Expanding: Simple reasoning (e.g., "___ is ___ because ___")
+- Language functions: Describing, expressing preferences, stating simple facts
+- Grammar focus: Present tense, basic adjectives, simple conjunctions
 
-REAL-WORLD COMMUNICATION NEEDS BY LEVEL:
-A1 STUDENTS: Need patterns for immediate, concrete communication
-- Expressing basic preferences: "I like ___ because ___"
-- Simple descriptions: "___ is ___" 
-- Basic needs: "I want/need ___"
-- Present actions: "I am ___ing"
+A2 LEVEL FRAMES:
+- Emerging: Simple past/present patterns (e.g., "I think ___ is ___", "Yesterday I ___")
+- Developing: Basic comparisons (e.g., "___ is more ___ than ___", "I prefer ___ because ___")
+- Expanding: Simple opinions with reasons (e.g., "In my opinion, ___ because ___")
+- Language functions: Expressing opinions, comparing, describing past experiences
+- Grammar focus: Past tense, comparatives, opinion expressions
 
-A2 STUDENTS: Need patterns for personal experiences and simple social interaction
-- Past experiences: "Yesterday I ___ and it was ___"
-- Future plans: "I'm going to ___ because ___"
-- Simple comparisons: "___ is more ___ than ___"
-- Basic opinions: "I think ___ is ___"
+B1 LEVEL FRAMES:
+- Emerging: Expressing opinions (e.g., "I believe that ___", "It seems that ___")
+- Developing: Cause-effect relationships (e.g., "___ leads to ___ because ___")
+- Expanding: Arguments with justification (e.g., "Although ___, I think ___ because ___")
+- Language functions: Arguing, justifying, discussing advantages/disadvantages
+- Grammar focus: Complex sentences, subordination, modal verbs
 
-B1 STUDENTS: Need patterns for social topics and reasoned communication
-- Expressing opinions with reasons: "I believe ___ because ___"
-- Problem-solution: "The problem is ___, so we should ___"
-- Advantages/disadvantages: "On one hand ___, but on the other hand ___"
-- Making suggestions: "We could ___ in order to ___"
+B2 LEVEL FRAMES:
+- Emerging: Analytical statements (e.g., "One could argue that ___", "___ suggests that ___")
+- Developing: Contrasting viewpoints (e.g., "While ___, on the other hand ___")
+- Expanding: Hypothetical reasoning (e.g., "If ___, then ___, which would result in ___")
+- Language functions: Analyzing, evaluating, hypothesizing
+- Grammar focus: Conditionals, passive voice, advanced conjunctions
 
-B2 STUDENTS: Need patterns for analytical and evaluative communication
-- Complex reasoning: "Although ___, ___ nevertheless ___"
-- Cause and effect: "___ has led to ___, which in turn ___"
-- Evaluation: "While ___ has advantages, it also ___"
-- Hypotheticals: "If ___ were to happen, then ___"
+C1 LEVEL FRAMES:
+- Emerging: Sophisticated analysis (e.g., "___ demonstrates that ___", "The evidence indicates ___")
+- Developing: Nuanced arguments (e.g., "Despite ___, it is evident that ___")
+- Expanding: Complex reasoning (e.g., "Given that ___, one might conclude that ___, provided that ___")
+- Language functions: Synthesizing, critiquing, presenting complex arguments
+- Grammar focus: Advanced conditionals, subjunctive mood, complex subordination
 
-C1/C2 STUDENTS: Need patterns for sophisticated analysis and professional communication
-- Nuanced arguments: "Despite the fact that ___, it could be argued that ___"
-- Academic discourse: "Research suggests that ___, indicating that ___"
-- Complex conditionals: "Had ___ not occurred, ___ would likely have ___"
+C2 LEVEL FRAMES:
+- Emerging: Expert discourse (e.g., "The implications of ___ extend to ___")
+- Developing: Critical evaluation (e.g., "Notwithstanding ___, the prevailing view suggests ___")
+- Expanding: Sophisticated synthesis (e.g., "In light of ___, coupled with ___, it becomes apparent that ___")
+- Language functions: Expert analysis, critical discourse, nuanced debate
+- Grammar focus: All advanced structures, idiomatic expressions, formal register
 
-PATTERN SELECTION STRATEGY:
-- Choose patterns that enable students to express authentic ideas about "${params.topic}"
-- Focus on high-frequency communication functions related to this topic
-- Ensure patterns can be used productively in conversations about this topic
-- Select patterns that connect the topic to students' experiences and opinions
+**FRAME GENERATION INSTRUCTIONS:**
+- Create frames that are SPECIFICALLY appropriate for ${params.cefrLevel} level
+- Each frame should relate directly to discussing "${params.topic}"
+- Generate UNIQUE examples for each tier based on the topic (NO generic examples)
+- Model responses should demonstrate natural language use for ${params.cefrLevel} students
+- Teaching notes should provide practical I Do / We Do / You Do guidance
 
-**Goal:** Develop topic-specific, communicatively valuable sentence patterns that support authentic expression about "${params.topic}" at the ${params.cefrLevel} level.
-
-I will count the total number of vocabulary items. If you don't include EXACTLY ${minVocabCount} complete vocabulary items, your response will be rejected.
 
 🎯 VOCABULARY IMAGE PROMPT INSTRUCTIONS:
 
@@ -901,26 +903,6 @@ B2+ SCAFFOLDING NEEDS:
 - Open-ended questions that require evaluation and synthesis
 - Multiple perspectives and complex reasoning opportunities
 
-DISCUSSION QUESTION VALIDATION CHECKLIST:
-
-Before finalizing questions, verify each meets these criteria:
-
-✓ COGNITIVE MATCH: Does this question match the thinking abilities of ${params.cefrLevel} students?
-✓ LINGUISTIC ACCESSIBILITY: Can students understand the question using their current language level?
-✓ SCAFFOLDING APPROPRIATENESS: Is the right amount of support provided for this level?
-✓ PERSONAL RELEVANCE: Can students connect this to their own experiences or interests?
-✓ DISCUSSION POTENTIAL: Will this generate meaningful conversation between students?
-✓ SPEAKING PRACTICE VALUE: Does this question encourage extended speaking appropriate to the level?
-✓ TOPIC CONNECTION: Does this clearly relate to the lesson content and vocabulary?
-
-AUTOMATIC REJECTION CRITERIA - REJECT QUESTIONS THAT:
-❌ Require language skills above the students' level to answer meaningfully
-❌ Are too abstract for students to relate to their experiences
-❌ Can be answered with simple yes/no without encouraging elaboration
-❌ Assume cultural knowledge students may not have
-❌ Are too complex cognitively for the developmental stage
-❌ Don't provide enough context for students to engage meaningfully
-❌ Are generic and could apply to any topic (not specifically about "${params.topic}")
 
 READING COMPREHENSION APPROACH:
 First, analyze appropriate comprehension skills for ${params.cefrLevel} level:
@@ -947,60 +929,13 @@ ${params.cefrLevel === 'A1' || params.cefrLevel === 'A2' || params.cefrLevel ===
 This scaffolding is CRITICAL for A1-B1 learners and must be included.`
   : `Since this is a ${params.cefrLevel} level lesson, do NOT include "lowerLevelScaffolding" in the sentence frames. Advanced learners do not need this additional scaffolding.`}
 
-STEP 6: CROSS-COMPONENT INTEGRATION & FINAL VALIDATION
+STEP 6: LESSON INTEGRATION
 
-CRITICAL: Before finalizing your lesson, you MUST perform explicit cross-component integration analysis to ensure vocabulary, reading text, and discussion questions work together synergistically.
-
-VOCABULARY-TEXT INTEGRATION ANALYSIS:
-Analyze how target vocabulary integrates with the reading text:
-
-✓ NATURAL INTEGRATION CHECK: Does each target vocabulary word appear naturally in the reading text (not forced or artificially inserted)?
-✓ CONTEXTUAL SUPPORT: Does the text provide sufficient context clues to help students understand the vocabulary in meaningful situations?
-✓ USAGE VARIETY: Are vocabulary words used in different contexts within the text to show versatility?
-✓ PREREQUISITE VOCABULARY: Does the text include necessary supporting vocabulary to make target words comprehensible?
-✓ TOPIC COHERENCE: Do all vocabulary choices genuinely support and enhance the topic "${params.topic}"?
-
-TEXT-DISCUSSION INTEGRATION ANALYSIS:
-Analyze how discussion questions connect to the reading text:
-
-✓ CONTENT DEPENDENCY: Do discussion questions require genuine understanding of the text content to answer effectively?
-✓ TOPIC EXTENSION: Do questions naturally extend text topics into meaningful personal or analytical discussions?
-✓ COMPREHENSION FOUNDATION: Are questions built on information and ideas presented in the text?
-✓ COGNITIVE PROGRESSION: Do questions appropriately build on text complexity for ${params.cefrLevel} level thinking?
-✓ ENGAGEMENT BRIDGE: Do questions create natural bridges from text content to student experiences and opinions?
-
-VOCABULARY-DISCUSSION INTEGRATION ANALYSIS:
-Analyze how discussion questions incorporate target vocabulary:
-
-✓ VOCABULARY USAGE OPPORTUNITIES: Do discussion questions provide natural opportunities for students to USE target vocabulary in their responses?
-✓ CONTEXTUAL REINFORCEMENT: Do questions require students to demonstrate understanding of vocabulary in new contexts?
-✓ SPEAKING PRACTICE: Would students naturally incorporate target vocabulary when answering these questions?
-✓ SCAFFOLDED APPLICATION: Do questions appropriately scaffold vocabulary usage for ${params.cefrLevel} level students?
-✓ MEANINGFUL COMMUNICATION: Do vocabulary usage opportunities feel authentic rather than mechanical?
-
-SYNERGISTIC LEARNING FLOW ANALYSIS:
-Analyze the overall learning experience across all components:
-
-✓ CONTENT COHERENCE: Do all components (vocabulary, text, discussion) support the same learning objectives for "${params.topic}"?
-✓ DIFFICULTY ALIGNMENT: Are all components appropriately leveled for ${params.cefrLevel} students?
-✓ REINFORCEMENT PATTERNS: Do components reinforce each other's content naturally?
-✓ PEDAGOGICAL SEQUENCE: Do components create an effective learning progression (vocabulary → text → discussion)?
-✓ AUTHENTIC CONNECTIONS: Do component relationships feel natural rather than artificially constructed?
-
-INTEGRATION QUALITY VALIDATION:
-Before proceeding, confirm your lesson achieves:
-- Target vocabulary appears meaningfully in text AND discussion contexts
-- Discussion questions genuinely require text comprehension to answer
-- Students will naturally use vocabulary when responding to discussion questions
-- All components work together to create a cohesive learning experience about "${params.topic}"
-- The learning flow from vocabulary → text → discussion feels natural and educationally sound
-
-REJECTION CRITERIA - REJECT LESSONS WHERE:
-❌ Vocabulary appears forced or artificially inserted into text
-❌ Discussion questions could be answered without reading the text
-❌ Students could answer discussion questions without using target vocabulary
-❌ Components feel disconnected or only superficially related
-❌ The lesson lacks a coherent learning progression
+Create a cohesive lesson where:
+- Vocabulary words appear naturally in the reading text
+- Discussion questions connect to the reading content
+- Students can use the vocabulary when answering discussion questions
+- All components support learning about "${params.topic}" at ${params.cefrLevel} level
 
 WARM-UP SECTION CLARIFICATION:
 The "targetVocabulary" field in the warm-up section should contain the key vocabulary words from the lesson's main vocabulary section. These are the same 5 words that will be featured in the vocabulary section, allowing students to preview and discuss them before formal introduction.
@@ -1146,150 +1081,25 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
         {"question": "Complete Question 5?", "options": ["True", "False"], "answer": "False", "correctAnswer": "False", "explanation": "Complete explanation..."}
       ]
     },
-    // PEDAGOGICAL SENTENCE FRAMES (v2) - Research-Backed Tiered Scaffolding
-    // Following best practices: tiered by proficiency, purpose-driven, with model responses
-    // Based on Vygotsky's ZPD and Gradual Release of Responsibility model
+    // PEDAGOGICAL SENTENCE FRAMES (v2) - DYNAMICALLY GENERATED FOR CEFR LEVEL
     {
       "type": "sentenceFrames",
       "version": "v2_pedagogical", 
-      "title": "Structured Language Practice for ${params.topic}",
-      "introduction": "These scaffolded sentence frames help you express ideas about ${params.topic} with increasing complexity. Choose the level that challenges you appropriately.",
+      "title": "Language Practice for ${params.topic}",
+      "introduction": "Practice expressing ideas about ${params.topic} with these sentence patterns designed for ${params.cefrLevel} students.",
       "pedagogicalFrames": [
-        {
-          "languageFunction": "Describing and Explaining ${params.topic}",
-          "grammarFocus": [
-            "Subject-verb agreement",
-            "Because-clauses for causation", 
-            "Present simple for general truths"
-          ],
-          "tieredFrames": {
-            "emerging": {
-              "frame": "${params.topic} is _____.",
-              "description": "Simple description - state basic facts or observations"
-            },
-            "developing": {
-              "frame": "I think ${params.topic} is _____ because _____.",
-              "description": "Add your opinion with a reason - connect ideas using 'because'"
-            },
-            "expanding": {
-              "frame": "I can infer that ${params.topic} is _____, since _____.",
-              "description": "Make inferences and justify - use 'since' to show sophisticated reasoning"
-            }
-          },
-          "modelResponses": {
-            "emerging": [
-              "${params.topic.charAt(0).toUpperCase() + params.topic.slice(1)} is interesting.",
-              "${params.topic.charAt(0).toUpperCase() + params.topic.slice(1)} is important to many people.",
-              "${params.topic.charAt(0).toUpperCase() + params.topic.slice(1)} is common in modern life."
-            ],
-            "developing": [
-              "I think ${params.topic} is fascinating because it affects our daily routines.",
-              "I believe ${params.topic} is valuable because it connects people across distances.",
-              "I think ${params.topic} is complex because it involves many different factors."
-            ],
-            "expanding": [
-              "I can infer that ${params.topic} is transformative, since it has changed how we communicate with each other.",
-              "I would argue that ${params.topic} is essential in contemporary society, since most professional work now depends on it.",
-              "One could deduce that ${params.topic} is a double-edged phenomenon, since it brings both benefits and challenges to users."
-            ]
-          },
-          "teachingNotes": {
-            "modelingTips": "Model each tier explicitly. Show students how the sentence structure becomes more complex at each level. Think aloud about your word choices and how you build the reasoning.",
-            "guidedPractice": "Practice collaboratively in pairs. Have students try the emerging frame first, then progress to developing. Use 'Turn and Talk' to rehearse before sharing with the class.",
-            "independentUse": "Students choose their level of support. Post frames on the board for reference. Encourage students to attempt the expanding frame even if challenging - scaffold as needed.",
-            "fadingStrategy": "Gradually make frames optional rather than required. Track when students can produce similar structures independently. Withdraw scaffold when students consistently succeed without it."
-          }
-        },
-        {
-          "languageFunction": "Comparing Aspects of ${params.topic}",
-          "grammarFocus": [
-            "Comparative structures",
-            "Transition words (like, however, whereas)",
-            "Parallel structure"
-          ],
-          "tieredFrames": {
-            "emerging": {
-              "frame": "_____ and _____ both have _____.",
-              "description": "Identify one simple similarity between two things"
-            },
-            "developing": {
-              "frame": "Like _____, _____ also contains _____. However, _____ differs in that _____.",
-              "description": "Show both similarity and difference using transition words"
-            },
-            "expanding": {
-              "frame": "While _____ and _____ share _____, the key distinction lies in _____.",
-              "description": "Present nuanced comparison with sophisticated subordination"
-            }
-          },
-          "modelResponses": {
-            "emerging": [
-              "Traditional methods and modern approaches both have advantages.",
-              "${params.topic.charAt(0).toUpperCase() + params.topic.slice(1)} and older systems both have users.",
-              "Online and offline versions both have their place."
-            ],
-            "developing": [
-              "Like traditional methods, modern ${params.topic} also contains core principles. However, modern approaches differ in that they incorporate technology.",
-              "Like earlier versions, current ${params.topic} also contains the same basic purpose. However, it differs in that it reaches a global audience.",
-              "Like face-to-face interaction, ${params.topic} also contains elements of human connection. However, it differs in that it removes physical presence."
-            ],
-            "expanding": [
-              "While traditional and digital forms of ${params.topic} share the fundamental goal of communication, the key distinction lies in the immediacy and scale of reach that digital platforms provide.",
-              "While ${params.topic} and conventional methods share certain benefits, the key distinction lies in how each approach manages time and accessibility constraints.",
-              "While both emerging and established aspects of ${params.topic} share similar user bases, the key distinction lies in the level of technological literacy required for engagement."
-            ]
-          },
-          "teachingNotes": {
-            "modelingTips": "Display examples side by side. Highlight the transition words and show how sentence complexity increases. Point out how 'while' creates subordination in the expanding frame.",
-            "guidedPractice": "Create a Venn diagram together as a class about ${params.topic}. Use the visual to practice the frames orally before writing. Partners practice filling frames with their own ideas.",
-            "independentUse": "Students write comparisons independently, choosing their frame level. Provide sentence starters on sticky notes or in notebooks for easy reference during writing tasks.",
-            "fadingStrategy": "First make frame selection optional. Then provide only the transition words. Finally, remove all support and monitor if students maintain the comparison structure independently."
-          }
-        },
-        {
-          "languageFunction": "Explaining Processes Related to ${params.topic}",
-          "grammarFocus": [
-            "Sequence markers (first, then, finally)",
-            "Purpose clauses (in order to)",
-            "Past tense for completed actions"
-          ],
-          "tieredFrames": {
-            "emerging": {
-              "frame": "First, I _____. Then, I _____. Finally, I _____.",
-              "description": "List steps in simple sequence"
-            },
-            "developing": {
-              "frame": "I solved this by _____. After that, I _____.",
-              "description": "Explain your method with temporal connections"
-            },
-            "expanding": {
-              "frame": "My first step was to _____. Then I _____, in order to _____. To achieve the result, I _____.",
-              "description": "Articulate complex process with purpose clauses"
-            }
-          },
-          "modelResponses": {
-            "emerging": [
-              "First, I open the application. Then, I enter my information. Finally, I click submit.",
-              "First, I read the instructions. Then, I gather materials. Finally, I complete the task.",
-              "First, I check the requirements. Then, I prepare my response. Finally, I review everything."
-            ],
-            "developing": [
-              "I solved this by researching ${params.topic} online. After that, I compared different perspectives.",
-              "I approached ${params.topic} by starting with basic concepts. After that, I explored more advanced applications.",
-              "I engaged with ${params.topic} by observing real examples. After that, I practiced applying the principles."
-            ],
-            "expanding": [
-              "My first step was to identify the core components of ${params.topic}. Then I analyzed each element carefully, in order to understand their relationships. To achieve a comprehensive understanding, I synthesized the information into a coherent framework.",
-              "My initial approach was to examine how ${params.topic} functions in practice. Then I studied the underlying principles, in order to grasp the theoretical foundation. To reach my conclusion, I integrated both practical and theoretical perspectives.",
-              "My first step was to gather diverse sources about ${params.topic}. Then I evaluated their credibility, in order to ensure reliable information. To form my analysis, I compared the key findings and drew evidence-based conclusions."
-            ]
-          },
-          "teachingNotes": {
-            "modelingTips": "Model the process explanation while performing an action. Use gestures to show sequence. Emphasize how 'in order to' adds purpose in the expanding frame.",
-            "guidedPractice": "Students work in groups to explain a simple process about ${params.topic} using the frames. Each group member uses a different tier. Groups present to class.",
-            "independentUse": "Students write individual process explanations. Frames remain visible for reference but become optional. Encourage trying the expanding frame even if it's challenging.",
-            "fadingStrategy": "Remove frames but keep sequence markers visible. Then remove markers too. Monitor if students independently use temporal/purpose language when explaining processes."
-          }
-        }
+        // GENERATE 3 UNIQUE SENTENCE FRAMES appropriate for ${params.cefrLevel} level
+        // Each frame must include:
+        // - languageFunction: The communication purpose (e.g., "Describing aspects of ${params.topic}")
+        // - grammarFocus: Array of 2-3 grammar points relevant to ${params.cefrLevel}
+        // - tieredFrames: Object with emerging, developing, expanding tiers
+        //   Each tier has: frame (the pattern), description (how to use it)
+        // - modelResponses: Object with emerging, developing, expanding arrays
+        //   Each array has 3 example sentences about ${params.topic}
+        // - teachingNotes: Object with modelingTips, guidedPractice, independentUse, fadingStrategy
+        //
+        // IMPORTANT: Generate frames that match ${params.cefrLevel} complexity
+        // NO hard-coded examples - create unique content based on "${params.topic}"
       ]
     },
     // CLOZE SECTION (Complete - Fill in the Blanks)
