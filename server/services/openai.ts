@@ -312,6 +312,54 @@ Each discussion question MUST have its own unique paragraph context (3-5 sentenc
 🎯 **CRITICAL VOCABULARY SELECTION PROTOCOL** 🎯
 **YOU MUST FOLLOW THIS 5-STEP PROCESS FOR ALL VOCABULARY SELECTION**
 
+**⚠️ MANDATORY: USE CAMBRIDGE ENGLISH VOCABULARY PROFILE (EVP) STANDARDS ⚠️**
+
+All vocabulary selections MUST align with the Cambridge English Vocabulary Profile (EVP), the authoritative CEFR-aligned vocabulary database. You have EVP knowledge in your training data - USE IT to ensure vocabulary accuracy.
+
+**CAMBRIDGE EVP LEVEL STANDARDS FOR ${cefrLevel}:**
+
+${cefrLevel === 'A1' ? `**A1 EVP Standards (Beginner):**
+- Select ONLY from Cambridge A1 vocabulary list
+- Examples: happy, work, eat, go, friend, time, help, need, house, family
+- FORBIDDEN: challenge, opportunity, achieve, develop, compare, improve (these are B1+)
+- Context: Basic survival needs, immediate personal information, concrete daily activities
+- Test: Would a complete beginner tourist know this word?` : cefrLevel === 'A2' ? `**A2 EVP Standards (Elementary):**
+- Select ONLY from Cambridge A2 vocabulary list
+- Examples: prefer, remember, decide, enjoy, worry, invite, boring, interesting
+- FORBIDDEN: evaluate, analyze, implement, demonstrate, substantial (these are B2+)
+- Context: Personal experiences, simple opinions, basic social situations
+- Test: Would someone with 6 months of basic English classes know this?` : cefrLevel === 'B1' ? `**B1 EVP Standards (Intermediate):**
+- Select ONLY from Cambridge B1 Preliminary vocabulary list
+- Examples: challenge, opportunity, achieve, compare, improve, affect, opinion, advantage
+- FORBIDDEN: synthesize, contemplate, facilitate, cultivate, paradigm (these are B2/C1)
+- Context: Practical problem-solving, expressing opinions with reasons, everyday discussions
+- Test: Would this appear in everyday news articles or casual workplace conversations?` : cefrLevel === 'B2' ? `**B2 EVP Standards (Upper-Intermediate):**
+- Select ONLY from Cambridge B2 First vocabulary list
+- Examples: analyze, evaluate, substantial, compelling, implement, diverse, furthermore
+- FORBIDDEN: elucidate, juxtapose, paradigm, ubiquitous, quintessential (these are C1/C2)
+- Context: Academic discussions, professional contexts, analytical thinking
+- Test: Would this appear in university lectures or business presentations?` : cefrLevel === 'C1' ? `**C1 EVP Standards (Advanced):**
+- Select ONLY from Cambridge C1 Advanced vocabulary list
+- Examples: elucidate, nuanced, paradigm, multifaceted, inherent, intrinsic, comprehensive
+- Context: Sophisticated analysis, expert-level discussion, academic research
+- Test: Would this appear in academic journals or specialized professional writing?` : `**C2 EVP Standards (Mastery):**
+- Select ONLY from Cambridge C2 Proficiency vocabulary list
+- Examples: ubiquitous, ephemeral, quintessential, conundrum, propensity, juxtapose
+- Context: Complete mastery of English, native-like precision, specialized discourse
+- Test: Would an educated native speaker use this in formal academic writing?`}
+
+**EVP VALIDATION REQUIREMENTS - CHECK EVERY WORD:**
+Before accepting ANY vocabulary word, verify:
+1. ✓ Word exists in Cambridge EVP at ${cefrLevel} level (or below)
+2. ✓ Word is NOT from a higher CEFR level (cross-check against level above)
+3. ✓ Word serves genuine communication needs for ${cefrLevel} learners
+4. ✓ Students have prerequisite vocabulary to understand this word's definition
+
+**REJECT immediately if:**
+✗ Word appears in Cambridge EVP at a HIGHER level than ${cefrLevel}
+✗ Word sounds "academic" but you're teaching A1/A2/B1
+✗ You're unsure of the word's EVP level (when in doubt, choose simpler)
+
 STEP 1: VOCABULARY LEVEL ANALYSIS (REQUIRED BEFORE SELECTION)
 
 Before selecting vocabulary, analyze what ${cefrLevel} students typically know and should learn next:
