@@ -71,6 +71,15 @@ export class GeminiService {
           }
         );
 
+        // Log the response structure for debugging
+        console.log('OpenRouter API response structure:', JSON.stringify(response.data, null, 2).substring(0, 500));
+        
+        // Check if response has expected structure
+        if (!response.data.choices || !Array.isArray(response.data.choices) || response.data.choices.length === 0) {
+          console.error('Unexpected API response structure:', response.data);
+          throw new Error(`Invalid API response: ${JSON.stringify(response.data)}`);
+        }
+
         const text = response.data.choices[0]?.message?.content;
         
         console.log('Received response from Gemini API');
@@ -1585,8 +1594,8 @@ If an example is a simple string, return a string. If it's an object with "compl
 // Test the OpenRouter integration
 export const testOpenRouterConnection = async (): Promise<boolean> => {
   try {
-    const testService = new GeminiService(process.env.OPENROUTER_API_KEY || '');
-    if (!testService.apiKey) {
+    const apiKey = process.env.OPENROUTER_API_KEY || '';
+    if (!apiKey) {
       console.error('OPENROUTER_API_KEY not configured');
       return false;
     }
@@ -1602,7 +1611,7 @@ export const testOpenRouterConnection = async (): Promise<boolean> => {
       testRequest,
       {
         headers: {
-          'Authorization': `Bearer ${testService.apiKey}`,
+          'Authorization': `Bearer ${apiKey}`,
           'Content-Type': 'application/json',
           'HTTP-Referer': 'https://planwiseesl.com',
           'X-Title': 'PlanwiseESL'
