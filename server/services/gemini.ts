@@ -108,8 +108,9 @@ export class GeminiService {
             
             // Check if jsonContent has required structure
             if (jsonContent.title && jsonContent.sections && Array.isArray(jsonContent.sections)) {
-              console.log('Lesson content has valid structure, formatting...');
-              return await this.formatLessonContent(jsonContent);
+              console.log('Lesson content has valid structure, applying quality control...');
+              const validatedContent = await this.validateAndImproveContent(jsonContent, params);
+              return await this.formatLessonContent(validatedContent);
             } else {
               // Log more detailed diagnostic information 
               console.warn('Parsed JSON is missing required structure', JSON.stringify({
@@ -200,8 +201,9 @@ export class GeminiService {
               
               // Validate structure after fixing
               if (jsonContent.title && jsonContent.sections && Array.isArray(jsonContent.sections)) {
-                console.log('Fixed content has valid structure, formatting...');
-                return await this.formatLessonContent(jsonContent);
+                console.log('Fixed content has valid structure, applying quality control...');
+                const validatedContent = await this.validateAndImproveContent(jsonContent, params);
+                return await this.formatLessonContent(validatedContent);
               } else {
                 throw new Error('Fixed JSON still missing required structure');
               }
@@ -542,165 +544,17 @@ Before finalizing, verify:
 
 Create ${params.cefrLevel === 'A1' ? '80-120 words' : params.cefrLevel === 'A2' ? '100-150 words' : params.cefrLevel === 'B1' ? '120-180 words' : params.cefrLevel === 'B2' ? '150-220 words' : '180-250 words'} text following these enhanced requirements.
 
-STEP 3: SENTENCE FRAMES - CEFR LEVEL-APPROPRIATE STRUCTURE
-
-**CRITICAL: Sentence frames are the cornerstone for helping students build sentences. They MUST match ${params.cefrLevel} structural complexity.**
-
-${params.cefrLevel === 'A1' ? `**A1 SENTENCE FRAME REQUIREMENTS:**
-
-STRUCTURAL CONSTRAINTS:
-- Maximum 6-8 words total
-- ONE clause only (no subordinate clauses)
-- Simple present or present continuous tense
-- Basic subject-verb-object structure
-- NO conjunctions like "because", "although", "when"
-- Use simple "and" to connect only
-
-CORRECT A1 EXAMPLES:
-✓ "I like _____ because _____." (6 words, simple reason)
-✓ "My favorite _____ is _____." (5 words, basic preference)
-✓ "I can _____ and _____." (5 words, simple abilities)
-✓ "I want to _____." (4 words, basic desire)
-
-INCORRECT A1 EXAMPLES (TOO COMPLEX):
-✗ "I think _____ is important because it helps people _____." (TOO MANY CLAUSES)
-✗ "When I _____, I usually _____." (SUBORDINATE CLAUSE - B1 level)
-✗ "It is important to _____ in order to _____." (INFINITIVE PURPOSE - B2 level)
-
-LANGUAGE FUNCTIONS FOR A1:
-- Expressing likes/dislikes
-- Describing things with adjectives
-- Stating basic facts
-- Naming and identifying` : params.cefrLevel === 'A2' ? `**A2 SENTENCE FRAME REQUIREMENTS:**
-
-STRUCTURAL CONSTRAINTS:
-- Maximum 8-10 words total
-- ONE main clause + optional simple connector
-- Present, past simple, or "going to" future only
-- Can use "because" for ONE simple reason
-- NO complex conjunctions ("although", "unless", "whereas")
-- NO relative clauses ("who", "which", "that")
-
-CORRECT A2 EXAMPLES:
-✓ "I like _____ because it is _____." (7 words, simple reason)
-✓ "In my opinion, _____ is _____." (6 words, simple opinion)
-✓ "I usually _____ when I _____." (6 words, simple time clause)
-✓ "I think _____ are _____." (5 words, basic evaluation)
-
-INCORRECT A2 EXAMPLES (TOO COMPLEX):
-✗ "I believe that _____ is essential because it enables people to _____." (TOO FORMAL/COMPLEX)
-✗ "The most significant aspect of _____ is that it _____." (RELATIVE CLAUSE - B1 level)
-✗ "Having experienced _____, I can say that _____." (PERFECT PARTICIPLE - B2 level)
-
-LANGUAGE FUNCTIONS FOR A2:
-- Expressing simple opinions
-- Describing personal experiences in past
-- Giving simple reasons with "because"
-- Making comparisons with basic adjectives` : params.cefrLevel === 'B1' ? `**B1 SENTENCE FRAME REQUIREMENTS:**
-
-STRUCTURAL CONSTRAINTS:
-- Maximum 12-15 words total
-- Can use ONE subordinate clause
-- Present perfect, past, and future tenses allowed
-- Can use "because", "when", "if", "although"
-- Basic relative clauses allowed ("who", "which", "that")
-- NO passive voice or complex conditionals
-
-CORRECT B1 EXAMPLES:
-✓ "I think _____ is important because it helps us _____." (9 words, reason clause)
-✓ "One advantage of _____ is that it _____." (8 words, relative clause)
-✓ "If we _____, we can _____." (6 words, conditional)
-✓ "People who _____ often _____." (5 words, relative clause)
-
-INCORRECT B1 EXAMPLES (TOO COMPLEX):
-✗ "It could be argued that _____ represents a significant shift in the way _____." (ACADEMIC DISCOURSE - C1 level)
-✗ "Were we to _____, the outcome would have been _____." (INVERSION - C2 level)
-✗ "Having been _____, the situation necessitates _____." (PERFECT PARTICIPLE + FORMAL VOCAB - C1 level)
-
-LANGUAGE FUNCTIONS FOR B1:
-- Explaining reasons and results
-- Expressing advantages/disadvantages
-- Making predictions and suggestions
-- Describing experiences with detail` : params.cefrLevel === 'B2' ? `**B2 SENTENCE FRAME REQUIREMENTS:**
-
-STRUCTURAL CONSTRAINTS:
-- Maximum 15-18 words total
-- Can use TWO subordinate clauses
-- All tenses including present perfect continuous
-- Modal verbs for speculation (might, could, should)
-- Passive voice allowed
-- NO inverted conditionals or subjunctive mood
-
-CORRECT B2 EXAMPLES:
-✓ "It is essential to _____ in order to _____." (9 words, purpose clause)
-✓ "One significant aspect of _____ is that it enables people to _____." (12 words)
-✓ "While some argue that _____, I believe that _____." (9 words, contrast)
-✓ "This suggests that _____ may have a significant impact on _____." (11 words)
-
-INCORRECT B2 EXAMPLES (TOO COMPLEX):
-✗ "Notwithstanding the aforementioned considerations, one might posit that _____." (OVERLY FORMAL - C2 level)
-✗ "Were it not for _____, the ramifications would be _____." (INVERSION - C2 level)
-✗ "The extent to which _____ remains a subject of considerable scholarly debate." (ACADEMIC FORMALITY - C2 level)
-
-LANGUAGE FUNCTIONS FOR B2:
-- Analyzing and evaluating situations
-- Presenting balanced arguments
-- Speculating about consequences
-- Making recommendations with justification` : params.cefrLevel === 'C1' ? `**C1 SENTENCE FRAME REQUIREMENTS:**
-
-STRUCTURAL CONSTRAINTS:
-- Maximum 20-25 words total
-- Multiple subordinate clauses allowed
-- All tenses and aspects
-- Advanced modality and hedging language
-- Passive constructions and nominalization
-- Complex conditionals allowed
-
-CORRECT C1 EXAMPLES:
-✓ "It could be argued that _____, though this perspective fails to account for _____." (14 words)
-✓ "The extent to which _____ remains a matter of considerable debate among _____." (13 words)
-✓ "While proponents of _____ maintain that _____, critics contend that _____." (11 words)
-✓ "This raises the question of whether _____ or whether it simply _____." (12 words)
-
-LANGUAGE FUNCTIONS FOR C1:
-- Constructing sophisticated arguments
-- Acknowledging counterarguments
-- Expressing nuanced viewpoints
-- Using hedging and tentative language` : `**C2 SENTENCE FRAME REQUIREMENTS:**
-
-STRUCTURAL CONSTRAINTS:
-- No word limit (natural academic/professional discourse)
-- Full range of grammatical structures
-- Inverted conditionals, subjunctive mood
-- Advanced discourse markers
-- Metaphorical and idiomatic language
-
-CORRECT C2 EXAMPLES:
-✓ "Were we to consider _____, the ramifications would be _____."
-✓ "Notwithstanding the aforementioned considerations, it is incumbent upon us to _____."
-✓ "The paradigm shift in _____ necessitates a fundamental reconsideration of _____."
-✓ "Insofar as _____ is concerned, one might posit that _____."
-
-LANGUAGE FUNCTIONS FOR C2:
-- Expert-level academic discourse
-- Sophisticated rhetorical devices
-- Highly nuanced arguments
-- Specialized professional language`}
+STEP 3: SENTENCE FRAMES
 
 **PATTERN REQUIREMENTS:**
 ✓ Enable authentic discussion about "${params.topic}"
-✓ Strictly follow ${params.cefrLevel} structural constraints above
-✓ Include Step 1 vocabulary naturally
-✓ Support real communication needs at student level
+✓ Match ${params.cefrLevel} complexity level
+✓ Include Step 1 vocabulary
+✓ Support real communication needs
+
+${params.cefrLevel === 'A1' ? 'Focus on basic preferences and descriptions' : params.cefrLevel === 'A2' ? 'Focus on personal experiences and simple opinions' : params.cefrLevel === 'B1' ? 'Focus on reasons and problem-solving' : params.cefrLevel === 'B2' ? 'Focus on analysis and evaluation' : params.cefrLevel === 'C1' ? 'Focus on sophisticated arguments' : 'Focus on expert-level discourse'}
 
 **Use enhanced format:** patternTemplate, languageFunction, structureComponents, examples, grammarFocus, teachingNotes.
-
-**VALIDATION BEFORE FINALIZING:**
-□ Does each sentence frame follow the word count limit for ${params.cefrLevel}?
-□ Are verb tenses restricted to those allowed at ${params.cefrLevel}?
-□ Do frames avoid grammatical structures above ${params.cefrLevel}?
-□ Can students at ${params.cefrLevel} easily understand and use these frames?
-□ Are frames genuinely useful for discussing "${params.topic}"?
 
 STEP 4: ACTIVITIES & QUESTIONS
 
@@ -1151,67 +1005,6 @@ REJECTION CRITERIA - REJECT LESSONS WHERE:
 WARM-UP SECTION CLARIFICATION:
 The "targetVocabulary" field in the warm-up section should contain the key vocabulary words from the lesson's main vocabulary section. These are the same 5 words that will be featured in the vocabulary section, allowing students to preview and discuss them before formal introduction.
 
-🎯 CRITICAL: TIERED FRAMES MUST BE CEFR-LEVEL APPROPRIATE
-
-The tieredFrames (emerging/developing/expanding) scaffold students WITHIN their ${params.cefrLevel} level. Each tier must follow the structural constraints for ${params.cefrLevel}.
-
-${params.cefrLevel === 'A1' ? `**A1 TIERED FRAMES - ALL TIERS MUST BE SIMPLE:**
-- EMERGING: 3-4 words max, simple present only
-  Example: "I like _____." or "_____ is fun."
-- DEVELOPING: 5-6 words, can add one simple connector
-  Example: "I like _____ and _____." or "My _____ is _____."
-- EXPANDING: 6-8 words max, can use basic "because"
-  Example: "I like _____ because _____." or "My favorite _____ is _____."
-
-ALL A1 tiers: NO subordinate clauses, NO complex tenses, ONLY simple present/continuous` : params.cefrLevel === 'A2' ? `**A2 TIERED FRAMES - SIMPLE TO MODERATE COMPLEXITY:**
-- EMERGING: 4-6 words, simple present/past
-  Example: "I think _____ is _____." or "I usually _____."
-- DEVELOPING: 7-9 words, can use "because" for one reason
-  Example: "I like _____ because it is _____." or "In my opinion, _____ are _____."
-- EXPANDING: 8-10 words max, simple "when" clauses allowed
-  Example: "I usually _____ when I _____." or "I think _____ because it helps _____."
-
-ALL A2 tiers: NO relative clauses, NO complex conjunctions, simple tenses only` : params.cefrLevel === 'B1' ? `**B1 TIERED FRAMES - MODERATE COMPLEXITY:**
-- EMERGING: 6-9 words, simple structures
-  Example: "I think _____ is important." or "One advantage is _____."
-- DEVELOPING: 10-12 words, one subordinate clause
-  Example: "I believe _____ is important because it helps us _____." or "People who _____ often _____."
-- EXPANDING: 12-15 words max, can use relative clauses
-  Example: "One advantage of _____ is that it _____." or "If we _____, we can achieve _____."
-
-ALL B1 tiers: Can use "because/when/if/although", basic relative clauses, NO passive voice` : params.cefrLevel === 'B2' ? `**B2 TIERED FRAMES - SOPHISTICATED STRUCTURES:**
-- EMERGING: 8-11 words, clear main idea
-  Example: "It is important to _____." or "This suggests that _____."
-- DEVELOPING: 12-15 words, analytical language
-  Example: "It is essential to _____ in order to _____." or "This suggests that _____ may impact _____."
-- EXPANDING: 15-18 words max, complex reasoning
-  Example: "While some argue _____, I believe that _____." or "This may indicate that _____, though further research is needed."
-
-ALL B2 tiers: Can use purpose clauses, passive voice, modal speculation, NO inverted conditionals` : params.cefrLevel === 'C1' ? `**C1 TIERED FRAMES - ADVANCED DISCOURSE:**
-- EMERGING: 10-13 words, sophisticated vocabulary
-  Example: "It could be argued that _____." or "The extent to which _____ remains debatable."
-- DEVELOPING: 14-18 words, nuanced arguments
-  Example: "It could be argued that _____, though this fails to account for _____."
-- EXPANDING: 19-25 words, complex hedging
-  Example: "While proponents maintain that _____, critics contend that _____, suggesting a need for _____."
-
-ALL C1 tiers: Advanced modality, hedging, complex conditionals allowed` : `**C2 TIERED FRAMES - EXPERT-LEVEL:**
-- EMERGING: Natural academic language (12-15 words)
-  Example: "Were we to consider _____, certain implications emerge." 
-- DEVELOPING: Sophisticated discourse (16-20 words)
-  Example: "Notwithstanding the aforementioned considerations, one might posit that _____."
-- EXPANDING: Expert-level complexity (20+ words)
-  Example: "Insofar as _____ is concerned, one might posit that _____, though this perspective warrants careful scrutiny."
-
-ALL C2 tiers: Full range of structures, inverted conditionals, subjunctive mood`}
-
-**VALIDATION FOR TIERED FRAMES:**
-□ Does the "emerging" tier follow ${params.cefrLevel} word limits?
-□ Does the "developing" tier use only ${params.cefrLevel}-appropriate grammar?
-□ Does the "expanding" tier stay within ${params.cefrLevel} complexity?
-□ Would a ${params.cefrLevel} student understand ALL three tiers?
-□ Do tiers scaffold WITHIN the level, not jump to higher levels?
-
 FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure all fields contain complete content. Do not use placeholders.
 
 {
@@ -1371,22 +1164,34 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
           ],
           "tieredFrames": {
             "emerging": {
-              "frame": "Generate appropriate emerging-tier frame for ${params.cefrLevel} level",
-              "description": "Simplest frame within ${params.cefrLevel} level"
+              "frame": "${params.topic} is _____.",
+              "description": "Simple description - state basic facts or observations"
             },
             "developing": {
-              "frame": "Generate appropriate developing-tier frame for ${params.cefrLevel} level",
-              "description": "Middle-tier frame within ${params.cefrLevel} level"
+              "frame": "I think ${params.topic} is _____ because _____.",
+              "description": "Add your opinion with a reason - connect ideas using 'because'"
             },
             "expanding": {
-              "frame": "Generate appropriate expanding-tier frame for ${params.cefrLevel} level",
-              "description": "Most complex frame within ${params.cefrLevel} level"
+              "frame": "I can infer that ${params.topic} is _____, since _____.",
+              "description": "Make inferences and justify - use 'since' to show sophisticated reasoning"
             }
           },
           "modelResponses": {
-            "emerging": ["Example 1", "Example 2", "Example 3"],
-            "developing": ["Example 1", "Example 2", "Example 3"],
-            "expanding": ["Example 1", "Example 2", "Example 3"]
+            "emerging": [
+              "${params.topic.charAt(0).toUpperCase() + params.topic.slice(1)} is interesting.",
+              "${params.topic.charAt(0).toUpperCase() + params.topic.slice(1)} is important to many people.",
+              "${params.topic.charAt(0).toUpperCase() + params.topic.slice(1)} is common in modern life."
+            ],
+            "developing": [
+              "I think ${params.topic} is fascinating because it affects our daily routines.",
+              "I believe ${params.topic} is valuable because it connects people across distances.",
+              "I think ${params.topic} is complex because it involves many different factors."
+            ],
+            "expanding": [
+              "I can infer that ${params.topic} is transformative, since it has changed how we communicate with each other.",
+              "I would argue that ${params.topic} is essential in contemporary society, since most professional work now depends on it.",
+              "One could deduce that ${params.topic} is a double-edged phenomenon, since it brings both benefits and challenges to users."
+            ]
           },
           "teachingNotes": {
             "modelingTips": "Model each tier explicitly. Show students how the sentence structure becomes more complex at each level. Think aloud about your word choices and how you build the reasoning.",
@@ -1404,22 +1209,34 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
           ],
           "tieredFrames": {
             "emerging": {
-              "frame": "Generate appropriate emerging-tier comparison frame for ${params.cefrLevel} level",
-              "description": "Simplest comparison frame within ${params.cefrLevel} level"
+              "frame": "_____ and _____ both have _____.",
+              "description": "Identify one simple similarity between two things"
             },
             "developing": {
-              "frame": "Generate appropriate developing-tier comparison frame for ${params.cefrLevel} level",
-              "description": "Middle-tier comparison frame within ${params.cefrLevel} level"
+              "frame": "Like _____, _____ also contains _____. However, _____ differs in that _____.",
+              "description": "Show both similarity and difference using transition words"
             },
             "expanding": {
-              "frame": "Generate appropriate expanding-tier comparison frame for ${params.cefrLevel} level",
-              "description": "Most complex comparison frame within ${params.cefrLevel} level"
+              "frame": "While _____ and _____ share _____, the key distinction lies in _____.",
+              "description": "Present nuanced comparison with sophisticated subordination"
             }
           },
           "modelResponses": {
-            "emerging": ["Example 1", "Example 2", "Example 3"],
-            "developing": ["Example 1", "Example 2", "Example 3"],
-            "expanding": ["Example 1", "Example 2", "Example 3"]
+            "emerging": [
+              "Traditional methods and modern approaches both have advantages.",
+              "${params.topic.charAt(0).toUpperCase() + params.topic.slice(1)} and older systems both have users.",
+              "Online and offline versions both have their place."
+            ],
+            "developing": [
+              "Like traditional methods, modern ${params.topic} also contains core principles. However, modern approaches differ in that they incorporate technology.",
+              "Like earlier versions, current ${params.topic} also contains the same basic purpose. However, it differs in that it reaches a global audience.",
+              "Like face-to-face interaction, ${params.topic} also contains elements of human connection. However, it differs in that it removes physical presence."
+            ],
+            "expanding": [
+              "While traditional and digital forms of ${params.topic} share the fundamental goal of communication, the key distinction lies in the immediacy and scale of reach that digital platforms provide.",
+              "While ${params.topic} and conventional methods share certain benefits, the key distinction lies in how each approach manages time and accessibility constraints.",
+              "While both emerging and established aspects of ${params.topic} share similar user bases, the key distinction lies in the level of technological literacy required for engagement."
+            ]
           },
           "teachingNotes": {
             "modelingTips": "Display examples side by side. Highlight the transition words and show how sentence complexity increases. Point out how 'while' creates subordination in the expanding frame.",
@@ -1437,22 +1254,34 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
           ],
           "tieredFrames": {
             "emerging": {
-              "frame": "Generate appropriate emerging-tier process frame for ${params.cefrLevel} level",
-              "description": "Simplest process frame within ${params.cefrLevel} level"
+              "frame": "First, I _____. Then, I _____. Finally, I _____.",
+              "description": "List steps in simple sequence"
             },
             "developing": {
-              "frame": "Generate appropriate developing-tier process frame for ${params.cefrLevel} level",
-              "description": "Middle-tier process frame within ${params.cefrLevel} level"
+              "frame": "I solved this by _____. After that, I _____.",
+              "description": "Explain your method with temporal connections"
             },
             "expanding": {
-              "frame": "Generate appropriate expanding-tier process frame for ${params.cefrLevel} level",
-              "description": "Most complex process frame within ${params.cefrLevel} level"
+              "frame": "My first step was to _____. Then I _____, in order to _____. To achieve the result, I _____.",
+              "description": "Articulate complex process with purpose clauses"
             }
           },
           "modelResponses": {
-            "emerging": ["Example 1", "Example 2", "Example 3"],
-            "developing": ["Example 1", "Example 2", "Example 3"],
-            "expanding": ["Example 1", "Example 2", "Example 3"]
+            "emerging": [
+              "First, I open the application. Then, I enter my information. Finally, I click submit.",
+              "First, I read the instructions. Then, I gather materials. Finally, I complete the task.",
+              "First, I check the requirements. Then, I prepare my response. Finally, I review everything."
+            ],
+            "developing": [
+              "I solved this by researching ${params.topic} online. After that, I compared different perspectives.",
+              "I approached ${params.topic} by starting with basic concepts. After that, I explored more advanced applications.",
+              "I engaged with ${params.topic} by observing real examples. After that, I practiced applying the principles."
+            ],
+            "expanding": [
+              "My first step was to identify the core components of ${params.topic}. Then I analyzed each element carefully, in order to understand their relationships. To achieve a comprehensive understanding, I synthesized the information into a coherent framework.",
+              "My initial approach was to examine how ${params.topic} functions in practice. Then I studied the underlying principles, in order to grasp the theoretical foundation. To reach my conclusion, I integrated both practical and theoretical perspectives.",
+              "My first step was to gather diverse sources about ${params.topic}. Then I evaluated their credibility, in order to ensure reliable information. To form my analysis, I compared the key findings and drew evidence-based conclusions."
+            ]
           },
           "teachingNotes": {
             "modelingTips": "Model the process explanation while performing an action. Use gestures to show sequence. Emphasize how 'in order to' adds purpose in the expanding frame.",
