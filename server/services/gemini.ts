@@ -544,17 +544,165 @@ Before finalizing, verify:
 
 Create ${params.cefrLevel === 'A1' ? '80-120 words' : params.cefrLevel === 'A2' ? '100-150 words' : params.cefrLevel === 'B1' ? '120-180 words' : params.cefrLevel === 'B2' ? '150-220 words' : '180-250 words'} text following these enhanced requirements.
 
-STEP 3: SENTENCE FRAMES
+STEP 3: SENTENCE FRAMES - CEFR LEVEL-APPROPRIATE STRUCTURE
+
+**CRITICAL: Sentence frames are the cornerstone for helping students build sentences. They MUST match ${params.cefrLevel} structural complexity.**
+
+${params.cefrLevel === 'A1' ? `**A1 SENTENCE FRAME REQUIREMENTS:**
+
+STRUCTURAL CONSTRAINTS:
+- Maximum 6-8 words total
+- ONE clause only (no subordinate clauses)
+- Simple present or present continuous tense
+- Basic subject-verb-object structure
+- NO conjunctions like "because", "although", "when"
+- Use simple "and" to connect only
+
+CORRECT A1 EXAMPLES:
+✓ "I like _____ because _____." (6 words, simple reason)
+✓ "My favorite _____ is _____." (5 words, basic preference)
+✓ "I can _____ and _____." (5 words, simple abilities)
+✓ "I want to _____." (4 words, basic desire)
+
+INCORRECT A1 EXAMPLES (TOO COMPLEX):
+✗ "I think _____ is important because it helps people _____." (TOO MANY CLAUSES)
+✗ "When I _____, I usually _____." (SUBORDINATE CLAUSE - B1 level)
+✗ "It is important to _____ in order to _____." (INFINITIVE PURPOSE - B2 level)
+
+LANGUAGE FUNCTIONS FOR A1:
+- Expressing likes/dislikes
+- Describing things with adjectives
+- Stating basic facts
+- Naming and identifying` : params.cefrLevel === 'A2' ? `**A2 SENTENCE FRAME REQUIREMENTS:**
+
+STRUCTURAL CONSTRAINTS:
+- Maximum 8-10 words total
+- ONE main clause + optional simple connector
+- Present, past simple, or "going to" future only
+- Can use "because" for ONE simple reason
+- NO complex conjunctions ("although", "unless", "whereas")
+- NO relative clauses ("who", "which", "that")
+
+CORRECT A2 EXAMPLES:
+✓ "I like _____ because it is _____." (7 words, simple reason)
+✓ "In my opinion, _____ is _____." (6 words, simple opinion)
+✓ "I usually _____ when I _____." (6 words, simple time clause)
+✓ "I think _____ are _____." (5 words, basic evaluation)
+
+INCORRECT A2 EXAMPLES (TOO COMPLEX):
+✗ "I believe that _____ is essential because it enables people to _____." (TOO FORMAL/COMPLEX)
+✗ "The most significant aspect of _____ is that it _____." (RELATIVE CLAUSE - B1 level)
+✗ "Having experienced _____, I can say that _____." (PERFECT PARTICIPLE - B2 level)
+
+LANGUAGE FUNCTIONS FOR A2:
+- Expressing simple opinions
+- Describing personal experiences in past
+- Giving simple reasons with "because"
+- Making comparisons with basic adjectives` : params.cefrLevel === 'B1' ? `**B1 SENTENCE FRAME REQUIREMENTS:**
+
+STRUCTURAL CONSTRAINTS:
+- Maximum 12-15 words total
+- Can use ONE subordinate clause
+- Present perfect, past, and future tenses allowed
+- Can use "because", "when", "if", "although"
+- Basic relative clauses allowed ("who", "which", "that")
+- NO passive voice or complex conditionals
+
+CORRECT B1 EXAMPLES:
+✓ "I think _____ is important because it helps us _____." (9 words, reason clause)
+✓ "One advantage of _____ is that it _____." (8 words, relative clause)
+✓ "If we _____, we can _____." (6 words, conditional)
+✓ "People who _____ often _____." (5 words, relative clause)
+
+INCORRECT B1 EXAMPLES (TOO COMPLEX):
+✗ "It could be argued that _____ represents a significant shift in the way _____." (ACADEMIC DISCOURSE - C1 level)
+✗ "Were we to _____, the outcome would have been _____." (INVERSION - C2 level)
+✗ "Having been _____, the situation necessitates _____." (PERFECT PARTICIPLE + FORMAL VOCAB - C1 level)
+
+LANGUAGE FUNCTIONS FOR B1:
+- Explaining reasons and results
+- Expressing advantages/disadvantages
+- Making predictions and suggestions
+- Describing experiences with detail` : params.cefrLevel === 'B2' ? `**B2 SENTENCE FRAME REQUIREMENTS:**
+
+STRUCTURAL CONSTRAINTS:
+- Maximum 15-18 words total
+- Can use TWO subordinate clauses
+- All tenses including present perfect continuous
+- Modal verbs for speculation (might, could, should)
+- Passive voice allowed
+- NO inverted conditionals or subjunctive mood
+
+CORRECT B2 EXAMPLES:
+✓ "It is essential to _____ in order to _____." (9 words, purpose clause)
+✓ "One significant aspect of _____ is that it enables people to _____." (12 words)
+✓ "While some argue that _____, I believe that _____." (9 words, contrast)
+✓ "This suggests that _____ may have a significant impact on _____." (11 words)
+
+INCORRECT B2 EXAMPLES (TOO COMPLEX):
+✗ "Notwithstanding the aforementioned considerations, one might posit that _____." (OVERLY FORMAL - C2 level)
+✗ "Were it not for _____, the ramifications would be _____." (INVERSION - C2 level)
+✗ "The extent to which _____ remains a subject of considerable scholarly debate." (ACADEMIC FORMALITY - C2 level)
+
+LANGUAGE FUNCTIONS FOR B2:
+- Analyzing and evaluating situations
+- Presenting balanced arguments
+- Speculating about consequences
+- Making recommendations with justification` : params.cefrLevel === 'C1' ? `**C1 SENTENCE FRAME REQUIREMENTS:**
+
+STRUCTURAL CONSTRAINTS:
+- Maximum 20-25 words total
+- Multiple subordinate clauses allowed
+- All tenses and aspects
+- Advanced modality and hedging language
+- Passive constructions and nominalization
+- Complex conditionals allowed
+
+CORRECT C1 EXAMPLES:
+✓ "It could be argued that _____, though this perspective fails to account for _____." (14 words)
+✓ "The extent to which _____ remains a matter of considerable debate among _____." (13 words)
+✓ "While proponents of _____ maintain that _____, critics contend that _____." (11 words)
+✓ "This raises the question of whether _____ or whether it simply _____." (12 words)
+
+LANGUAGE FUNCTIONS FOR C1:
+- Constructing sophisticated arguments
+- Acknowledging counterarguments
+- Expressing nuanced viewpoints
+- Using hedging and tentative language` : `**C2 SENTENCE FRAME REQUIREMENTS:**
+
+STRUCTURAL CONSTRAINTS:
+- No word limit (natural academic/professional discourse)
+- Full range of grammatical structures
+- Inverted conditionals, subjunctive mood
+- Advanced discourse markers
+- Metaphorical and idiomatic language
+
+CORRECT C2 EXAMPLES:
+✓ "Were we to consider _____, the ramifications would be _____."
+✓ "Notwithstanding the aforementioned considerations, it is incumbent upon us to _____."
+✓ "The paradigm shift in _____ necessitates a fundamental reconsideration of _____."
+✓ "Insofar as _____ is concerned, one might posit that _____."
+
+LANGUAGE FUNCTIONS FOR C2:
+- Expert-level academic discourse
+- Sophisticated rhetorical devices
+- Highly nuanced arguments
+- Specialized professional language`}
 
 **PATTERN REQUIREMENTS:**
 ✓ Enable authentic discussion about "${params.topic}"
-✓ Match ${params.cefrLevel} complexity level
-✓ Include Step 1 vocabulary
-✓ Support real communication needs
-
-${params.cefrLevel === 'A1' ? 'Focus on basic preferences and descriptions' : params.cefrLevel === 'A2' ? 'Focus on personal experiences and simple opinions' : params.cefrLevel === 'B1' ? 'Focus on reasons and problem-solving' : params.cefrLevel === 'B2' ? 'Focus on analysis and evaluation' : params.cefrLevel === 'C1' ? 'Focus on sophisticated arguments' : 'Focus on expert-level discourse'}
+✓ Strictly follow ${params.cefrLevel} structural constraints above
+✓ Include Step 1 vocabulary naturally
+✓ Support real communication needs at student level
 
 **Use enhanced format:** patternTemplate, languageFunction, structureComponents, examples, grammarFocus, teachingNotes.
+
+**VALIDATION BEFORE FINALIZING:**
+□ Does each sentence frame follow the word count limit for ${params.cefrLevel}?
+□ Are verb tenses restricted to those allowed at ${params.cefrLevel}?
+□ Do frames avoid grammatical structures above ${params.cefrLevel}?
+□ Can students at ${params.cefrLevel} easily understand and use these frames?
+□ Are frames genuinely useful for discussing "${params.topic}"?
 
 STEP 4: ACTIVITIES & QUESTIONS
 

@@ -45,6 +45,22 @@ Social media: LinkedIn - www.linkedin.com/in/davidjackson113, X (Twitter) - @Dav
 - **Scaling**: Autoscale deployment, connection pooling, lazy loading of AI services.
 - **Performance Optimization**: Response-first pattern for lesson generation, pre-caching lesson data, selective field queries to avoid loading massive content fields.
 
+## Recent Changes (October 8, 2025)
+
+### CEFR-Level Appropriate Sentence Frames Enhancement
+**Issue**: Sentence frames were not appropriately leveled - A2 lessons were receiving complex sentence structures suitable for B1/B2, making them difficult for beginners to use.
+
+**Root Cause**: AI prompt provided vague guidance ("Focus on personal experiences") without concrete structural constraints for each CEFR level.
+
+**Solution**: Enhanced AI prompt with explicit level-specific requirements for sentence frames:
+- **Structural Constraints**: Word count limits (A1: 6-8 words, A2: 8-10, B1: 12-15, B2: 15-18, C1: 20-25, C2: unlimited)
+- **Grammatical Restrictions**: Specific tenses and clause types allowed at each level (e.g., A1: only simple present, no subordinate clauses; A2: can use "because" but no relative clauses)
+- **Concrete Examples**: Provided CORRECT examples showing appropriate complexity and INCORRECT examples showing overly complex structures to avoid
+- **Language Functions**: Clear guidance on communicative functions appropriate for each level
+- **Validation Checklist**: Final checks to ensure frames match level requirements
+
+**Impact**: Sentence frames now properly scaffold student sentence-building at their actual proficiency level, making them genuinely useful as the "cornerstone" for helping students construct sentences.
+
 ## Recent Changes (October 4, 2025)
 
 ### Interactive Lesson Deletion with Vocabulary Control
