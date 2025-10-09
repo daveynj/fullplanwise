@@ -424,7 +424,14 @@ For comprehension questions:
    - Reading text difficulty must match the specified level
    - Discussion paragraph contexts must be level-appropriate with vocabulary and grammar matching the CEFR level
 
-7. DISCUSSION SECTION REQUIREMENTS:
+7. READING TEXT REQUIREMENTS:
+   - ⚠️ CRITICAL: The reading section MUST contain EXACTLY 5 PARAGRAPHS in the "paragraphs" array
+   - Each paragraph must be a complete, full paragraph with multiple sentences (not a single sentence)
+   - The 5 paragraphs together form one cohesive reading text about the lesson topic
+   - Paragraph length should match CEFR level (A1: 2-3 sentences, B1: 3-4 sentences, C1: 4-5 sentences)
+   - All 5 paragraphs must flow together as a unified reading passage
+
+8. DISCUSSION SECTION REQUIREMENTS:
    - CRITICAL: Each discussion question MUST have its own unique paragraph context (paragraphContext field)
    - These paragraph contexts must be 3-5 sentences that provide background information
    - The paragraph contexts must use vocabulary and sentence structures appropriate for the specified CEFR level
@@ -1053,17 +1060,17 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
       "procedure": "Complete step-by-step instructions...",
       "teacherNotes": "Complete teacher notes..."
     },
-    // READING SECTION (Complete)
+    // READING SECTION (Complete) - MUST HAVE EXACTLY 5 PARAGRAPHS
     {
       "type": "reading",
       "title": "Reading Text: [Actual Title]",
       "introduction": "Complete introduction...",
       "paragraphs": [
-        "Complete paragraph 1 text...",
-        "Complete paragraph 2 text...",
-        "Complete paragraph 3 text...",
-        "Complete paragraph 4 text...",
-        "Complete paragraph 5 text..."
+        "Complete FIRST paragraph text here - full paragraph with multiple sentences appropriate for ${cefrLevel} level...",
+        "Complete SECOND paragraph text here - full paragraph with multiple sentences...",
+        "Complete THIRD paragraph text here - full paragraph with multiple sentences...",
+        "Complete FOURTH paragraph text here - full paragraph with multiple sentences...",
+        "Complete FIFTH paragraph text here - full paragraph with multiple sentences..."
       ],
       "teacherNotes": "Complete teacher notes..."
     },
