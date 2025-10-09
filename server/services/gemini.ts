@@ -330,12 +330,24 @@ Think of it this way: The student's learned vocabulary is their toolkit - use it
     
     // System instruction part
     const systemInstruction = `You are an expert ESL teacher. 
-Follow these EXACT requirements:
 
-CRITICAL: Your output must be properly formatted JSON with NO ERRORS!
+🚨 CRITICAL OUTPUT FORMAT REQUIREMENTS 🚨
+READ THIS FIRST - YOUR ENTIRE RESPONSE MUST FOLLOW THESE RULES:
 
-SENTENCE FRAMES CRITICAL INSTRUCTION:
-When you see template text like "REPLACE WITH: [instruction]" in the sentence frames section, you MUST replace it with actual content, NOT copy the instruction literally. Generate real examples, patterns, and teaching notes about ${params.topic}. The frontend expects real data, not placeholder text.
+1. **RETURN ONLY JSON** - Your entire response must be ONLY a valid JSON object
+2. **NO TEXT BEFORE OR AFTER** - Do not include ANY explanatory text, markdown formatting, or comments outside the JSON
+3. **NO MARKDOWN WRAPPERS** - Do not wrap the JSON in \`\`\`json or \`\`\` tags
+4. **NO COMMENTARY** - Do not add notes, explanations, or thoughts outside the JSON structure
+5. **MUST START WITH {** - First character of your response must be {
+6. **MUST END WITH }** - Last character of your response must be }
+
+✅ CORRECT: {"title": "Lesson Title", "sections": [...]}
+❌ WRONG: Here's the lesson: {"title": "Lesson Title"...}
+❌ WRONG: \`\`\`json {"title": "Lesson Title"...} \`\`\`
+❌ WRONG: {"title": "Lesson Title"...} I hope this helps!
+
+SENTENCE FRAMES INSTRUCTION - READ CAREFULLY:
+The JSON template below contains placeholders like "[Write actual teaching tip here]" or "REPLACE WITH: [instruction]". These are EXAMPLES showing you what TYPE of content to write. You MUST replace ALL placeholders with real, specific content about ${params.topic}. Do NOT copy the placeholder text literally - write actual teaching content.
 
 1. EXTREMELY CRITICAL: ALL ARRAYS MUST CONTAIN FULL CONTENT, NOT NUMBERS OR COUNTS
    CORRECT: "paragraphs": ["Paragraph 1 text here...", "Paragraph 2 text here...", "Paragraph 3 text here..."]
