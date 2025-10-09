@@ -1180,25 +1180,73 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
         {"question": "Complete Question 5?", "options": ["True", "False"], "answer": "False", "correctAnswer": "False", "explanation": "Complete explanation..."}
       ]
     },
-    // PEDAGOGICAL SENTENCE FRAMES (v2) - DYNAMICALLY GENERATED FOR CEFR LEVEL
+    // PEDAGOGICAL SENTENCE FRAMES (v2) - Complete 3 frames
     {
       "type": "sentenceFrames",
       "version": "v2_pedagogical", 
       "title": "Language Practice for ${params.topic}",
       "introduction": "Practice expressing ideas about ${params.topic} with these sentence patterns designed for ${params.cefrLevel} students.",
       "pedagogicalFrames": [
-        // GENERATE 3 UNIQUE SENTENCE FRAMES appropriate for ${params.cefrLevel} level
-        // Each frame must include:
-        // - languageFunction: The communication purpose (e.g., "Describing aspects of ${params.topic}")
-        // - grammarFocus: Array of 2-3 grammar points relevant to ${params.cefrLevel}
-        // - tieredFrames: Object with emerging, developing, expanding tiers
-        //   Each tier has: frame (the pattern), description (how to use it)
-        // - modelResponses: Object with emerging, developing, expanding arrays
-        //   Each array has 3 example sentences about ${params.topic}
-        // - teachingNotes: Object with modelingTips, guidedPractice, independentUse, fadingStrategy
-        //
-        // IMPORTANT: Generate frames that match ${params.cefrLevel} complexity
-        // NO hard-coded examples - create unique content based on "${params.topic}"
+        {
+          "languageFunction": "Complete function 1...",
+          "grammarFocus": ["grammar point 1", "grammar point 2"],
+          "tieredFrames": {
+            "emerging": {"frame": "Complete frame...", "description": "Complete description..."},
+            "developing": {"frame": "Complete frame...", "description": "Complete description..."},
+            "expanding": {"frame": "Complete frame...", "description": "Complete description..."}
+          },
+          "modelResponses": {
+            "emerging": ["Complete sentence 1...", "Complete sentence 2...", "Complete sentence 3..."],
+            "developing": ["Complete sentence 1...", "Complete sentence 2...", "Complete sentence 3..."],
+            "expanding": ["Complete sentence 1...", "Complete sentence 2...", "Complete sentence 3..."]
+          },
+          "teachingNotes": {
+            "modelingTips": "Complete tips...",
+            "guidedPractice": "Complete practice...",
+            "independentUse": "Complete guidance...",
+            "fadingStrategy": "Complete strategy..."
+          }
+        },
+        {
+          "languageFunction": "Complete function 2...",
+          "grammarFocus": ["grammar point 1", "grammar point 2"],
+          "tieredFrames": {
+            "emerging": {"frame": "Complete frame...", "description": "Complete description..."},
+            "developing": {"frame": "Complete frame...", "description": "Complete description..."},
+            "expanding": {"frame": "Complete frame...", "description": "Complete description..."}
+          },
+          "modelResponses": {
+            "emerging": ["Complete sentence 1...", "Complete sentence 2...", "Complete sentence 3..."],
+            "developing": ["Complete sentence 1...", "Complete sentence 2...", "Complete sentence 3..."],
+            "expanding": ["Complete sentence 1...", "Complete sentence 2...", "Complete sentence 3..."]
+          },
+          "teachingNotes": {
+            "modelingTips": "Complete tips...",
+            "guidedPractice": "Complete practice...",
+            "independentUse": "Complete guidance...",
+            "fadingStrategy": "Complete strategy..."
+          }
+        },
+        {
+          "languageFunction": "Complete function 3...",
+          "grammarFocus": ["grammar point 1", "grammar point 2"],
+          "tieredFrames": {
+            "emerging": {"frame": "Complete frame...", "description": "Complete description..."},
+            "developing": {"frame": "Complete frame...", "description": "Complete description..."},
+            "expanding": {"frame": "Complete frame...", "description": "Complete description..."}
+          },
+          "modelResponses": {
+            "emerging": ["Complete sentence 1...", "Complete sentence 2...", "Complete sentence 3..."],
+            "developing": ["Complete sentence 1...", "Complete sentence 2...", "Complete sentence 3..."],
+            "expanding": ["Complete sentence 1...", "Complete sentence 2...", "Complete sentence 3..."]
+          },
+          "teachingNotes": {
+            "modelingTips": "Complete tips...",
+            "guidedPractice": "Complete practice...",
+            "independentUse": "Complete guidance...",
+            "fadingStrategy": "Complete strategy..."
+          }
+        }
       ]
     },
     // CLOZE SECTION (Complete - Fill in the Blanks)
