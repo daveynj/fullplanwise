@@ -346,9 +346,6 @@ READ THIS FIRST - YOUR ENTIRE RESPONSE MUST FOLLOW THESE RULES:
 ❌ WRONG: \`\`\`json {"title": "Lesson Title"...} \`\`\`
 ❌ WRONG: {"title": "Lesson Title"...} I hope this helps!
 
-SENTENCE FRAMES SPECIFIC INSTRUCTION:
-In the sentence frames section specifically, when you see template text like "REPLACE WITH: [instruction]", you MUST replace it with actual teaching content about ${params.topic}, NOT copy the instruction literally. This ONLY applies to sentence frames content, not to the JSON structure itself.
-
 1. EXTREMELY CRITICAL: ALL ARRAYS MUST CONTAIN FULL CONTENT, NOT NUMBERS OR COUNTS
    CORRECT: "paragraphs": ["Paragraph 1 text here...", "Paragraph 2 text here...", "Paragraph 3 text here..."]
    WRONG: "paragraphs": 5
