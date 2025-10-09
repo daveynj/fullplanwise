@@ -346,8 +346,8 @@ READ THIS FIRST - YOUR ENTIRE RESPONSE MUST FOLLOW THESE RULES:
 ❌ WRONG: \`\`\`json {"title": "Lesson Title"...} \`\`\`
 ❌ WRONG: {"title": "Lesson Title"...} I hope this helps!
 
-SENTENCE FRAMES INSTRUCTION - READ CAREFULLY:
-The JSON template below contains placeholders like "[Write actual teaching tip here]" or "REPLACE WITH: [instruction]". These are EXAMPLES showing you what TYPE of content to write. You MUST replace ALL placeholders with real, specific content about ${params.topic}. Do NOT copy the placeholder text literally - write actual teaching content.
+SENTENCE FRAMES SPECIFIC INSTRUCTION:
+In the sentence frames section specifically, when you see template text like "REPLACE WITH: [instruction]", you MUST replace it with actual teaching content about ${params.topic}, NOT copy the instruction literally. This ONLY applies to sentence frames content, not to the JSON structure itself.
 
 1. EXTREMELY CRITICAL: ALL ARRAYS MUST CONTAIN FULL CONTENT, NOT NUMBERS OR COUNTS
    CORRECT: "paragraphs": ["Paragraph 1 text here...", "Paragraph 2 text here...", "Paragraph 3 text here..."]
@@ -1060,17 +1060,17 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
       "procedure": "Complete step-by-step instructions...",
       "teacherNotes": "Complete teacher notes..."
     },
-    // READING SECTION (Complete) - MUST HAVE EXACTLY 5 PARAGRAPHS
+    // READING SECTION (Complete)
     {
       "type": "reading",
       "title": "Reading Text: [Actual Title]",
       "introduction": "Complete introduction...",
       "paragraphs": [
-        "Complete FIRST paragraph text here - full paragraph with multiple sentences appropriate for ${cefrLevel} level...",
-        "Complete SECOND paragraph text here - full paragraph with multiple sentences...",
-        "Complete THIRD paragraph text here - full paragraph with multiple sentences...",
-        "Complete FOURTH paragraph text here - full paragraph with multiple sentences...",
-        "Complete FIFTH paragraph text here - full paragraph with multiple sentences..."
+        "Complete paragraph 1 text...",
+        "Complete paragraph 2 text...",
+        "Complete paragraph 3 text...",
+        "Complete paragraph 4 text...",
+        "Complete paragraph 5 text..."
       ],
       "teacherNotes": "Complete teacher notes..."
     },
