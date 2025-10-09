@@ -1383,7 +1383,25 @@ The Grammar Spotlight should use strategic grammar selection and pedagogically-o
 4. **Clear Communication**: Focus on helping students express their ideas effectively
 5. **Practical Application**: Show students when and how to use this grammar in real communication
 
-Ensure the entire output is a single, valid JSON object starting with { and ending with }.`;
+🚨 FINAL REMINDER - OUTPUT FORMAT 🚨
+
+Your response MUST be:
+✅ ONLY valid JSON (no text before or after)
+✅ Starting with { and ending with }
+✅ No markdown code blocks or formatting
+✅ No explanatory text or commentary
+✅ Parseable directly as JSON without any preprocessing
+
+WRONG EXAMPLES TO AVOID:
+❌ "Here is your lesson: {...}"
+❌ "\`\`\`json {...} \`\`\`"
+❌ "{...} Let me know if you need changes!"
+❌ "I've created a lesson about ${params.topic}: {...}"
+
+RIGHT FORMAT:
+✅ {"title":"...","level":"...","sections":[...]}
+
+BEGIN YOUR JSON RESPONSE NOW:`;
 
     return systemInstruction;
   }
