@@ -1208,7 +1208,7 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
         {"question": "Complete Question 5?", "options": ["True", "False"], "answer": "False", "correctAnswer": "False", "explanation": "Complete explanation..."}
       ]
     },
-    // PEDAGOGICAL SENTENCE FRAMES (v2) - Complete 3 frames
+    // PEDAGOGICAL SENTENCE FRAMES (v2) - Generate 3 complete frames
     {
       "type": "sentenceFrames",
       "version": "v2_pedagogical", 
@@ -1216,57 +1216,17 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
       "introduction": "Practice expressing ideas about ${params.topic} with these sentence patterns designed for ${params.cefrLevel} students.",
       "pedagogicalFrames": [
         {
-          "languageFunction": "Complete function 1...",
-          "grammarFocus": ["grammar point 1", "grammar point 2"],
+          "languageFunction": "Communication purpose...",
+          "grammarFocus": ["grammar1", "grammar2"],
           "tieredFrames": {
-            "emerging": {"frame": "Complete frame...", "description": "Complete description..."},
-            "developing": {"frame": "Complete frame...", "description": "Complete description..."},
-            "expanding": {"frame": "Complete frame...", "description": "Complete description..."}
+            "emerging": {"frame": "Complete frame...", "description": "How to use..."},
+            "developing": {"frame": "Complete frame...", "description": "How to use..."},
+            "expanding": {"frame": "Complete frame...", "description": "How to use..."}
           },
           "modelResponses": {
-            "emerging": ["Complete sentence 1...", "Complete sentence 2...", "Complete sentence 3..."],
-            "developing": ["Complete sentence 1...", "Complete sentence 2...", "Complete sentence 3..."],
-            "expanding": ["Complete sentence 1...", "Complete sentence 2...", "Complete sentence 3..."]
-          },
-          "teachingNotes": {
-            "modelingTips": "Complete tips...",
-            "guidedPractice": "Complete practice...",
-            "independentUse": "Complete guidance...",
-            "fadingStrategy": "Complete strategy..."
-          }
-        },
-        {
-          "languageFunction": "Complete function 2...",
-          "grammarFocus": ["grammar point 1", "grammar point 2"],
-          "tieredFrames": {
-            "emerging": {"frame": "Complete frame...", "description": "Complete description..."},
-            "developing": {"frame": "Complete frame...", "description": "Complete description..."},
-            "expanding": {"frame": "Complete frame...", "description": "Complete description..."}
-          },
-          "modelResponses": {
-            "emerging": ["Complete sentence 1...", "Complete sentence 2...", "Complete sentence 3..."],
-            "developing": ["Complete sentence 1...", "Complete sentence 2...", "Complete sentence 3..."],
-            "expanding": ["Complete sentence 1...", "Complete sentence 2...", "Complete sentence 3..."]
-          },
-          "teachingNotes": {
-            "modelingTips": "Complete tips...",
-            "guidedPractice": "Complete practice...",
-            "independentUse": "Complete guidance...",
-            "fadingStrategy": "Complete strategy..."
-          }
-        },
-        {
-          "languageFunction": "Complete function 3...",
-          "grammarFocus": ["grammar point 1", "grammar point 2"],
-          "tieredFrames": {
-            "emerging": {"frame": "Complete frame...", "description": "Complete description..."},
-            "developing": {"frame": "Complete frame...", "description": "Complete description..."},
-            "expanding": {"frame": "Complete frame...", "description": "Complete description..."}
-          },
-          "modelResponses": {
-            "emerging": ["Complete sentence 1...", "Complete sentence 2...", "Complete sentence 3..."],
-            "developing": ["Complete sentence 1...", "Complete sentence 2...", "Complete sentence 3..."],
-            "expanding": ["Complete sentence 1...", "Complete sentence 2...", "Complete sentence 3..."]
+            "emerging": ["Example 1...", "Example 2...", "Example 3..."],
+            "developing": ["Example 1...", "Example 2...", "Example 3..."],
+            "expanding": ["Example 1...", "Example 2...", "Example 3..."]
           },
           "teachingNotes": {
             "modelingTips": "Complete tips...",
@@ -1275,6 +1235,7 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
             "fadingStrategy": "Complete strategy..."
           }
         }
+        // Generate 2 more frames following the same structure (3 total frames required)
       ]
     },
     // CLOZE SECTION (Complete - Fill in the Blanks)
