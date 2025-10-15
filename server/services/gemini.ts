@@ -41,7 +41,7 @@ export class GeminiService {
       
       // Configure the request for OpenRouter
       const requestData = {
-        model: 'x-ai/grok-4-fast',
+        model: 'moonshotai/kimi-k2-0905',
         messages: [
           {
             role: 'user',
@@ -53,7 +53,7 @@ export class GeminiService {
         max_tokens: 16384, // Increased token count from 8192 to 16384 for more detailed lessons
       };
 
-      console.log('Sending request to OpenRouter API (Grok-4 Fast)...');
+      console.log('Sending request to OpenRouter API (Kimi K2)...');
       console.log('Request payload:', JSON.stringify(requestData, null, 2).substring(0, 300));
 
       try {
