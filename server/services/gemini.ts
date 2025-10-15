@@ -41,7 +41,7 @@ export class GeminiService {
       
       // Configure the request for OpenRouter
       const requestData = {
-        model: 'x-ai/grok-4-fast',
+        model: 'baidu/ernie-4.5-21b-a3b-thinking',
         messages: [
           {
             role: 'user',
@@ -53,7 +53,7 @@ export class GeminiService {
         max_tokens: 16384, // Increased token count from 8192 to 16384 for more detailed lessons
       };
 
-      console.log('Sending request to OpenRouter API (Grok-4 Fast)...');
+      console.log('Sending request to OpenRouter API (Baidu ERNIE)...');
       console.log('Request payload:', JSON.stringify(requestData, null, 2).substring(0, 300));
 
       try {
@@ -1757,7 +1757,7 @@ export const testOpenRouterConnection = async (): Promise<boolean> => {
     }
 
     const testRequest = {
-      model: 'x-ai/grok-4-fast',
+      model: 'baidu/ernie-4.5-21b-a3b-thinking',
       messages: [{ role: 'user', content: 'Hello, can you respond with just "OK"?' }],
       max_tokens: 10
     };
