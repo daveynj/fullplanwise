@@ -1018,15 +1018,43 @@ Then, based on your analysis:
   d) Require different reading skills (locating information, making connections, drawing conclusions)
   e) Provide appropriate scaffolding for students at this level
 
-SCAFFOLDING REQUIREMENTS FOR LOWER LEVELS:
-${params.cefrLevel === 'A1' || params.cefrLevel === 'A2' || params.cefrLevel === 'B1' 
-  ? `Since this is a ${params.cefrLevel} level lesson, you MUST include enhanced scaffolding for lower-level learners. For each sentence frame, add a "lowerLevelScaffolding" object with:
-1. "sentenceWorkshop": Progressive building activities from word → phrase → sentence
-2. "patternTrainer": Interactive word banks with categorized vocabulary for building sentences
-3. "visualMaps": Color-coded structure maps showing sentence components
+SENTENCE FRAMES PEDAGOGICAL APPROACH:
 
-This scaffolding is CRITICAL for A1-B1 learners and must be included.`
-  : `Since this is a ${params.cefrLevel} level lesson, do NOT include "lowerLevelScaffolding" in the sentence frames. Advanced learners do not need this additional scaffolding.`}
+As an expert ESL teacher, create 3 pedagogical sentence frames that support students in expressing ideas about "${params.topic}" effectively. These frames must:
+
+1. **Integrate with Lesson Content:**
+   - Use vocabulary words from this lesson naturally in example sentences
+   - Connect to the reading text and discussion topics
+   - Support students in expressing ideas introduced in the lesson
+   - Create a cohesive learning experience across all sections
+
+2. **Match CEFR ${params.cefrLevel} Level:**
+   - Grammar structures appropriate for ${params.cefrLevel} proficiency
+   - Cognitive complexity matching ${params.cefrLevel} abilities
+   - Sentence patterns that challenge without overwhelming
+   - Language functions relevant to ${params.cefrLevel} communication goals
+
+3. **Provide Effective Scaffolding:**
+   - Tiered support (emerging/developing/expanding) matching student needs
+   - Model responses that demonstrate authentic, natural usage
+   - Teaching notes that guide effective implementation
+   - Gradual release framework: I do → We do → You do
+
+4. **Focus on Communication:**
+   - Language functions that help students DO something with English (describe, compare, express opinion, etc.)
+   - Frames that lead to meaningful communication about "${params.topic}"
+   - Authentic contexts where students would use these patterns
+   - Natural, conversational language appropriate for the level
+
+${params.cefrLevel === 'A1' || params.cefrLevel === 'A2' || params.cefrLevel === 'B1' 
+  ? `5. **Include Lower-Level Scaffolding (REQUIRED for ${params.cefrLevel}):**
+   For each frame, add "lowerLevelScaffolding" object with:
+   - "sentenceWorkshop": Progressive building from word → phrase → sentence
+   - "patternTrainer": Interactive word banks with categorized vocabulary
+   - "visualMaps": Color-coded structure maps showing sentence components
+   This scaffolding is CRITICAL for A1-B1 learners.`
+  : `5. **No Additional Scaffolding for ${params.cefrLevel}:**
+   Do NOT include "lowerLevelScaffolding" - advanced learners don't need it.`}
 
 STEP 6: LESSON INTEGRATION
 
