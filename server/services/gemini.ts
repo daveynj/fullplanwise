@@ -581,20 +581,46 @@ Only proceed if ALL checks pass.
 
 ### STEP 7: Integration & Validation
 
-**Final Checks:**
-✓ Vocabulary appears in reading with context clues
+**🚨 COMPREHENSIVE FINAL SELF-CHECK:**
+
+Before generating the JSON, perform this complete validation:
+
+**A. Content Quality:**
+✓ Vocabulary appears in reading with context clues (2-3 times each)
 ✓ Definitions use vocab 2+ levels below
 ✓ Reading creates discussion opportunities
 ✓ Questions connect to reading and vocabulary
 ✓ Sentence frames use lesson vocabulary
 ✓ All components match ${params.cefrLevel} level
-✓ paragraphContext for each discussion question (3-5 sentences)
 ✓ Natural, cohesive lesson flow
+
+**B. Structural Requirements:**
+✓ Exactly 5 vocabulary words with ALL fields (pronunciation, semanticMap, imagePrompt, etc.)
+✓ Reading has exactly 5 paragraphs
+✓ Comprehension has 3-5 questions
+✓ Sentence frames has exactly 3 frames with tiered scaffolding
+✓ ${params.cefrLevel === 'A1' || params.cefrLevel === 'A2' || params.cefrLevel === 'B1' ? 'lowerLevelScaffolding present in sentence frames' : 'NO lowerLevelScaffolding in sentence frames'}
+✓ Discussion has exactly 5 questions with paragraphContext (3-5 sentences each)
+✓ Quiz has exactly 5 questions
+✓ Grammar Spotlight includes logicExplanation and visual elements
+
+**C. JSON Format:**
+✓ Valid JSON structure (no syntax errors)
+✓ All required fields present
+✓ No placeholder text (e.g., "Complete...", "Example...")
+✓ All imagePrompts end with "No text visible"
+✓ pronunciation objects have syllables, stressIndex, phoneticGuide
+
+**D. Cross-Section Consistency:**
+✓ Same 5 vocabulary words in warmup.targetVocabulary and vocabulary section
+✓ Vocabulary integrated naturally throughout reading text
+✓ Grammar Spotlight uses lesson vocabulary in examples when possible
+✓ All sections relate cohesively to "${params.topic}"
 
 **Warm-up Clarification:**
 targetVocabulary field contains the same 5 words from vocabulary section (preview before formal introduction).
 
-FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure all fields contain complete content. Do not use placeholders.
+Only proceed to generate JSON if ALL checks pass. FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure all fields contain complete content. Do not use placeholders.
 
 {
   "title": "Descriptive lesson title about ${text}",
@@ -828,6 +854,7 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
       ]
     },
     // QUIZ SECTION (Complete - 5 questions)
+    // 🚨 SELF-CHECK: Before finalizing, verify: (1) Exactly 5 questions created, (2) Variety of question types (multiple choice, true/false), (3) All options grammatically correct, (4) Correct answers clearly match one option, (5) Explanations are clear and educational, (6) Difficulty appropriate for ${params.cefrLevel}
     {
       "type": "quiz",
       "title": "Knowledge Check",
