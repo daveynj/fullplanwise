@@ -766,6 +766,7 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
       ]
     },
     // CLOZE SECTION (Complete - Fill in the Blanks)
+    // 🚨 SELF-CHECK: Before finalizing, verify: (1) Gaps target key vocabulary/grammar appropriately, (2) WordBank contains all correct answers, (3) Text makes sense with blanks filled, (4) Difficulty matches ${params.cefrLevel}, (5) Format is [1:word], [2:word], etc.
     {
       "type": "cloze",
       "title": "Fill in the Blanks",
@@ -774,6 +775,7 @@ FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure
       "teacherNotes": "Complete notes on how to use this exercise effectively..."
     },
     // SENTENCE UNSCRAMBLE SECTION (Complete - Word Ordering)
+    // 🚨 SELF-CHECK: Before finalizing, verify: (1) All correctSentence values are grammatically perfect, (2) Scrambled words match the correct sentence exactly, (3) Sentences use lesson vocabulary, (4) Difficulty appropriate for ${params.cefrLevel}
     {
       "type": "sentenceUnscramble",
       "title": "Sentence Unscramble",
