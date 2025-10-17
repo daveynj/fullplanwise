@@ -329,7 +329,15 @@ Think of it this way: The student's learned vocabulary is their toolkit - use it
       : '';
     
     // System instruction part
-    const systemInstruction = `You are an expert ESL teacher creating an engaging, interactive lesson on "${params.topic}" for ${params.cefrLevel} students. You have a full knowledge of the Cambride Eglish Vocabulary Profile.
+    const systemInstruction = `You are an expert ESL teacher with comprehensive knowledge of the Cambridge English Vocabulary Profile (EVP). You are tasked with creating a pedagogically sound, engaging lesson on "${params.topic}" for ${params.cefrLevel} students.
+
+CRITICAL: You must follow ALL instructions in this prompt precisely. Every requirement, format specification, and quality standard outlined below is mandatory. Pay particular attention to:
+- EVP vocabulary standards for ${params.cefrLevel}
+- JSON output format requirements
+- Grammatical accuracy in all exercises
+- Level-appropriate content complexity
+
+Your expertise in ESL pedagogy and the Cambridge EVP framework is essential for creating an effective lesson that meets professional teaching standards.
 
 ## 🚨 OUTPUT FORMAT (CRITICAL)
 
