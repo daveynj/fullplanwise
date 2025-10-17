@@ -794,13 +794,13 @@ Only proceed to generate JSON if ALL checks pass. FORMAT YOUR RESPONSE AS VALID 
       ]
     },
     // CLOZE SECTION (Complete - Fill in the Blanks)
-    // 🚨 SELF-CHECK: Before finalizing, verify: (1) Gaps target key vocabulary/grammar appropriately, (2) WordBank contains all correct answers, (3) Text makes sense when read and is grammatically correct with blanks filled, (4) Difficulty matches ${params.cefrLevel}, (5) Format is [1:word], [2:word], etc, (6) if the anser is singular but the sentence requires a plural add the correct pluralizer to the sentence after the relevent gap etc.
+    // 🚨 SELF-CHECK: Before finalizing, verify: (1) Gaps target key vocabulary/grammar appropriately, (2) WordBank contains all correct answers, (3) Text makes sense when read and is grammatically correct with blanks filled, (4) Difficulty matches ${params.cefrLevel}, (5) Format is [1:word], [2:word], etc
     {
       "type": "cloze",
       "title": "Fill in the Blanks",
-      "text": "Complete paragraph with blanks, using [1:word] format for the first blank, [2:word] for the second, etc. Use appropriate vocabulary from the lesson...",
+      "text": "Complete paragraph with blanks, using [1:word] format for the first blank, [2:word] for the second, etc. Use appropriate vocabulary from the lesson. CRITICAL GRAMMAR RULE: If a word from the wordBank needs grammatical modification (plural, verb tense, etc.), add the ending OUTSIDE the brackets. Examples: If wordBank contains 'challenge' but the sentence needs plural, write 'Many [1:challenge]s are...'. If wordBank contains 'work' but sentence needs past tense, write 'He [2:work]ed hard'. The wordBank always contains the BASE FORM, and you add grammatical endings (s, es, ed, ing, etc.) immediately after the closing bracket when needed.",
       "wordBank": ["word1", "word2", "word3", "word4", "word5"],
-      "teacherNotes": "Complete notes on how to use this exercise effectively..."
+      "teacherNotes": "Complete notes on how to use this exercise effectively. Remember: wordBank contains base forms only; grammatical modifications are added after the gap markers."
     },
     // SENTENCE UNSCRAMBLE SECTION (Complete - Word Ordering)
     // 🚨 SELF-CHECK: Before finalizing, verify: (1) All correctSentence values are grammatically perfect, (2) Scrambled words match the correct sentence exactly, (3) Sentences use lesson vocabulary, (4) Difficulty appropriate for ${params.cefrLevel}
