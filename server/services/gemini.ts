@@ -953,6 +953,16 @@ The Grammar Spotlight should use strategic grammar selection and pedagogically-o
 4. **Clear Communication**: Focus on helping students express their ideas effectively
 5. **Practical Application**: Show students when and how to use this grammar in real communication
 
+**🚨 SELF-CHECK - Grammar Spotlight:**
+Before finalizing, verify your Grammar Spotlight meets ALL requirements:
+1. Grammar type is appropriate for ${params.cefrLevel} (not too simple/complex)
+2. Examples use vocabulary from THIS lesson when possible
+3. logicExplanation clearly explains WHY this grammar exists and HOW it works
+4. Visual elements match the grammar type (e.g., timeline for tenses, scale for modals)
+5. Teaching tips are practical and actionable for classroom use
+6. All examples demonstrate the grammar pattern clearly with highlighted elements
+Only proceed if ALL checks pass.
+
 🚨 FINAL REMINDER - OUTPUT FORMAT 🚨
 
 Your response MUST be:
