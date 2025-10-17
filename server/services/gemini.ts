@@ -41,7 +41,7 @@ export class GeminiService {
       
       // Configure the request for OpenRouter
       const requestData = {
-        model: 'google/gemini-2.5-flash',
+        model: 'x-ai/grok-4-fast',
         messages: [
           {
             role: 'user',
@@ -53,7 +53,7 @@ export class GeminiService {
         max_tokens: 16384, // Increased token count from 8192 to 16384 for more detailed lessons
       };
 
-      console.log('Sending request to OpenRouter API (Gemini 2.5 Flash)...');
+      console.log('Sending request to OpenRouter API (Grok-4 Fast)...');
       console.log('Request payload:', JSON.stringify(requestData, null, 2).substring(0, 300));
 
       try {
@@ -1017,10 +1017,10 @@ BEGIN YOUR JSON RESPONSE NOW:`;
   
   /**
    * Validate and improve the generated content for quality control
-   * NOTE: Validations removed to improve speed - trusting Gemini 2.5 Flash to generate high-quality content
+   * NOTE: Validations removed to improve speed - trusting Grok-4 Fast to generate high-quality content
    */
   private async validateAndImproveContent(content: any, params: LessonGenerateParams): Promise<any> {
-    console.log('Skipping quality control validation - trusting Gemini 2.5 Flash for high-quality output');
+    console.log('Skipping quality control validation - trusting Grok-4 Fast for high-quality output');
     return content;
   }
 
@@ -1314,7 +1314,7 @@ export const testOpenRouterConnection = async (): Promise<boolean> => {
     }
 
     const testRequest = {
-      model: 'google/gemini-2.5-flash',
+      model: 'x-ai/grok-4-fast',
       messages: [{ role: 'user', content: 'Hello, can you respond with just "OK"?' }],
       max_tokens: 10
     };
