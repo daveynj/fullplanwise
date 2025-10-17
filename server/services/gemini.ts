@@ -435,6 +435,14 @@ ${params.cefrLevel === 'A1' ? `- Cambridge A1 list: happy, work, eat, go, friend
 ✓ Serves genuine communicative function
 ✓ Similar words from lower levels already known
 
+**🚨 SELF-CHECK BEFORE PROCEEDING:**
+Before finalizing your vocabulary selection, CONFIRM EACH WORD against EVP criteria:
+1. For each candidate word, verify it meets ${params.cefrLevel} EVP standards
+2. Check it's NOT from a higher CEFR level (e.g., if ${params.cefrLevel}, avoid ${params.cefrLevel === 'A1' ? 'A2+' : params.cefrLevel === 'A2' ? 'B1+' : params.cefrLevel === 'B1' ? 'B2+' : params.cefrLevel === 'B2' ? 'C1+' : 'C2+'} words)
+3. Confirm it serves a genuine communicative need for "${params.topic}"
+4. Ensure it can be defined using vocabulary 2+ levels below
+Only proceed with words that pass ALL checks.
+
 **Vocabulary Structure (all fields required):**
 Each word needs: term, partOfSpeech, coreDefinition (using vocab 2+ levels below), simpleExplanation (2-3 sentences), contextualMeaning (relates to "${params.topic}"), levelAppropriateExample, commonCollocations (3 items), additionalExamples (formal/informal/personal - 3 items), definition (legacy), example (legacy), wordFamily {words, description}, collocations (3 items), usageNotes, pronunciation {syllables, stressIndex, phoneticGuide}, imagePrompt, semanticMap {synonyms, antonyms, relatedConcepts, contexts, associatedWords}
 
