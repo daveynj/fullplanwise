@@ -490,6 +490,16 @@ SELECT EXACTLY 5 VOCABULARY WORDS meeting all criteria above.
 ✓ Sentence structures varied but appropriate
 ✓ Text creates discussion opportunities
 
+**🚨 SELF-CHECK - Reading Text:**
+Before proceeding, verify your reading text meets ALL requirements:
+1. Word count: ${params.cefrLevel === 'A1' ? '80-120' : params.cefrLevel === 'A2' ? '100-150' : params.cefrLevel === 'B1' ? '120-180' : params.cefrLevel === 'B2' ? '150-220' : '180-250'} words total
+2. Each of the 5 vocabulary words appears 2-3 times with context clues
+3. Vocabulary density: maximum 1 new word per 25 words
+4. Sentence complexity appropriate for ${params.cefrLevel} (${params.cefrLevel === 'A1' ? '6-8' : params.cefrLevel === 'A2' ? '8-10' : params.cefrLevel === 'B1' ? '10-12' : params.cefrLevel === 'B2' ? '12-15' : 'flexible'} words average)
+5. Text creates natural opportunities for discussion
+6. All vocabulary is contextually supported for student comprehension
+Only proceed if ALL checks pass.
+
 → After creating the reading text, design comprehension questions.
 
 ### STEP 4: Comprehension Questions
@@ -502,6 +512,16 @@ Create 3-5 questions testing understanding of the reading:
 - Test genuine comprehension, not word recognition
 - Use question formats appropriate for ${params.cefrLevel}
 - Avoid ambiguity
+
+**🚨 SELF-CHECK - Comprehension Questions:**
+Before proceeding, verify your comprehension questions meet ALL requirements:
+1. Created 3-5 questions (confirm exact count)
+2. Questions progress from literal → interpretive → applied understanding
+3. Cognitive depth appropriate for ${params.cefrLevel} (not too simple/complex)
+4. Questions test comprehension, not just word recognition
+5. All questions are clear, unambiguous, and answerable from the reading
+6. Variety of question types used (not all the same format)
+Only proceed if ALL checks pass.
 
 → After creating comprehension questions, design sentence frames.
 
