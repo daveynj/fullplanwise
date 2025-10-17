@@ -792,7 +792,7 @@ Only proceed to generate JSON if ALL checks pass. FORMAT YOUR RESPONSE AS VALID 
       ]
     },
     // CLOZE SECTION (Complete - Fill in the Blanks)
-    // 🚨 SELF-CHECK: Before finalizing, verify: (1) Gaps target key vocabulary/grammar appropriately, (2) WordBank contains all correct answers, (3) Text makes sense when read and is grammatically correct with blanks filled, (4) Difficulty matches ${params.cefrLevel}, (5) Format is [1:word], [2:word], etc.
+    // 🚨 SELF-CHECK: Before finalizing, verify: (1) Gaps target key vocabulary/grammar appropriately, (2) WordBank contains all correct answers, (3) Text makes sense when read and is grammatically correct with blanks filled, (4) Difficulty matches ${params.cefrLevel}, (5) Format is [1:word], [2:word], etc, (6) if the anser is singular but the sentence requires a plural add the correct pluralizer to the sentence after the relevent gap etc.
     {
       "type": "cloze",
       "title": "Fill in the Blanks",
