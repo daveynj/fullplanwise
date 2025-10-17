@@ -329,7 +329,7 @@ Think of it this way: The student's learned vocabulary is their toolkit - use it
       : '';
     
     // System instruction part
-    const systemInstruction = `You are an expert ESL teacher creating an engaging, interactive lesson on "${params.topic}" for ${params.cefrLevel} students.
+    const systemInstruction = `You are an expert ESL teacher creating an engaging, interactive lesson on "${params.topic}" for ${params.cefrLevel} students. You have a full knowledge of the Cambride Eglish Vocabulary Profile.
 
 ## 🚨 OUTPUT FORMAT (CRITICAL)
 
@@ -416,7 +416,7 @@ ${params.cefrLevel === 'A1' ? 'Basic descriptions and immediate needs' : params.
 
 Select vocabulary using Cambridge EVP for ${params.cefrLevel}. Verify each word meets EVP standards:
 
-**${params.cefrLevel} EVP Standards:**
+**${params.cefrLevel} EVP Standards examples:**
 ${params.cefrLevel === 'A1' ? `- Cambridge A1 list: happy, work, eat, go, friend, time, help, need
 - Avoid B1+: challenge, opportunity, achieve, develop
 - Context: Basic daily needs and personal information` : params.cefrLevel === 'A2' ? `- Cambridge A2 list: prefer, remember, decide, enjoy, worry, invite
@@ -792,7 +792,7 @@ Only proceed to generate JSON if ALL checks pass. FORMAT YOUR RESPONSE AS VALID 
       ]
     },
     // CLOZE SECTION (Complete - Fill in the Blanks)
-    // 🚨 SELF-CHECK: Before finalizing, verify: (1) Gaps target key vocabulary/grammar appropriately, (2) WordBank contains all correct answers, (3) Text makes sense with blanks filled, (4) Difficulty matches ${params.cefrLevel}, (5) Format is [1:word], [2:word], etc.
+    // 🚨 SELF-CHECK: Before finalizing, verify: (1) Gaps target key vocabulary/grammar appropriately, (2) WordBank contains all correct answers, (3) Text makes sense when read and is grammatically correct with blanks filled, (4) Difficulty matches ${params.cefrLevel}, (5) Format is [1:word], [2:word], etc.
     {
       "type": "cloze",
       "title": "Fill in the Blanks",
@@ -854,7 +854,7 @@ Only proceed to generate JSON if ALL checks pass. FORMAT YOUR RESPONSE AS VALID 
       ]
     },
     // QUIZ SECTION (Complete - 5 questions)
-    // 🚨 SELF-CHECK: Before finalizing, verify: (1) Exactly 5 questions created, (2) Variety of question types (multiple choice, true/false), (3) All options grammatically correct, (4) Correct answers clearly match one option, (5) Explanations are clear and educational, (6) Difficulty appropriate for ${params.cefrLevel}
+    // 🚨 SELF-CHECK: Before finalizing, verify: (1) Exactly 5 questions created, (2) Variety of question types (multiple choice, true/false), (3) All options grammatically perfect, (4) Correct answers clearly match one option, (5) Explanations are clear and educational, (6) Difficulty appropriate for ${params.cefrLevel}
     {
       "type": "quiz",
       "title": "Knowledge Check",
