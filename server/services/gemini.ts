@@ -416,17 +416,19 @@ ${params.cefrLevel === 'A1' ? 'Basic descriptions and immediate needs' : params.
 
 Select vocabulary using Cambridge EVP for ${params.cefrLevel}. Verify each word meets EVP standards:
 
-**${params.cefrLevel} EVP Standards examples:**
-${params.cefrLevel === 'A1' ? `- Cambridge A1 list: happy, work, eat, go, friend, time, help, need
-- Avoid B1+: challenge, opportunity, achieve, develop
-- Context: Basic daily needs and personal information` : params.cefrLevel === 'A2' ? `- Cambridge A2 list: prefer, remember, decide, enjoy, worry, invite
-- Avoid B2+: evaluate, analyze, implement, demonstrate
-- Context: Personal experiences and simple social situations` : params.cefrLevel === 'B1' ? `- Cambridge B1 list: challenge, opportunity, achieve, compare, improve, affect
-- Avoid B2/C1: synthesize, contemplate, facilitate, cultivate
-- Context: Practical problem-solving and expressing opinions with reasons` : params.cefrLevel === 'B2' ? `- Cambridge B2 list: analyze, evaluate, substantial, compelling, implement, diverse
-- Avoid C1/C2: elucidate, juxtapose, paradigm, ubiquitous
-- Context: Academic discussion and professional contexts` : params.cefrLevel === 'C1' ? `- Cambridge C1 list: elucidate, nuanced, paradigm, multifaceted, inherent, intrinsic
-- Context: Sophisticated analysis and expert-level discussion` : `- Cambridge C2 list: ubiquitous, ephemeral, quintessential, conundrum, propensity
+**${params.cefrLevel} EVP Standards:**
+${params.cefrLevel === 'A1' ? `- Consult Cambridge EVP A1 vocabulary list directly
+- Avoid vocabulary from B1 and higher levels
+- Context: Basic daily needs and personal information` : params.cefrLevel === 'A2' ? `- Consult Cambridge EVP A2 vocabulary list directly
+- Avoid vocabulary from B2 and higher levels
+- Context: Personal experiences and simple social situations` : params.cefrLevel === 'B1' ? `- Consult Cambridge EVP B1 vocabulary list directly
+- Avoid vocabulary from B2/C1 and higher levels
+- Context: Practical problem-solving and expressing opinions with reasons` : params.cefrLevel === 'B2' ? `- Consult Cambridge EVP B2 vocabulary list directly
+- Avoid vocabulary from C1/C2 levels
+- Context: Academic discussion and professional contexts` : params.cefrLevel === 'C1' ? `- Consult Cambridge EVP C1 vocabulary list directly
+- Avoid vocabulary from C2 level unless necessary
+- Context: Sophisticated analysis and expert-level discussion` : `- Consult Cambridge EVP C2 vocabulary list directly
+- Use the full range of advanced vocabulary
 - Context: Complete mastery of English vocabulary`}
 
 **EVP Checklist (verify each word):**
