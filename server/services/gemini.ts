@@ -541,6 +541,16 @@ ${params.cefrLevel === 'A1' ? 'A1: Simple present ("___ is ___", "I like ___"), 
 - Teaching notes provide I Do / We Do / You Do guidance
 ${params.cefrLevel === 'A1' || params.cefrLevel === 'A2' || params.cefrLevel === 'B1' ? `- MUST include "lowerLevelScaffolding" with sentenceWorkshop, patternTrainer, visualMaps` : `- Do NOT include lowerLevelScaffolding for ${params.cefrLevel}`}
 
+**🚨 SELF-CHECK - Sentence Frames:**
+Before proceeding, verify your sentence frames meet ALL requirements:
+1. Created exactly 3 sentence frames related to "${params.topic}"
+2. Each frame has tiered scaffolding: emerging/developing/expanding
+3. Model responses demonstrate natural ${params.cefrLevel} language use
+4. Teaching notes include I Do / We Do / You Do guidance
+5. ${params.cefrLevel === 'A1' || params.cefrLevel === 'A2' || params.cefrLevel === 'B1' ? `"lowerLevelScaffolding" object present with sentenceWorkshop, patternTrainer, visualMaps` : `NO "lowerLevelScaffolding" included (not needed for ${params.cefrLevel})`}
+6. Frames are practical and usable for real classroom discussion
+Only proceed if ALL checks pass.
+
 → After creating sentence frames, build discussion questions.
 
 ### STEP 6: Discussion Questions
@@ -556,6 +566,16 @@ ${params.cefrLevel === 'C1' || params.cefrLevel === 'C2' ? 'Use direct, conversa
 - Include clear context (self-contained, understandable without lesson text)
 - NOT generic - specifically about "${params.topic}"
 - Culturally inclusive and globally accessible
+
+**🚨 SELF-CHECK - Discussion Questions:**
+Before proceeding, verify your discussion questions meet ALL requirements:
+1. Created exactly 5 discussion questions
+2. Each question has paragraphContext (3-5 sentences providing context)
+3. Each question has an imagePrompt (50-80 words, detailed, ends with "No text visible")
+4. Cognitive level appropriate for ${params.cefrLevel} (${params.cefrLevel === 'A1' || params.cefrLevel === 'A2' ? 'personal experiences, concrete situations' : params.cefrLevel === 'B1' ? 'opinions with reasons, practical problems' : 'analytical thinking, abstract concepts'})
+5. Questions are engaging and culturally inclusive
+6. All paragraphContext sections are unique and self-contained
+Only proceed if ALL checks pass.
 
 → After creating discussion questions, validate integration.
 
