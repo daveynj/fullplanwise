@@ -518,25 +518,42 @@ Only proceed if ALL checks pass.
 
 → After creating the reading text, design comprehension questions.
 
-### STEP 4: Comprehension Questions
+### STEP 4: Vocabulary Comprehension Questions
 
-Create 3-5 questions testing understanding of the reading:
+Create EXACTLY 5 questions - one for each of the 5 KEY VOCABULARY WORDS:
+
+**CRITICAL - Focus on VOCABULARY, not reading facts:**
+- Each question must test understanding of ONE of the 5 target vocabulary words
+- Create exactly ONE question per vocabulary word (5 words = 5 questions)
+- Test word meaning, usage, context, and application
+- Students must demonstrate they understand the VOCABULARY, not just recall facts from the text
+- Question types: "Which sentence uses [word] correctly?", "What does [word] mean?", "In which situation would you use [word]?", "Which word best describes...?"
 
 **Approach:**
-- Assess understanding at appropriate depth for ${params.cefrLevel}
-- Progress from literal to interpretive to applied understanding
-- Test genuine comprehension, not word recognition
+- Test vocabulary at appropriate depth for ${params.cefrLevel}
+- Include definition questions, usage questions, and contextual application questions
+- Each of the 5 vocabulary words MUST appear in exactly one question
 - Use question formats appropriate for ${params.cefrLevel}
 - Avoid ambiguity
 
-**🚨 SELF-CHECK - Comprehension Questions:**
+**🚨 ANSWER RANDOMIZATION - CRITICAL:**
+The correct answer MUST NOT always be in the same position. Distribute correct answers across different positions:
+- Question 1: Correct answer in position A, B, C, or D (randomize)
+- Question 2: Correct answer in a DIFFERENT position than Question 1
+- Question 3: Correct answer in a DIFFERENT position than Questions 1 & 2
+- Continue varying positions - DO NOT put all correct answers in position B or any single position
+- For True/False questions, vary between True and False as correct answers
+
+**🚨 SELF-CHECK - Vocabulary Comprehension Questions:**
 Before proceeding, verify your comprehension questions meet ALL requirements:
-1. Created 3-5 questions (confirm exact count)
-2. Questions progress from literal → interpretive → applied understanding
-3. Cognitive depth appropriate for ${params.cefrLevel} (not too simple/complex)
-4. Questions test comprehension, not just word recognition
-5. All questions are clear, unambiguous, and answerable from the reading
-6. Variety of question types used (not all the same format)
+1. Created EXACTLY 5 questions (one per vocabulary word - confirm exact count)
+2. Each question tests understanding of ONE specific vocabulary word from the 5 target words (not reading facts)
+3. All 5 vocabulary words are covered (each word has exactly one question)
+4. Questions test word meaning, usage, or contextual application
+5. Cognitive depth appropriate for ${params.cefrLevel} (not too simple/complex)
+6. All questions are clear, unambiguous, and test VOCABULARY knowledge
+7. Variety of question types used (definition, usage, context, application)
+8. CRITICAL: Correct answers are in DIFFERENT positions (verify positions: should be distributed, NOT all in position B)
 Only proceed if ALL checks pass.
 
 → After creating comprehension questions, design sentence frames.
@@ -613,11 +630,13 @@ Before generating the JSON, perform this complete validation:
 **B. Structural Requirements:**
 ✓ Exactly 5 vocabulary words with ALL fields (pronunciation, semanticMap, imagePrompt, etc.)
 ✓ Reading has exactly 5 paragraphs
-✓ Comprehension has 3-5 questions
+✓ Comprehension has EXACTLY 5 questions - one per vocabulary word - testing VOCABULARY (not reading facts)
+✓ CRITICAL: Comprehension correct answers are in DIFFERENT positions (distributed across A/B/C/D, NOT all in position B)
 ✓ Sentence frames has exactly 3 frames with tiered scaffolding
 ✓ ${params.cefrLevel === 'A1' || params.cefrLevel === 'A2' || params.cefrLevel === 'B1' ? 'lowerLevelScaffolding present in sentence frames' : 'NO lowerLevelScaffolding in sentence frames'}
 ✓ Discussion has exactly 5 questions with paragraphContext (3-5 sentences each)
 ✓ Quiz has exactly 5 questions
+✓ CRITICAL: Quiz correct answers are in DIFFERENT positions (distributed across A/B/C/D, NOT all in position B)
 ✓ Grammar Spotlight includes logicExplanation and visual elements
 
 **C. JSON Format:**
@@ -870,7 +889,7 @@ Only proceed to generate JSON if ALL checks pass. FORMAT YOUR RESPONSE AS VALID 
       ]
     },
     // QUIZ SECTION (Complete - 5 questions)
-    // 🚨 SELF-CHECK: Before finalizing, verify: (1) Exactly 5 questions created, (2) Variety of question types (multiple choice, true/false), (3) All options grammatically perfect, (4) Correct answers clearly match one option, (5) Explanations are clear and educational, (6) Difficulty appropriate for ${params.cefrLevel}
+    // 🚨 SELF-CHECK: Before finalizing, verify: (1) Exactly 5 questions created, (2) Variety of question types (multiple choice, true/false), (3) All options grammatically perfect, (4) Correct answers clearly match one option, (5) Explanations are clear and educational, (6) Difficulty appropriate for ${params.cefrLevel}, (7) CRITICAL: Correct answers are in DIFFERENT positions across questions - NOT all in position B or any single position - distribute across A, B, C, D and vary True/False
     {
       "type": "quiz",
       "title": "Knowledge Check",
