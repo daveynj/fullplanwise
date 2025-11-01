@@ -47,6 +47,20 @@ Social media: LinkedIn - www.linkedin.com/in/davidjackson113, X (Twitter) - @Dav
 
 ## Recent Changes (November 1, 2025)
 
+### Natural Vocabulary Reinforcement Enhancement
+**Problem**: AI was forcing previously learned vocabulary into reading texts in unnatural, contrived ways that made the content sound awkward.
+
+**Root Cause**: The prompt instruction told the AI to "Use these words FREELY throughout the lesson," which was being interpreted as a directive to incorporate as many learned words as possible, rather than an optional permission.
+
+**Solution**: Revised the vocabulary instruction section in `server/services/gemini.ts` to:
+1. Change "Use FREELY" → "You MAY use naturally" (making it optional, not mandatory)
+2. Add explicit prohibition: "Never force these words into the lesson just because they're available"
+3. Add clear priority: "Prioritize creating natural, authentic, and engaging reading texts over vocabulary reinforcement"
+4. Emphasize that natural content quality is MORE IMPORTANT than vocabulary reinforcement
+5. Maintain existing prohibition on using learned words as focus vocabulary
+
+**Impact**: Reading texts now sound natural and authentic while still allowing organic incorporation of previously learned vocabulary when contextually appropriate.
+
 ### Prompt Optimization and Quality Control Enhancement
 **Changes**: Optimized the lesson generation prompt and added comprehensive quality control mechanisms.
 
