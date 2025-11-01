@@ -456,6 +456,9 @@ Only proceed with words that pass ALL checks.
 **Vocabulary Structure (all fields required):**
 Each word needs: term, partOfSpeech, coreDefinition (using vocab 2+ levels below), simpleExplanation (2-3 sentences), contextualMeaning (relates to "${params.topic}"), levelAppropriateExample, commonCollocations (3 items), additionalExamples (formal/informal/personal - 3 items), definition (legacy), example (legacy), wordFamily {words, description}, collocations (3 items), usageNotes, pronunciation {syllables, stressIndex, phoneticGuide}, imagePrompt, semanticMap {synonyms, antonyms, relatedConcepts, contexts, associatedWords}
 
+**Definition Writing Principle:**
+Write definitions that students can easily understand at first reading. Use simple, clear language that directly explains the meaning without complex vocabulary or abstract concepts. The definition should feel natural and conversational, as if explaining the word to a friend. Prioritize clarity and accessibility over technical precision - the student should immediately grasp the meaning from your definition.
+
 **Definition Standards:**
 ${params.cefrLevel === 'A1' || params.cefrLevel === 'A2' ? `Use top ${params.cefrLevel === 'A1' ? '500' : '1,000'} words, max ${params.cefrLevel === 'A1' ? '8' : '10'} words, present tense, concrete examples` : params.cefrLevel === 'B1' ? `Use A2 vocab + common B1 words, max 12 words` : params.cefrLevel === 'B2' ? `Use B1 vocab, max 15 words, focus on precision` : `Use sophisticated vocab appropriately, maintain clarity`}
 
