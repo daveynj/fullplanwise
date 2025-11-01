@@ -529,6 +529,20 @@ Create EXACTLY 5 questions - one for each of the 5 KEY VOCABULARY WORDS:
 - Students must demonstrate they understand the VOCABULARY, not just recall facts from the text
 - Question types: "Which sentence uses [word] correctly?", "What does [word] mean?", "In which situation would you use [word]?", "Which word best describes...?"
 
+**FORBIDDEN PHRASES - DO NOT USE:**
+❌ "in the context of the reading"
+❌ "in the passage"
+❌ "according to the text"
+❌ "How is [word] used in the passage?"
+❌ "What does [word] mean in the reading?"
+These phrases make it a reading comprehension question, NOT a vocabulary question!
+
+**CORRECT APPROACH:**
+✅ "What does [word] mean?"
+✅ "Which sentence uses [word] correctly?"
+✅ "In which situation would you use [word]?"
+✅ "The word [word] best describes something that is..."
+
 **Approach:**
 - Test vocabulary at appropriate depth for ${params.cefrLevel}
 - Include definition questions, usage questions, and contextual application questions
@@ -553,7 +567,8 @@ Before proceeding, verify your comprehension questions meet ALL requirements:
 5. Cognitive depth appropriate for ${params.cefrLevel} (not too simple/complex)
 6. All questions are clear, unambiguous, and test VOCABULARY knowledge
 7. Variety of question types used (definition, usage, context, application)
-8. CRITICAL: Correct answers are in DIFFERENT positions (verify positions: should be distributed, NOT all in position B)
+8. CRITICAL: NO forbidden phrases used ("in the context of the reading", "in the passage", "according to the text")
+9. CRITICAL: Correct answers are in DIFFERENT positions (verify positions: should be distributed, NOT all in position B)
 Only proceed if ALL checks pass.
 
 → After creating comprehension questions, design sentence frames.
@@ -631,6 +646,7 @@ Before generating the JSON, perform this complete validation:
 ✓ Exactly 5 vocabulary words with ALL fields (pronunciation, semanticMap, imagePrompt, etc.)
 ✓ Reading has exactly 5 paragraphs
 ✓ Comprehension has EXACTLY 5 questions - one per vocabulary word - testing VOCABULARY (not reading facts)
+✓ CRITICAL: Comprehension questions do NOT use forbidden phrases ("in the context of the reading", "in the passage", etc.)
 ✓ CRITICAL: Comprehension correct answers are in DIFFERENT positions (distributed across A/B/C/D, NOT all in position B)
 ✓ Sentence frames has exactly 3 frames with tiered scaffolding
 ✓ ${params.cefrLevel === 'A1' || params.cefrLevel === 'A2' || params.cefrLevel === 'B1' ? 'lowerLevelScaffolding present in sentence frames' : 'NO lowerLevelScaffolding in sentence frames'}
@@ -784,16 +800,17 @@ Only proceed to generate JSON if ALL checks pass. FORMAT YOUR RESPONSE AS VALID 
         }
       ]
     },
-    // COMPREHENSION SECTION (Complete - 5 questions)
+    // VOCABULARY CHECK SECTION (Complete - 5 questions, one per vocabulary word)
+    // CRITICAL: Questions test VOCABULARY understanding, NOT reading facts. NO phrases like "in the context of the reading" or "in the passage"
     {
       "type": "comprehension",
-      "title": "Reading Comprehension",
+      "title": "Vocabulary Check",
       "questions": [
-        {"question": "Complete Question 1?", "options": ["A", "B"], "answer": "A", "correctAnswer": "A", "explanation": "Complete explanation..."},
-        {"question": "Complete Question 2?", "options": ["A", "B", "C"], "answer": "C", "correctAnswer": "C", "explanation": "Complete explanation..."},
-        {"question": "Complete Question 3?", "options": ["A", "B", "C", "D"], "answer": "D", "correctAnswer": "D", "explanation": "Complete explanation..."},
-        {"question": "Complete Question 4?", "options": ["True", "False"], "answer": "True", "correctAnswer": "True", "explanation": "Complete explanation..."},
-        {"question": "Complete Question 5?", "options": ["True", "False"], "answer": "False", "correctAnswer": "False", "explanation": "Complete explanation..."}
+        {"question": "What does 'word1' mean?", "options": ["Incorrect definition A", "Incorrect definition B", "Correct definition", "Incorrect definition D"], "answer": "Correct definition", "correctAnswer": "Correct definition", "explanation": "Word1 means..."},
+        {"question": "Which sentence uses 'word2' correctly?", "options": ["Correct usage sentence", "Incorrect usage B", "Incorrect usage C"], "answer": "Correct usage sentence", "correctAnswer": "Correct usage sentence", "explanation": "This sentence correctly uses word2 because..."},
+        {"question": "In which situation would you use 'word3'?", "options": ["Wrong context A", "Wrong context B", "Wrong context C", "Correct context"], "answer": "Correct context", "correctAnswer": "Correct context", "explanation": "Word3 is used when..."},
+        {"question": "The word 'word4' best describes something that is...", "options": ["Wrong description A", "Correct description", "Wrong description C"], "answer": "Correct description", "correctAnswer": "Correct description", "explanation": "Word4 describes..."},
+        {"question": "If something is 'word5', it means it is NOT...", "options": ["Wrong opposite A", "Wrong opposite B", "Wrong opposite C", "Correct opposite"], "answer": "Correct opposite", "correctAnswer": "Correct opposite", "explanation": "Word5 is the opposite of..."}
       ]
     },
     // PEDAGOGICAL SENTENCE FRAMES (v2) - Generate 3 complete frames
