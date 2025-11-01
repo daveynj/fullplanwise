@@ -315,9 +315,12 @@ This student has already learned the following vocabulary words in previous less
 ${studentVocabulary.join(', ')}
 
 IMPORTANT INSTRUCTIONS:
-✅ DO: Use these words FREELY throughout the lesson (reading texts, discussion questions, comprehension questions, etc.) since the student knows them and this provides valuable reinforcement and natural usage examples.
+✅ DO: You MAY use these words naturally in your reading texts, discussion questions, and comprehension questions - BUT ONLY when they fit the context organically and enhance the natural flow of the text. Never force these words into the lesson just because they're available.
 
-❌ DON'T: Include these words as the FOCUS VOCABULARY words for this lesson - they've already been taught.
+❌ DON'T: 
+- Include these words as the FOCUS VOCABULARY words for this lesson - they've already been taught.
+- Force these words into the reading text in unnatural or contrived ways
+- Prioritize using these words over creating authentic, engaging content
 
 Instead, choose NEW vocabulary words that:
 - Build upon their existing knowledge
@@ -325,7 +328,7 @@ Instead, choose NEW vocabulary words that:
 - Are relevant to the topic "${params.topic}"
 - Help the student progress in their language learning journey
 
-Think of it this way: The student's learned vocabulary is their toolkit - use it naturally in the lesson content to help them understand and engage with the material, but teach them NEW words to expand their toolkit.`
+KEY PRINCIPLE: Prioritize creating natural, authentic, and engaging reading texts over vocabulary reinforcement. The student's previously learned words are available to you if they happen to fit naturally, but creating high-quality, natural-sounding content is MORE IMPORTANT than incorporating their learned vocabulary. Only use these words when they genuinely enhance the text - not as a checklist to complete.`
       : '';
     
     // System instruction part
