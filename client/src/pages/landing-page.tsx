@@ -51,7 +51,7 @@ export default function LandingPage() {
   return (
     <div className="flex flex-col min-h-screen font-open-sans">
       <SEOHead
-        title="From 3-Hour Lesson Prep to 3-Minute Freedom | AI ESL Lesson Generator"
+        title="Plan Wise ESL: AI Lesson Generator for ESL Teachers"
         description="Transform your lesson planning from exhausting to effortless. Go from 3-hour prep sessions to 3-minute lesson generation. Start your transformation today!"
         keywords={[
           "ESL teacher burnout solution",
