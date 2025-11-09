@@ -100,27 +100,34 @@ export default function LandingPage() {
             {/* Hero Text Column */}
             <div className="text-center lg:text-left lg:w-1/2">
               <h1 className="text-4xl md:text-5xl font-nunito font-bold mb-4">
-                From 3-Hour Lesson Prep to 3-Minute Freedom
+                Steal back hours of prep. Get a complete ESL lesson in 45 seconds
               </h1>
               <p className="text-xl md:text-2xl mb-6 opacity-90">
-                Transform your lesson planning from exhausting to effortless. Go from exhausted to energized—reclaim your weekends and rediscover your passion for teaching.
+                Built for online ESL tutors on Preply, italki, Cambly and beyond. CEFR-based, fully editable, and ready to teach in your next class.
               </p>
               
               {/* Quick benefit list */}
               <ul className="mb-8 text-lg space-y-2 mx-auto lg:mx-0 max-w-md">
                 <li className="flex items-center">
                   <CheckCircle className="h-5 w-5 mr-2 text-brand-yellow" /> 
-                  <span>Create complete CEFR-aligned lessons in 3 minutes</span>
+                  <span>Save 20–60 minutes per lesson prep.</span>
                 </li>
                 <li className="flex items-center">
                   <CheckCircle className="h-5 w-5 mr-2 text-brand-yellow" /> 
-                  <span>Increase your teaching hours (and income)</span>
+                  <span>Look more professional with structured, engaging materials.</span>
                 </li>
                 <li className="flex items-center">
                   <CheckCircle className="h-5 w-5 mr-2 text-brand-yellow" /> 
-                  <span>No more late nights preparing materials</span>
+                  <span>Tailor lessons to any student’s level, interests, or goals instantly.</span>
                 </li>
               </ul>
+              <div className="text-left mt-4">
+                <p className="font-bold text-lg">Who it's for:</p>
+                <ul className="list-disc list-inside">
+                  <li>Online ESL tutors on Preply, italki, Cambly, and private students.</li>
+                  <li>Language schools and small agencies.</li>
+                </ul>
+              </div>
               <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-4 mb-8">
                 <div className="flex flex-col items-center lg:items-start">
                   <Link href="/auth?register=true">
