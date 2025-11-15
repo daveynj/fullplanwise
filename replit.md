@@ -45,9 +45,44 @@ Social media: LinkedIn - www.linkedin.com/in/davidjackson113, X (Twitter) - @Dav
 - **Scaling**: Autoscale deployment, connection pooling, lazy loading of AI services.
 - **Performance Optimization**: Response-first pattern for lesson generation, pre-caching lesson data, selective field queries to avoid loading massive content fields.
 
-## Recent Changes (November 1, 2025)
+## Recent Changes (November 15, 2025)
 
-### Natural Vocabulary Reinforcement Enhancement
+### Image Generation Rate Limit Fix
+**Problem**: When Replicate API hit rate limits (429 errors), vocabulary images failed to generate but the system logged success anyway and saved null images to the database, causing missing vocabulary images in newly created lessons.
+
+**Root Causes**:
+1. No retry logic for 429/503 rate limit errors
+2. All images generating in parallel, causing burst rate limit violations
+3. Success logging showed "Generated image" even when imageBase64 was null
+4. No validation before saving lessons to detect null images
+
+**Solution Implemented**:
+1. **Retry Logic** (replicate-flux.service.ts):
+   - Added exponential backoff with jitter for 429/503 errors
+   - Up to 5 retry attempts per image
+   - Respects `retry_after` header from Replicate API
+   - Clear error logging when all retries exhausted
+
+2. **Concurrency Limiting** (gemini.ts):
+   - Changed from parallel Promise.all to batched execution
+   - Images generate in batches of 3 (stays within Replicate's 5-request burst limit)
+   - 2-second delay between batches
+   - Deferred function execution prevents all promises from starting at once
+   - Progress logging for each batch
+
+3. **Accurate Success Logging** (gemini.ts):
+   - Only logs "✓ Generated image" when imageBase64 is not null
+   - Logs "✗ Failed to generate" when null returned
+   - Applied to both vocabulary and discussion images
+
+4. **Pre-Save Validation** (routes.ts):
+   - Checks all vocabulary and discussion images before database save
+   - Logs detailed warnings listing all missing images by term/question
+   - Doesn't block save (allows partial success for user visibility)
+
+**Impact**: Images now generate reliably without hitting rate limits. Teachers can see warnings if any images fail and regenerate if needed.
+
+### Natural Vocabulary Reinforcement Enhancement (November 1, 2025)
 **Problem**: AI was forcing previously learned vocabulary into reading texts in unnatural, contrived ways that made the content sound awkward.
 
 **Root Cause**: The prompt instruction told the AI to "Use these words FREELY throughout the lesson," which was being interpreted as a directive to incorporate as many learned words as possible, rather than an optional permission.
