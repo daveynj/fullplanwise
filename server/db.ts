@@ -17,8 +17,13 @@ if (!process.env.DATABASE_URL) {
 console.log('Initializing database connection');
 
 // Add connection configuration with improved error handling
+// Increase row size limit to handle lessons with embedded images (up to 20MB)
+const connectionString = process.env.DATABASE_URL + 
+  (process.env.DATABASE_URL?.includes('?') ? '&' : '?') + 
+  'options=-c%20max_row_size=20000000';
+
 export const pool = new Pool({ 
-  connectionString: process.env.DATABASE_URL,
+  connectionString,
   max: 3, // Further reduced pool size
   idleTimeoutMillis: 30000, // Shorter idle timeout
   connectionTimeoutMillis: 10000, // Longer connection timeout
