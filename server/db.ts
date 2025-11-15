@@ -5,7 +5,9 @@ import * as schema from "@shared/schema";
 
 // Configure Neon with error handling
 neonConfig.webSocketConstructor = ws;
-neonConfig.poolQueryViaFetch = true;
+// Disable poolQueryViaFetch to use WebSocket mode for streaming large payloads (>8MB lessons with images)
+// WebSocket mode can handle larger responses than HTTP fetch which has an 8MB limit
+neonConfig.poolQueryViaFetch = false;
 neonConfig.useSecureWebSocket = true;
 
 if (!process.env.DATABASE_URL) {
@@ -17,13 +19,8 @@ if (!process.env.DATABASE_URL) {
 console.log('Initializing database connection');
 
 // Add connection configuration with improved error handling
-// Increase row size limit to handle lessons with embedded images (up to 20MB)
-const connectionString = process.env.DATABASE_URL + 
-  (process.env.DATABASE_URL?.includes('?') ? '&' : '?') + 
-  'options=-c%20max_row_size=20000000';
-
 export const pool = new Pool({ 
-  connectionString,
+  connectionString: process.env.DATABASE_URL,
   max: 3, // Further reduced pool size
   idleTimeoutMillis: 30000, // Shorter idle timeout
   connectionTimeoutMillis: 10000, // Longer connection timeout
