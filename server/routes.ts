@@ -468,6 +468,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         grammarSpotlight
       };
       
+      // DEBUG: Check if responseLesson contains imageBase64 before sending
+      const contentStr = typeof responseLesson.content === 'string' 
+        ? responseLesson.content 
+        : JSON.stringify(responseLesson.content);
+      const hasImageInResponse = contentStr.includes('imageBase64');
+      console.log(`[Route] Response content length: ${contentStr.length}, has imageBase64: ${hasImageInResponse}`);
+      
       console.log(`Successfully fetched lesson ${lessonId}`);
       res.json(responseLesson);
     } catch (error: any) {
