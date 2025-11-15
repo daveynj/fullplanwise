@@ -551,18 +551,6 @@ export class DatabaseStorage implements IStorage {
       
       if (lesson) {
         console.log(`[Storage.getLesson] Found lesson ${id}: "${lesson.title}"`);
-        
-        // DEBUG: Check if content contains imageBase64
-        const contentStr = typeof lesson.content === 'string' ? lesson.content : JSON.stringify(lesson.content);
-        const hasImageBase64 = contentStr.includes('imageBase64');
-        const contentLength = contentStr.length;
-        console.log(`[Storage.getLesson] Content length: ${contentLength}, contains imageBase64: ${hasImageBase64}`);
-        
-        if (hasImageBase64) {
-          // Count how many imageBase64 fields exist
-          const imageCount = (contentStr.match(/imageBase64/g) || []).length;
-          console.log(`[Storage.getLesson] Found ${imageCount} imageBase64 fields`);
-        }
       } else {
         console.log(`[Storage.getLesson] Lesson ${id} not found in database`);
       }
