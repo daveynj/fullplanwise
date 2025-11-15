@@ -1256,12 +1256,12 @@ If an example is a simple string, return a string. If it's an object with "compl
       provider: 'gemini'
     };
     
-    // Generate ALL images in parallel if sections exist
+    // Generate ALL images with concurrency limiting if sections exist
     if (lessonContent.sections && Array.isArray(lessonContent.sections)) {
-      console.log('Starting PARALLEL image generation for Gemini lesson...');
+      console.log('Starting BATCHED image generation for Gemini lesson...');
       
-      // Collect all image generation tasks
-      const imageGenerationTasks: Promise<void>[] = [];
+      // Collect all image generation FUNCTIONS (not promises - they execute later)
+      const imageGenerationTasks: (() => Promise<void>)[] = [];
       
       for (const section of lessonContent.sections) {
         // Vocabulary images
@@ -1275,17 +1275,21 @@ If an example is a simple string, return a string. If it's an object with "compl
             }
             
             if (word.imagePrompt) {
-              // Queue parallel image generation
-              const task = (async () => {
+              // Queue deferred image generation function (executes later in batches)
+              const task = async () => {
                 try {
                   const requestId = `vocab_${word.term ? word.term.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 15) : 'word'}`;
                   word.imageBase64 = await replicateFluxService.generateImage(word.imagePrompt, requestId);
-                  console.log(`✓ Generated image for vocab: ${word.term}`);
+                  if (word.imageBase64) {
+                    console.log(`✓ Generated image for vocab: ${word.term}`);
+                  } else {
+                    console.error(`✗ Failed to generate image for vocab: ${word.term} (returned null)`);
+                  }
                 } catch (imgError) {
                   console.error(`✗ Error generating image for vocab ${word.term}:`, imgError);
                   word.imageBase64 = null;
                 }
-              })();
+              };
               imageGenerationTasks.push(task);
             } else {
               console.log(`No imagePrompt for vocab: "${word.term}"`);
@@ -1319,17 +1323,21 @@ If an example is a simple string, return a string. If it's an object with "compl
             }
             
             if (question.imagePrompt) {
-              // Queue parallel image generation
-              const task = (async () => {
+              // Queue deferred image generation function (executes later in batches)
+              const task = async () => {
                 try {
                   const requestId = `disc_${question.question ? question.question.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 15) : 'question'}`;
                   question.imageBase64 = await replicateFluxService.generateImage(question.imagePrompt, requestId);
-                  console.log(`✓ Generated image for discussion question`);
+                  if (question.imageBase64) {
+                    console.log(`✓ Generated image for discussion question`);
+                  } else {
+                    console.error(`✗ Failed to generate discussion image (returned null)`);
+                  }
                 } catch (imgError) {
                   console.error(`✗ Error generating discussion image:`, imgError);
                   question.imageBase64 = null;
                 }
-              })();
+              };
               imageGenerationTasks.push(task);
             } else {
               question.imageBase64 = null;
@@ -1338,14 +1346,33 @@ If an example is a simple string, return a string. If it's an object with "compl
         }
       }
       
-      // Wait for ALL images to generate in parallel
+      // Execute ALL image generation tasks with concurrency limiting
       if (imageGenerationTasks.length > 0) {
-        console.log(`⚡ Generating ${imageGenerationTasks.length} images in parallel...`);
-        await Promise.all(imageGenerationTasks);
-        console.log(`✓ All ${imageGenerationTasks.length} images generated in parallel!`);
+        const batchSize = 3; // Process 3 images at a time to avoid rate limits
+        const totalTasks = imageGenerationTasks.length;
+        console.log(`⚡ Generating ${totalTasks} images in batches of ${batchSize}...`);
+        
+        for (let i = 0; i < totalTasks; i += batchSize) {
+          const batchFunctions = imageGenerationTasks.slice(i, i + batchSize);
+          const batchNum = Math.floor(i / batchSize) + 1;
+          const totalBatches = Math.ceil(totalTasks / batchSize);
+          
+          console.log(`Processing batch ${batchNum}/${totalBatches} (${batchFunctions.length} images)...`);
+          
+          // Execute batch functions in parallel (convert functions to promises)
+          await Promise.all(batchFunctions.map(fn => fn()));
+          
+          // Add a small delay between batches to avoid rate limiting
+          if (i + batchSize < totalTasks) {
+            console.log(`Waiting 2s before next batch...`);
+            await new Promise(resolve => setTimeout(resolve, 2000)); // 2 second delay
+          }
+        }
+        
+        console.log(`✓ All ${totalTasks} images generated!`);
       }
       
-      console.log('Finished parallel image generation for Gemini lesson.');
+      console.log('Finished batched image generation for Gemini lesson.');
     } else {
         console.log('No sections found, skipping image generation.');
     }

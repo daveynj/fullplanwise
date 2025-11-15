@@ -602,6 +602,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
           tags: validatedData.tags || []
         };
         
+        // Validate images before saving
+        const missingImages: string[] = [];
+        if (generatedContent.sections && Array.isArray(generatedContent.sections)) {
+          for (const section of generatedContent.sections) {
+            if (section.type === 'vocabulary' && section.words && Array.isArray(section.words)) {
+              for (const word of section.words) {
+                if (!word.imageBase64 && word.imagePrompt) {
+                  missingImages.push(`vocab: ${word.term || word.word}`);
+                }
+              }
+            }
+            if (section.type === 'discussion' && section.questions && Array.isArray(section.questions)) {
+              for (const question of section.questions) {
+                if (!question.imageBase64 && question.imagePrompt) {
+                  missingImages.push(`discussion: ${question.question?.substring(0, 50) || 'unknown'}`);
+                }
+              }
+            }
+          }
+        }
+        
+        if (missingImages.length > 0) {
+          console.warn(`⚠️ WARNING: Lesson has ${missingImages.length} missing images:`);
+          missingImages.forEach(img => console.warn(`  - ${img}`));
+          console.warn(`  This lesson may need to be regenerated for complete images.`);
+        }
+        
         // Asynchronous save - don't await, let it run in background
         console.log(`Starting async lesson save to database for temp ID: ${tempId}...`);
         storage.createLesson(lessonToSave)

@@ -20,7 +20,7 @@ export class ReplicateFluxService {
   }
 
   /**
-   * Generate an image using FLUX Schnell model
+   * Generate an image using FLUX Schnell model with retry logic for rate limits
    * @param prompt The text prompt describing the image
    * @param requestId Optional unique identifier for logging
    * @returns Base64 encoded PNG image data, or null if generation fails
@@ -37,46 +37,72 @@ export class ReplicateFluxService {
 
     console.log(`Requesting FLUX image generation for prompt: "${prompt.substring(0, 100)}..."`);
 
-    try {
-      // Start the prediction
-      const response: AxiosResponse = await axios.post(
-        `${this.baseURL}/models/black-forest-labs/flux-schnell/predictions`,
-        {
-          input: {
-            prompt: prompt,
-            num_outputs: 1,
-            aspect_ratio: "1:1",
-            output_format: "png",
-            output_quality: 80,
-            go_fast: true
-          }
-        },
-        {
-          headers: {
-            'Authorization': `Bearer ${this.apiKey}`,
-            'Content-Type': 'application/json'
-          },
-          timeout: 30000
-        }
-      );
+    const maxRetries = 5;
+    let attempt = 0;
 
-      if (response.data && response.data.id) {
-        console.log(`FLUX prediction started (${requestId}): ${response.data.id}`);
+    while (attempt <= maxRetries) {
+      try {
+        // Start the prediction
+        const response: AxiosResponse = await axios.post(
+          `${this.baseURL}/models/black-forest-labs/flux-schnell/predictions`,
+          {
+            input: {
+              prompt: prompt,
+              num_outputs: 1,
+              aspect_ratio: "1:1",
+              output_format: "png",
+              output_quality: 80,
+              go_fast: true
+            }
+          },
+          {
+            headers: {
+              'Authorization': `Bearer ${this.apiKey}`,
+              'Content-Type': 'application/json'
+            },
+            timeout: 30000
+          }
+        );
+
+        if (response.data && response.data.id) {
+          console.log(`FLUX prediction started (${requestId}): ${response.data.id}`);
+          
+          // Wait for completion and return base64
+          const result = await this.waitForPrediction(response.data.id, requestId);
+          return result;
+        } else {
+          console.warn('FLUX API response did not contain prediction ID');
+          return null;
+        }
+      } catch (error: any) {
+        const is429 = error.response?.status === 429;
+        const is503 = error.response?.status === 503;
         
-        // Wait for completion and return base64
-        const result = await this.waitForPrediction(response.data.id, requestId);
-        return result;
-      } else {
-        console.warn('FLUX API response did not contain prediction ID');
-        return null;
+        if (is429 || is503) {
+          attempt++;
+          const retryAfter = error.response?.data?.retry_after || 5;
+          const backoffDelay = Math.min(retryAfter * 1000 + Math.random() * 1000, 15000);
+          
+          console.log(`⏳ Rate limit hit for ${requestId} (attempt ${attempt}/${maxRetries}), retrying in ${(backoffDelay/1000).toFixed(1)}s...`);
+          
+          if (attempt <= maxRetries) {
+            await new Promise(resolve => setTimeout(resolve, backoffDelay));
+            continue;
+          } else {
+            console.error(`✗ Failed to generate image for ${requestId} after ${maxRetries} retries (rate limit)`);
+            return null;
+          }
+        } else {
+          console.error(`✗ Error generating image for ${requestId}:`, error.message);
+          if (error.response) {
+            console.error('Replicate Error Details:', error.response.data);
+          }
+          return null;
+        }
       }
-    } catch (error: any) {
-      console.error('Error calling FLUX via Replicate:', error.message);
-      if (error.response) {
-        console.error('Replicate Error Details:', error.response.data);
-      }
-      return null;
     }
+
+    return null;
   }
 
   /**
