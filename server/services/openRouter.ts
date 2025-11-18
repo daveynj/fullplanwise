@@ -5,6 +5,7 @@ import { replicateFluxService } from './replicate-flux.service';
 
 /**
  * Service for interacting with AI models via OpenRouter
+ * Service for interacting with the Google Gemini AI API via OpenRouter
  */
 export class OpenRouterService {
   private apiKey: string;
@@ -30,6 +31,10 @@ export class OpenRouterService {
       }
 
       console.log('Starting OpenRouter AI lesson generation...');
+        throw new Error('Gemini API key is not configured');
+      }
+
+      console.log('Starting Gemini AI lesson generation...');
       
       // Create unique identifiers for this request (for logging purposes only)
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
@@ -154,6 +159,7 @@ export class OpenRouterService {
           } catch (jsonError) {
             // If we fail to parse as JSON, try to fix common JSON errors first
             console.error('Error parsing OpenRouter response as JSON:', jsonError);
+            console.error('Error parsing Gemini response as JSON:', jsonError);
             
             // Log the first part of the text and position of error to help with debugging
             const errorMessage = jsonError instanceof Error ? jsonError.message : 'Unknown JSON error';
@@ -235,6 +241,9 @@ export class OpenRouterService {
           console.error('Unexpected error processing OpenRouter response:', error);
           // Propagate the error to trigger fallback
           throw new Error(`Error processing OpenRouter response: ${error instanceof Error ? error.message : 'Unknown error'}`);
+          console.error('Unexpected error processing Gemini response:', error);
+          // Propagate the error to trigger fallback
+          throw new Error(`Error processing Gemini response: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
       } catch (error: any) {
         // Enhanced error logging for axios errors
@@ -262,6 +271,7 @@ export class OpenRouterService {
         }
         
         console.error('Error during OpenRouter API request:', error.message);
+        console.error('Error during Gemini API request:', error.message);
         
         // Determine if this is a content policy error
         const isPolicyError = error.message && (
@@ -277,6 +287,7 @@ export class OpenRouterService {
             title: `Lesson on ${params.topic}`,
             error: error.message,
             provider: 'openrouter',
+            provider: 'gemini',
             sections: [
               {
                 type: "error",
@@ -298,6 +309,7 @@ export class OpenRouterService {
   
   /**
    * Constructs a structured prompt for the AI model
+   * Constructs a structured prompt for the Gemini AI model
    */
   private constructLessonPrompt(params: LessonGenerateParams, studentVocabulary: string[] = []): string {
     const { cefrLevel, topic, focus, lessonLength, additionalNotes } = params;
@@ -382,6 +394,8 @@ Each vocabulary word needs: syllables array, stressIndex number, phoneticGuide s
 
 **Level-Appropriate Content:**
 - **CRITICAL VOCABULARY RULE:** All supporting words in the reading text (words that are NOT the 5 key vocabulary terms) **MUST** be from a CEFR level *below* the lesson's target level. For example, in a B1 lesson, supporting words must be A1 or A2 level.
+
+**Level-Appropriate Content:**
 - Vocabulary matches ${params.cefrLevel} (not taught at lower levels)
 - Question complexity fits cognitive level
 - Conceptual approach matches ${params.cefrLevel} capabilities
@@ -1257,6 +1271,7 @@ If an example is a simple string, return a string. If it's an object with "compl
     const lessonContent = {
       ...content,
       provider: 'openrouter'
+      provider: 'gemini'
     };
     
     // Generate ALL images with concurrency limiting if sections exist
