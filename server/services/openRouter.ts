@@ -378,12 +378,17 @@ Each vocabulary word needs: syllables array, stressIndex number, phoneticGuide s
 - Avoid textbook language - model native-like expression
 - Vary sentence structures and maintain consistent voice
 - Create genuine interest through vivid, specific details
+- **For A1, A2, and B1 levels:** Use concrete, literal language. Avoid abstract concepts or idiomatic phrases (e.g., instead of "This setup helps," say "This arrangement helps").
+
+**Level-Appropriate Content:**
+- **CRITICAL VOCABULARY RULE:** All supporting words in the reading text (words that are NOT the 5 key vocabulary terms) **MUST** be from a CEFR level *below* the lesson's target level. For example, in a B1 lesson, supporting words must be A1 or A2 level.
 
 **Level-Appropriate Content:**
 - Vocabulary matches ${params.cefrLevel} (not taught at lower levels)
 - Question complexity fits cognitive level
 - Conceptual approach matches ${params.cefrLevel} capabilities
 - Grammar aligns with level (A1: present simple, B1+: conditionals, etc.)
+- **A1/A2 GRAMMAR RESTRICTION:** For A1 and A2 lessons, strictly use simple present and simple past tenses. Avoid complex structures like the passive voice, conditional tenses (e.g., "if..."), or the present perfect tense.
 
 **Question Quality:**
 - Discussion: Elicit more than yes/no; build on lesson concepts; encourage critical thinking
