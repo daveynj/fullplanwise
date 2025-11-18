@@ -10,7 +10,7 @@ import {
   subscriptionSchema
 } from "@shared/schema";
 import { mailchimpService } from "./services/mailchimp.service";
-import { testOpenRouterConnection } from "./services/gemini";
+import { testOpenRouterConnection } from "./services/openRouter";
 import { testImageGeneration } from "./services/image-generation.service";
 import Stripe from "stripe";
 import { isFreeTrialActive, getFreeTrialEndDate } from "./features";
@@ -31,16 +31,16 @@ import path from 'path';
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Dynamic AI service loader - using only Gemini for reliable lesson generation
-  let geminiService: any = null;
+  let openRouterService: any = null;
 
-  const getGeminiService = async () => {
-    if (!geminiService) {
-      console.log('Loading Gemini AI service...');
-      const { geminiService: service } = await import("./services/gemini");
-      geminiService = service;
-      console.log('Gemini AI service loaded successfully');
+  const getOpenRouterService = async () => {
+    if (!openRouterService) {
+      console.log('Loading OpenRouter AI service...');
+      const { openRouterService: service } = await import("./services/openRouter");
+      openRouterService = service;
+      console.log('OpenRouter AI service loaded successfully');
     }
-    return geminiService;
+    return openRouterService;
   };
 
   // Dynamic PDF service loader
@@ -546,9 +546,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
         }
         
-        // Generate lesson using Gemini
-        const gemini = await getGeminiService();
-        generatedContent = await gemini.generateLesson(validatedData, studentVocabulary);
+        // Generate lesson using OpenRouter
+        const openRouter = await getOpenRouterService();
+        generatedContent = await openRouter.generateLesson(validatedData, studentVocabulary);
           
         // No fallback needed since we're only using Gemini
         
