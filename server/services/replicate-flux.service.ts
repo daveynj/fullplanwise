@@ -47,9 +47,9 @@ export class ReplicateFluxService {
             go_fast: true
           }
         }
-      );
+      ) as string[];
 
-      if (output) {
+      if (output && Array.isArray(output) && output.length > 0) {
         // The output is a URL to the generated image.
         // We need to download it and convert it to base64.
         const imageUrl = output[0];

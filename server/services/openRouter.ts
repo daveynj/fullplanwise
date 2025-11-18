@@ -1356,9 +1356,9 @@ If an example is a simple string, return a string. If it's an object with "compl
       
       // Execute ALL image generation tasks with concurrency limiting
       if (imageGenerationTasks.length > 0) {
-        const batchSize = 3; // Process 3 images at a time to avoid rate limits
+        const batchSize = 10; // Process 10 images at a time for faster generation with Flux Schnell
         const totalTasks = imageGenerationTasks.length;
-        console.log(`⚡ Generating ${totalTasks} images in batches of ${batchSize}...`);
+        console.log(`⚡ Generating ${totalTasks} images in parallel batches of ${batchSize} using Flux Schnell...`);
         
         for (let i = 0; i < totalTasks; i += batchSize) {
           const batchFunctions = imageGenerationTasks.slice(i, i + batchSize);
@@ -1370,10 +1370,10 @@ If an example is a simple string, return a string. If it's an object with "compl
           // Execute batch functions in parallel (convert functions to promises)
           await Promise.all(batchFunctions.map(fn => fn()));
           
-          // Add a small delay between batches to avoid rate limiting
+          // Add a minimal delay between batches to avoid overwhelming the API
           if (i + batchSize < totalTasks) {
-            console.log(`Waiting 2s before next batch...`);
-            await new Promise(resolve => setTimeout(resolve, 2000)); // 2 second delay
+            console.log(`Waiting 500ms before next batch...`);
+            await new Promise(resolve => setTimeout(resolve, 500)); // 0.5 second delay
           }
         }
         
