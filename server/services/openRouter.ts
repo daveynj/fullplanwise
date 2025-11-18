@@ -6,7 +6,7 @@ import { replicateFluxService } from './replicate-flux.service';
 /**
  * Service for interacting with the Google Gemini AI API via OpenRouter
  */
-export class GeminiService {
+export class OpenRouterService {
   private apiKey: string;
   private baseURL: string = 'https://openrouter.ai/api/v1';
 
@@ -41,7 +41,7 @@ export class GeminiService {
       
       // Configure the request for OpenRouter
       const requestData = {
-        model: 'deepseek/deepseek-chat-v3.1',
+        model: 'moonshotai/kimi-k2-thinking',
         messages: [
           {
             role: 'user',
@@ -291,7 +291,7 @@ export class GeminiService {
         }
       }
     } catch (error: any) {
-      console.error('Error in GeminiService.generateLesson:', error.message);
+      console.error('Error in OpenRouterService.generateLesson:', error.message);
       throw error;
     }
   }
@@ -378,12 +378,15 @@ Each vocabulary word needs: syllables array, stressIndex number, phoneticGuide s
 - Avoid textbook language - model native-like expression
 - Vary sentence structures and maintain consistent voice
 - Create genuine interest through vivid, specific details
+- **For A1, A2, and B1 levels:** Use concrete, literal language. Avoid abstract concepts or idiomatic phrases (e.g., instead of "This setup helps," say "This arrangement helps").
 
 **Level-Appropriate Content:**
+- **CRITICAL VOCABULARY RULE:** All supporting words in the reading text (words that are NOT the 5 key vocabulary terms) **MUST** be from a CEFR level *below* the lesson's target level. For example, in a B1 lesson, supporting words must be A1 or A2 level.
 - Vocabulary matches ${params.cefrLevel} (not taught at lower levels)
 - Question complexity fits cognitive level
 - Conceptual approach matches ${params.cefrLevel} capabilities
 - Grammar aligns with level (A1: present simple, B1+: conditionals, etc.)
+- **A1/A2 GRAMMAR RESTRICTION:** For A1 and A2 lessons, strictly use simple present and simple past tenses. Avoid complex structures like the passive voice, conditional tenses (e.g., "if..."), or the present perfect tense.
 
 **Question Quality:**
 - Discussion: Elicit more than yes/no; build on lesson concepts; encourage critical thinking
@@ -1418,4 +1421,4 @@ export const testOpenRouterConnection = async (): Promise<boolean> => {
   }
 };
 
-export const geminiService = new GeminiService(process.env.OPENROUTER_API_KEY || '');
+export const openRouterService = new OpenRouterService(process.env.OPENROUTER_API_KEY || '');

@@ -1,6 +1,6 @@
 // This file can be used to test OpenRouter integration
 // Run with: node test-openrouter.js
-import { testOpenRouterConnection } from './server/services/gemini.ts';
+import { testOpenRouterConnection } from './server/services/openRouter.ts';
 
 async function test() {
   console.log('Testing OpenRouter connection...');
