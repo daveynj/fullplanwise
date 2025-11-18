@@ -4,9 +4,9 @@ import * as fs from 'fs';
 import { replicateFluxService } from './replicate-flux.service';
 
 /**
- * Service for interacting with the Google Gemini AI API via OpenRouter
+ * Service for interacting with AI models via OpenRouter
  */
-export class GeminiService {
+export class OpenRouterService {
   private apiKey: string;
   private baseURL: string = 'https://openrouter.ai/api/v1';
 
@@ -26,10 +26,10 @@ export class GeminiService {
   async generateLesson(params: LessonGenerateParams, studentVocabulary: string[] = []): Promise<any> {
     try {
       if (!this.apiKey) {
-        throw new Error('Gemini API key is not configured');
+        throw new Error('OpenRouter API key is not configured');
       }
 
-      console.log('Starting Gemini AI lesson generation...');
+      console.log('Starting OpenRouter AI lesson generation...');
       
       // Create unique identifiers for this request (for logging purposes only)
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
@@ -41,7 +41,7 @@ export class GeminiService {
       
       // Configure the request for OpenRouter
       const requestData = {
-        model: 'deepseek/deepseek-chat-v3.1',
+        model: 'x-ai/grok-4-fast',
         messages: [
           {
             role: 'user',
@@ -53,7 +53,7 @@ export class GeminiService {
         max_tokens: 16384, // Increased token count from 8192 to 16384 for more detailed lessons
       };
 
-      console.log('Sending request to OpenRouter API (DeepSeek Chat v3.1)...');
+      console.log('Sending request to OpenRouter API...');
       console.log('Request payload:', JSON.stringify(requestData, null, 2).substring(0, 300));
 
       try {
@@ -90,7 +90,7 @@ export class GeminiService {
         
         console.log('Successfully extracted content from API response');
         
-        console.log('Received response from Gemini API');
+        console.log('Received response from OpenRouter API');
         
         try {
           // First, attempt to clean up the content and remove markdown code block markers
@@ -141,7 +141,7 @@ export class GeminiService {
                 title: `Lesson on ${params.topic}`,
                 content: "The generated lesson is missing required structure",
                 error: 'Invalid lesson structure',
-                provider: 'gemini',
+                provider: 'openrouter',
                 sections: [
                   {
                     type: "error",
@@ -153,7 +153,7 @@ export class GeminiService {
             }
           } catch (jsonError) {
             // If we fail to parse as JSON, try to fix common JSON errors first
-            console.error('Error parsing Gemini response as JSON:', jsonError);
+            console.error('Error parsing OpenRouter response as JSON:', jsonError);
             
             // Log the first part of the text and position of error to help with debugging
             const errorMessage = jsonError instanceof Error ? jsonError.message : 'Unknown JSON error';
@@ -232,9 +232,9 @@ export class GeminiService {
             }
           }
         } catch (error) {
-          console.error('Unexpected error processing Gemini response:', error);
+          console.error('Unexpected error processing OpenRouter response:', error);
           // Propagate the error to trigger fallback
-          throw new Error(`Error processing Gemini response: ${error instanceof Error ? error.message : 'Unknown error'}`);
+          throw new Error(`Error processing OpenRouter response: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
       } catch (error: any) {
         // Enhanced error logging for axios errors
@@ -261,7 +261,7 @@ export class GeminiService {
           console.error('❌ Error setting up request:', error.message);
         }
         
-        console.error('Error during Gemini API request:', error.message);
+        console.error('Error during OpenRouter API request:', error.message);
         
         // Determine if this is a content policy error
         const isPolicyError = error.message && (
@@ -276,7 +276,7 @@ export class GeminiService {
           return {
             title: `Lesson on ${params.topic}`,
             error: error.message,
-            provider: 'gemini',
+            provider: 'openrouter',
             sections: [
               {
                 type: "error",
@@ -291,13 +291,13 @@ export class GeminiService {
         }
       }
     } catch (error: any) {
-      console.error('Error in GeminiService.generateLesson:', error.message);
+      console.error('Error in OpenRouterService.generateLesson:', error.message);
       throw error;
     }
   }
   
   /**
-   * Constructs a structured prompt for the Gemini AI model
+   * Constructs a structured prompt for the AI model
    */
   private constructLessonPrompt(params: LessonGenerateParams, studentVocabulary: string[] = []): string {
     const { cefrLevel, topic, focus, lessonLength, additionalNotes } = params;
@@ -378,12 +378,15 @@ Each vocabulary word needs: syllables array, stressIndex number, phoneticGuide s
 - Avoid textbook language - model native-like expression
 - Vary sentence structures and maintain consistent voice
 - Create genuine interest through vivid, specific details
+- **For A1, A2, and B1 levels:** Use concrete, literal language. Avoid abstract concepts or idiomatic phrases (e.g., instead of "This setup helps," say "This arrangement helps").
 
 **Level-Appropriate Content:**
+- **CRITICAL VOCABULARY RULE:** All supporting words in the reading text (words that are NOT the 5 key vocabulary terms) **MUST** be from a CEFR level *below* the lesson's target level. For example, in a B1 lesson, supporting words must be A1 or A2 level.
 - Vocabulary matches ${params.cefrLevel} (not taught at lower levels)
 - Question complexity fits cognitive level
 - Conceptual approach matches ${params.cefrLevel} capabilities
 - Grammar aligns with level (A1: present simple, B1+: conditionals, etc.)
+- **A1/A2 GRAMMAR RESTRICTION:** For A1 and A2 lessons, strictly use simple present and simple past tenses. Avoid complex structures like the passive voice, conditional tenses (e.g., "if..."), or the present perfect tense.
 
 **Question Quality:**
 - Discussion: Elicit more than yes/no; build on lesson concepts; encourage critical thinking
@@ -1253,12 +1256,12 @@ If an example is a simple string, return a string. If it's an object with "compl
     // Add provider identifier to the content
     const lessonContent = {
       ...content,
-      provider: 'gemini'
+      provider: 'openrouter'
     };
     
     // Generate ALL images with concurrency limiting if sections exist
     if (lessonContent.sections && Array.isArray(lessonContent.sections)) {
-      console.log('Starting BATCHED image generation for Gemini lesson...');
+      console.log('Starting BATCHED image generation for OpenRouter lesson...');
       
       // Collect all image generation FUNCTIONS (not promises - they execute later)
       const imageGenerationTasks: (() => Promise<void>)[] = [];
@@ -1372,7 +1375,7 @@ If an example is a simple string, return a string. If it's an object with "compl
         console.log(`✓ All ${totalTasks} images generated!`);
       }
       
-      console.log('Finished batched image generation for Gemini lesson.');
+      console.log('Finished batched image generation for OpenRouter lesson.');
     } else {
         console.log('No sections found, skipping image generation.');
     }
@@ -1418,4 +1421,4 @@ export const testOpenRouterConnection = async (): Promise<boolean> => {
   }
 };
 
-export const geminiService = new GeminiService(process.env.OPENROUTER_API_KEY || '');
+export const openRouterService = new OpenRouterService(process.env.OPENROUTER_API_KEY || '');
