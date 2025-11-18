@@ -31,10 +31,6 @@ export class OpenRouterService {
       }
 
       console.log('Starting OpenRouter AI lesson generation...');
-        throw new Error('Gemini API key is not configured');
-      }
-
-      console.log('Starting Gemini AI lesson generation...');
       
       // Create unique identifiers for this request (for logging purposes only)
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
@@ -241,9 +237,6 @@ export class OpenRouterService {
           console.error('Unexpected error processing OpenRouter response:', error);
           // Propagate the error to trigger fallback
           throw new Error(`Error processing OpenRouter response: ${error instanceof Error ? error.message : 'Unknown error'}`);
-          console.error('Unexpected error processing Gemini response:', error);
-          // Propagate the error to trigger fallback
-          throw new Error(`Error processing Gemini response: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
       } catch (error: any) {
         // Enhanced error logging for axios errors
@@ -271,7 +264,6 @@ export class OpenRouterService {
         }
         
         console.error('Error during OpenRouter API request:', error.message);
-        console.error('Error during Gemini API request:', error.message);
         
         // Determine if this is a content policy error
         const isPolicyError = error.message && (
@@ -287,7 +279,6 @@ export class OpenRouterService {
             title: `Lesson on ${params.topic}`,
             error: error.message,
             provider: 'openrouter',
-            provider: 'gemini',
             sections: [
               {
                 type: "error",
@@ -1271,7 +1262,6 @@ If an example is a simple string, return a string. If it's an object with "compl
     const lessonContent = {
       ...content,
       provider: 'openrouter'
-      provider: 'gemini'
     };
     
     // Generate ALL images with concurrency limiting if sections exist
