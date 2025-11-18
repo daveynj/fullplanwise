@@ -6,7 +6,7 @@ import { replicateFluxService } from './replicate-flux.service';
 /**
  * Service for interacting with the Google Gemini AI API via OpenRouter
  */
-export class GeminiService {
+export class OpenRouterService {
   private apiKey: string;
   private baseURL: string = 'https://openrouter.ai/api/v1';
 
@@ -41,7 +41,7 @@ export class GeminiService {
       
       // Configure the request for OpenRouter
       const requestData = {
-        model: 'deepseek/deepseek-chat-v3.1',
+        model: 'moonshotai/kimi-k2-thinking',
         messages: [
           {
             role: 'user',
@@ -291,7 +291,7 @@ export class GeminiService {
         }
       }
     } catch (error: any) {
-      console.error('Error in GeminiService.generateLesson:', error.message);
+      console.error('Error in OpenRouterService.generateLesson:', error.message);
       throw error;
     }
   }
@@ -1418,4 +1418,4 @@ export const testOpenRouterConnection = async (): Promise<boolean> => {
   }
 };
 
-export const geminiService = new GeminiService(process.env.OPENROUTER_API_KEY || '');
+export const openRouterService = new OpenRouterService(process.env.OPENROUTER_API_KEY || '');
