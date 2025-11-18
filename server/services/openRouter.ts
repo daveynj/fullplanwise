@@ -382,6 +382,8 @@ Each vocabulary word needs: syllables array, stressIndex number, phoneticGuide s
 
 **Level-Appropriate Content:**
 - **CRITICAL VOCABULARY RULE:** All supporting words in the reading text (words that are NOT the 5 key vocabulary terms) **MUST** be from a CEFR level *below* the lesson's target level. For example, in a B1 lesson, supporting words must be A1 or A2 level.
+
+**Level-Appropriate Content:**
 - Vocabulary matches ${params.cefrLevel} (not taught at lower levels)
 - Question complexity fits cognitive level
 - Conceptual approach matches ${params.cefrLevel} capabilities
