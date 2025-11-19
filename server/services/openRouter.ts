@@ -42,7 +42,7 @@ export class OpenRouterService {
       
       // Configure the request for OpenRouter
       const requestData = {
-        model: 'deepseek/deepseek-chat-v3.1',
+        model: 'x-ai/grok-4-fast',
         messages: [
           {
             role: 'user',
@@ -1399,7 +1399,7 @@ export const testOpenRouterConnection = async (): Promise<boolean> => {
     }
 
     const testRequest = {
-      model: 'deepseek/deepseek-chat-v3.1',
+      model: 'x-ai/grok-4-fast',
       messages: [{ role: 'user', content: 'Hello, can you respond with just "OK"?' }],
       max_tokens: 10
     };

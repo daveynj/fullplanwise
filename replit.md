@@ -174,16 +174,11 @@ Social media: LinkedIn - www.linkedin.com/in/davidjackson113, X (Twitter) - @Dav
 
 ## Recent Changes (November 19, 2025)
 
-### AI Model and Image Generation Migration
-**Changes**: Migrated from Grok-4-Fast to DeepSeek Chat v3.1 for lesson generation and from Replicate to Runware.ai for image generation.
+### Image Generation Migration to Runware.ai
+**Changes**: Migrated from Replicate to Runware.ai for image generation while maintaining Grok-4-Fast for lesson content generation.
 
 **Implementations**:
-1. **AI Model Update**:
-   - Changed model from `x-ai/grok-4-fast` to `deepseek/deepseek-chat-v3.1` in OpenRouter service
-   - Updated both lesson generation and test connection endpoints
-   - Maintained existing prompt structure and parameters
-
-2. **Image Generation Service Migration**:
+1. **Image Generation Service Migration**:
    - Created new `RunwareService` (server/services/runware.service.ts) to replace Replicate
    - Uses Runware.ai HTTP REST API with Flux Schnell model (`runware:100@1`)
    - Generates 256x256 PNG images with base64 output
@@ -195,12 +190,12 @@ Social media: LinkedIn - www.linkedin.com/in/davidjackson113, X (Twitter) - @Dav
    - Most lessons now complete in a single batch with no inter-batch delays
    - Maintained parallel execution with Promise.all for fast generation
 
-**Impact**: Faster lesson generation with DeepSeek Chat v3.1, more cost-effective image generation with Runware.ai, and optimized batch processing for typical lesson size.
+**Impact**: More cost-effective image generation with Runware.ai, faster batch processing for typical lesson size (single batch of 10 images with no delays).
 
 ## External Dependencies
 
 - **AI Services**:
-    - DeepSeek Chat v3.1 (via OpenRouter) - Lesson content generation
+    - xAI Grok-4-Fast (via OpenRouter) - Lesson content generation
     - Runware.ai (Flux Schnell model) - Image generation
 - **Payment & Communication**:
     - Stripe (Subscription and payment processing)
