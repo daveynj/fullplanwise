@@ -155,7 +155,6 @@ export class OpenRouterService {
           } catch (jsonError) {
             // If we fail to parse as JSON, try to fix common JSON errors first
             console.error('Error parsing OpenRouter response as JSON:', jsonError);
-            console.error('Error parsing Gemini response as JSON:', jsonError);
             
             // Log the first part of the text and position of error to help with debugging
             const errorMessage = jsonError instanceof Error ? jsonError.message : 'Unknown JSON error';
