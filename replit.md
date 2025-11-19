@@ -172,10 +172,36 @@ Social media: LinkedIn - www.linkedin.com/in/davidjackson113, X (Twitter) - @Dav
 
 **Solution**: Modified the query to select only lesson metadata fields (id, title, cefrLevel, createdAt, etc.) while explicitly excluding the `content` field. Response size reduced from 67MB to a few KB. Also added proper null checking for LEFT JOIN results to handle orphaned lesson assignments gracefully.
 
+## Recent Changes (November 19, 2025)
+
+### AI Model and Image Generation Migration
+**Changes**: Migrated from Grok-4-Fast to DeepSeek Chat v3.1 for lesson generation and from Replicate to Runware.ai for image generation.
+
+**Implementations**:
+1. **AI Model Update**:
+   - Changed model from `x-ai/grok-4-fast` to `deepseek/deepseek-chat-v3.1` in OpenRouter service
+   - Updated both lesson generation and test connection endpoints
+   - Maintained existing prompt structure and parameters
+
+2. **Image Generation Service Migration**:
+   - Created new `RunwareService` (server/services/runware.service.ts) to replace Replicate
+   - Uses Runware.ai HTTP REST API with Flux Schnell model (`runware:100@1`)
+   - Generates 256x256 PNG images with base64 output
+   - Supports batch generation in single API request for efficiency
+   - Updated OpenRouter service to use `runwareService` instead of `replicateFluxService`
+
+3. **Batch Processing Configuration**:
+   - Set batch size to 10 images per batch (optimal for typical lessons with ~10 images)
+   - Most lessons now complete in a single batch with no inter-batch delays
+   - Maintained parallel execution with Promise.all for fast generation
+
+**Impact**: Faster lesson generation with DeepSeek Chat v3.1, more cost-effective image generation with Runware.ai, and optimized batch processing for typical lesson size.
+
 ## External Dependencies
 
 - **AI Services**:
-    - xAI Grok-4 Fast (via OpenRouter)
+    - DeepSeek Chat v3.1 (via OpenRouter) - Lesson content generation
+    - Runware.ai (Flux Schnell model) - Image generation
 - **Payment & Communication**:
     - Stripe (Subscription and payment processing)
 - **Infrastructure**:

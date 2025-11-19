@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
 import { LessonGenerateParams } from '@shared/schema';
 import * as fs from 'fs';
-import { replicateFluxService } from './replicate-flux.service';
+import { runwareService } from './runware.service';
 
 /**
  * Service for interacting with AI models via OpenRouter
@@ -42,7 +42,7 @@ export class OpenRouterService {
       
       // Configure the request for OpenRouter
       const requestData = {
-        model: 'x-ai/grok-4-fast',
+        model: 'deepseek/deepseek-chat-v3.1',
         messages: [
           {
             role: 'user',
@@ -1287,7 +1287,7 @@ If an example is a simple string, return a string. If it's an object with "compl
               const task = async () => {
                 try {
                   const requestId = `vocab_${word.term ? word.term.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 15) : 'word'}`;
-                  word.imageBase64 = await replicateFluxService.generateImage(word.imagePrompt, requestId);
+                  word.imageBase64 = await runwareService.generateImage(word.imagePrompt, requestId);
                   if (word.imageBase64) {
                     console.log(`✓ Generated image for vocab: ${word.term}`);
                   } else {
@@ -1335,7 +1335,7 @@ If an example is a simple string, return a string. If it's an object with "compl
               const task = async () => {
                 try {
                   const requestId = `disc_${question.question ? question.question.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 15) : 'question'}`;
-                  question.imageBase64 = await replicateFluxService.generateImage(question.imagePrompt, requestId);
+                  question.imageBase64 = await runwareService.generateImage(question.imagePrompt, requestId);
                   if (question.imageBase64) {
                     console.log(`✓ Generated image for discussion question`);
                   } else {
@@ -1356,9 +1356,9 @@ If an example is a simple string, return a string. If it's an object with "compl
       
       // Execute ALL image generation tasks with concurrency limiting
       if (imageGenerationTasks.length > 0) {
-        const batchSize = 10; // Process 10 images at a time for faster generation with Flux Schnell
+        const batchSize = 10; // Process 10 images at a time (typically one batch for lessons)
         const totalTasks = imageGenerationTasks.length;
-        console.log(`⚡ Generating ${totalTasks} images in parallel batches of ${batchSize} using Flux Schnell...`);
+        console.log(`⚡ Generating ${totalTasks} images in parallel batches of ${batchSize} using Runware (Flux Schnell)...`);
         
         for (let i = 0; i < totalTasks; i += batchSize) {
           const batchFunctions = imageGenerationTasks.slice(i, i + batchSize);
@@ -1399,7 +1399,7 @@ export const testOpenRouterConnection = async (): Promise<boolean> => {
     }
 
     const testRequest = {
-      model: 'x-ai/grok-4-fast',
+      model: 'deepseek/deepseek-chat-v3.1',
       messages: [{ role: 'user', content: 'Hello, can you respond with just "OK"?' }],
       max_tokens: 10
     };
