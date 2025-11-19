@@ -1931,7 +1931,7 @@ export function LessonContent({ content }: LessonContentProps) {
   });
   
   // Add grammar spotlight if the data exists in the content
-  if (content?.grammarSpotlight && !availableSections.includes("grammarSpotlight")) {
+  if (parsedContent?.grammarSpotlight && !availableSections.includes("grammarSpotlight")) {
     // Insert after grammar section if it exists, or after vocabulary
     const grammarIndex = availableSections.indexOf("grammar");
     const vocabularyIndex = availableSections.indexOf("vocabulary");

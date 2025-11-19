@@ -1,3 +1,4 @@
+
 import { 
   users, students, lessons, studentLessons, studentVocabulary,
   type User, type InsertUser, type Student, type InsertStudent, 
@@ -9,8 +10,6 @@ import session from "express-session";
 import { Store } from "express-session";
 import { db } from "./db";
 import { SQL, eq, and, desc, count, or, ilike, gte, sql } from "drizzle-orm";
-import connectPg from "connect-pg-simple";
-import { pool } from "./db";
 
 // modify the interface with any CRUD methods
 // you might need
@@ -85,13 +84,11 @@ export class DatabaseStorage implements IStorage {
   sessionStore: Store;
 
   constructor() {
-    const PostgresSessionStore = connectPg(session);
-    this.sessionStore = new PostgresSessionStore({ 
-      pool, 
-      tableName: 'session',
-      createTableIfMissing: true 
+    const MemoryStore = createMemoryStore(session);
+    this.sessionStore = new MemoryStore({
+      checkPeriod: 86400000 // prune expired entries every 24h
     });
-    console.log("Database storage initialized with PostgreSQL session store");
+    console.log("Database storage initialized with memory session store");
   }
 
   // User methods
