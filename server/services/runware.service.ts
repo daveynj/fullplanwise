@@ -76,8 +76,8 @@ export class RunwareService {
         taskUUID,
         positivePrompt: prompt,
         model: 'runware:100@1', // Flux Schnell model
-        width: 256,
-        height: 256,
+        width: 512,
+        height: 512,
         numberResults: 1,
         outputType: 'base64Data',
         outputFormat: 'PNG'
@@ -149,8 +149,8 @@ export class RunwareService {
       taskUUID: uuidv4(),
       positivePrompt: prompt,
       model: 'runware:100@1', // Flux Schnell
-      width: 256,
-      height: 256,
+      width: 512,
+      height: 512,
       numberResults: 1,
       outputType: 'base64Data',
       outputFormat: 'PNG'

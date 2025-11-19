@@ -181,7 +181,7 @@ Social media: LinkedIn - www.linkedin.com/in/davidjackson113, X (Twitter) - @Dav
 1. **Image Generation Service Migration**:
    - Created new `RunwareService` (server/services/runware.service.ts) to replace Replicate
    - Uses Runware.ai HTTP REST API with Flux Schnell model (`runware:100@1`)
-   - Generates 256x256 PNG images with base64 output
+   - Generates 512x512 PNG images with base64 output
    - Supports batch generation in single API request for efficiency
    - Updated OpenRouter service to use `runwareService` instead of `replicateFluxService`
 
