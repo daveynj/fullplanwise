@@ -2109,8 +2109,8 @@ export function LessonContent({ content }: LessonContentProps) {
           const grammarData = findSection('grammar');
           console.log("Grammar data found:", grammarData);
           if (!grammarData) {
-            console.log("No grammar data found");
-            return <div className="p-4">Grammar data not available</div>;
+            console.log("No grammar data found - hiding grammar tab");
+            return null; // Don't show tab at all if no data
           }
           
           // Create a properly formatted section object if needed
