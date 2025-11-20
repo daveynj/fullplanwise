@@ -1,7 +1,8 @@
 
-import { drizzle } from 'drizzle-orm/better-sqlite3';
-import Database from 'better-sqlite3';
+import { drizzle } from 'drizzle-orm/neon-serverless';
+import { Pool, neonConfig } from '@neondatabase/serverless';
 import * as schema from "@shared/schema";
+import ws from 'ws';
 
 if (!process.env.DATABASE_URL) {
   throw new Error(
@@ -11,6 +12,7 @@ if (!process.env.DATABASE_URL) {
 
 console.log('Initializing database connection');
 
-const sqlite = new Database(process.env.DATABASE_URL.replace('sqlite:', ''));
+neonConfig.webSocketConstructor = ws;
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
-export const db = drizzle(sqlite, { schema });
+export const db = drizzle(pool, { schema });

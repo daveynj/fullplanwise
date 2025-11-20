@@ -42,7 +42,7 @@ export class OpenRouterService {
       
       // Configure the request for OpenRouter
       const requestData = {
-        model: 'x-ai/grok-4-fast',
+        model: 'x-ai/grok-4.1-fast',
         messages: [
           {
             role: 'user',
@@ -1277,7 +1277,7 @@ export const testOpenRouterConnection = async (): Promise<boolean> => {
     }
 
     const testRequest = {
-      model: 'x-ai/grok-4-fast',
+      model: 'x-ai/grok-4.1-fast',
       messages: [{ role: 'user', content: 'Hello, can you respond with just "OK"?' }],
       max_tokens: 10
     };
