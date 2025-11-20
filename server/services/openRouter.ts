@@ -660,7 +660,6 @@ Before generating the JSON, perform this complete validation:
 ✓ Discussion has exactly 5 questions with paragraphContext (3-5 sentences each)
 ✓ Quiz has exactly 5 questions
 ✓ CRITICAL: Quiz correct answers are in DIFFERENT positions (distributed across A/B/C/D, NOT all in position B)
-✓ Grammar Spotlight includes logicExplanation and visual elements
 
 **C. JSON Format:**
 ✓ Valid JSON structure (no syntax errors)
@@ -672,7 +671,6 @@ Before generating the JSON, perform this complete validation:
 **D. Cross-Section Consistency:**
 ✓ Same 5 vocabulary words in warmup.targetVocabulary and vocabulary section
 ✓ Vocabulary integrated naturally throughout reading text
-✓ Grammar Spotlight uses lesson vocabulary in examples when possible
 ✓ All sections relate cohesively to "${params.topic}"
 
 **Warm-up Clarification:**
