@@ -105,26 +105,26 @@ export default function LandingPage() {
           </button>
         </nav>
 
-        {/* Mobile Navigation Menu */}
-        {mobileMenuOpen && (
-          <div className="md:hidden bg-brand-light border-t border-gray-200 py-4 px-6 space-y-3">
-            <Link href="/blog" onClick={() => setMobileMenuOpen(false)}>
-              <Button variant="ghost" className="w-full justify-start text-brand-navy hover:bg-brand-navy/10">
-                Blog
-              </Button>
-            </Link>
-            <Link href="/auth" onClick={() => setMobileMenuOpen(false)}>
-              <Button variant="outline" className="w-full border-brand-navy text-brand-navy hover:bg-brand-navy/10">
-                Login
-              </Button>
-            </Link>
-            <Link href="/auth?register=true" onClick={() => setMobileMenuOpen(false)}>
-              <Button variant="brand" className="w-full">
-                Sign Up Free
-              </Button>
-            </Link>
-          </div>
-        )}
+        {/* Mobile Navigation Menu - Always in DOM, hidden with CSS */}
+        <div className={`md:hidden bg-brand-light border-t border-gray-200 py-4 px-6 space-y-3 transition-all duration-300 ease-in-out overflow-hidden ${
+          mobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0 py-0'
+        }`}>
+          <Link href="/blog" onClick={() => setMobileMenuOpen(false)}>
+            <Button variant="ghost" className="w-full justify-start text-brand-navy hover:bg-brand-navy/10">
+              Blog
+            </Button>
+          </Link>
+          <Link href="/auth" onClick={() => setMobileMenuOpen(false)}>
+            <Button variant="outline" className="w-full border-brand-navy text-brand-navy hover:bg-brand-navy/10">
+              Login
+            </Button>
+          </Link>
+          <Link href="/auth?register=true" onClick={() => setMobileMenuOpen(false)}>
+            <Button variant="brand" className="w-full">
+              Sign Up Free
+            </Button>
+          </Link>
+        </div>
       </header>
 
       {/* Hero Section with Lesson Preview */}
