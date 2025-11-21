@@ -1427,7 +1427,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Blog post methods
-  async getAllBlogPosts(page: number = 1, pageSize: number = 10, category?: string, featured?: boolean): Promise<{posts: BlogPost[], total: number}> {
+  async getAllBlogPosts(page: number = 1, pageSize: number = 10, category?: string, featured?: boolean, isPublished?: boolean): Promise<{posts: BlogPost[], total: number}> {
     try {
       const offset = (page - 1) * pageSize;
       
@@ -1437,6 +1437,9 @@ export class DatabaseStorage implements IStorage {
       }
       if (featured !== undefined) {
         whereConditions.push(eq(blogPosts.featured, featured));
+      }
+      if (isPublished !== undefined) {
+        whereConditions.push(eq(blogPosts.isPublished, isPublished));
       }
       
       const whereClause = whereConditions.length > 0 ? and(...whereConditions) : undefined;

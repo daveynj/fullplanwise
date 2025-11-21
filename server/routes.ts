@@ -1935,8 +1935,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/sitemap.xml", async (req, res) => {
     try {
       // Fetch all published blog posts
-      const { posts, total } = await storage.getAllBlogPosts(1, 1000); // Get all posts
-      console.log(`[Sitemap] Fetched ${posts.length} posts out of ${total} total posts`);
+      const { posts, total } = await storage.getAllBlogPosts(1, 1000, undefined, undefined, true); // Only published posts
+      console.log(`[Sitemap] Fetched ${posts.length} published posts out of ${total} total`);
       console.log(`[Sitemap] Post slugs:`, posts.map(p => p.slug));
       
       const baseUrl = req.protocol + '://' + req.get('host');
