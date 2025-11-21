@@ -32,8 +32,11 @@ Social media: LinkedIn - www.linkedin.com/in/davidjackson113, X (Twitter) - @Dav
 - **User Management**: Role-based access (Teacher, Admin), credit system, subscription support, and password reset.
 - **Content Enhancement**: Includes vocabulary downloads (HTML), PDF generation, and interactive elements.
 - **Lesson Sharing**: Teachers can share lessons via public URLs.
-- **Blog System**: Admin-only blog post management with a rich text editor (Tiptap), supporting various formatting and media, stored in PostgreSQL with XSS protection via DOMPurify.
-- **SEO**: Comprehensive on-page SEO, structured data, sitemaps, and optimized content.
+- **Blog System**: SEO-optimized blog with two distinct layouts:
+  - **Blog Index**: 3-column responsive grid (mobile-first design), semantic HTML5 with <article> tags, standard pagination (not infinite scroll), and integrated search
+  - **Single Post**: 70/30 sidebar-right layout with breadcrumbs, Table of Contents (auto-generated from headings), related posts, popular posts sidebar, and search functionality
+  - **Admin Management**: Rich text editor (Tiptap) for content creation with XSS protection via DOMPurify
+- **SEO**: Comprehensive on-page SEO including breadcrumb navigation, proper heading hierarchy (h1-h3), meta descriptions, canonical URLs, semantic HTML5 tags (main, nav, aside, article), and optimized content.
 
 ### System Design Choices
 - **Data Flow**: Manages user authentication, AI-powered lesson creation, grammar analysis, content storage, interactive display, and export options.
