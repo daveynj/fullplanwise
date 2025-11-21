@@ -1511,8 +1511,12 @@ export class DatabaseStorage implements IStorage {
       if (postUpdate.tags !== undefined) updateData.tags = postUpdate.tags;
       if (postUpdate.readTime !== undefined) updateData.readTime = postUpdate.readTime;
       if (postUpdate.featured !== undefined) updateData.featured = postUpdate.featured;
+      if (postUpdate.featuredImageUrl !== undefined) updateData.featuredImageUrl = postUpdate.featuredImageUrl;
+      if (postUpdate.featuredImageAlt !== undefined) updateData.featuredImageAlt = postUpdate.featuredImageAlt;
       if (postUpdate.metaTitle !== undefined) updateData.metaTitle = postUpdate.metaTitle;
       if (postUpdate.metaDescription !== undefined) updateData.metaDescription = postUpdate.metaDescription;
+      if (postUpdate.publishedAt !== undefined) updateData.publishedAt = postUpdate.publishedAt;
+      if (postUpdate.isPublished !== undefined) updateData.isPublished = postUpdate.isPublished;
       
       // Always update the updatedAt timestamp
       updateData.updatedAt = new Date();
