@@ -246,8 +246,12 @@ export const blogPosts = pgTable("blog_posts", {
   tags: text("tags").array().default([]),
   readTime: text("read_time"),
   featured: boolean("featured").notNull().default(false),
+  featuredImageUrl: text("featured_image_url"), // SEO: Featured image for post thumbnails
+  featuredImageAlt: text("featured_image_alt"), // SEO: Alt text for accessibility
   metaTitle: text("meta_title"), // SEO meta title (separate from main title)
   metaDescription: text("meta_description"), // SEO meta description (separate from excerpt)
+  publishedAt: timestamp("published_at"), // When the post was published (null = draft)
+  isPublished: boolean("is_published").notNull().default(false), // Controls visibility in sitemap and frontend
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
@@ -266,8 +270,12 @@ export const insertBlogPostSchema = createInsertSchema(blogPosts)
     author: z.string().min(1, "Author is required"),
     publishDate: z.string().min(1, "Publish date is required"),
     category: z.string().min(1, "Category is required"),
+    featuredImageUrl: z.string().url("Must be a valid URL").optional(),
+    featuredImageAlt: z.string().max(125, "Alt text is too long (max 125 characters)").optional(),
     metaTitle: z.string().max(60, "Meta title is too long (max 60 characters)").optional(),
     metaDescription: z.string().max(160, "Meta description is too long (max 160 characters)").optional(),
+    publishedAt: z.date().optional(),
+    isPublished: z.boolean().default(false),
   });
 
 // Create update schema as partial of insert schema with no timestamp requirements
@@ -282,8 +290,12 @@ export const updateBlogPostSchema = z.object({
   tags: z.array(z.string()).optional(),
   readTime: z.string().optional().nullable(),
   featured: z.boolean().optional(),
+  featuredImageUrl: z.string().url("Must be a valid URL").optional().nullable(),
+  featuredImageAlt: z.string().max(125, "Alt text is too long (max 125 characters)").optional().nullable(),
   metaTitle: z.string().max(60, "Meta title is too long (max 60 characters)").optional().nullable(),
   metaDescription: z.string().max(160, "Meta description is too long (max 160 characters)").optional().nullable(),
+  publishedAt: z.date().optional().nullable(),
+  isPublished: z.boolean().optional(),
 });
 
 export type InsertBlogPost = z.infer<typeof insertBlogPostSchema>;
