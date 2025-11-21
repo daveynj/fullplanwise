@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
-import { LogOut, Home, Wand2, Users, Book, Settings, CreditCard, Shield, Library, Sparkles } from "lucide-react";
+import { LogOut, Home, Wand2, Users, Book, Settings, CreditCard, Shield, Library, Sparkles, BookOpen } from "lucide-react";
 import { useFreeTrial } from "@/hooks/use-free-trial";
 
 export function Sidebar() {

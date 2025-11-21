@@ -58,7 +58,7 @@ export default function AdminBlogPosts() {
 
   const createMutation = useMutation({
     mutationFn: async (data: any) => {
-      return apiRequest('/api/admin/blog/posts', 'POST', data);
+      return apiRequest('POST', '/api/admin/blog/posts', data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/blog/posts'] });
@@ -80,7 +80,7 @@ export default function AdminBlogPosts() {
 
   const updateMutation = useMutation({
     mutationFn: async ({ id, data }: { id: number; data: any }) => {
-      return apiRequest(`/api/admin/blog/posts/${id}`, 'PUT', data);
+      return apiRequest('PUT', `/api/admin/blog/posts/${id}`, data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/blog/posts'] });
@@ -103,7 +103,7 @@ export default function AdminBlogPosts() {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
-      return apiRequest(`/api/admin/blog/posts/${id}`, 'DELETE');
+      return apiRequest('DELETE', `/api/admin/blog/posts/${id}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/blog/posts'] });
@@ -512,67 +512,68 @@ export default function AdminBlogPosts() {
         </div>
       ) : (
         <div className="grid gap-4">
-          {postsData?.posts.map((post) => (
-            <Card key={post.id} data-testid={`card-post-${post.id}`}>
-              <CardHeader>
-                <div className="flex justify-between items-start">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <CardTitle className="text-lg">{post.title}</CardTitle>
-                      {post.featured && (
-                        <Badge variant="secondary">Featured</Badge>
+          {postsData?.posts && postsData.posts.length > 0 ? (
+            postsData.posts.map((post) => (
+              <Card key={post.id} data-testid={`card-post-${post.id}`}>
+                <CardHeader>
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <CardTitle className="text-lg">{post.title}</CardTitle>
+                        {post.featured && (
+                          <Badge variant="secondary">Featured</Badge>
+                        )}
+                      </div>
+                      <CardDescription className="line-clamp-2">
+                        {post.excerpt}
+                      </CardDescription>
+                      <div className="flex gap-4 mt-2 text-sm text-muted-foreground">
+                        <span>By {post.author}</span>
+                        <span>{post.publishDate}</span>
+                        <span>{post.category}</span>
+                        {post.readTime && <span>{post.readTime}</span>}
+                      </div>
+                      {post.tags && post.tags.length > 0 && (
+                        <div className="flex gap-1 mt-2">
+                          {post.tags.map((tag, idx) => (
+                            <Badge key={idx} variant="outline" className="text-xs">
+                              {tag}
+                            </Badge>
+                          ))}
+                        </div>
                       )}
                     </div>
-                    <CardDescription className="line-clamp-2">
-                      {post.excerpt}
-                    </CardDescription>
-                    <div className="flex gap-4 mt-2 text-sm text-muted-foreground">
-                      <span>By {post.author}</span>
-                      <span>{post.publishDate}</span>
-                      <span>{post.category}</span>
-                      {post.readTime && <span>{post.readTime}</span>}
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => window.open(`/blog/${post.id}`, '_blank')}
+                        data-testid={`button-view-${post.id}`}
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => openEditDialog(post)}
+                        data-testid={`button-edit-${post.id}`}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => openDeleteDialog(post)}
+                        data-testid={`button-delete-${post.id}`}
+                      >
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
                     </div>
-                    {post.tags && post.tags.length > 0 && (
-                      <div className="flex gap-1 mt-2">
-                        {post.tags.map((tag, idx) => (
-                          <Badge key={idx} variant="outline" className="text-xs">
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
-                    )}
                   </div>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => window.open(`/blog/${post.id}`, '_blank')}
-                      data-testid={`button-view-${post.id}`}
-                    >
-                      <Eye className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => openEditDialog(post)}
-                      data-testid={`button-edit-${post.id}`}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => openDeleteDialog(post)}
-                      data-testid={`button-delete-${post.id}`}
-                    >
-                      <Trash2 className="h-4 w-4 text-destructive" />
-                    </Button>
-                  </div>
-                </div>
-              </CardHeader>
-            </Card>
-          ))}
-          {postsData?.posts.length === 0 && (
+                </CardHeader>
+              </Card>
+            ))
+          ) : (
             <Card>
               <CardContent className="py-12 text-center">
                 <p className="text-muted-foreground">No blog posts yet. Create your first post!</p>
