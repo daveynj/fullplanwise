@@ -233,6 +233,57 @@ export type LessonGenerateParams = z.infer<typeof lessonGenerateSchema>;
 export const SubscriptionTierEnum = z.enum(['free', 'unlimited']);
 export type SubscriptionTier = z.infer<typeof SubscriptionTierEnum>;
 
+// Blog posts table schema
+export const blogPosts = pgTable("blog_posts", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  slug: text("slug").notNull().unique(),
+  content: text("content").notNull(), // Rich text HTML content
+  excerpt: text("excerpt").notNull(),
+  author: text("author").notNull(),
+  publishDate: text("publish_date").notNull(),
+  category: text("category").notNull(),
+  tags: text("tags").array().default([]),
+  readTime: text("read_time"),
+  featured: boolean("featured").notNull().default(false),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const insertBlogPostSchema = createInsertSchema(blogPosts)
+  .omit({
+    id: true,
+    createdAt: true,
+    updatedAt: true,
+  })
+  .extend({
+    title: z.string().min(1, "Title is required").max(200, "Title is too long"),
+    slug: z.string().min(1, "Slug is required").max(200, "Slug is too long").regex(/^[a-z0-9-]+$/, "Slug must contain only lowercase letters, numbers, and hyphens"),
+    content: z.string().min(1, "Content is required"),
+    excerpt: z.string().min(1, "Excerpt is required").max(500, "Excerpt is too long"),
+    author: z.string().min(1, "Author is required"),
+    publishDate: z.string().min(1, "Publish date is required"),
+    category: z.string().min(1, "Category is required"),
+  });
+
+// Create update schema as partial of insert schema with no timestamp requirements
+export const updateBlogPostSchema = z.object({
+  title: z.string().min(1, "Title is required").max(200, "Title is too long").optional(),
+  slug: z.string().min(1, "Slug is required").max(200, "Slug is too long").regex(/^[a-z0-9-]+$/, "Slug must contain only lowercase letters, numbers, and hyphens").optional(),
+  content: z.string().min(1, "Content is required").optional(),
+  excerpt: z.string().min(1, "Excerpt is required").max(500, "Excerpt is too long").optional(),
+  author: z.string().min(1, "Author is required").optional(),
+  publishDate: z.string().min(1, "Publish date is required").optional(),
+  category: z.string().min(1, "Category is required").optional(),
+  tags: z.array(z.string()).optional(),
+  readTime: z.string().optional().nullable(),
+  featured: z.boolean().optional(),
+});
+
+export type InsertBlogPost = z.infer<typeof insertBlogPostSchema>;
+export type UpdateBlogPost = z.infer<typeof updateBlogPostSchema>;
+export type BlogPost = typeof blogPosts.$inferSelect;
+
 // Subscription schema for creating subscriptions
 export const subscriptionSchema = z.object({
   planId: z.string(),

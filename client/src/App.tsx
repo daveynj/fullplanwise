@@ -29,6 +29,7 @@ import { GrammarComponentShowcase } from "@/components/lesson/grammar-component-
 import PublicLibraryPage from "@/pages/public-library-page";
 import AdminLessonManagementPage from "@/pages/admin-lesson-management-page";
 import BlogPage from "@/pages/blog-page";
+import AdminBlogPosts from "@/pages/admin-blog-posts";
 
 function GrammarShowcasePage() {
   return (
@@ -58,6 +59,7 @@ function Router() {
       <ProtectedRoute path="/settings" component={SettingsPage} />
       <ProtectedRoute path="/admin" component={AdminDashboardPage} requireAdmin={true} />
       <ProtectedRoute path="/admin/lessons" component={AdminLessonManagementPage} requireAdmin={true} />
+      <ProtectedRoute path="/admin/blog" component={AdminBlogPosts} requireAdmin={true} />
       <ProtectedRoute path="/grammar-test" component={GrammarTestPage} />
       <ProtectedRoute path="/grammar-showcase" component={GrammarShowcasePage} />
       <Route path="/auth" component={AuthPage} />

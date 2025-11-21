@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { Link, useParams } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SEOHead } from "@/components/SEOHead";
+import DOMPurify from 'isomorphic-dompurify';
 import { 
   BookOpen, 
   Search, 
@@ -19,9 +21,19 @@ import {
   Target,
   TrendingUp
 } from "lucide-react";
+import type { BlogPost } from "@shared/schema";
 
-// Blog post data - optimized for SEO and AI discoverability
-const blogPosts = [
+// Sanitize HTML content to prevent XSS attacks
+const sanitizeHtml = (html: string): string => {
+  return DOMPurify.sanitize(html, {
+    ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'a', 'img', 'blockquote', 'code', 'pre'],
+    ALLOWED_ATTR: ['href', 'target', 'rel', 'src', 'alt', 'class', 'style'],
+  });
+};
+
+// Hardcoded posts removed - now fetching from database
+// Keep this array only for migration reference
+const legacyBlogPosts = [
   {
     id: 20,
     title: "Revolutionize Your Teaching: Get Unlimited, AI-Powered Lesson Plans for Free!",
@@ -3003,13 +3015,19 @@ Former Finance Professional, England`,
   }
 ];
 
-const categories = ["All", "AI Technology", "Teaching Methods", "Teaching Strategies", "Research & Methods", "Inclusive Education", "Teaching Efficiency", "Student Engagement", "Professional Development", "Student Psychology", "Business Development", "Founder Story"];
-
 export default function BlogPage() {
   const params = useParams();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedPost, setSelectedPost] = useState<number | null>(null);
+
+  // Fetch blog posts from API
+  const { data: postsData, isLoading } = useQuery<{ posts: BlogPost[]; total: number }>({
+    queryKey: ['/api/blog/posts'],
+    queryFn: () => fetch('/api/blog/posts?pageSize=100').then(res => res.json()),
+  });
+
+  const blogPosts = postsData?.posts || [];
 
   // Handle URL-based post selection
   useEffect(() => {
@@ -3047,10 +3065,13 @@ export default function BlogPage() {
   const filteredPosts = blogPosts.filter(post => {
     const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          post.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         post.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
+                         (post.tags && post.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase())));
     const matchesCategory = selectedCategory === "All" || post.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
+
+  // Get unique categories from posts
+  const categories = ["All", ...Array.from(new Set(blogPosts.map(post => post.category)))];
 
   const featuredPost = blogPosts.find(post => post.featured);
 
@@ -3129,33 +3150,8 @@ export default function BlogPage() {
 
             {/* Article Body */}
             <div className="prose prose-lg max-w-none">
-              {post.content.split('\n\n').map((paragraph, index) => {
-                if (paragraph.startsWith('**') && paragraph.endsWith('**')) {
-                  const headingText = paragraph.replace(/\*\*/g, '');
-                  return (
-                    <h2 key={index} className="text-2xl font-bold text-gray-900 mt-8 mb-4" id={headingText.toLowerCase().replace(/[^a-z0-9]+/g, '-')}>
-                      {headingText}
-                    </h2>
-                  );
-                }
-                if (paragraph.startsWith('- ')) {
-                  const listItems = paragraph.split('\n').filter(item => item.startsWith('- '));
-                  return (
-                    <ul key={index} className="list-disc pl-6 mb-6 space-y-2">
-                      {listItems.map((item, itemIndex) => (
-                        <li key={itemIndex} className="text-gray-700">
-                          {renderContentWithLinks(item.substring(2))}
-                        </li>
-                      ))}
-                    </ul>
-                  );
-                }
-                return (
-                  <p key={index} className="text-gray-700 leading-relaxed mb-6">
-                    {renderContentWithLinks(paragraph)}
-                  </p>
-                );
-              })}
+              {/* Render HTML content from Tiptap editor - sanitized to prevent XSS */}
+              <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(post.content) }} />
             </div>
 
             {/* Call to Action */}

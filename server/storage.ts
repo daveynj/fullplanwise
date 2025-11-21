@@ -1,9 +1,10 @@
 
 import { 
-  users, students, lessons, studentLessons, studentVocabulary,
+  users, students, lessons, studentLessons, studentVocabulary, blogPosts,
   type User, type InsertUser, type Student, type InsertStudent, 
   type Lesson, type InsertLesson, type StudentLesson, type InsertStudentLesson,
-  type StudentVocabulary, type InsertStudentVocabulary 
+  type StudentVocabulary, type InsertStudentVocabulary,
+  type BlogPost, type InsertBlogPost, type UpdateBlogPost
 } from "@shared/schema";
 import createMemoryStore from "memorystore";
 import session from "express-session";
@@ -75,6 +76,14 @@ export interface IStorage {
   addStudentVocabulary(vocabulary: InsertStudentVocabulary[]): Promise<StudentVocabulary[]>;
   getStudentVocabulary(studentId: number, limit?: number): Promise<StudentVocabulary[]>;
   extractAndSaveVocabulary(studentId: number, lessonId: number): Promise<number>;
+  
+  // Blog post methods
+  getAllBlogPosts(page?: number, pageSize?: number, category?: string, featured?: boolean): Promise<{posts: BlogPost[], total: number}>;
+  getBlogPost(id: number): Promise<BlogPost | undefined>;
+  getBlogPostBySlug(slug: string): Promise<BlogPost | undefined>;
+  createBlogPost(post: InsertBlogPost): Promise<BlogPost>;
+  updateBlogPost(id: number, post: UpdateBlogPost): Promise<BlogPost>;
+  deleteBlogPost(id: number): Promise<boolean>;
   
   // Session store
   sessionStore: Store;
@@ -1413,6 +1422,117 @@ export class DatabaseStorage implements IStorage {
       return vocabularyToAdd.length;
     } catch (error) {
       console.error('Error extracting and saving vocabulary:', error);
+      throw error;
+    }
+  }
+
+  // Blog post methods
+  async getAllBlogPosts(page: number = 1, pageSize: number = 10, category?: string, featured?: boolean): Promise<{posts: BlogPost[], total: number}> {
+    try {
+      const offset = (page - 1) * pageSize;
+      
+      let whereConditions = [];
+      if (category) {
+        whereConditions.push(eq(blogPosts.category, category));
+      }
+      if (featured !== undefined) {
+        whereConditions.push(eq(blogPosts.featured, featured));
+      }
+      
+      const whereClause = whereConditions.length > 0 ? and(...whereConditions) : undefined;
+      
+      // Build query conditionally based on where clause
+      let query = db.select().from(blogPosts);
+      if (whereClause) {
+        query = query.where(whereClause);
+      }
+      const posts = await query
+        .orderBy(desc(blogPosts.createdAt))
+        .limit(pageSize)
+        .offset(offset);
+      
+      // Build count query conditionally
+      let countQuery = db.select({ count: count() }).from(blogPosts);
+      if (whereClause) {
+        countQuery = countQuery.where(whereClause);
+      }
+      const [{ count: totalCount }] = await countQuery;
+      
+      return { posts, total: Number(totalCount) };
+    } catch (error) {
+      console.error('Error fetching blog posts:', error);
+      throw error;
+    }
+  }
+
+  async getBlogPost(id: number): Promise<BlogPost | undefined> {
+    try {
+      const [post] = await db.select().from(blogPosts).where(eq(blogPosts.id, id));
+      return post;
+    } catch (error) {
+      console.error('Error fetching blog post:', error);
+      throw error;
+    }
+  }
+
+  async getBlogPostBySlug(slug: string): Promise<BlogPost | undefined> {
+    try {
+      const [post] = await db.select().from(blogPosts).where(eq(blogPosts.slug, slug));
+      return post;
+    } catch (error) {
+      console.error('Error fetching blog post by slug:', error);
+      throw error;
+    }
+  }
+
+  async createBlogPost(post: InsertBlogPost): Promise<BlogPost> {
+    try {
+      const [newPost] = await db.insert(blogPosts).values(post).returning();
+      return newPost;
+    } catch (error) {
+      console.error('Error creating blog post:', error);
+      throw error;
+    }
+  }
+
+  async updateBlogPost(id: number, postUpdate: UpdateBlogPost): Promise<BlogPost> {
+    try {
+      // UpdateBlogPost type already has all allowed fields as optional
+      // Filter out undefined values and ensure we only update provided fields
+      const updateData: any = {};
+      
+      if (postUpdate.title !== undefined) updateData.title = postUpdate.title;
+      if (postUpdate.slug !== undefined) updateData.slug = postUpdate.slug;
+      if (postUpdate.content !== undefined) updateData.content = postUpdate.content;
+      if (postUpdate.excerpt !== undefined) updateData.excerpt = postUpdate.excerpt;
+      if (postUpdate.author !== undefined) updateData.author = postUpdate.author;
+      if (postUpdate.publishDate !== undefined) updateData.publishDate = postUpdate.publishDate;
+      if (postUpdate.category !== undefined) updateData.category = postUpdate.category;
+      if (postUpdate.tags !== undefined) updateData.tags = postUpdate.tags;
+      if (postUpdate.readTime !== undefined) updateData.readTime = postUpdate.readTime;
+      if (postUpdate.featured !== undefined) updateData.featured = postUpdate.featured;
+      
+      // Always update the updatedAt timestamp
+      updateData.updatedAt = new Date();
+      
+      const [updatedPost] = await db
+        .update(blogPosts)
+        .set(updateData)
+        .where(eq(blogPosts.id, id))
+        .returning();
+      return updatedPost;
+    } catch (error) {
+      console.error('Error updating blog post:', error);
+      throw error;
+    }
+  }
+
+  async deleteBlogPost(id: number): Promise<boolean> {
+    try {
+      await db.delete(blogPosts).where(eq(blogPosts.id, id));
+      return true;
+    } catch (error) {
+      console.error('Error deleting blog post:', error);
       throw error;
     }
   }

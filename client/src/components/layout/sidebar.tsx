@@ -47,6 +47,7 @@ export function Sidebar() {
   // Admin items - only visible to admin users
   const adminItems = [
     { path: "/admin", label: "Admin Dashboard", icon: <Shield className="mr-3 text-2xl" /> },
+    { path: "/admin/blog", label: "Blog Management", icon: <BookOpen className="mr-3 text-2xl" /> },
   ];
 
   const toggleMobileMenu = () => {

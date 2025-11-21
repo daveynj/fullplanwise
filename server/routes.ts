@@ -7,7 +7,9 @@ import {
   insertStudentSchema, 
   insertLessonSchema, 
   lessonGenerateSchema,
-  subscriptionSchema
+  subscriptionSchema,
+  insertBlogPostSchema,
+  updateBlogPostSchema
 } from "@shared/schema";
 import { mailchimpService } from "./services/mailchimp.service";
 import { testOpenRouterConnection } from "./services/openRouter";
@@ -1720,6 +1722,212 @@ export async function registerRoutes(app: Express): Promise<Server> {
         error: error.message,
         timestamp: new Date().toISOString()
       });
+    }
+  });
+
+  // Blog post routes
+  // Public route to get all blog posts
+  app.get("/api/blog/posts", async (req, res) => {
+    try {
+      const page = parseInt(req.query.page as string) || 1;
+      const pageSize = parseInt(req.query.pageSize as string) || 20;
+      const category = req.query.category as string | undefined;
+      const featured = req.query.featured === 'true' ? true : req.query.featured === 'false' ? false : undefined;
+      
+      const result = await storage.getAllBlogPosts(page, pageSize, category, featured);
+      res.json(result);
+    } catch (error: any) {
+      console.error('Error fetching blog posts:', error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Public route to get a single blog post by ID
+  app.get("/api/blog/posts/:id", async (req, res) => {
+    try {
+      const post = await storage.getBlogPost(parseInt(req.params.id));
+      if (!post) {
+        return res.status(404).json({ message: "Blog post not found" });
+      }
+      res.json(post);
+    } catch (error: any) {
+      console.error('Error fetching blog post:', error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Public route to get a blog post by slug
+  app.get("/api/blog/posts/slug/:slug", async (req, res) => {
+    try {
+      const post = await storage.getBlogPostBySlug(req.params.slug);
+      if (!post) {
+        return res.status(404).json({ message: "Blog post not found" });
+      }
+      res.json(post);
+    } catch (error: any) {
+      console.error('Error fetching blog post by slug:', error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Admin-only route to create a blog post
+  app.post("/api/admin/blog/posts", ensureAuthenticated, async (req, res) => {
+    try {
+      const currentUser = await storage.getUser(req.user!.id);
+      if (!currentUser?.isAdmin) {
+        return res.status(403).json({ message: "Unauthorized. Admin privileges required." });
+      }
+
+      const validatedData = insertBlogPostSchema.parse(req.body);
+      const post = await storage.createBlogPost(validatedData);
+      res.status(201).json(post);
+    } catch (error: any) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid blog post data", errors: error.errors });
+      }
+      console.error('Error creating blog post:', error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Admin-only route to update a blog post
+  app.put("/api/admin/blog/posts/:id", ensureAuthenticated, async (req, res) => {
+    try {
+      const currentUser = await storage.getUser(req.user!.id);
+      if (!currentUser?.isAdmin) {
+        return res.status(403).json({ message: "Unauthorized. Admin privileges required." });
+      }
+
+      const postId = parseInt(req.params.id);
+      const existingPost = await storage.getBlogPost(postId);
+      if (!existingPost) {
+        return res.status(404).json({ message: "Blog post not found" });
+      }
+
+      // Validate update data with dedicated update schema
+      const updateData = updateBlogPostSchema.parse(req.body);
+      
+      // Check slug uniqueness if slug is being updated
+      if (updateData.slug && updateData.slug !== existingPost.slug) {
+        const slugExists = await storage.getBlogPostBySlug(updateData.slug);
+        if (slugExists) {
+          return res.status(400).json({ message: "A post with this slug already exists" });
+        }
+      }
+
+      const updatedPost = await storage.updateBlogPost(postId, updateData);
+      res.json(updatedPost);
+    } catch (error: any) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid blog post data", errors: error.errors });
+      }
+      console.error('Error updating blog post:', error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Admin-only route to delete a blog post
+  app.delete("/api/admin/blog/posts/:id", ensureAuthenticated, async (req, res) => {
+    try {
+      const currentUser = await storage.getUser(req.user!.id);
+      if (!currentUser?.isAdmin) {
+        return res.status(403).json({ message: "Unauthorized. Admin privileges required." });
+      }
+
+      const postId = parseInt(req.params.id);
+      const existingPost = await storage.getBlogPost(postId);
+      if (!existingPost) {
+        return res.status(404).json({ message: "Blog post not found" });
+      }
+
+      await storage.deleteBlogPost(postId);
+      res.json({ message: "Blog post deleted successfully" });
+    } catch (error: any) {
+      console.error('Error deleting blog post:', error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Admin-only route to migrate legacy blog posts (one-time migration)
+  app.post("/api/admin/blog/migrate-legacy", ensureAuthenticated, async (req, res) => {
+    try {
+      const currentUser = await storage.getUser(req.user!.id);
+      if (!currentUser?.isAdmin) {
+        return res.status(403).json({ message: "Unauthorized. Admin privileges required." });
+      }
+
+      // Helper function to convert markdown-like text to basic HTML
+      const convertToHTML = (text: string): string => {
+        return text
+          .split('\n\n')
+          .map(para => {
+            // Handle bold markdown headings
+            if (para.startsWith('**') && para.endsWith('**')) {
+              const headingText = para.replace(/\*\*/g, '');
+              return `<h2>${headingText}</h2>`;
+            }
+            // Handle list items
+            if (para.startsWith('- ')) {
+              const items = para.split('\n').filter(item => item.startsWith('- '));
+              const listHTML = items.map(item => `<li>${item.substring(2)}</li>`).join('');
+              return `<ul>${listHTML}</ul>`;
+            }
+            // Handle bold and italic inline
+            let processed = para;
+            processed = processed.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            processed = processed.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            return `<p>${processed}</p>`;
+          })
+          .join('');
+      };
+
+      const legacyPosts = req.body.posts;
+      
+      if (!Array.isArray(legacyPosts) || legacyPosts.length === 0) {
+        return res.status(400).json({ message: "No posts provided for migration" });
+      }
+
+      const migratedPosts = [];
+      
+      for (const post of legacyPosts) {
+        try {
+          // Generate slug from title
+          const slug = post.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+          
+          // Check if post with this slug already exists
+          const existing = await storage.getBlogPostBySlug(slug);
+          if (existing) {
+            console.log(`Post with slug "${slug}" already exists, skipping...`);
+            continue;
+          }
+          
+          const newPost = await storage.createBlogPost({
+            title: post.title,
+            slug,
+            content: convertToHTML(post.content || post.excerpt),
+            excerpt: post.excerpt,
+            author: post.author || "The Plan Wise ESL Team",
+            publishDate: post.publishDate || post.date,
+            category: post.category,
+            tags: post.tags || [],
+            readTime: post.readTime || post.readingTime,
+            featured: post.featured || false,
+          });
+          
+          migratedPosts.push(newPost);
+        } catch (error: any) {
+          console.error(`Error migrating post "${post.title}":`, error);
+        }
+      }
+      
+      res.json({ 
+        message: `Successfully migrated ${migratedPosts.length} blog posts`,
+        migratedCount: migratedPosts.length,
+        totalProvided: legacyPosts.length
+      });
+    } catch (error: any) {
+      console.error('Error migrating blog posts:', error);
+      res.status(500).json({ message: error.message });
     }
   });
 
