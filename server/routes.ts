@@ -1931,6 +1931,55 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Dynamic sitemap.xml generation for SEO
+  app.get("/sitemap.xml", async (req, res) => {
+    try {
+      // Fetch all published blog posts
+      const { posts } = await storage.getAllBlogPosts(1, 1000); // Get all posts
+      
+      const baseUrl = req.protocol + '://' + req.get('host');
+      const today = new Date().toISOString().split('T')[0];
+      
+      // Static pages with their priority and update frequency
+      const staticPages = [
+        { url: '/', changefreq: 'weekly', priority: '1.0', lastmod: today },
+        { url: '/blog', changefreq: 'daily', priority: '0.9', lastmod: today },
+      ];
+      
+      // Generate XML
+      let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
+      xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
+      
+      // Add static pages
+      for (const page of staticPages) {
+        xml += '  <url>\n';
+        xml += `    <loc>${baseUrl}${page.url}</loc>\n`;
+        xml += `    <lastmod>${page.lastmod}</lastmod>\n`;
+        xml += `    <changefreq>${page.changefreq}</changefreq>\n`;
+        xml += `    <priority>${page.priority}</priority>\n`;
+        xml += '  </url>\n';
+      }
+      
+      // Add blog posts
+      for (const post of posts) {
+        xml += '  <url>\n';
+        xml += `    <loc>${baseUrl}/blog/${post.slug}</loc>\n`;
+        xml += `    <lastmod>${post.publishDate}</lastmod>\n`;
+        xml += `    <changefreq>monthly</changefreq>\n`;
+        xml += `    <priority>0.7</priority>\n`;
+        xml += '  </url>\n';
+      }
+      
+      xml += '</urlset>';
+      
+      res.header('Content-Type', 'application/xml');
+      res.send(xml);
+    } catch (error: any) {
+      console.error('Error generating sitemap:', error);
+      res.status(500).send('Error generating sitemap');
+    }
+  });
+
 
   // Create HTTP server
   const httpServer = createServer(app);
