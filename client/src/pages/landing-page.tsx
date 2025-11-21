@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { SEOHead } from '@/components/SEOHead';
@@ -24,7 +24,7 @@ import {
 import { 
   Clock, Target, MonitorSmartphone, BookOpen, MessageSquare, 
   Lightbulb, CheckCircle, Sparkles, Layers, Puzzle, Database,
-  Lock as LockIcon
+  Lock as LockIcon, Menu, X
 } from 'lucide-react';
 
 // Screenshots are served from public directory
@@ -48,6 +48,8 @@ const FreeTrialBanner = () => {
 export default function LandingPage() {
   const { isFreeTrialActive, freeTrialEndDate } = useFreeTrial();
   const endDate = freeTrialEndDate ? format(freeTrialEndDate, "MMMM do") : '';
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  
   return (
     <div className="flex flex-col min-h-screen font-open-sans">
       <SEOHead
@@ -70,14 +72,16 @@ export default function LandingPage() {
       />
       <FreeTrialBanner />
       {/* Header/Navigation */}
-      <header className="bg-brand-light shadow-sm sticky top-0 z-10">
+      <header className="bg-brand-light shadow-sm sticky top-0 z-50">
         <nav className="container mx-auto px-6 py-3 flex justify-between items-center">
           {/* Combine logo and text */}
           <div className="flex items-center gap-2">
-            <img src="/PlanWise_ESL_logo.png" alt="PlanwiseESL AI-powered ESL lesson generator logo" className="h-20 w-auto" /> 
-            <span className="text-xl font-nunito font-bold text-brand-navy">PLAN WISE ESL</span>
+            <img src="/PlanWise_ESL_logo.png" alt="PlanwiseESL AI-powered ESL lesson generator logo" className="h-16 sm:h-20 w-auto" /> 
+            <span className="text-lg sm:text-xl font-nunito font-bold text-brand-navy">PLAN WISE ESL</span>
           </div>
-          <div className="flex items-center gap-4">
+          
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center gap-4">
             <Link href="/blog">
               <Button variant="ghost" className="text-brand-navy hover:bg-brand-navy/10">
                 Blog
@@ -90,7 +94,37 @@ export default function LandingPage() {
               <Button variant="brand">Sign Up Free</Button>
             </Link>
           </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            className="md:hidden p-2 text-brand-navy hover:bg-brand-navy/10 rounded"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Toggle menu"
+          >
+            {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
         </nav>
+
+        {/* Mobile Navigation Menu */}
+        {mobileMenuOpen && (
+          <div className="md:hidden bg-brand-light border-t border-gray-200 py-4 px-6 space-y-3">
+            <Link href="/blog" onClick={() => setMobileMenuOpen(false)}>
+              <Button variant="ghost" className="w-full justify-start text-brand-navy hover:bg-brand-navy/10">
+                Blog
+              </Button>
+            </Link>
+            <Link href="/auth" onClick={() => setMobileMenuOpen(false)}>
+              <Button variant="outline" className="w-full border-brand-navy text-brand-navy hover:bg-brand-navy/10">
+                Login
+              </Button>
+            </Link>
+            <Link href="/auth?register=true" onClick={() => setMobileMenuOpen(false)}>
+              <Button variant="brand" className="w-full">
+                Sign Up Free
+              </Button>
+            </Link>
+          </div>
+        )}
       </header>
 
       {/* Hero Section with Lesson Preview */}
