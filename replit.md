@@ -36,7 +36,10 @@ Social media: LinkedIn - www.linkedin.com/in/davidjackson113, X (Twitter) - @Dav
   - **Blog Index**: 3-column responsive grid (mobile-first design), semantic HTML5 with <article> tags, standard pagination (not infinite scroll), and integrated search
   - **Single Post**: 70/30 sidebar-right layout with breadcrumbs, Table of Contents (auto-generated from headings), related posts, popular posts sidebar, and search functionality
   - **Admin Management**: Rich text editor (Tiptap) for content creation with XSS protection via DOMPurify
-- **SEO**: Comprehensive on-page SEO including breadcrumb navigation, proper heading hierarchy (h1-h3), meta descriptions, canonical URLs, semantic HTML5 tags (main, nav, aside, article), and optimized content.
+  - **URL Structure**: Slug-based URLs (/blog/post-slug) instead of numeric IDs for better SEO
+  - **SEO Metadata**: Dedicated metaTitle and metaDescription fields in CMS with character counters (60/160 chars)
+  - **Sitemap**: Dynamic sitemap.xml generation listing all blog posts and static pages for search engine crawling
+- **SEO**: Comprehensive on-page SEO including breadcrumb navigation, proper heading hierarchy (h1-h3), meta descriptions, canonical URLs, semantic HTML5 tags (main, nav, aside, article), slug-based URLs, and dynamic sitemap generation.
 
 ### System Design Choices
 - **Data Flow**: Manages user authentication, AI-powered lesson creation, grammar analysis, content storage, interactive display, and export options.
