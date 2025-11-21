@@ -132,7 +132,7 @@ export default function BlogIndex() {
 
                       {/* Title - using h3 tag for SEO hierarchy */}
                       <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors line-clamp-2">
-                        <Link href={`/blog/${post.id}`} data-testid={`link-post-${post.id}`}>
+                        <Link href={`/blog/${post.slug}`} data-testid={`link-post-${post.id}`}>
                           {post.title}
                         </Link>
                       </h3>
@@ -143,7 +143,7 @@ export default function BlogIndex() {
                       </p>
 
                       {/* Call to Action - "Read Article" link */}
-                      <Link href={`/blog/${post.id}`}>
+                      <Link href={`/blog/${post.slug}`}>
                         <Button
                           variant="ghost"
                           className="w-full justify-between group-hover:bg-primary/10"

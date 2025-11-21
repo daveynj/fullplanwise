@@ -56,19 +56,19 @@ const extractHeadingsAndAddIds = (html: string): {
 };
 
 export default function BlogPost() {
-  const { id } = useParams();
+  const { slug } = useParams();
   const [, navigate] = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
   const [tocHeadings, setTocHeadings] = useState<{ id: string; text: string; level: number }[]>([]);
 
   // Fetch current post
   const { data: post, isLoading } = useQuery<BlogPost>({
-    queryKey: ['/api/blog/posts', id],
-    queryFn: () => fetch(`/api/blog/posts/${id}`).then(res => {
+    queryKey: ['/api/blog/posts', slug],
+    queryFn: () => fetch(`/api/blog/posts/slug/${slug}`).then(res => {
       if (!res.ok) throw new Error('Post not found');
       return res.json();
     }),
-    enabled: !!id,
+    enabled: !!slug,
   });
 
   // Fetch all posts for related posts and popular posts
@@ -291,14 +291,14 @@ export default function BlogPost() {
                         </div>
                         <div className="p-4">
                           <h3 className="font-semibold mb-2 line-clamp-2 group-hover:text-primary transition-colors">
-                            <Link href={`/blog/${relatedPost.id}`}>
+                            <Link href={`/blog/${relatedPost.slug}`}>
                               {relatedPost.title}
                             </Link>
                           </h3>
                           <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
                             {relatedPost.excerpt}
                           </p>
-                          <Link href={`/blog/${relatedPost.id}`}>
+                          <Link href={`/blog/${relatedPost.slug}`}>
                             <Button variant="ghost" size="sm" className="w-full justify-between">
                               <span>Read More</span>
                               <ArrowRight className="h-4 w-4" />
@@ -347,7 +347,7 @@ export default function BlogPost() {
                       {popularPosts.map((popularPost) => (
                         <Link
                           key={popularPost.id}
-                          href={`/blog/${popularPost.id}`}
+                          href={`/blog/${popularPost.slug}`}
                           className="group block"
                         >
                           <div className="flex gap-3">
