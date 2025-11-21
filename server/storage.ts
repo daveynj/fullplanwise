@@ -78,7 +78,7 @@ export interface IStorage {
   extractAndSaveVocabulary(studentId: number, lessonId: number): Promise<number>;
   
   // Blog post methods
-  getAllBlogPosts(page?: number, pageSize?: number, category?: string, featured?: boolean): Promise<{posts: BlogPost[], total: number}>;
+  getAllBlogPosts(page?: number, pageSize?: number, category?: string, featured?: boolean, isPublished?: boolean): Promise<{posts: BlogPost[], total: number}>;
   getBlogPost(id: number): Promise<BlogPost | undefined>;
   getBlogPostBySlug(slug: string): Promise<BlogPost | undefined>;
   createBlogPost(post: InsertBlogPost): Promise<BlogPost>;

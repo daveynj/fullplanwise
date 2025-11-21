@@ -1726,7 +1726,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Blog post routes
-  // Public route to get all blog posts
+  // Public route to get all blog posts (only published posts)
   app.get("/api/blog/posts", async (req, res) => {
     try {
       const page = parseInt(req.query.page as string) || 1;
@@ -1734,7 +1734,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const category = req.query.category as string | undefined;
       const featured = req.query.featured === 'true' ? true : req.query.featured === 'false' ? false : undefined;
       
-      const result = await storage.getAllBlogPosts(page, pageSize, category, featured);
+      // For public blog index, only show published posts
+      const result = await storage.getAllBlogPosts(page, pageSize, category, featured, true);
       res.json(result);
     } catch (error: any) {
       console.error('Error fetching blog posts:', error);

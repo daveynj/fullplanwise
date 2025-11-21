@@ -113,9 +113,18 @@ export default function BlogIndex() {
                   >
                     {/* Thumbnail Image - 16:9 aspect ratio */}
                     <div className="relative aspect-video bg-muted overflow-hidden">
-                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-primary/5">
-                        <span className="text-4xl">📚</span>
-                      </div>
+                      {post.featuredImageUrl ? (
+                        <img
+                          src={post.featuredImageUrl}
+                          alt={post.featuredImageAlt || post.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-primary/5">
+                          <span className="text-4xl">📚</span>
+                        </div>
+                      )}
                     </div>
 
                     <div className="flex flex-col flex-grow p-6">
