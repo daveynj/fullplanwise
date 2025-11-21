@@ -49,8 +49,12 @@ export default function AdminBlogPosts() {
     tags: '',
     readTime: '',
     featured: false,
+    featuredImageUrl: '',
+    featuredImageAlt: '',
     metaTitle: '',
     metaDescription: '',
+    publishedAt: '',
+    isPublished: false,
   });
 
   const { data: postsData, isLoading } = useQuery<{ posts: BlogPost[]; total: number }>({
@@ -137,8 +141,12 @@ export default function AdminBlogPosts() {
       tags: '',
       readTime: '',
       featured: false,
+      featuredImageUrl: '',
+      featuredImageAlt: '',
       metaTitle: '',
       metaDescription: '',
+      publishedAt: '',
+      isPublished: false,
     });
   };
 
@@ -177,8 +185,12 @@ export default function AdminBlogPosts() {
       tags: post.tags?.join(', ') || '',
       readTime: post.readTime || '',
       featured: post.featured,
+      featuredImageUrl: post.featuredImageUrl || '',
+      featuredImageAlt: post.featuredImageAlt || '',
       metaTitle: post.metaTitle || '',
       metaDescription: post.metaDescription || '',
+      publishedAt: post.publishedAt ? new Date(post.publishedAt).toISOString().split('T')[0] : '',
+      isPublished: post.isPublished || false,
     });
     setEditDialogOpen(true);
   };
@@ -287,6 +299,61 @@ export default function AdminBlogPosts() {
                     <p className="text-xs text-muted-foreground mt-1">
                       {formData.metaDescription.length}/160 characters
                     </p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="create-featured-image-url">Featured Image URL</Label>
+                      <Input
+                        id="create-featured-image-url"
+                        value={formData.featuredImageUrl}
+                        onChange={(e) => setFormData({ ...formData, featuredImageUrl: e.target.value })}
+                        placeholder="https://example.com/image.jpg"
+                        data-testid="input-featured-image-url"
+                      />
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Thumbnail image for blog index and social sharing
+                      </p>
+                    </div>
+                    <div>
+                      <Label htmlFor="create-featured-image-alt">Featured Image Alt Text</Label>
+                      <Input
+                        id="create-featured-image-alt"
+                        value={formData.featuredImageAlt}
+                        onChange={(e) => setFormData({ ...formData, featuredImageAlt: e.target.value })}
+                        placeholder="Descriptive alt text"
+                        maxLength={125}
+                        data-testid="input-featured-image-alt"
+                      />
+                      <p className="text-xs text-muted-foreground mt-1">
+                        SEO accessibility description (max 125 chars)
+                      </p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="create-published-at">Published Date</Label>
+                      <Input
+                        id="create-published-at"
+                        type="date"
+                        value={formData.publishedAt}
+                        onChange={(e) => setFormData({ ...formData, publishedAt: e.target.value })}
+                        data-testid="input-published-at"
+                      />
+                      <p className="text-xs text-muted-foreground mt-1">
+                        When this post was/will be published
+                      </p>
+                    </div>
+                    <div className="flex items-center space-x-2 mt-6">
+                      <Checkbox
+                        id="create-is-published"
+                        checked={formData.isPublished}
+                        onCheckedChange={(checked) => setFormData({ ...formData, isPublished: checked as boolean })}
+                        data-testid="checkbox-is-published"
+                      />
+                      <Label htmlFor="create-is-published" className="font-normal">
+                        Published (visible on site and in sitemap)
+                      </Label>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -463,6 +530,61 @@ export default function AdminBlogPosts() {
                   <p className="text-xs text-muted-foreground mt-1">
                     {formData.metaDescription.length}/160 characters
                   </p>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="edit-featured-image-url">Featured Image URL</Label>
+                    <Input
+                      id="edit-featured-image-url"
+                      value={formData.featuredImageUrl}
+                      onChange={(e) => setFormData({ ...formData, featuredImageUrl: e.target.value })}
+                      placeholder="https://example.com/image.jpg"
+                      data-testid="input-edit-featured-image-url"
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Thumbnail image for blog index and social sharing
+                    </p>
+                  </div>
+                  <div>
+                    <Label htmlFor="edit-featured-image-alt">Featured Image Alt Text</Label>
+                    <Input
+                      id="edit-featured-image-alt"
+                      value={formData.featuredImageAlt}
+                      onChange={(e) => setFormData({ ...formData, featuredImageAlt: e.target.value })}
+                      placeholder="Descriptive alt text"
+                      maxLength={125}
+                      data-testid="input-edit-featured-image-alt"
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      SEO accessibility description (max 125 chars)
+                    </p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="edit-published-at">Published Date</Label>
+                    <Input
+                      id="edit-published-at"
+                      type="date"
+                      value={formData.publishedAt}
+                      onChange={(e) => setFormData({ ...formData, publishedAt: e.target.value })}
+                      data-testid="input-edit-published-at"
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      When this post was/will be published
+                    </p>
+                  </div>
+                  <div className="flex items-center space-x-2 mt-6">
+                    <Checkbox
+                      id="edit-is-published"
+                      checked={formData.isPublished}
+                      onCheckedChange={(checked) => setFormData({ ...formData, isPublished: checked as boolean })}
+                      data-testid="checkbox-edit-is-published"
+                    />
+                    <Label htmlFor="edit-is-published" className="font-normal">
+                      Published (visible on site and in sitemap)
+                    </Label>
+                  </div>
                 </div>
               </div>
             </div>
