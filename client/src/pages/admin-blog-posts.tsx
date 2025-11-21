@@ -49,6 +49,8 @@ export default function AdminBlogPosts() {
     tags: '',
     readTime: '',
     featured: false,
+    metaTitle: '',
+    metaDescription: '',
   });
 
   const { data: postsData, isLoading } = useQuery<{ posts: BlogPost[]; total: number }>({
@@ -135,6 +137,8 @@ export default function AdminBlogPosts() {
       tags: '',
       readTime: '',
       featured: false,
+      metaTitle: '',
+      metaDescription: '',
     });
   };
 
@@ -173,6 +177,8 @@ export default function AdminBlogPosts() {
       tags: post.tags?.join(', ') || '',
       readTime: post.readTime || '',
       featured: post.featured,
+      metaTitle: post.metaTitle || '',
+      metaDescription: post.metaDescription || '',
     });
     setEditDialogOpen(true);
   };
@@ -247,6 +253,42 @@ export default function AdminBlogPosts() {
                   rows={3}
                   data-testid="input-excerpt"
                 />
+              </div>
+
+              {/* SEO Meta Fields */}
+              <div className="border-t pt-4 mt-4">
+                <h3 className="text-sm font-semibold mb-3">SEO Meta Data (Optional)</h3>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="create-meta-title">Meta Title</Label>
+                    <Input
+                      id="create-meta-title"
+                      value={formData.metaTitle}
+                      onChange={(e) => setFormData({ ...formData, metaTitle: e.target.value })}
+                      placeholder="SEO title (max 60 characters)"
+                      maxLength={60}
+                      data-testid="input-meta-title"
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {formData.metaTitle.length}/60 characters
+                    </p>
+                  </div>
+                  <div>
+                    <Label htmlFor="create-meta-description">Meta Description</Label>
+                    <Textarea
+                      id="create-meta-description"
+                      value={formData.metaDescription}
+                      onChange={(e) => setFormData({ ...formData, metaDescription: e.target.value })}
+                      placeholder="SEO description (max 160 characters)"
+                      rows={2}
+                      maxLength={160}
+                      data-testid="input-meta-description"
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {formData.metaDescription.length}/160 characters
+                    </p>
+                  </div>
+                </div>
               </div>
 
               <div>

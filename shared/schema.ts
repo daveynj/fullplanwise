@@ -246,6 +246,8 @@ export const blogPosts = pgTable("blog_posts", {
   tags: text("tags").array().default([]),
   readTime: text("read_time"),
   featured: boolean("featured").notNull().default(false),
+  metaTitle: text("meta_title"), // SEO meta title (separate from main title)
+  metaDescription: text("meta_description"), // SEO meta description (separate from excerpt)
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
@@ -264,6 +266,8 @@ export const insertBlogPostSchema = createInsertSchema(blogPosts)
     author: z.string().min(1, "Author is required"),
     publishDate: z.string().min(1, "Publish date is required"),
     category: z.string().min(1, "Category is required"),
+    metaTitle: z.string().max(60, "Meta title is too long (max 60 characters)").optional(),
+    metaDescription: z.string().max(160, "Meta description is too long (max 160 characters)").optional(),
   });
 
 // Create update schema as partial of insert schema with no timestamp requirements
@@ -278,6 +282,8 @@ export const updateBlogPostSchema = z.object({
   tags: z.array(z.string()).optional(),
   readTime: z.string().optional().nullable(),
   featured: z.boolean().optional(),
+  metaTitle: z.string().max(60, "Meta title is too long (max 60 characters)").optional().nullable(),
+  metaDescription: z.string().max(160, "Meta description is too long (max 160 characters)").optional().nullable(),
 });
 
 export type InsertBlogPost = z.infer<typeof insertBlogPostSchema>;
