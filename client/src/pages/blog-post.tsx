@@ -132,9 +132,9 @@ export default function BlogPost() {
   return (
     <>
       <SEOHead
-        title={`${post.title} | Plan Wise ESL Blog`}
-        description={post.excerpt}
-        canonicalUrl={`/blog/${post.id}`}
+        title={post.metaTitle || `${post.title} | Plan Wise ESL Blog`}
+        description={post.metaDescription || post.excerpt}
+        canonicalUrl={`/blog/${post.slug}`}
       />
 
       <main className="min-h-screen bg-background">
