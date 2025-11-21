@@ -431,6 +431,42 @@ export default function AdminBlogPosts() {
               />
             </div>
 
+            {/* SEO Meta Fields */}
+            <div className="border-t pt-4 mt-4">
+              <h3 className="text-sm font-semibold mb-3">SEO Meta Data (Optional)</h3>
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="edit-meta-title">Meta Title</Label>
+                  <Input
+                    id="edit-meta-title"
+                    value={formData.metaTitle}
+                    onChange={(e) => setFormData({ ...formData, metaTitle: e.target.value })}
+                    placeholder="SEO title (max 60 characters)"
+                    maxLength={60}
+                    data-testid="input-edit-meta-title"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {formData.metaTitle.length}/60 characters
+                  </p>
+                </div>
+                <div>
+                  <Label htmlFor="edit-meta-description">Meta Description</Label>
+                  <Textarea
+                    id="edit-meta-description"
+                    value={formData.metaDescription}
+                    onChange={(e) => setFormData({ ...formData, metaDescription: e.target.value })}
+                    placeholder="SEO description (max 160 characters)"
+                    rows={2}
+                    maxLength={160}
+                    data-testid="input-edit-meta-description"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {formData.metaDescription.length}/160 characters
+                  </p>
+                </div>
+              </div>
+            </div>
+
             <div>
               <Label>Content *</Label>
               <RichTextEditor
