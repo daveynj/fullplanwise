@@ -1771,6 +1771,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Admin-only route to get all blog posts (includes drafts)
+  app.get("/api/admin/blog/posts", ensureAuthenticated, async (req, res) => {
+    try {
+      const currentUser = await storage.getUser(req.user!.id);
+      if (!currentUser?.isAdmin) {
+        return res.status(403).json({ message: "Unauthorized. Admin privileges required." });
+      }
+
+      const page = parseInt(req.query.page as string) || 1;
+      const pageSize = parseInt(req.query.pageSize as string) || 100;
+      
+      // Admin gets ALL posts regardless of publication status
+      const result = await storage.getAllBlogPosts(page, pageSize, undefined, undefined, undefined);
+      res.json(result);
+    } catch (error: any) {
+      console.error('Error fetching admin blog posts:', error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   // Admin-only route to create a blog post
   app.post("/api/admin/blog/posts", ensureAuthenticated, async (req, res) => {
     try {

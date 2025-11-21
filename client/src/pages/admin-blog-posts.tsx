@@ -58,8 +58,8 @@ export default function AdminBlogPosts() {
   });
 
   const { data: postsData, isLoading } = useQuery<{ posts: BlogPost[]; total: number }>({
-    queryKey: ['/api/blog/posts'],
-    queryFn: () => fetch('/api/blog/posts?pageSize=100').then(res => res.json()),
+    queryKey: ['/api/admin/blog/posts'],
+    queryFn: () => fetch('/api/admin/blog/posts?pageSize=100').then(res => res.json()),
   });
 
   const createMutation = useMutation({
@@ -67,7 +67,7 @@ export default function AdminBlogPosts() {
       return apiRequest('POST', '/api/admin/blog/posts', data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/blog/posts'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/blog/posts'] });
       setCreateDialogOpen(false);
       resetForm();
       toast({
@@ -89,7 +89,7 @@ export default function AdminBlogPosts() {
       return apiRequest('PUT', `/api/admin/blog/posts/${id}`, data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/blog/posts'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/blog/posts'] });
       setEditDialogOpen(false);
       resetForm();
       setSelectedPost(null);
@@ -112,7 +112,7 @@ export default function AdminBlogPosts() {
       return apiRequest('DELETE', `/api/admin/blog/posts/${id}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/blog/posts'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/blog/posts'] });
       setDeleteDialogOpen(false);
       setSelectedPost(null);
       toast({
@@ -151,18 +151,50 @@ export default function AdminBlogPosts() {
   };
 
   const handleCreate = () => {
-    const payload = {
-      ...formData,
+    const payload: any = {
+      title: formData.title,
+      slug: formData.slug,
+      content: formData.content,
+      excerpt: formData.excerpt,
+      author: formData.author,
+      publishDate: formData.publishDate,
+      category: formData.category,
       tags: formData.tags.split(',').map(t => t.trim()).filter(t => t),
+      readTime: formData.readTime || undefined,
+      featured: formData.featured,
+      // Convert empty strings to undefined for optional fields
+      featuredImageUrl: formData.featuredImageUrl || undefined,
+      featuredImageAlt: formData.featuredImageAlt || undefined,
+      metaTitle: formData.metaTitle || undefined,
+      metaDescription: formData.metaDescription || undefined,
+      // Convert date string to Date object
+      publishedAt: formData.publishedAt ? new Date(formData.publishedAt) : undefined,
+      isPublished: formData.isPublished,
     };
     createMutation.mutate(payload);
   };
 
   const handleUpdate = () => {
     if (!selectedPost) return;
-    const payload = {
-      ...formData,
+    const payload: any = {
+      title: formData.title,
+      slug: formData.slug,
+      content: formData.content,
+      excerpt: formData.excerpt,
+      author: formData.author,
+      publishDate: formData.publishDate,
+      category: formData.category,
       tags: formData.tags.split(',').map(t => t.trim()).filter(t => t),
+      readTime: formData.readTime || null,
+      featured: formData.featured,
+      // Convert empty strings to null for optional fields
+      featuredImageUrl: formData.featuredImageUrl || null,
+      featuredImageAlt: formData.featuredImageAlt || null,
+      metaTitle: formData.metaTitle || null,
+      metaDescription: formData.metaDescription || null,
+      // Convert date string to Date object
+      publishedAt: formData.publishedAt ? new Date(formData.publishedAt) : null,
+      isPublished: formData.isPublished,
     };
     updateMutation.mutate({ id: selectedPost.id, data: payload });
   };

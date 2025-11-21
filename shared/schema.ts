@@ -274,7 +274,7 @@ export const insertBlogPostSchema = createInsertSchema(blogPosts)
     featuredImageAlt: z.string().max(125, "Alt text is too long (max 125 characters)").optional(),
     metaTitle: z.string().max(60, "Meta title is too long (max 60 characters)").optional(),
     metaDescription: z.string().max(160, "Meta description is too long (max 160 characters)").optional(),
-    publishedAt: z.date().optional(),
+    publishedAt: z.coerce.date().optional(),
     isPublished: z.boolean().default(false),
   });
 
@@ -294,7 +294,7 @@ export const updateBlogPostSchema = z.object({
   featuredImageAlt: z.string().max(125, "Alt text is too long (max 125 characters)").optional().nullable(),
   metaTitle: z.string().max(60, "Meta title is too long (max 60 characters)").optional().nullable(),
   metaDescription: z.string().max(160, "Meta description is too long (max 160 characters)").optional().nullable(),
-  publishedAt: z.date().optional().nullable(),
+  publishedAt: z.coerce.date().optional().nullable(),
   isPublished: z.boolean().optional(),
 });
 
