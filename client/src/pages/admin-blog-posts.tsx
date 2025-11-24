@@ -398,6 +398,16 @@ export default function AdminBlogPosts() {
                       <p className="text-xs text-muted-foreground mt-1">
                         Upload an image or paste a URL
                       </p>
+                      {formData.featuredImageUrl && (
+                        <div className="mt-2 relative aspect-video rounded-md overflow-hidden border">
+                          <img
+                            src={formData.featuredImageUrl}
+                            alt="Preview"
+                            className="object-cover w-full h-full"
+                            onError={(e) => (e.currentTarget.style.display = 'none')}
+                          />
+                        </div>
+                      )}
                     </div>
                     <div>
                       <Label htmlFor="create-featured-image-alt">Featured Image Alt Text</Label>
@@ -639,6 +649,16 @@ export default function AdminBlogPosts() {
                     <p className="text-xs text-muted-foreground mt-1">
                       Upload an image or paste a URL
                     </p>
+                    {formData.featuredImageUrl && (
+                      <div className="mt-2 relative aspect-video rounded-md overflow-hidden border">
+                        <img
+                          src={formData.featuredImageUrl}
+                          alt="Preview"
+                          className="object-cover w-full h-full"
+                          onError={(e) => (e.currentTarget.style.display = 'none')}
+                        />
+                      </div>
+                    )}
                   </div>
                   <div>
                     <Label htmlFor="edit-featured-image-alt">Featured Image Alt Text</Label>
