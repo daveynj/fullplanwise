@@ -26,6 +26,10 @@ app.use(express.urlencoded({ extended: false }));
 // Serve static files from the public directory
 app.use(express.static('public'));
 
+// Serve uploads from attached_assets/uploads
+import path from "path";
+app.use('/uploads', express.static(path.join(process.cwd(), "attached_assets", "uploads")));
+
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;

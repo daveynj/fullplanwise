@@ -2,10 +2,12 @@ import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Link from '@tiptap/extension-link';
 import Image from '@tiptap/extension-image';
+import Youtube from '@tiptap/extension-youtube';
 import TextAlign from '@tiptap/extension-text-align';
 import Underline from '@tiptap/extension-underline';
 import { TextStyle } from '@tiptap/extension-text-style';
 import { Color } from '@tiptap/extension-color';
+import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -27,6 +29,7 @@ import {
   ListOrdered,
   Link as LinkIcon,
   Image as ImageIcon,
+  Youtube as YoutubeIcon,
   Heading1,
   Heading2,
   Heading3,
@@ -46,11 +49,14 @@ interface RichTextEditorProps {
 }
 
 export function RichTextEditor({ content, onChange, placeholder }: RichTextEditorProps) {
+  const { toast } = useToast();
   const [linkUrl, setLinkUrl] = useState('');
   const [linkDialogOpen, setLinkDialogOpen] = useState(false);
   const [imageUrl, setImageUrl] = useState('');
   const [imageAlt, setImageAlt] = useState('');
   const [imageDialogOpen, setImageDialogOpen] = useState(false);
+  const [videoUrl, setVideoUrl] = useState('');
+  const [videoDialogOpen, setVideoDialogOpen] = useState(false);
 
   const editor = useEditor({
     extensions: [
@@ -68,6 +74,12 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
       Image.configure({
         HTMLAttributes: {
           class: 'max-w-full h-auto rounded-md my-4',
+        },
+      }),
+      Youtube.configure({
+        controls: false,
+        HTMLAttributes: {
+          class: 'w-full aspect-video rounded-md my-4',
         },
       }),
       TextAlign.configure({
@@ -109,6 +121,56 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
     setImageAlt('');
     setImageDialogOpen(false);
   }, [editor, imageUrl, imageAlt]);
+
+  const addVideo = useCallback(() => {
+    if (!editor || !videoUrl) return;
+
+    editor.commands.setYoutubeVideo({
+      src: videoUrl,
+    });
+    setVideoUrl('');
+    setVideoDialogOpen(false);
+  }, [editor, videoUrl]);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: 'Error',
+        description: 'File size too large (max 5MB)',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const res = await fetch('/api/admin/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!res.ok) throw new Error('Upload failed');
+
+      const data = await res.json();
+      setImageUrl(data.url);
+
+      toast({
+        title: 'Success',
+        description: 'Image uploaded successfully',
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to upload image',
+        variant: 'destructive',
+      });
+    }
+  };
 
   if (!editor) {
     return null;
@@ -251,6 +313,52 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
 
         <div className="w-px h-6 bg-border mx-1" />
 
+        {/* Video */}
+        <Dialog open={videoDialogOpen} onOpenChange={setVideoDialogOpen}>
+          <DialogTrigger asChild>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              data-testid="button-video"
+            >
+              <YoutubeIcon className="h-4 w-4" />
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Insert Video</DialogTitle>
+              <DialogDescription>
+                Enter a YouTube URL.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="video-url">Video URL</Label>
+                <Input
+                  id="video-url"
+                  type="url"
+                  placeholder="https://www.youtube.com/watch?v=..."
+                  value={videoUrl}
+                  onChange={(e) => setVideoUrl(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      addVideo();
+                    }
+                  }}
+                  data-testid="input-video-url"
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button type="button" onClick={addVideo} data-testid="button-insert-video">
+                Insert Video
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
         {/* Link */}
         <Dialog open={linkDialogOpen} onOpenChange={setLinkDialogOpen}>
           <DialogTrigger asChild>
@@ -319,14 +427,27 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
             <div className="space-y-4">
               <div>
                 <Label htmlFor="image-url">Image URL</Label>
-                <Input
-                  id="image-url"
-                  type="url"
-                  placeholder="https://example.com/image.jpg"
-                  value={imageUrl}
-                  onChange={(e) => setImageUrl(e.target.value)}
-                  data-testid="input-image-url"
-                />
+                <div className="space-y-2">
+                  <Input
+                    id="image-url"
+                    type="url"
+                    placeholder="https://example.com/image.jpg"
+                    value={imageUrl}
+                    onChange={(e) => setImageUrl(e.target.value)}
+                    data-testid="input-image-url"
+                  />
+                  <div className="flex items-center gap-2">
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="cursor-pointer"
+                    />
+                  </div>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Upload an image or paste a URL
+                </p>
               </div>
               <div>
                 <Label htmlFor="image-alt">Alt Text</Label>

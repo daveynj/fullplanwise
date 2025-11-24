@@ -25,6 +25,7 @@ import { db } from "./db";
 // import { pdfGeneratorService } from "./services/pdf-generator.service";
 import fs from 'fs/promises';
 import path from 'path';
+import multer from 'multer';
 
 // Dynamic Stripe initialization - load only when needed
 // const stripe = process.env.STRIPE_SECRET_KEY 
@@ -1787,6 +1788,58 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(result);
     } catch (error: any) {
       console.error('Error fetching admin blog posts:', error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Configure multer for file uploads
+  const uploadDir = path.join(process.cwd(), "attached_assets", "uploads");
+  const storageConfig = multer.diskStorage({
+    destination: async function (req, file, cb) {
+      // Ensure directory exists
+      try {
+        await fs.mkdir(uploadDir, { recursive: true });
+        cb(null, uploadDir);
+      } catch (err: any) {
+        console.error('Error creating upload directory:', err);
+        cb(err, uploadDir);
+      }
+    },
+    filename: function (req, file, cb) {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      cb(null, uniqueSuffix + path.extname(file.originalname));
+    }
+  });
+
+  const upload = multer({
+    storage: storageConfig,
+    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+    fileFilter: (req, file, cb) => {
+      // Allow images only
+      if (file.mimetype.startsWith('image/')) {
+        cb(null, true);
+      } else {
+        cb(new Error('Only image files are allowed'));
+      }
+    }
+  });
+
+  // Admin-only route for file uploads
+  app.post("/api/admin/upload", ensureAuthenticated, upload.single('file'), async (req, res) => {
+    try {
+      const currentUser = await storage.getUser(req.user!.id);
+      if (!currentUser?.isAdmin) {
+        return res.status(403).json({ message: "Unauthorized. Admin privileges required." });
+      }
+
+      if (!req.file) {
+        return res.status(400).json({ message: "No file uploaded" });
+      }
+
+      const fileUrl = `/uploads/${req.file.filename}`;
+      res.json({ url: fileUrl });
+    } catch (error: any) {
+      console.error('Error uploading file:', error);
       res.status(500).json({ message: error.message });
     }
   });
