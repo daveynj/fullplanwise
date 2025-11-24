@@ -126,7 +126,6 @@ export default function LandingPage() {
           </Link>
         </div>
       </header>
-
       {/* Hero Section with Lesson Preview */}
       <section className="bg-brand-navy text-brand-light py-16 px-6">
         <div className="container mx-auto max-w-6xl">
@@ -158,7 +157,7 @@ export default function LandingPage() {
               <div className="text-left mt-4">
                 <p className="font-bold text-lg">Who it's for:</p>
                 <ul className="list-disc list-inside">
-                  <li>Online ESL tutors on Preply, italki, Cambly, and private students.</li>
+                  <li>Online ESL tutors on Preply, italki, Cambly, and private ESL tutors.</li>
                   <li>Language schools and small agencies.</li>
                 </ul>
               </div>
@@ -218,7 +217,6 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-
       {/* Lesson Showcase Section - NEW */}
       <section className="py-16 px-6 bg-brand-light border-b border-gray-200">
         <div className="container mx-auto max-w-6xl">
@@ -362,7 +360,6 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-      
       {/* Problem/Solution Section */}
       <section className="py-16 px-6 bg-gray-light">
         <div className="container mx-auto max-w-4xl">
@@ -427,7 +424,6 @@ export default function LandingPage() {
           </p>
         </div>
       </section>
-
       {/* Features and Benefits Section */}
       <section id="features" className="py-16 px-6 bg-white">
         <div className="container mx-auto max-w-5xl">
@@ -454,7 +450,6 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-
       {/* How It Works Section */}
       <section className="py-16 px-6 bg-gray-light">
         <div className="container mx-auto max-w-4xl text-center">
@@ -478,7 +473,6 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-
       {/* Pricing Section */}
       <section id="pricing" className="py-16 px-6 bg-gray-light">
         <div className="container mx-auto max-w-4xl">
@@ -535,7 +529,6 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-
       {/* Social Proof/Testimonials Section */}
       <section className="py-16 px-6 bg-white">
         <div className="container mx-auto max-w-4xl text-center">
@@ -552,7 +545,6 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-
       {/* Final Call to Action Section with Stats */}
       <section className="py-20 px-6 bg-brand-navy text-brand-light text-center">
         <div className="container mx-auto max-w-3xl">
@@ -595,7 +587,6 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-
       {/* FAQ Section with Schema Markup */}
       <section className="py-20 px-6 bg-white">
         <div className="container mx-auto max-w-4xl">
@@ -665,7 +656,6 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-
       {/* Footer */}
       <footer className="bg-gray-900 text-white py-12">
         <div className="container mx-auto px-6">
