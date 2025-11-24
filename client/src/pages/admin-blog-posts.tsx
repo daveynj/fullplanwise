@@ -99,6 +99,7 @@ export default function AdminBlogPosts() {
       });
     },
     onError: (error: any) => {
+      console.error('Update error:', error);
       toast({
         title: 'Error',
         description: error.message || 'Failed to update blog post',
@@ -185,17 +186,18 @@ export default function AdminBlogPosts() {
       publishDate: formData.publishDate,
       category: formData.category,
       tags: formData.tags.split(',').map(t => t.trim()).filter(t => t),
-      readTime: formData.readTime || null,
+      readTime: formData.readTime || undefined,
       featured: formData.featured,
-      // Convert empty strings to null for optional fields
-      featuredImageUrl: formData.featuredImageUrl || null,
-      featuredImageAlt: formData.featuredImageAlt || null,
-      metaTitle: formData.metaTitle || null,
-      metaDescription: formData.metaDescription || null,
+      // Convert empty strings to undefined for optional fields (same as create)
+      featuredImageUrl: formData.featuredImageUrl || undefined,
+      featuredImageAlt: formData.featuredImageAlt || undefined,
+      metaTitle: formData.metaTitle || undefined,
+      metaDescription: formData.metaDescription || undefined,
       // Convert date string to Date object
-      publishedAt: formData.publishedAt ? new Date(formData.publishedAt) : null,
+      publishedAt: formData.publishedAt ? new Date(formData.publishedAt) : undefined,
       isPublished: formData.isPublished,
     };
+    console.log('Update payload:', payload);
     updateMutation.mutate({ id: selectedPost.id, data: payload });
   };
 
