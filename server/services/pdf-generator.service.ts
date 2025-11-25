@@ -578,11 +578,7 @@ export class PDFGeneratorService {
           
           <div class="footer">
             <div class="footer-content">
-              <div class="generation-info">Generated on ${new Date().toLocaleDateString()}</div>
-              <div class="brand-footer">
-                <div class="powered-by">Powered by <strong><a href="https://planwiseesl.com" target="_blank" style="color: #051d40; text-decoration: none;">PlanwiseESL.com</a></strong></div>
-                <div class="footer-tagline">Create your own AI lessons at <a href="https://planwiseesl.com" target="_blank" style="color: #6B7280; text-decoration: underline;">planwiseesl.com</a></div>
-              </div>
+              <div class="generation-info">Generated instantly by PlanWiseESL.com. Want lessons like this? Tell your teacher!</div>
             </div>
           </div>
         </body>
