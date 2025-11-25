@@ -5,7 +5,6 @@ import { runwareService } from './runware.service';
 
 /**
  * Service for interacting with AI models via OpenRouter
- * Service for interacting with the Google Gemini AI API via OpenRouter
  */
 export class OpenRouterService {
   private apiKey: string;
@@ -20,9 +19,6 @@ export class OpenRouterService {
   
   /**
    * Generate a complete ESL lesson based on the provided parameters
-   * @param params Lesson generation parameters
-   * @param studentVocabulary Optional array of previously learned vocabulary words
-   * @returns Generated lesson content
    */
   async generateLesson(params: LessonGenerateParams, studentVocabulary: string[] = []): Promise<any> {
     try {
@@ -32,15 +28,12 @@ export class OpenRouterService {
 
       console.log('Starting OpenRouter AI lesson generation...');
       
-      // Create unique identifiers for this request (for logging purposes only)
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
       const topicSafe = params.topic.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 20);
       const requestId = `${topicSafe}_${timestamp}`;
       
-      // Construct the prompt
       const prompt = this.constructLessonPrompt(params, studentVocabulary);
       
-      // Configure the request for OpenRouter
       const requestData = {
         model: 'x-ai/grok-4.1-fast',
         messages: [
@@ -51,14 +44,13 @@ export class OpenRouterService {
         ],
         temperature: 0.3,
         top_p: 0.9,
-        max_tokens: 16384, // Increased token count from 8192 to 16384 for more detailed lessons
+        max_tokens: 16384,
       };
 
       console.log('Sending request to OpenRouter API...');
       console.log('Request payload:', JSON.stringify(requestData, null, 2).substring(0, 300));
 
       try {
-        // Make the request to OpenRouter
         const response: AxiosResponse = await axios.post(
           `${this.baseURL}/chat/completions`,
           requestData,
@@ -69,14 +61,13 @@ export class OpenRouterService {
               'HTTP-Referer': 'https://planwiseesl.com',
               'X-Title': 'PlanwiseESL'
             },
-            timeout: 60000 // 60 second timeout for lesson generation
+            timeout: 60000
           }
         );
 
         console.log('Received response from OpenRouter');
         console.log('Response status:', response.status);
         
-        // Check if response has expected structure
         if (!response.data || !response.data.choices || !Array.isArray(response.data.choices) || response.data.choices.length === 0) {
           console.error('Unexpected API response structure:', JSON.stringify(response.data, null, 2).substring(0, 1000));
           throw new Error(`Invalid API response structure. Expected 'choices' array but got: ${JSON.stringify(response.data).substring(0, 500)}`);
@@ -91,46 +82,36 @@ export class OpenRouterService {
         
         console.log('Successfully extracted content from API response');
         
-        console.log('Received response from OpenRouter API');
-        
         try {
-          // First, attempt to clean up the content and remove markdown code block markers
           let cleanedContent = text;
           
-          // Check if content starts with ` and ends with ` which is common in Gemini responses
           if (text.trim().startsWith('`') && text.trim().endsWith('`')) {
             console.log('Detected markdown code block, cleaning content');
             cleanedContent = text.replace(/`\s*/g, '').replace(/`\s*$/g, '').trim();
           }
           
-          // Clean responses that start with just "json" (without markdown)
           if (cleanedContent.trim().startsWith('json\n') || cleanedContent.trim().startsWith('json\r\n') || cleanedContent.trim().startsWith('json ')) {
             console.log('Detected "json" prefix, removing it');
             cleanedContent = cleanedContent.trim().replace(/^json\s*[\r\n\s]+/, '');
           }
           
-          // Clean any other common AI response prefixes
           cleanedContent = cleanedContent.trim().replace(/^(Here's the|Here is the|The following is the)\s*[\w\s]*:?\s*[\r\n]*/, '');
           cleanedContent = cleanedContent.trim().replace(/^JSON\s*[\r\n]+/, '');
           
-          // Clean leading/trailing quotes that sometimes wrap the entire JSON
           if (cleanedContent.startsWith('"') && cleanedContent.endsWith('"')) {
             console.log('Removing wrapping quotes');
             cleanedContent = cleanedContent.slice(1, -1);
           }
           
-          // Now try to parse the cleaned content
           try {
             const jsonContent = JSON.parse(cleanedContent);
             console.log('Successfully parsed JSON content');
             
-            // Check if jsonContent has required structure
             if (jsonContent.title && jsonContent.sections && Array.isArray(jsonContent.sections)) {
               console.log('Lesson content has valid structure, applying quality control...');
               const validatedContent = await this.validateAndImproveContent(jsonContent, params);
               return await this.formatLessonContent(validatedContent);
             } else {
-              // Log more detailed diagnostic information 
               console.warn('Parsed JSON is missing required structure', JSON.stringify({
                 hasTitle: !!jsonContent.title,
                 hasSections: !!jsonContent.sections,
@@ -153,10 +134,8 @@ export class OpenRouterService {
               };
             }
           } catch (jsonError) {
-            // If we fail to parse as JSON, try to fix common JSON errors first
             console.error('Error parsing OpenRouter response as JSON:', jsonError);
             
-            // Log the first part of the text and position of error to help with debugging
             const errorMessage = jsonError instanceof Error ? jsonError.message : 'Unknown JSON error';
             const errorPosition = errorMessage.match(/position (\d+)/)?.[1];
             
@@ -166,25 +145,22 @@ export class OpenRouterService {
             
             console.warn('Response text around error:', textPreview);
             
-            // Attempt to fix common JSON errors
             console.log('Attempting to fix common JSON formatting errors...');
             
             try {
-              // Common JSON fixes
               let fixedContent = cleanedContent
-                .replace(/,\s*}/g, '}')           // Remove trailing commas in objects
-                .replace(/,\s*\]/g, ']')          // Remove trailing commas in arrays
-                .replace(/,(\s*["']?\s*[}\]])/g, '$1') // More aggressive trailing comma removal
-                .replace(/([^\\])(\\)([^"\\\/bfnrtu])/g, '$1\\\\$3')  // Fix unescaped backslashes
-                .replace(/([^\\])\\'/g, "$1'")    // Remove escaping from single quotes
-                .replace(/\r?\n|\r/g, ' ')        // Replace newlines with spaces
-                .replace(/"\s+([^"]*)\s+"/g, '"$1"') // Fix spaces in JSON keys
-                .replace(/(['"])([\w]+)(['"]):/g, '"$2":') // Ensure property names use double quotes
-                .replace(/,\s*,/g, ',')           // Fix double commas
-                .replace(/"\s*"([^"]*)\s*"/g, '"$1"') // Fix broken quoted strings
-                .replace(/,\s*"([^"]*)",\s*"can\s+lea/g, '", "can lea'); // Fix the specific error pattern from logs
+                .replace(/,\s*}/g, '}')
+                .replace(/,\s*\]/g, ']')
+                .replace(/,(\s*["']?\s*[}\]])/g, '$1')
+                .replace(/([^\\])(\\)([^"\\\/bfnrtu])/g, '$1\\\\$3')
+                .replace(/([^\\])\\'/g, "$1'")
+                .replace(/\r?\n|\r/g, ' ')
+                .replace(/"\s+([^"]*)\s+"/g, '"$1"')
+                .replace(/(['"])([\w]+)(['"]):/g, '"$2":')
+                .replace(/,\s*,/g, ',')
+                .replace(/"\s*"([^"]*)\s*"/g, '"$1"')
+                .replace(/,\s*"([^"]*)",\s*"can\s+lea/g, '", "can lea');
                 
-              // Handle other common errors
               let inString = false;
               let escaped = false;
               let fixedChars = [];
@@ -193,7 +169,6 @@ export class OpenRouterService {
                 const char = fixedContent[i];
                 
                 if (escaped) {
-                  // Handle escaped characters
                   escaped = false;
                   fixedChars.push(char);
                 } else if (char === '\\') {
@@ -203,21 +178,17 @@ export class OpenRouterService {
                   inString = !inString;
                   fixedChars.push(char);
                 } else if (!inString && (char === ' ' || char === '\t' || char === '\n' || char === '\r')) {
-                  // Skip extra whitespace outside strings
                   continue;
                 } else {
                   fixedChars.push(char);
                 }
               }
               
-              // Create final fixed content
               const finalFixedContent = fixedChars.join('');
               
-              // Try parsing again with fixed content
               const jsonContent = JSON.parse(finalFixedContent);
               console.log('Successfully parsed JSON after applying fixes!');
               
-              // Validate structure after fixing
               if (jsonContent.title && jsonContent.sections && Array.isArray(jsonContent.sections)) {
                 console.log('Fixed content has valid structure, applying quality control...');
                 const validatedContent = await this.validateAndImproveContent(jsonContent, params);
@@ -227,44 +198,35 @@ export class OpenRouterService {
               }
             } catch (fixError) {
               console.error('Error parsing even after fixes:', fixError);
-              
-              // If still failing, throw error to trigger fallback
               throw new Error(`JSON parsing failed even after attempted fixes: ${errorMessage}`);
             }
           }
         } catch (error) {
           console.error('Unexpected error processing OpenRouter response:', error);
-          // Propagate the error to trigger fallback
           throw new Error(`Error processing OpenRouter response: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
       } catch (error: any) {
-        // Enhanced error logging for axios errors
         if (error.response) {
-          // The request was made and the server responded with a status code outside 2xx
-          console.error('❌ OpenRouter API Error Response:');
+          console.error('OpenRouter API Error Response:');
           console.error('Status:', error.response.status);
           console.error('Status Text:', error.response.statusText);
           console.error('Headers:', JSON.stringify(error.response.headers, null, 2).substring(0, 500));
           console.error('Response Data Type:', typeof error.response.data);
           console.error('Response Data Preview:', JSON.stringify(error.response.data).substring(0, 500));
           
-          // Check if it's an authentication error
           if (error.response.status === 401 || error.response.status === 403) {
-            console.error('⚠️ AUTHENTICATION ERROR - Check OPENROUTER_API_KEY');
+            console.error('AUTHENTICATION ERROR - Check OPENROUTER_API_KEY');
           }
         } else if (error.request) {
-          // The request was made but no response was received
-          console.error('❌ No response received from OpenRouter API');
+          console.error('No response received from OpenRouter API');
           console.error('Request URL:', error.config?.url);
           console.error('Request Method:', error.config?.method);
         } else {
-          // Something happened in setting up the request
-          console.error('❌ Error setting up request:', error.message);
+          console.error('Error setting up request:', error.message);
         }
         
         console.error('Error during OpenRouter API request:', error.message);
         
-        // Determine if this is a content policy error
         const isPolicyError = error.message && (
           error.message.includes('content policy') || 
           error.message.includes('SAFETY') || 
@@ -272,7 +234,6 @@ export class OpenRouterService {
           error.message.includes('not appropriate')
         );
         
-        // For policy errors, return error object; otherwise propagate to trigger fallback
         if (isPolicyError) {
           return {
             title: `Lesson on ${params.topic}`,
@@ -287,7 +248,6 @@ export class OpenRouterService {
             ]
           };
         } else {
-          // For technical errors, throw to trigger fallback
           throw error;
         }
       }
@@ -298,660 +258,339 @@ export class OpenRouterService {
   }
   
   /**
-   * Constructs a structured prompt for the AI model
-   * Constructs a structured prompt for the Gemini AI model
+   * Constructs a natural language prompt for the AI model to generate ESL lessons
    */
   private constructLessonPrompt(params: LessonGenerateParams, studentVocabulary: string[] = []): string {
-    const { cefrLevel, topic, focus, lessonLength, additionalNotes } = params;
+    const { cefrLevel, topic, focus, lessonLength } = params;
     
-    // We'll set some variables to match what the system prompt expects
-    const targetLevel = cefrLevel;
-    const text = topic;
-    const minVocabCount = 5;
-    const maxVocabCount = 5;
+    const levelGuidance = this.getLevelGuidance(cefrLevel);
     
-    // Build vocabulary instruction
-    const vocabularyInstruction = studentVocabulary.length > 0 
-      ? `\n\n🎯 STUDENT VOCABULARY HISTORY:
-This student has already learned the following vocabulary words in previous lessons:
-${studentVocabulary.join(', ')}
+    const vocabularyHistoryNote = studentVocabulary.length > 0 
+      ? `
 
-IMPORTANT INSTRUCTIONS:
-✅ DO: You MAY use these words naturally in your reading texts, discussion questions, and comprehension questions - BUT ONLY when they fit the context organically and enhance the natural flow of the text. Never force these words into the lesson just because they're available.
+STUDENT'S PREVIOUS VOCABULARY:
+This student has already learned these words: ${studentVocabulary.join(', ')}
 
-❌ DON'T: 
-- Include these words as the FOCUS VOCABULARY words for this lesson - they've already been taught.
-- Force these words into the reading text in unnatural or contrived ways
-- Prioritize using these words over creating authentic, engaging content
-
-Instead, choose NEW vocabulary words that:
-- Build upon their existing knowledge
-- Are appropriately challenging for ${params.cefrLevel} level
-- Are relevant to the topic "${params.topic}"
-- Help the student progress in their language learning journey
-
-KEY PRINCIPLE: Prioritize creating natural, authentic, and engaging reading texts over vocabulary reinforcement. The student's previously learned words are available to you if they happen to fit naturally, but creating high-quality, natural-sounding content is MORE IMPORTANT than incorporating their learned vocabulary. Only use these words when they genuinely enhance the text - not as a checklist to complete.`
+You may use these words naturally when they fit, but choose 5 NEW words as the focus vocabulary for this lesson. Prioritize creating engaging content over forcing in previously learned words.`
       : '';
-    
-    // System instruction part
-    const systemInstruction = `You are an expert ESL teacher with comprehensive knowledge of the Cambridge English Vocabulary Profile (EVP). You are tasked with creating a pedagogically sound, engaging lesson on "${params.topic}" for ${params.cefrLevel} students.
 
-CRITICAL: You must follow ALL instructions in this prompt precisely. Every requirement, format specification, and quality standard outlined below is mandatory. Pay particular attention to:
-- EVP vocabulary standards for ${params.cefrLevel}
-- JSON output format requirements
-- Grammatical accuracy in all exercises
-- Level-appropriate content complexity
+    const prompt = `You are an expert ESL teacher creating a ${lessonLength}-minute lesson on "${topic}" for ${cefrLevel} (${levelGuidance.description}) students.
 
-Your expertise in ESL pedagogy and the Cambridge EVP framework is essential for creating an effective lesson that meets professional teaching standards.
+CRITICAL: Return ONLY valid JSON. Start with { and end with }. No markdown, no explanations, no text before or after.
+${vocabularyHistoryNote}
+${params.targetVocabulary ? `\nREQUIRED VOCABULARY: Include these specific words: ${params.targetVocabulary}` : ''}
 
-## 🚨 OUTPUT FORMAT (CRITICAL)
-
-Your response MUST be:
-1. **Valid JSON only** - Start with { and end with }
-2. **No markdown** - No \`\`\`json wrappers or explanatory text
-3. **Complete arrays** - Never use counts (❌ "paragraphs": 5) - always full content (✅ "paragraphs": ["text...", "text..."])
-4. **Proper structure** - All sections complete with actual content, not placeholders
-
-✅ Correct: {"title": "Lesson Title", "sections": [...]}
-❌ Wrong: \`\`\`json {"title": "..."}\`\`\` or Here's your lesson: {...}
-
-## EDGE CASES
-
-${vocabularyInstruction}
-
-${params.targetVocabulary ? `**Required Vocabulary:** You MUST include these words: ${params.targetVocabulary}` : ''}
-
-**Warm-up Guidelines:**
-- Never reference pictures/images in warm-up activities
-- Questions activate prior knowledge about "${params.topic}"
-- Focus on personal experience and universal concepts
-- Prepare students for vocabulary and reading content
-
-**Pronunciation Format:**
-Each vocabulary word needs: syllables array, stressIndex number, phoneticGuide string
-- Use English letters and hyphens only (e.g., "AS-tro-naut" or "eks-PLOR-ay-shun")
-- NO IPA symbols
-
-## CONTENT STANDARDS
-
-**Writing Style:**
-- Use natural, engaging language appropriate for ${params.cefrLevel}
-- Balance authenticity with accessibility
-- Avoid textbook language - model native-like expression
-- Vary sentence structures and maintain consistent voice
-- Create genuine interest through vivid, specific details
-- **For A1, A2, and B1 levels:** Use concrete, literal language. Avoid abstract concepts or idiomatic phrases (e.g., instead of "This setup helps," say "This arrangement helps").
-
-**Level-Appropriate Content:**
-- **CRITICAL VOCABULARY RULE:** All supporting words in the reading text (words that are NOT the 5 key vocabulary terms) **MUST** be from a CEFR level *below* the lesson's target level. For example, in a B1 lesson, supporting words must be A1 or A2 level.
-
-**Level-Appropriate Content:**
-- Vocabulary matches ${params.cefrLevel} (not taught at lower levels)
-- Question complexity fits cognitive level
-- Conceptual approach matches ${params.cefrLevel} capabilities
-- Grammar aligns with level (A1: present simple, B1+: conditionals, etc.)
-- **A1/A2 GRAMMAR RESTRICTION:** For A1 and A2 lessons, strictly use simple present and simple past tenses. Avoid complex structures like the passive voice, conditional tenses (e.g., "if..."), or the present perfect tense.
-
-**Question Quality:**
-- Discussion: Elicit more than yes/no; build on lesson concepts; encourage critical thinking
-- Comprehension: Test genuine understanding; progress from literal to applied; avoid ambiguity
-
-## 🚨 KEY REQUIREMENTS
-
-**Reading Text:** Must contain EXACTLY 5 paragraphs in the "paragraphs" array. Each paragraph complete with multiple sentences (A1: 2-3, B1: 3-4, C1: 4-5 sentences). All 5 paragraphs form one cohesive reading passage.
-
-**Discussion Questions:** Each question MUST have its own paragraphContext field (3-5 sentences) providing background information at appropriate ${params.cefrLevel} level, leading naturally into the question.
-
-**Image Prompts:**
-Create 50-80 word scenario-based prompts showing the situation being discussed.
-
-Formula: "[Scenario from paragraphContext]. [Characters in situation]. [Action embodying the question]. [Environmental/emotional context]. Realistic illustration, natural lighting, engaging composition, clear storytelling. No text visible."
-
-Example: "Modern apartment at evening. Professional at laptop with work documents, family photos nearby untouched. Person looking thoughtfully between work screen and personal items, showing tension between responsibilities. Warm lighting contrasting work and personal space. Realistic illustration, natural lighting, engaging composition, clear storytelling. No text visible."
+LESSON CONTEXT:
+This is for a 1-on-1 online class via screen sharing. Create engaging, interactive content. Focus area: "${focus}".
 
 ---
 
-## SEQUENTIAL WORKFLOW
+CREATING YOUR LESSON:
 
-### STEP 1: Foundation Analysis
+STEP 1: SELECT 5 VOCABULARY WORDS
 
-Analyze "${params.topic}" for ${params.cefrLevel} students:
+Choose 5 words appropriate for ${cefrLevel} using the Cambridge English Vocabulary Profile. ${levelGuidance.vocabularyGuidance}
 
-**Cognitive Focus:**
-${params.cefrLevel === 'A1' ? 'Concrete, observable aspects students can directly experience' : params.cefrLevel === 'A2' ? 'Personal experiences and simple social interactions' : params.cefrLevel === 'B1' ? 'Practical problems affecting daily life' : params.cefrLevel === 'B2' ? 'Abstract concepts requiring analysis' : params.cefrLevel === 'C1' ? 'Sophisticated concepts requiring synthesis' : 'Expert-level analysis with nuanced understanding'}
+Ask yourself: Would a ${cefrLevel} student encounter and need this word? Is it useful for discussing "${topic}"? Can it be defined using simpler vocabulary?
 
-**Vocabulary Base:**
-${params.cefrLevel === 'A1' ? 'Top 1,000 basic daily words' : params.cefrLevel === 'A2' ? 'Top 2,000 personal experience words' : params.cefrLevel === 'B1' ? 'Top 3,000 functional words' : params.cefrLevel === 'B2' ? '3,000+ academic/professional words' : params.cefrLevel === 'C1' ? '5,000+ advanced words' : 'Expert-level specialized terminology'}
+Each word needs:
+- term, partOfSpeech
+- definition (clear and simple, ${levelGuidance.definitionGuidance})
+- example (natural usage sentence)
+- collocations (2-3 common phrases)
+- wordFamily (related word forms with description)
+- usageNotes (when and how to use it)
+- pronunciation with syllables array, stressIndex number, and phoneticGuide using English letters only (like "eg-ZAM-pul"), no IPA symbols
+- imagePrompt (40-80 words describing a scene that illustrates the word, ending with "No text visible")
+- semanticMap with synonyms, antonyms, relatedConcepts, contexts, and associatedWords
 
-**Topic Approach:**
-${params.cefrLevel === 'A1' ? 'Basic descriptions and immediate needs' : params.cefrLevel === 'A2' ? 'Personal experiences and simple opinions' : params.cefrLevel === 'B1' ? 'Practical applications and problem-solving' : params.cefrLevel === 'B2' ? 'Analytical discussion and evaluation' : params.cefrLevel === 'C1' ? 'Sophisticated analysis and synthesis' : 'Expert-level discourse and critical evaluation'}
+STEP 2: WRITE THE READING TEXT
 
-→ After analyzing the foundation, proceed to vocabulary selection.
+Create a reading passage of ${levelGuidance.readingLength} in exactly 5 paragraphs. This should spark discussion, not just be reading practice.
 
-### STEP 2: Vocabulary Selection
+${levelGuidance.readingGuidance}
 
-🚨 **USE CAMBRIDGE ENGLISH VOCABULARY PROFILE (EVP) STANDARDS**
+Include all 5 vocabulary words naturally, each appearing 2-3 times with context clues. Keep vocabulary density to about 1 new word per 25 words.
 
-Select vocabulary using Cambridge EVP for ${params.cefrLevel}. Verify each word meets EVP standards:
+STEP 3: CREATE 5 VOCABULARY CHECK QUESTIONS
 
-**${params.cefrLevel} EVP Standards:**
-${params.cefrLevel === 'A1' ? `- Consult Cambridge EVP A1 vocabulary list directly
-- Avoid vocabulary from B1 and higher levels
-- Context: Basic daily needs and personal information` : params.cefrLevel === 'A2' ? `- Consult Cambridge EVP A2 vocabulary list directly
-- Avoid vocabulary from B2 and higher levels
-- Context: Personal experiences and simple social situations` : params.cefrLevel === 'B1' ? `- Consult Cambridge EVP B1 vocabulary list directly
-- Avoid vocabulary from B2/C1 and higher levels
-- Context: Practical problem-solving and expressing opinions with reasons` : params.cefrLevel === 'B2' ? `- Consult Cambridge EVP B2 vocabulary list directly
-- Avoid vocabulary from C1/C2 levels
-- Context: Academic discussion and professional contexts` : params.cefrLevel === 'C1' ? `- Consult Cambridge EVP C1 vocabulary list directly
-- Avoid vocabulary from C2 level unless necessary
-- Context: Sophisticated analysis and expert-level discussion` : `- Consult Cambridge EVP C2 vocabulary list directly
-- Use the full range of advanced vocabulary
-- Context: Complete mastery of English vocabulary`}
+Write exactly 5 questions testing vocabulary understanding (one per word). These test whether students know the vocabulary, NOT whether they remember facts from the reading.
 
-**EVP Checklist (verify each word):**
-✓ Appears in Cambridge EVP at ${params.cefrLevel} or below
-✓ NOT from higher CEFR level
-✓ Serves genuine communicative function
-✓ Similar words from lower levels already known
+Good formats:
+- "What does [word] mean?"
+- "Which sentence uses [word] correctly?"
+- "In which situation would you use [word]?"
 
-**🚨 SELF-CHECK BEFORE PROCEEDING:**
-Before finalizing your vocabulary selection, CONFIRM EACH WORD against EVP criteria:
-1. For each candidate word, verify it meets ${params.cefrLevel} EVP standards
-2. Check it's NOT from a higher CEFR level (e.g., if ${params.cefrLevel}, avoid ${params.cefrLevel === 'A1' ? 'A2+' : params.cefrLevel === 'A2' ? 'B1+' : params.cefrLevel === 'B1' ? 'B2+' : params.cefrLevel === 'B2' ? 'C1+' : 'C2+'} words)
-3. Confirm it serves a genuine communicative need for "${params.topic}"
-4. Ensure it can be defined using vocabulary 2+ levels below
-Only proceed with words that pass ALL checks.
+Avoid: "According to the passage..." or "In the reading..." - these test reading recall, not vocabulary.
 
-**Vocabulary Structure (all fields required):**
-Each word needs: term, partOfSpeech, coreDefinition (using vocab 2+ levels below), simpleExplanation (2-3 sentences), contextualMeaning (relates to "${params.topic}"), levelAppropriateExample, commonCollocations (3 items), additionalExamples (formal/informal/personal - 3 items), definition (legacy), example (legacy), wordFamily {words, description}, collocations (3 items), usageNotes, pronunciation {syllables, stressIndex, phoneticGuide}, imagePrompt, semanticMap {synonyms, antonyms, relatedConcepts, contexts, associatedWords}
+Distribute correct answers across positions A, B, C, D. Don't put all correct answers in the same position.
 
-**Definition Writing Principle:**
-Write definitions that students can easily understand at first reading. Use simple, clear language that directly explains the meaning without complex vocabulary or abstract concepts. The definition should feel natural and conversational, as if explaining the word to a friend. Prioritize clarity and accessibility over technical precision - the student should immediately grasp the meaning from your definition.
+STEP 4: DESIGN 3 SENTENCE FRAMES
 
-**Definition Standards:**
-${params.cefrLevel === 'A1' || params.cefrLevel === 'A2' ? `Use top ${params.cefrLevel === 'A1' ? '500' : '1,000'} words, max ${params.cefrLevel === 'A1' ? '8' : '10'} words, present tense, concrete examples` : params.cefrLevel === 'B1' ? `Use A2 vocab + common B1 words, max 12 words` : params.cefrLevel === 'B2' ? `Use B1 vocab, max 15 words, focus on precision` : `Use sophisticated vocab appropriately, maintain clarity`}
+Create 3 sentence frames for practicing ideas about "${topic}". Each needs three tiers:
+- emerging (simplest, maximum support)
+- developing (moderate complexity)
+- expanding (more sophisticated for confident students)
 
-**Integration Requirements:**
-- Each word appears in reading with 2-3 context clues
-- Max 1 new word per 25 words of text
-- Words spaced throughout, not clustered
+${levelGuidance.sentenceFrameGuidance}
 
-**Vocabulary Image Prompts:**
-40-80 words showing word meaning in context of "${params.topic}". Include: specific setting, character(s) showing the concept, action/state, context clues, mood. End with: "Realistic educational illustration, warm natural lighting, clear focal point. No text visible."
+Include 3 model responses per tier and teaching notes with modeling tips, guided practice, independent use guidance, and fading strategy.
 
-SELECT EXACTLY 5 VOCABULARY WORDS meeting all criteria above.
+${levelGuidance.needsLowerLevelScaffolding ? 'Include a "lowerLevelScaffolding" object with sentenceWorkshop, patternTrainer, and visualMaps.' : ''}
 
-→ After selecting vocabulary, integrate them into the reading text.
+STEP 5: WRITE 5 DISCUSSION QUESTIONS
 
-### STEP 3: Reading Text Development
+Create 5 discussion questions about "${topic}". Each needs:
+- paragraphContext (3-5 sentences at ${cefrLevel} level providing background)
+- question (engaging, invites personal response)
+- imagePrompt (50-80 words describing a related scene, ending with "No text visible")
 
-**Purpose:** Create a conversation catalyst for speaking practice about "${params.topic}".
+${levelGuidance.discussionGuidance}
 
-**Requirements:**
-- ${params.cefrLevel === 'A1' ? '80-120 words' : params.cefrLevel === 'A2' ? '100-150 words' : params.cefrLevel === 'B1' ? '120-180 words' : params.cefrLevel === 'B2' ? '150-220 words' : '180-250 words'} total length
-- Each vocabulary word appears 2-3 times with context clues
-- Begin with familiar vocabulary, progress through connected ideas
-- Include concrete examples and relatable scenarios
-- End connecting to students' experiences
+Make questions culturally inclusive and globally accessible.
 
-**Vocabulary Integration:**
-- First appearance: context supports understanding
-- Subsequent uses: show different usage patterns
-- Include 1-2 related words/synonyms
-- Max 1 new word per 25 words
+STEP 6: ADD PRACTICE ACTIVITIES
 
-**Contextual Support:**
-- Surrounding sentences support vocabulary comprehension
-- Use appropriate signal words and transitions for ${params.cefrLevel}
-- Balance new vocabulary with familiar language
-- ${params.cefrLevel === 'A1' || params.cefrLevel === 'A2' ? `Simple sentences, ${params.cefrLevel === 'A1' ? '6-8' : '8-10'} words average` : params.cefrLevel === 'B1' ? '10-12 words per sentence average, use because/so/although' : params.cefrLevel === 'B2' ? '12-15 words per sentence average, complex connectors' : 'Flexible length with sophisticated structures'}
+Cloze exercise: Create a fill-in-the-blank paragraph using lesson vocabulary. Format blanks as [1:word], [2:word], etc. The wordBank contains base forms; add grammatical endings after the bracket when needed (like "[1:challenge]s" for plural).
 
-**Validation:**
-✓ Students can infer vocabulary from context
-✓ Each paragraph contributes to understanding
-✓ Sentence structures varied but appropriate
-✓ Text creates discussion opportunities
+Sentence unscramble: Create 3 sentences using lesson vocabulary. Provide words in scrambled order and the correct sentence.
 
-**🚨 SELF-CHECK - Reading Text:**
-Before proceeding, verify your reading text meets ALL requirements:
-1. Word count: ${params.cefrLevel === 'A1' ? '80-120' : params.cefrLevel === 'A2' ? '100-150' : params.cefrLevel === 'B1' ? '120-180' : params.cefrLevel === 'B2' ? '150-220' : '180-250'} words total
-2. Each of the 5 vocabulary words appears 2-3 times with context clues
-3. Vocabulary density: maximum 1 new word per 25 words
-4. Sentence complexity appropriate for ${params.cefrLevel} (${params.cefrLevel === 'A1' ? '6-8' : params.cefrLevel === 'A2' ? '8-10' : params.cefrLevel === 'B1' ? '10-12' : params.cefrLevel === 'B2' ? '12-15' : 'flexible'} words average)
-5. Text creates natural opportunities for discussion
-6. All vocabulary is contextually supported for student comprehension
-Only proceed if ALL checks pass.
+STEP 7: CREATE 5 QUIZ QUESTIONS
 
-→ After creating the reading text, design comprehension questions.
+Write 5 quiz questions about the lesson. Mix multiple choice and true/false. Vary correct answer positions and include clear explanations.
 
-### STEP 4: Vocabulary Comprehension Questions
+---
 
-Create EXACTLY 5 questions - one for each of the 5 KEY VOCABULARY WORDS:
+BEFORE GENERATING:
 
-**CRITICAL - Focus on VOCABULARY, not reading facts:**
-- Each question must test understanding of ONE of the 5 target vocabulary words
-- Create exactly ONE question per vocabulary word (5 words = 5 questions)
-- Test word meaning, usage, context, and application
-- Students must demonstrate they understand the VOCABULARY, not just recall facts from the text
-- Question types: "Which sentence uses [word] correctly?", "What does [word] mean?", "In which situation would you use [word]?", "Which word best describes...?"
+Verify: 5 vocabulary words with all fields, 5 reading paragraphs, 5 comprehension questions (one per vocab word), 3 sentence frames with tiered scaffolding, 5 discussion questions with paragraphContext and imagePrompt, 5 quiz questions. All image prompts end with "No text visible". Same 5 vocabulary words in warmup.targetVocabulary and vocabulary section.
 
-**FORBIDDEN PHRASES - DO NOT USE:**
-❌ "in the context of the reading"
-❌ "in the passage"
-❌ "according to the text"
-❌ "How is [word] used in the passage?"
-❌ "What does [word] mean in the reading?"
-These phrases make it a reading comprehension question, NOT a vocabulary question!
+---
 
-**CORRECT APPROACH:**
-✅ "What does [word] mean?"
-✅ "Which sentence uses [word] correctly?"
-✅ "In which situation would you use [word]?"
-✅ "The word [word] best describes something that is..."
-
-**Approach:**
-- Test vocabulary at appropriate depth for ${params.cefrLevel}
-- Include definition questions, usage questions, and contextual application questions
-- Each of the 5 vocabulary words MUST appear in exactly one question
-- Use question formats appropriate for ${params.cefrLevel}
-- Avoid ambiguity
-
-**🚨 ANSWER RANDOMIZATION - CRITICAL:**
-The correct answer MUST NOT always be in the same position. Distribute correct answers across different positions:
-- Question 1: Correct answer in position A, B, C, or D (randomize)
-- Question 2: Correct answer in a DIFFERENT position than Question 1
-- Question 3: Correct answer in a DIFFERENT position than Questions 1 & 2
-- Continue varying positions - DO NOT put all correct answers in position B or any single position
-- For True/False questions, vary between True and False as correct answers
-
-**🚨 SELF-CHECK - Vocabulary Comprehension Questions:**
-Before proceeding, verify your comprehension questions meet ALL requirements:
-1. Created EXACTLY 5 questions (one per vocabulary word - confirm exact count)
-2. Each question tests understanding of ONE specific vocabulary word from the 5 target words (not reading facts)
-3. All 5 vocabulary words are covered (each word has exactly one question)
-4. Questions test word meaning, usage, or contextual application
-5. Cognitive depth appropriate for ${params.cefrLevel} (not too simple/complex)
-6. All questions are clear, unambiguous, and test VOCABULARY knowledge
-7. Variety of question types used (definition, usage, context, application)
-8. CRITICAL: NO forbidden phrases used ("in the context of the reading", "in the passage", "according to the text")
-9. CRITICAL: Correct answers are in DIFFERENT positions (verify positions: should be distributed, NOT all in position B)
-Only proceed if ALL checks pass.
-
-→ After creating comprehension questions, design sentence frames.
-
-### STEP 5: Sentence Frames
-
-🚨 **CEFR-SPECIFIC FRAMES REQUIRED**
-
-Generate 3 pedagogical sentence frames for ${params.cefrLevel} students discussing "${params.topic}". Each frame needs tiered scaffolding (emerging/developing/expanding) matching ${params.cefrLevel} capabilities.
-
-**Level-Specific Frames:**
-${params.cefrLevel === 'A1' ? 'A1: Simple present ("___ is ___", "I like ___"), basic connectors, simple reasoning. Functions: Describing, expressing preferences.' : params.cefrLevel === 'A2' ? 'A2: Simple past/present, basic comparisons ("___ is more ___ than ___"), opinions with reasons. Functions: Comparing, describing experiences.' : params.cefrLevel === 'B1' ? 'B1: Opinions ("I believe that ___"), cause-effect, arguments with justification. Functions: Arguing, justifying, discussing advantages/disadvantages.' : params.cefrLevel === 'B2' ? 'B2: Analytical statements, contrasting viewpoints, hypothetical reasoning. Functions: Analyzing, evaluating, hypothesizing.' : params.cefrLevel === 'C1' ? 'C1: Sophisticated analysis, nuanced arguments, complex reasoning. Functions: Synthesizing, critiquing, complex arguments.' : 'C2: Expert discourse, critical evaluation, sophisticated synthesis. Functions: Expert analysis, nuanced debate.'}
-
-**Frame Requirements:**
-- Relate directly to "${params.topic}"
-- Include tiered scaffolding: emerging/developing/expanding
-- Model responses demonstrate natural ${params.cefrLevel} usage
-- Teaching notes provide I Do / We Do / You Do guidance
-${params.cefrLevel === 'A1' || params.cefrLevel === 'A2' || params.cefrLevel === 'B1' ? `- MUST include "lowerLevelScaffolding" with sentenceWorkshop, patternTrainer, visualMaps` : `- Do NOT include lowerLevelScaffolding for ${params.cefrLevel}`}
-
-**🚨 SELF-CHECK - Sentence Frames:**
-Before proceeding, verify your sentence frames meet ALL requirements:
-1. Created exactly 3 sentence frames related to "${params.topic}"
-2. Each frame has tiered scaffolding: emerging/developing/expanding
-3. Model responses demonstrate natural ${params.cefrLevel} language use
-4. Teaching notes include I Do / We Do / You Do guidance
-5. ${params.cefrLevel === 'A1' || params.cefrLevel === 'A2' || params.cefrLevel === 'B1' ? `"lowerLevelScaffolding" object present with sentenceWorkshop, patternTrainer, visualMaps` : `NO "lowerLevelScaffolding" included (not needed for ${params.cefrLevel})`}
-6. Frames are practical and usable for real classroom discussion
-Only proceed if ALL checks pass.
-
-→ After creating sentence frames, build discussion questions.
-
-### STEP 6: Discussion Questions
-
-**Cognitive Abilities for ${params.cefrLevel}:**
-${params.cefrLevel === 'A1' || params.cefrLevel === 'A2' ? `${params.cefrLevel === 'A1' ? 'Immediate personal experiences, basic preferences, concrete situations' : 'Personal experiences, simple comparisons, basic problem-solving'}. Provide concrete context, use familiar vocabulary, focus on accessible experiences.` : params.cefrLevel === 'B1' ? 'Express opinions with reasons, practical problems, lifestyle choices. Provide some context, allow independent thinking, include reason-giving opportunities.' : params.cefrLevel === 'B2' ? 'Analytical discussions, abstract concepts, multiple perspectives. Minimal scaffolding, open-ended questions requiring evaluation.' : params.cefrLevel === 'C1' || params.cefrLevel === 'C2' ? `${params.cefrLevel === 'C1' ? 'Sophisticated analysis, complex issues, well-structured arguments' : 'Expert-level discussions, nuanced argumentation, interdisciplinary topics'}. Minimal scaffolding, focus on synthesis and critical thinking.` : ''}
-
-**Question Tone:**
-${params.cefrLevel === 'C1' || params.cefrLevel === 'C2' ? 'Use direct, conversational language. Avoid verbose academic phrasing.' : 'Keep questions clear and appropriate for ${params.cefrLevel} level.'}
-
-**Warm-up Requirements:**
-- Questions MUST be directly related to "${params.topic}"
-- Include clear context (self-contained, understandable without lesson text)
-- NOT generic - specifically about "${params.topic}"
-- Culturally inclusive and globally accessible
-
-**🚨 SELF-CHECK - Discussion Questions:**
-Before proceeding, verify your discussion questions meet ALL requirements:
-1. Created exactly 5 discussion questions
-2. Each question has paragraphContext (3-5 sentences providing context)
-3. Each question has an imagePrompt (50-80 words, detailed, ends with "No text visible")
-4. Cognitive level appropriate for ${params.cefrLevel} (${params.cefrLevel === 'A1' || params.cefrLevel === 'A2' ? 'personal experiences, concrete situations' : params.cefrLevel === 'B1' ? 'opinions with reasons, practical problems' : 'analytical thinking, abstract concepts'})
-5. Questions are engaging and culturally inclusive
-6. All paragraphContext sections are unique and self-contained
-Only proceed if ALL checks pass.
-
-→ After creating discussion questions, validate integration.
-
-### STEP 7: Integration & Validation
-
-**🚨 COMPREHENSIVE FINAL SELF-CHECK:**
-
-Before generating the JSON, perform this complete validation:
-
-**A. Content Quality:**
-✓ Vocabulary appears in reading with context clues (2-3 times each)
-✓ Definitions use vocab 2+ levels below
-✓ Reading creates discussion opportunities
-✓ Questions connect to reading and vocabulary
-✓ Sentence frames use lesson vocabulary
-✓ All components match ${params.cefrLevel} level
-✓ Natural, cohesive lesson flow
-
-**B. Structural Requirements:**
-✓ Exactly 5 vocabulary words with ALL fields (pronunciation, semanticMap, imagePrompt, etc.)
-✓ Reading has exactly 5 paragraphs
-✓ Comprehension has EXACTLY 5 questions - one per vocabulary word - testing VOCABULARY (not reading facts)
-✓ CRITICAL: Comprehension questions do NOT use forbidden phrases ("in the context of the reading", "in the passage", etc.)
-✓ CRITICAL: Comprehension correct answers are in DIFFERENT positions (distributed across A/B/C/D, NOT all in position B)
-✓ Sentence frames has exactly 3 frames with tiered scaffolding
-✓ ${params.cefrLevel === 'A1' || params.cefrLevel === 'A2' || params.cefrLevel === 'B1' ? 'lowerLevelScaffolding present in sentence frames' : 'NO lowerLevelScaffolding in sentence frames'}
-✓ Discussion has exactly 5 questions with paragraphContext (3-5 sentences each)
-✓ Quiz has exactly 5 questions
-✓ CRITICAL: Quiz correct answers are in DIFFERENT positions (distributed across A/B/C/D, NOT all in position B)
-
-**C. JSON Format:**
-✓ Valid JSON structure (no syntax errors)
-✓ All required fields present
-✓ No placeholder text (e.g., "Complete...", "Example...")
-✓ All imagePrompts end with "No text visible"
-✓ pronunciation objects have syllables, stressIndex, phoneticGuide
-
-**D. Cross-Section Consistency:**
-✓ Same 5 vocabulary words in warmup.targetVocabulary and vocabulary section
-✓ Vocabulary integrated naturally throughout reading text
-✓ All sections relate cohesively to "${params.topic}"
-
-**Warm-up Clarification:**
-targetVocabulary field contains the same 5 words from vocabulary section (preview before formal introduction).
-
-Only proceed to generate JSON if ALL checks pass. FORMAT YOUR RESPONSE AS VALID JSON following the structure below exactly. Ensure all fields contain complete content. Do not use placeholders.
+JSON STRUCTURE (showing format - generate complete content for all items):
 
 {
-  "title": "Descriptive lesson title about ${text}",
+  "title": "Engaging title about ${topic}",
   "level": "${cefrLevel}",
   "focus": "${focus}",
   "estimatedTime": ${lessonLength},
   "sections": [
-    // WARMUP SECTION (Complete)
     {
       "type": "warmup",
       "title": "Warm-up Activity",
-      "content": "Complete description of the warm-up...",
-      "questions": ["Complete Question 1?", "Complete Question 2?", "Complete Question 3?", "Complete Question 4?", "Complete Question 5?"],
+      "content": "Brief warm-up description",
+      "questions": ["Question 1?", "Question 2?", "Question 3?", "Question 4?", "Question 5?"],
       "targetVocabulary": ["word1", "word2", "word3", "word4", "word5"],
-      "procedure": "Complete step-by-step instructions...",
-      "teacherNotes": "Complete teacher notes..."
+      "procedure": "Step-by-step instructions",
+      "teacherNotes": "Teaching tips"
     },
-    // READING SECTION (Complete)
     {
       "type": "reading",
-      "title": "Reading Text: [Actual Title]",
-      "introduction": "Complete introduction...",
-      "paragraphs": [
-        "Complete paragraph 1 text...",
-        "Complete paragraph 2 text...",
-        "Complete paragraph 3 text...",
-        "Complete paragraph 4 text...",
-        "Complete paragraph 5 text..."
-      ],
-      "teacherNotes": "Complete teacher notes..."
+      "title": "Reading Text: [Title]",
+      "introduction": "Brief setup",
+      "paragraphs": ["Paragraph 1...", "Paragraph 2...", "Paragraph 3...", "Paragraph 4...", "Paragraph 5..."],
+      "teacherNotes": "How to approach the reading"
     },
-    // VOCABULARY SECTION (Complete - 5 words)
     {
       "type": "vocabulary",
       "title": "Key Vocabulary",
       "words": [
         {
-          "term": "word1", "partOfSpeech": "noun", "definition": "Complete definition...", "example": "Complete example...",
-          "semanticGroup": "Group Name", 
-          "additionalExamples": ["Example 1", "Example 2"],
-          "wordFamily": {"words": ["related1", "related2"], "description": "How these words are related"},
-          "collocations": ["phrase1", "phrase2"], 
-          "usageNotes": "Complete usage notes...",
-          "teachingTips": "Complete tips...",
-          "pronunciation": {"syllables": ["syl"], "stressIndex": 0, "phoneticGuide": "guide"},
-          "imagePrompt": "An illustration showing the meaning of word1 clearly. No text visible.",
+          "term": "word",
+          "partOfSpeech": "noun",
+          "definition": "Clear, simple definition",
+          "example": "Natural example sentence",
+          "semanticGroup": "Category",
+          "additionalExamples": ["Formal example", "Informal example", "Personal example"],
+          "wordFamily": {"words": ["related1", "related2"], "description": "How they relate"},
+          "collocations": ["phrase 1", "phrase 2", "phrase 3"],
+          "usageNotes": "When and how to use",
+          "teachingTips": "Teaching suggestions",
+          "pronunciation": {"syllables": ["syl", "la", "bles"], "stressIndex": 1, "phoneticGuide": "SIL-uh-bulz"},
+          "imagePrompt": "Scene description showing the word's meaning. Setting and characters. Actions and emotions. Realistic educational illustration, warm lighting. No text visible.",
           "semanticMap": {
-            "synonyms": ["actual_synonym1", "actual_synonym2", "actual_synonym3"],
-            "antonyms": ["actual_antonym1", "actual_antonym2"], 
-            "relatedConcepts": ["actual_concept1", "actual_concept2", "actual_concept3"],
-            "contexts": ["actual_context1", "actual_context2", "actual_context3"],
-            "associatedWords": ["actual_word1", "actual_word2", "actual_word3"]
-          }
-        },
-        {
-          "term": "word2", "partOfSpeech": "verb", "definition": "Complete definition...", "example": "Complete example...",
-          "semanticGroup": "Group Name", 
-          "additionalExamples": ["Example 1", "Example 2"],
-          "wordFamily": {"words": ["related1", "related2"], "description": "How these words are related"},
-          "collocations": ["phrase1", "phrase2"], 
-          "usageNotes": "Complete usage notes...",
-          "teachingTips": "Complete tips...",
-          "pronunciation": {"syllables": ["syl"], "stressIndex": 0, "phoneticGuide": "guide"},
-          "imagePrompt": "An illustration showing the meaning of word2 clearly. No text visible.",
-          "semanticMap": {
-            "synonyms": ["actual_synonym1", "actual_synonym2", "actual_synonym3"],
-            "antonyms": ["actual_antonym1", "actual_antonym2"], 
-            "relatedConcepts": ["actual_concept1", "actual_concept2", "actual_concept3"],
-            "contexts": ["actual_context1", "actual_context2", "actual_context3"],
-            "associatedWords": ["actual_word1", "actual_word2", "actual_word3"]
-          }
-        },
-        {
-          "term": "word3", "partOfSpeech": "adj", "definition": "Complete definition...", "example": "Complete example...",
-          "semanticGroup": "Group Name", 
-          "additionalExamples": ["Example 1", "Example 2"],
-          "wordFamily": {"words": ["related1", "related2"], "description": "How these words are related"},
-          "collocations": ["phrase1", "phrase2"], 
-          "usageNotes": "Complete usage notes...",
-          "teachingTips": "Complete tips...",
-          "pronunciation": {"syllables": ["syl"], "stressIndex": 0, "phoneticGuide": "guide"},
-          "imagePrompt": "An illustration showing the meaning of word3 clearly. No text visible.",
-          "semanticMap": {
-            "synonyms": ["actual_synonym1", "actual_synonym2", "actual_synonym3"],
-            "antonyms": ["actual_antonym1", "actual_antonym2"], 
-            "relatedConcepts": ["actual_concept1", "actual_concept2", "actual_concept3"],
-            "contexts": ["actual_context1", "actual_context2", "actual_context3"],
-            "associatedWords": ["actual_word1", "actual_word2", "actual_word3"]
-          }
-        },
-        {
-          "term": "word4", "partOfSpeech": "adv", "definition": "Complete definition...", "example": "Complete example...",
-          "semanticGroup": "Group Name", 
-          "additionalExamples": ["Example 1", "Example 2"],
-          "wordFamily": {"words": ["related1", "related2"], "description": "How these words are related"},
-          "collocations": ["phrase1", "phrase2"], 
-          "usageNotes": "Complete usage notes...",
-          "teachingTips": "Complete tips...",
-          "pronunciation": {"syllables": ["syl"], "stressIndex": 0, "phoneticGuide": "guide"},
-          "imagePrompt": "An illustration showing the meaning of word4 clearly. No text visible.",
-          "semanticMap": {
-            "synonyms": ["actual_synonym1", "actual_synonym2", "actual_synonym3"],
-            "antonyms": ["actual_antonym1", "actual_antonym2"], 
-            "relatedConcepts": ["actual_concept1", "actual_concept2", "actual_concept3"],
-            "contexts": ["actual_context1", "actual_context2", "actual_context3"],
-            "associatedWords": ["actual_word1", "actual_word2", "actual_word3"]
-          }
-        },
-        {
-          "term": "word5", "partOfSpeech": "noun", "definition": "Complete definition...", "example": "Complete example...",
-          "semanticGroup": "Group Name", 
-          "additionalExamples": ["Example 1", "Example 2"],
-          "wordFamily": {"words": ["related1", "related2"], "description": "How these words are related"},
-          "collocations": ["phrase1", "phrase2"], 
-          "usageNotes": "Complete usage notes...",
-          "teachingTips": "Complete tips...",
-          "pronunciation": {"syllables": ["syl"], "stressIndex": 0, "phoneticGuide": "guide"},
-          "imagePrompt": "An illustration showing the meaning of word5 clearly. No text visible.",
-          "semanticMap": {
-            "synonyms": ["actual_synonym1", "actual_synonym2", "actual_synonym3"],
-            "antonyms": ["actual_antonym1", "actual_antonym2"], 
-            "relatedConcepts": ["actual_concept1", "actual_concept2", "actual_concept3"],
-            "contexts": ["actual_context1", "actual_context2", "actual_context3"],
-            "associatedWords": ["actual_word1", "actual_word2", "actual_word3"]
+            "synonyms": ["syn1", "syn2", "syn3"],
+            "antonyms": ["ant1", "ant2"],
+            "relatedConcepts": ["concept1", "concept2", "concept3"],
+            "contexts": ["context1", "context2", "context3"],
+            "associatedWords": ["assoc1", "assoc2", "assoc3"]
           }
         }
       ]
     },
-    // VOCABULARY CHECK SECTION (Complete - 5 questions, one per vocabulary word)
-    // CRITICAL: Questions test VOCABULARY understanding, NOT reading facts. NO phrases like "in the context of the reading" or "in the passage"
     {
       "type": "comprehension",
       "title": "Vocabulary Check",
       "questions": [
-        {"question": "What does 'word1' mean?", "options": ["Incorrect definition A", "Incorrect definition B", "Correct definition", "Incorrect definition D"], "answer": "Correct definition", "correctAnswer": "Correct definition", "explanation": "Word1 means..."},
-        {"question": "Which sentence uses 'word2' correctly?", "options": ["Correct usage sentence", "Incorrect usage B", "Incorrect usage C"], "answer": "Correct usage sentence", "correctAnswer": "Correct usage sentence", "explanation": "This sentence correctly uses word2 because..."},
-        {"question": "In which situation would you use 'word3'?", "options": ["Wrong context A", "Wrong context B", "Wrong context C", "Correct context"], "answer": "Correct context", "correctAnswer": "Correct context", "explanation": "Word3 is used when..."},
-        {"question": "The word 'word4' best describes something that is...", "options": ["Wrong description A", "Correct description", "Wrong description C"], "answer": "Correct description", "correctAnswer": "Correct description", "explanation": "Word4 describes..."},
-        {"question": "If something is 'word5', it means it is NOT...", "options": ["Wrong opposite A", "Wrong opposite B", "Wrong opposite C", "Correct opposite"], "answer": "Correct opposite", "correctAnswer": "Correct opposite", "explanation": "Word5 is the opposite of..."}
+        {
+          "question": "What does 'word1' mean?",
+          "options": ["Wrong A", "Correct answer", "Wrong C", "Wrong D"],
+          "answer": "Correct answer",
+          "correctAnswer": "Correct answer",
+          "explanation": "Explanation of why this is correct"
+        }
       ]
     },
-    // PEDAGOGICAL SENTENCE FRAMES (v2) - Generate 3 complete frames
     {
       "type": "sentenceFrames",
-      "version": "v2_pedagogical", 
-      "title": "Language Practice for ${params.topic}",
-      "introduction": "Practice expressing ideas about ${params.topic} with these sentence patterns designed for ${params.cefrLevel} students.",
+      "version": "v2_pedagogical",
+      "title": "Language Practice for ${topic}",
+      "introduction": "Practice expressing ideas about ${topic}.",
       "pedagogicalFrames": [
         {
-          "languageFunction": "Communication purpose...",
-          "grammarFocus": ["grammar1", "grammar2"],
+          "languageFunction": "Communication purpose",
+          "grammarFocus": ["grammar point 1", "grammar point 2"],
           "tieredFrames": {
-            "emerging": {"frame": "Complete frame...", "description": "How to use..."},
-            "developing": {"frame": "Complete frame...", "description": "How to use..."},
-            "expanding": {"frame": "Complete frame...", "description": "How to use..."}
+            "emerging": {"frame": "Simple frame...", "description": "How to use"},
+            "developing": {"frame": "Medium frame...", "description": "How to use"},
+            "expanding": {"frame": "Complex frame...", "description": "How to use"}
           },
           "modelResponses": {
-            "emerging": ["Example 1...", "Example 2...", "Example 3..."],
-            "developing": ["Example 1...", "Example 2...", "Example 3..."],
-            "expanding": ["Example 1...", "Example 2...", "Example 3..."]
+            "emerging": ["Example 1", "Example 2", "Example 3"],
+            "developing": ["Example 1", "Example 2", "Example 3"],
+            "expanding": ["Example 1", "Example 2", "Example 3"]
           },
           "teachingNotes": {
-            "modelingTips": "Complete tips...",
-            "guidedPractice": "Complete practice...",
-            "independentUse": "Complete guidance...",
-            "fadingStrategy": "Complete strategy..."
+            "modelingTips": "How to demonstrate",
+            "guidedPractice": "How to practice together",
+            "independentUse": "How students use independently",
+            "fadingStrategy": "How to reduce support"
           }
         }
-        // Generate 2 more frames following the same structure (3 total frames required)
-      ]
+      ]${levelGuidance.needsLowerLevelScaffolding ? `,
+      "lowerLevelScaffolding": {
+        "sentenceWorkshop": "Step-by-step guidance",
+        "patternTrainer": "Repeated practice approach",
+        "visualMaps": "Visual structure representations"
+      }` : ''}
     },
-    // CLOZE SECTION (Complete - Fill in the Blanks)
-    // 🚨 SELF-CHECK: Before finalizing, verify: (1) Gaps target key vocabulary/grammar appropriately, (2) WordBank contains all correct answers, (3) Text makes sense when read and is grammatically correct with blanks filled, (4) Difficulty matches ${params.cefrLevel}, (5) Format is [1:word], [2:word], etc
     {
       "type": "cloze",
       "title": "Fill in the Blanks",
-      "text": "Complete paragraph with blanks, using [1:word] format for the first blank, [2:word] for the second, etc. Use appropriate vocabulary from the lesson. CRITICAL GRAMMAR RULE: If a word from the wordBank needs grammatical modification (plural, verb tense, etc.), add the ending OUTSIDE the brackets. Examples: If wordBank contains 'challenge' but the sentence needs plural, write 'Many [1:challenge]s are...'. If wordBank contains 'work' but sentence needs past tense, write 'He [2:work]ed hard'. The wordBank always contains the BASE FORM, and you add grammatical endings (s, es, ed, ing, etc.) immediately after the closing bracket when needed.",
+      "text": "Paragraph with [1:word] format blanks. Add endings outside brackets like [2:work]ed.",
       "wordBank": ["word1", "word2", "word3", "word4", "word5"],
-      "teacherNotes": "Complete notes on how to use this exercise effectively. Remember: wordBank contains base forms only; grammatical modifications are added after the gap markers."
+      "teacherNotes": "How to use this exercise"
     },
-    // SENTENCE UNSCRAMBLE SECTION (Complete - Word Ordering)
-    // 🚨 SELF-CHECK: Before finalizing, verify: (1) All correctSentence values are grammatically perfect, (2) Scrambled words match the correct sentence exactly, (3) Sentences use lesson vocabulary, (4) Difficulty appropriate for ${params.cefrLevel}
     {
       "type": "sentenceUnscramble",
       "title": "Sentence Unscramble",
       "sentences": [
-        {
-          "words": ["Complete", "array", "of", "individual", "words", "in", "scrambled", "order"],
-          "correctSentence": "Complete array of individual words in correct order."
-        },
-        {
-          "words": ["Another", "set", "of", "words", "in", "scrambled", "order"],
-          "correctSentence": "Another set of words in correct order."
-        },
-        {
-          "words": ["One", "more", "sentence", "with", "words", "out", "of", "order"],
-          "correctSentence": "One more sentence with words in correct order."
-        }
+        {"words": ["scrambled", "words", "here"], "correctSentence": "Words here scrambled."},
+        {"words": ["another", "scrambled", "sentence"], "correctSentence": "Another scrambled sentence."},
+        {"words": ["third", "example", "sentence"], "correctSentence": "Third example sentence."}
       ],
-      "teacherNotes": "Complete notes on how to use this exercise effectively..."
+      "teacherNotes": "How to approach this activity"
     },
-    // DISCUSSION SECTION (Complete - 5 pairs)
     {
       "type": "discussion",
       "title": "Discussion Questions",
       "questions": [
         {
-          "paragraphContext": "Complete, unique context paragraph 1 (3-5 sentences)...",
-          "question": "Complete discussion question 1 related to paragraph 1?", 
-          "imagePrompt": "Complete image prompt for Q1 (no text)..."
-        },
-        {
-          "paragraphContext": "Complete, unique context paragraph 2 (3-5 sentences)...",
-          "question": "Complete discussion question 2 related to paragraph 2?", 
-          "imagePrompt": "Complete image prompt for Q2 (no text)..."
-        },
-        {
-          "paragraphContext": "Complete, unique context paragraph 3 (3-5 sentences)...",
-          "question": "Complete discussion question 3 related to paragraph 3?", 
-          "imagePrompt": "Complete image prompt for Q3 (no text)..."
-        },
-        {
-          "paragraphContext": "Complete, unique context paragraph 4 (3-5 sentences)...",
-          "question": "Complete discussion question 4 related to paragraph 4?", 
-          "imagePrompt": "Complete image prompt for Q4 (no text)..."
-        },
-        {
-          "paragraphContext": "Complete, unique context paragraph 5 (3-5 sentences)...",
-          "question": "Complete discussion question 5 related to paragraph 5?", 
-          "imagePrompt": "Complete image prompt for Q5 (no text)..."
+          "paragraphContext": "3-5 sentence context at ${cefrLevel} level providing background for the question.",
+          "question": "Engaging discussion question inviting personal response?",
+          "imagePrompt": "Scene description (50-80 words) showing the context. Setting, characters, actions, emotions. Realistic illustration, natural lighting. No text visible."
         }
       ]
     },
-    // QUIZ SECTION (Complete - 5 questions)
-    // 🚨 SELF-CHECK: Before finalizing, verify: (1) Exactly 5 questions created, (2) Variety of question types (multiple choice, true/false), (3) All options grammatically perfect, (4) Correct answers clearly match one option, (5) Explanations are clear and educational, (6) Difficulty appropriate for ${params.cefrLevel}, (7) CRITICAL: Correct answers are in DIFFERENT positions across questions - NOT all in position B or any single position - distribute across A, B, C, D and vary True/False
     {
       "type": "quiz",
       "title": "Knowledge Check",
       "questions": [
-        {"question": "Complete Quiz Q1?", "options": ["A", "B"], "answer": "A", "correctAnswer": "A", "explanation": "Complete explanation..."},
-        {"question": "Complete Quiz Q2?", "options": ["A", "B", "C"], "answer": "C", "correctAnswer": "C", "explanation": "Complete explanation..."},
-        {"question": "Complete Quiz Q3?", "options": ["A", "B", "C", "D"], "answer": "D", "correctAnswer": "D", "explanation": "Complete explanation..."},
-        {"question": "Complete Quiz Q4?", "options": ["True", "False"], "answer": "True", "correctAnswer": "True", "explanation": "Complete explanation..."},
-        {"question": "Complete Quiz Q5?", "options": ["True", "False"], "answer": "False", "correctAnswer": "False", "explanation": "Complete explanation..."}
+        {"question": "Quiz question?", "options": ["A", "B", "C", "D"], "answer": "B", "correctAnswer": "B", "explanation": "Why correct"},
+        {"question": "True or false?", "options": ["True", "False"], "answer": "True", "correctAnswer": "True", "explanation": "Why true"}
       ]
     }
   ]
 }
 
-🚨 FINAL REMINDER - OUTPUT FORMAT 🚨
+Generate complete content for ALL items: 5 vocabulary words, 5 paragraphs, 5 comprehension questions, 3 sentence frames, 5 discussion questions, 5 quiz questions.
 
-Your response MUST be:
-✅ ONLY valid JSON (no text before or after)
-✅ Starting with { and ending with }
-✅ No markdown code blocks or formatting
-✅ No explanatory text or commentary
-✅ Parseable directly as JSON without any preprocessing
+BEGIN JSON:`;
 
-WRONG EXAMPLES TO AVOID:
-❌ "Here is your lesson: {...}"
-❌ "\`\`\`json {...} \`\`\`"
-❌ "{...} Let me know if you need changes!"
-❌ "I've created a lesson about ${params.topic}: {...}"
-
-RIGHT FORMAT:
-✅ {"title":"...","level":"...","sections":[...]}
-
-BEGIN YOUR JSON RESPONSE NOW:`;
-
-    return systemInstruction;
+    return prompt;
   }
   
   /**
-   * Validate and improve the generated content for quality control
-   * NOTE: Validations removed to improve speed - trusting Grok-4 Fast to generate high-quality content
+   * Returns level-specific guidance for prompt construction
+   */
+  private getLevelGuidance(cefrLevel: string): {
+    description: string;
+    vocabularyGuidance: string;
+    definitionGuidance: string;
+    readingLength: string;
+    readingGuidance: string;
+    sentenceFrameGuidance: string;
+    discussionGuidance: string;
+    needsLowerLevelScaffolding: boolean;
+  } {
+    const guidance: Record<string, any> = {
+      'A1': {
+        description: 'Beginner',
+        vocabularyGuidance: 'Select only basic, high-frequency words for daily survival and immediate personal needs. Avoid abstract or complex words.',
+        definitionGuidance: 'use only the 500 most common words, under 8 words, present tense only',
+        readingLength: '80-120 words',
+        readingGuidance: 'Use very simple sentences of 6-8 words. Stick to present tense and simple past. Focus on concrete, observable things. Avoid idioms and abstract concepts.',
+        sentenceFrameGuidance: 'Use simple present patterns like "I like ___" or "___ is ___". Focus on basic descriptions and preferences.',
+        discussionGuidance: 'Ask about immediate personal experiences and basic preferences. Provide lots of concrete context. Keep questions answerable with simple sentences.',
+        needsLowerLevelScaffolding: true
+      },
+      'A2': {
+        description: 'Elementary',
+        vocabularyGuidance: 'Choose words relating to personal experiences and simple social situations that students can connect to daily life.',
+        definitionGuidance: 'use the top 1,000 words, under 10 words, present and simple past tense',
+        readingLength: '100-150 words',
+        readingGuidance: 'Use simple sentences of 8-10 words with basic connectors (and, but, because). Include simple past for experiences. Focus on relatable situations.',
+        sentenceFrameGuidance: 'Use simple comparisons like "___ is more ___ than ___" and basic opinions like "I think ___ is ___".',
+        discussionGuidance: 'Ask about personal experiences, simple comparisons, and basic opinions. Provide clear context.',
+        needsLowerLevelScaffolding: true
+      },
+      'B1': {
+        description: 'Intermediate',
+        vocabularyGuidance: 'Select words for discussing practical problems, expressing opinions with reasons, and talking about lifestyle choices. Avoid highly academic vocabulary.',
+        definitionGuidance: 'use A2 vocabulary plus common B1 words, under 12 words',
+        readingLength: '120-180 words',
+        readingGuidance: 'Use sentences of 10-12 words with connectors like because, so, although, however. Include opinions and reasons. Discuss practical topics.',
+        sentenceFrameGuidance: 'Include opinion expressions with reasons like "I believe that ___ because ___" and cause-effect structures.',
+        discussionGuidance: 'Ask questions requiring opinions with reasons. Students should discuss practical problems with some detail.',
+        needsLowerLevelScaffolding: true
+      },
+      'B2': {
+        description: 'Upper Intermediate',
+        vocabularyGuidance: 'Choose vocabulary for academic discussions and professional contexts. Students should express complex ideas and evaluate perspectives.',
+        definitionGuidance: 'use B1 vocabulary, focus on precision, under 15 words',
+        readingLength: '150-220 words',
+        readingGuidance: 'Use varied sentences of 12-15 words with sophisticated connectors. Include analytical content with multiple perspectives.',
+        sentenceFrameGuidance: 'Include analytical structures, contrasting viewpoints like "While some argue ___, others believe ___", and hypothetical reasoning.',
+        discussionGuidance: 'Ask analytical questions requiring evaluation and multiple perspectives. Minimal scaffolding needed.',
+        needsLowerLevelScaffolding: false
+      },
+      'C1': {
+        description: 'Advanced',
+        vocabularyGuidance: 'Select sophisticated vocabulary for nuanced expression and complex argumentation with near-native precision.',
+        definitionGuidance: 'use sophisticated vocabulary appropriately while maintaining clarity',
+        readingLength: '180-250 words',
+        readingGuidance: 'Use flexible sentence structures with sophisticated vocabulary. Include complex analysis and synthesis of ideas.',
+        sentenceFrameGuidance: 'Use sophisticated analytical structures and nuanced argumentation. Focus on synthesizing ideas and building complex arguments.',
+        discussionGuidance: 'Ask questions requiring sophisticated analysis and well-structured arguments on complex issues.',
+        needsLowerLevelScaffolding: false
+      },
+      'C2': {
+        description: 'Proficiency',
+        vocabularyGuidance: 'Use the full range of advanced and specialized vocabulary. Students are developing mastery-level precision.',
+        definitionGuidance: 'use precise academic vocabulary, prioritize nuance and accuracy',
+        readingLength: '180-250 words',
+        readingGuidance: 'Use expert-level language with subtle distinctions and nuanced expression reflecting native-speaker sophistication.',
+        sentenceFrameGuidance: 'Use expert discourse patterns with critical evaluation and sophisticated synthesis structures.',
+        discussionGuidance: 'Ask questions for expert-level discussion with nuanced argumentation demonstrating mastery-level abilities.',
+        needsLowerLevelScaffolding: false
+      }
+    };
+    
+    return guidance[cefrLevel] || guidance['B1'];
+  }
+  
+  /**
+   * Validate and improve the generated content
    */
   private async validateAndImproveContent(content: any, params: LessonGenerateParams): Promise<any> {
     console.log('Skipping quality control validation - trusting Grok-4 Fast for high-quality output');
@@ -963,53 +602,24 @@ BEGIN YOUR JSON RESPONSE NOW:`;
    */
   private async validateReadingTextGrammar(paragraphs: string[], cefrLevel: string, topic: string): Promise<string[]> {
     try {
-      const validationPrompt = `You are a grammar quality control expert for ESL lesson content.
-
-CRITICAL TASK: Review these reading text paragraphs and ensure they are grammatically PERFECT. Fix any grammar errors while maintaining the meaning and appropriate CEFR level.
+      const validationPrompt = `You are a grammar expert for ESL content. Review these paragraphs and fix any grammar errors while maintaining the meaning and ${cefrLevel} level.
 
 CEFR LEVEL: ${cefrLevel}
-LESSON TOPIC: ${topic}
-PARAGRAPHS TO CHECK: ${JSON.stringify(paragraphs)}
+TOPIC: ${topic}
+PARAGRAPHS: ${JSON.stringify(paragraphs)}
 
-VALIDATION CRITERIA (ALL must be met):
-1. **PERFECT GRAMMAR**: Every sentence must be grammatically correct
-2. **VERB FORMS**: Correct tense, aspect, and agreement (e.g., "is imagining" not "is imagine")
-3. **SUBJECT-VERB AGREEMENT**: Singular/plural subjects match their verbs
-4. **ARTICLE USAGE**: Correct use of a/an/the
-5. **PREPOSITIONS**: Appropriate prepositions in context
-6. **WORD ORDER**: Standard English word order maintained
-7. **LEVEL APPROPRIATENESS**: Language complexity matches ${cefrLevel} level
+Fix grammar issues like incorrect verb forms, subject-verb agreement, articles, prepositions, and word order. Preserve the meaning and vocabulary. Maintain bold formatting for vocabulary words.
 
-COMMON GRAMMAR ERRORS TO FIX:
-❌ "She is imagine" → ✅ "She is imagining" (incorrect verb form)
-❌ "He like pizza" → ✅ "He likes pizza" (subject-verb agreement)
-❌ "They was happy" → ✅ "They were happy" (verb agreement)
-❌ "I go to school yesterday" → ✅ "I went to school yesterday" (tense)
-❌ "She is very good in math" → ✅ "She is very good at math" (preposition)
-
-IMPORTANT: 
-- Preserve the MEANING and VOCABULARY of the original text
-- Keep sentences at the appropriate ${cefrLevel} complexity level
-- Only fix grammar - don't rewrite content or add new information
-- Maintain bold markdown formatting for vocabulary words (e.g., **achieve**)
-
-Return ONLY a JSON array of corrected paragraphs as strings. Each paragraph must be grammatically perfect.`;
-
-      const validationRequestData = {
-        model: 'google/gemini-1.5-flash',
-        messages: [
-          {
-            role: 'user',
-            content: validationPrompt
-          }
-        ],
-        temperature: 0.1,
-        max_tokens: 3000
-      };
+Return ONLY a JSON array of corrected paragraphs.`;
 
       const result: AxiosResponse = await axios.post(
         `${this.baseURL}/chat/completions`,
-        validationRequestData,
+        {
+          model: 'google/gemini-1.5-flash',
+          messages: [{ role: 'user', content: validationPrompt }],
+          temperature: 0.1,
+          max_tokens: 3000
+        },
         {
           headers: {
             'Authorization': `Bearer ${this.apiKey}`,
@@ -1045,56 +655,28 @@ Return ONLY a JSON array of corrected paragraphs as strings. Each paragraph must
   }
 
   /**
-   * Validate sentence frame examples for logical coherence using Gemini
+   * Validate sentence frame examples for logical coherence
    */
   private async validateSentenceFrameExamples(examples: any[], pattern: string, topic: string): Promise<any[]> {
     try {
-      const validationPrompt = `You are a quality control expert for ESL lesson content specializing in sentence pattern validation.
+      const validationPrompt = `You are a quality expert for ESL content. Review these sentence examples and ensure they correctly demonstrate the pattern while being logical and grammatically correct.
 
-CRITICAL TASK: Review these sentence examples and ensure they CORRECTLY DEMONSTRATE the target sentence pattern while being logical and grammatically correct.
+PATTERN: ${pattern}
+TOPIC: ${topic}
+EXAMPLES: ${JSON.stringify(examples)}
 
-TARGET SENTENCE PATTERN: ${pattern}
-LESSON TOPIC: ${topic}
-CURRENT EXAMPLES: ${JSON.stringify(examples)}
+Ensure each example follows the exact pattern structure, makes logical sense, and uses correct grammar.
 
-VALIDATION CRITERIA (ALL must be met):
-1. **PATTERN ADHERENCE**: The sentence MUST follow the exact structure of the target pattern
-2. **LOGICAL MEANING**: The content must make logical sense
-3. **GRAMMAR CORRECTNESS**: Perfect grammar and syntax
-4. **TOPIC RELEVANCE**: Appropriate for the lesson topic
-
-COMMON PATTERN ISSUES TO FIX:
-- If pattern is "It is ___ to ___ because ___" but example is "Mars is difficult because...", fix to "It is difficult to travel to Mars because..."
-- If pattern uses specific connectors (like "because", "when", "although"), ensure they're present
-- If pattern requires infinitives ("to + verb"), ensure they're used correctly
-- If pattern has placeholders, ensure each placeholder is properly filled
-
-EXAMPLE FIXES FOR PATTERN "It is ___ to ___ because ___":
-❌ WRONG: "Mars is difficult because it is far away" (doesn't follow pattern)
-✅ CORRECT: "It is difficult to travel to Mars because it is far away"
-
-❌ WRONG: "Space exploration expensive because rockets cost money" (missing pattern structure)
-✅ CORRECT: "It is expensive to explore space because rockets cost a lot of money"
-
-Return ONLY a JSON array of corrected examples. Each example must perfectly demonstrate the target sentence pattern while being logical and appropriate for the topic.
-
-If an example is a simple string, return a string. If it's an object with "completeSentence" and "breakdown" properties, maintain that structure and ensure the breakdown correctly maps to the pattern components.`;
-
-      const validationRequestData = {
-        model: 'google/gemini-1.5-flash',
-        messages: [
-          {
-            role: 'user',
-            content: validationPrompt
-          }
-        ],
-        temperature: 0.1, // Low temperature for consistency
-        max_tokens: 2000
-      };
+Return ONLY a JSON array of corrected examples.`;
 
       const result: AxiosResponse = await axios.post(
         `${this.baseURL}/chat/completions`,
-        validationRequestData,
+        {
+          model: 'google/gemini-1.5-flash',
+          messages: [{ role: 'user', content: validationPrompt }],
+          temperature: 0.1,
+          max_tokens: 2000
+        },
         {
           headers: {
             'Authorization': `Bearer ${this.apiKey}`,
@@ -1102,14 +684,13 @@ If an example is a simple string, return a string. If it's an object with "compl
             'HTTP-Referer': 'https://planwiseesl.com',
             'X-Title': 'PlanwiseESL'
           },
-          timeout: 30000 // 30 second timeout for validation
+          timeout: 30000
         }
       );
 
       const text = result.data.choices[0]?.message?.content;
 
       try {
-        // Clean up the response and parse as JSON
         let cleanedContent = text.trim();
         if (cleanedContent.startsWith('```json')) {
           cleanedContent = cleanedContent.replace(/```json\s*/g, '').replace(/```\s*$/g, '').trim();
@@ -1118,75 +699,63 @@ If an example is a simple string, return a string. If it's an object with "compl
         }
 
         const validatedExamples = JSON.parse(cleanedContent);
-        console.log('Successfully validated sentence frame examples using Gemini');
+        console.log('Successfully validated sentence frame examples');
         return Array.isArray(validatedExamples) ? validatedExamples : examples;
       } catch (parseError) {
-        console.error('Error parsing Gemini validation response, using original examples');
+        console.error('Error parsing validation response, using original examples');
         return examples;
       }
     } catch (error) {
-      console.error('Error validating sentence frame examples with Gemini:', error);
-      return examples; // Return original examples if validation fails
+      console.error('Error validating sentence frame examples:', error);
+      return examples;
     }
   }
 
   /**
-   * Format and process the lesson content, adding image data IN PARALLEL for speed
+   * Format and process the lesson content, adding images in parallel
    */
   private async formatLessonContent(content: any): Promise<any> {
-    // Add provider identifier to the content
     const lessonContent = {
       ...content,
       provider: 'openrouter'
     };
     
-    // Generate ALL images with concurrency limiting if sections exist
     if (lessonContent.sections && Array.isArray(lessonContent.sections)) {
-      console.log('Starting BATCHED image generation for OpenRouter lesson...');
+      console.log('Starting batched image generation for OpenRouter lesson...');
       
-      // Collect all image generation FUNCTIONS (not promises - they execute later)
       const imageGenerationTasks: (() => Promise<void>)[] = [];
       
       for (const section of lessonContent.sections) {
-        // Vocabulary images
         if (section.type === 'vocabulary' && section.words && Array.isArray(section.words)) {
-          console.log(`Found ${section.words.length} vocabulary words, queueing parallel image generation...`);
+          console.log(`Found ${section.words.length} vocabulary words, queueing image generation...`);
           for (const word of section.words) {
-            // Generate fallback imagePrompt if missing
             if (!word.imagePrompt && word.term) {
               word.imagePrompt = `An illustration showing the meaning of "${word.term}" in a clear, educational way. No text visible in the image.`;
-              console.log(`Generated fallback imagePrompt for vocab word: "${word.term}"`);
             }
             
             if (word.imagePrompt) {
-              // Queue deferred image generation function (executes later in batches)
               const task = async () => {
                 try {
                   const requestId = `vocab_${word.term ? word.term.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 15) : 'word'}`;
                   word.imageBase64 = await runwareService.generateImage(word.imagePrompt, requestId);
                   if (word.imageBase64) {
-                    console.log(`✓ Generated image for vocab: ${word.term}`);
-                  } else {
-                    console.error(`✗ Failed to generate image for vocab: ${word.term} (returned null)`);
+                    console.log(`Generated image for vocab: ${word.term}`);
                   }
                 } catch (imgError) {
-                  console.error(`✗ Error generating image for vocab ${word.term}:`, imgError);
+                  console.error(`Error generating image for vocab ${word.term}:`, imgError);
                   word.imageBase64 = null;
                 }
               };
               imageGenerationTasks.push(task);
             } else {
-              console.log(`No imagePrompt for vocab: "${word.term}"`);
               word.imageBase64 = null;
             }
           }
         }
         
-        // Discussion images
         if (section.type === 'discussion' && section.questions && Array.isArray(section.questions)) {
-          console.log(`Found ${section.questions.length} discussion questions, queueing parallel image generation...`);
+          console.log(`Found ${section.questions.length} discussion questions, queueing image generation...`);
           for (const question of section.questions) {
-            // Ensure paragraphContext exists
             if (!question.paragraphContext && section.paragraphContext) {
               question.paragraphContext = section.paragraphContext;
             }
@@ -1200,25 +769,21 @@ If an example is a simple string, return a string. If it's an object with "compl
               }
             }
             
-            // Generate enhanced fallback imagePrompt if missing
             if (!question.imagePrompt && question.question) {
               const contextSnippet = question.paragraphContext ? question.paragraphContext.substring(0, 150) : question.question;
-              question.imagePrompt = `A realistic illustration showing a scenario related to: "${question.question.substring(0, 100)}". Scene includes people in a relatable situation that embodies this question. ${contextSnippet.includes('work') ? 'Professional setting' : contextSnippet.includes('school') || contextSnippet.includes('student') ? 'Educational environment' : contextSnippet.includes('family') || contextSnippet.includes('home') ? 'Home or family setting' : 'Contemporary setting'} with natural lighting and clear visual storytelling. Characters showing emotions or actions relevant to the topic. Realistic illustration, warm natural lighting, engaging composition. No text visible.`;
+              question.imagePrompt = `A realistic illustration showing a scenario related to: "${question.question.substring(0, 100)}". Scene includes people in a relatable situation. ${contextSnippet.includes('work') ? 'Professional setting' : contextSnippet.includes('school') || contextSnippet.includes('student') ? 'Educational environment' : contextSnippet.includes('family') || contextSnippet.includes('home') ? 'Home setting' : 'Contemporary setting'} with natural lighting. Realistic illustration, engaging composition. No text visible.`;
             }
             
             if (question.imagePrompt) {
-              // Queue deferred image generation function (executes later in batches)
               const task = async () => {
                 try {
                   const requestId = `disc_${question.question ? question.question.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 15) : 'question'}`;
                   question.imageBase64 = await runwareService.generateImage(question.imagePrompt, requestId);
                   if (question.imageBase64) {
-                    console.log(`✓ Generated image for discussion question`);
-                  } else {
-                    console.error(`✗ Failed to generate discussion image (returned null)`);
+                    console.log(`Generated image for discussion question`);
                   }
                 } catch (imgError) {
-                  console.error(`✗ Error generating discussion image:`, imgError);
+                  console.error(`Error generating discussion image:`, imgError);
                   question.imageBase64 = null;
                 }
               };
@@ -1230,11 +795,10 @@ If an example is a simple string, return a string. If it's an object with "compl
         }
       }
       
-      // Execute ALL image generation tasks with concurrency limiting
       if (imageGenerationTasks.length > 0) {
-        const batchSize = 10; // Process 10 images at a time (typically one batch for lessons)
+        const batchSize = 10;
         const totalTasks = imageGenerationTasks.length;
-        console.log(`⚡ Generating ${totalTasks} images in parallel batches of ${batchSize} using Runware (Flux Schnell)...`);
+        console.log(`Generating ${totalTasks} images in parallel batches of ${batchSize}...`);
         
         for (let i = 0; i < totalTasks; i += batchSize) {
           const batchFunctions = imageGenerationTasks.slice(i, i + batchSize);
@@ -1243,29 +807,24 @@ If an example is a simple string, return a string. If it's an object with "compl
           
           console.log(`Processing batch ${batchNum}/${totalBatches} (${batchFunctions.length} images)...`);
           
-          // Execute batch functions in parallel (convert functions to promises)
           await Promise.all(batchFunctions.map(fn => fn()));
           
-          // Add a minimal delay between batches to avoid overwhelming the API
           if (i + batchSize < totalTasks) {
             console.log(`Waiting 500ms before next batch...`);
-            await new Promise(resolve => setTimeout(resolve, 500)); // 0.5 second delay
+            await new Promise(resolve => setTimeout(resolve, 500));
           }
         }
         
-        console.log(`✓ All ${totalTasks} images generated!`);
+        console.log(`All ${totalTasks} images generated!`);
       }
       
-      console.log('Finished batched image generation for OpenRouter lesson.');
-    } else {
-        console.log('No sections found, skipping image generation.');
+      console.log('Finished image generation for OpenRouter lesson.');
     }
     
     return lessonContent;
   }
 }
 
-// Test the OpenRouter integration
 export const testOpenRouterConnection = async (): Promise<boolean> => {
   try {
     const apiKey = process.env.OPENROUTER_API_KEY || '';
