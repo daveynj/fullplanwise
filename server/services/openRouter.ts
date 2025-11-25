@@ -323,7 +323,7 @@ Good formats:
 
 Avoid: "According to the passage..." or "In the reading..." - these test reading recall, not vocabulary.
 
-Distribute correct answers across positions A, B, C, D. Don't put all correct answers in the same position.
+CRITICAL: You MUST randomize the position of the correct answer for each question. Do not always place it in the same position (e.g., always B). Distribute correct answers randomly across A, B, C, and D.
 
 STEP 4: DESIGN 3 SENTENCE FRAMES
 
@@ -351,13 +351,13 @@ Make questions culturally inclusive and globally accessible.
 
 STEP 6: ADD PRACTICE ACTIVITIES
 
-Cloze exercise: Create a fill-in-the-blank paragraph using lesson vocabulary. Format blanks as [1:word], [2:word], etc. The wordBank contains base forms; add grammatical endings after the bracket when needed (like "[1:challenge]s" for plural).
+Cloze exercise: Create a fill-in-the-blank paragraph. It must contain exactly 5 blanks, one for each of the 5 vocabulary words. Use each vocabulary word from the word bank once. Format blanks as [1:word], [2:word], etc. The wordBank contains base forms; add grammatical endings after the bracket when needed (like "[1:challenge]s" for plural).
 
-Sentence unscramble: Create 3 sentences using lesson vocabulary. Provide words in scrambled order and the correct sentence.
+Sentence unscramble: Create 3 grammatically correct and natural-sounding sentences using lesson vocabulary. For each, provide the words in a scrambled list and the correct sentence. Ensure the scrambled list contains all words from the correct sentence and no extra words.
 
 STEP 7: CREATE 5 QUIZ QUESTIONS
 
-Write 5 quiz questions about the lesson. Mix multiple choice and true/false. Vary correct answer positions and include clear explanations.
+Write 5 quiz questions about the lesson. Mix multiple choice and true/false. CRITICAL: For multiple choice, you MUST randomize the position of the correct answer. Do not use a fixed pattern. Include clear explanations for all answers.
 
 ---
 
@@ -424,9 +424,9 @@ JSON STRUCTURE (showing format - generate complete content for all items):
       "questions": [
         {
           "question": "What does 'word1' mean?",
-          "options": ["Wrong A", "Correct answer", "Wrong C", "Wrong D"],
-          "answer": "Correct answer",
-          "correctAnswer": "Correct answer",
+          "options": ["Option A", "Option B", "Option C", "Option D"],
+          "answer": "The correct option",
+          "correctAnswer": "The correct option",
           "explanation": "Explanation of why this is correct"
         }
       ]
@@ -496,7 +496,7 @@ JSON STRUCTURE (showing format - generate complete content for all items):
       "type": "quiz",
       "title": "Knowledge Check",
       "questions": [
-        {"question": "Quiz question?", "options": ["A", "B", "C", "D"], "answer": "B", "correctAnswer": "B", "explanation": "Why correct"},
+        {"question": "Quiz question?", "options": ["Option A", "Option B", "Option C", "Option D"], "answer": "The correct option", "correctAnswer": "The correct option", "explanation": "Why correct"},
         {"question": "True or false?", "options": ["True", "False"], "answer": "True", "correctAnswer": "True", "explanation": "Why true"}
       ]
     }
