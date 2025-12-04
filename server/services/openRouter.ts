@@ -35,7 +35,7 @@ export class OpenRouterService {
       const prompt = this.constructLessonPrompt(params, studentVocabulary);
       
       const requestData = {
-        model: 'x-ai/grok-4.1-fast:free',
+        model: 'x-ai/grok-4.1-fast',
         messages: [
           {
             role: 'user',
