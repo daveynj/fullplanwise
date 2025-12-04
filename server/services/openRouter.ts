@@ -35,7 +35,7 @@ export class OpenRouterService {
       const prompt = this.constructLessonPrompt(params, studentVocabulary);
       
       const requestData = {
-        model: 'x-ai/grok-4.1-fast',
+        model: 'deepseek/deepseek-v3.2',
         messages: [
           {
             role: 'user',
@@ -834,7 +834,7 @@ export const testOpenRouterConnection = async (): Promise<boolean> => {
     }
 
     const testRequest = {
-      model: 'x-ai/grok-4.1-fast',
+      model: 'deepseek/deepseek-v3.2',
       messages: [{ role: 'user', content: 'Hello, can you respond with just "OK"?' }],
       max_tokens: 10
     };
