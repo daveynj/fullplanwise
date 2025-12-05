@@ -715,6 +715,19 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
       "timeAllocation": "10 minutes",
       "teacherNotes": "Show images for each vocabulary word and practice pronunciation before discussing definitions."
     },
+
+    // COMPREHENSION QUESTIONS REQUIREMENTS:
+    // - Create ${questionCount} multiple-choice questions that test understanding of key details from the reading
+    // - Questions should be different difficulty levels appropriate for ${cefrLevel} students
+    // - CRITICAL: Randomize the position of the correct answer among the 4 options (don't always put it in position 0, 1, 2, or 3)
+    // - Each question must have EXACTLY 4 options
+    // - Incorrect options (distractors) must be:
+    //   * Similar in length and detail to the correct answer
+    //   * Plausible but clearly incorrect based on the reading text
+    //   * Not obviously wrong (avoid very short or very long options that give away the answer)
+    // - All options should be complete sentences or phrases of roughly equal length
+    // - Correct answers should demonstrate understanding of the reading content, not just memorization
+
     {
       "type": "comprehension",
       "title": "Reading Comprehension",
@@ -722,27 +735,27 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
       "questions": [
         {
           "question": "First question about a key detail from the reading",
-          "options": ["Correct answer", "Wrong answer 1", "Wrong answer 2", "Wrong answer 3"],
-          "correctAnswer": "Correct answer"
+          "options": ["Correct answer that is detailed and specific", "Wrong answer that is equally detailed but incorrect", "Another wrong answer of similar length and specificity", "Fourth wrong answer also balanced in detail"],
+          "correctAnswer": "Correct answer that is detailed and specific"
         },
         {
           "question": "Second question about another aspect of the reading",
-          "options": ["Wrong answer 1", "Correct answer", "Wrong answer 2", "Wrong answer 3"],
-          "correctAnswer": "Correct answer"
+          "options": ["Wrong answer similar in length to correct", "Correct answer with appropriate detail level", "Another plausible but incorrect option", "Fourth balanced distractor option"],
+          "correctAnswer": "Correct answer with appropriate detail level"
         },
         {
           "question": "Third question testing deeper understanding",
-          "options": ["Wrong answer 1", "Wrong answer 2", "Correct answer", "Wrong answer 3"],
-          "correctAnswer": "Correct answer"
+          "options": ["Balanced wrong answer option", "Another incorrect but convincing choice", "Correct answer with proper detail", "Fourth distractor of equal length"],
+          "correctAnswer": "Correct answer with proper detail"
         },
         {
           "question": "Fourth question about vocabulary in context",
-          "options": ["Wrong answer 1", "Wrong answer 2", "Wrong answer 3", "Correct answer"],
-          "correctAnswer": "Correct answer"
+          "options": ["Wrong answer that could seem right", "Another incorrect option of similar detail", "Third convincing but wrong choice", "Correct answer appropriately detailed"],
+          "correctAnswer": "Correct answer appropriately detailed"
         }
       ],
       "timeAllocation": "10 minutes",
-      "teacherNotes": "Encourage students to refer back to the text when answering questions."
+      "teacherNotes": "Encourage students to refer back to the text when answering questions. The correct answers should be randomly positioned among the options, not always in the same place."
     },
     {
       "type": "sentenceFrames",

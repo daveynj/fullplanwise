@@ -50,6 +50,16 @@ interface ComprehensionExtractorProps {
   content: any;
 }
 
+// Utility function to shuffle array elements
+const shuffleArray = <T,>(array: T[]): T[] => {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+};
+
 export const ComprehensionExtractor = ({ content }: ComprehensionExtractorProps) => {
   console.log("COMPREHENSION EXTRACTOR RECEIVED CONTENT TYPE:", typeof content);
   console.log("COMPREHENSION EXTRACTOR CONTENT:", JSON.stringify(content, null, 2).substring(0, 500));
@@ -57,10 +67,33 @@ export const ComprehensionExtractor = ({ content }: ComprehensionExtractorProps)
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
   const [userAnswers, setUserAnswers] = useState<(string | null)[]>([]);
-  
+  const [shuffledOptions, setShuffledOptions] = useState<{[key: number]: string[]}>({});
+
   // Use the utility function to extract comprehension questions
   const extractedQuestions: ComprehensionQuestion[] = extractComprehensionQuestions(content);
   console.log("EXTRACTED COMPREHENSION QUESTIONS:", extractedQuestions);
+
+  // Shuffle options for each question when first accessed
+  const getShuffledOptions = (questionIndex: number): string[] => {
+    if (shuffledOptions[questionIndex]) {
+      return shuffledOptions[questionIndex];
+    }
+
+    const question = extractedQuestions[questionIndex];
+    if (!question || !question.options || !Array.isArray(question.options)) {
+      return [];
+    }
+
+    const options = question.options.map(opt => typeof opt === 'string' ? opt : opt.text || '');
+    const shuffled = shuffleArray(options);
+
+    setShuffledOptions(prev => ({
+      ...prev,
+      [questionIndex]: shuffled
+    }));
+
+    return shuffled;
+  };
   
   // Find the correct answer for the current question
   const getCorrectAnswer = (question: ComprehensionQuestion): string => {
@@ -334,14 +367,13 @@ export const ComprehensionExtractor = ({ content }: ComprehensionExtractorProps)
                       </div>
                     )}
 
-                    {'options' in extractedQuestions[activeQuestion] && extractedQuestions[activeQuestion].options && 
-                      Array.isArray(extractedQuestions[activeQuestion].options) && 
+                    {'options' in extractedQuestions[activeQuestion] && extractedQuestions[activeQuestion].options &&
+                      Array.isArray(extractedQuestions[activeQuestion].options) &&
                       extractedQuestions[activeQuestion].type !== "true-false" && (
                       <div className="space-y-2">
-                        {extractedQuestions[activeQuestion].options?.map((option, idx) => {
-                          const optionText = typeof option === 'string' ? option : option.text;
-                          const isCorrect = typeof option === 'object' ? option.correct : isAnswerCorrect(optionText, getCorrectAnswer(extractedQuestions[activeQuestion]));
-                          
+                        {getShuffledOptions(activeQuestion).map((optionText, idx) => {
+                          const isCorrect = isAnswerCorrect(optionText, getCorrectAnswer(extractedQuestions[activeQuestion]));
+
                           const isSelected = selectedOption === optionText;
                           
                           let optionClass = "flex items-center p-3 border rounded-md cursor-pointer";
