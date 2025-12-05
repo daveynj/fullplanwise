@@ -353,11 +353,12 @@ STEP 6: ADD PRACTICE ACTIVITIES
 
 Cloze exercise: Create a fill-in-the-blank paragraph. It must contain exactly 5 blanks, one for each of the 5 vocabulary words. Use each vocabulary word from the word bank once. Format blanks as [1:word], [2:word], etc. The wordBank contains base forms; add grammatical endings after the bracket when needed (like "[1:challenge]s" for plural).
 
-Sentence unscramble: Create 3 grammatically correct and natural-sounding sentences using lesson vocabulary. For each sentence:
+Sentence unscramble: Create 3 grammatically correct and natural-sounding sentences using lesson vocabulary. IMPORTANT: Sentences must sound like natural, idiomatic English that native speakers would actually say - avoid awkward literal translations. For each sentence:
 - First create the complete grammatically correct sentence and put it in "correctSentence"
-- Then extract ALL words from that exact sentence (including articles like "the"/"a", prepositions like "in"/"on", pronouns like "it"/"they", conjunctions like "and"/"but", etc.) and put them in the "words" array
-- The words array must contain every single word needed to reconstruct the sentence exactly as written
-- Do not omit any words, even if they seem "unimportant" - all words are essential for the unscramble activity
+- Then extract EXACTLY the words from that sentence (no more, no less) and put them in the "words" array in their original order
+- The words array must contain every single word from the correctSentence and nothing else
+- Include ALL words: articles (the/a/an), prepositions (in/on/at), pronouns (it/they/we), conjunctions (and/but/or), etc.
+- Do NOT add extra words or omit any words from the sentence
 
 STEP 7: CREATE 5 QUIZ QUESTIONS
 
