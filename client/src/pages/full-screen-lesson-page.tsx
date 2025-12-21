@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useLocation, Link } from "wouter";
 import { LessonContent } from "@/components/lesson/lesson-content";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, X, ExpandIcon, MinimizeIcon, Download } from "lucide-react";
+import { ArrowLeft, X, ExpandIcon, MinimizeIcon, Download, FileJson } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Lesson } from "@shared/schema";
@@ -152,6 +152,38 @@ export default function FullScreenLessonPage() {
     window.print();
   };
 
+  // Download lesson as JSON (admin only)
+  const downloadLessonJSON = () => {
+    if (!lesson) return;
+    
+    const lessonData = {
+      id: lesson.id,
+      title: lesson.title,
+      topic: lesson.topic,
+      cefrLevel: lesson.cefrLevel,
+      content: parsedContent || lesson.content,
+      notes: lesson.notes,
+      category: lesson.category,
+      tags: lesson.tags,
+      createdAt: lesson.createdAt
+    };
+    
+    const blob = new Blob([JSON.stringify(lessonData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `lesson-${lesson.id}-${lesson.title.replace(/[^a-z0-9]/gi, '-').toLowerCase()}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    
+    toast({
+      title: "Download started",
+      description: "Your lesson JSON file is downloading.",
+    });
+  };
+
 
   
   // Track fullscreen changes
@@ -253,6 +285,20 @@ export default function FullScreenLessonPage() {
           </div>
           
           <div className="flex items-center gap-3">
+            {/* Download JSON button - Admin only */}
+            {user?.isAdmin && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={downloadLessonJSON}
+                className="text-gray-600 bg-green-50 border-green-200 hover:bg-green-100"
+                data-testid="button-download-json"
+              >
+                <FileJson className="h-4 w-4 mr-2" />
+                <span className="hidden sm:inline">Download JSON</span>
+                <span className="sm:hidden">JSON</span>
+              </Button>
+            )}
             <Button
               asChild
               variant="outline"
