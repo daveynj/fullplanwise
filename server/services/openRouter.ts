@@ -351,7 +351,7 @@ Make questions culturally inclusive and globally accessible.
 
 STEP 6: ADD PRACTICE ACTIVITIES
 
-Cloze exercise: Create a fill-in-the-blank paragraph. It must contain exactly 5 blanks, one for each of the 5 vocabulary words. Use each vocabulary word from the word bank once. Format blanks as [1:word], [2:word], etc. The wordBank contains base forms; add grammatical endings after the bracket when needed (like "[1:challenge]s" for plural).
+Cloze exercise: Create a fill-in-the-blank paragraph. It must contain exactly 5 blanks, one for each of the 5 vocabulary words. Use each vocabulary word from the word bank once. CRITICAL: The blanks must NOT appear in the same order as the vocabulary was taught. Randomize which vocabulary word appears in each blank position - for example, if vocabulary is taught as [word1, word2, word3, word4, word5], the blanks in the paragraph should use them in a different order like [word3, word1, word5, word2, word4]. Format blanks as [1:word], [2:word], etc. where the number is the blank position in the text (not the vocabulary order). The wordBank contains base forms; add grammatical endings after the bracket when needed (like "[1:challenge]s" for plural).
 
 Sentence unscramble: Create 3 grammatically correct and natural-sounding sentences using lesson vocabulary. IMPORTANT: Sentences must sound like natural, idiomatic English that native speakers would actually say - avoid awkward literal translations. For each sentence:
 - First create the complete grammatically correct sentence and put it in "correctSentence"
