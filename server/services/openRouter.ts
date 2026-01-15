@@ -274,25 +274,34 @@ This student has already learned these words: ${studentVocabulary.join(', ')}
 You may use these words naturally when they fit, but choose 5 NEW words as the focus vocabulary for this lesson. Prioritize creating engaging content over forcing in previously learned words.`
       : '';
 
-    const prompt = `You are an expert ESL teacher creating a ${lessonLength}-minute lesson on "${topic}" for ${cefrLevel} (${levelGuidance.description}) students.
+    const prompt = `<role>
+You are an expert ESL teacher creating a ${lessonLength}-minute lesson on "${topic}" for ${cefrLevel} (${levelGuidance.description}) students.
+</role>
 
+<output_format>
 CRITICAL: Return ONLY valid JSON. Start with { and end with }. No markdown, no explanations, no text before or after.
+</output_format>
 ${vocabularyHistoryNote}
 ${params.targetVocabulary ? `\nREQUIRED VOCABULARY: Include these specific words: ${params.targetVocabulary}` : ''}
 
+<context>
 LESSON CONTEXT:
 This is for a 1-on-1 online class via screen sharing. Create engaging, interactive content. Focus area: "${focus}".
+</context>
 
 ---
 
+<instructions>
 CREATING YOUR LESSON:
 
-STEP 1: SELECT 5 VOCABULARY WORDS
-
+<step number="1" title="SELECT 5 VOCABULARY WORDS">
 Choose 5 words appropriate for ${cefrLevel} using the Cambridge English Vocabulary Profile. ${levelGuidance.vocabularyGuidance}
 
+<guidance>
 Ask yourself: Would a ${cefrLevel} student encounter and need this word? Is it useful for discussing "${topic}"? Can it be defined using simpler vocabulary?
+</guidance>
 
+<requirements>
 Each word needs:
 - term, partOfSpeech
 - definition (clear and simple, ${levelGuidance.definitionGuidance})
@@ -303,30 +312,36 @@ Each word needs:
 - pronunciation with syllables array, stressIndex number, and phoneticGuide using English letters only (like "eg-ZAM-pul"), no IPA symbols
 - imagePrompt (40-80 words describing a scene that illustrates the word, ending with "No text visible")
 - semanticMap with synonyms, antonyms, relatedConcepts, contexts, and associatedWords
+</requirements>
+</step>
 
-STEP 2: WRITE THE READING TEXT
-
+<step number="2" title="WRITE THE READING TEXT">
 Create a reading passage of ${levelGuidance.readingLength} in exactly 5 paragraphs. This should spark discussion, not just be reading practice.
 
 ${levelGuidance.readingGuidance}
 
+<requirements>
 Include all 5 vocabulary words naturally, each appearing 2-3 times with context clues. Keep vocabulary density to about 1 new word per 25 words.
+</requirements>
+</step>
 
-STEP 3: CREATE 5 VOCABULARY CHECK QUESTIONS
-
+<step number="3" title="CREATE 5 VOCABULARY CHECK QUESTIONS">
 Write exactly 5 questions testing vocabulary understanding (one per word). These test whether students know the vocabulary, NOT whether they remember facts from the reading.
 
-Good formats:
+<good_formats>
 - "What does [word] mean?"
 - "Which sentence uses [word] correctly?"
 - "In which situation would you use [word]?"
+</good_formats>
 
-Avoid: "According to the passage..." or "In the reading..." - these test reading recall, not vocabulary.
+<avoid>
+"According to the passage..." or "In the reading..." - these test reading recall, not vocabulary.
+</avoid>
 
-CRITICAL: You MUST randomize the position of the correct answer for each question. Do not always place it in the same position (e.g., always B). Distribute correct answers randomly across A, B, C, and D.
+<critical>You MUST randomize the position of the correct answer for each question. Do not always place it in the same position (e.g., always B). Distribute correct answers randomly across A, B, C, and D.</critical>
+</step>
 
-STEP 4: DESIGN 3 SENTENCE FRAMES
-
+<step number="4" title="DESIGN 3 SENTENCE FRAMES">
 Create 3 sentence frames for practicing ideas about "${topic}". Each needs three tiers:
 - emerging (simplest, maximum support)
 - developing (moderate complexity)
@@ -334,12 +349,13 @@ Create 3 sentence frames for practicing ideas about "${topic}". Each needs three
 
 ${levelGuidance.sentenceFrameGuidance}
 
+<requirements>
 Include 3 model responses per tier and teaching notes with modeling tips, guided practice, independent use guidance, and fading strategy.
-
 ${levelGuidance.needsLowerLevelScaffolding ? 'Include a "lowerLevelScaffolding" object with sentenceWorkshop, patternTrainer, and visualMaps.' : ''}
+</requirements>
+</step>
 
-STEP 5: WRITE 5 DISCUSSION QUESTIONS
-
+<step number="5" title="WRITE 5 DISCUSSION QUESTIONS">
 Create 5 discussion questions about "${topic}". Each needs:
 - paragraphContext (3-5 sentences at ${cefrLevel} level providing background)
 - question (engaging, invites personal response)
@@ -347,31 +363,50 @@ Create 5 discussion questions about "${topic}". Each needs:
 
 ${levelGuidance.discussionGuidance}
 
+<requirements>
 Make questions culturally inclusive and globally accessible.
+</requirements>
+</step>
 
-STEP 6: ADD PRACTICE ACTIVITIES
+<step number="6" title="ADD PRACTICE ACTIVITIES">
+<activity name="cloze">
+Cloze exercise: Create a fill-in-the-blank paragraph. It must contain exactly 5 blanks, one for each of the 5 vocabulary words. Use each vocabulary word from the word bank once.
+<critical>The blanks must NOT appear in the same order as the vocabulary was taught. Randomize which vocabulary word appears in each blank position - for example, if vocabulary is taught as [word1, word2, word3, word4, word5], the blanks in the paragraph should use them in a different order like [word3, word1, word5, word2, word4].</critical>
+Format blanks as [1:word], [2:word], etc. where the number is the blank position in the text (not the vocabulary order). The wordBank contains base forms; add grammatical endings after the bracket when needed (like "[1:challenge]s" for plural).
+</activity>
 
-Cloze exercise: Create a fill-in-the-blank paragraph. It must contain exactly 5 blanks, one for each of the 5 vocabulary words. Use each vocabulary word from the word bank once. CRITICAL: The blanks must NOT appear in the same order as the vocabulary was taught. Randomize which vocabulary word appears in each blank position - for example, if vocabulary is taught as [word1, word2, word3, word4, word5], the blanks in the paragraph should use them in a different order like [word3, word1, word5, word2, word4]. Format blanks as [1:word], [2:word], etc. where the number is the blank position in the text (not the vocabulary order). The wordBank contains base forms; add grammatical endings after the bracket when needed (like "[1:challenge]s" for plural).
-
-Sentence unscramble: Create 3 grammatically correct and natural-sounding sentences using lesson vocabulary. IMPORTANT: Sentences must sound like natural, idiomatic English that native speakers would actually say - avoid awkward literal translations. For each sentence:
+<activity name="sentence_unscramble">
+Sentence unscramble: Create 3 grammatically correct and natural-sounding sentences using lesson vocabulary. IMPORTANT: Sentences must sound like natural, idiomatic English that native speakers would actually say - avoid awkward literal translations.
+<requirements>
+For each sentence:
 - First create the complete grammatically correct sentence and put it in "correctSentence"
 - Then extract EXACTLY the words from that sentence (no more, no less) and put them in the "words" array in their original order
 - The words array must contain every single word from the correctSentence and nothing else
 - Include ALL words: articles (the/a/an), prepositions (in/on/at), pronouns (it/they/we), conjunctions (and/but/or), etc.
 - Do NOT add extra words or omit any words from the sentence
+</requirements>
+</activity>
+</step>
 
-STEP 7: CREATE 5 QUIZ QUESTIONS
+<step number="7" title="CREATE 5 QUIZ QUESTIONS">
+Write 5 quiz questions about the lesson. Mix multiple choice and true/false.
+<critical>For multiple choice, you MUST randomize the position of the correct answer. Do not use a fixed pattern.</critical>
+<requirements>Include clear explanations for all answers.</requirements>
+</step>
 
-Write 5 quiz questions about the lesson. Mix multiple choice and true/false. CRITICAL: For multiple choice, you MUST randomize the position of the correct answer. Do not use a fixed pattern. Include clear explanations for all answers.
+</instructions>
 
 ---
 
+<validation>
 BEFORE GENERATING:
 
 Verify: 5 vocabulary words with all fields, 5 reading paragraphs, 5 comprehension questions (one per vocab word), 3 sentence frames with tiered scaffolding, 5 discussion questions with paragraphContext and imagePrompt, 5 quiz questions. All image prompts end with "No text visible". Same 5 vocabulary words in warmup.targetVocabulary and vocabulary section.
+</validation>
 
 ---
 
+<json_schema>
 JSON STRUCTURE (showing format - generate complete content for all items):
 
 {
@@ -507,8 +542,11 @@ JSON STRUCTURE (showing format - generate complete content for all items):
     }
   ]
 }
+</json_schema>
 
+<final_instruction>
 Generate complete content for ALL items: 5 vocabulary words, 5 paragraphs, 5 comprehension questions, 3 sentence frames, 5 discussion questions, 5 quiz questions.
+</final_instruction>
 
 BEGIN JSON:`;
 
