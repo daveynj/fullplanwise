@@ -636,7 +636,7 @@ BEGIN JSON:`;
    * Validate and improve the generated content
    */
   private async validateAndImproveContent(content: any, params: LessonGenerateParams): Promise<any> {
-    console.log('Skipping quality control validation - trusting Grok-4 Fast for high-quality output');
+    console.log('Skipping quality control validation - trusting Gemini 3 Pro for high-quality output');
     return content;
   }
 

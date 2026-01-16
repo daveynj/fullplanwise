@@ -25,7 +25,7 @@ Social media: LinkedIn - www.linkedin.com/in/davidjackson113, X (Twitter) - @Dav
 - **Build Tools**: Vite (frontend), esbuild (backend).
 
 ### Feature Specifications
-- **AI Service Integration**: Primary AI (xAI Grok-4 Fast via OpenRouter) for intelligent lesson generation, operating with trusted output to eliminate post-generation validation and dynamically loading services.
+- **AI Service Integration**: Primary AI (Google Gemini 3 Pro Preview via OpenRouter) for intelligent lesson generation, operating with trusted output to eliminate post-generation validation and dynamically loading services.
 - **Lesson Generation**: Supports CEFR levels A1-C2, various component types (warm-ups, vocabulary, reading, questions, discussion), Grammar Spotlight visualizations, and Semantic Maps. Lessons are generated rapidly (~2 minutes) due to optimized prompts and streamlined processes.
 - **Vocabulary Tracking**: Tracks student vocabulary to prevent AI from teaching duplicate words, ensuring progressive vocabulary building. Learned words are used naturally in reading texts without forced inclusion.
 - **Enhanced Image Generation**: Generates contextual and pedagogically aligned images with detailed prompts (40-80 words for vocabulary, 50-80 words for discussion).
@@ -52,7 +52,7 @@ Social media: LinkedIn - www.linkedin.com/in/davidjackson113, X (Twitter) - @Dav
 ## External Dependencies
 
 - **AI Services**:
-    - xAI Grok-4-Fast (via OpenRouter) - Lesson content generation.
+    - Google Gemini 3 Pro Preview (via OpenRouter) - Lesson content generation.
     - Runware.ai (Flux Schnell model) - Image generation.
 - **Payment & Communication**:
     - Stripe - Subscription and payment processing.
