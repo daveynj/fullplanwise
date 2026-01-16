@@ -35,7 +35,7 @@ export class OpenRouterService {
       const prompt = this.constructLessonPrompt(params, studentVocabulary);
       
       const requestData = {
-        model: 'x-ai/grok-4.1-fast',
+        model: 'google/gemini-3-pro-preview',
         messages: [
           {
             role: 'user',
@@ -658,7 +658,7 @@ Return ONLY a JSON array of corrected paragraphs.`;
       const result: AxiosResponse = await axios.post(
         `${this.baseURL}/chat/completions`,
         {
-          model: 'x-ai/grok-4.1-fast',
+          model: 'google/gemini-3-pro-preview',
           messages: [{ role: 'user', content: validationPrompt }],
           temperature: 0.1,
           max_tokens: 3000
@@ -715,7 +715,7 @@ Return ONLY a JSON array of corrected examples.`;
       const result: AxiosResponse = await axios.post(
         `${this.baseURL}/chat/completions`,
         {
-          model: 'x-ai/grok-4.1-fast',
+          model: 'google/gemini-3-pro-preview',
           messages: [{ role: 'user', content: validationPrompt }],
           temperature: 0.1,
           max_tokens: 2000
@@ -877,7 +877,7 @@ export const testOpenRouterConnection = async (): Promise<boolean> => {
     }
 
     const testRequest = {
-      model: 'x-ai/grok-4.1-fast',
+      model: 'google/gemini-3-pro-preview',
       messages: [{ role: 'user', content: 'Hello, can you respond with just "OK"?' }],
       max_tokens: 10
     };
