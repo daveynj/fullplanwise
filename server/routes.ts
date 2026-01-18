@@ -2005,9 +2005,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Helper function to serve 404 HTML response
+  // This returns proper HTTP 404 status for SEO while serving a user-friendly page
+  const serve404Html = async (res: any, app: Express) => {
+    const isProduction = app.get("env") !== "development";
+    
+    // In production, serve the built index.html with 404 status
+    if (isProduction) {
+      const builtPath = path.join(process.cwd(), 'dist', 'public', 'index.html');
+      try {
+        const html = await fs.readFile(builtPath, 'utf-8');
+        res.status(404).type('html').send(html);
+        return true;
+      } catch {
+        // Fall through to simple 404 page
+      }
+    }
+    
+    // In development or if built file doesn't exist, serve a simple 404 HTML page
+    // This ensures Google sees proper 404 status and users see a friendly message
+    const html404 = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page Not Found | PlanwiseESL</title>
+  <link rel="canonical" href="https://planwiseesl.com${res.req.originalUrl.split('?')[0]}" />
+  <meta name="robots" content="noindex, follow" />
+  <style>
+    body { font-family: system-ui, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background: #f9fafb; }
+    .container { text-align: center; padding: 2rem; }
+    h1 { color: #1f2937; margin-bottom: 1rem; }
+    p { color: #6b7280; margin-bottom: 2rem; }
+    a { display: inline-block; padding: 0.75rem 1.5rem; background: #2563eb; color: white; text-decoration: none; border-radius: 0.5rem; }
+    a:hover { background: #1d4ed8; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>404 - Page Not Found</h1>
+    <p>The page you're looking for doesn't exist or has been removed.</p>
+    <a href="/">Go to Homepage</a>
+  </div>
+</body>
+</html>`;
+    res.status(404).type('html').send(html404);
+    return true;
+  };
+
   // Server-side route to handle blog post 404s properly for SEO
   // This route checks if a blog post exists and returns 404 status for missing posts
-  // For proper 404 handling, we serve the HTML directly with the correct status code
   app.get("/blog/:slug", async (req, res, next) => {
     const { slug } = req.params;
     
@@ -2015,21 +2062,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Check if blog post exists and is published
       const post = await storage.getBlogPostBySlug(slug);
       
-      if (!post || !post.published) {
+      if (!post || !post.isPublished) {
         // Return 404 status with HTML - search engines will see the proper 404 status code
         console.log(`[SEO] Blog post not found: ${slug} - returning 404`);
-        
-        // Read and serve the index.html with 404 status
-        // This allows the SPA to render the not-found UI while returning proper HTTP 404
-        const indexPath = path.join(process.cwd(), 'client', 'index.html');
-        try {
-          const html = await fs.readFile(indexPath, 'utf-8');
-          res.status(404).type('html').send(html);
-          return;
-        } catch (readError) {
-          // Fallback: just return 404 status and let Vite handle it
-          console.error('Error reading index.html for 404:', readError);
-        }
+        await serve404Html(res, app);
+        return;
       }
       
       // Post exists - continue to Vite middleware to serve normally
@@ -2050,16 +2087,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       if (!lesson || !lesson.isPublic) {
         console.log(`[SEO] Lesson not found or not public: ${id} - returning 404`);
-        
-        // Read and serve the index.html with 404 status
-        const indexPath = path.join(process.cwd(), 'client', 'index.html');
-        try {
-          const html = await fs.readFile(indexPath, 'utf-8');
-          res.status(404).type('html').send(html);
-          return;
-        } catch (readError) {
-          console.error('Error reading index.html for 404:', readError);
-        }
+        await serve404Html(res, app);
+        return;
       }
       
       next();

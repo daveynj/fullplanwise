@@ -40,6 +40,9 @@ Social media: LinkedIn - www.linkedin.com/in/davidjackson113, X (Twitter) - @Dav
   - **SEO Metadata**: Dedicated metaTitle and metaDescription fields in CMS with character counters (60/160 chars)
   - **Sitemap**: Dynamic sitemap.xml generation listing all blog posts and static pages for search engine crawling
 - **SEO**: Comprehensive on-page SEO including breadcrumb navigation, proper heading hierarchy (h1-h3), meta descriptions, canonical URLs, semantic HTML5 tags (main, nav, aside, article), slug-based URLs, and dynamic sitemap generation.
+  - **404 Handling**: Server-side 404 status codes for deleted/non-existent blog posts and private lessons (fixes Google Search Console "soft 404" errors)
+  - **Canonical URLs**: Self-referencing absolute canonical URLs (https://planwiseesl.com/...) with query parameter stripping (fixes "duplicate without canonical" errors)
+  - **Sitemap Filtering**: Dynamic sitemap only includes published blog posts and public pages (excludes admin pages and unpublished content)
 
 ### System Design Choices
 - **Data Flow**: Manages user authentication, AI-powered lesson creation, grammar analysis, content storage, interactive display, and export options.
