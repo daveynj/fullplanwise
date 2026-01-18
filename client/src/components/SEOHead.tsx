@@ -26,6 +26,33 @@ export function SEOHead({
   const fullTitle = title.includes("PlanwiseESL") ? title : `${title} | PlanwiseESL - AI-Powered ESL Lessons`;
   const fullDescription = description.length > 160 ? description.substring(0, 157) + "..." : description;
   
+  // Generate absolute canonical URL (stripping query parameters)
+  const generateCanonicalUrl = (url?: string): string => {
+    const baseUrl = "https://planwiseesl.com";
+    
+    if (!url) {
+      // Use current path without query params
+      const currentPath = window.location.pathname;
+      return `${baseUrl}${currentPath}`;
+    }
+    
+    // If already absolute URL, strip query params
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      try {
+        const urlObj = new URL(url);
+        return `${urlObj.origin}${urlObj.pathname}`;
+      } catch {
+        return url;
+      }
+    }
+    
+    // Relative URL - make absolute and clean
+    const cleanPath = url.split('?')[0]; // Remove query params
+    return `${baseUrl}${cleanPath.startsWith('/') ? '' : '/'}${cleanPath}`;
+  };
+  
+  const absoluteCanonicalUrl = generateCanonicalUrl(canonicalUrl);
+  
   useEffect(() => {
     // Set document title
     document.title = fullTitle;
@@ -78,19 +105,16 @@ export function SEOHead({
     setMetaTag('distribution', 'Global');
     setMetaTag('rating', 'General');
     
-    // Set canonical URL
-    if (canonicalUrl) {
-      setLinkTag('canonical', canonicalUrl);
-    }
+    // Set canonical URL - ALWAYS set to fix "duplicate without canonical" SEO issue
+    // Uses absolute URL without query parameters
+    setLinkTag('canonical', absoluteCanonicalUrl);
     
     // Set Open Graph tags
     setMetaTag('og:title', fullTitle, true);
     setMetaTag('og:description', fullDescription, true);
     setMetaTag('og:image', ogImage, true);
     setMetaTag('og:type', article ? 'article' : 'website', true);
-    if (canonicalUrl) {
-      setMetaTag('og:url', canonicalUrl, true);
-    }
+    setMetaTag('og:url', absoluteCanonicalUrl, true);
     
     // Enhanced Twitter Card tags
     setMetaTag('twitter:card', 'summary_large_image');
@@ -166,7 +190,7 @@ export function SEOHead({
         "dateModified": article.modifiedTime || article.publishedTime,
         "mainEntityOfPage": {
           "@type": "WebPage",
-          "@id": canonicalUrl || window.location.href
+          "@id": absoluteCanonicalUrl
         },
         "articleSection": article.section,
         "keywords": article.tags.join(", "),
@@ -217,7 +241,7 @@ export function SEOHead({
         document.title = "PlanwiseESL - AI-Powered ESL Lessons";
       }
     };
-  }, [fullTitle, fullDescription, keywords, canonicalUrl, ogImage, article]);
+  }, [fullTitle, fullDescription, keywords, absoluteCanonicalUrl, ogImage, article]);
   
   return null; // This component doesn't render anything
 }
