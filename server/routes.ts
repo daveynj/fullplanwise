@@ -1061,9 +1061,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = req.user!.id;
 
       // Map generic price IDs to actual Stripe price IDs
-      // Using the price IDs from Stripe connector sandbox
       const stripeProductMap: Record<string, string> = {
-        'price_unlimited_monthly': 'price_1SrESyCXVXQHEVvgCJQbwmEn',
+        'price_unlimited_monthly': 'price_1RAwzFAsWPZqDtgQDk06P5r1',
       };
 
       // Get the actual price ID from our map, or use the provided one if not found
