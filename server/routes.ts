@@ -1951,23 +1951,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         isPublished
       } = req.body;
 
-      // Handle image: save base64 to file if provided
+      // Handle image: store base64 data URL directly in database (persists across restarts)
       let featuredImageUrl = null;
       if (featuredImageBase64 && featuredImageBase64.startsWith('data:image')) {
-        // Extract base64 data
-        const matches = featuredImageBase64.match(/^data:image\/(\w+);base64,(.+)$/);
-        if (matches) {
-          const ext = matches[1] === 'jpeg' ? 'jpg' : matches[1];
-          const base64Data = matches[2];
-          const filename = `blog_${Date.now()}_${Math.random().toString(36).substring(7)}.${ext}`;
-
-          const imagesDir = path.join(process.cwd(), 'public', 'blog-images');
-          await fs.mkdir(imagesDir, { recursive: true });
-
-          const filepath = path.join(imagesDir, filename);
-          await fs.writeFile(filepath, Buffer.from(base64Data, 'base64'));
-          featuredImageUrl = `/blog-images/${filename}`;
-        }
+        // Store the base64 data URL directly - this persists in the database
+        featuredImageUrl = featuredImageBase64;
       }
 
       // Check if slug already exists
