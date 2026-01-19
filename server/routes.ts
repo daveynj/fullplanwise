@@ -14,8 +14,9 @@ import {
 import { mailchimpService } from "./services/mailchimp.service";
 import { testOpenRouterConnection } from "./services/openRouter";
 import { testImageGeneration } from "./services/image-generation.service";
-import Stripe from "stripe";
 import { isFreeTrialActive, getFreeTrialEndDate } from "./features";
+import { getUncachableStripeClient } from "./stripeClient";
+import Stripe from "stripe";
 // Dynamic imports for AI services - loaded only when needed
 // import { qwenService } from "./services/qwen";
 // import { geminiService } from "./services/gemini";
@@ -58,16 +59,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     return pdfGeneratorService;
   };
 
-  // Dynamic Stripe loader
-  let stripe: any = null;
   const getStripe = async () => {
-    if (!stripe && process.env.STRIPE_SECRET_KEY) {
-      console.log('Loading Stripe service...');
-      const Stripe = (await import("stripe")).default;
-      stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: "2023-10-16" as any });
-      console.log('Stripe service loaded successfully');
+    try {
+      return await getUncachableStripeClient();
+    } catch (error) {
+      console.error('Failed to get Stripe client:', error);
+      return null;
     }
-    return stripe;
   };
 
   // Set up authentication routes
@@ -1232,6 +1230,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.status(403).json({ message: "Subscriptions are disabled during the free trial period." });
     }
     try {
+      const stripe = await getStripe();
       if (!stripe) {
         return res.status(500).json({ message: "Stripe API key not configured" });
       }
