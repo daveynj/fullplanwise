@@ -152,6 +152,7 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
       const res = await fetch('/api/admin/upload', {
         method: 'POST',
         body: formData,
+        credentials: 'include',
       });
 
       if (!res.ok) throw new Error('Upload failed');
