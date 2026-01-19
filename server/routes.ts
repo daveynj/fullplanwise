@@ -1926,7 +1926,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/admin/blog/import", async (req, res) => {
     // Verify import secret (server-to-server auth)
     const importSecret = req.headers['x-import-secret'];
-    const expectedSecret = process.env.PLANWISE_IMPORT_SECRET;
+    const expectedSecret = process.env.PLANWISE_SECRET;
 
     if (!expectedSecret || importSecret !== expectedSecret) {
       return res.status(401).json({ message: "Unauthorized" });
