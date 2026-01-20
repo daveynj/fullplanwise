@@ -23,7 +23,7 @@ async function initStripe() {
 
   try {
     console.log('Initializing Stripe schema...');
-    await runMigrations({ 
+    await runMigrations({
       databaseUrl,
       schema: 'stripe'
     });
@@ -88,8 +88,9 @@ app.post(
   }
 );
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+// Increased limit for base64 images in blog posts
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: false, limit: '10mb' }));
 
 // Serve static files from the public directory
 app.use(express.static('public'));
