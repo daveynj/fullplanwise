@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { SEOHead } from "@/components/SEOHead";
+import { BlogHeader } from "@/components/layout/blog-header";
 import DOMPurify from 'isomorphic-dompurify';
 import {
   Calendar,
@@ -90,6 +91,7 @@ export default function BlogPost() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background">
+        <BlogHeader />
         <div className="max-w-7xl mx-auto px-4 py-12">
           <div className="animate-pulse space-y-8">
             <div className="h-8 bg-muted rounded w-1/2"></div>
@@ -103,12 +105,15 @@ export default function BlogPost() {
 
   if (!post) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Post not found</h1>
-          <Link href="/blog">
-            <Button>Back to Blog</Button>
-          </Link>
+      <div className="min-h-screen bg-background">
+        <BlogHeader />
+        <div className="flex items-center justify-center" style={{ minHeight: 'calc(100vh - 80px)' }}>
+          <div className="text-center">
+            <h1 className="text-2xl font-bold mb-4">Post not found</h1>
+            <Link href="/blog">
+              <Button>Back to Blog</Button>
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -139,6 +144,7 @@ export default function BlogPost() {
         canonicalUrl={`/blog/${post.slug}`}
       />
 
+      <BlogHeader />
       <main className="min-h-screen bg-background">
         {/* Breadcrumbs at the very top */}
         <nav

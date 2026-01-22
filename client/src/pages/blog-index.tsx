@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SEOHead } from "@/components/SEOHead";
+import { BlogHeader } from "@/components/layout/blog-header";
 import { Search, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import type { BlogPost } from "@shared/schema";
 
@@ -52,6 +53,7 @@ export default function BlogIndex() {
         canonicalUrl="/blog"
       />
 
+      <BlogHeader />
       <main className="min-h-screen bg-background">
         {/* Hero Section */}
         <header className="bg-gradient-to-r from-primary/10 via-primary/5 to-background py-16 px-4">
