@@ -21,7 +21,7 @@ import {
   CreditCard as CreditCardIcon, 
   Loader2 
 } from "lucide-react";
-import { useFreeTrial } from "@/hooks/use-free-trial";
+import { useTrialStatus } from "@/hooks/use-trial-status";
 import { format } from 'date-fns';
 
 // Subscription plan
@@ -42,7 +42,7 @@ const unlimitedPlan = {
 export default function BuyCreditsPage() {
   const { user } = useAuth();
   const { toast } = useToast();
-  const { isFreeTrialActive, freeTrialEndDate } = useFreeTrial();
+  const { isInTrial, isPersonalTrial, trialDaysRemaining, trialExpiresAt, freeCreditsRemaining } = useTrialStatus();
   
   // Create subscription mutation
   const createSubscriptionMutation = useMutation({
@@ -97,24 +97,26 @@ export default function BuyCreditsPage() {
             {/* Page header */}
             <div className="mb-8 text-center">
               <h1 className="text-3xl md:text-4xl font-nunito font-bold">
-                {isFreeTrialActive ? "Free Trial Active" : "Subscribe for Unlimited Access"}
+                {isInTrial ? "Free Trial Active" : "Subscribe for Unlimited Access"}
               </h1>
               <p className="text-gray-600 mt-2">
-                {isFreeTrialActive 
-                  ? `All lesson generations are free until ${freeTrialEndDate ? format(freeTrialEndDate, "MMMM do, yyyy") : ''}.`
-                  : "Join our unlimited plan to generate as many AI-powered lessons as you need."
+                {isInTrial 
+                  ? `You have ${trialDaysRemaining} day${trialDaysRemaining !== 1 ? 's' : ''} of unlimited lesson generation remaining${freeCreditsRemaining > 0 ? `, plus ${freeCreditsRemaining} free credit${freeCreditsRemaining !== 1 ? 's' : ''} after trial ends` : ''}.`
+                  : freeCreditsRemaining > 0 
+                    ? `You have ${freeCreditsRemaining} free lesson credit${freeCreditsRemaining !== 1 ? 's' : ''} remaining. Subscribe for unlimited access.`
+                    : "Join our unlimited plan to generate as many AI-powered lessons as you need."
                 }
               </p>
             </div>
 
-            {isFreeTrialActive ? (
+            {isInTrial ? (
               <Card className="max-w-3xl mx-auto text-center py-12">
                 <CardHeader>
-                  <CardTitle className="text-2xl font-nunito">Payments Disabled During Free Trial</CardTitle>
+                  <CardTitle className="text-2xl font-nunito">Free Trial Active</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-lg text-gray-700">
-                    You currently have unlimited access to lesson generation. Subscriptions will be available after the free trial period ends.
+                    You have unlimited lesson generation for {trialDaysRemaining} more day{trialDaysRemaining !== 1 ? 's' : ''}. Subscribe anytime for continued unlimited access after your trial ends.
                   </p>
                 </CardContent>
               </Card>

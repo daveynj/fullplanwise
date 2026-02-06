@@ -9,14 +9,14 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { LessonGenerateParams, Student } from "@shared/schema";
 import { useLocation } from "wouter";
-import { useFreeTrial } from "@/hooks/use-free-trial";
+import { useTrialStatus } from "@/hooks/use-trial-status";
 
 export default function LessonGeneratorPage() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [, setLocation] = useLocation();
   const [generatingLesson, setGeneratingLesson] = useState(false);
-  const { isFreeTrialActive } = useFreeTrial();
+  const { canGenerateLessons } = useTrialStatus();
   
   // Read studentId from URL parameters
   const urlParams = new URLSearchParams(window.location.search);
@@ -124,13 +124,10 @@ export default function LessonGeneratorPage() {
       return;
     }
     
-    // Check if user can generate (free trial, subscription, or admin)
-    const canGenerate = isFreeTrialActive || user.subscriptionTier === 'unlimited' || user.isAdmin;
-    
-    if (!canGenerate) {
+    if (!canGenerateLessons && !user.isAdmin) {
       toast({
-        title: "Subscription Required",
-        description: "Please subscribe to generate lessons.",
+        title: "No Credits Remaining",
+        description: "Your free trial has ended and you've used all your free lessons. Subscribe for unlimited access!",
         variant: "destructive",
       });
       return;

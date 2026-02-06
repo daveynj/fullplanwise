@@ -3,13 +3,13 @@ import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { LogOut, Home, Wand2, Users, Book, Settings, CreditCard, Shield, Library, Sparkles, BookOpen } from "lucide-react";
-import { useFreeTrial } from "@/hooks/use-free-trial";
+import { useTrialStatus } from "@/hooks/use-trial-status";
 
 export function Sidebar() {
   const [location, setLocation] = useLocation();
   const { user, logoutMutation } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { isFreeTrialActive } = useFreeTrial();
+  const { isInTrial, isSubscriber, freeCreditsRemaining } = useTrialStatus();
 
   const handleLogout = () => {
     logoutMutation.mutate();
@@ -103,9 +103,9 @@ export function Sidebar() {
           <Sparkles className="mx-auto text-brand-yellow h-6 w-6 mb-2" />
           <p className="text-sm font-medium text-brand-light/80">Subscription Status</p>
           <p className="text-lg font-nunito font-bold text-brand-light">
-            {isFreeTrialActive ? "Free Trial" : (user?.subscriptionTier === 'unlimited' ? 'Unlimited' : 'Free Tier')}
+            {isSubscriber ? 'Unlimited' : (isInTrial ? 'Free Trial' : (freeCreditsRemaining > 0 ? `${freeCreditsRemaining} Credits` : 'Free Tier'))}
           </p>
-          {!isFreeTrialActive && user?.subscriptionTier !== 'unlimited' && (
+          {!isSubscriber && !isInTrial && (
              <Button 
               variant="brand"
               className="font-bold px-3 py-2 rounded-lg text-sm shadow-sm mt-3 w-full"

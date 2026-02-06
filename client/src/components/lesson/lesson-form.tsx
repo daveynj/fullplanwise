@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { Wand2, Bot, Sparkles, Info } from "lucide-react";
-import { useFreeTrial } from "@/hooks/use-free-trial";
+import { useTrialStatus } from "@/hooks/use-trial-status";
 import { useAuth } from "@/hooks/use-auth";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -67,7 +67,7 @@ const placeholders = [
 export function LessonForm({ students, onSubmit, initialStudentId }: LessonFormProps) {
   const [selectedCefrLevel, setSelectedCefrLevel] = useState<string>("B1");
   const [placeholder, setPlaceholder] = useState(placeholders[0]);
-  const { isFreeTrialActive } = useFreeTrial();
+  const { canGenerateLessons, isInTrial, isSubscriber, freeCreditsRemaining } = useTrialStatus();
   const { user } = useAuth();
   
   useEffect(() => {
@@ -114,7 +114,7 @@ export function LessonForm({ students, onSubmit, initialStudentId }: LessonFormP
     onSubmit(parsedValues);
   };
 
-  const canGenerate = isFreeTrialActive || user?.subscriptionTier === 'unlimited' || user?.isAdmin;
+  const canGenerate = canGenerateLessons || user?.isAdmin;
 
   return (
     <Card>
@@ -277,8 +277,11 @@ export function LessonForm({ students, onSubmit, initialStudentId }: LessonFormP
                 disabled={!canGenerate || form.formState.isSubmitting}
               >
                 <Wand2 className="mr-2 text-xl" /> Generate Lesson
-                {(isFreeTrialActive || user?.subscriptionTier === 'unlimited') && (
+                {(isInTrial || isSubscriber) && (
                   <span className="bg-white/20 ml-2 px-2 py-0.5 rounded-md text-sm">Unlimited</span>
+                )}
+                {!isInTrial && !isSubscriber && freeCreditsRemaining > 0 && (
+                  <span className="bg-white/20 ml-2 px-2 py-0.5 rounded-md text-sm">{freeCreditsRemaining} credit{freeCreditsRemaining !== 1 ? 's' : ''} left</span>
                 )}
               </Button>
             </div>
@@ -286,7 +289,7 @@ export function LessonForm({ students, onSubmit, initialStudentId }: LessonFormP
             {/* Show warning if cannot generate */}
             {!canGenerate && (
               <p className="text-destructive text-sm text-center mt-2">
-                You need an active subscription to generate lessons.
+                Your free trial has ended and you've used all your free lessons. Subscribe for unlimited access!
               </p>
             )}
           </form>

@@ -36,7 +36,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { User, Settings, Bell, Lock, Loader2, CreditCard, Calendar, Badge, Gift, Check, ExternalLink } from "lucide-react";
-import { useFreeTrial } from "@/hooks/use-free-trial";
+import { useTrialStatus } from "@/hooks/use-trial-status";
 
 // Profile update schema
 const profileUpdateSchema = z.object({
@@ -62,7 +62,7 @@ export default function SettingsPage() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [, setLocation] = useLocation();
-  const { isFreeTrialActive, freeTrialEndDate } = useFreeTrial();
+  const { isInTrial, isPersonalTrial, trialDaysRemaining, trialExpiresAt, isSubscriber, freeCreditsRemaining } = useTrialStatus();
   
   // Profile update form
   const profileForm = useForm<ProfileUpdateValues>({
@@ -202,12 +202,13 @@ export default function SettingsPage() {
                         <h3 className="font-semibold text-lg">{user?.fullName}</h3>
                         <p className="text-gray-500">{user?.email}</p>
                         <p className="text-sm text-gray-500 mt-1">
-                          {isFreeTrialActive ? "Free Trial Account" : 
-                           user?.subscriptionTier === "unlimited" ? "Unlimited Account" : "Free Account"}
+                          {isSubscriber ? "Unlimited Account" : 
+                           isInTrial ? "Free Trial Account" : 
+                           freeCreditsRemaining > 0 ? `${freeCreditsRemaining} Free Credits Remaining` : "Free Account"}
                         </p>
-                        {(user?.subscriptionTier === "unlimited" || isFreeTrialActive) && (
+                        {(isSubscriber || isInTrial) && (
                           <div className="mt-1 text-sm text-primary-600 font-medium">
-                            Active Subscription
+                            {isSubscriber ? 'Active Subscription' : `Trial: ${trialDaysRemaining} day${trialDaysRemaining !== 1 ? 's' : ''} remaining`}
                           </div>
                         )}
                       </div>
@@ -281,8 +282,8 @@ export default function SettingsPage() {
                           <div>
                             <p className="font-medium">Subscription Type</p>
                             <p className="text-gray-600">
-                              {isFreeTrialActive ? "Free Trial" :
-                               user?.subscriptionTier === "unlimited" ? "Unlimited Plan" : "Free Plan"}
+                              {isSubscriber ? "Unlimited Plan" :
+                               isInTrial ? "Free Trial" : "Free Plan"}
                             </p>
                           </div>
                         </div>
@@ -291,23 +292,21 @@ export default function SettingsPage() {
                           <Calendar className="h-5 w-5 text-primary mr-2 mt-0.5 flex-shrink-0" />
                           <div>
                             <p className="font-medium">
-                              {isFreeTrialActive ? "Trial Ends" : (localStorage.getItem('subscriptionEndDate') ? "Subscription Ends" : "Renewal Date")}
+                              {isInTrial ? "Trial Ends" : (localStorage.getItem('subscriptionEndDate') ? "Subscription Ends" : "Renewal Date")}
                             </p>
                             <p className="text-gray-600">
-                              {isFreeTrialActive ? (freeTrialEndDate?.toLocaleDateString()) :
+                              {isInTrial ? (trialExpiresAt?.toLocaleDateString()) :
                                (user?.subscriptionTier !== "free" ? 
                                 (() => {
-                                  // Check for a canceled subscription
                                   const endDate = localStorage.getItem('subscriptionEndDate');
                                   if (endDate) {
                                     return endDate;
                                   }
                                   
-                                  // Otherwise calculate renewal date
                                   const now = new Date();
                                   const renewalDate = new Date();
                                   
-                                  renewalDate.setDate(now.getDate() + 30); // Assume monthly for simplicity
+                                  renewalDate.setDate(now.getDate() + 30);
                                   
                                   return renewalDate.toLocaleDateString();
                                 })() : 
@@ -324,7 +323,7 @@ export default function SettingsPage() {
                           <div>
                             <p className="font-medium">Plan Benefits</p>
                             <ul className="mt-1 text-gray-600 text-sm space-y-1">
-                              {user?.subscriptionTier === "unlimited" || isFreeTrialActive ? (
+                              {isSubscriber || isInTrial ? (
                                 <>
                                   <li className="flex items-center">
                                     <Check className="h-4 w-4 text-green-500 mr-1" /> Unlimited lesson generations
@@ -354,13 +353,13 @@ export default function SettingsPage() {
                         <Button 
                           className="bg-primary hover:bg-primary/90"
                           onClick={() => setLocation("/buy-credits")}
-                          disabled={isFreeTrialActive || user?.subscriptionTier === 'unlimited'}
+                          disabled={isInTrial || isSubscriber}
                         >
                           <Gift className="mr-2 h-4 w-4" />
                           {user?.subscriptionTier === "free" ? "Upgrade to Unlimited" : "Change Plan"}
                         </Button>
                         
-                        {user?.subscriptionTier !== "free" && !isFreeTrialActive && !localStorage.getItem('subscriptionEndDate') && (
+                        {user?.subscriptionTier !== "free" && !isInTrial && !localStorage.getItem('subscriptionEndDate') && (
                           <Button 
                             variant="outline" 
                             className="text-red-600 border-red-200 hover:bg-red-50"
