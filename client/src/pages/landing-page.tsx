@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'wouter';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { SEOHead } from '@/components/SEOHead';
 import { useFreeTrial } from '@/hooks/use-free-trial';
-import { HomepageLessonPreview } from '@/components/homepage/HomepageLessonPreview';
+import { LessonContent } from '@/components/lesson/lesson-content';
 import { format } from 'date-fns';
 // Import Card components
 import {
@@ -15,13 +15,6 @@ import {
   CardHeader,
   CardTitle
 } from "@/components/ui/card";
-// Import Tabs for lesson showcase
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
 // Import icons
 import {
   Clock, Target, MonitorSmartphone, BookOpen, MessageSquare,
@@ -50,7 +43,8 @@ const FreeTrialBanner = () => {
 export default function LandingPage() {
   const { isFreeTrialActive, freeTrialEndDate } = useFreeTrial();
   const endDate = freeTrialEndDate ? format(freeTrialEndDate, "MMMM do") : '';
-  const [activeSection, setActiveSection] = useState('reading');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [parsedLessonContent, setParsedLessonContent] = useState<any>(null);
 
   // Fetch live lesson data for the showcase
   const { data: lesson, isLoading: isLessonLoading } = useQuery<any>({
@@ -59,13 +53,27 @@ export default function LandingPage() {
     retry: false,
   });
 
-  // Parse lesson content
-  const lessonData = lesson ? {
-    title: lesson.title,
-    level: lesson.cefrLevel,
-    sections: typeof lesson.content === 'string' ? JSON.parse(lesson.content).sections : lesson.content?.sections || []
-  } : null;
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  // Parse lesson content exactly like full-screen-lesson-page does
+  useEffect(() => {
+    if (lesson && lesson.content) {
+      try {
+        if (typeof lesson.content === 'string') {
+          const parsed = JSON.parse(lesson.content);
+          setParsedLessonContent({
+            ...parsed,
+            grammarSpotlight: lesson.grammarSpotlight
+          });
+        } else {
+          setParsedLessonContent({
+            ...lesson.content,
+            grammarSpotlight: lesson.grammarSpotlight
+          });
+        }
+      } catch (e) {
+        console.error('Error parsing lesson content:', e);
+      }
+    }
+  }, [lesson]);
 
   return (
     <div className="flex flex-col min-h-screen font-open-sans">
@@ -233,7 +241,7 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-      {/* Lesson Showcase Section - NEW */}
+      {/* Lesson Showcase Section - Live Lesson Display */}
       <section className="py-16 px-6 bg-brand-light border-b border-gray-200">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12">
@@ -244,86 +252,48 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <Tabs defaultValue="reading" className="w-full" onValueChange={setActiveSection}>
-            <div className="flex flex-col md:flex-row gap-6">
-              {/* Left Sidebar - Tab Navigation */}
-              <div className="md:w-1/4">
-                <div className="sticky top-24">
-                  <div className="mb-6">
-                    <h3 className="text-xl font-nunito font-semibold mb-2 text-brand-navy">Lesson Components</h3>
-                    <p className="text-sm text-gray-600">Click to explore each section of a complete ESL lesson</p>
+          {/* Live Lesson Display */}
+          <div className="bg-white rounded-2xl border border-gray-200 shadow-lg overflow-hidden">
+            {/* Lesson Header */}
+            {lesson && (
+              <div className="bg-gradient-to-r from-brand-navy to-brand-navy-light px-6 py-4 text-white">
+                <div className="flex items-center justify-between flex-wrap gap-4">
+                  <div>
+                    <p className="text-xs uppercase tracking-wider opacity-80 mb-1">Sample Lesson</p>
+                    <h3 className="font-nunito font-bold text-xl">{lesson.title}</h3>
                   </div>
-                  <TabsList className="flex flex-col space-y-1 h-auto bg-transparent">
-                    <TabsTrigger value="warmup" className="justify-start text-left px-4 py-3 w-full transition-all duration-200 data-[state=active]:bg-gradient-to-r data-[state=active]:from-brand-yellow/30 data-[state=active]:to-brand-yellow/10 data-[state=active]:text-brand-navy data-[state=active]:shadow-sm data-[state=active]:border-l-4 data-[state=active]:border-brand-yellow hover:bg-gray-50">
-                      <Lightbulb className="h-4 w-4 mr-2 flex-shrink-0" />
-                      Warm-up Activities
-                    </TabsTrigger>
-                    <TabsTrigger value="reading" className="justify-start text-left px-4 py-3 w-full transition-all duration-200 data-[state=active]:bg-gradient-to-r data-[state=active]:from-brand-yellow/30 data-[state=active]:to-brand-yellow/10 data-[state=active]:text-brand-navy data-[state=active]:shadow-sm data-[state=active]:border-l-4 data-[state=active]:border-brand-yellow hover:bg-gray-50">
-                      <BookOpen className="h-4 w-4 mr-2 flex-shrink-0" />
-                      Reading Text
-                    </TabsTrigger>
-                    <TabsTrigger value="vocabulary" className="justify-start text-left px-4 py-3 w-full transition-all duration-200 data-[state=active]:bg-gradient-to-r data-[state=active]:from-brand-yellow/30 data-[state=active]:to-brand-yellow/10 data-[state=active]:text-brand-navy data-[state=active]:shadow-sm data-[state=active]:border-l-4 data-[state=active]:border-brand-yellow hover:bg-gray-50">
-                      <Database className="h-4 w-4 mr-2 flex-shrink-0" />
-                      Vocabulary Practice
-                    </TabsTrigger>
-                    <TabsTrigger value="comprehension" className="justify-start text-left px-4 py-3 w-full transition-all duration-200 data-[state=active]:bg-gradient-to-r data-[state=active]:from-brand-yellow/30 data-[state=active]:to-brand-yellow/10 data-[state=active]:text-brand-navy data-[state=active]:shadow-sm data-[state=active]:border-l-4 data-[state=active]:border-brand-yellow hover:bg-gray-50">
-                      <CheckCircle className="h-4 w-4 mr-2 flex-shrink-0" />
-                      Comprehension Questions
-                    </TabsTrigger>
-                    <TabsTrigger value="sentence" className="justify-start text-left px-4 py-3 w-full transition-all duration-200 data-[state=active]:bg-gradient-to-r data-[state=active]:from-brand-yellow/30 data-[state=active]:to-brand-yellow/10 data-[state=active]:text-brand-navy data-[state=active]:shadow-sm data-[state=active]:border-l-4 data-[state=active]:border-brand-yellow hover:bg-gray-50">
-                      <Layers className="h-4 w-4 mr-2 flex-shrink-0" />
-                      Sentence Patterns
-                    </TabsTrigger>
-                    <TabsTrigger value="cloze" className="justify-start text-left px-4 py-3 w-full transition-all duration-200 data-[state=active]:bg-gradient-to-r data-[state=active]:from-brand-yellow/30 data-[state=active]:to-brand-yellow/10 data-[state=active]:text-brand-navy data-[state=active]:shadow-sm data-[state=active]:border-l-4 data-[state=active]:border-brand-yellow hover:bg-gray-50">
-                      <Puzzle className="h-4 w-4 mr-2 flex-shrink-0" />
-                      Fill-in-the-Blanks
-                    </TabsTrigger>
-                    <TabsTrigger value="unscramble" className="justify-start text-left px-4 py-3 w-full transition-all duration-200 data-[state=active]:bg-gradient-to-r data-[state=active]:from-brand-yellow/30 data-[state=active]:to-brand-yellow/10 data-[state=active]:text-brand-navy data-[state=active]:shadow-sm data-[state=active]:border-l-4 data-[state=active]:border-brand-yellow hover:bg-gray-50">
-                      <Sparkles className="h-4 w-4 mr-2 flex-shrink-0" />
-                      Sentence Unscramble
-                    </TabsTrigger>
-                    <TabsTrigger value="discussion" className="justify-start text-left px-4 py-3 w-full transition-all duration-200 data-[state=active]:bg-gradient-to-r data-[state=active]:from-brand-yellow/30 data-[state=active]:to-brand-yellow/10 data-[state=active]:text-brand-navy data-[state=active]:shadow-sm data-[state=active]:border-l-4 data-[state=active]:border-brand-yellow hover:bg-gray-50">
-                      <MessageSquare className="h-4 w-4 mr-2 flex-shrink-0" />
-                      Discussion Questions
-                    </TabsTrigger>
-                    <TabsTrigger value="quiz" className="justify-start text-left px-4 py-3 w-full transition-all duration-200 data-[state=active]:bg-gradient-to-r data-[state=active]:from-brand-yellow/30 data-[state=active]:to-brand-yellow/10 data-[state=active]:text-brand-navy data-[state=active]:shadow-sm data-[state=active]:border-l-4 data-[state=active]:border-brand-yellow hover:bg-gray-50">
-                      <Target className="h-4 w-4 mr-2 flex-shrink-0" />
-                      Knowledge Check Quiz
-                    </TabsTrigger>
-                  </TabsList>
-
-                  {/* Lesson Info Badge */}
-                  {lessonData && (
-                    <div className="mt-6 p-4 bg-gradient-to-br from-brand-navy to-brand-navy-light rounded-xl text-white">
-                      <p className="text-xs uppercase tracking-wider opacity-80 mb-1">Viewing Lesson</p>
-                      <p className="font-semibold text-sm">{lessonData.title}</p>
-                      <div className="flex items-center gap-2 mt-2">
-                        <span className="px-2 py-0.5 bg-brand-yellow text-brand-navy text-xs font-bold rounded">
-                          {lessonData.level}
-                        </span>
-                        <Link href="/lessons/1006">
-                          <span className="text-xs underline hover:no-underline cursor-pointer">
-                            View Full Lesson →
-                          </span>
-                        </Link>
-                      </div>
-                    </div>
-                  )}
+                  <div className="flex items-center gap-3">
+                    <span className="px-3 py-1 bg-brand-yellow text-brand-navy text-sm font-bold rounded">
+                      CEFR {lesson.cefrLevel}
+                    </span>
+                    <Link href="/lessons/1006">
+                      <Button variant="outline" size="sm" className="border-white text-white hover:bg-white/10">
+                        View Full Lesson →
+                      </Button>
+                    </Link>
+                  </div>
                 </div>
               </div>
+            )}
 
-              {/* Right Content Area - Live Lesson Preview */}
-              <div className="md:w-3/4">
-                <div className="bg-white/50 backdrop-blur-sm rounded-2xl border border-gray-200/50 p-6 shadow-lg min-h-[500px]">
-                  <HomepageLessonPreview
-                    lessonData={lessonData}
-                    activeSection={activeSection}
-                    isLoading={isLessonLoading}
-                  />
+            {/* Lesson Content - Exactly as it appears in the app */}
+            <div className="p-6 max-h-[800px] overflow-y-auto">
+              {isLessonLoading ? (
+                <div className="flex items-center justify-center py-12">
+                  <div className="text-center">
+                    <div className="w-12 h-12 border-4 border-t-primary border-primary/30 rounded-full animate-spin mx-auto mb-4"></div>
+                    <p className="text-gray-600">Loading lesson preview...</p>
+                  </div>
                 </div>
-              </div>
+              ) : parsedLessonContent ? (
+                <LessonContent content={parsedLessonContent} />
+              ) : (
+                <div className="text-center py-12">
+                  <p className="text-gray-500">Unable to load lesson preview. <Link href="/lessons/1006" className="text-primary underline">Click here to view the full lesson.</Link></p>
+                </div>
+              )}
             </div>
-          </Tabs>
+          </div>
 
           <div className="mt-12 text-center">
             <Link href="/auth?register=true">
