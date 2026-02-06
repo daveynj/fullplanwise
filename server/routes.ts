@@ -84,6 +84,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  // User trial/credits status endpoint - returns personalized trial info
+  app.get("/api/user/trial-status", ensureAuthenticated, async (req, res) => {
+    try {
+      const user = await storage.getUser(req.user!.id);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      const now = new Date();
+      const isSubscriber = user.subscriptionTier === 'unlimited';
+      const isInPersonalTrial = user.trialExpiresAt && now < new Date(user.trialExpiresAt);
+      const globalTrialActive = isFreeTrialActive();
+
+      // Calculate days remaining in personal trial
+      let trialDaysRemaining = 0;
+      if (isInPersonalTrial && user.trialExpiresAt) {
+        trialDaysRemaining = Math.ceil(
+          (new Date(user.trialExpiresAt).getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+        );
+      }
+
+      res.json({
+        isSubscriber,
+        isInTrial: isInPersonalTrial || globalTrialActive,
+        isPersonalTrial: isInPersonalTrial,
+        isGlobalTrial: globalTrialActive,
+        trialDaysRemaining,
+        trialExpiresAt: user.trialExpiresAt,
+        freeCreditsRemaining: user.freeCreditsRemaining ?? 0,
+        canGenerateLessons: isSubscriber || isInPersonalTrial || globalTrialActive || (user.freeCreditsRemaining ?? 0) > 0
+      });
+    } catch (error: any) {
+      console.error('Error fetching trial status:', error);
+      res.status(500).json({ message: "Error fetching trial status" });
+    }
+  });
+
   // Student Routes
   app.get("/api/students", ensureAuthenticated, async (req, res) => {
     try {
@@ -504,12 +541,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const freeTrialActive = isFreeTrialActive();
 
-      // Lesson generation is allowed if:
-      // 1. The free trial is active
-      // 2. The user is an admin
-      // 3. The user has an "unlimited" subscription
-      if (!freeTrialActive && !user.isAdmin && user.subscriptionTier !== 'unlimited') {
-        return res.status(402).json({ message: "A subscription is required to generate lessons." });
+      // New hybrid trial system:
+      // - Admins: always allowed
+      // - Subscribers (unlimited tier): always allowed
+      // - Global free trial active: everyone allowed
+      // - User in personal trial period (7 days): allowed
+      // - Free users with credits: allowed (decrement credit after generation)
+      // - Otherwise: denied
+
+      const isSubscriber = user.subscriptionTier === 'unlimited';
+      const isInPersonalTrial = user.trialExpiresAt && new Date() < new Date(user.trialExpiresAt);
+      const hasCredits = (user.freeCreditsRemaining ?? 0) > 0;
+
+      // Track if we should decrement credits after successful generation
+      let shouldDecrementCredits = false;
+
+      if (!user.isAdmin && !isSubscriber && !freeTrialActive) {
+        // Free user - check personal trial or credits
+        if (isInPersonalTrial) {
+          console.log(`User ${user.id} is in personal trial period (expires: ${user.trialExpiresAt})`);
+        } else if (hasCredits) {
+          console.log(`User ${user.id} will use 1 credit (${user.freeCreditsRemaining} remaining)`);
+          shouldDecrementCredits = true;
+        } else {
+          // No trial, no credits, no subscription
+          return res.status(402).json({
+            message: "Your free trial has ended and you've used all your free lessons. Subscribe for unlimited access!",
+            creditsRemaining: 0,
+            trialExpired: true
+          });
+        }
       }
 
       // Start a timer to track generation time
@@ -583,6 +644,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Send response immediately - don't wait for database save
         console.log(`Lesson generation completed in ${timeTaken.toFixed(1)}s - responding immediately with temp ID: ${tempId}`);
         res.json(lessonResponse);
+
+        // Decrement credits if this user is using one of their free credits
+        if (shouldDecrementCredits) {
+          storage.decrementUserCredits(user.id)
+            .then(() => console.log(`✅ Decremented credit for user ${user.id}`))
+            .catch(err => console.error(`❌ Failed to decrement credit for user ${user.id}:`, err));
+        }
 
         // Save to database asynchronously (non-blocking)
         const lessonToSave = {

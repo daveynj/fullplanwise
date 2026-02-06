@@ -14,7 +14,10 @@ export const users = pgTable("users", {
   stripeSubscriptionId: text("stripe_subscription_id"),
   subscriptionTier: text("subscription_tier").default("free"),
   resetPasswordToken: text("reset_password_token"),
-  resetPasswordExpires: timestamp("reset_password_expires")
+  resetPasswordExpires: timestamp("reset_password_expires"),
+  // Free trial system
+  freeCreditsRemaining: integer("free_credits_remaining").default(2),
+  trialExpiresAt: timestamp("trial_expires_at"),
 });
 
 // Student table schema
@@ -169,7 +172,7 @@ export const CATEGORY_LABELS: Record<LessonCategory, string> = {
 
 export const PublicLibraryCategoryEnum = z.enum([
   'business-english',
-  'general-english', 
+  'general-english',
   'ielts-preparation',
   'conversation-practice',
   'grammar-focus',
@@ -183,7 +186,7 @@ export type PublicLibraryCategory = z.infer<typeof PublicLibraryCategoryEnum>;
 
 export const PUBLIC_LIBRARY_LABELS: Record<PublicLibraryCategory, string> = {
   'business-english': "Business English",
-  'general-english': "General English", 
+  'general-english': "General English",
   'ielts-preparation': "IELTS Preparation",
   'conversation-practice': "Conversation Practice",
   'grammar-focus': "Grammar Focus",

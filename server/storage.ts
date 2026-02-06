@@ -1,7 +1,7 @@
 
-import { 
+import {
   users, students, lessons, studentLessons, studentVocabulary, blogPosts,
-  type User, type InsertUser, type Student, type InsertStudent, 
+  type User, type InsertUser, type Student, type InsertStudent,
   type Lesson, type InsertLesson, type StudentLesson, type InsertStudentLesson,
   type StudentVocabulary, type InsertStudentVocabulary,
   type BlogPost, type InsertBlogPost, type UpdateBlogPost
@@ -25,30 +25,31 @@ export interface IStorage {
   updateUserStripeInfo(userId: number, stripeInfo: { stripeCustomerId: string, stripeSubscriptionId: string | null }): Promise<User>;
   updateUserAdminStatus(userId: number, isAdmin: boolean): Promise<User>;
   updateUser(userId: number, updates: Partial<User>): Promise<User>;
-  
+  decrementUserCredits(userId: number): Promise<void>;
+
   // Student methods
   getStudents(teacherId: number): Promise<Student[]>;
   getStudent(id: number): Promise<Student | undefined>;
   createStudent(student: InsertStudent): Promise<Student>;
   updateStudent(id: number, student: Partial<Student>): Promise<Student>;
   deleteStudent(id: number): Promise<boolean>;
-  
+
   // Lesson methods
-  getLessons(teacherId: number, page?: number, pageSize?: number, search?: string, cefrLevel?: string, dateFilter?: string): Promise<{lessons: Lesson[], total: number}>;
+  getLessons(teacherId: number, page?: number, pageSize?: number, search?: string, cefrLevel?: string, dateFilter?: string): Promise<{ lessons: Lesson[], total: number }>;
   getLessonsByStudent(studentId: number): Promise<Lesson[]>;
   getLesson(id: number): Promise<Lesson | undefined>;
   createLesson(lesson: InsertLesson): Promise<Lesson>;
   updateLesson(id: number, lessonUpdate: Partial<Lesson>): Promise<Lesson>;
   deleteLesson(id: number): Promise<boolean>;
-  getLessonDeletionInfo(id: number): Promise<{assignmentCount: number, affectedStudentIds: number[], lessonTitle: string}>;
+  getLessonDeletionInfo(id: number): Promise<{ assignmentCount: number, affectedStudentIds: number[], lessonTitle: string }>;
   deleteLessonWithStrategy(id: number, strategy: 'delete_all' | 'keep_vocabulary'): Promise<boolean>;
-  
+
   // Public library methods
-  getPublicLessons(page?: number, pageSize?: number, search?: string, cefrLevel?: string, category?: string): Promise<{lessons: Lesson[], total: number}>;
+  getPublicLessons(page?: number, pageSize?: number, search?: string, cefrLevel?: string, category?: string): Promise<{ lessons: Lesson[], total: number }>;
   copyLessonToUser(lessonId: number, userId: number): Promise<Lesson>;
-  
+
   // Admin methods
-  getUsersWithLessonStats(page?: number, pageSize?: number, search?: string, dateFilter?: string): Promise<{users: any[], total: number}>;
+  getUsersWithLessonStats(page?: number, pageSize?: number, search?: string, dateFilter?: string): Promise<{ users: any[], total: number }>;
   getAdminAnalytics(): Promise<{
     totalUsers: number;
     activeUsersLast30Days: number;
@@ -56,14 +57,14 @@ export interface IStorage {
     totalLessons: number;
     lessonsLast30Days: number;
     lessonsLast7Days: number;
-    topCategories: Array<{category: string, count: number}>;
-    userGrowthData: Array<{date: string, users: number, lessons: number}>;
-    cefrDistribution: Array<{level: string, count: number}>;
+    topCategories: Array<{ category: string, count: number }>;
+    userGrowthData: Array<{ date: string, users: number, lessons: number }>;
+    cefrDistribution: Array<{ level: string, count: number }>;
     averageLessonsPerUser: number;
-    topUsers: Array<{username: string, lessonCount: number, lastActive: string}>;
+    topUsers: Array<{ username: string, lessonCount: number, lastActive: string }>;
   }>;
-  getAllLessonsForAdmin(page?: number, pageSize?: number, search?: string, category?: string, cefrLevel?: string): Promise<{lessons: any[], total: number}>;
-  
+  getAllLessonsForAdmin(page?: number, pageSize?: number, search?: string, category?: string, cefrLevel?: string): Promise<{ lessons: any[], total: number }>;
+
   // Student-Lesson association methods
   assignLessonToStudent(studentId: number, lessonId: number, teacherId: number, notes?: string): Promise<StudentLesson>;
   getStudentLessons(studentId: number): Promise<Array<StudentLesson & { lesson: Lesson }>>;
@@ -71,20 +72,20 @@ export interface IStorage {
   removeStudentLessonByAssignmentId(assignmentId: number, studentId: number): Promise<boolean>;
   checkLessonAssignment(studentId: number, lessonId: number): Promise<StudentLesson | undefined>;
   updateStudentLessonStatus(id: number, status: string): Promise<StudentLesson>;
-  
+
   // Student vocabulary methods
   addStudentVocabulary(vocabulary: InsertStudentVocabulary[]): Promise<StudentVocabulary[]>;
   getStudentVocabulary(studentId: number, limit?: number): Promise<StudentVocabulary[]>;
   extractAndSaveVocabulary(studentId: number, lessonId: number): Promise<number>;
-  
+
   // Blog post methods
-  getAllBlogPosts(page?: number, pageSize?: number, category?: string, featured?: boolean, isPublished?: boolean): Promise<{posts: BlogPost[], total: number}>;
+  getAllBlogPosts(page?: number, pageSize?: number, category?: string, featured?: boolean, isPublished?: boolean): Promise<{ posts: BlogPost[], total: number }>;
   getBlogPost(id: number): Promise<BlogPost | undefined>;
   getBlogPostBySlug(slug: string): Promise<BlogPost | undefined>;
   createBlogPost(post: InsertBlogPost): Promise<BlogPost>;
   updateBlogPost(id: number, post: UpdateBlogPost): Promise<BlogPost>;
   deleteBlogPost(id: number): Promise<boolean>;
-  
+
   // Session store
   sessionStore: Store;
 }
@@ -123,16 +124,22 @@ export class DatabaseStorage implements IStorage {
 
   async createUser(insertUser: InsertUser): Promise<User> {
     try {
+      // Calculate trial expiry date (7 days from now)
+      const trialExpiresAt = new Date();
+      trialExpiresAt.setDate(trialExpiresAt.getDate() + 7);
+
       // Ensure default values are set
       const userToInsert = {
         ...insertUser,
         fullName: insertUser.fullName || insertUser.username,
         isAdmin: false,
-        subscriptionTier: "free"
+        subscriptionTier: "free",
+        freeCreditsRemaining: 2,  // 2 free lessons after trial ends
+        trialExpiresAt  // 7-day trial period
       };
-      
+
       const [user] = await db.insert(users).values(userToInsert).returning();
-      console.log(`User created in database with ID: ${user.id}`);
+      console.log(`User created in database with ID: ${user.id}, trial expires: ${trialExpiresAt.toISOString()}`);
       return user;
     } catch (error) {
       console.error('Error creating user:', error);
@@ -140,25 +147,39 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
+  async decrementUserCredits(userId: number): Promise<void> {
+    try {
+      await db.update(users)
+        .set({
+          freeCreditsRemaining: sql`GREATEST(0, COALESCE(${users.freeCreditsRemaining}, 0) - 1)`
+        })
+        .where(eq(users.id, userId));
+      console.log(`Decremented credits for user ${userId}`);
+    } catch (error) {
+      console.error('Error decrementing user credits:', error);
+      throw error;
+    }
+  }
+
   async updateUserStripeInfo(
-    userId: number, 
+    userId: number,
     stripeInfo: { stripeCustomerId: string, stripeSubscriptionId: string | null }
   ): Promise<User> {
     try {
       const [updatedUser] = await db
         .update(users)
-        .set({ 
+        .set({
           stripeCustomerId: stripeInfo.stripeCustomerId,
           stripeSubscriptionId: stripeInfo.stripeSubscriptionId,
           subscriptionTier: stripeInfo.stripeSubscriptionId ? "unlimited" : "free"
         })
         .where(eq(users.id, userId))
         .returning();
-      
+
       if (!updatedUser) {
         throw new Error("User not found");
       }
-      
+
       return updatedUser;
     } catch (error) {
       console.error('Error updating user Stripe info:', error);
@@ -173,11 +194,11 @@ export class DatabaseStorage implements IStorage {
         .set({ isAdmin })
         .where(eq(users.id, userId))
         .returning();
-      
+
       if (!updatedUser) {
         throw new Error("User not found");
       }
-      
+
       console.log(`User ${userId} admin status updated to: ${isAdmin}`);
       return updatedUser;
     } catch (error) {
@@ -185,7 +206,7 @@ export class DatabaseStorage implements IStorage {
       throw error;
     }
   }
-  
+
   async getUserByStripeCustomerId(stripeCustomerId: string): Promise<User | undefined> {
     try {
       const [user] = await db
@@ -198,7 +219,7 @@ export class DatabaseStorage implements IStorage {
       throw error;
     }
   }
-  
+
   async getUsersByEmail(email: string): Promise<User[]> {
     try {
       const foundUsers = await db
@@ -211,7 +232,7 @@ export class DatabaseStorage implements IStorage {
       throw error;
     }
   }
-  
+
   async getUserByResetToken(token: string): Promise<User[]> {
     try {
       const foundUsers = await db
@@ -224,7 +245,7 @@ export class DatabaseStorage implements IStorage {
       throw error;
     }
   }
-  
+
   async updateUser(userId: number, updates: Partial<User>): Promise<User> {
     try {
       const [updatedUser] = await db
@@ -232,11 +253,11 @@ export class DatabaseStorage implements IStorage {
         .set(updates)
         .where(eq(users.id, userId))
         .returning();
-      
+
       if (!updatedUser) {
         throw new Error("User not found");
       }
-      
+
       console.log(`User ${userId} updated with changes:`, updates);
       return updatedUser;
     } catch (error) {
@@ -291,11 +312,11 @@ export class DatabaseStorage implements IStorage {
         .set(studentUpdate)
         .where(eq(students.id, id))
         .returning();
-      
+
       if (!updatedStudent) {
         throw new Error("Student not found");
       }
-      
+
       return updatedStudent;
     } catch (error) {
       console.error('Error updating student:', error);
@@ -309,7 +330,7 @@ export class DatabaseStorage implements IStorage {
         .delete(students)
         .where(eq(students.id, id))
         .returning({ id: students.id });
-      
+
       return result.length > 0;
     } catch (error) {
       console.error('Error deleting student:', error);
@@ -318,29 +339,29 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Lesson methods
-  private lessonsCache: Map<string, {lessons: Lesson[], total: number, timestamp: number}> = new Map();
+  private lessonsCache: Map<string, { lessons: Lesson[], total: number, timestamp: number }> = new Map();
   private CACHE_TTL = 5000; // Cache time-to-live in ms (5 seconds)
 
   async getLessons(
-    teacherId: number, 
-    page: number = 1, 
-    pageSize: number = 10, 
-    search?: string, 
-    cefrLevel?: string, 
+    teacherId: number,
+    page: number = 1,
+    pageSize: number = 10,
+    search?: string,
+    cefrLevel?: string,
     dateFilter?: string,
     category?: string
-  ): Promise<{lessons: Lesson[], total: number}> {
+  ): Promise<{ lessons: Lesson[], total: number }> {
     try {
       console.log(`[Storage.getLessons] START - teacherId: ${teacherId}, page: ${page}, pageSize: ${pageSize}, search: ${search || 'none'}`);
-      
+
       // Calculate offset based on page number and page size
       const offset = (page - 1) * pageSize;
       console.log(`[Storage.getLessons] Calculated offset: ${offset}`);
-      
+
       // Build filter conditions
       const conditions = [eq(lessons.teacherId, teacherId)];
       console.log('Initial conditions set for teacherId:', teacherId); // Simplified log
-      
+
       // Add search filter if provided
       if (search && search.trim() !== '') {
         const searchTerm = `%${search.trim()}%`;
@@ -358,19 +379,19 @@ export class DatabaseStorage implements IStorage {
           // Don't add additional conditions on failure since teacherId is already included
         }
       }
-      
+
       // Add CEFR level filter if provided
       if (cefrLevel && cefrLevel !== 'all') {
         const cefrCondition = eq(lessons.cefrLevel, cefrLevel);
         conditions.push(cefrCondition);
         console.log('Added CEFR condition for level:', cefrLevel); // Simplified log
       }
-      
+
       // Add date filter if provided
       if (dateFilter && dateFilter !== 'all') {
         const now = new Date();
         let startDate: Date;
-        
+
         if (dateFilter === 'today') {
           startDate = new Date(now);
           startDate.setHours(0, 0, 0, 0);
@@ -383,21 +404,21 @@ export class DatabaseStorage implements IStorage {
         } else {
           startDate = new Date(0); // Default to epoch start if unknown filter
         }
-        
+
         const dateCondition = gte(lessons.createdAt, startDate);
         conditions.push(dateCondition);
         console.log('Added date condition for filter:', dateFilter, 'Start date:', startDate.toISOString()); // Simplified log
       }
-      
+
       // Add category filter if provided
       if (category && category !== 'all') {
         const categoryCondition = eq(lessons.category, category);
         conditions.push(categoryCondition);
         console.log('Added category condition for category:', category); // Simplified log
       }
-      
+
       console.log(`Final condition count for count/fetch: ${conditions.length}`); // Simplified log
-      
+
       // Try a direct query first to see if we can get any lessons at all for this teacher
       // This helps us debug if the issue is with filtering or with basic data access
       try {
@@ -405,12 +426,12 @@ export class DatabaseStorage implements IStorage {
           .select({ count: count() })
           .from(lessons)
           .where(eq(lessons.teacherId, teacherId));
-        
+
         console.log(`Basic teacher lessons check: Teacher ID ${teacherId} has ${basicCheck[0]?.count || 0} total lessons in database`);
       } catch (e) {
         console.error('Error in basic teacher lessons check:', e);
       }
-      
+
       // Make sure indexes exist
       try {
         await db.execute(
@@ -422,7 +443,7 @@ export class DatabaseStorage implements IStorage {
       } catch (e) {
         console.error('Error creating indexes (non-critical):', e);
       }
-      
+
       // Execute count query - get total count
       console.log('Executing count query...');
       let total = 0;
@@ -431,7 +452,7 @@ export class DatabaseStorage implements IStorage {
           .select({ count: count() })
           .from(lessons)
           .where(and(...conditions));
-        
+
         total = Number(countResult[0]?.count || 0);
         console.log(`Found ${total} lessons matching criteria`);
       } catch (countError) {
@@ -442,16 +463,16 @@ export class DatabaseStorage implements IStorage {
             .select({ id: lessons.id })
             .from(lessons)
             .where(eq(lessons.teacherId, teacherId));
-          
+
           total = allLessons.length;
           console.log(`Fallback count method found ${total} total lessons`);
         } catch (fallbackError) {
           console.error('Error in fallback count query:', fallbackError);
         }
       }
-      
+
       console.log(`[Storage.getLessons] Total lessons matching criteria: ${total}`);
-            
+
       // Get the filtered and paginated lessons 
       console.log(`[Storage.getLessons] Fetching lessons with limit=${pageSize}, offset=${offset}...`);
       let lessonsList: Lesson[] = [];
@@ -483,7 +504,7 @@ export class DatabaseStorage implements IStorage {
       } catch (fetchError) {
         fetchErrorOccurred = true;
         console.error('[Storage.getLessons] Error fetching lessons with conditions:', fetchError);
-        
+
         // If the conditional query fails, try a simpler query without conditions
         try {
           console.log('[Storage.getLessons] Attempting fallback query with minimal conditions...');
@@ -509,15 +530,15 @@ export class DatabaseStorage implements IStorage {
             .orderBy(desc(lessons.createdAt))
             .limit(pageSize)
             .offset(offset);
-           console.log(`[Storage.getLessons] Fallback query successful. Found ${lessonsList.length} lessons.`);
+          console.log(`[Storage.getLessons] Fallback query successful. Found ${lessonsList.length} lessons.`);
         } catch (fallbackError) {
           console.error('[Storage.getLessons] Fallback query also failed:', fallbackError);
           lessonsList = []; // Ensure empty list on complete failure
         }
       }
-      
+
       console.log(`[Storage.getLessons] Returning ${lessonsList.length} lessons for page ${page}. Fetch error occurred: ${fetchErrorOccurred}`);
-      
+
       // Return result directly without caching
       return {
         lessons: lessonsList,
@@ -525,7 +546,7 @@ export class DatabaseStorage implements IStorage {
       };
     } catch (error) {
       console.error('[Storage.getLessons] Outer catch block error:', error);
-      
+
       // Return empty results instead of failing completely
       console.log('[Storage.getLessons] Returning empty results due to outer error');
       return {
@@ -554,13 +575,13 @@ export class DatabaseStorage implements IStorage {
         .select()
         .from(lessons)
         .where(eq(lessons.id, id));
-      
+
       if (lesson) {
         console.log(`[Storage.getLesson] Found lesson ${id}: "${lesson.title}"`);
       } else {
         console.log(`[Storage.getLesson] Lesson ${id} not found in database`);
       }
-      
+
       return lesson;
     } catch (error) {
       console.error(`[Storage.getLesson] Error fetching lesson ${id}:`, error);
@@ -588,11 +609,11 @@ export class DatabaseStorage implements IStorage {
         .set(lessonUpdate)
         .where(eq(lessons.id, id))
         .returning();
-      
+
       if (!updatedLesson) {
         throw new Error("Lesson not found");
       }
-      
+
       return updatedLesson;
     } catch (error) {
       console.error('Error updating lesson:', error);
@@ -606,7 +627,7 @@ export class DatabaseStorage implements IStorage {
         .delete(lessons)
         .where(eq(lessons.id, id))
         .returning({ id: lessons.id });
-      
+
       return result.length > 0;
     } catch (error) {
       console.error('Error deleting lesson:', error);
@@ -614,13 +635,13 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
-  async getLessonDeletionInfo(id: number): Promise<{assignmentCount: number, affectedStudentIds: number[], lessonTitle: string}> {
+  async getLessonDeletionInfo(id: number): Promise<{ assignmentCount: number, affectedStudentIds: number[], lessonTitle: string }> {
     try {
       // Get lesson title
       const [lesson] = await db.select({ title: lessons.title })
         .from(lessons)
         .where(eq(lessons.id, id));
-      
+
       if (!lesson) {
         throw new Error('Lesson not found');
       }
@@ -629,9 +650,9 @@ export class DatabaseStorage implements IStorage {
       const assignments = await db.select({ studentId: studentLessons.studentId })
         .from(studentLessons)
         .where(eq(studentLessons.lessonId, id));
-      
+
       const affectedStudentIds = [...new Set(assignments.map(a => a.studentId))];
-      
+
       return {
         assignmentCount: assignments.length,
         affectedStudentIds,
@@ -647,35 +668,35 @@ export class DatabaseStorage implements IStorage {
     try {
       // Get lesson info first
       const { lessonTitle, assignmentCount } = await this.getLessonDeletionInfo(id);
-      
+
       // If no assignments, just do a simple delete (shouldn't happen from UI, but safety check)
       if (assignmentCount === 0) {
         console.log(`Lesson ${id} has no assignments, performing simple delete`);
         return await this.deleteLesson(id);
       }
-      
+
       // Use transaction to ensure all operations succeed or fail together
       await db.transaction(async (tx) => {
         if (strategy === 'delete_all') {
           // Strategy A: Delete everything (assignments + vocabulary + lesson)
           console.log(`Deleting lesson ${id} with all associated data`);
-          
+
           // Delete vocabulary
           await tx.delete(studentVocabulary)
             .where(eq(studentVocabulary.lessonId, id));
-          
+
           // Delete assignments
           await tx.delete(studentLessons)
             .where(eq(studentLessons.lessonId, id));
-          
+
           // Delete lesson
           await tx.delete(lessons)
             .where(eq(lessons.id, id));
-            
+
         } else {
           // Strategy B: Keep vocabulary as standalone (delete lesson but preserve vocabulary)
           console.log(`Deleting lesson ${id} but keeping vocabulary as standalone`);
-          
+
           // Only update vocabulary that came from this lesson (source='lesson')
           // Preserve originLessonTitle if already set (for words migrated from multiple deleted lessons)
           await tx.update(studentVocabulary)
@@ -690,17 +711,17 @@ export class DatabaseStorage implements IStorage {
                 eq(studentVocabulary.source, 'lesson')
               )
             );
-          
+
           // Delete assignments
           await tx.delete(studentLessons)
             .where(eq(studentLessons.lessonId, id));
-          
+
           // Delete lesson
           await tx.delete(lessons)
             .where(eq(lessons.id, id));
         }
       });
-      
+
       console.log(`Successfully deleted lesson ${id} with strategy: ${strategy}`);
       return true;
     } catch (error) {
@@ -708,20 +729,20 @@ export class DatabaseStorage implements IStorage {
       throw error;
     }
   }
-  
+
   // Admin methods
   async getUsersWithLessonStats(
     page: number = 1,
     pageSize: number = 10,
     search?: string,
     dateFilter?: string
-  ): Promise<{users: any[], total: number}> {
+  ): Promise<{ users: any[], total: number }> {
     try {
       console.log(`Getting users with lesson stats, page: ${page}, search: ${search || 'none'}, dateFilter: ${dateFilter || 'none'}`);
-      
+
       // Calculate offset based on page number and page size
       const offset = (page - 1) * pageSize;
-      
+
       // Build search condition for users
       let userConditions = [];
       if (search && search.trim() !== '') {
@@ -734,7 +755,7 @@ export class DatabaseStorage implements IStorage {
           )
         );
       }
-      
+
       // Find the total number of users matching search
       let countResult;
       if (userConditions.length > 0) {
@@ -747,9 +768,9 @@ export class DatabaseStorage implements IStorage {
           .select({ count: count() })
           .from(users);
       }
-      
+
       const total = Number(countResult[0]?.count || 0);
-      
+
       // Get users with pagination
       let usersList;
       if (userConditions.length > 0) {
@@ -768,12 +789,12 @@ export class DatabaseStorage implements IStorage {
           .limit(pageSize)
           .offset(offset);
       }
-      
+
       // Build date filter for lessons if needed
       let startDate: Date | undefined;
       if (dateFilter && dateFilter !== 'all') {
         const now = new Date();
-        
+
         if (dateFilter === 'today') {
           startDate = new Date(now);
           startDate.setHours(0, 0, 0, 0);
@@ -787,7 +808,7 @@ export class DatabaseStorage implements IStorage {
           startDate = new Date(0); // Default to epoch start if unknown filter
         }
       }
-      
+
       // For each user, get their lesson stats
       const usersWithStats = await Promise.all(
         usersList.map(async (user) => {
@@ -809,9 +830,9 @@ export class DatabaseStorage implements IStorage {
               .from(lessons)
               .where(eq(lessons.teacherId, user.id));
           }
-          
+
           const lessonCount = Number(lessonCountResult[0]?.count || 0);
-          
+
           // Get most recent lesson date
           let recentLesson;
           if (startDate) {
@@ -833,12 +854,12 @@ export class DatabaseStorage implements IStorage {
               .orderBy(desc(lessons.createdAt))
               .limit(1);
           }
-          
+
           const mostRecentDate = recentLesson[0]?.createdAt || null;
-          
+
           // Create user object without password
           const { password, ...userWithoutPassword } = user;
-          
+
           // Return user with lesson stats
           return {
             ...userWithoutPassword,
@@ -847,14 +868,14 @@ export class DatabaseStorage implements IStorage {
           };
         })
       );
-      
+
       return {
         users: usersWithStats,
         total
       };
     } catch (error) {
       console.error('Error fetching users with lesson stats:', error);
-      
+
       // Return empty results instead of failing completely
       return {
         users: [],
@@ -958,7 +979,7 @@ export class DatabaseStorage implements IStorage {
       }));
 
       // Simple user growth data placeholder
-      const userGrowthData: Array<{date: string, users: number, lessons: number}> = [];
+      const userGrowthData: Array<{ date: string, users: number, lessons: number }> = [];
 
       return {
         totalUsers,
@@ -982,7 +1003,7 @@ export class DatabaseStorage implements IStorage {
   async getAllLessonsForAdmin(page = 1, pageSize = 20, search = '', category = 'all', cefrLevel = 'all') {
     try {
       const offset = (page - 1) * pageSize;
-      
+
       // Build base query for counting
       let countQuery = db
         .select({ count: sql`count(*)` })
@@ -1014,13 +1035,13 @@ export class DatabaseStorage implements IStorage {
         countQuery = countQuery.where(searchCondition);
         lessonsQuery = lessonsQuery.where(searchCondition);
       }
-      
+
       // Apply category filter
       if (category && category !== 'all') {
         countQuery = countQuery.where(eq(lessons.category, category));
         lessonsQuery = lessonsQuery.where(eq(lessons.category, category));
       }
-      
+
       // Apply CEFR level filter
       if (cefrLevel && cefrLevel !== 'all') {
         countQuery = countQuery.where(eq(lessons.cefrLevel, cefrLevel));
@@ -1030,13 +1051,13 @@ export class DatabaseStorage implements IStorage {
       // Execute count query
       const [countResult] = await countQuery;
       const total = Number(countResult.count);
-      
+
       // Execute lessons query
       const lessonsResult = await lessonsQuery
         .orderBy(desc(lessons.createdAt))
         .limit(pageSize)
         .offset(offset);
-      
+
       return {
         lessons: lessonsResult,
         total
@@ -1050,7 +1071,7 @@ export class DatabaseStorage implements IStorage {
   async getPublicLessons(page = 1, pageSize = 20, search = '', cefrLevel = 'all', category = 'all') {
     try {
       const offset = (page - 1) * pageSize;
-      
+
       // Build base query for counting
       let countQuery = db
         .select({ count: sql`count(*)` })
@@ -1085,13 +1106,13 @@ export class DatabaseStorage implements IStorage {
         countQuery = countQuery.where(and(eq(lessons.isPublic, true), searchCondition));
         lessonsQuery = lessonsQuery.where(and(eq(lessons.isPublic, true), searchCondition));
       }
-      
+
       // Apply category filter (using publicCategory field)
       if (category && category !== 'all') {
         countQuery = countQuery.where(and(eq(lessons.isPublic, true), eq(lessons.publicCategory, category)));
         lessonsQuery = lessonsQuery.where(and(eq(lessons.isPublic, true), eq(lessons.publicCategory, category)));
       }
-      
+
       // Apply CEFR level filter
       if (cefrLevel && cefrLevel !== 'all') {
         countQuery = countQuery.where(and(eq(lessons.isPublic, true), eq(lessons.cefrLevel, cefrLevel)));
@@ -1101,13 +1122,13 @@ export class DatabaseStorage implements IStorage {
       // Execute count query
       const [countResult] = await countQuery;
       const total = Number(countResult.count);
-      
+
       // Execute lessons query
       const lessonsResult = await lessonsQuery
         .orderBy(desc(lessons.createdAt))
         .limit(pageSize)
         .offset(offset);
-      
+
       return {
         lessons: lessonsResult,
         total
@@ -1164,10 +1185,10 @@ export class DatabaseStorage implements IStorage {
         notes: notes || null,
         status: 'assigned'
       }).returning();
-      
+
       // Extract and save vocabulary from this lesson
       await this.extractAndSaveVocabulary(studentId, lessonId);
-      
+
       return studentLesson;
     } catch (error) {
       console.error('Error assigning lesson to student:', error);
@@ -1178,7 +1199,7 @@ export class DatabaseStorage implements IStorage {
   async getStudentLessons(studentId: number): Promise<Array<StudentLesson & { lesson: any }>> {
     try {
       console.log(`[getStudentLessons] Fetching lessons for student ${studentId}`);
-      
+
       // Use basic select with explicit column selection to avoid loading massive content field
       const result = await db
         .select({
@@ -1211,19 +1232,19 @@ export class DatabaseStorage implements IStorage {
         .leftJoin(lessons, eq(studentLessons.lessonId, lessons.id))
         .where(eq(studentLessons.studentId, studentId))
         .orderBy(desc(studentLessons.assignedAt));
-      
+
       console.log(`[getStudentLessons] Found ${result.length} lesson assignments`);
-      
+
       // Filter out orphaned assignments where lesson doesn't exist
       // With LEFT JOIN, row.lesson is an object with null values when no match
       const validLessons = result.filter(row => {
         return row && row.lesson && row.lesson.id !== null;
       });
-      
+
       if (validLessons.length < result.length) {
         console.log(`[getStudentLessons] Warning: Filtered out ${result.length - validLessons.length} orphaned lesson assignments`);
       }
-      
+
       return validLessons as any;
     } catch (error) {
       console.error('Error getting student lessons:', error);
@@ -1240,7 +1261,7 @@ export class DatabaseStorage implements IStorage {
           eq(studentVocabulary.lessonId, lessonId)
         ));
       console.log(`Removed vocabulary for student ${studentId}, lesson ${lessonId}`);
-      
+
       // Then remove the lesson association
       await db.delete(studentLessons)
         .where(and(
@@ -1248,7 +1269,7 @@ export class DatabaseStorage implements IStorage {
           eq(studentLessons.lessonId, lessonId)
         ));
       console.log(`Removed lesson association for student ${studentId}, lesson ${lessonId}`);
-      
+
       return true;
     } catch (error) {
       console.error('Error removing student lesson:', error);
@@ -1266,12 +1287,12 @@ export class DatabaseStorage implements IStorage {
           eq(studentLessons.id, assignmentId),
           eq(studentLessons.studentId, studentId)
         ));
-      
+
       if (!assignment) {
         console.log(`No assignment found for ID ${assignmentId}`);
         return false;
       }
-      
+
       // Remove vocabulary associated with this specific assignment
       await db.delete(studentVocabulary)
         .where(and(
@@ -1279,12 +1300,12 @@ export class DatabaseStorage implements IStorage {
           eq(studentVocabulary.lessonId, assignment.lessonId)
         ));
       console.log(`Removed vocabulary for student ${studentId}, lesson ${assignment.lessonId} (assignment ${assignmentId})`);
-      
+
       // Remove the specific lesson assignment
       await db.delete(studentLessons)
         .where(eq(studentLessons.id, assignmentId));
       console.log(`Removed lesson assignment ${assignmentId} for student ${studentId}`);
-      
+
       return true;
     } catch (error) {
       console.error('Error removing student lesson by assignment ID:', error);
@@ -1342,11 +1363,11 @@ export class DatabaseStorage implements IStorage {
         .from(studentVocabulary)
         .where(eq(studentVocabulary.studentId, studentId))
         .orderBy(desc(studentVocabulary.learnedAt));
-      
+
       if (limit) {
         query = query.limit(limit);
       }
-      
+
       return await query;
     } catch (error) {
       console.error('Error getting student vocabulary:', error);
@@ -1367,7 +1388,7 @@ export class DatabaseStorage implements IStorage {
       // Parse content if it's a string
       let content = lesson.content as any;
       console.log(`[extractAndSaveVocabulary] Content type: ${typeof content}`);
-      
+
       if (typeof content === 'string') {
         try {
           content = JSON.parse(content);
@@ -1391,7 +1412,7 @@ export class DatabaseStorage implements IStorage {
             console.log(`[extractAndSaveVocabulary] Found vocabulary section with ${section.words.length} words`);
             for (const word of section.words) {
               const wordTerm = (word.term || word.word || '').toLowerCase();
-              
+
               // Only add if student doesn't already know this word
               if (wordTerm && !existingWords.has(wordTerm)) {
                 vocabularyToAdd.push({
@@ -1427,10 +1448,10 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Blog post methods
-  async getAllBlogPosts(page: number = 1, pageSize: number = 10, category?: string, featured?: boolean, isPublished?: boolean): Promise<{posts: BlogPost[], total: number}> {
+  async getAllBlogPosts(page: number = 1, pageSize: number = 10, category?: string, featured?: boolean, isPublished?: boolean): Promise<{ posts: BlogPost[], total: number }> {
     try {
       const offset = (page - 1) * pageSize;
-      
+
       let whereConditions = [];
       if (category) {
         whereConditions.push(eq(blogPosts.category, category));
@@ -1441,9 +1462,9 @@ export class DatabaseStorage implements IStorage {
       if (isPublished !== undefined) {
         whereConditions.push(eq(blogPosts.isPublished, isPublished));
       }
-      
+
       const whereClause = whereConditions.length > 0 ? and(...whereConditions) : undefined;
-      
+
       // Build query conditionally based on where clause
       let query = db.select().from(blogPosts);
       if (whereClause) {
@@ -1453,14 +1474,14 @@ export class DatabaseStorage implements IStorage {
         .orderBy(desc(blogPosts.createdAt))
         .limit(pageSize)
         .offset(offset);
-      
+
       // Build count query conditionally
       let countQuery = db.select({ count: count() }).from(blogPosts);
       if (whereClause) {
         countQuery = countQuery.where(whereClause);
       }
       const [{ count: totalCount }] = await countQuery;
-      
+
       return { posts, total: Number(totalCount) };
     } catch (error) {
       console.error('Error fetching blog posts:', error);
@@ -1503,7 +1524,7 @@ export class DatabaseStorage implements IStorage {
       // UpdateBlogPost type already has all allowed fields as optional
       // Filter out undefined values and ensure we only update provided fields
       const updateData: any = {};
-      
+
       if (postUpdate.title !== undefined) updateData.title = postUpdate.title;
       if (postUpdate.slug !== undefined) updateData.slug = postUpdate.slug;
       if (postUpdate.content !== undefined) updateData.content = postUpdate.content;
@@ -1520,10 +1541,10 @@ export class DatabaseStorage implements IStorage {
       if (postUpdate.metaDescription !== undefined) updateData.metaDescription = postUpdate.metaDescription;
       if (postUpdate.publishedAt !== undefined) updateData.publishedAt = postUpdate.publishedAt;
       if (postUpdate.isPublished !== undefined) updateData.isPublished = postUpdate.isPublished;
-      
+
       // Always update the updatedAt timestamp
       updateData.updatedAt = new Date();
-      
+
       const [updatedPost] = await db
         .update(blogPosts)
         .set(updateData)

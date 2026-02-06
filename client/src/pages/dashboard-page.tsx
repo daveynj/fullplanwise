@@ -3,15 +3,15 @@ import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { 
-  BookOpen, Users, Clock, BarChart2, ArrowRight, 
-  CheckCircle2, Lightbulb, PenSquare, Award, Sparkles
+import {
+  BookOpen, Users, Clock, BarChart2, ArrowRight,
+  CheckCircle2, Lightbulb, PenSquare, Award, Sparkles, Gift, Zap
 } from "lucide-react";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Lesson, Student } from "@shared/schema";
 import { useState } from "react";
-import { useFreeTrial } from "@/hooks/use-free-trial";
+import { useTrialStatus } from "@/hooks/use-trial-status";
 import { format } from 'date-fns';
 
 // Define interface for paginated lessons
@@ -20,33 +20,114 @@ interface PaginatedLessons {
   total: number;
 }
 
-const FreeTrialBanner = () => {
-  const { isFreeTrialActive, freeTrialEndDate } = useFreeTrial();
+const TrialStatusBanner = () => {
+  const {
+    isSubscriber,
+    isInTrial,
+    isPersonalTrial,
+    trialDaysRemaining,
+    freeCreditsRemaining,
+    canGenerateLessons
+  } = useTrialStatus();
 
-  if (!isFreeTrialActive || !freeTrialEndDate) {
+  // Subscribers don't need to see this
+  if (isSubscriber) {
     return null;
   }
 
-  const endDate = format(freeTrialEndDate, "MMMM do, yyyy");
+  // Show trial banner if user is in personal trial
+  if (isPersonalTrial && trialDaysRemaining > 0) {
+    return (
+      <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg mb-6 p-4 shadow-lg">
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          <div className="flex items-center gap-3">
+            <div className="bg-white/20 p-2 rounded-full">
+              <Sparkles className="h-6 w-6" />
+            </div>
+            <div>
+              <p className="font-bold text-lg">🎉 Free Trial Active!</p>
+              <p className="text-white/90">
+                {trialDaysRemaining} day{trialDaysRemaining !== 1 ? 's' : ''} left of unlimited lesson generation
+              </p>
+            </div>
+          </div>
+          <Link href="/buy-credits">
+            <Button variant="secondary" size="sm" className="font-bold">
+              Subscribe for Unlimited
+            </Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
-  return (
-    <div className="bg-brand-yellow text-brand-navy text-center py-3 px-4 font-semibold rounded-lg mb-6">
-      🎉 <span className="font-bold">Limited Time Offer:</span> Get unlimited lesson generations for FREE until {endDate}!
-    </div>
-  );
+  // Show credits banner if user has credits remaining (after trial ends)
+  if (freeCreditsRemaining > 0) {
+    return (
+      <div className="bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg mb-6 p-4 shadow-lg">
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          <div className="flex items-center gap-3">
+            <div className="bg-white/20 p-2 rounded-full">
+              <Gift className="h-6 w-6" />
+            </div>
+            <div>
+              <p className="font-bold text-lg">📚 Free Lessons Available</p>
+              <p className="text-white/90">
+                {freeCreditsRemaining} free lesson{freeCreditsRemaining !== 1 ? 's' : ''} remaining
+              </p>
+            </div>
+          </div>
+          <Link href="/buy-credits">
+            <Button variant="secondary" size="sm" className="font-bold">
+              Get Unlimited Lessons
+            </Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  // Show subscribe prompt if user has no trial and no credits
+  if (!canGenerateLessons) {
+    return (
+      <div className="bg-gradient-to-r from-red-500 to-pink-600 text-white rounded-lg mb-6 p-4 shadow-lg">
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          <div className="flex items-center gap-3">
+            <div className="bg-white/20 p-2 rounded-full">
+              <Zap className="h-6 w-6" />
+            </div>
+            <div>
+              <p className="font-bold text-lg">🔒 Free Trial Ended</p>
+              <p className="text-white/90">
+                Subscribe to continue generating unlimited ESL lessons
+              </p>
+            </div>
+          </div>
+          <Link href="/buy-credits">
+            <Button variant="secondary" size="sm" className="font-bold">
+              Subscribe Now
+            </Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  return null;
 };
+
 
 export default function DashboardPage() {
   const { user } = useAuth();
   const [showSteps, setShowSteps] = useState(false);
-  const { isFreeTrialActive, freeTrialEndDate } = useFreeTrial();
-  
+  const { isSubscriber, isInTrial, isPersonalTrial, trialDaysRemaining, freeCreditsRemaining } = useTrialStatus();
+
   // Fetch students for quick access
   const { data: students = [] } = useQuery<Student[]>({
     queryKey: ["/api/students"],
     retry: false,
   });
-  
+
   // Fetch recent lessons (now returns paginated response)
   const { data: lessonData } = useQuery<PaginatedLessons>({
     queryKey: ["/api/lessons"],
@@ -56,42 +137,42 @@ export default function DashboardPage() {
   // Extract lesson array from the paginated response
   const lessons = lessonData?.lessons || [];
   const totalLessons = lessonData?.total || 0;
-  
+
   // For demo purposes, we'll show the most recent lessons
   const recentLessons = lessons.slice(0, 3);
 
   // Get stats for the dashboard
   const stats = [
-    { 
-      title: "Total Lessons", 
-      value: totalLessons, 
-      icon: <BookOpen className="h-10 w-10 text-primary" />, 
+    {
+      title: "Total Lessons",
+      value: totalLessons,
+      icon: <BookOpen className="h-10 w-10 text-primary" />,
       trend: "+5% from last week",
-      color: "bg-blue-50" 
+      color: "bg-blue-50"
     },
-    { 
-      title: "Students", 
-      value: students.length, 
-      icon: <Users className="h-10 w-10 text-[#FFB400]" />, 
+    {
+      title: "Students",
+      value: students.length,
+      icon: <Users className="h-10 w-10 text-[#FFB400]" />,
       trend: "No change",
-      color: "bg-amber-50" 
+      color: "bg-amber-50"
     },
-    { 
-      title: "Subscription", 
-      value: isFreeTrialActive ? "Free Trial" : (user?.subscriptionTier === 'unlimited' ? 'Unlimited' : 'Free'), 
-      icon: <Sparkles className="h-10 w-10 text-[#28A745]" />, 
-      trend: isFreeTrialActive ? `Ends ${freeTrialEndDate ? format(freeTrialEndDate, "MMMM do") : ''}` : "Manage subscription",
-      color: "bg-green-50" 
+    {
+      title: "Account Status",
+      value: isSubscriber ? 'Unlimited' : (isInTrial ? 'Free Trial' : `${freeCreditsRemaining} Credits`),
+      icon: <Sparkles className="h-10 w-10 text-[#28A745]" />,
+      trend: isSubscriber ? 'Unlimited lessons' : (isPersonalTrial ? `${trialDaysRemaining} days remaining` : 'Subscribe for unlimited'),
+      color: "bg-green-50"
     },
   ];
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-gray-light">
       <Sidebar />
-      
+
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header />
-        
+
         <main className="flex-1 overflow-y-auto p-4 md:p-6">
           <div className="max-w-7xl mx-auto">
             {/* Welcome section */}
@@ -99,8 +180,8 @@ export default function DashboardPage() {
               <h1 className="text-3xl md:text-4xl font-nunito font-bold mb-3">Welcome, {user?.fullName}!</h1>
               <p className="text-gray-700 text-xl font-medium">Here's what's happening with your PLAN WISE ESL teaching</p>
             </div>
-            
-            <FreeTrialBanner />
+
+            <TrialStatusBanner />
 
             {/* Onboarding Widget - Only shown when user has 0 lessons */}
             {totalLessons === 0 && (
@@ -121,18 +202,18 @@ export default function DashboardPage() {
                             Create My First Lesson
                           </Button>
                         </Link>
-                        <Button 
-                          variant="outline" 
+                        <Button
+                          variant="outline"
                           onClick={() => setShowSteps(!showSteps)}
                           className="flex items-center"
                         >
-                          {showSteps ? 'Hide Steps' : 'Show How It Works'} 
+                          {showSteps ? 'Hide Steps' : 'Show How It Works'}
                           {showSteps ? null : <ArrowRight className="ml-1 h-4 w-4" />}
                         </Button>
                       </div>
                     </div>
                   </div>
-                  
+
                   {/* Step-by-step guide - toggleable */}
                   {showSteps && (
                     <div className="mt-6 pt-6 border-t border-gray-200">
@@ -145,7 +226,7 @@ export default function DashboardPage() {
                             <p className="text-gray-700 text-lg">Enter any topic you're interested in teaching. For example: "Environmental Conservation" or "Food and Culture".</p>
                           </div>
                         </div>
-                        
+
                         <div className="flex gap-5 items-start">
                           <div className="bg-primary text-white rounded-full w-10 h-10 flex items-center justify-center shrink-0 text-lg font-bold">2</div>
                           <div>
@@ -153,7 +234,7 @@ export default function DashboardPage() {
                             <p className="text-gray-700 text-lg">Choose the CEFR level that matches your students' ability (A1-C2).</p>
                           </div>
                         </div>
-                        
+
                         <div className="flex gap-5 items-start">
                           <div className="bg-primary text-white rounded-full w-10 h-10 flex items-center justify-center shrink-0 text-lg font-bold">3</div>
                           <div>
@@ -161,7 +242,7 @@ export default function DashboardPage() {
                             <p className="text-gray-700 text-lg">Our AI will create a complete lesson in 2-3 minutes. You can use it immediately or make adjustments.</p>
                           </div>
                         </div>
-                        
+
                         <div className="flex gap-5 items-start">
                           <div className="bg-green-600 text-white rounded-full w-10 h-10 flex items-center justify-center shrink-0">
                             <CheckCircle2 className="h-6 w-6" />
@@ -172,7 +253,7 @@ export default function DashboardPage() {
                           </div>
                         </div>
                       </div>
-                      
+
                       <div className="mt-8 flex justify-center">
                         <Link href="/generate">
                           <Button className="bg-green-600 hover:bg-green-700 px-8 py-6 text-lg font-bold">
@@ -185,7 +266,7 @@ export default function DashboardPage() {
                 </CardContent>
               </Card>
             )}
-            
+
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
               {stats.map((stat, index) => (
@@ -205,13 +286,13 @@ export default function DashboardPage() {
                 </Card>
               ))}
             </div>
-            
+
             {/* Quick Actions */}
             <div className="mb-10">
               <h2 className="text-2xl font-nunito font-bold mb-6">Quick Actions</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <Link href="/generate">
-                  <Button 
+                  <Button
                     className={`w-full ${totalLessons === 0 ? 'bg-green-600 hover:bg-green-700 shadow-lg' : 'bg-primary hover:bg-primary/90'} h-auto py-5 text-center relative`}
                   >
                     {totalLessons === 0 && (
@@ -238,17 +319,18 @@ export default function DashboardPage() {
                   </Button>
                 </Link>
                 <Link href="/buy-credits">
-                  <Button variant="outline" className="w-full h-auto py-5 text-center" disabled={isFreeTrialActive || user?.subscriptionTier === 'unlimited'}>
+                  <Button variant="outline" className="w-full h-auto py-5 text-center" disabled={isInTrial || isSubscriber}>
                     <div>
                       <p className="font-bold text-lg">
-                        {user?.subscriptionTier === 'unlimited' ? 'Subscribed' : 'Upgrade to Unlimited'}
+                        {isSubscriber ? 'Subscribed' : 'Upgrade to Unlimited'}
                       </p>
                       <p className="text-sm text-gray-600 mt-1">
-                        {isFreeTrialActive ? "Manage after trial" : "Get unlimited lessons"}
+                        {isInTrial ? "Manage after trial" : "Get unlimited lessons"}
                       </p>
                     </div>
                   </Button>
                 </Link>
+
                 <Link href="/history">
                   <Button variant="outline" className="w-full h-auto py-5 text-center">
                     <div>
@@ -259,7 +341,7 @@ export default function DashboardPage() {
                 </Link>
               </div>
             </div>
-            
+
             {/* Feature Highlights - Only shown for users with 0 lessons */}
             {totalLessons === 0 && (
               <div className="mb-10">
@@ -276,7 +358,7 @@ export default function DashboardPage() {
                       </div>
                     </CardContent>
                   </Card>
-                  
+
                   <Card className="bg-gradient-to-br from-green-50 to-green-100 shadow-md">
                     <CardContent className="p-8">
                       <div className="flex flex-col items-center text-center">
@@ -288,7 +370,7 @@ export default function DashboardPage() {
                       </div>
                     </CardContent>
                   </Card>
-                  
+
                   <Card className="bg-gradient-to-br from-purple-50 to-purple-100 shadow-md">
                     <CardContent className="p-8">
                       <div className="flex flex-col items-center text-center">
@@ -303,7 +385,7 @@ export default function DashboardPage() {
                 </div>
               </div>
             )}
-            
+
             {/* Recent Activity */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Recent Lessons */}
@@ -342,7 +424,7 @@ export default function DashboardPage() {
                   )}
                 </CardContent>
               </Card>
-              
+
               {/* Students */}
               <Card className="col-span-1">
                 <CardHeader>
