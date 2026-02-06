@@ -1,18 +1,20 @@
 import React, { useState } from 'react';
 import { Link } from 'wouter';
+import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { SEOHead } from '@/components/SEOHead';
 import { useFreeTrial } from '@/hooks/use-free-trial';
+import { HomepageLessonPreview } from '@/components/homepage/HomepageLessonPreview';
 import { format } from 'date-fns';
 // Import Card components
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardFooter, 
-  CardHeader, 
-  CardTitle 
-} from "@/components/ui/card"; 
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle
+} from "@/components/ui/card";
 // Import Tabs for lesson showcase
 import {
   Tabs,
@@ -21,8 +23,8 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs";
 // Import icons
-import { 
-  Clock, Target, MonitorSmartphone, BookOpen, MessageSquare, 
+import {
+  Clock, Target, MonitorSmartphone, BookOpen, MessageSquare,
   Lightbulb, CheckCircle, Sparkles, Layers, Puzzle, Database,
   Lock as LockIcon, Menu, X
 } from 'lucide-react';
@@ -48,8 +50,23 @@ const FreeTrialBanner = () => {
 export default function LandingPage() {
   const { isFreeTrialActive, freeTrialEndDate } = useFreeTrial();
   const endDate = freeTrialEndDate ? format(freeTrialEndDate, "MMMM do") : '';
+  const [activeSection, setActiveSection] = useState('reading');
+
+  // Fetch live lesson data for the showcase
+  const { data: lesson, isLoading: isLessonLoading } = useQuery<any>({
+    queryKey: ['/api/lessons/1006'],
+    staleTime: 1000 * 60 * 60, // Cache for 1 hour
+    retry: false,
+  });
+
+  // Parse lesson content
+  const lessonData = lesson ? {
+    title: lesson.title,
+    level: lesson.cefrLevel,
+    sections: typeof lesson.content === 'string' ? JSON.parse(lesson.content).sections : lesson.content?.sections || []
+  } : null;
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  
+
   return (
     <div className="flex flex-col min-h-screen font-open-sans">
       <SEOHead
@@ -57,7 +74,7 @@ export default function LandingPage() {
         description="Transform your lesson planning from exhausting to effortless. Go from 3-hour prep sessions to 3-minute lesson generation. Start your transformation today!"
         keywords={[
           "ESL teacher burnout solution",
-          "AI ESL lesson generator", 
+          "AI ESL lesson generator",
           "lesson planning takes too long",
           "how to plan ESL lessons faster",
           "tired of ESL lesson prep",
@@ -76,10 +93,10 @@ export default function LandingPage() {
         <nav className="container mx-auto px-6 py-3 flex justify-between items-center">
           {/* Combine logo and text */}
           <div className="flex items-center gap-2">
-            <img src="/PlanWise_ESL_logo.png" alt="PlanwiseESL AI-powered ESL lesson generator logo" className="h-16 sm:h-20 w-auto" /> 
+            <img src="/PlanWise_ESL_logo.png" alt="PlanwiseESL AI-powered ESL lesson generator logo" className="h-16 sm:h-20 w-auto" />
             <span className="text-lg sm:text-xl font-nunito font-bold text-brand-navy">PLAN WISE ESL</span>
           </div>
-          
+
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-4">
             <Link href="/blog">
@@ -106,9 +123,8 @@ export default function LandingPage() {
         </nav>
 
         {/* Mobile Navigation Menu - Always in DOM, hidden with CSS */}
-        <div className={`md:hidden bg-brand-light border-t border-gray-200 py-4 px-6 space-y-3 transition-all duration-300 ease-in-out overflow-hidden ${
-          mobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0 py-0'
-        }`}>
+        <div className={`md:hidden bg-brand-light border-t border-gray-200 py-4 px-6 space-y-3 transition-all duration-300 ease-in-out overflow-hidden ${mobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0 py-0'
+          }`}>
           <Link href="/blog" onClick={() => setMobileMenuOpen(false)}>
             <Button variant="ghost" className="w-full justify-start text-brand-navy hover:bg-brand-navy/10">
               Blog
@@ -138,19 +154,19 @@ export default function LandingPage() {
               <p className="text-xl md:text-2xl mb-6 opacity-90">
                 Built for online ESL tutors on Preply, italki, Cambly and beyond. CEFR-based, fully editable, and ready to teach in your next class.
               </p>
-              
+
               {/* Quick benefit list */}
               <ul className="mb-8 text-lg space-y-2 mx-auto lg:mx-0 max-w-md">
                 <li className="flex items-center">
-                  <CheckCircle className="h-5 w-5 mr-2 text-brand-yellow" /> 
+                  <CheckCircle className="h-5 w-5 mr-2 text-brand-yellow" />
                   <span>Save 20–60 minutes per lesson prep.</span>
                 </li>
                 <li className="flex items-center">
-                  <CheckCircle className="h-5 w-5 mr-2 text-brand-yellow" /> 
+                  <CheckCircle className="h-5 w-5 mr-2 text-brand-yellow" />
                   <span>Look more professional with structured, engaging materials.</span>
                 </li>
                 <li className="flex items-center">
-                  <CheckCircle className="h-5 w-5 mr-2 text-brand-yellow" /> 
+                  <CheckCircle className="h-5 w-5 mr-2 text-brand-yellow" />
                   <span>Tailor lessons to any student’s level, interests, or goals instantly.</span>
                 </li>
               </ul>
@@ -183,30 +199,30 @@ export default function LandingPage() {
                   </Button>
                 </a>
               </div>
-              
+
               <div className="hidden lg:block">
                 {/* Smaller YouTube video for desktop only */}
                 <div className="rounded-lg overflow-hidden shadow-lg max-w-md mx-auto">
-                  <iframe 
+                  <iframe
                     className="w-full aspect-video"
-                    src="https://www.youtube.com/embed/pcLlwL5sNK0" 
-                    title="YouTube video player" 
-                    frameBorder="0" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                    referrerPolicy="strict-origin-when-cross-origin" 
+                    src="https://www.youtube.com/embed/pcLlwL5sNK0"
+                    title="YouTube video player"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerPolicy="strict-origin-when-cross-origin"
                     allowFullScreen
                   ></iframe>
                 </div>
               </div>
             </div>
-            
+
             {/* Hero Image/Preview Column */}
             <div className="lg:w-1/2">
               <Card variant="default" className="rounded-xl overflow-hidden shadow-xl">
-                <img 
-                  src="/reading.PNG" 
-                  alt="ESL Lesson Preview" 
-                  className="w-full h-auto rounded-t-xl" 
+                <img
+                  src="/reading.PNG"
+                  alt="ESL Lesson Preview"
+                  className="w-full h-auto rounded-t-xl"
                 />
                 <div className="p-4 text-gray-800">
                   <h3 className="text-xl font-semibold text-brand-navy">AI-Generated Lessons in Minutes</h3>
@@ -223,134 +239,92 @@ export default function LandingPage() {
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-nunito font-bold mb-4 text-brand-navy">See Real AI-Generated Lessons</h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              Each lesson comes with a complete suite of activities - from warm-up exercises to vocabulary practice, 
+              Each lesson comes with a complete suite of activities - from warm-up exercises to vocabulary practice,
               reading comprehension, interactive activities, and assessment tools.
             </p>
           </div>
-          
-          <Tabs defaultValue="reading" className="w-full">
+
+          <Tabs defaultValue="reading" className="w-full" onValueChange={setActiveSection}>
             <div className="flex flex-col md:flex-row gap-6">
+              {/* Left Sidebar - Tab Navigation */}
               <div className="md:w-1/4">
                 <div className="sticky top-24">
-                  <h3 className="text-xl font-nunito font-semibold mb-4 text-brand-navy">Lesson Components</h3>
-                  <p className="text-sm text-gray-600 mb-4">Click to explore each section of a complete ESL lesson</p>
+                  <div className="mb-6">
+                    <h3 className="text-xl font-nunito font-semibold mb-2 text-brand-navy">Lesson Components</h3>
+                    <p className="text-sm text-gray-600">Click to explore each section of a complete ESL lesson</p>
+                  </div>
                   <TabsList className="flex flex-col space-y-1 h-auto bg-transparent">
-                    <TabsTrigger value="warmup" className="justify-start data-[state=active]:bg-brand-yellow/20 data-[state=active]:text-brand-navy">
-                      <Lightbulb className="h-4 w-4 mr-2" />
+                    <TabsTrigger value="warmup" className="justify-start text-left px-4 py-3 w-full transition-all duration-200 data-[state=active]:bg-gradient-to-r data-[state=active]:from-brand-yellow/30 data-[state=active]:to-brand-yellow/10 data-[state=active]:text-brand-navy data-[state=active]:shadow-sm data-[state=active]:border-l-4 data-[state=active]:border-brand-yellow hover:bg-gray-50">
+                      <Lightbulb className="h-4 w-4 mr-2 flex-shrink-0" />
                       Warm-up Activities
                     </TabsTrigger>
-                    <TabsTrigger value="reading" className="justify-start data-[state=active]:bg-brand-yellow/20 data-[state=active]:text-brand-navy">
-                      <BookOpen className="h-4 w-4 mr-2" />
+                    <TabsTrigger value="reading" className="justify-start text-left px-4 py-3 w-full transition-all duration-200 data-[state=active]:bg-gradient-to-r data-[state=active]:from-brand-yellow/30 data-[state=active]:to-brand-yellow/10 data-[state=active]:text-brand-navy data-[state=active]:shadow-sm data-[state=active]:border-l-4 data-[state=active]:border-brand-yellow hover:bg-gray-50">
+                      <BookOpen className="h-4 w-4 mr-2 flex-shrink-0" />
                       Reading Text
                     </TabsTrigger>
-                    <TabsTrigger value="vocabulary" className="justify-start data-[state=active]:bg-brand-yellow/20 data-[state=active]:text-brand-navy">
-                      <Database className="h-4 w-4 mr-2" />
+                    <TabsTrigger value="vocabulary" className="justify-start text-left px-4 py-3 w-full transition-all duration-200 data-[state=active]:bg-gradient-to-r data-[state=active]:from-brand-yellow/30 data-[state=active]:to-brand-yellow/10 data-[state=active]:text-brand-navy data-[state=active]:shadow-sm data-[state=active]:border-l-4 data-[state=active]:border-brand-yellow hover:bg-gray-50">
+                      <Database className="h-4 w-4 mr-2 flex-shrink-0" />
                       Vocabulary Practice
                     </TabsTrigger>
-                    <TabsTrigger value="comprehension" className="justify-start data-[state=active]:bg-brand-yellow/20 data-[state=active]:text-brand-navy">
-                      <CheckCircle className="h-4 w-4 mr-2" />
+                    <TabsTrigger value="comprehension" className="justify-start text-left px-4 py-3 w-full transition-all duration-200 data-[state=active]:bg-gradient-to-r data-[state=active]:from-brand-yellow/30 data-[state=active]:to-brand-yellow/10 data-[state=active]:text-brand-navy data-[state=active]:shadow-sm data-[state=active]:border-l-4 data-[state=active]:border-brand-yellow hover:bg-gray-50">
+                      <CheckCircle className="h-4 w-4 mr-2 flex-shrink-0" />
                       Comprehension Questions
                     </TabsTrigger>
-                    <TabsTrigger value="sentence" className="justify-start data-[state=active]:bg-brand-yellow/20 data-[state=active]:text-brand-navy">
-                      <Layers className="h-4 w-4 mr-2" />
+                    <TabsTrigger value="sentence" className="justify-start text-left px-4 py-3 w-full transition-all duration-200 data-[state=active]:bg-gradient-to-r data-[state=active]:from-brand-yellow/30 data-[state=active]:to-brand-yellow/10 data-[state=active]:text-brand-navy data-[state=active]:shadow-sm data-[state=active]:border-l-4 data-[state=active]:border-brand-yellow hover:bg-gray-50">
+                      <Layers className="h-4 w-4 mr-2 flex-shrink-0" />
                       Sentence Patterns
                     </TabsTrigger>
-                    <TabsTrigger value="cloze" className="justify-start data-[state=active]:bg-brand-yellow/20 data-[state=active]:text-brand-navy">
-                      <Puzzle className="h-4 w-4 mr-2" />
+                    <TabsTrigger value="cloze" className="justify-start text-left px-4 py-3 w-full transition-all duration-200 data-[state=active]:bg-gradient-to-r data-[state=active]:from-brand-yellow/30 data-[state=active]:to-brand-yellow/10 data-[state=active]:text-brand-navy data-[state=active]:shadow-sm data-[state=active]:border-l-4 data-[state=active]:border-brand-yellow hover:bg-gray-50">
+                      <Puzzle className="h-4 w-4 mr-2 flex-shrink-0" />
                       Fill-in-the-Blanks
                     </TabsTrigger>
-                    <TabsTrigger value="unscramble" className="justify-start data-[state=active]:bg-brand-yellow/20 data-[state=active]:text-brand-navy">
-                      <Sparkles className="h-4 w-4 mr-2" />
+                    <TabsTrigger value="unscramble" className="justify-start text-left px-4 py-3 w-full transition-all duration-200 data-[state=active]:bg-gradient-to-r data-[state=active]:from-brand-yellow/30 data-[state=active]:to-brand-yellow/10 data-[state=active]:text-brand-navy data-[state=active]:shadow-sm data-[state=active]:border-l-4 data-[state=active]:border-brand-yellow hover:bg-gray-50">
+                      <Sparkles className="h-4 w-4 mr-2 flex-shrink-0" />
                       Sentence Unscramble
                     </TabsTrigger>
-                    <TabsTrigger value="discussion" className="justify-start data-[state=active]:bg-brand-yellow/20 data-[state=active]:text-brand-navy">
-                      <MessageSquare className="h-4 w-4 mr-2" />
+                    <TabsTrigger value="discussion" className="justify-start text-left px-4 py-3 w-full transition-all duration-200 data-[state=active]:bg-gradient-to-r data-[state=active]:from-brand-yellow/30 data-[state=active]:to-brand-yellow/10 data-[state=active]:text-brand-navy data-[state=active]:shadow-sm data-[state=active]:border-l-4 data-[state=active]:border-brand-yellow hover:bg-gray-50">
+                      <MessageSquare className="h-4 w-4 mr-2 flex-shrink-0" />
                       Discussion Questions
                     </TabsTrigger>
-                    <TabsTrigger value="quiz" className="justify-start data-[state=active]:bg-brand-yellow/20 data-[state=active]:text-brand-navy">
-                      <Target className="h-4 w-4 mr-2" />
+                    <TabsTrigger value="quiz" className="justify-start text-left px-4 py-3 w-full transition-all duration-200 data-[state=active]:bg-gradient-to-r data-[state=active]:from-brand-yellow/30 data-[state=active]:to-brand-yellow/10 data-[state=active]:text-brand-navy data-[state=active]:shadow-sm data-[state=active]:border-l-4 data-[state=active]:border-brand-yellow hover:bg-gray-50">
+                      <Target className="h-4 w-4 mr-2 flex-shrink-0" />
                       Knowledge Check Quiz
                     </TabsTrigger>
                   </TabsList>
+
+                  {/* Lesson Info Badge */}
+                  {lessonData && (
+                    <div className="mt-6 p-4 bg-gradient-to-br from-brand-navy to-brand-navy-light rounded-xl text-white">
+                      <p className="text-xs uppercase tracking-wider opacity-80 mb-1">Viewing Lesson</p>
+                      <p className="font-semibold text-sm">{lessonData.title}</p>
+                      <div className="flex items-center gap-2 mt-2">
+                        <span className="px-2 py-0.5 bg-brand-yellow text-brand-navy text-xs font-bold rounded">
+                          {lessonData.level}
+                        </span>
+                        <Link href="/lessons/1006">
+                          <span className="text-xs underline hover:no-underline cursor-pointer">
+                            View Full Lesson →
+                          </span>
+                        </Link>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
-              
+
+              {/* Right Content Area - Live Lesson Preview */}
               <div className="md:w-3/4">
-                <TabsContent value="warmup" className="mt-0 border rounded-lg shadow-sm p-4 bg-gray-50">
-                  <h3 className="text-xl font-semibold mb-4 text-brand-navy">Warm-up Activities</h3>
-                  <p className="mb-4">Get students engaged from the very start with vocabulary previews and discussion questions to activate prior knowledge.</p>
-                  <div className="rounded-lg overflow-hidden border shadow-md">
-                    <img src="/warmup.PNG" alt="Warm-up Activities" className="w-full h-auto" />
-                  </div>
-                </TabsContent>
-                
-                <TabsContent value="reading" className="mt-0 border rounded-lg shadow-sm p-4 bg-gray-50">
-                  <h3 className="text-xl font-semibold mb-4 text-brand-navy">Reading Text</h3>
-                  <p className="mb-4">Engaging, level-appropriate reading passages on any topic you choose.</p>
-                  <div className="rounded-lg overflow-hidden border shadow-md">
-                    <img src="/reading.PNG" alt="Reading Text" className="w-full h-auto" />
-                  </div>
-                </TabsContent>
-                
-                <TabsContent value="vocabulary" className="mt-0 border rounded-lg shadow-sm p-4 bg-gray-50">
-                  <h3 className="text-xl font-semibold mb-4 text-brand-navy">Vocabulary Practice</h3>
-                  <p className="mb-4">Comprehensive vocabulary cards with definitions, pronunciations, example sentences, and word family connections.</p>
-                  <div className="rounded-lg overflow-hidden border shadow-md">
-                    <img src="/vocab2.PNG" alt="Vocabulary Practice" className="w-full h-auto" />
-                  </div>
-                </TabsContent>
-                
-                <TabsContent value="comprehension" className="mt-0 border rounded-lg shadow-sm p-4 bg-gray-50">
-                  <h3 className="text-xl font-semibold mb-4 text-brand-navy">Comprehension Questions</h3>
-                  <p className="mb-4">Multiple-choice questions that check student understanding of the reading text and reinforce key concepts.</p>
-                  <div className="rounded-lg overflow-hidden border shadow-md">
-                    <img src="/comprehension.PNG" alt="Comprehension Questions" className="w-full h-auto" />
-                  </div>
-                </TabsContent>
-                
-                <TabsContent value="sentence" className="mt-0 border rounded-lg shadow-sm p-4 bg-gray-50">
-                  <h3 className="text-xl font-semibold mb-4 text-brand-navy">Sentence Patterns</h3>
-                  <p className="mb-4">Build grammar skills with structured sentence patterns that help students understand language functions and structure.</p>
-                  <div className="rounded-lg overflow-hidden border shadow-md">
-                    <img src="/sentence frames.PNG" alt="Sentence Patterns" className="w-full h-auto" />
-                  </div>
-                </TabsContent>
-                
-                <TabsContent value="cloze" className="mt-0 border rounded-lg shadow-sm p-4 bg-gray-50">
-                  <h3 className="text-xl font-semibold mb-4 text-brand-navy">Fill-in-the-Blanks</h3>
-                  <p className="mb-4">Interactive cloze exercises that reinforce vocabulary understanding and contextual word usage.</p>
-                  <div className="rounded-lg overflow-hidden border shadow-md">
-                    <img src="/cloze.PNG" alt="Fill-in-the-Blanks Exercise" className="w-full h-auto" />
-                  </div>
-                </TabsContent>
-                
-                <TabsContent value="unscramble" className="mt-0 border rounded-lg shadow-sm p-4 bg-gray-50">
-                  <h3 className="text-xl font-semibold mb-4 text-brand-navy">Sentence Unscramble</h3>
-                  <p className="mb-4">Drag-and-drop activities that develop sentence structure understanding through word ordering exercises.</p>
-                  <div className="rounded-lg overflow-hidden border shadow-md">
-                    <img src="/unscrmble.PNG" alt="Sentence Unscramble Activity" className="w-full h-auto" />
-                  </div>
-                </TabsContent>
-                
-                <TabsContent value="discussion" className="mt-0 border rounded-lg shadow-sm p-4 bg-gray-50">
-                  <h3 className="text-xl font-semibold mb-4 text-brand-navy">Discussion Questions</h3>
-                  <p className="mb-4">Thought-provoking questions with contextual prompts that encourage critical thinking and conversational practice.</p>
-                  <div className="rounded-lg overflow-hidden border shadow-md">
-                    <img src="/discussion questions.PNG" alt="Discussion Questions" className="w-full h-auto" />
-                  </div>
-                </TabsContent>
-                
-                <TabsContent value="quiz" className="mt-0 border rounded-lg shadow-sm p-4 bg-gray-50">
-                  <h3 className="text-xl font-semibold mb-4 text-brand-navy">Knowledge Check Quiz</h3>
-                  <p className="mb-4">End-of-lesson assessments to gauge student understanding and retention of key lesson concepts.</p>
-                  <div className="rounded-lg overflow-hidden border shadow-md">
-                    <img src="/quiz.PNG" alt="Knowledge Check Quiz" className="w-full h-auto" />
-                  </div>
-                </TabsContent>
+                <div className="bg-white/50 backdrop-blur-sm rounded-2xl border border-gray-200/50 p-6 shadow-lg min-h-[500px]">
+                  <HomepageLessonPreview
+                    lessonData={lessonData}
+                    activeSection={activeSection}
+                    isLoading={isLessonLoading}
+                  />
+                </div>
               </div>
             </div>
           </Tabs>
-          
+
           <div className="mt-12 text-center">
             <Link href="/auth?register=true">
               <Button size="lg" className="bg-primary hover:bg-primary/90">
@@ -367,7 +341,7 @@ export default function LandingPage() {
           <p className="text-lg text-gray-600 mb-8 text-center">
             Online ESL teachers face the constant challenge of creating CEFR-aligned, engaging, and individualized lessons for one-on-one sessions. Finding the right materials takes time you could be spending teaching.
           </p>
-          
+
           {/* Comparison */}
           <div className="grid md:grid-cols-2 gap-8 mb-8">
             <div className="bg-white rounded-xl p-6 shadow-sm border border-red-100">
@@ -393,7 +367,7 @@ export default function LandingPage() {
                 </li>
               </ul>
             </div>
-            
+
             <div className="bg-white rounded-xl p-6 shadow-sm border border-green-100">
               <h3 className="text-xl font-semibold mb-3 text-green-600 flex items-center">
                 <Sparkles className="h-5 w-5 mr-2" /> With Plan Wise ESL
@@ -418,7 +392,7 @@ export default function LandingPage() {
               </ul>
             </div>
           </div>
-          
+
           <p className="text-lg font-semibold text-brand-navy text-center">
             Plan Wise ESL is your solution – generate complete, ready-to-teach lessons in minutes.
           </p>
@@ -549,7 +523,7 @@ export default function LandingPage() {
       <section className="py-20 px-6 bg-brand-navy text-brand-light text-center">
         <div className="container mx-auto max-w-3xl">
           <h2 className="text-3xl md:text-4xl font-nunito font-bold mb-6">Ready to Revolutionize Your Lesson Planning?</h2>
-          
+
           {/* Value proposition stats */}
           <div className="grid grid-cols-3 gap-4 mb-8 max-w-2xl mx-auto">
             <div className="stat">
@@ -565,11 +539,11 @@ export default function LandingPage() {
               <p className="text-sm md:text-base">CEFR Levels Supported</p>
             </div>
           </div>
-          
+
           <p className="text-xl mb-8 opacity-90">
             Stop spending <span className="font-bold">3+ hours per lesson</span> on preparation. Start teaching more and planning less.
           </p>
-          
+
           <div className="flex flex-col items-center">
             <Link href="/auth?register=true">
               <Button size="lg" variant="brand" className="font-semibold px-10 py-4">
@@ -667,34 +641,34 @@ export default function LandingPage() {
                 <span className="text-xl font-bold">PlanwiseESL</span>
               </div>
               <p className="text-gray-300 text-sm mb-4 max-w-md">
-                AI-powered ESL lesson generator created by ESL teacher Dave Jackson. 
+                AI-powered ESL lesson generator created by ESL teacher Dave Jackson.
                 Transform your teaching with lessons that engage students and save you 15+ hours weekly.
               </p>
-              
+
               {/* Social Links */}
               <div className="flex space-x-4">
-                <a 
-                  href="https://www.linkedin.com/in/davidjackson113" 
-                  target="_blank" 
+                <a
+                  href="https://www.linkedin.com/in/davidjackson113"
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center space-x-2 text-gray-300 hover:text-blue-400 transition-colors duration-200"
                   aria-label="Connect with Dave Jackson on LinkedIn"
                 >
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
                   </svg>
                   <span className="text-sm">LinkedIn</span>
                 </a>
-                
-                <a 
-                  href="https://x.com/DaveTeacher1" 
-                  target="_blank" 
+
+                <a
+                  href="https://x.com/DaveTeacher1"
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center space-x-2 text-gray-300 hover:text-blue-400 transition-colors duration-200"
                   aria-label="Follow Dave Jackson on X (Twitter)"
                 >
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/>
+                    <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" />
                   </svg>
                   <span className="text-sm">X (Twitter)</span>
                 </a>
