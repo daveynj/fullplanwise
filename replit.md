@@ -56,7 +56,7 @@ Social media: LinkedIn - www.linkedin.com/in/davidjackson113, X (Twitter) - @Dav
 
 - **AI Services**:
     - Claude Sonnet 4 (via OpenRouter) - Lesson content generation.
-    - Runware.ai (Flux Schnell model) - Image generation.
+    - Replicate (FLUX Schnell model by Black Forest Labs) - Image generation.
 - **Payment & Communication**:
     - Stripe - Subscription and payment processing.
 - **Infrastructure**:

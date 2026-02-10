@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
 import { LessonGenerateParams } from '@shared/schema';
 import * as fs from 'fs';
-import { runwareService } from './runware.service';
+import { replicateService } from './replicate.service';
 
 /**
  * Service for interacting with AI models via OpenRouter
@@ -780,7 +780,7 @@ Return ONLY a JSON array of corrected examples.`;
               const task = async () => {
                 try {
                   const requestId = `vocab_${word.term ? word.term.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 15) : 'word'}`;
-                  word.imageBase64 = await runwareService.generateImage(word.imagePrompt, requestId);
+                  word.imageBase64 = await replicateService.generateImage(word.imagePrompt, requestId);
                   if (word.imageBase64) {
                     console.log(`Generated image for vocab: ${word.term}`);
                   }
@@ -821,7 +821,7 @@ Return ONLY a JSON array of corrected examples.`;
               const task = async () => {
                 try {
                   const requestId = `disc_${question.question ? question.question.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 15) : 'question'}`;
-                  question.imageBase64 = await runwareService.generateImage(question.imagePrompt, requestId);
+                  question.imageBase64 = await replicateService.generateImage(question.imagePrompt, requestId);
                   if (question.imageBase64) {
                     console.log(`Generated image for discussion question`);
                   }
