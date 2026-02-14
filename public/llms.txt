@@ -1,0 +1,68 @@
+# PlanWise ESL
+
+> PlanWise ESL is an AI-powered lesson planning platform for ESL (English as a Second Language) teachers. It transforms hours of lesson preparation into minutes by generating complete, customized, CEFR-aligned lessons using artificial intelligence.
+
+## About
+
+PlanWise ESL was created by Dave Jackson, an experienced ESL teacher who understands the pain of spending 2-3 hours preparing a single lesson. The platform uses AI (Claude Sonnet 4 via OpenRouter) to generate comprehensive, pedagogically sound lessons in approximately 2-3 minutes.
+
+The platform is live at https://planwiseesl.com
+
+## Ideal Customer Profile
+
+PlanWise ESL is built for:
+
+- ESL/EFL teachers who spend too much time on lesson planning
+- Language school administrators managing multiple teachers
+- Private English tutors looking to scale their lesson quality
+- Teachers preparing students for exams like IELTS
+- Business English instructors needing specialized content
+- Teachers at any experience level, from new to veteran
+
+## Core Problem Solved
+
+ESL teachers typically spend 2-3 hours preparing a single lesson. This leads to burnout, inconsistent lesson quality, and less time for actual teaching. PlanWise ESL reduces lesson prep time to approximately 3 minutes while maintaining or improving lesson quality.
+
+## Key Features
+
+- **AI Lesson Generation**: Generate complete, ready-to-teach ESL lessons in minutes, not hours. Lessons include warm-ups, vocabulary sections, reading passages, comprehension questions, discussion prompts, and more.
+- **CEFR Level Support**: Full support for all CEFR levels from A1 (Beginner) to C2 (Proficiency), ensuring lessons match student ability.
+- **Grammar Spotlight**: Visual grammar explanations with sentence diagrams and color-coded grammar components for clearer teaching.
+- **Semantic Maps**: Visual vocabulary maps showing word relationships to deepen student understanding.
+- **Student Vocabulary Tracking**: Tracks which words each student has learned to prevent duplicate vocabulary teaching and ensure progressive language building.
+- **Lesson Categories**: Specialized content for General English, Business English, Academic English, Medical English, Legal English, Technology English, Tourism & Hospitality, Finance, Healthcare, Science, Arts & Culture, and Sports English.
+- **Lesson Component Selection**: Teachers choose which components to include — warm-ups, vocabulary, reading, questions, discussion, grammar spotlight, semantic maps, and more.
+- **AI-Generated Images**: Contextual, pedagogically aligned images generated for vocabulary and discussion sections.
+- **PDF Export**: Download lessons as formatted PDFs for offline use or printing.
+- **Vocabulary Downloads**: Export student vocabulary lists as HTML files.
+- **Lesson Library**: Save and organize all generated lessons for reuse.
+- **Student Management**: Track students, assign lessons, and monitor vocabulary progress.
+- **Public Lesson Library**: Share lessons publicly for other teachers to discover and use.
+- **Lesson Sharing**: Share individual lessons via public URLs.
+- **Blog**: SEO-optimized blog with ESL teaching tips, strategies, and resources.
+
+## Subscription & Pricing
+
+- **Free Trial**: 2 free lesson generations to try the platform
+- **Unlimited Plan**: Subscription-based access for unlimited lesson generation, powered by Stripe
+
+## Technology
+
+- Frontend: React with TypeScript, Tailwind CSS, shadcn/ui
+- Backend: Express.js with TypeScript on Node.js
+- Database: PostgreSQL (Neon serverless)
+- AI: Claude Sonnet 4 via OpenRouter for lesson content; Replicate (FLUX Schnell) for image generation
+- Payments: Stripe for subscriptions
+
+## Contact
+
+- Created by: Dave Jackson
+- LinkedIn: https://www.linkedin.com/in/davidjackson113
+- X (Twitter): https://x.com/DaveTeacher1
+
+## Pages
+
+- [Home](https://planwiseesl.com/)
+- [Blog](https://planwiseesl.com/blog)
+- [Public Lesson Library](https://planwiseesl.com/library)
+- [Sign Up / Log In](https://planwiseesl.com/auth)

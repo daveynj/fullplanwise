@@ -2079,6 +2079,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/llms.txt", (req, res) => {
+    const filePath = path.join(process.cwd(), "public", "llms.txt");
+    res.header("Content-Type", "text/plain; charset=utf-8");
+    res.sendFile(filePath);
+  });
+
   // Dynamic sitemap.xml generation for SEO
   app.get("/sitemap.xml", async (req, res) => {
     try {
