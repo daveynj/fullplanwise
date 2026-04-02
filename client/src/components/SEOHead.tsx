@@ -6,6 +6,7 @@ interface SEOHeadProps {
   keywords?: string[];
   canonicalUrl?: string;
   ogImage?: string;
+  contentHtml?: string;
   article?: {
     publishedTime: string;
     modifiedTime?: string;
@@ -20,7 +21,8 @@ export function SEOHead({
   description, 
   keywords = [], 
   canonicalUrl,
-  ogImage = "/images/twitter-card-brand-updated.svg?v=2025-01-18",
+  ogImage = "/images/twitter-card-new-design.png",
+  contentHtml,
   article 
 }: SEOHeadProps) {
   const fullTitle = title.includes("PlanwiseESL") ? title : `${title} | PlanwiseESL - AI-Powered ESL Lessons`;
@@ -112,7 +114,9 @@ export function SEOHead({
     // Set Open Graph tags
     setMetaTag('og:title', fullTitle, true);
     setMetaTag('og:description', fullDescription, true);
-    setMetaTag('og:image', ogImage, true);
+    setMetaTag('og:image', ogImage.startsWith('/') ? `https://planwiseesl.com${ogImage}` : ogImage, true);
+    setMetaTag('og:image:width', '1200', true);
+    setMetaTag('og:image:height', '630', true);
     setMetaTag('og:type', article ? 'article' : 'website', true);
     setMetaTag('og:url', absoluteCanonicalUrl, true);
     
@@ -128,7 +132,6 @@ export function SEOHead({
     // Additional social media tags
     setMetaTag('og:site_name', 'PlanwiseESL', true);
     setMetaTag('og:locale', 'en_US', true);
-    setMetaTag('fb:app_id', '1234567890123456', true); // Placeholder - replace with actual if available
     
     // Set article-specific Open Graph tags
     if (article) {
@@ -194,8 +197,13 @@ export function SEOHead({
         },
         "articleSection": article.section,
         "keywords": article.tags.join(", "),
-        "wordCount": Math.floor(Math.random() * 1000) + 1500, // Estimated based on content length
-        "timeRequired": "PT8M", // 8 minutes reading time
+        ...(contentHtml ? (() => {
+          const tmp = document.createElement('div');
+          tmp.innerHTML = contentHtml;
+          const words = (tmp.textContent || '').trim().split(/\s+/).filter(Boolean).length;
+          const readMins = Math.max(1, Math.round(words / 200));
+          return { "wordCount": words, "timeRequired": `PT${readMins}M` };
+        })() : {}),
         "audience": {
           "@type": "EducationalAudience",
           "educationalRole": "teacher"

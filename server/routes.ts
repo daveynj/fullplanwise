@@ -2093,7 +2093,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log(`[Sitemap] Fetched ${posts.length} published posts out of ${total} total`);
       console.log(`[Sitemap] Post slugs:`, posts.map(p => p.slug));
 
-      const baseUrl = req.protocol + '://' + req.get('host');
+      const baseUrl = 'https://planwiseesl.com';
       const today = new Date().toISOString().split('T')[0];
 
       // Static pages with their priority and update frequency

@@ -142,6 +142,15 @@ export default function BlogPost() {
         title={post.metaTitle || `${post.title} | Plan Wise ESL Blog`}
         description={post.metaDescription || post.excerpt}
         canonicalUrl={`/blog/${post.slug}`}
+        ogImage={post.featuredImageUrl || undefined}
+        contentHtml={post.content}
+        article={{
+          publishedTime: post.publishedAt ? new Date(post.publishedAt).toISOString() : post.publishDate,
+          modifiedTime: post.updatedAt ? new Date(post.updatedAt).toISOString() : undefined,
+          author: post.author,
+          section: post.category,
+          tags: post.tags || [],
+        }}
       />
 
       <BlogHeader />
