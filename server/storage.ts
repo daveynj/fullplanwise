@@ -10,7 +10,7 @@ import createMemoryStore from "memorystore";
 import session from "express-session";
 import { Store } from "express-session";
 import { db } from "./db";
-import { SQL, eq, and, desc, count, or, ilike, gte, sql } from "drizzle-orm";
+import { SQL, eq, and, desc, count, or, ilike, gte, sql, inArray } from "drizzle-orm";
 
 // modify the interface with any CRUD methods
 // you might need
@@ -807,17 +807,17 @@ export class DatabaseStorage implements IStorage {
       const userIds = usersList.map(u => u.id);
 
       // Single query to get lesson counts and most-recent date per user
-      const lessonConditions: any[] = [sql`${lessons.teacherId} = ANY(ARRAY[${sql.join(userIds.map(id => sql`${id}`), sql`, `)}])`];
-      if (startDate) lessonConditions.push(gte(lessons.createdAt, startDate));
+      const lessonWhereConditions: any[] = [inArray(lessons.teacherId, userIds)];
+      if (startDate) lessonWhereConditions.push(gte(lessons.createdAt, startDate));
 
       const lessonStats = await db
         .select({
           teacherId: lessons.teacherId,
-          lessonCount: sql<number>`count(${lessons.id})`,
+          lessonCount: sql<number>`cast(count(${lessons.id}) as integer)`,
           mostRecentLessonDate: sql<string>`max(${lessons.createdAt})`,
         })
         .from(lessons)
-        .where(and(...lessonConditions))
+        .where(and(...lessonWhereConditions))
         .groupBy(lessons.teacherId);
 
       const statsMap = new Map(lessonStats.map(s => [s.teacherId, s]));
