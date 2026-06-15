@@ -1,0 +1,1 @@
+- [Production DB connection](production-db-connection.md) — Replit overrides DATABASE_URL with "helium" in prod; use NEON_DATABASE_URL + standard pg driver instead.
