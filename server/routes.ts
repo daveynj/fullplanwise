@@ -113,7 +113,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         trialDaysRemaining,
         trialExpiresAt: user.trialExpiresAt,
         freeCreditsRemaining: user.freeCreditsRemaining ?? 0,
-        canGenerateLessons: isSubscriber || isInPersonalTrial || globalTrialActive || (user.freeCreditsRemaining ?? 0) > 0
+        canGenerateLessons: isSubscriber || globalTrialActive || (user.freeCreditsRemaining ?? 0) > 0
       });
     } catch (error: any) {
       console.error('Error fetching trial status:', error);
@@ -557,16 +557,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       let shouldDecrementCredits = false;
 
       if (!user.isAdmin && !isSubscriber && !freeTrialActive) {
-        // Free user - check personal trial or credits
-        if (isInPersonalTrial) {
-          console.log(`User ${user.id} is in personal trial period (expires: ${user.trialExpiresAt})`);
-        } else if (hasCredits) {
-          console.log(`User ${user.id} will use 1 credit (${user.freeCreditsRemaining} remaining)`);
+        // Free user - credits are required whether in trial period or not.
+        // The trial period is just the time window to use free credits, not unlimited access.
+        if (hasCredits) {
+          console.log(`User ${user.id} will use 1 credit (${user.freeCreditsRemaining} remaining)${isInPersonalTrial ? ' during trial period' : ''}`);
           shouldDecrementCredits = true;
         } else {
-          // No trial, no credits, no subscription
+          // No credits remaining (and no subscription)
           return res.status(402).json({
-            message: "Your free trial has ended and you've used all your free lessons. Subscribe for unlimited access!",
+            message: "You've used all your free lessons. Subscribe for unlimited access!",
             creditsRemaining: 0,
             trialExpired: true
           });
