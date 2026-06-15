@@ -18,6 +18,8 @@ export const users = pgTable("users", {
   // Free trial system
   freeCreditsRemaining: integer("free_credits_remaining").default(2),
   trialExpiresAt: timestamp("trial_expires_at"),
+  // Activity tracking
+  lastLoginAt: timestamp("last_login_at"),
 });
 
 // Student table schema

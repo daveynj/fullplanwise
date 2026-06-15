@@ -26,6 +26,7 @@ export interface IStorage {
   updateUserAdminStatus(userId: number, isAdmin: boolean): Promise<User>;
   updateUser(userId: number, updates: Partial<User>): Promise<User>;
   decrementUserCredits(userId: number): Promise<void>;
+  updateLastLogin(userId: number): Promise<void>;
 
   // Student methods
   getStudents(teacherId: number): Promise<Student[]>;
@@ -57,6 +58,7 @@ export interface IStorage {
     totalLessons: number;
     lessonsLast30Days: number;
     lessonsLast7Days: number;
+    paidUsers: number;
     topCategories: Array<{ category: string, count: number }>;
     userGrowthData: Array<{ date: string, users: number, lessons: number }>;
     cefrDistribution: Array<{ level: string, count: number }>;
@@ -158,6 +160,16 @@ export class DatabaseStorage implements IStorage {
     } catch (error) {
       console.error('Error decrementing user credits:', error);
       throw error;
+    }
+  }
+
+  async updateLastLogin(userId: number): Promise<void> {
+    try {
+      await db.update(users)
+        .set({ lastLoginAt: new Date() })
+        .where(eq(users.id, userId));
+    } catch (error) {
+      console.error('Error updating last login:', error);
     }
   }
 
@@ -740,147 +752,89 @@ export class DatabaseStorage implements IStorage {
     try {
       console.log(`Getting users with lesson stats, page: ${page}, search: ${search || 'none'}, dateFilter: ${dateFilter || 'none'}`);
 
-      // Calculate offset based on page number and page size
       const offset = (page - 1) * pageSize;
 
-      // Build search condition for users
-      let userConditions = [];
-      if (search && search.trim() !== '') {
-        const searchTerm = `%${search.trim()}%`;
-        userConditions.push(
-          or(
-            ilike(users.username, searchTerm),
-            ilike(users.email, searchTerm),
-            ilike(users.fullName, searchTerm)
-          )
-        );
-      }
-
-      // Find the total number of users matching search
-      let countResult;
-      if (userConditions.length > 0) {
-        countResult = await db
-          .select({ count: count() })
-          .from(users)
-          .where(and(...userConditions));
-      } else {
-        countResult = await db
-          .select({ count: count() })
-          .from(users);
-      }
-
-      const total = Number(countResult[0]?.count || 0);
-
-      // Get users with pagination
-      let usersList;
-      if (userConditions.length > 0) {
-        usersList = await db
-          .select()
-          .from(users)
-          .where(and(...userConditions))
-          .orderBy(desc(users.id))
-          .limit(pageSize)
-          .offset(offset);
-      } else {
-        usersList = await db
-          .select()
-          .from(users)
-          .orderBy(desc(users.id))
-          .limit(pageSize)
-          .offset(offset);
-      }
-
-      // Build date filter for lessons if needed
+      // Map frontend filter values to date thresholds
       let startDate: Date | undefined;
       if (dateFilter && dateFilter !== 'all') {
         const now = new Date();
-
-        if (dateFilter === 'today') {
-          startDate = new Date(now);
-          startDate.setHours(0, 0, 0, 0);
-        } else if (dateFilter === 'week') {
-          startDate = new Date(now);
-          startDate.setDate(now.getDate() - 7);
-        } else if (dateFilter === 'month') {
-          startDate = new Date(now);
-          startDate.setMonth(now.getMonth() - 1);
-        } else {
-          startDate = new Date(0); // Default to epoch start if unknown filter
+        if (dateFilter === '7days') {
+          startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        } else if (dateFilter === '30days') {
+          startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+        } else if (dateFilter === '90days') {
+          startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
         }
       }
 
-      // For each user, get their lesson stats
-      const usersWithStats = await Promise.all(
-        usersList.map(async (user) => {
-          // Count total lessons
-          let lessonCountResult;
-          if (startDate) {
-            lessonCountResult = await db
-              .select({ count: count() })
-              .from(lessons)
-              .where(
-                and(
-                  eq(lessons.teacherId, user.id),
-                  gte(lessons.createdAt, startDate)
-                )
-              );
-          } else {
-            lessonCountResult = await db
-              .select({ count: count() })
-              .from(lessons)
-              .where(eq(lessons.teacherId, user.id));
-          }
+      // Build search condition
+      const searchCondition = search && search.trim() !== ''
+        ? or(
+            ilike(users.username, `%${search.trim()}%`),
+            ilike(users.email, `%${search.trim()}%`),
+            ilike(users.fullName, `%${search.trim()}%`)
+          )
+        : undefined;
 
-          const lessonCount = Number(lessonCountResult[0]?.count || 0);
+      // Count total matching users
+      const countResult = await db
+        .select({ count: count() })
+        .from(users)
+        .where(searchCondition);
+      const total = Number(countResult[0]?.count || 0);
 
-          // Get most recent lesson date
-          let recentLesson;
-          if (startDate) {
-            const dateFilter = and(
-              eq(lessons.teacherId, user.id),
-              gte(lessons.createdAt, startDate)
-            );
-            recentLesson = await db
-              .select({ createdAt: lessons.createdAt })
-              .from(lessons)
-              .where(dateFilter)
-              .orderBy(desc(lessons.createdAt))
-              .limit(1);
-          } else {
-            recentLesson = await db
-              .select({ createdAt: lessons.createdAt })
-              .from(lessons)
-              .where(eq(lessons.teacherId, user.id))
-              .orderBy(desc(lessons.createdAt))
-              .limit(1);
-          }
-
-          const mostRecentDate = recentLesson[0]?.createdAt || null;
-
-          // Create user object without password
-          const { password, ...userWithoutPassword } = user;
-
-          // Return user with lesson stats
-          return {
-            ...userWithoutPassword,
-            lessonCount,
-            mostRecentLessonDate: mostRecentDate
-          };
+      // Fetch paginated users (single query)
+      const usersList = await db
+        .select({
+          id: users.id,
+          username: users.username,
+          email: users.email,
+          fullName: users.fullName,
+          isAdmin: users.isAdmin,
+          subscriptionTier: users.subscriptionTier,
+          freeCreditsRemaining: users.freeCreditsRemaining,
+          trialExpiresAt: users.trialExpiresAt,
+          lastLoginAt: users.lastLoginAt,
         })
-      );
+        .from(users)
+        .where(searchCondition)
+        .orderBy(desc(users.id))
+        .limit(pageSize)
+        .offset(offset);
 
-      return {
-        users: usersWithStats,
-        total
-      };
+      if (usersList.length === 0) return { users: [], total };
+
+      const userIds = usersList.map(u => u.id);
+
+      // Single query to get lesson counts and most-recent date per user
+      const lessonConditions: any[] = [sql`${lessons.teacherId} = ANY(ARRAY[${sql.join(userIds.map(id => sql`${id}`), sql`, `)}])`];
+      if (startDate) lessonConditions.push(gte(lessons.createdAt, startDate));
+
+      const lessonStats = await db
+        .select({
+          teacherId: lessons.teacherId,
+          lessonCount: sql<number>`count(${lessons.id})`,
+          mostRecentLessonDate: sql<string>`max(${lessons.createdAt})`,
+        })
+        .from(lessons)
+        .where(and(...lessonConditions))
+        .groupBy(lessons.teacherId);
+
+      const statsMap = new Map(lessonStats.map(s => [s.teacherId, s]));
+
+      const usersWithStats = usersList.map(user => {
+        const stats = statsMap.get(user.id);
+        return {
+          ...user,
+          lessonCount: stats ? Number(stats.lessonCount) : 0,
+          mostRecentLessonDate: stats?.mostRecentLessonDate || null,
+        };
+      });
+
+      return { users: usersWithStats, total };
     } catch (error) {
       console.error('Error fetching users with lesson stats:', error);
-
-      // Return empty results instead of failing completely
-      return {
-        users: [],
-        total: 0
-      };
+      return { users: [], total: 0 };
     }
   }
 
@@ -978,8 +932,29 @@ export class DatabaseStorage implements IStorage {
         lastActive: row.lastActive as string
       }));
 
-      // Simple user growth data placeholder
-      const userGrowthData: Array<{ date: string, users: number, lessons: number }> = [];
+      // Daily lesson counts for the past 30 days (real data)
+      const dailyLessonsResult = await db
+        .select({
+          date: sql<string>`date_trunc('day', ${lessons.createdAt})::date::text`,
+          lessons: sql<number>`count(*)`,
+        })
+        .from(lessons)
+        .where(gte(lessons.createdAt, thirtyDaysAgo))
+        .groupBy(sql`date_trunc('day', ${lessons.createdAt})`)
+        .orderBy(sql`date_trunc('day', ${lessons.createdAt})`);
+
+      const userGrowthData = dailyLessonsResult.map(row => ({
+        date: row.date,
+        users: 0, // reserved for future signup tracking
+        lessons: Number(row.lessons),
+      }));
+
+      // Subscription breakdown
+      const paidUsersResult = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(users)
+        .where(sql`${users.subscriptionTier} = 'unlimited'`);
+      const paidUsers = Number(paidUsersResult[0]?.count || 0);
 
       return {
         totalUsers,
@@ -988,6 +963,7 @@ export class DatabaseStorage implements IStorage {
         totalLessons,
         lessonsLast30Days,
         lessonsLast7Days,
+        paidUsers,
         topCategories,
         userGrowthData,
         cefrDistribution,

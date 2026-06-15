@@ -23,10 +23,12 @@ interface UserWithLessonStats {
   email: string;
   fullName: string | null;
   isAdmin: boolean;
-  credits: number;
+  freeCreditsRemaining: number;
   lessonCount: number;
   mostRecentLessonDate: string | null;
+  lastLoginAt: string | null;
   subscriptionTier: string;
+  trialExpiresAt: string | null;
 }
 
 interface PaginatedUsers {
@@ -41,6 +43,7 @@ interface AdminAnalytics {
   totalLessons: number;
   lessonsLast30Days: number;
   lessonsLast7Days: number;
+  paidUsers: number;
   topCategories: Array<{category: string, count: number}>;
   userGrowthData: Array<{date: string, users: number, lessons: number}>;
   cefrDistribution: Array<{level: string, count: number}>;
@@ -328,7 +331,7 @@ export function AdminDashboardPage() {
                       <MetricsCard
                         title="Total Users"
                         value={analytics.totalUsers}
-                        change={`${analytics.activeUsersLast30Days} active (30d)`}
+                        change={`${analytics.paidUsers} paid subscriber${analytics.paidUsers !== 1 ? 's' : ''}`}
                         icon={<Users className="h-6 w-6" />}
                         color="bg-blue-100 text-blue-800"
                       />
@@ -340,9 +343,9 @@ export function AdminDashboardPage() {
                         color="bg-green-100 text-green-800"
                       />
                       <MetricsCard
-                        title="MAU (30 days)"
+                        title="Active Users (30d)"
                         value={analytics.activeUsersLast30Days}
-                        change={`${analytics.activeUsersLast7Days} weekly`}
+                        change={`${analytics.activeUsersLast7Days} this week`}
                         icon={<TrendingUp className="h-6 w-6" />}
                         color="bg-purple-100 text-purple-800"
                       />
@@ -354,6 +357,38 @@ export function AdminDashboardPage() {
                         color="bg-orange-100 text-orange-800"
                       />
                     </div>
+
+                    {/* Lesson activity over last 30 days */}
+                    {analytics.userGrowthData.length > 0 && (
+                      <Card>
+                        <CardHeader>
+                          <CardTitle className="flex items-center gap-2">
+                            <TrendingUp className="h-5 w-5" />
+                            Lessons Created — Last 30 Days
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="flex items-end gap-1 h-24">
+                            {(() => {
+                              const max = Math.max(...analytics.userGrowthData.map(d => d.lessons), 1);
+                              return analytics.userGrowthData.map((d) => (
+                                <div
+                                  key={d.date}
+                                  className="flex-1 bg-primary rounded-t opacity-80 hover:opacity-100 transition-opacity cursor-default"
+                                  style={{ height: `${(d.lessons / max) * 100}%`, minHeight: d.lessons > 0 ? '4px' : '0' }}
+                                  title={`${d.date}: ${d.lessons} lesson${d.lessons !== 1 ? 's' : ''}`}
+                                />
+                              ));
+                            })()}
+                          </div>
+                          <div className="flex justify-between text-xs text-gray-400 mt-1">
+                            <span>{analytics.userGrowthData[0]?.date}</span>
+                            <span>{analytics.lessonsLast30Days} total</span>
+                            <span>{analytics.userGrowthData[analytics.userGrowthData.length - 1]?.date}</span>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    )}
 
                     {/* Top Categories */}
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -539,53 +574,72 @@ export function AdminDashboardPage() {
                                 <TableHead>User</TableHead>
                                 <TableHead>Email</TableHead>
                                 <TableHead>Lessons</TableHead>
-                                <TableHead>Credits</TableHead>
-                                <TableHead>Admin</TableHead>
-                                <TableHead>Subscription</TableHead>
-                                <TableHead>Last Active</TableHead>
+                                <TableHead>Plan</TableHead>
+                                <TableHead>Credits Left</TableHead>
+                                <TableHead>Last Login</TableHead>
+                                <TableHead>Last Lesson</TableHead>
                                 <TableHead>Actions</TableHead>
                               </TableRow>
                             </TableHeader>
                             <TableBody>
-                              {data.users.map((user) => (
+                              {data.users.map((user) => {
+                                const inTrial = user.trialExpiresAt && new Date(user.trialExpiresAt) >= new Date();
+                                return (
                                 <TableRow key={user.id}>
                                   <TableCell>
-                                    <div className="font-medium">{user.username}</div>
-                                    <div className="text-sm text-gray-500">{user.fullName}</div>
+                                    <div className="font-medium flex items-center gap-1">
+                                      {user.username}
+                                      {user.isAdmin && (
+                                        <Badge variant="destructive" className="text-xs py-0 px-1 ml-1">
+                                          Admin
+                                        </Badge>
+                                      )}
+                                    </div>
+                                    <div className="text-xs text-gray-500">{user.fullName}</div>
                                   </TableCell>
-                                  <TableCell>{user.email}</TableCell>
+                                  <TableCell className="text-sm">{user.email}</TableCell>
                                   <TableCell>
-                                    <Badge variant="outline">
-                                      {user.lessonCount} lessons
-                                    </Badge>
-                                  </TableCell>
-                                  <TableCell>
-                                    <Badge variant={user.credits > 0 ? "default" : "secondary"}>
-                                      {user.credits} credits
+                                    <Badge variant={user.lessonCount > 0 ? "outline" : "secondary"}>
+                                      {user.lessonCount}
                                     </Badge>
                                   </TableCell>
                                   <TableCell>
                                     {user.isAdmin ? (
-                                      <Badge variant="destructive">
-                                        <UserCheck className="mr-1 h-3 w-3" />
-                                        Admin
-                                      </Badge>
+                                      <Badge className="bg-red-100 text-red-700 border-0">Admin</Badge>
+                                    ) : user.subscriptionTier === 'unlimited' ? (
+                                      <Badge className="bg-green-100 text-green-700 border-0">Paid</Badge>
+                                    ) : inTrial ? (
+                                      <Badge className="bg-blue-100 text-blue-700 border-0">Trial</Badge>
                                     ) : (
-                                      <Badge variant="outline">User</Badge>
+                                      <Badge variant="secondary">Free</Badge>
                                     )}
                                   </TableCell>
                                   <TableCell>
-                                    <Badge variant="secondary">
-                                      {user.subscriptionTier}
-                                    </Badge>
+                                    {user.isAdmin || user.subscriptionTier === 'unlimited' ? (
+                                      <span className="text-gray-400 text-sm">∞</span>
+                                    ) : (
+                                      <Badge variant={(user.freeCreditsRemaining ?? 0) > 0 ? "default" : "destructive"}>
+                                        {user.freeCreditsRemaining ?? 0}
+                                      </Badge>
+                                    )}
+                                  </TableCell>
+                                  <TableCell>
+                                    {user.lastLoginAt ? (
+                                      <div className="text-sm">
+                                        <div>{format(new Date(user.lastLoginAt), 'MMM d, yyyy')}</div>
+                                        <div className="text-xs text-gray-400">{format(new Date(user.lastLoginAt), 'h:mm a')}</div>
+                                      </div>
+                                    ) : (
+                                      <span className="text-gray-400 text-sm">No data yet</span>
+                                    )}
                                   </TableCell>
                                   <TableCell>
                                     {user.mostRecentLessonDate ? (
-                                      <div className="text-sm">
+                                      <div className="text-sm text-gray-600">
                                         {format(new Date(user.mostRecentLessonDate), 'MMM d, yyyy')}
                                       </div>
                                     ) : (
-                                      <span className="text-gray-400">Never</span>
+                                      <span className="text-gray-400 text-sm">None</span>
                                     )}
                                   </TableCell>
                                   <TableCell>
@@ -600,7 +654,8 @@ export function AdminDashboardPage() {
                                     </div>
                                   </TableCell>
                                 </TableRow>
-                              ))}
+                                );
+                              })}
                             </TableBody>
                           </Table>
                         </div>

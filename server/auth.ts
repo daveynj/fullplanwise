@@ -234,6 +234,8 @@ export function setupAuth(app: Express) {
           console.log("Session creation error:", err);
           return next(err);
         }
+        // Track last login time (fire-and-forget)
+        storage.updateLastLogin(user.id).catch(() => {});
         // Remove password from the response
         const { password, ...userWithoutPassword } = user;
         console.log("Login successful");
