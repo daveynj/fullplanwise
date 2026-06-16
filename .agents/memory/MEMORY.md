@@ -1,1 +1,2 @@
 - [Production DB connection](production-db-connection.md) — Replit overrides DATABASE_URL with "helium" in prod; use NEON_DATABASE_URL + standard pg driver instead.
+- [Stripe secrets naming](stripe-secrets-naming.md) — STRIPE_SECRET_KEY and VITE_STRIPE_PUBLIC_KEY are Replit-integration-owned names; user-set secrets with those names are silently ignored in prod. Use PLANWISE_STRIPE_SECRET and PLANWISE_STRIPE_PUBLIC instead.
