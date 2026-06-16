@@ -1,32 +1,33 @@
 import Stripe from 'stripe';
 
-function getCredentials() {
+function getSecretKey(): string {
   const secretKey = process.env.STRIPE_SECRET_KEY;
-  const publishableKey = process.env.VITE_STRIPE_PUBLIC_KEY;
-
-  if (!secretKey || !publishableKey) {
-    throw new Error('Stripe keys not found. Please set STRIPE_SECRET_KEY and VITE_STRIPE_PUBLIC_KEY in your secrets.');
+  if (!secretKey) {
+    throw new Error('STRIPE_SECRET_KEY is not configured. Please add it to your Replit secrets.');
   }
+  return secretKey;
+}
 
-  return { secretKey, publishableKey };
+function getPublishableKey(): string {
+  const publishableKey = process.env.VITE_STRIPE_PUBLIC_KEY;
+  if (!publishableKey) {
+    throw new Error('VITE_STRIPE_PUBLIC_KEY is not configured. Please add it to your Replit secrets.');
+  }
+  return publishableKey;
 }
 
 export async function getUncachableStripeClient() {
-  const { secretKey } = getCredentials();
-
-  return new Stripe(secretKey, {
+  return new Stripe(getSecretKey(), {
     apiVersion: '2025-08-27.basil' as any,
   });
 }
 
 export async function getStripePublishableKey() {
-  const { publishableKey } = getCredentials();
-  return publishableKey;
+  return getPublishableKey();
 }
 
 export async function getStripeSecretKey() {
-  const { secretKey } = getCredentials();
-  return secretKey;
+  return getSecretKey();
 }
 
 let stripeSync: any = null;
@@ -34,7 +35,7 @@ let stripeSync: any = null;
 export async function getStripeSync() {
   if (!stripeSync) {
     const { StripeSync } = await import('stripe-replit-sync');
-    const secretKey = await getStripeSecretKey();
+    const secretKey = getSecretKey();
 
     stripeSync = new StripeSync({
       poolConfig: {
