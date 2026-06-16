@@ -1139,7 +1139,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Map generic price IDs to actual Stripe price IDs
       const stripeProductMap: Record<string, string> = {
-        'price_unlimited_monthly': 'price_1RAwzFAsWPZqDtgQDk06P5r1',
+        'price_unlimited_monthly': 'price_1Timp4Bnt8Mku7BYBMYUVYrF',
       };
 
       // Get the actual price ID from our map, or use the provided one if not found
