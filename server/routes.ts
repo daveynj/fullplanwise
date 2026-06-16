@@ -74,6 +74,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.status(401).json({ message: "Unauthorized" });
   };
 
+  app.get("/api/debug/env-keys", (req, res) => {
+    const keys = ['STRIPE_SECRET_KEY', 'VITE_STRIPE_PUBLIC_KEY', 'STRIPE_WEBHOOK_SECRET', 'PLANWISE_STRIPE_SECRET', 'PLANWISE_STRIPE_PUBLIC', 'NEON_DATABASE_URL', 'DATABASE_URL'];
+    const result: Record<string, boolean | string> = {};
+    for (const k of keys) {
+      result[k] = !!process.env[k];
+    }
+    result['DATABASE_URL_value'] = process.env.DATABASE_URL?.substring(0, 10) || 'not set';
+    res.json(result);
+  });
+
   app.get("/api/features/free-trial", (req, res) => {
     const isActive = isFreeTrialActive();
     const endDate = getFreeTrialEndDate();

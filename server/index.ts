@@ -8,10 +8,10 @@ import { WebhookHandlers } from './webhookHandlers';
 const app = express();
 
 async function initStripe() {
-  const databaseUrl = process.env.DATABASE_URL;
+  const databaseUrl = process.env.NEON_DATABASE_URL || process.env.DATABASE_URL;
 
-  if (!databaseUrl) {
-    console.warn('DATABASE_URL not set - Stripe sync features will be limited');
+  if (!databaseUrl || databaseUrl === 'helium') {
+    console.warn('Valid database URL not found - Stripe sync features will be limited');
     return;
   }
 
