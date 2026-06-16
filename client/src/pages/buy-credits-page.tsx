@@ -28,7 +28,7 @@ import { format } from 'date-fns';
 const unlimitedPlan = {
   id: "unlimited_monthly",
   title: "Unlimited Plan",
-  price: 19,
+  price: 19.99,
   period: "month",
   features: [
     "Unlimited lesson generations",

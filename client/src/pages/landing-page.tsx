@@ -454,7 +454,7 @@ export default function LandingPage() {
                 <CardDescription className="text-center">For active and professional teachers.</CardDescription>
               </CardHeader>
               <CardContent className="text-center space-y-4">
-                <p className="text-4xl font-bold text-brand-navy">$19<span className="text-lg font-normal text-gray-500">/month</span></p>
+                <p className="text-4xl font-bold text-brand-navy">$19.99<span className="text-lg font-normal text-gray-500">/month</span></p>
                 <ul className="text-left text-sm space-y-2 text-gray-600 list-disc list-inside">
                   <li><strong>Unlimited</strong> AI lesson generations</li>
                   <li>Access to all lesson components</li>
