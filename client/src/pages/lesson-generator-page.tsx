@@ -113,9 +113,11 @@ export default function LessonGeneratorPage() {
         pollingRef.current = null;
         setPollingJobId(null);
         setGeneratingLesson(false);
+        // Lesson may have saved even if polling lost track of it
+        queryClient.invalidateQueries({ queryKey: ["/api/lessons"] });
         toast({
-          title: "Failed to generate lesson",
-          description: "Lost connection while waiting. Please try again.",
+          title: "Connection lost while waiting",
+          description: "Your lesson may have finished saving — please check your Lesson Library. If it's not there, try generating again.",
           variant: "destructive",
         });
       }
