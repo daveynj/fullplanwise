@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
 import { LessonForm } from "@/components/lesson/lesson-form";
@@ -16,24 +16,112 @@ export default function LessonGeneratorPage() {
   const { toast } = useToast();
   const [, setLocation] = useLocation();
   const [generatingLesson, setGeneratingLesson] = useState(false);
+  const [pollingJobId, setPollingJobId] = useState<string | null>(null);
+  const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const { canGenerateLessons } = useTrialStatus();
-  
-  // Read studentId from URL parameters
+
   const urlParams = new URLSearchParams(window.location.search);
   const studentIdFromUrl = urlParams.get('studentId');
-  
-  // Force reset loading state on component mount
+
   useEffect(() => {
     setGeneratingLesson(false);
   }, []);
-  
-  // Fetch students for dropdown
+
+  // Clean up polling on unmount
+  useEffect(() => {
+    return () => {
+      if (pollingRef.current) clearInterval(pollingRef.current);
+    };
+  }, []);
+
   const { data: students = [] } = useQuery<Student[]>({
     queryKey: ["/api/students"],
     retry: false,
   });
 
-  // Generate lesson mutation
+  const handleJobComplete = (lesson: any) => {
+    if (pollingRef.current) clearInterval(pollingRef.current);
+    pollingRef.current = null;
+    setPollingJobId(null);
+    setGeneratingLesson(false);
+
+    if (lesson && lesson.id) {
+      toast({
+        title: "Lesson generated successfully!",
+        description: "Opening your new lesson...",
+      });
+
+      if (lesson.content) {
+        queryClient.setQueryData([`/api/lessons/${lesson.id}`], {
+          id: lesson.id,
+          title: lesson.title,
+          topic: lesson.topic,
+          cefrLevel: lesson.cefrLevel,
+          content: typeof lesson.content === 'string' ? lesson.content : JSON.stringify(lesson.content),
+          grammarSpotlight: lesson.grammarSpotlight,
+          teacherId: lesson.teacherId,
+          studentId: lesson.studentId,
+          notes: lesson.notes || "Auto-saved lesson",
+          category: lesson.category || 'general',
+          tags: lesson.tags || [],
+          isPublic: false,
+          publicCategory: null,
+          createdAt: lesson.createdAt || lesson.generatedAt,
+        });
+      }
+
+      setLocation(`/lessons/${lesson.id}`);
+
+      setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+        queryClient.invalidateQueries({ queryKey: ["/api/lessons"] });
+      }, 100);
+    } else {
+      toast({
+        title: "Lesson created but couldn't be opened automatically",
+        description: "Please check your lesson history to view this lesson.",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/lessons"] });
+    }
+  };
+
+  const startPolling = (jobId: string) => {
+    setPollingJobId(jobId);
+    if (pollingRef.current) clearInterval(pollingRef.current);
+
+    pollingRef.current = setInterval(async () => {
+      try {
+        const res = await apiRequest("GET", `/api/lessons/job/${jobId}`);
+        const data = await res.json();
+
+        if (data.status === 'complete') {
+          handleJobComplete(data.lesson);
+        } else if (data.status === 'error') {
+          if (pollingRef.current) clearInterval(pollingRef.current);
+          pollingRef.current = null;
+          setPollingJobId(null);
+          setGeneratingLesson(false);
+          toast({
+            title: "Failed to generate lesson",
+            description: data.error || "An unexpected error occurred.",
+            variant: "destructive",
+          });
+        }
+        // If 'pending', keep polling
+      } catch (err: any) {
+        if (pollingRef.current) clearInterval(pollingRef.current);
+        pollingRef.current = null;
+        setPollingJobId(null);
+        setGeneratingLesson(false);
+        toast({
+          title: "Failed to generate lesson",
+          description: "Lost connection while waiting. Please try again.",
+          variant: "destructive",
+        });
+      }
+    }, 5000);
+  };
+
   const generateLessonMutation = useMutation({
     mutationFn: async (params: LessonGenerateParams) => {
       const res = await apiRequest("POST", "/api/lessons/generate", params);
@@ -43,75 +131,29 @@ export default function LessonGeneratorPage() {
       setGeneratingLesson(true);
     },
     onSuccess: (data) => {
-      setGeneratingLesson(false); // Clear loading state immediately
-      
-      // Redirect to the lesson view IMMEDIATELY - don't wait for queries
-      if (data && data.id) {
-        console.log(`Lesson generated successfully with ID: ${data.id}, redirecting immediately...`);
-        
-        toast({
-          title: "Lesson generated successfully!",
-          description: "Opening your new lesson...",
-        });
-        
-        // Store lesson data in React Query cache to avoid database fetch
-        if (data.content) {
-          queryClient.setQueryData([`/api/lessons/${data.id}`], {
-            id: data.id,
-            title: data.title,
-            topic: data.topic,
-            cefrLevel: data.cefrLevel,
-            content: typeof data.content === 'string' ? data.content : JSON.stringify(data.content),
-            grammarSpotlight: data.grammarSpotlight,
-            teacherId: data.teacherId,
-            studentId: data.studentId,
-            notes: "Auto-saved lesson",
-            category: data.category || 'general',
-            tags: data.tags || [],
-            isPublic: false,
-            publicCategory: null,
-            createdAt: data.generatedAt,
-            isTemporary: data.isTemporary || false
-          });
-          console.log(`Cached lesson data for ID: ${data.id} - skipping database fetch`);
-        }
-        
-        // Redirect first, then invalidate queries in background
-        setLocation(`/lessons/${data.id}`);
-        
-        // Invalidate queries in background after redirect
-        setTimeout(() => {
-          queryClient.invalidateQueries({ queryKey: ["/api/user"] });
-          queryClient.invalidateQueries({ queryKey: ["/api/lessons"] });
-        }, 100);
+      if (data.jobId) {
+        // New async job pattern — start polling
+        startPolling(data.jobId);
+      } else if (data && data.id) {
+        // Legacy direct response fallback
+        handleJobComplete(data);
       } else {
-        // Fallback if no lesson ID is available
+        setGeneratingLesson(false);
         toast({
           title: "Lesson created but couldn't be opened automatically",
           description: "Please check your lesson history to view this lesson.",
-          variant: "default"
         });
-        
-        // Still invalidate queries for fallback case
-        queryClient.invalidateQueries({ queryKey: ["/api/user"] });
         queryClient.invalidateQueries({ queryKey: ["/api/lessons"] });
       }
     },
     onError: (error: Error) => {
-      setGeneratingLesson(false); // Clear loading state on error
-      
+      setGeneratingLesson(false);
       toast({
         title: "Failed to generate lesson",
         description: error.message,
         variant: "destructive",
       });
     },
-    onSettled: () => {
-      // This runs after both success and error
-      // But we've already handled loading state in onSuccess and onError
-      // so this is just a safety net
-      setGeneratingLesson(false);
-    }
   });
 
   const handleGenerateLesson = (params: LessonGenerateParams) => {
@@ -123,7 +165,7 @@ export default function LessonGeneratorPage() {
       });
       return;
     }
-    
+
     if (!canGenerateLessons && !user.isAdmin) {
       toast({
         title: "No Credits Remaining",
@@ -132,31 +174,29 @@ export default function LessonGeneratorPage() {
       });
       return;
     }
-    
+
     generateLessonMutation.mutate(params);
   };
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-gray-light">
       <Sidebar />
-      
+
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header />
-        
+
         <main className="flex-1 overflow-y-auto p-4 md:p-6">
           <div className="max-w-7xl mx-auto">
-            {/* Page header */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
               <div>
                 <h1 className="text-2xl md:text-3xl font-nunito font-bold">Generate New Lesson</h1>
                 <p className="text-gray-600">Create an AI-powered lesson based on your requirements</p>
               </div>
             </div>
-            
-            {/* Lesson form container */}
+
             <div className="max-w-3xl mx-auto">
-              <LessonForm 
-                students={students} 
+              <LessonForm
+                students={students}
                 onSubmit={handleGenerateLesson}
                 initialStudentId={studentIdFromUrl || undefined}
               />
@@ -164,9 +204,9 @@ export default function LessonGeneratorPage() {
           </div>
         </main>
       </div>
-      
-      <LoadingOverlay 
-        isLoading={generatingLesson} 
+
+      <LoadingOverlay
+        isLoading={generatingLesson}
         message="Creating Your Lesson"
         progressText="Your lesson will open automatically when ready..."
       />

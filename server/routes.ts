@@ -28,6 +28,24 @@ import fs from 'fs/promises';
 import path from 'path';
 import multer from 'multer';
 
+// In-memory job store for async lesson generation
+type LessonJobStatus = 'pending' | 'complete' | 'error';
+interface LessonJob {
+  status: LessonJobStatus;
+  lesson?: any;
+  error?: string;
+  createdAt: number;
+}
+const lessonJobs = new Map<string, LessonJob>();
+
+// Clean up jobs older than 30 minutes every 10 minutes
+setInterval(() => {
+  const cutoff = Date.now() - 30 * 60 * 1000;
+  for (const [id, job] of lessonJobs.entries()) {
+    if (job.createdAt < cutoff) lessonJobs.delete(id);
+  }
+}, 10 * 60 * 1000);
+
 export async function registerRoutes(app: Express): Promise<Server> {
   // Dynamic AI service loader - using only Gemini for reliable lesson generation
   let openRouterService: any = null;
@@ -539,6 +557,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Poll endpoint: check status of an async lesson generation job
+  app.get("/api/lessons/job/:jobId", ensureAuthenticated, (req, res) => {
+    const job = lessonJobs.get(req.params.jobId);
+    if (!job) {
+      return res.status(404).json({ message: "Job not found or expired" });
+    }
+    if (job.status === 'pending') {
+      return res.json({ status: 'pending' });
+    }
+    if (job.status === 'error') {
+      lessonJobs.delete(req.params.jobId);
+      return res.status(500).json({ status: 'error', error: job.error });
+    }
+    // Complete — return lesson and clean up
+    const lesson = job.lesson;
+    lessonJobs.delete(req.params.jobId);
+    return res.json({ status: 'complete', lesson });
+  });
+
   app.post("/api/lessons/generate", ensureAuthenticated, async (req, res) => {
     try {
       const validatedData = lessonGenerateSchema.parse(req.body);
@@ -551,29 +588,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const freeTrialActive = isFreeTrialActive();
 
-      // New hybrid trial system:
-      // - Admins: always allowed
-      // - Subscribers (unlimited tier): always allowed
-      // - Global free trial active: everyone allowed
-      // - User in personal trial period (7 days): allowed
-      // - Free users with credits: allowed (decrement credit after generation)
-      // - Otherwise: denied
-
       const isSubscriber = user.subscriptionTier === 'unlimited';
       const isInPersonalTrial = user.trialExpiresAt && new Date() < new Date(user.trialExpiresAt);
       const hasCredits = (user.freeCreditsRemaining ?? 0) > 0;
 
-      // Track if we should decrement credits after successful generation
       let shouldDecrementCredits = false;
 
       if (!user.isAdmin && !isSubscriber && !freeTrialActive) {
-        // Free user - credits are required whether in trial period or not.
-        // The trial period is just the time window to use free credits, not unlimited access.
         if (hasCredits) {
           console.log(`User ${user.id} will use 1 credit (${user.freeCreditsRemaining} remaining)${isInPersonalTrial ? ' during trial period' : ''}`);
           shouldDecrementCredits = true;
         } else {
-          // No credits remaining (and no subscription)
           return res.status(402).json({
             message: "You've used all your free lessons. Subscribe for unlimited access!",
             creditsRemaining: 0,
@@ -582,94 +607,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
 
-      // Start a timer to track generation time
-      const startTime = Date.now();
-      console.log(`Starting lesson generation for user ${user.id}, topic: ${validatedData.topic}, CEFR level: ${validatedData.cefrLevel}`);
+      // Create a job and respond immediately — generation happens in background
+      const jobId = `job_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      lessonJobs.set(jobId, { status: 'pending', createdAt: Date.now() });
+      console.log(`Created lesson generation job ${jobId} for user ${user.id}, topic: ${validatedData.topic}`);
+      res.json({ jobId });
 
-      // Track if we need to try fallback provider
-      let generatedContent;
-      let usedFallbackProvider = false;
-      let errorMessage = '';
-      let primaryProviderError = null;
+      // Run generation entirely in background
+      const teacherId = req.user!.id;
+      (async () => {
+        const startTime = Date.now();
+        try {
+          console.log(`[Job ${jobId}] Starting lesson generation, topic: ${validatedData.topic}, level: ${validatedData.cefrLevel}`);
 
-      try {
-        // Generate lesson content using the selected AI provider
-        const primaryProvider = validatedData.aiProvider || 'gemini'; // Default to Gemini
-
-        console.log(`Using AI provider: ${primaryProvider}`);
-
-        // Fetch student vocabulary if studentId is provided
-        let studentVocabulary: string[] = [];
-        if (validatedData.studentId && validatedData.useStudentHistory !== false) {
-          try {
-            const vocabRecords = await storage.getStudentVocabulary(validatedData.studentId, 50);
-            studentVocabulary = vocabRecords.map(v => v.word).filter(Boolean);
-            if (studentVocabulary.length > 0) {
-              console.log(`Found ${studentVocabulary.length} learned vocabulary words for student ${validatedData.studentId}`);
+          let studentVocabulary: string[] = [];
+          if (validatedData.studentId && validatedData.useStudentHistory !== false) {
+            try {
+              const vocabRecords = await storage.getStudentVocabulary(validatedData.studentId, 50);
+              studentVocabulary = vocabRecords.map(v => v.word).filter(Boolean);
+              if (studentVocabulary.length > 0) {
+                console.log(`[Job ${jobId}] Found ${studentVocabulary.length} learned vocabulary words`);
+              }
+            } catch (vocabError) {
+              console.error(`[Job ${jobId}] Error fetching student vocabulary:`, vocabError);
             }
-          } catch (vocabError) {
-            console.error('Error fetching student vocabulary:', vocabError);
           }
-        }
 
-        // Generate lesson using OpenRouter (text only — images generated async after response)
-        const openRouter = await getOpenRouterService();
-        generatedContent = await openRouter.generateLesson(validatedData, studentVocabulary);
+          const openRouter = await getOpenRouterService();
+          const generatedContent = await openRouter.generateLesson(validatedData, studentVocabulary);
 
-        // Calculate time taken for text generation
-        const endTime = Date.now();
-        const timeTaken = (endTime - startTime) / 1000;
-        console.log(`Lesson text generation completed in ${timeTaken.toFixed(1)} seconds`);
+          const textTimeTaken = (Date.now() - startTime) / 1000;
+          console.log(`[Job ${jobId}] Lesson text ready in ${textTimeTaken.toFixed(1)}s — starting image generation`);
 
-        // Check if the AI included a grammar spotlight in the generated content
-        let grammarVisualization = null;
-        if (generatedContent.grammarSpotlight) {
-          grammarVisualization = generatedContent.grammarSpotlight;
-          console.log(`AI generated grammar spotlight: ${grammarVisualization.grammarType}`);
-        } else {
-          console.log('No grammar spotlight was generated by AI for this lesson');
-        }
+          let grammarVisualization = null;
+          if (generatedContent.grammarSpotlight) {
+            grammarVisualization = generatedContent.grammarSpotlight;
+          }
 
-        // Prepare response with temporary ID and send immediately — images will be added async
-        const tempId = `temp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-        const lessonResponse: any = {
-          id: tempId,
-          title: generatedContent.title,
-          topic: validatedData.topic,
-          cefrLevel: validatedData.cefrLevel,
-          content: generatedContent,
-          grammarSpotlight: grammarVisualization,
-          generatedAt: new Date().toISOString(),
-          generationTimeSeconds: timeTaken,
-          studentId: validatedData.studentId || null,
-          aiProvider: 'gemini',
-          isTemporary: true
-        };
-
-        console.log(`Responding immediately with temp ID: ${tempId} (images will generate in background)`);
-        res.json(lessonResponse);
-
-        // Decrement credits if this user is using one of their free credits
-        if (shouldDecrementCredits) {
-          storage.decrementUserCredits(user.id)
-            .then(() => console.log(`✅ Decremented credit for user ${user.id}`))
-            .catch(err => console.error(`❌ Failed to decrement credit for user ${user.id}:`, err));
-        }
-
-        // Generate images then save to database — all async after response is sent
-        console.log(`Starting async image generation + DB save for temp ID: ${tempId}...`);
-        (async () => {
+          // Generate images (still async within background job)
           try {
-            // Generate images in background
             await openRouter.generateImagesForLesson(generatedContent);
-            console.log(`✅ Image generation complete for temp ID: ${tempId}`);
+            console.log(`[Job ${jobId}] Image generation complete`);
           } catch (imgError) {
-            console.error(`❌ Error during async image generation for ${tempId}:`, imgError);
+            console.error(`[Job ${jobId}] Image generation error (continuing):`, imgError);
           }
 
-          // Save to database (with or without images)
+          // Save to database
           const lessonToSave = {
-            teacherId: req.user!.id,
+            teacherId,
             studentId: validatedData.studentId || null,
             title: generatedContent.title,
             topic: validatedData.topic,
@@ -681,37 +666,60 @@ export async function registerRoutes(app: Express): Promise<Server> {
             tags: validatedData.tags || []
           };
 
-          try {
-            const savedLesson = await storage.createLesson(lessonToSave);
-            console.log(`✅ Lesson successfully saved with permanent ID: ${savedLesson.id} (was temp: ${tempId})`);
+          const savedLesson = await storage.createLesson(lessonToSave);
+          console.log(`[Job ${jobId}] Lesson saved with permanent ID: ${savedLesson.id}`);
 
-            if (validatedData.studentId) {
-              try {
-                console.log(`Creating student-lesson association for student ${validatedData.studentId} and lesson ${savedLesson.id}`);
-                await storage.assignLessonToStudent(
-                  validatedData.studentId,
-                  savedLesson.id,
-                  req.user!.id
-                );
-                console.log(`✅ Student-lesson association created and vocabulary extracted`);
-              } catch (assocError) {
-                console.error(`❌ Error creating student-lesson association:`, assocError);
-              }
+          if (validatedData.studentId) {
+            try {
+              await storage.assignLessonToStudent(validatedData.studentId, savedLesson.id, teacherId);
+              console.log(`[Job ${jobId}] Student-lesson association created`);
+            } catch (assocError) {
+              console.error(`[Job ${jobId}] Error creating student-lesson association:`, assocError);
             }
-          } catch (saveError) {
-            console.error(`❌ Error saving lesson with temp ID ${tempId}:`, saveError);
           }
-        })();
-      } catch (aiError: any) {
-        // Gemini provider failed
-        console.error("Gemini AI provider failed:", aiError);
 
-        // Return error to client with status 503 (Service Unavailable)
-        return res.status(503).json({
-          message: "AI service unavailable - lesson generation failed",
-          error: aiError.message
-        });
-      }
+          // Decrement credits on success
+          if (shouldDecrementCredits) {
+            storage.decrementUserCredits(teacherId)
+              .then(() => console.log(`[Job ${jobId}] Credit decremented for user ${teacherId}`))
+              .catch(err => console.error(`[Job ${jobId}] Failed to decrement credit:`, err));
+          }
+
+          const totalTime = (Date.now() - startTime) / 1000;
+          console.log(`[Job ${jobId}] Complete in ${totalTime.toFixed(1)}s`);
+
+          // Mark job as complete with the lesson data
+          lessonJobs.set(jobId, {
+            status: 'complete',
+            createdAt: Date.now(),
+            lesson: {
+              id: savedLesson.id,
+              title: generatedContent.title,
+              topic: validatedData.topic,
+              cefrLevel: validatedData.cefrLevel,
+              content: generatedContent,
+              grammarSpotlight: grammarVisualization,
+              generatedAt: new Date().toISOString(),
+              generationTimeSeconds: totalTime,
+              studentId: validatedData.studentId || null,
+              teacherId,
+              notes: "Auto-saved lesson",
+              category: validatedData.category || 'general',
+              tags: validatedData.tags || [],
+              isPublic: false,
+              publicCategory: null,
+              createdAt: new Date().toISOString(),
+            }
+          });
+        } catch (err: any) {
+          console.error(`[Job ${jobId}] Generation failed:`, err.message);
+          lessonJobs.set(jobId, {
+            status: 'error',
+            error: err.message || 'Lesson generation failed',
+            createdAt: Date.now()
+          });
+        }
+      })();
     } catch (error: any) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ message: "Invalid lesson parameters", errors: error.errors });
