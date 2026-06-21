@@ -637,22 +637,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const generatedContent = await openRouter.generateLesson(validatedData, studentVocabulary);
 
           const textTimeTaken = (Date.now() - startTime) / 1000;
-          console.log(`[Job ${jobId}] Lesson text ready in ${textTimeTaken.toFixed(1)}s — starting image generation`);
+          console.log(`[Job ${jobId}] Lesson text ready in ${textTimeTaken.toFixed(1)}s — saving lesson now`);
 
           let grammarVisualization = null;
           if (generatedContent.grammarSpotlight) {
             grammarVisualization = generatedContent.grammarSpotlight;
           }
 
-          // Generate images (still async within background job)
-          try {
-            await openRouter.generateImagesForLesson(generatedContent);
-            console.log(`[Job ${jobId}] Image generation complete`);
-          } catch (imgError) {
-            console.error(`[Job ${jobId}] Image generation error (continuing):`, imgError);
-          }
-
-          // Save to database
+          // Save to database immediately — before images
           const lessonToSave = {
             teacherId,
             studentId: validatedData.studentId || null,
@@ -685,10 +677,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
               .catch(err => console.error(`[Job ${jobId}] Failed to decrement credit:`, err));
           }
 
-          const totalTime = (Date.now() - startTime) / 1000;
-          console.log(`[Job ${jobId}] Complete in ${totalTime.toFixed(1)}s`);
+          const textOnlyTime = (Date.now() - startTime) / 1000;
+          console.log(`[Job ${jobId}] Marking complete (text only) in ${textOnlyTime.toFixed(1)}s — images generating in background`);
 
-          // Mark job as complete with the lesson data
+          // Mark job as complete NOW so the user can open the lesson immediately
           lessonJobs.set(jobId, {
             status: 'complete',
             createdAt: Date.now(),
@@ -700,7 +692,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
               content: generatedContent,
               grammarSpotlight: grammarVisualization,
               generatedAt: new Date().toISOString(),
-              generationTimeSeconds: totalTime,
+              generationTimeSeconds: textOnlyTime,
               studentId: validatedData.studentId || null,
               teacherId,
               notes: "Auto-saved lesson",
@@ -711,6 +703,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
               createdAt: new Date().toISOString(),
             }
           });
+
+          // Generate images in the background — update DB when done
+          openRouter.generateImagesForLesson(generatedContent)
+            .then(async () => {
+              console.log(`[Job ${jobId}] Image generation complete — updating lesson in DB`);
+              try {
+                await storage.updateLesson(savedLesson.id, {
+                  content: JSON.stringify(generatedContent)
+                });
+                console.log(`[Job ${jobId}] Lesson updated with images`);
+              } catch (updateErr) {
+                console.error(`[Job ${jobId}] Failed to update lesson with images:`, updateErr);
+              }
+            })
+            .catch(imgError => {
+              console.error(`[Job ${jobId}] Image generation error:`, imgError);
+            });
         } catch (err: any) {
           console.error(`[Job ${jobId}] Generation failed:`, err.message);
           lessonJobs.set(jobId, {

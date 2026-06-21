@@ -874,11 +874,6 @@ Return ONLY a JSON array of corrected examples.`;
         console.log(`Processing batch ${batchNum}/${totalBatches} (${batchFunctions.length} images)...`);
 
         await Promise.all(batchFunctions.map(fn => fn()));
-
-        if (i + batchSize < totalTasks) {
-          console.log(`Waiting 3s before next batch to avoid rate limits...`);
-          await new Promise(resolve => setTimeout(resolve, 3000));
-        }
       }
 
       console.log(`All ${totalTasks} images generated!`);
