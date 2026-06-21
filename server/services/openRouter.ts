@@ -755,7 +755,8 @@ Return ONLY a JSON array of corrected examples.`;
   }
 
   /**
-   * Format and process the lesson content, adding images in parallel
+   * Format and process the lesson content, preparing image prompts but NOT generating images.
+   * Call generateImagesForLesson() separately to generate the actual images.
    */
   private async formatLessonContent(content: any): Promise<any> {
     const lessonContent = {
@@ -764,40 +765,17 @@ Return ONLY a JSON array of corrected examples.`;
     };
     
     if (lessonContent.sections && Array.isArray(lessonContent.sections)) {
-      console.log('Starting batched image generation for OpenRouter lesson...');
-      
-      const imageGenerationTasks: (() => Promise<void>)[] = [];
-      
       for (const section of lessonContent.sections) {
         if (section.type === 'vocabulary' && section.words && Array.isArray(section.words)) {
-          console.log(`Found ${section.words.length} vocabulary words, queueing image generation...`);
           for (const word of section.words) {
             if (!word.imagePrompt && word.term) {
               word.imagePrompt = `An illustration showing the meaning of "${word.term}" in a clear, educational way. No text visible in the image.`;
             }
-            
-            if (word.imagePrompt) {
-              const task = async () => {
-                try {
-                  const requestId = `vocab_${word.term ? word.term.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 15) : 'word'}`;
-                  word.imageBase64 = await replicateService.generateImage(word.imagePrompt, requestId);
-                  if (word.imageBase64) {
-                    console.log(`Generated image for vocab: ${word.term}`);
-                  }
-                } catch (imgError) {
-                  console.error(`Error generating image for vocab ${word.term}:`, imgError);
-                  word.imageBase64 = null;
-                }
-              };
-              imageGenerationTasks.push(task);
-            } else {
-              word.imageBase64 = null;
-            }
+            word.imageBase64 = null;
           }
         }
         
         if (section.type === 'discussion' && section.questions && Array.isArray(section.questions)) {
-          console.log(`Found ${section.questions.length} discussion questions, queueing image generation...`);
           for (const question of section.questions) {
             if (!question.paragraphContext && section.paragraphContext) {
               question.paragraphContext = section.paragraphContext;
@@ -816,54 +794,97 @@ Return ONLY a JSON array of corrected examples.`;
               const contextSnippet = question.paragraphContext ? question.paragraphContext.substring(0, 150) : question.question;
               question.imagePrompt = `A realistic illustration showing a scenario related to: "${question.question.substring(0, 100)}". Scene includes people in a relatable situation. ${contextSnippet.includes('work') ? 'Professional setting' : contextSnippet.includes('school') || contextSnippet.includes('student') ? 'Educational environment' : contextSnippet.includes('family') || contextSnippet.includes('home') ? 'Home setting' : 'Contemporary setting'} with natural lighting. Realistic illustration, engaging composition. No text visible.`;
             }
-            
-            if (question.imagePrompt) {
-              const task = async () => {
-                try {
-                  const requestId = `disc_${question.question ? question.question.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 15) : 'question'}`;
-                  question.imageBase64 = await replicateService.generateImage(question.imagePrompt, requestId);
-                  if (question.imageBase64) {
-                    console.log(`Generated image for discussion question`);
-                  }
-                } catch (imgError) {
-                  console.error(`Error generating discussion image:`, imgError);
-                  question.imageBase64 = null;
-                }
-              };
-              imageGenerationTasks.push(task);
-            } else {
-              question.imageBase64 = null;
-            }
+            question.imageBase64 = null;
           }
         }
       }
-      
-      if (imageGenerationTasks.length > 0) {
-        const batchSize = 3;
-        const totalTasks = imageGenerationTasks.length;
-        console.log(`Generating ${totalTasks} images in sequential batches of ${batchSize}...`);
-        
-        for (let i = 0; i < totalTasks; i += batchSize) {
-          const batchFunctions = imageGenerationTasks.slice(i, i + batchSize);
-          const batchNum = Math.floor(i / batchSize) + 1;
-          const totalBatches = Math.ceil(totalTasks / batchSize);
-          
-          console.log(`Processing batch ${batchNum}/${totalBatches} (${batchFunctions.length} images)...`);
-          
-          await Promise.all(batchFunctions.map(fn => fn()));
-          
-          if (i + batchSize < totalTasks) {
-            console.log(`Waiting 3s before next batch to avoid rate limits...`);
-            await new Promise(resolve => setTimeout(resolve, 3000));
-          }
-        }
-        
-        console.log(`All ${totalTasks} images generated!`);
-      }
-      
-      console.log('Finished image generation for OpenRouter lesson.');
     }
     
+    return lessonContent;
+  }
+
+  /**
+   * Generate images for a lesson that has already been formatted (with imagePrompts set).
+   * Mutates the lessonContent object in place and returns it.
+   * Safe to call after the HTTP response has already been sent.
+   */
+  async generateImagesForLesson(lessonContent: any): Promise<any> {
+    if (!lessonContent.sections || !Array.isArray(lessonContent.sections)) {
+      return lessonContent;
+    }
+
+    console.log('Starting batched image generation for OpenRouter lesson...');
+
+    const imageGenerationTasks: (() => Promise<void>)[] = [];
+
+    for (const section of lessonContent.sections) {
+      if (section.type === 'vocabulary' && section.words && Array.isArray(section.words)) {
+        console.log(`Found ${section.words.length} vocabulary words, queueing image generation...`);
+        for (const word of section.words) {
+          if (word.imagePrompt) {
+            const task = async () => {
+              try {
+                const requestId = `vocab_${word.term ? word.term.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 15) : 'word'}`;
+                word.imageBase64 = await replicateService.generateImage(word.imagePrompt, requestId);
+                if (word.imageBase64) {
+                  console.log(`Generated image for vocab: ${word.term}`);
+                }
+              } catch (imgError) {
+                console.error(`Error generating image for vocab ${word.term}:`, imgError);
+                word.imageBase64 = null;
+              }
+            };
+            imageGenerationTasks.push(task);
+          }
+        }
+      }
+
+      if (section.type === 'discussion' && section.questions && Array.isArray(section.questions)) {
+        console.log(`Found ${section.questions.length} discussion questions, queueing image generation...`);
+        for (const question of section.questions) {
+          if (question.imagePrompt) {
+            const task = async () => {
+              try {
+                const requestId = `disc_${question.question ? question.question.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 15) : 'question'}`;
+                question.imageBase64 = await replicateService.generateImage(question.imagePrompt, requestId);
+                if (question.imageBase64) {
+                  console.log(`Generated image for discussion question`);
+                }
+              } catch (imgError) {
+                console.error(`Error generating discussion image:`, imgError);
+                question.imageBase64 = null;
+              }
+            };
+            imageGenerationTasks.push(task);
+          }
+        }
+      }
+    }
+
+    if (imageGenerationTasks.length > 0) {
+      const batchSize = 3;
+      const totalTasks = imageGenerationTasks.length;
+      console.log(`Generating ${totalTasks} images in sequential batches of ${batchSize}...`);
+
+      for (let i = 0; i < totalTasks; i += batchSize) {
+        const batchFunctions = imageGenerationTasks.slice(i, i + batchSize);
+        const batchNum = Math.floor(i / batchSize) + 1;
+        const totalBatches = Math.ceil(totalTasks / batchSize);
+
+        console.log(`Processing batch ${batchNum}/${totalBatches} (${batchFunctions.length} images)...`);
+
+        await Promise.all(batchFunctions.map(fn => fn()));
+
+        if (i + batchSize < totalTasks) {
+          console.log(`Waiting 3s before next batch to avoid rate limits...`);
+          await new Promise(resolve => setTimeout(resolve, 3000));
+        }
+      }
+
+      console.log(`All ${totalTasks} images generated!`);
+    }
+
+    console.log('Finished image generation for OpenRouter lesson.');
     return lessonContent;
   }
 }
