@@ -35,7 +35,7 @@ export class OpenRouterService {
       const prompt = this.constructLessonPrompt(params, studentVocabulary);
       
       const requestData = {
-        model: 'anthropic/claude-sonnet-4.6',
+        model: 'z-ai/glm-5.2',
         messages: [
           {
             role: 'user',
@@ -658,7 +658,7 @@ Return ONLY a JSON array of corrected paragraphs.`;
       const result: AxiosResponse = await axios.post(
         `${this.baseURL}/chat/completions`,
         {
-          model: 'anthropic/claude-sonnet-4.6',
+          model: 'z-ai/glm-5.2',
           messages: [{ role: 'user', content: validationPrompt }],
           temperature: 0.1,
           max_tokens: 3000
@@ -715,7 +715,7 @@ Return ONLY a JSON array of corrected examples.`;
       const result: AxiosResponse = await axios.post(
         `${this.baseURL}/chat/completions`,
         {
-          model: 'anthropic/claude-sonnet-4.6',
+          model: 'z-ai/glm-5.2',
           messages: [{ role: 'user', content: validationPrompt }],
           temperature: 0.1,
           max_tokens: 2000
@@ -898,7 +898,7 @@ export const testOpenRouterConnection = async (): Promise<boolean> => {
     }
 
     const testRequest = {
-      model: 'anthropic/claude-sonnet-4.6',
+      model: 'z-ai/glm-5.2',
       messages: [{ role: 'user', content: 'Hello, can you respond with just "OK"?' }],
       max_tokens: 10
     };
