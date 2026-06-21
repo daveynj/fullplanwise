@@ -839,9 +839,9 @@ Return ONLY a JSON array of corrected examples.`;
       }
       
       if (imageGenerationTasks.length > 0) {
-        const batchSize = 10;
+        const batchSize = 3;
         const totalTasks = imageGenerationTasks.length;
-        console.log(`Generating ${totalTasks} images in parallel batches of ${batchSize}...`);
+        console.log(`Generating ${totalTasks} images in sequential batches of ${batchSize}...`);
         
         for (let i = 0; i < totalTasks; i += batchSize) {
           const batchFunctions = imageGenerationTasks.slice(i, i + batchSize);
@@ -853,8 +853,8 @@ Return ONLY a JSON array of corrected examples.`;
           await Promise.all(batchFunctions.map(fn => fn()));
           
           if (i + batchSize < totalTasks) {
-            console.log(`Waiting 500ms before next batch...`);
-            await new Promise(resolve => setTimeout(resolve, 500));
+            console.log(`Waiting 3s before next batch to avoid rate limits...`);
+            await new Promise(resolve => setTimeout(resolve, 3000));
           }
         }
         
