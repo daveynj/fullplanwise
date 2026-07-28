@@ -1460,13 +1460,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // First retrieve the subscription to get current period end
       const subscription = await stripe.subscriptions.retrieve(user.stripeSubscriptionId);
 
+      // Newer Stripe API versions expose current_period_end on subscription
+      // items; older versions have it on the subscription itself. Support both.
+      const periodEnd: unknown =
+        subscription.items?.data?.[0]?.current_period_end ??
+        (subscription as any).current_period_end;
+
+      if (typeof periodEnd !== "number" || !Number.isFinite(periodEnd)) {
+        return res.status(500).json({
+          message: "Could not determine the billing period end for this subscription. The subscription was not cancelled; please try again or contact support."
+        });
+      }
+
       // Cancel the subscription at the end of the current period
       await stripe.subscriptions.update(user.stripeSubscriptionId, {
         cancel_at_period_end: true
       });
 
       // Convert the Unix timestamp to a JavaScript Date
-      const endDate = new Date((subscription as any).current_period_end * 1000);
+      const endDate = new Date(periodEnd * 1000);
       const formattedEndDate = endDate.toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
@@ -1483,7 +1495,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({
         message: "Subscription scheduled for cancellation at the end of the current billing period",
         endDate: formattedEndDate,
-        endTimestamp: (subscription as any).current_period_end
+        endTimestamp: periodEnd
       });
     } catch (error: any) {
       res.status(500).json({ message: "Error cancelling subscription: " + error.message });
