@@ -162,7 +162,7 @@ export function LessonPreview({ lesson }: LessonPreviewProps) {
   
   // Special handling for various AI response formats
   // Look for sections that have questionable format (with colons instead of proper JSON)
-  parsedContent.sections.forEach((section, index) => {
+  parsedContent.sections.forEach((section: any, index: number) => {
     if (section && typeof section === 'object') {
       // Check for improperly formatted arrays
       Object.keys(section).forEach(key => {

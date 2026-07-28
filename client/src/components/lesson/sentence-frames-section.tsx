@@ -13,7 +13,7 @@ import {
   SentenceFramePattern, 
   SentenceFrameComponent,
   SentenceFrameExample 
-} from '../../../types/lessonContentTypes';
+} from '../../../../types/lessonContentTypes';
 
 // Import the scaffolding component
 import { SentenceFramesScaffolding } from './sentence-frames-scaffolding';
@@ -676,7 +676,7 @@ export function SentenceFramesSection({ section }: SentenceFramesSectionProps) {
     const legacyFrame: SentenceFramePattern = {
       patternTemplate: section.pattern,
       languageFunction: section.title || "Express ideas clearly",
-      examples: section.examples?.map(example => (typeof example === 'string' ? example : example.text || "")) || [],
+      examples: section.examples?.map((example: any) => (typeof example === 'string' ? example : example.text || "")) || [],
       structureComponents: section.components?.map(comp => ({
         label: comp.componentName || "Component",
         description: comp.description || "",

@@ -112,7 +112,7 @@ export function setupAuth(app: Express) {
         // If not found by username, try by email
         if (!user) {
           const usersByEmail = await storage.getUsersByEmail(username);
-          user = usersByEmail.length > 0 ? usersByEmail[0] : null;
+          user = usersByEmail.length > 0 ? usersByEmail[0] : undefined;
         }
         
         if (!user || !(await comparePasswords(password, user.password))) {

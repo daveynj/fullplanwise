@@ -423,7 +423,7 @@ export class DatabaseStorage implements IStorage {
             ilike(lessons.title, searchTerm),
             ilike(lessons.topic, searchTerm)
           );
-          conditions.push(searchCondition);
+          if (searchCondition) conditions.push(searchCondition);
           console.log('Added search condition for term:', searchTerm); // Simplified log
         } catch (error) {
           console.error('Error adding search condition:', error);
@@ -550,7 +550,7 @@ export class DatabaseStorage implements IStorage {
           .where(and(...conditions))
           .orderBy(desc(lessons.createdAt))
           .limit(pageSize)
-          .offset(offset);
+          .offset(offset) as unknown as Lesson[];
         console.log(`[Storage.getLessons] Main query successful. Found ${lessonsList.length} lessons.`);
       } catch (fetchError) {
         fetchErrorOccurred = true;
@@ -580,7 +580,7 @@ export class DatabaseStorage implements IStorage {
             .where(eq(lessons.teacherId, teacherId))
             .orderBy(desc(lessons.createdAt))
             .limit(pageSize)
-            .offset(offset);
+            .offset(offset) as unknown as Lesson[];
           console.log(`[Storage.getLessons] Fallback query successful. Found ${lessonsList.length} lessons.`);
         } catch (fallbackError) {
           console.error('[Storage.getLessons] Fallback query also failed:', fallbackError);
@@ -931,7 +931,7 @@ export class DatabaseStorage implements IStorage {
         .orderBy(desc(sql`count(*)`))
         .limit(10);
       const topCategories = topCategoriesResult.map(row => ({
-        category: row.category,
+        category: row.category as string,
         count: Number(row.count)
       }));
 
@@ -945,7 +945,7 @@ export class DatabaseStorage implements IStorage {
         .groupBy(lessons.cefrLevel)
         .orderBy(lessons.cefrLevel);
       const cefrDistribution = cefrDistributionResult.map(row => ({
-        level: row.level,
+        level: row.level as string,
         count: Number(row.count)
       }));
 
@@ -1023,7 +1023,8 @@ export class DatabaseStorage implements IStorage {
       let countQuery = db
         .select({ count: sql`count(*)` })
         .from(lessons)
-        .innerJoin(users, eq(lessons.teacherId, users.id));
+        .innerJoin(users, eq(lessons.teacherId, users.id))
+        .$dynamic();
 
       // Build base query for lessons
       let lessonsQuery = db
@@ -1038,7 +1039,8 @@ export class DatabaseStorage implements IStorage {
           contentPreview: sql`substring(${lessons.content}, 1, 200)`.as('contentPreview')
         })
         .from(lessons)
-        .innerJoin(users, eq(lessons.teacherId, users.id));
+        .innerJoin(users, eq(lessons.teacherId, users.id))
+        .$dynamic();
 
       // Apply search filter
       if (search && search !== '') {
@@ -1074,7 +1076,7 @@ export class DatabaseStorage implements IStorage {
         .offset(offset);
 
       return {
-        lessons: lessonsResult,
+        lessons: lessonsResult as unknown as Lesson[],
         total
       };
     } catch (error) {
@@ -1092,7 +1094,8 @@ export class DatabaseStorage implements IStorage {
         .select({ count: sql`count(*)` })
         .from(lessons)
         .innerJoin(users, eq(lessons.teacherId, users.id))
-        .where(eq(lessons.isPublic, true));
+        .where(eq(lessons.isPublic, true))
+        .$dynamic();
 
       // Build base query for lessons
       let lessonsQuery = db
@@ -1109,7 +1112,8 @@ export class DatabaseStorage implements IStorage {
         })
         .from(lessons)
         .innerJoin(users, eq(lessons.teacherId, users.id))
-        .where(eq(lessons.isPublic, true));
+        .where(eq(lessons.isPublic, true))
+        .$dynamic();
 
       // Apply search filter
       if (search && search !== '') {
@@ -1145,7 +1149,7 @@ export class DatabaseStorage implements IStorage {
         .offset(offset);
 
       return {
-        lessons: lessonsResult,
+        lessons: lessonsResult as unknown as Lesson[],
         total
       };
     } catch (error) {
@@ -1377,7 +1381,8 @@ export class DatabaseStorage implements IStorage {
         .select()
         .from(studentVocabulary)
         .where(eq(studentVocabulary.studentId, studentId))
-        .orderBy(desc(studentVocabulary.learnedAt));
+        .orderBy(desc(studentVocabulary.learnedAt))
+        .$dynamic();
 
       if (limit) {
         query = query.limit(limit);
@@ -1481,7 +1486,7 @@ export class DatabaseStorage implements IStorage {
       const whereClause = whereConditions.length > 0 ? and(...whereConditions) : undefined;
 
       // Build query conditionally based on where clause
-      let query = db.select().from(blogPosts);
+      let query = db.select().from(blogPosts).$dynamic();
       if (whereClause) {
         query = query.where(whereClause);
       }
@@ -1491,7 +1496,7 @@ export class DatabaseStorage implements IStorage {
         .offset(offset);
 
       // Build count query conditionally
-      let countQuery = db.select({ count: count() }).from(blogPosts);
+      let countQuery = db.select({ count: count() }).from(blogPosts).$dynamic();
       if (whereClause) {
         countQuery = countQuery.where(whereClause);
       }

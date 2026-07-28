@@ -44,8 +44,6 @@ import {
   Target,
   RotateCcw,
 } from "lucide-react";
-import { AudioPlayer } from "@/components/shared/audio-player";
-import { handleMessageWithAPI } from '@/lib/api-helpers';
 import { DiscussionSection } from './discussion-section';
 import { SentenceFramesSection } from './sentence-frames-section';
 import { PedagogicalSentenceFramesSection } from './pedagogical-sentence-frames';
@@ -774,7 +772,7 @@ export function LessonContent({ content }: LessonContentProps) {
       
       try {
         // Look for discussion sections in the lesson structure
-        const discussionSections = parsedContent.sections?.filter(section => 
+        const discussionSections = parsedContent.sections?.filter((section: any) => 
           section.type === 'discussion' && section.questions
         );
         

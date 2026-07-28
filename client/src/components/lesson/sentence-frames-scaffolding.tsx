@@ -10,7 +10,7 @@ import {
   SentenceWorkshopActivity,
   PatternTrainer,
   SentenceBuildingStep 
-} from '../../../types/lessonContentTypes';
+} from '../../../../types/lessonContentTypes';
 
 interface ScaffoldingProps {
   scaffolding: LowerLevelScaffolding;

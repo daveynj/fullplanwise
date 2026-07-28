@@ -3084,13 +3084,13 @@ export default function BlogPage() {
         <SEOHead
           title={post.title}
           description={post.excerpt}
-          keywords={post.tags}
+          keywords={post.tags ?? undefined}
           canonicalUrl={`https://planwiseesl.com/blog/${post.id}`}
           article={{
             publishedTime: new Date(post.publishDate).toISOString(),
             author: "PlanwiseESL Team",
             section: post.category,
-            tags: post.tags
+            tags: post.tags ?? []
           }}
         />
         {/* Header */}
@@ -3140,7 +3140,7 @@ export default function BlogPage() {
                 </div>
               </div>
               <div className="flex flex-wrap gap-2 mb-8">
-                {post.tags.map(tag => (
+                {(post.tags ?? []).map(tag => (
                   <Badge key={tag} variant="outline" className="text-xs">
                     {tag}
                   </Badge>
@@ -3334,7 +3334,7 @@ export default function BlogPage() {
                   {post.excerpt}
                 </p>
                 <div className="flex flex-wrap gap-1 mb-4">
-                  {post.tags.slice(0, 3).map(tag => (
+                  {(post.tags ?? []).slice(0, 3).map(tag => (
                     <Badge key={tag} variant="secondary" className="text-xs">
                       {tag}
                     </Badge>

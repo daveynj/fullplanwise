@@ -102,14 +102,14 @@ export class GrammarAnalyzer {
    * Now tries multiple patterns and returns the best match, ensuring most lessons get grammar analysis
    */
   analyzeText(text: string, cefrLevel: string): GrammarVisualization | null {
-    const foundPatterns: Array<{ type: keyof typeof this.grammarPatterns, matches: string[], score: number }> = [];
+    const foundPatterns: Array<{ type: keyof GrammarAnalyzer["grammarPatterns"], matches: string[], score: number }> = [];
 
     // Check each grammar pattern
     for (const [patternType, pattern] of Object.entries(this.grammarPatterns)) {
       const matches = text.match(pattern.regex);
       if (matches && matches.length >= (pattern.minMatches || 1)) {
         foundPatterns.push({
-          type: patternType as keyof typeof this.grammarPatterns,
+          type: patternType as keyof GrammarAnalyzer["grammarPatterns"],
           matches: [...new Set(matches)], // Remove duplicates
           score: matches.length * this.getPatternPriority(patternType, cefrLevel)
         });
@@ -198,7 +198,7 @@ export class GrammarAnalyzer {
   }
 
   private generateVisualization(
-    grammarType: keyof typeof this.grammarPatterns,
+    grammarType: keyof GrammarAnalyzer["grammarPatterns"],
     matches: string[],
     fullText: string,
     cefrLevel: string,

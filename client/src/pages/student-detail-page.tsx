@@ -36,7 +36,7 @@ export default function StudentDetailPage() {
   const [isUnassignDialogOpen, setIsUnassignDialogOpen] = useState(false);
   const [lessonToUnassign, setLessonToUnassign] = useState<Lesson | null>(null);
   const [, navigate] = useLocation();
-  const { logout } = useAuth();
+  const { logoutMutation } = useAuth();
   
   // Fetch student details
   const { 
@@ -52,7 +52,7 @@ export default function StudentDetailPage() {
   const { 
     data: studentLessons = [],
     isLoading: isLessonsLoading
-  } = useQuery({
+  } = useQuery<any[]>({
     queryKey: [`/api/students/${studentId}/lessons`],
     enabled: !!studentId,
     retry: false,
@@ -62,7 +62,7 @@ export default function StudentDetailPage() {
   const { 
     data: vocabulary = [],
     isLoading: isVocabularyLoading
-  } = useQuery({
+  } = useQuery<any[]>({
     queryKey: [`/api/students/${studentId}/vocabulary`],
     enabled: !!studentId,
     retry: false,
@@ -148,7 +148,7 @@ export default function StudentDetailPage() {
         description: "Your session may have expired. Please log in again.",
         variant: "destructive",
       });
-      logout();
+      logoutMutation.mutate();
       navigate('/auth');
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps

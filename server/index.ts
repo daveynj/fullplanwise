@@ -26,7 +26,7 @@ async function initStripe() {
     await runMigrations({
       databaseUrl,
       schema: 'stripe'
-    });
+    } as any);
     console.log('Stripe schema ready');
 
     const stripeSync = await getStripeSync();
@@ -132,7 +132,7 @@ app.use((req, res, next) => {
 (async () => {
   const server = await registerRoutes(app);
 
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+  app.use((err: any, _req: ExpressRequest, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
 

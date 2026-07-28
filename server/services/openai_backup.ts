@@ -616,11 +616,11 @@ Return your response as a valid, properly-formatted JSON object that strictly ad
       });
       
       // Check if any paragraphs don't meet quality standards
-      const lowQualityParagraphs = paragraphQuality.filter(p => !p.isGoodQuality);
+      const lowQualityParagraphs = paragraphQuality.filter((p: any) => !p.isGoodQuality);
       
       if (lowQualityParagraphs.length > 0) {
         console.log(`Quality check failed: ${lowQualityParagraphs.length} paragraphs have fewer than ${MIN_SENTENCES_PER_PARAGRAPH} sentences`);
-        lowQualityParagraphs.forEach(p => {
+        lowQualityParagraphs.forEach((p: any) => {
           console.log(`Paragraph ${p.index + 1} has only ${p.sentenceCount} sentences`);
         });
         return false;

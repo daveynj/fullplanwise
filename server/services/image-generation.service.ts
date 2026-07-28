@@ -200,7 +200,7 @@ export const testImageGeneration = async (): Promise<void> => {
 
   try {
     const service = new ImageGenerationService(process.env.OPENROUTER_API_KEY || '');
-    if (!service.apiKey) {
+    if (!process.env.OPENROUTER_API_KEY) {
       console.error('❌ OPENROUTER_API_KEY not configured');
       return;
     }

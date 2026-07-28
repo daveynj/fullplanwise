@@ -20,7 +20,7 @@ export function HtmlDownloadButton({ lessonId, title }: HtmlDownloadButtonProps)
         <span>Download for PDF</span>
       </a>
       
-      <style jsx>{`
+      <style>{`
         @keyframes pulse {
           0% {
             box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.7);

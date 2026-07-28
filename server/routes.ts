@@ -841,7 +841,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 console.error(`[Job ${jobId}] Failed to update lesson with images:`, updateErr);
               }
             })
-            .catch(imgError => {
+            .catch((imgError: any) => {
               console.error(`[Job ${jobId}] Image generation error:`, imgError);
             });
         } catch (err: any) {
@@ -1466,7 +1466,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       // Convert the Unix timestamp to a JavaScript Date
-      const endDate = new Date(subscription.current_period_end * 1000);
+      const endDate = new Date((subscription as any).current_period_end * 1000);
       const formattedEndDate = endDate.toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
@@ -1483,7 +1483,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({
         message: "Subscription scheduled for cancellation at the end of the current billing period",
         endDate: formattedEndDate,
-        endTimestamp: subscription.current_period_end
+        endTimestamp: (subscription as any).current_period_end
       });
     } catch (error: any) {
       res.status(500).json({ message: "Error cancelling subscription: " + error.message });
@@ -2132,6 +2132,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             tags: post.tags || [],
             readTime: post.readTime || post.readingTime,
             featured: post.featured || false,
+            isPublished: true,
           });
 
           migratedPosts.push(newPost);
