@@ -151,6 +151,15 @@ export function setupAuth(app: Express) {
         return res.status(400).json({ message: "Username already exists" });
       }
 
+      // Reject registration when the email is already in use
+      if (req.body.email) {
+        const usersWithEmail = await storage.getUsersByEmail(req.body.email);
+        if (usersWithEmail.length > 0) {
+          console.log("Registration failed: Email already in use");
+          return res.status(409).json({ message: "An account with that email already exists" });
+        }
+      }
+
       const user = await storage.createUser({
         ...req.body,
         password: await hashPassword(req.body.password),
@@ -284,13 +293,17 @@ export function setupAuth(app: Express) {
       // For this implementation, we'll just return the token directly
       // This is NOT secure for production, but works for demonstration
       
-      console.log(`Reset token generated for user ${user.id}: ${token}`);
+      // Never log token material outside development
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`Reset token generated for user ${user.id}: ${token}`);
+      } else {
+        console.log(`Reset token generated for user ${user.id}`);
+      }
       
       res.status(200).json({
         message: "If an account with that email exists, a password reset link has been sent.",
-        // Only include the token in development - REMOVE THIS IN PRODUCTION
-        // In production, this would be sent via email only
-        token: process.env.NODE_ENV !== 'production' ? token : undefined
+        // Only expose the token in development; never in any other environment
+        token: process.env.NODE_ENV === 'development' ? token : undefined
       });
     } catch (error: any) {
       console.error('Password reset request error:', error);

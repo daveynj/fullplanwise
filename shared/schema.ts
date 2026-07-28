@@ -13,6 +13,9 @@ export const users = pgTable("users", {
   stripeCustomerId: text("stripe_customer_id"),
   stripeSubscriptionId: text("stripe_subscription_id"),
   subscriptionTier: text("subscription_tier").default("free"),
+  // Pending subscription cancellation state (synced from Stripe on cancel)
+  subscriptionCancelAtPeriodEnd: boolean("subscription_cancel_at_period_end").notNull().default(false),
+  subscriptionCurrentPeriodEnd: timestamp("subscription_current_period_end"),
   resetPasswordToken: text("reset_password_token"),
   resetPasswordExpires: timestamp("reset_password_expires"),
   // Free trial system

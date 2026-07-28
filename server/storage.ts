@@ -26,6 +26,8 @@ export interface IStorage {
   updateUserAdminStatus(userId: number, isAdmin: boolean): Promise<User>;
   updateUser(userId: number, updates: Partial<User>): Promise<User>;
   decrementUserCredits(userId: number): Promise<void>;
+  tryDecrementUserCredits(userId: number): Promise<boolean>;
+  incrementUserCredits(userId: number): Promise<void>;
   updateLastLogin(userId: number): Promise<void>;
 
   // Student methods
@@ -159,6 +161,43 @@ export class DatabaseStorage implements IStorage {
       console.log(`Decremented credits for user ${userId}`);
     } catch (error) {
       console.error('Error decrementing user credits:', error);
+      throw error;
+    }
+  }
+
+  // Atomically decrement one credit only when the balance is above zero.
+  // Returns true when a credit was actually spent, false when the balance was empty.
+  async tryDecrementUserCredits(userId: number): Promise<boolean> {
+    try {
+      const result = await db.update(users)
+        .set({
+          freeCreditsRemaining: sql`COALESCE(${users.freeCreditsRemaining}, 0) - 1`
+        })
+        .where(and(
+          eq(users.id, userId),
+          sql`COALESCE(${users.freeCreditsRemaining}, 0) > 0`
+        ))
+        .returning({ id: users.id });
+      const decremented = result.length > 0;
+      console.log(`Atomic credit decrement for user ${userId}: ${decremented ? 'spent 1 credit' : 'no credits available'}`);
+      return decremented;
+    } catch (error) {
+      console.error('Error atomically decrementing user credits:', error);
+      throw error;
+    }
+  }
+
+  // Compensating increment used to refund a credit when generation fails
+  async incrementUserCredits(userId: number): Promise<void> {
+    try {
+      await db.update(users)
+        .set({
+          freeCreditsRemaining: sql`COALESCE(${users.freeCreditsRemaining}, 0) + 1`
+        })
+        .where(eq(users.id, userId));
+      console.log(`Refunded 1 credit for user ${userId}`);
+    } catch (error) {
+      console.error('Error refunding user credit:', error);
       throw error;
     }
   }

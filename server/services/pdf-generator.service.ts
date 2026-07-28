@@ -1444,58 +1444,68 @@ export class PDFGeneratorService {
         
         // ---- WORD FAMILY ----
         if (word.wordFamily && word.wordFamily.words && word.wordFamily.words.length > 0) {
+          const familyText = word.wordFamily.words.join(', ');
+          const familyLines = doc.splitTextToSize(familyText, 135);
+          const familyHeight = familyLines.length * 4;
+
+          // Page-break before this block if it would overflow
+          if (yPosition + familyHeight > 270) {
+            doc.addPage();
+            yPosition = 20;
+          }
+
           doc.setFontSize(9);
           doc.setTextColor(50, 50, 50);
           doc.setFont('helvetica', 'bold');
           doc.text('Related Words:', 20, yPosition);
           doc.setFont('helvetica', 'normal');
-          
-          const familyText = word.wordFamily.words.join(', ');
-          const familyLines = doc.splitTextToSize(familyText, 135);
-          const displayFamilyLines = familyLines.length > 1 ? 
-                                    [familyLines[0] + '...'] : 
-                                    familyLines;
-          
-          doc.text(displayFamilyLines, 60, yPosition);
-          
-          yPosition += 6;
+
+          doc.text(familyLines, 60, yPosition);
+
+          yPosition += Math.max(6, familyHeight + 2);
         }
-        
+
         // ---- COLLOCATIONS ----
         if (word.collocations && word.collocations.length > 0) {
+          const collocationsText = word.collocations.join(', ');
+          const collocationsLines = doc.splitTextToSize(collocationsText, 135);
+          const collocationsHeight = collocationsLines.length * 4;
+
+          if (yPosition + collocationsHeight > 270) {
+            doc.addPage();
+            yPosition = 20;
+          }
+
           doc.setFontSize(9);
           doc.setTextColor(50, 50, 50);
           doc.setFont('helvetica', 'bold');
           doc.text('Common with:', 20, yPosition);
           doc.setFont('helvetica', 'normal');
-          
-          const collocationsText = word.collocations.join(', ');
-          const collocationsLines = doc.splitTextToSize(collocationsText, 135);
-          const displayCollocationsLines = collocationsLines.length > 1 ? 
-                                          [collocationsLines[0] + '...'] : 
-                                          collocationsLines;
-          
-          doc.text(displayCollocationsLines, 60, yPosition);
-          
-          yPosition += 6;
+
+          doc.text(collocationsLines, 60, yPosition);
+
+          yPosition += Math.max(6, collocationsHeight + 2);
         }
-        
+
         // ---- USAGE NOTES ----
         if (word.usageNotes) {
+          const usageLines = doc.splitTextToSize(word.usageNotes, 135);
+          const usageHeight = usageLines.length * 4;
+
+          if (yPosition + usageHeight > 270) {
+            doc.addPage();
+            yPosition = 20;
+          }
+
           doc.setFontSize(9);
           doc.setTextColor(50, 50, 50);
           doc.setFont('helvetica', 'bold');
           doc.text('Usage Notes:', 20, yPosition);
           doc.setFont('helvetica', 'normal');
-          
-          const usageLines = doc.splitTextToSize(word.usageNotes, 135);
-          const displayUsageLines = usageLines.length > 1 ? 
-                                  [usageLines[0] + '...'] : 
-                                  usageLines;
-          
-          doc.text(displayUsageLines, 60, yPosition);
-          
-          yPosition += 6;
+
+          doc.text(usageLines, 60, yPosition);
+
+          yPosition += Math.max(6, usageHeight + 2);
         }
         
         // ---- SEMANTIC MAP ----
@@ -1523,74 +1533,86 @@ export class PDFGeneratorService {
             
             // Synonyms
             if (semanticMap.synonyms && semanticMap.synonyms.length > 0) {
+              const synonymText = this.ensureSemanticArray(semanticMap.synonyms).join(', ');
+              const synonymLines = doc.splitTextToSize(synonymText, 120);
+              const synonymHeight = synonymLines.length * 3.5;
+
+              if (yPosition + synonymHeight > 270) {
+                doc.addPage();
+                yPosition = 20;
+              }
+
               doc.setFontSize(8);
               doc.setFont('helvetica', 'bold');
               doc.text('Synonyms:', 25, yPosition);
               doc.setFont('helvetica', 'normal');
-              
-              const synonymText = this.ensureSemanticArray(semanticMap.synonyms).join(', ');
-              const synonymLines = doc.splitTextToSize(synonymText, 120);
-              const displaySynonymLines = synonymLines.length > 1 ? 
-                                        [synonymLines[0] + '...'] : 
-                                        synonymLines;
-              
-              doc.text(displaySynonymLines, 60, yPosition);
-              
-              yPosition += 5;
+
+              doc.text(synonymLines, 60, yPosition);
+
+              yPosition += Math.max(5, synonymHeight + 1.5);
             }
-            
+
             // Antonyms
             if (semanticMap.antonyms && semanticMap.antonyms.length > 0) {
+              const antonymText = this.ensureSemanticArray(semanticMap.antonyms).join(', ');
+              const antonymLines = doc.splitTextToSize(antonymText, 120);
+              const antonymHeight = antonymLines.length * 3.5;
+
+              if (yPosition + antonymHeight > 270) {
+                doc.addPage();
+                yPosition = 20;
+              }
+
               doc.setFontSize(8);
               doc.setFont('helvetica', 'bold');
               doc.text('Antonyms:', 25, yPosition);
               doc.setFont('helvetica', 'normal');
-              
-              const antonymText = this.ensureSemanticArray(semanticMap.antonyms).join(', ');
-              const antonymLines = doc.splitTextToSize(antonymText, 120);
-              const displayAntonymLines = antonymLines.length > 1 ? 
-                                        [antonymLines[0] + '...'] : 
-                                        antonymLines;
-              
-              doc.text(displayAntonymLines, 60, yPosition);
-              
-              yPosition += 5;
+
+              doc.text(antonymLines, 60, yPosition);
+
+              yPosition += Math.max(5, antonymHeight + 1.5);
             }
-            
+
             // Related concepts
             if (semanticMap.relatedConcepts && semanticMap.relatedConcepts.length > 0) {
+              const relatedText = this.ensureSemanticArray(semanticMap.relatedConcepts).join(', ');
+              const relatedLines = doc.splitTextToSize(relatedText, 120);
+              const relatedHeight = relatedLines.length * 3.5;
+
+              if (yPosition + relatedHeight > 270) {
+                doc.addPage();
+                yPosition = 20;
+              }
+
               doc.setFontSize(8);
               doc.setFont('helvetica', 'bold');
               doc.text('Related:', 25, yPosition);
               doc.setFont('helvetica', 'normal');
-              
-              const relatedText = this.ensureSemanticArray(semanticMap.relatedConcepts).join(', ');
-              const relatedLines = doc.splitTextToSize(relatedText, 120);
-              const displayRelatedLines = relatedLines.length > 1 ? 
-                                        [relatedLines[0] + '...'] : 
-                                        relatedLines;
-              
-              doc.text(displayRelatedLines, 60, yPosition);
-              
-              yPosition += 5;
+
+              doc.text(relatedLines, 60, yPosition);
+
+              yPosition += Math.max(5, relatedHeight + 1.5);
             }
-            
+
             // Add more semantic data if present
             if (semanticMap.contexts && semanticMap.contexts.length > 0) {
+              const contextsText = this.ensureSemanticArray(semanticMap.contexts).join(', ');
+              const contextsLines = doc.splitTextToSize(contextsText, 120);
+              const contextsHeight = contextsLines.length * 3.5;
+
+              if (yPosition + contextsHeight > 270) {
+                doc.addPage();
+                yPosition = 20;
+              }
+
               doc.setFontSize(8);
               doc.setFont('helvetica', 'bold');
               doc.text('Contexts:', 25, yPosition);
               doc.setFont('helvetica', 'normal');
-              
-              const contextsText = this.ensureSemanticArray(semanticMap.contexts).join(', ');
-              const contextsLines = doc.splitTextToSize(contextsText, 120);
-              const displayContextsLines = contextsLines.length > 1 ? 
-                                          [contextsLines[0] + '...'] : 
-                                          contextsLines;
-              
-              doc.text(displayContextsLines, 60, yPosition);
-              
-              yPosition += 5;
+
+              doc.text(contextsLines, 60, yPosition);
+
+              yPosition += Math.max(5, contextsHeight + 1.5);
             }
           }
         }

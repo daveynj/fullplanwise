@@ -292,15 +292,17 @@ export default function SettingsPage() {
                           <Calendar className="h-5 w-5 text-primary mr-2 mt-0.5 flex-shrink-0" />
                           <div>
                             <p className="font-medium">
-                              {isInTrial ? "Trial Ends" : (localStorage.getItem('subscriptionEndDate') ? "Subscription Ends" : "Renewal Date")}
+                              {isInTrial ? "Trial Ends" : (user?.subscriptionCancelAtPeriodEnd ? "Subscription Ends" : "Renewal Date")}
                             </p>
                             <p className="text-gray-600">
                               {isInTrial ? (trialExpiresAt?.toLocaleDateString()) :
                                (user?.subscriptionTier !== "free" ? 
                                 (() => {
-                                  const endDate = localStorage.getItem('subscriptionEndDate');
-                                  if (endDate) {
-                                    return endDate;
+                                  // Cancellation state comes from the server (user record),
+                                  // so it stays consistent across devices
+                                  const endDate = user?.subscriptionCurrentPeriodEnd;
+                                  if (user?.subscriptionCancelAtPeriodEnd && endDate) {
+                                    return new Date(endDate).toLocaleDateString();
                                   }
                                   
                                   const now = new Date();
@@ -359,7 +361,7 @@ export default function SettingsPage() {
                           {user?.subscriptionTier === "free" ? "Upgrade to Unlimited" : "Change Plan"}
                         </Button>
                         
-                        {user?.subscriptionTier !== "free" && !isInTrial && !localStorage.getItem('subscriptionEndDate') && (
+                        {user?.subscriptionTier !== "free" && !isInTrial && !user?.subscriptionCancelAtPeriodEnd && (
                           <Button 
                             variant="outline" 
                             className="text-red-600 border-red-200 hover:bg-red-50"
@@ -372,12 +374,7 @@ export default function SettingsPage() {
                                     title: "Subscription cancelled",
                                     description: `Your subscription has been scheduled for cancellation and will end on ${result.endDate}.`,
                                   });
-                                  
-                                  // Store the subscription end date in localStorage for display purposes
-                                  if (result.endDate) {
-                                    localStorage.setItem('subscriptionEndDate', result.endDate);
-                                  }
-                                  
+
                                   queryClient.invalidateQueries({ queryKey: ["/api/user"] });
                                 } catch (error) {
                                   toast({
@@ -396,8 +393,8 @@ export default function SettingsPage() {
                       
                       {user?.subscriptionTier !== "free" && (
                         <p className="text-sm text-gray-500 mt-3">
-                          {localStorage.getItem('subscriptionEndDate') 
-                            ? `Your subscription has been cancelled but will remain active until ${localStorage.getItem('subscriptionEndDate')}.` 
+                          {user?.subscriptionCancelAtPeriodEnd && user?.subscriptionCurrentPeriodEnd
+                            ? `Your subscription has been cancelled but will remain active until ${new Date(user.subscriptionCurrentPeriodEnd).toLocaleDateString()}.`
                             : "Your subscription will remain active until the current billing period ends, even if you cancel."}
                         </p>
                       )}

@@ -514,6 +514,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Lesson not found" });
       }
 
+      // Access control: public lessons are visible to anyone; private lessons
+      // only to their owner or an admin. Return 404 to avoid ID enumeration.
+      const isOwnerOrAdmin = req.isAuthenticated() &&
+        (lesson.teacherId === req.user!.id || !!req.user!.isAdmin);
+      if (!lesson.isPublic && !isOwnerOrAdmin) {
+        console.log(`Unauthorized access attempt to private lesson ${lessonId}`);
+        return res.status(404).json({ message: "Lesson not found" });
+      }
+
       // Parse grammarSpotlight JSON if it exists (with error handling)
       let grammarSpotlight = null;
       if (lesson.grammarSpotlight) {
@@ -590,14 +599,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const isSubscriber = user.subscriptionTier === 'unlimited';
       const isInPersonalTrial = user.trialExpiresAt && new Date() < new Date(user.trialExpiresAt);
-      const hasCredits = (user.freeCreditsRemaining ?? 0) > 0;
 
-      let shouldDecrementCredits = false;
+      // Atomically spend one credit BEFORE generation starts. The conditional
+      // SQL decrement only succeeds when the balance is above zero, so parallel
+      // requests cannot overspend. The credit is refunded if generation fails.
+      let creditSpent = false;
 
       if (!user.isAdmin && !isSubscriber && !freeTrialActive) {
-        if (hasCredits) {
-          console.log(`User ${user.id} will use 1 credit (${user.freeCreditsRemaining} remaining)${isInPersonalTrial ? ' during trial period' : ''}`);
-          shouldDecrementCredits = true;
+        creditSpent = await storage.tryDecrementUserCredits(user.id);
+        if (creditSpent) {
+          console.log(`User ${user.id} spent 1 credit${isInPersonalTrial ? ' during trial period' : ''}`);
         } else {
           return res.status(402).json({
             message: "You've used all your free lessons. Subscribe for unlimited access!",
@@ -670,13 +681,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
             }
           }
 
-          // Decrement credits on success
-          if (shouldDecrementCredits) {
-            storage.decrementUserCredits(teacherId)
-              .then(() => console.log(`[Job ${jobId}] Credit decremented for user ${teacherId}`))
-              .catch(err => console.error(`[Job ${jobId}] Failed to decrement credit:`, err));
-          }
-
           const textOnlyTime = (Date.now() - startTime) / 1000;
           console.log(`[Job ${jobId}] Marking complete (text only) in ${textOnlyTime.toFixed(1)}s — images generating in background`);
 
@@ -722,6 +726,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
             });
         } catch (err: any) {
           console.error(`[Job ${jobId}] Generation failed:`, err.message);
+          // Refund the credit spent upfront — generation did not complete
+          if (creditSpent) {
+            try {
+              await storage.incrementUserCredits(teacherId);
+              console.log(`[Job ${jobId}] Refunded 1 credit to user ${teacherId}`);
+            } catch (refundError) {
+              console.error(`[Job ${jobId}] Failed to refund credit:`, refundError);
+            }
+          }
           lessonJobs.set(jobId, {
             status: 'error',
             error: err.message || 'Lesson generation failed',
@@ -908,7 +921,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Lesson not found" });
       }
 
-      // Allow public access to PDF downloads for all lessons
+      // Access control: public lessons are downloadable by anyone; private
+      // lessons only by their owner or an admin. Return 404 to avoid ID enumeration.
+      const isOwnerOrAdmin = req.isAuthenticated() &&
+        (lesson.teacherId === req.user!.id || !!req.user!.isAdmin);
+      if (!lesson.isPublic && !isOwnerOrAdmin) {
+        console.log(`Unauthorized PDF download attempt for private lesson ${lessonId}`);
+        return res.status(404).json({ message: "Lesson not found" });
+      }
+
       console.log(`PDF download requested for lesson ${lessonId}: "${lesson.title}"`);
 
       // Log whether user is authenticated for analytics
@@ -1095,6 +1116,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Set the subscription tier
       const updatedUser = await storage.updateUser(userId, {
         subscriptionTier: 'unlimited',
+        // New subscription: clear any pending cancellation state
+        subscriptionCancelAtPeriodEnd: false,
+        subscriptionCurrentPeriodEnd: null,
       });
 
       console.log(`Manual subscription activation: User ${userId} subscribed to unlimited plan.`);
@@ -1325,6 +1349,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         day: 'numeric'
       });
 
+      // Persist the pending cancellation on the user record so the settings
+      // page can read it from the server (consistent across devices)
+      await storage.updateUser(userId, {
+        subscriptionCancelAtPeriodEnd: true,
+        subscriptionCurrentPeriodEnd: endDate,
+      });
+
       res.json({
         message: "Subscription scheduled for cancellation at the end of the current billing period",
         endDate: formattedEndDate,
@@ -1490,7 +1521,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Lesson not found" });
       }
 
-      console.log(`Public copy request for lesson ${lessonId}: "${lesson.title}"`);
+      // Access control: public lessons can be copied by anyone; private
+      // lessons only by their owner or an admin. Return 404 to avoid ID enumeration.
+      const isOwnerOrAdmin = req.isAuthenticated() &&
+        (lesson.teacherId === req.user!.id || !!req.user!.isAdmin);
+      if (!lesson.isPublic && !isOwnerOrAdmin) {
+        console.log(`Unauthorized copy attempt for private lesson ${lessonId}`);
+        return res.status(404).json({ message: "Lesson not found" });
+      }
+
+      console.log(`Copy request for lesson ${lessonId}: "${lesson.title}"`);
 
       // Return the full lesson data for public use
       res.json({
