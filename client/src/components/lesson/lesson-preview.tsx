@@ -6,9 +6,10 @@ import { Edit, Download, Share, Maximize2 } from "lucide-react";
 import { LessonContent } from "./lesson-content";
 import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
+import type { ParsedLessonContent, LessonSection, PreviewableLesson } from "../../../../types/lessonContentTypes";
 
 interface LessonPreviewProps {
-  lesson: any;
+  lesson: PreviewableLesson | null | undefined;
   onSave: () => void; // Kept for backward compatibility
   savePending: boolean; // Kept for backward compatibility
 }
@@ -84,7 +85,7 @@ export function LessonPreview({ lesson }: LessonPreviewProps) {
   }
   
   // Parse the content if it's a string (from database)
-  let parsedContent;
+  let parsedContent: ParsedLessonContent;
   try {
     if (lesson.content && typeof lesson.content === 'string') {
       try {
@@ -162,7 +163,7 @@ export function LessonPreview({ lesson }: LessonPreviewProps) {
   
   // Special handling for various AI response formats
   // Look for sections that have questionable format (with colons instead of proper JSON)
-  parsedContent.sections.forEach((section: any, index: number) => {
+  parsedContent.sections.forEach((section: LessonSection, index: number) => {
     if (section && typeof section === 'object') {
       // Check for improperly formatted arrays
       Object.keys(section).forEach(key => {
@@ -189,7 +190,7 @@ export function LessonPreview({ lesson }: LessonPreviewProps) {
             section[key] = [value];
           } else if (typeof value === 'object') {
             // If it's an object, try to extract values into an array
-            section[key] = Object.values(value).filter(v => v !== null && v !== undefined);
+            section[key] = Object.values(value as Record<string, unknown>).filter(v => v !== null && v !== undefined);
           }
         }
       });
@@ -275,10 +276,10 @@ export function LessonPreview({ lesson }: LessonPreviewProps) {
             </div>
           ) : (
             // Look for teacher notes in sections
-            parsedContent.sections?.some((section: any) => section.teacherNotes) ? (
+            parsedContent.sections?.some((section: LessonSection) => section.teacherNotes) ? (
               parsedContent.sections
-                .filter((section: any) => section.teacherNotes)
-                .map((section: any, idx: number) => (
+                .filter((section: LessonSection) => section.teacherNotes)
+                .map((section: LessonSection, idx: number) => (
                   <div key={`teacher-note-${idx}`} className="bg-gray-light rounded-lg p-4 mb-4">
                     <h3 className="font-semibold mb-2">{section.title || 'Section Notes'}</h3>
                     <p>{section.teacherNotes}</p>
@@ -301,7 +302,7 @@ export function LessonPreview({ lesson }: LessonPreviewProps) {
           </div>
           
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {parsedContent.sections && parsedContent.sections.map((section: any, index: number) => (
+            {parsedContent.sections && parsedContent.sections.map((section: LessonSection, index: number) => (
               <div key={index} className="border border-gray-200 rounded-lg overflow-hidden cursor-pointer hover:shadow-md transition">
                 <div className="aspect-[16/9] bg-gray-100 flex items-center justify-center">
                   <div className="text-xl font-nunito font-semibold p-4 text-center">

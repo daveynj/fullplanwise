@@ -4,6 +4,8 @@ import { VocabularySemanticMap } from '../vocabulary-semantic-map';
 
 export interface VocabularyWord {
   word: string;
+  /** Alternative property name for `word` used by some AI providers. */
+  term?: string;
   partOfSpeech?: string;
   definition?: string;
   example?: string;

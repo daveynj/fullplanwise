@@ -53,7 +53,7 @@ function getComponentColor(label: string): string {
 }
 
 // Helper function to analyze structure
-function analyzeStructure(obj: any) {
+function analyzeStructure(obj: unknown) {
   if (!obj) {
     console.log("Object is null or undefined");
     return;
@@ -107,7 +107,7 @@ function NaturalExamplesStep({ frame, onNext }: { frame: SentenceFramePattern; o
     }
   };
 
-  const getExampleText = (example: any): string => {
+  const getExampleText = (example: SentenceFrameExample | string): string => {
     if (typeof example === 'string') {
       return example;
     }
@@ -214,7 +214,7 @@ function PatternDiscoveryStep({ frame, onNext, onShowPattern }: {
     return <span dangerouslySetInnerHTML={{ __html: highlighted }} />;
   };
 
-  const getExampleWithBreakdown = (example: any) => {
+  const getExampleWithBreakdown = (example: SentenceFrameExample | string) => {
     if (typeof example === 'string') {
       return { text: example, breakdown: null };
     }
@@ -246,7 +246,7 @@ function PatternDiscoveryStep({ frame, onNext, onShowPattern }: {
           <div className="space-y-4">
             {displayExamples.map((example, index) => (
               <div key={index} className="p-4 bg-white rounded-lg border border-gray-200 text-lg">
-                {highlightPattern(example.text, example.breakdown)}
+                {highlightPattern(example.text, example.breakdown ?? undefined)}
               </div>
             ))}
             
@@ -676,7 +676,7 @@ export function SentenceFramesSection({ section }: SentenceFramesSectionProps) {
     const legacyFrame: SentenceFramePattern = {
       patternTemplate: section.pattern,
       languageFunction: section.title || "Express ideas clearly",
-      examples: section.examples?.map((example: any) => (typeof example === 'string' ? example : example.text || "")) || [],
+      examples: section.examples?.map((example: SentenceFrameExample | string) => (typeof example === 'string' ? example : example.text || "")) || [],
       structureComponents: section.components?.map(comp => ({
         label: comp.componentName || "Component",
         description: comp.description || "",

@@ -25,6 +25,19 @@ import { StudentForm } from "@/components/student/student-form";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, BookOpen, Edit, ArrowLeft, Plus, User, AlertTriangle, LogOut, BookMarked, Library } from "lucide-react";
 import { Student, Lesson } from "@shared/schema";
+
+interface StudentLessonAssignment {
+  id: number;
+  lesson?: Lesson | null;
+}
+
+interface StudentVocabularyItem {
+  id: number;
+  word: string;
+  definition?: string | null;
+  cefrLevel?: string | null;
+  learnedAt: string;
+}
 import { useAuth } from "@/hooks/use-auth";
 
 export default function StudentDetailPage() {
@@ -52,7 +65,7 @@ export default function StudentDetailPage() {
   const { 
     data: studentLessons = [],
     isLoading: isLessonsLoading
-  } = useQuery<any[]>({
+  } = useQuery<StudentLessonAssignment[]>({
     queryKey: [`/api/students/${studentId}/lessons`],
     enabled: !!studentId,
     retry: false,
@@ -62,7 +75,7 @@ export default function StudentDetailPage() {
   const { 
     data: vocabulary = [],
     isLoading: isVocabularyLoading
-  } = useQuery<any[]>({
+  } = useQuery<StudentVocabularyItem[]>({
     queryKey: [`/api/students/${studentId}/vocabulary`],
     enabled: !!studentId,
     retry: false,
@@ -374,9 +387,9 @@ export default function StudentDetailPage() {
                       ) : studentLessons.length > 0 ? (
                         <div className="space-y-4">
                           {studentLessons
-                            .filter((sl: any) => sl.lesson && sl.lesson.title)
-                            .map((sl: any) => {
-                            const lesson = sl.lesson;
+                            .filter((sl) => !!(sl.lesson && sl.lesson.title))
+                            .map((sl) => {
+                            const lesson = sl.lesson!;
                             const assignmentId = sl.id;
                             return (
                               <div key={assignmentId} className="flex items-center p-4 bg-gray-50 rounded-lg">
@@ -443,7 +456,7 @@ export default function StudentDetailPage() {
                         </div>
                       ) : vocabulary.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          {vocabulary.map((vocab: any) => (
+                          {vocabulary.map((vocab) => (
                             <div key={vocab.id} className="p-4 bg-gray-50 rounded-lg border border-gray-200" data-testid={`vocabulary-${vocab.id}`}>
                               <div className="flex items-start justify-between">
                                 <div className="flex-1">

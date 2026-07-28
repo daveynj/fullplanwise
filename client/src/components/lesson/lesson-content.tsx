@@ -64,9 +64,10 @@ import { cn, extractDiscussionQuestions, extractQuizQuestions, extractComprehens
 import { useLocation } from "wouter";
 import { VocabularySemanticMap } from './vocabulary-semantic-map';
 import { GrammarSpotlight } from './grammar-spotlight';
+import type { ParsedLessonContent, LessonSection, LessonQuestionAnswer, LessonVocabularyWord, SentenceFramePattern } from '../../../../types/lessonContentTypes';
 
 interface LessonContentProps {
-  content: any;
+  content: ParsedLessonContent;
 }
 
 type SectionType = 
@@ -100,7 +101,7 @@ interface SectionDetails {
 }
 
 export function LessonContent({ content }: LessonContentProps) {
-  const [parsedContent, setParsedContent] = useState<any>(null);
+  const [parsedContent, setParsedContent] = useState<ParsedLessonContent | null>(null);
   const [activeTab, setActiveTab] = useState<string>(""); 
   const [location, setLocation] = useLocation();
   const [grammarSpotlightHidden, setGrammarSpotlightHidden] = useState<boolean>(false);
@@ -144,7 +145,7 @@ export function LessonContent({ content }: LessonContentProps) {
             console.log("FOUND POSSIBLE COMPREHENSION KEYS:", comprehensionKeys);
             // Add them to sections
             comprehensionKeys.forEach(key => {
-              if (!parsedContent.sections.some((s: any) => s.type === "comprehension")) {
+              if (!parsedContent.sections.some((s: LessonSection) => s.type === "comprehension")) {
                 console.log("Adding comprehension section from key:", key);
                 parsedContent.sections.push({
                   type: "comprehension",
@@ -169,12 +170,12 @@ export function LessonContent({ content }: LessonContentProps) {
               // Extract comprehension questions if they exist
               if (value.toLowerCase().includes("comprehension") && 
                   value.includes("?") &&
-                  !parsedContent.sections.some((s: any) => s.type === "comprehension")) {
+                  !parsedContent.sections.some((s: LessonSection) => s.type === "comprehension")) {
                 
                 console.log("FOUND COMPREHENSION CONTENT IN KEY:", key.substring(0, 30));
                 
                 // Extract questions from the long text
-                const questions: any[] = [];
+                const questions: LessonQuestionAnswer[] = [];
                 const lines = value.split(/[\r\n]+/);
                 
                 lines.forEach(line => {
@@ -207,12 +208,12 @@ export function LessonContent({ content }: LessonContentProps) {
               // Extract discussion questions too
               if (value.toLowerCase().includes("discussion") && 
                   value.includes("?") &&
-                  !parsedContent.sections.some((s: any) => s.type === "discussion")) {
+                  !parsedContent.sections.some((s: LessonSection) => s.type === "discussion")) {
                 
                 console.log("FOUND DISCUSSION CONTENT IN KEY:", key.substring(0, 30));
                 
                 // Extract questions from the long text
-                const questions: any[] = [];
+                const questions: LessonQuestionAnswer[] = [];
                 const lines = value.split(/[\r\n]+/);
                 
                 lines.forEach(line => {
@@ -279,7 +280,7 @@ export function LessonContent({ content }: LessonContentProps) {
           
           // Look for reading sections
           if (processedContent.reading || processedContent.readingText || processedContent.readingPassage) {
-            const readingContent = processedContent.reading || processedContent.readingText || processedContent.readingPassage;
+            const readingContent = (processedContent.reading || processedContent.readingText || processedContent.readingPassage) as string | string[];
             processedContent.sections.push({
               type: 'reading',
               title: 'Reading',
@@ -293,19 +294,19 @@ export function LessonContent({ content }: LessonContentProps) {
           
           // Look for vocabulary sections
           if (processedContent.vocabulary || processedContent.targetVocabulary) {
-            const vocabContent = processedContent.vocabulary || processedContent.targetVocabulary;
+            const vocabContent = (processedContent.vocabulary || processedContent.targetVocabulary) as (LessonVocabularyWord | string)[] | Record<string, unknown>;
             let vocabularyWords = [];
             
             // Handle various formats for vocabulary
             if (Array.isArray(vocabContent)) {
-              vocabularyWords = vocabContent.map((word: any) => {
+              vocabularyWords = vocabContent.map((word: LessonVocabularyWord | string) => {
                 if (typeof word === 'string') {
                   return { word, definition: 'No definition provided' };
                 } else if (typeof word === 'object') {
                   return word;
                 }
                 return null;
-              }).filter(Boolean);
+              }).filter((w): w is LessonVocabularyWord => w !== null);
             } else if (typeof vocabContent === 'object') {
               // Handle object format (term: definition)
               for (const [term, definition] of Object.entries(vocabContent)) {
@@ -330,7 +331,7 @@ export function LessonContent({ content }: LessonContentProps) {
           // Look for cloze (fill-in-the-blanks) activities
           if (processedContent.cloze || processedContent.fillInTheBlanks || processedContent.fillInBlanks || processedContent.clozeActivity) {
             console.log("Found cloze activity in Gemini response");
-            const clozeContent = processedContent.cloze || processedContent.fillInTheBlanks || processedContent.fillInBlanks || processedContent.clozeActivity;
+            const clozeContent = (processedContent.cloze || processedContent.fillInTheBlanks || processedContent.fillInBlanks || processedContent.clozeActivity) as string | { text?: string; passage?: string; content?: string; wordBank?: string[] | string; words?: string[] } | null | undefined;
             let clozeText = "";
             let wordBank: string[] = [];
             
@@ -344,12 +345,12 @@ export function LessonContent({ content }: LessonContentProps) {
                 const word = match.match(/\[(\d+):([^\]]+)\]/)?.[2] || "";
                 return word;
               });
-            } else if (typeof clozeContent === 'object') {
+            } else if (clozeContent && typeof clozeContent === 'object') {
               // Handle object format with text and wordBank properties
               if (clozeContent.text) {
                 clozeText = clozeContent.text;
               } else if (clozeContent.passage || clozeContent.content) {
-                clozeText = clozeContent.passage || clozeContent.content;
+                clozeText = clozeContent.passage || clozeContent.content || "";
               }
               
               // Get word bank from the object
@@ -390,8 +391,8 @@ export function LessonContent({ content }: LessonContentProps) {
           
           // Look for comprehension sections
           if (processedContent.comprehension || processedContent.comprehensionQuestions) {
-            const compContent = processedContent.comprehension || processedContent.comprehensionQuestions;
-            let questions = [];
+            const compContent = (processedContent.comprehension || processedContent.comprehensionQuestions) as LessonQuestionAnswer[] | Record<string, unknown>;
+            let questions: LessonQuestionAnswer[] = [];
             
             // Handle various formats for comprehension questions
             if (Array.isArray(compContent)) {
@@ -421,19 +422,19 @@ export function LessonContent({ content }: LessonContentProps) {
           
           // Look for discussion sections
           if (processedContent.discussion || processedContent.discussionQuestions) {
-            const discContent = processedContent.discussion || processedContent.discussionQuestions;
-            let questions = [];
+            const discContent = (processedContent.discussion || processedContent.discussionQuestions) as (LessonQuestionAnswer | string)[] | Record<string, unknown>;
+            let questions: LessonQuestionAnswer[] = [];
             
             // Handle various formats for discussion questions
             if (Array.isArray(discContent)) {
-              questions = discContent.map((q: any) => {
+              questions = discContent.map((q: LessonQuestionAnswer | string) => {
                 if (typeof q === 'string') {
                   return { question: q };
                 } else if (typeof q === 'object' && q.question) {
                   return q;
                 }
                 return null;
-              }).filter(Boolean);
+              }).filter((q): q is LessonQuestionAnswer => q !== null);
             } else if (typeof discContent === 'object') {
               // Handle object format 
               for (const [question, followUp] of Object.entries(discContent)) {
@@ -459,8 +460,8 @@ export function LessonContent({ content }: LessonContentProps) {
           
           // Look for quiz sections
           if (processedContent.quiz || processedContent.quizQuestions || processedContent.assessment) {
-            const quizContent = processedContent.quiz || processedContent.quizQuestions || processedContent.assessment;
-            let questions = [];
+            const quizContent = (processedContent.quiz || processedContent.quizQuestions || processedContent.assessment) as LessonQuestionAnswer[] | Record<string, unknown>;
+            let questions: LessonQuestionAnswer[] = [];
             
             // Handle various formats for quiz questions
             if (Array.isArray(quizContent)) {
@@ -492,10 +493,10 @@ export function LessonContent({ content }: LessonContentProps) {
       
       // Make sure sections are properly structured
       if (processedContent.sections && Array.isArray(processedContent.sections)) {
-        const normalizedSections: any[] = [];
+        const normalizedSections: LessonSection[] = [];
         
         // Process each section to ensure all have proper 'type' field
-        processedContent.sections.forEach((section: any) => {
+        processedContent.sections.forEach((section: LessonSection) => {
           if (section && typeof section === 'object') {
             // Make sure each section has a valid type
             if (!section.type || typeof section.type !== 'string') {
@@ -561,13 +562,13 @@ export function LessonContent({ content }: LessonContentProps) {
       setParsedContent(processedContent);
       
       // --- BEGIN EDIT: Log final state of sentenceFrames section ---
-      const finalSentenceFramesSection = processedContent.sections?.find((s: any) => s?.type === 'sentenceFrames' || s?.type === 'grammar');
+      const finalSentenceFramesSection = processedContent.sections?.find((s: LessonSection) => s?.type === 'sentenceFrames' || s?.type === 'grammar');
       console.log("SentenceFrames section in final processedContent.sections:", JSON.stringify(finalSentenceFramesSection, null, 2));
       // --- END EDIT ---
       
       // --- BEGIN EDIT: Set initial active tab ---
       // Determine available sections AFTER processing
-      const finalSectionTypes = processedContent.sections?.map((s: any) => s?.type).filter(Boolean) || [];
+      const finalSectionTypes = processedContent.sections?.map((s: LessonSection) => s?.type).filter((t): t is string => typeof t === 'string') || [];
       
       // Make sure we have an overview section for all lessons
       if (!finalSectionTypes.includes('overview')) {
@@ -772,7 +773,7 @@ export function LessonContent({ content }: LessonContentProps) {
       
       try {
         // Look for discussion sections in the lesson structure
-        const discussionSections = parsedContent.sections?.filter((section: any) => 
+        const discussionSections = parsedContent.sections?.filter((section: LessonSection) => 
           section.type === 'discussion' && section.questions
         );
         
@@ -793,7 +794,7 @@ export function LessonContent({ content }: LessonContentProps) {
     try {
       if (Array.isArray(parsedContent.sections)) {
         // Find based on type, allowing for alternatives
-        const found = parsedContent.sections.find((section: any) => {
+        const found = parsedContent.sections.find((section: LessonSection) => {
           if (!section || typeof section !== 'object') return false;
           if (type === 'warmup') return section.type === 'warmup' || section.type === 'warm-up';
           if (type === 'sentenceFrames') return section.type === 'sentenceFrames' || section.type === 'grammar';
@@ -846,7 +847,7 @@ export function LessonContent({ content }: LessonContentProps) {
     const vocabWords: VocabularyWord[] = [];
     
     // We'll extract vocabulary words using direct key matching based on the sample images
-    const vocabularySection = parsedContent.sections.find((s: any) => s.type === 'vocabulary');
+    const vocabularySection = parsedContent.sections.find((s: LessonSection) => s.type === 'vocabulary');
     
     if (vocabularySection) {
       // Get vocabulary words from the content
@@ -854,7 +855,7 @@ export function LessonContent({ content }: LessonContentProps) {
       
       // Look for the 'words' array in the vocabulary section (Gemini format)
       if (vocabularySection.words && Array.isArray(vocabularySection.words)) {
-        vocabularySection.words.forEach((wordData: any) => {
+        vocabularySection.words.forEach((wordData: LessonVocabularyWord) => {
           if (typeof wordData === 'object') {
             // Handle complex pronunciation object structure
             let pronunciationData;
@@ -924,7 +925,7 @@ export function LessonContent({ content }: LessonContentProps) {
     
     if (section.questions) {
       if (Array.isArray(section.questions)) {
-        discussionQuestions = section.questions;
+        discussionQuestions = section.questions.filter((q): q is string => typeof q === 'string');
       } else if (typeof section.questions === 'object') {
         // Extract questions from object format
         discussionQuestions = Object.keys(section.questions)
@@ -1090,7 +1091,7 @@ export function LessonContent({ content }: LessonContentProps) {
                                 
                                 // Check for pronunciation object with value or ipa field
                                 if (currentWord?.pronunciation && typeof currentWord.pronunciation === 'object') {
-                                  const pronounceObj = currentWord.pronunciation as any;
+                                  const pronounceObj = currentWord.pronunciation as Exclude<LessonVocabularyWord['pronunciation'], string | undefined>;
                                   
                                   // If we have a direct value/ipa field, use that
                                   if (pronounceObj.value) {
@@ -1145,7 +1146,7 @@ export function LessonContent({ content }: LessonContentProps) {
                                 
                                 // Handle complex pronunciation object
                                 if (currentWord?.pronunciation && typeof currentWord.pronunciation === 'object') {
-                                  const pronounceObj = currentWord.pronunciation as any;
+                                  const pronounceObj = currentWord.pronunciation as Exclude<LessonVocabularyWord['pronunciation'], string | undefined>;
                                   
                                   // Get syllables from pronunciation object or fall back
                                   syllables = pronounceObj.syllables && Array.isArray(pronounceObj.syllables) && pronounceObj.syllables.length > 0
@@ -1368,7 +1369,7 @@ export function LessonContent({ content }: LessonContentProps) {
   };
 
   const VocabularySection = () => {
-    const section = findSection('vocabulary');
+    const section = findSection('vocabulary') ?? ({} as LessonSection);
     
     // Log raw vocabulary section data to examine its structure
     console.log("RAW VOCABULARY SECTION:", section);
@@ -1383,7 +1384,7 @@ export function LessonContent({ content }: LessonContentProps) {
     
     // Look for the 'words' array in the vocabulary section (Gemini format)
     if (section.words && Array.isArray(section.words)) {
-      section.words.forEach((wordData: any) => {
+      section.words.forEach((wordData: LessonVocabularyWord) => {
         if (typeof wordData === 'object') {
           // Use only the AI-generated data
           extractedVocabWords.push({
@@ -1535,7 +1536,7 @@ export function LessonContent({ content }: LessonContentProps) {
                     {/* Word display (centered on the card) */}
                     <div className="relative z-10 text-center p-6 bg-white/80 rounded-lg shadow-sm backdrop-blur-sm">
                       <div className="flex items-center justify-center gap-3 mb-1">
-                        <h2 className="text-3xl font-bold text-gray-800">{(currentWord as any).term || currentWord.word}</h2>
+                        <h2 className="text-3xl font-bold text-gray-800">{currentWord.term || currentWord.word}</h2>
                         {currentWord.topicEssential && (
                           <Badge variant="destructive" className="bg-red-600 text-white text-xs font-medium px-2 py-1">
                             Topic Essential
@@ -1559,7 +1560,7 @@ export function LessonContent({ content }: LessonContentProps) {
                   <div className="h-full flex flex-col">
                     {/* Word title */}
                     <div className="mb-4 text-center">
-                      <h2 className="text-2xl font-bold text-gray-800">{(currentWord as any).term || currentWord.word}</h2>
+                      <h2 className="text-2xl font-bold text-gray-800">{currentWord.term || currentWord.word}</h2>
                       <p className="text-gray-500 italic">{currentWord.partOfSpeech}</p>
                     </div>
                     
@@ -1629,16 +1630,16 @@ export function LessonContent({ content }: LessonContentProps) {
   };
 
   const ComprehensionSection = () => {
-    const section = findSection('comprehension');
+    const section = findSection('comprehension') ?? ({} as LessonSection);
     
     const [activeQuestion, setActiveQuestion] = useState(0);
     
     // Add additional error handling for questions array
-    let questions: any[] = [];
+    let questions: LessonQuestionAnswer[] = [];
     try {
       // Check if questions is a valid array
       if (section.questions && Array.isArray(section.questions) && section.questions.length > 0) {
-        questions = section.questions;
+        questions = section.questions.map((q) => (typeof q === 'string' ? { question: q } : q));
       } else {
         console.warn("No valid questions array found in comprehension section");
       }
@@ -1731,7 +1732,7 @@ export function LessonContent({ content }: LessonContentProps) {
   // Teacher Notes Section to collect all teacher notes
   // Overview component that displays the lesson title and warm-up questions in a new tab
   const OverviewSection = () => {
-    const lesson = parsedContent?.lesson || {};
+    const lesson: NonNullable<ParsedLessonContent['lesson']> = parsedContent?.lesson || {};
     
     // --- Corrected Warm-up Question Fetching ---
     // Try to find the warm-up section from multiple possible types/locations
@@ -1743,7 +1744,7 @@ export function LessonContent({ content }: LessonContentProps) {
     let warmupQuestions: string[] = [];
     if (warmupSection?.questions) {
       if (Array.isArray(warmupSection.questions)) {
-        warmupQuestions = warmupSection.questions.filter((q: any): q is string => typeof q === 'string');
+        warmupQuestions = warmupSection.questions.filter((q: LessonQuestionAnswer | string): q is string => typeof q === 'string');
       } else if (typeof warmupSection.questions === 'object') {
         // Handle object format - assuming keys are the questions
         warmupQuestions = Object.keys(warmupSection.questions)
@@ -1752,7 +1753,7 @@ export function LessonContent({ content }: LessonContentProps) {
     }
     // If still no questions, check the top-level parsedContent as a fallback
     if (warmupQuestions.length === 0 && Array.isArray(parsedContent?.warmUpQuestions)) {
-        warmupQuestions = parsedContent.warmUpQuestions.filter((q: any): q is string => typeof q === 'string');
+        warmupQuestions = parsedContent.warmUpQuestions.filter((q: LessonQuestionAnswer | string): q is string => typeof q === 'string');
     }
     // --- End Correction ---
 
@@ -1819,7 +1820,7 @@ export function LessonContent({ content }: LessonContentProps) {
     const allNotes: {[key: string]: string} = {};
     
     if (Array.isArray(parsedContent.sections)) {
-      parsedContent.sections.forEach((section: any) => {
+      parsedContent.sections.forEach((section: LessonSection) => {
         if (section && typeof section === 'object' && section.teacherNotes) {
           // Use section type or title as the key
           const sectionName = section.title || 
@@ -1891,7 +1892,7 @@ export function LessonContent({ content }: LessonContentProps) {
   
   // Helper function to check if a section type exists
   const hasSectionType = (type: string): boolean => {
-    return parsedContent.sections.some((s: any) => s && s.type === type);
+    return parsedContent.sections.some((s: LessonSection) => s && s.type === type);
   };
   
   // Log the entire lesson content structure to understand where the discussion questions are
@@ -1900,8 +1901,9 @@ export function LessonContent({ content }: LessonContentProps) {
   // Extract all existing section types from the content
   if (Array.isArray(parsedContent.sections)) {
     contentSectionTypes = parsedContent.sections
-      .filter((s: any) => s && typeof s === 'object' && s.type && typeof s.type === 'string')
-      .map((s: any) => s.type);
+      .filter((s: LessonSection) => s && typeof s === 'object' && s.type && typeof s.type === 'string')
+      .map((s: LessonSection) => s.type)
+      .filter((t): t is string => typeof t === 'string');
   }
   
   console.log("Section types from content:", contentSectionTypes);
@@ -1975,8 +1977,9 @@ export function LessonContent({ content }: LessonContentProps) {
   // If no standard sections found, fall back to filtering and mapping
   if (availableSections.length === 0) {
     const fallbackSections = parsedContent.sections
-      .filter((s: any) => s && typeof s === 'object' && s.type && typeof s.type === 'string')
-      .map((s: any) => s.type);
+      .filter((s: LessonSection) => s && typeof s === 'object' && s.type && typeof s.type === 'string')
+      .map((s: LessonSection) => s.type)
+      .filter((t): t is string => typeof t === 'string');
     
     availableSections.push(...fallbackSections);
   }
@@ -2049,7 +2052,7 @@ export function LessonContent({ content }: LessonContentProps) {
           console.log("=========== EXAMINING SENTENCE FRAMES DATA ===========");
           console.log("1. Direct section data:", sentenceFramesData);
           console.log("2. Available section types:", 
-            JSON.stringify(parsedContent.sections?.map((s: any) => s.type))
+            JSON.stringify(parsedContent.sections?.map((s: LessonSection) => s.type))
           );
           
           // Just log the sentence frames to understand what we're dealing with
@@ -2085,14 +2088,14 @@ export function LessonContent({ content }: LessonContentProps) {
           // Create a properly formatted section for rendering
           const formattedSection = {
             type: 'sentenceFrames',
-            version: sentenceFramesData.version,
+            version: sentenceFramesData.version as string | undefined,
             title: sentenceFramesData.title || 'Sentence Frames',
             introduction: sentenceFramesData.introduction,
             pedagogicalFrames: sentenceFramesData.pedagogicalFrames,
             frames: Array.isArray(sentenceFramesData.frames) 
               ? sentenceFramesData.frames 
               : sentenceFramesData.content && typeof sentenceFramesData.content === 'object'
-                ? [sentenceFramesData.content]
+                ? [sentenceFramesData.content as SentenceFramePattern]
                 : []
           };
           
@@ -2131,7 +2134,7 @@ export function LessonContent({ content }: LessonContentProps) {
             frames: Array.isArray(grammarData.frames) 
               ? grammarData.frames 
               : grammarData.content && typeof grammarData.content === 'object'
-                ? [grammarData.content]
+                ? [grammarData.content as SentenceFramePattern]
                 : []
           };
           
@@ -2199,12 +2202,12 @@ export function LessonContent({ content }: LessonContentProps) {
       render: (
         (() => {
           if (!hasSectionType('cloze')) return null;
-          const clozeData = parsedContent.cloze || findSection('cloze');
+          const clozeData = (parsedContent.cloze as LessonSection | undefined) || findSection('cloze');
           if (!clozeData) return <div>No cloze activity data found</div>;
           return <InteractiveClozeSection 
             title={clozeData.title || "Fill in the Blanks"} 
-            text={clozeData.text || ""} 
-            wordBank={clozeData.wordBank || []} 
+            text={typeof clozeData.text === 'string' ? clozeData.text : ""} 
+            wordBank={Array.isArray(clozeData.wordBank) ? (clozeData.wordBank as string[]) : []} 
           />;
         })()
       )
@@ -2216,9 +2219,9 @@ export function LessonContent({ content }: LessonContentProps) {
       render: (
         (() => {
           if (!hasSectionType('sentenceUnscramble')) return null;
-          const unscrambleData = parsedContent.sentenceUnscramble || findSection('sentenceUnscramble');
+          const unscrambleData = (parsedContent.sentenceUnscramble as LessonSection | undefined) || findSection('sentenceUnscramble');
           return <SentenceUnscrambleSection 
-            sentences={unscrambleData?.sentences || []}
+            sentences={Array.isArray(unscrambleData?.sentences) ? (unscrambleData?.sentences as { words: string[]; correctSentence: string }[]) : []}
             title={unscrambleData?.title || "Sentence Unscramble"}
           />;
         })()

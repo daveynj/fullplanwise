@@ -24,6 +24,8 @@ export interface SentenceFrameExample {
   breakdown: {
     [componentLabel: string]: string;
   };
+  /** Plain-text form of the example used by some AI providers. */
+  text?: string;
   /** Alternative format used by some AI providers */
   componentBreakdown?: {
     [componentLabel: string]: string;
@@ -284,3 +286,122 @@ export interface SentenceFramePattern {
   /** Enhanced scaffolding for lower-level learners */
   lowerLevelScaffolding?: LowerLevelScaffolding;
 } 
+/**
+ * A question/answer item used in comprehension, quiz, and discussion sections.
+ * AI providers sometimes return plain strings instead of objects.
+ */
+export interface LessonQuestionAnswer {
+  question: string;
+  answer?: string;
+  options?: string[];
+  correctAnswer?: string | number;
+  explanation?: string;
+  [key: string]: unknown;
+}
+
+/** A question entry in a lesson section — either structured or a plain string. */
+export type LessonQuestion = string | LessonQuestionAnswer;
+
+/**
+ * A vocabulary word entry as produced by AI providers. Some providers use
+ * `term` instead of `word`, and pronunciation may be a string or an object.
+ */
+export interface LessonVocabularyWord {
+  word?: string;
+  /** Alternative property name for `word` used by some AI providers. */
+  term?: string;
+  definition?: string;
+  partOfSpeech?: string;
+  example?: string;
+  examples?: string[];
+  phonetic?: string;
+  ipa?: string;
+  syllables?: string[];
+  stressIndex?: number;
+  phoneticGuide?: string;
+  imageBase64?: string | null;
+  semanticGroup?: string;
+  category?: string;
+  group?: string;
+  additionalExamples?: string[];
+  wordFamily?: { words: string[]; description?: string };
+  relatedWords?: string[];
+  wordFamilyDescription?: string;
+  collocations?: string[];
+  usageNotes?: string;
+  usage?: string;
+  semanticMap?: {
+    synonyms?: string[];
+    antonyms?: string[];
+    relatedConcepts?: string[];
+    contexts?: string[];
+    associatedWords?: string[];
+  };
+  topicEssential?: boolean;
+  pronunciation?:
+    | string
+    | {
+        ipa?: string;
+        value?: string;
+        syllables?: string[];
+        stressIndex?: number;
+        phoneticGuide?: string;
+        [key: string]: unknown;
+      };
+  [key: string]: unknown;
+}
+
+/**
+ * A single section of AI-generated lesson content. Known fields are typed;
+ * the index signature allows provider-specific extra keys, which callers
+ * must narrow before use.
+ */
+export interface LessonSection {
+  type?: string;
+  version?: string;
+  title?: string;
+  content?: unknown;
+  introduction?: string;
+  description?: string;
+  teacherNotes?: string;
+  questions?: LessonQuestion[] | Record<string, unknown>;
+  words?: LessonVocabularyWord[];
+  paragraphs?: string[];
+  frames?: SentenceFramePattern[];
+  pedagogicalFrames?: PedagogicalSentenceFrame[];
+  examples?: (SentenceFrameExample | string)[];
+  [key: string]: unknown;
+}
+
+/**
+ * The parsed top-level lesson content structure rendered by lesson displays.
+ * AI providers sometimes attach content under arbitrary top-level keys, so
+ * an index signature is kept for detection/normalization code paths.
+ */
+export interface ParsedLessonContent {
+  title?: string;
+  provider?: string;
+  level?: string;
+  focus?: string;
+  estimatedTime?: string | number;
+  lesson?: { title?: string; level?: string; focus?: string; time?: string };
+  sections: LessonSection[];
+  teacherNotes?: string;
+  warmUpQuestions?: string[];
+  rawContent?: string;
+  grammarSpotlight?: unknown;
+  [key: string]: unknown;
+}
+
+/**
+ * The lesson record shape consumed by the lesson preview component.
+ * `content` may be a JSON string (from the database) or an already-parsed object.
+ */
+export interface PreviewableLesson {
+  id?: number;
+  title?: string;
+  cefrLevel?: string;
+  content?: string | ParsedLessonContent | null;
+  grammarSpotlight?: unknown;
+  [key: string]: unknown;
+}
