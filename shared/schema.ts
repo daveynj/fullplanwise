@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, jsonb, index } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -24,6 +24,17 @@ export const users = pgTable("users", {
   // Activity tracking
   lastLoginAt: timestamp("last_login_at"),
 });
+
+// Lesson generation attempts, used for the per-user hourly rate limit.
+// Persisted in Postgres so counters survive restarts and are shared across
+// instances. Rows older than the rate window are pruned periodically.
+export const lessonGenerationAttempts = pgTable("lesson_generation_attempts", {
+  id: serial("id").primaryKey(),
+  teacherId: integer("teacher_id").notNull(),
+  attemptedAt: timestamp("attempted_at").notNull().defaultNow(),
+}, (table) => [
+  index("lesson_gen_attempts_teacher_time_idx").on(table.teacherId, table.attemptedAt),
+]);
 
 // Student table schema
 export const students = pgTable("students", {

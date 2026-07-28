@@ -31,7 +31,7 @@ if (isProduction) {
 console.log('Initializing database connection');
 console.log('Using connection source:', process.env.NEON_DATABASE_URL ? 'NEON_DATABASE_URL' : 'DATABASE_URL');
 
-const pool = new Pool({
+export const pool = new Pool({
   connectionString,
   ssl: { rejectUnauthorized: false },
 });

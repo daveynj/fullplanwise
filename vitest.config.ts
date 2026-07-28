@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   test: {
     environment: "jsdom",
-    include: ["client/src/**/*.test.{ts,tsx}"],
+    include: ["client/src/**/*.test.{ts,tsx}", "server/**/*.test.ts"],
   },
   resolve: {
     alias: {

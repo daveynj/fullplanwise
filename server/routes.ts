@@ -22,6 +22,7 @@ import Stripe from "stripe";
 // import { geminiService } from "./services/gemini";
 
 import { db } from "./db";
+import { sql } from "drizzle-orm";
 // Dynamic import for PDF service - loaded only when needed
 // import { pdfGeneratorService } from "./services/pdf-generator.service";
 import fs from 'fs/promises';
@@ -65,30 +66,53 @@ function getActivePendingJob(teacherId: number): string | null {
 // bypass credit limits. Configurable via LESSON_GENERATION_HOURLY_LIMIT.
 const GENERATION_RATE_LIMIT = Math.max(1, parseInt(process.env.LESSON_GENERATION_HOURLY_LIMIT || "20", 10) || 20);
 const GENERATION_RATE_WINDOW_MS = 60 * 60 * 1000;
-// Maps teacherId -> timestamps (ms) of generation starts within the window.
-const generationTimestampsByTeacher = new Map<number, number[]>();
 
-// Returns null when the teacher is under the limit (and does NOT record the
-// attempt), or the number of minutes until the next slot frees up when over.
-function getRateLimitRetryMinutes(teacherId: number): number | null {
-  const now = Date.now();
-  const cutoff = now - GENERATION_RATE_WINDOW_MS;
-  const timestamps = (generationTimestampsByTeacher.get(teacherId) || []).filter(t => t > cutoff);
-  if (timestamps.length === 0) {
-    generationTimestampsByTeacher.delete(teacherId);
-  } else {
-    generationTimestampsByTeacher.set(teacherId, timestamps);
-  }
-  if (timestamps.length < GENERATION_RATE_LIMIT) return null;
-  const oldest = Math.min(...timestamps);
-  return Math.max(1, Math.ceil((oldest + GENERATION_RATE_WINDOW_MS - now) / 60000));
+// Atomically checks the per-user rate limit AND records the attempt in
+// Postgres, so counters survive restarts and are shared across instances.
+// A per-teacher advisory lock (held for the duration of the transaction)
+// serializes concurrent requests for the same teacher, so parallel requests
+// cannot both read a stale count and overshoot the cap.
+// Returns null when the attempt was recorded (under the limit), or the number
+// of minutes until the next slot frees up when over the limit.
+const RATE_LIMIT_LOCK_NAMESPACE = 42_0001; // arbitrary app-unique advisory lock class
+async function tryRecordGenerationAttempt(teacherId: number): Promise<number | null> {
+  return db.transaction(async (tx) => {
+    // Serialize per teacher: two-key advisory lock (namespace, teacherId),
+    // automatically released at transaction end.
+    await tx.execute(sql`SELECT pg_advisory_xact_lock(${RATE_LIMIT_LOCK_NAMESPACE}, ${teacherId})`);
+
+    const inserted = await tx.execute(sql`
+      INSERT INTO lesson_generation_attempts (teacher_id)
+      SELECT ${teacherId}
+      WHERE (
+        SELECT count(*) FROM lesson_generation_attempts
+        WHERE teacher_id = ${teacherId}
+          AND attempted_at > now() - interval '1 hour'
+      ) < ${GENERATION_RATE_LIMIT}
+      RETURNING id
+    `);
+    if (inserted.rows.length > 0) return null;
+
+    // Over the limit: compute when the oldest attempt in the window expires.
+    const oldest = await tx.execute(sql`
+      SELECT extract(epoch FROM min(attempted_at)) * 1000 AS oldest_ms
+      FROM lesson_generation_attempts
+      WHERE teacher_id = ${teacherId}
+        AND attempted_at > now() - interval '1 hour'
+    `);
+    const oldestMs = Number(oldest.rows[0]?.oldest_ms);
+    if (!Number.isFinite(oldestMs)) return 1;
+    return Math.max(1, Math.ceil((oldestMs + GENERATION_RATE_WINDOW_MS - Date.now()) / 60000));
+  });
 }
 
-function recordGenerationAttempt(teacherId: number): void {
-  const timestamps = generationTimestampsByTeacher.get(teacherId) || [];
-  timestamps.push(Date.now());
-  generationTimestampsByTeacher.set(teacherId, timestamps);
-}
+// Prune rate-limit rows older than the window every 15 minutes so the table
+// stays small. Safe to skip on error — stale rows never affect the limit
+// because every query filters on attempted_at.
+setInterval(() => {
+  db.execute(sql`DELETE FROM lesson_generation_attempts WHERE attempted_at < now() - interval '2 hours'`)
+    .catch((err) => console.error("Failed to prune lesson_generation_attempts:", err));
+}, 15 * 60 * 1000);
 
 // Clean up jobs older than 30 minutes every 10 minutes
 setInterval(() => {
@@ -656,8 +680,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     // Per-user rate limit: cap generations per rolling hour, regardless of
-    // credit/subscription status, to bound AI API spend.
-    const retryMinutes = getRateLimitRetryMinutes(teacherId);
+    // credit/subscription status, to bound AI API spend. Persisted in
+    // Postgres so it survives restarts and applies across instances.
+    const retryMinutes = await tryRecordGenerationAttempt(teacherId);
     if (retryMinutes !== null) {
       console.log(`User ${teacherId} hit the lesson generation rate limit (${GENERATION_RATE_LIMIT}/hour)`);
       return res.status(429).json({
@@ -665,7 +690,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         retryAfterMinutes: retryMinutes
       });
     }
-    recordGenerationAttempt(teacherId);
 
     // Reserve the job slot immediately (synchronously) so concurrent requests
     // hit the guard above. Released on every failure path before the job starts.
