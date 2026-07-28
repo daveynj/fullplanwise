@@ -2161,7 +2161,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     if (isProduction) {
       const builtPath = path.join(process.cwd(), 'dist', 'public', 'index.html');
       try {
-        const html = await fs.readFile(builtPath, 'utf-8');
+        let html = await fs.readFile(builtPath, 'utf-8');
+        // Inject a real 404 title, noindex meta, and description so crawlers
+        // and link previews see an unambiguous "Page Not Found" document
+        // instead of the generic homepage metadata from the SPA shell.
+        html = html.replace(/<title>[\s\S]*?<\/title>/i, '<title>Page Not Found | PlanwiseESL</title>');
+        html = html.replace(
+          /<meta\s+name=["']description["'][^>]*>/i,
+          '<meta name="description" content="The page you\'re looking for doesn\'t exist or has been removed." />'
+        );
+        if (/<meta\s+name=["']robots["']/i.test(html)) {
+          html = html.replace(/<meta\s+name=["']robots["'][^>]*>/i, '<meta name="robots" content="noindex, follow" />');
+        } else {
+          html = html.replace(/<head(\s[^>]*)?>/i, (m) => `${m}\n    <meta name="robots" content="noindex, follow" />`);
+        }
+        // Remove canonical/og/twitter tags that would point crawlers at homepage metadata
+        html = html.replace(/<link\s+rel=["']canonical["'][^>]*>\s*/gi, '');
+        html = html.replace(/<meta\s+(?:property|name)=["'](?:og|twitter):[^"']*["'][^>]*>\s*/gi, '');
         res.status(404).type('html').send(html);
         return true;
       } catch {
