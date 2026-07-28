@@ -126,7 +126,26 @@ export default function LessonGeneratorPage() {
 
   const generateLessonMutation = useMutation({
     mutationFn: async (params: LessonGenerateParams) => {
-      const res = await apiRequest("POST", "/api/lessons/generate", params);
+      const res = await fetch("/api/lessons/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(params),
+        credentials: "include",
+      });
+      if (res.status === 409) {
+        // A generation job is already pending — resume polling it
+        const data = await res.json();
+        if (data.jobId) return data;
+        throw new Error(data.message || "A lesson is already being generated.");
+      }
+      if (!res.ok) {
+        const text = (await res.text()) || res.statusText;
+        let message = text;
+        try {
+          message = JSON.parse(text).message || text;
+        } catch {}
+        throw new Error(message);
+      }
       return await res.json();
     },
     onMutate: () => {

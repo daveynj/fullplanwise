@@ -38,6 +38,28 @@ interface LessonJob {
 }
 const lessonJobs = new Map<string, LessonJob>();
 
+// Server-side idempotency guard: one pending generation job per teacher.
+// Maps teacherId -> jobId of the currently pending job.
+const pendingJobByTeacher = new Map<number, string>();
+const DUPLICATE_SUBMIT_WINDOW_MS = 10 * 1000;
+
+// Returns the existing pending jobId when the teacher already has a job that
+// is still pending, or was created within the duplicate-submit window.
+function getActivePendingJob(teacherId: number): string | null {
+  const existingJobId = pendingJobByTeacher.get(teacherId);
+  if (!existingJobId) return null;
+  const job = lessonJobs.get(existingJobId);
+  if (!job) {
+    pendingJobByTeacher.delete(teacherId);
+    return null;
+  }
+  if (job.status === 'pending' || Date.now() - job.createdAt < DUPLICATE_SUBMIT_WINDOW_MS) {
+    return existingJobId;
+  }
+  pendingJobByTeacher.delete(teacherId);
+  return null;
+}
+
 // Clean up jobs older than 30 minutes every 10 minutes
 setInterval(() => {
   const cutoff = Date.now() - 30 * 60 * 1000;
@@ -586,12 +608,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   app.post("/api/lessons/generate", ensureAuthenticated, async (req, res) => {
+    const teacherId = req.user!.id;
+
+    // Server-side idempotency: reject a duplicate submission while a job is
+    // already pending (or was created within the last few seconds) for this
+    // teacher. No credit is spent — the client can resume polling the
+    // existing job. The check AND the reservation both happen synchronously,
+    // before any awaited work, so two near-simultaneous requests cannot both
+    // pass the guard.
+    const existingJobId = getActivePendingJob(teacherId);
+    if (existingJobId) {
+      console.log(`User ${teacherId} submitted duplicate generation request — returning existing job ${existingJobId}`);
+      return res.status(409).json({
+        message: "A lesson is already being generated. Please wait for it to finish.",
+        jobId: existingJobId
+      });
+    }
+
+    // Reserve the job slot immediately (synchronously) so concurrent requests
+    // hit the guard above. Released on every failure path before the job starts.
+    const jobId = `job_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    lessonJobs.set(jobId, { status: 'pending', createdAt: Date.now() });
+    pendingJobByTeacher.set(teacherId, jobId);
+
+    const releaseReservation = () => {
+      lessonJobs.delete(jobId);
+      if (pendingJobByTeacher.get(teacherId) === jobId) {
+        pendingJobByTeacher.delete(teacherId);
+      }
+    };
+
     try {
       const validatedData = lessonGenerateSchema.parse(req.body);
 
       // Check if user has enough credits (skip for admin users and during free trial)
-      const user = await storage.getUser(req.user!.id);
+      const user = await storage.getUser(teacherId);
       if (!user) {
+        releaseReservation();
         return res.status(404).json({ message: "User not found" });
       }
 
@@ -610,6 +663,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         if (creditSpent) {
           console.log(`User ${user.id} spent 1 credit${isInPersonalTrial ? ' during trial period' : ''}`);
         } else {
+          releaseReservation();
           return res.status(402).json({
             message: "You've used all your free lessons. Subscribe for unlimited access!",
             creditsRemaining: 0,
@@ -618,14 +672,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
 
-      // Create a job and respond immediately — generation happens in background
-      const jobId = `job_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      lessonJobs.set(jobId, { status: 'pending', createdAt: Date.now() });
+      // Respond immediately — generation happens in background
       console.log(`Created lesson generation job ${jobId} for user ${user.id}, topic: ${validatedData.topic}`);
       res.json({ jobId });
 
       // Run generation entirely in background
-      const teacherId = req.user!.id;
       (async () => {
         const startTime = Date.now();
         try {
@@ -685,6 +736,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           console.log(`[Job ${jobId}] Marking complete (text only) in ${textOnlyTime.toFixed(1)}s — images generating in background`);
 
           // Mark job as complete NOW so the user can open the lesson immediately
+          if (pendingJobByTeacher.get(teacherId) === jobId) {
+            pendingJobByTeacher.delete(teacherId);
+          }
           lessonJobs.set(jobId, {
             status: 'complete',
             createdAt: Date.now(),
@@ -735,6 +789,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
               console.error(`[Job ${jobId}] Failed to refund credit:`, refundError);
             }
           }
+          if (pendingJobByTeacher.get(teacherId) === jobId) {
+            pendingJobByTeacher.delete(teacherId);
+          }
           lessonJobs.set(jobId, {
             status: 'error',
             error: err.message || 'Lesson generation failed',
@@ -743,6 +800,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       })();
     } catch (error: any) {
+      releaseReservation();
       if (error instanceof z.ZodError) {
         return res.status(400).json({ message: "Invalid lesson parameters", errors: error.errors });
       }
