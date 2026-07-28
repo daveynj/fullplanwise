@@ -9,6 +9,7 @@ import { type Server } from "http";
 import viteConfig from "../vite.config";
 import { nanoid } from "nanoid";
 import { injectLandingPrerender } from "./landing-prerender";
+import { injectBlogPrerender } from "./blog-prerender";
 
 const viteLogger = createLogger();
 
@@ -70,6 +71,10 @@ export async function setupVite(app: Express, server: Server) {
       // (match on pathname so query strings like /?utm=... still get prerendered output)
       if (pathname === "/" || pathname === "/index.html") {
         template = injectLandingPrerender(template);
+      } else if (pathname.startsWith("/blog")) {
+        // Prerender blog index/post content for bots (null = not a blog page or unpublished)
+        const prerendered = await injectBlogPrerender(template, pathname);
+        if (prerendered) template = prerendered;
       }
       const page = await vite.transformIndexHtml(url, template);
       res.status(200).set({ "Content-Type": "text/html" }).end(page);
@@ -99,6 +104,25 @@ export function serveStatic(app: Express) {
   // strings (/?utm=...) still get prerendered output.
   app.get("/", servePrerenderedLanding);
   app.get("/index.html", servePrerenderedLanding);
+
+  // Intercept blog pages so bots get prerendered post content. Falls through to
+  // the SPA shell when the slug is missing/unpublished (routes.ts already 404s those).
+  const servePrerenderedBlog = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+      const template = fs.readFileSync(path.resolve(distPath, "index.html"), "utf-8");
+      const pathname = req.originalUrl.split("?")[0];
+      const prerendered = await injectBlogPrerender(template, pathname);
+      if (prerendered) {
+        res.status(200).set({ "Content-Type": "text/html" }).end(prerendered);
+        return;
+      }
+      next();
+    } catch (e) {
+      next(e);
+    }
+  };
+  app.get("/blog", servePrerenderedBlog);
+  app.get("/blog/:slug", servePrerenderedBlog);
 
   // Disable static index serving so the handlers above are not shadowed
   app.use(express.static(distPath, { index: false }));
