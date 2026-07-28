@@ -8,6 +8,7 @@ const __dirname = dirname(__filename);
 import { type Server } from "http";
 import viteConfig from "../vite.config";
 import { nanoid } from "nanoid";
+import { injectLandingPrerender } from "./landing-prerender";
 
 const viteLogger = createLogger();
 
@@ -46,6 +47,10 @@ export async function setupVite(app: Express, server: Server) {
   app.use(vite.middlewares);
   app.use("*", async (req, res, next) => {
     const url = req.originalUrl;
+    // NOTE: req.path is unreliable inside app.use("*") (mount-path stripping makes it "/"
+    // for every request). Derive the pathname from originalUrl so query strings like
+    // /?utm=... still match the homepage.
+    const pathname = req.originalUrl.split('?')[0];
 
     try {
       const clientTemplate = path.resolve(
@@ -61,6 +66,11 @@ export async function setupVite(app: Express, server: Server) {
         `src="/src/main.tsx"`,
         `src="/src/main.tsx?v=${nanoid()}"`,
       );
+      // Prerender landing content for bots/crawlers on the homepage only
+      // (match on pathname so query strings like /?utm=... still get prerendered output)
+      if (pathname === "/" || pathname === "/index.html") {
+        template = injectLandingPrerender(template);
+      }
       const page = await vite.transformIndexHtml(url, template);
       res.status(200).set({ "Content-Type": "text/html" }).end(page);
     } catch (e) {
@@ -79,7 +89,19 @@ export function serveStatic(app: Express) {
     );
   }
 
-  app.use(express.static(distPath));
+  const servePrerenderedLanding = (_req: express.Request, res: express.Response) => {
+    const template = fs.readFileSync(path.resolve(distPath, "index.html"), "utf-8");
+    res.status(200).set({ "Content-Type": "text/html" }).end(injectLandingPrerender(template));
+  };
+
+  // Intercept homepage requests BEFORE static serving so bots get prerendered content.
+  // Registered for all methods the path can receive; matched on pathname so query
+  // strings (/?utm=...) still get prerendered output.
+  app.get("/", servePrerenderedLanding);
+  app.get("/index.html", servePrerenderedLanding);
+
+  // Disable static index serving so the handlers above are not shadowed
+  app.use(express.static(distPath, { index: false }));
 
   // fall through to index.html if the file doesn't exist
   app.use("*", (_req, res) => {
