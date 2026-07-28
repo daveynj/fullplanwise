@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useParams, useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
@@ -79,14 +79,19 @@ export default function BlogPost() {
     queryKey: ['/api/blog/posts', { pageSize: 100 }],
   });
 
-  // Extract headings and prepare content with IDs when post loads
-  const contentWithIds = post?.content ? extractHeadingsAndAddIds(sanitizeHtml(post.content)) : null;
+  // Extract headings and prepare content with IDs when post loads.
+  // Memoized on post.content so the object reference is stable across renders,
+  // preventing the useEffect from firing on every render.
+  const contentWithIds = useMemo(
+    () => (post?.content ? extractHeadingsAndAddIds(sanitizeHtml(post.content)) : null),
+    [post?.content]
+  );
   
   useEffect(() => {
     if (contentWithIds) {
       setTocHeadings(contentWithIds.headings);
     }
-  }, [post?.id]);
+  }, [contentWithIds]);
 
   if (isLoading) {
     return (

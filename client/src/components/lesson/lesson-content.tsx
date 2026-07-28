@@ -967,9 +967,22 @@ export function LessonContent({ content }: LessonContentProps) {
     const highlightWordInExample = (example: string, word: string) => {
       if (!example || !word) return example;
       
+      // Escape HTML to prevent XSS before inserting into dangerouslySetInnerHTML
+      const escapeHtml = (str: string) =>
+        str
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+
+      const escapedExample = escapeHtml(example);
+      // Escape word before using it in the regex (in case it contains special chars)
+      const escapedWordForRegex = escapeHtml(word).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      
       // Case-insensitive replace to highlight all instances of the word
-      const regex = new RegExp(`\\b${word}\\b`, 'gi');
-      return example.replace(regex, (match) => `<span class="font-bold text-blue-600">${match}</span>`);
+      const regex = new RegExp(`\\b${escapedWordForRegex}\\b`, 'gi');
+      return escapedExample.replace(regex, (match) => `<span class="font-bold text-blue-600">${match}</span>`);
     };
     
     return (

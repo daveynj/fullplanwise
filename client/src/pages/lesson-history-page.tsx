@@ -247,18 +247,8 @@ export default function LessonHistoryPage() {
       }
     },
     onSuccess: (data) => {
-      // Invalidate lessons query to refresh the list - use precise query parameters
-      queryClient.invalidateQueries({ 
-        queryKey: [
-          "/api/lessons", 
-          { 
-            page: currentPage,
-            search: searchQuery,
-            cefrLevel: cefrFilter,
-            dateFilter: dateFilter
-          }
-        ] 
-      });
+      // Invalidate all lessons queries (dashboard + history) by using the base key prefix
+      queryClient.invalidateQueries({ queryKey: ["/api/lessons"] });
       
       // Also invalidate student queries if lesson had assignments
       if (deletionInfo && deletionInfo.affectedStudentIds.length > 0) {
@@ -294,18 +284,8 @@ export default function LessonHistoryPage() {
       return await response.json();
     },
     onSuccess: (data) => {
-      // Invalidate lessons and student lessons queries to refresh the lists - use precise query parameters
-      queryClient.invalidateQueries({ 
-        queryKey: [
-          "/api/lessons", 
-          { 
-            page: currentPage,
-            search: searchQuery,
-            cefrLevel: cefrFilter,
-            dateFilter: dateFilter
-          }
-        ] 
-      });
+      // Invalidate all lessons queries (dashboard + history) by using the base key prefix
+      queryClient.invalidateQueries({ queryKey: ["/api/lessons"] });
       
       if (selectedStudentId) {
         queryClient.invalidateQueries({ queryKey: [`/api/lessons/student/${selectedStudentId}`] });
@@ -342,6 +322,7 @@ export default function LessonHistoryPage() {
   
   // Confirm deletion
   const confirmDelete = () => {
+    if (deleteLessonMutation.isPending) return;
     if (lessonToDelete) {
       deleteLessonMutation.mutate({ 
         lessonId: lessonToDelete.id, 
@@ -360,6 +341,7 @@ export default function LessonHistoryPage() {
   
   // Confirm assignment
   const confirmAssign = () => {
+    if (assignLessonMutation.isPending) return;
     if (lessonToAssign && selectedStudentId) {
       assignLessonMutation.mutate({ 
         lessonId: lessonToAssign.id, 

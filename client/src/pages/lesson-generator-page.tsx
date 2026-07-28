@@ -159,6 +159,9 @@ export default function LessonGeneratorPage() {
   });
 
   const handleGenerateLesson = (params: LessonGenerateParams) => {
+    // Prevent double-submit while a generation is already in flight
+    if (generateLessonMutation.isPending || generatingLesson) return;
+
     if (!user) {
       toast({
         title: "Authentication required",

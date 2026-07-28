@@ -143,15 +143,16 @@ export default function StudentDetailPage() {
   // Handle potential auth errors during fetch
   useEffect(() => {
     if (studentError && (studentError as any).status === 401) {
-        toast({
-          title: "Authentication Error",
-          description: "Your session may have expired. Please log in again.",
-          variant: "destructive",
-        });
-        logout();
-        navigate('/login');
-      }
-  }, [studentError, logout, navigate, toast]);
+      toast({
+        title: "Authentication Error",
+        description: "Your session may have expired. Please log in again.",
+        variant: "destructive",
+      });
+      logout();
+      navigate('/auth');
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [studentError]);
 
   // If error loading student
   if (studentError) {
