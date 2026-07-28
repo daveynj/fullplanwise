@@ -60,6 +60,36 @@ function getActivePendingJob(teacherId: number): string | null {
   return null;
 }
 
+// Per-user rate limit on lesson generation: max N generations per rolling hour.
+// Caps OpenRouter/Replicate spend even for subscribers/admin/trial users who
+// bypass credit limits. Configurable via LESSON_GENERATION_HOURLY_LIMIT.
+const GENERATION_RATE_LIMIT = Math.max(1, parseInt(process.env.LESSON_GENERATION_HOURLY_LIMIT || "20", 10) || 20);
+const GENERATION_RATE_WINDOW_MS = 60 * 60 * 1000;
+// Maps teacherId -> timestamps (ms) of generation starts within the window.
+const generationTimestampsByTeacher = new Map<number, number[]>();
+
+// Returns null when the teacher is under the limit (and does NOT record the
+// attempt), or the number of minutes until the next slot frees up when over.
+function getRateLimitRetryMinutes(teacherId: number): number | null {
+  const now = Date.now();
+  const cutoff = now - GENERATION_RATE_WINDOW_MS;
+  const timestamps = (generationTimestampsByTeacher.get(teacherId) || []).filter(t => t > cutoff);
+  if (timestamps.length === 0) {
+    generationTimestampsByTeacher.delete(teacherId);
+  } else {
+    generationTimestampsByTeacher.set(teacherId, timestamps);
+  }
+  if (timestamps.length < GENERATION_RATE_LIMIT) return null;
+  const oldest = Math.min(...timestamps);
+  return Math.max(1, Math.ceil((oldest + GENERATION_RATE_WINDOW_MS - now) / 60000));
+}
+
+function recordGenerationAttempt(teacherId: number): void {
+  const timestamps = generationTimestampsByTeacher.get(teacherId) || [];
+  timestamps.push(Date.now());
+  generationTimestampsByTeacher.set(teacherId, timestamps);
+}
+
 // Clean up jobs older than 30 minutes every 10 minutes
 setInterval(() => {
   const cutoff = Date.now() - 30 * 60 * 1000;
@@ -624,6 +654,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         jobId: existingJobId
       });
     }
+
+    // Per-user rate limit: cap generations per rolling hour, regardless of
+    // credit/subscription status, to bound AI API spend.
+    const retryMinutes = getRateLimitRetryMinutes(teacherId);
+    if (retryMinutes !== null) {
+      console.log(`User ${teacherId} hit the lesson generation rate limit (${GENERATION_RATE_LIMIT}/hour)`);
+      return res.status(429).json({
+        message: `You've reached the limit of ${GENERATION_RATE_LIMIT} lesson generations per hour. Please try again in about ${retryMinutes} minute${retryMinutes === 1 ? '' : 's'}.`,
+        retryAfterMinutes: retryMinutes
+      });
+    }
+    recordGenerationAttempt(teacherId);
 
     // Reserve the job slot immediately (synchronously) so concurrent requests
     // hit the guard above. Released on every failure path before the job starts.
