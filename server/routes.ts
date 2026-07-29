@@ -138,7 +138,7 @@ setInterval(() => {
 // Parses a numeric route param strictly. Returns null when the raw value is
 // not a plain non-negative integer (e.g. "abc", "12abc", "1e5", huge values),
 // so routes can reject bad IDs before touching the database.
-function parseIdParam(raw: string): number | null {
+export function parseIdParam(raw: string): number | null {
   if (!/^\d+$/.test(raw)) return null;
   const n = parseInt(raw, 10);
   return Number.isSafeInteger(n) ? n : null;
@@ -147,7 +147,7 @@ function parseIdParam(raw: string): number | null {
 // Parses a numeric query parameter safely. Returns the fallback when the raw
 // value is missing or not a plain positive integer, and clamps the result to
 // [min, max] so bad values (NaN, negatives, huge numbers) never reach the DB.
-function parseQueryInt(
+export function parseQueryInt(
   raw: unknown,
   fallback: number,
   min: number = 1,
