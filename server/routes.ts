@@ -13,6 +13,7 @@ import {
 } from "@shared/schema";
 import { mailchimpService } from "./services/mailchimp.service";
 import { testOpenRouterConnection } from "./services/openRouter";
+import { validateGrammarSpotlightForStorage } from "../types/lessonContentTypes";
 import { testImageGeneration } from "./services/image-generation.service";
 import { isFreeTrialActive, getFreeTrialEndDate } from "./features";
 import { getUncachableStripeClient } from "./stripeClient";
@@ -770,7 +771,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
           let grammarVisualization = null;
           if (generatedContent.grammarSpotlight) {
-            grammarVisualization = generatedContent.grammarSpotlight;
+            const validatedSpotlight = validateGrammarSpotlightForStorage(generatedContent.grammarSpotlight);
+            if (validatedSpotlight) {
+              grammarVisualization = validatedSpotlight;
+              // Keep the stored lesson content consistent with the validated payload
+              generatedContent.grammarSpotlight = validatedSpotlight;
+            } else {
+              console.warn(`[Job ${jobId}] Dropping malformed grammarSpotlight from AI output — failed runtime validation`);
+              delete generatedContent.grammarSpotlight;
+            }
           }
 
           // Save to database immediately — before images

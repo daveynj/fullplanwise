@@ -686,6 +686,40 @@ export function normalizeGrammarSpotlight(input: unknown): GrammarSpotlight | un
 }
 
 /**
+ * Validates untrusted AI grammar-spotlight output for server-side storage.
+ * Normalizes the payload via {@link normalizeGrammarSpotlight}, then rejects
+ * payloads that carry no renderable content after normalization (e.g. wrong
+ * types everywhere, empty object, non-object input). Returns the normalized
+ * spotlight when it is worth storing, or undefined when it should be dropped.
+ */
+export function validateGrammarSpotlightForStorage(
+  input: unknown,
+): GrammarSpotlight | undefined {
+  const normalized = normalizeGrammarSpotlight(input);
+  if (!normalized) return undefined;
+
+  const logic = normalized.logicExplanation;
+  const hasLogic =
+    !!logic &&
+    !!(
+      logic.communicationNeed ||
+      logic.logicalSolution ||
+      logic.usagePattern ||
+      logic.communicationImpact
+    );
+
+  const hasRenderableContent =
+    !!normalized.title ||
+    !!normalized.description ||
+    (normalized.examples?.length ?? 0) > 0 ||
+    (normalized.visualLayout?.components?.length ?? 0) > 0 ||
+    (normalized.visualSteps?.length ?? 0) > 0 ||
+    hasLogic;
+
+  return hasRenderableContent ? normalized : undefined;
+}
+
+/**
  * The parsed top-level lesson content structure rendered by lesson displays.
  * AI providers sometimes attach content under arbitrary top-level keys, so
  * an index signature is kept for detection/normalization code paths.
