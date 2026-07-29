@@ -12,6 +12,11 @@ import {
 import { extractComprehensionQuestions } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { SectionHeader } from "./shared/section-header";
+import type {
+  ParsedLessonContent,
+  LessonQuestionAnswer,
+  LessonQuestionOption,
+} from "../../../../types/lessonContentTypes";
 
 // Utility function to normalize text for more flexible matching
 const normalizeText = (text: string): string => {
@@ -31,23 +36,12 @@ const normalizeText = (text: string): string => {
     .replace(/\s{2,}/g, " ");
 };
 
-// Interface for object-format options (for consistency with quiz-extractor)
-interface ComprehensionOptionObject {
-  text: string;
-  correct: boolean;
-}
-
-interface ComprehensionQuestion {
-  question: string;
-  answer: string;
-  correctAnswer?: string;
-  explanation?: string;
-  type?: "true-false" | "multiple-choice" | string;
-  options?: Array<string | ComprehensionOptionObject>;
-}
+// Shared lesson content types — options may be plain strings or { text, correct } objects
+type ComprehensionOptionObject = LessonQuestionOption;
+type ComprehensionQuestion = LessonQuestionAnswer;
 
 interface ComprehensionExtractorProps {
-  content: any;
+  content: ParsedLessonContent;
 }
 
 // Utility function to shuffle array elements
@@ -100,8 +94,8 @@ export const ComprehensionExtractor = ({ content }: ComprehensionExtractorProps)
     console.log("Getting correct answer for:", question);
     
     // Check for various formats of correctAnswer
-    if (question.correctAnswer) {
-      return question.correctAnswer;
+    if (question.correctAnswer !== undefined && question.correctAnswer !== null && question.correctAnswer !== '') {
+      return String(question.correctAnswer);
     }
     
     // Some AI responses use 'answer' field
@@ -126,7 +120,7 @@ export const ComprehensionExtractor = ({ content }: ComprehensionExtractorProps)
       // If options are like ["A. Option 1", "B. Option 2"] and answer is just "A"
       // Map the single letter answer to the full option text
       if (question.correctAnswer || question.answer) {
-        const letter = (question.correctAnswer || question.answer || '').trim();
+        const letter = String(question.correctAnswer ?? question.answer ?? '').trim();
         if (/^[A-D]$/.test(letter)) {
           const index = letter.charCodeAt(0) - 65; // Convert A,B,C,D to 0,1,2,3
           if (index >= 0 && index < question.options.length) {
@@ -271,8 +265,8 @@ export const ComprehensionExtractor = ({ content }: ComprehensionExtractorProps)
             <HelpCircle className="h-5 w-5" />
             Progress
           </CardTitle>
-          {content.comprehension?.introduction && (
-            <CardDescription>{content.comprehension.introduction}</CardDescription>
+          {typeof (content.comprehension as Record<string, unknown> | undefined)?.introduction === 'string' && (
+            <CardDescription>{(content.comprehension as Record<string, unknown>).introduction as string}</CardDescription>
           )}
         </CardHeader>
         <CardContent className="pt-6">

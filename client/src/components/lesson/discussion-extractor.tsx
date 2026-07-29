@@ -1,19 +1,13 @@
 import { DiscussionSection } from "./discussion-section";
 import { extractDiscussionQuestions } from "@/lib/utils";
-
-interface DiscussionQuestion {
-  question: string;
-  level?: "basic" | "critical";
-  introduction?: string; // Introduction sentence before the question
-  focusVocabulary?: string[];
-  followUp?: string[];
-  answer?: string;
-  imagePrompt?: string; // Assuming this already exists for generation
-  imageBase64?: string | null; // Added for Stability AI image
-}
+import type {
+  ParsedLessonContent,
+  LessonSection,
+  LessonQuestionAnswer,
+} from "../../../../types/lessonContentTypes";
 
 interface DiscussionExtractorProps {
-  content: any;
+  content: ParsedLessonContent;
 }
 
 export const DiscussionExtractor = ({ content, sectionType = "discussion" }: DiscussionExtractorProps & { sectionType?: string }) => {
@@ -26,7 +20,7 @@ export const DiscussionExtractor = ({ content, sectionType = "discussion" }: Dis
   // Extract introduction from content if available
   if (content.sections && Array.isArray(content.sections)) {
     const discussionSection = content.sections.find(
-      (s: any) => s && typeof s === 'object' && s.type === 'discussion'
+      (s: LessonSection) => s && typeof s === 'object' && s.type === 'discussion'
     );
     
     if (discussionSection) {
@@ -53,17 +47,18 @@ export const DiscussionExtractor = ({ content, sectionType = "discussion" }: Dis
     }
   } else if (content.discussion && typeof content.discussion === 'object') {
     console.log("Found discussion object directly in content");
+    const discussion = content.discussion as Record<string, unknown>;
     
     // Extract introduction if available
-    if (content.discussion.introduction && typeof content.discussion.introduction === 'string') {
-      sectionIntroduction = content.discussion.introduction;
+    if (discussion.introduction && typeof discussion.introduction === 'string') {
+      sectionIntroduction = discussion.introduction;
       console.log("Found direct discussion introduction:", sectionIntroduction.substring(0, 100));
     }
     
     // Try to get paragraph context if available
-    const paragraphContext = content.discussion.paragraphContext || 
-                            content.discussion.context || 
-                            content.discussion.paragraph;
+    const paragraphContext = discussion.paragraphContext || 
+                            discussion.context || 
+                            discussion.paragraph;
                             
     if (paragraphContext && typeof paragraphContext === 'string') {
       console.log("Found paragraph context in direct discussion:", paragraphContext.substring(0, 100));
@@ -75,7 +70,7 @@ export const DiscussionExtractor = ({ content, sectionType = "discussion" }: Dis
   }
   
   // Use our utility function to extract discussion questions
-  const extractedQuestions: DiscussionQuestion[] = extractDiscussionQuestions(content);
+  const extractedQuestions: LessonQuestionAnswer[] = extractDiscussionQuestions(content);
   console.log("EXTRACTED DISCUSSION QUESTIONS:", extractedQuestions);
   
   if (extractedQuestions.length > 0) {

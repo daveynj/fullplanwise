@@ -287,15 +287,36 @@ export interface SentenceFramePattern {
   lowerLevelScaffolding?: LowerLevelScaffolding;
 } 
 /**
+ * A multiple-choice option in object form. Some AI providers return options
+ * as plain strings, others as `{ text, correct }` objects.
+ */
+export interface LessonQuestionOption {
+  text: string;
+  correct?: boolean;
+  [key: string]: unknown;
+}
+
+/**
  * A question/answer item used in comprehension, quiz, and discussion sections.
  * AI providers sometimes return plain strings instead of objects.
  */
 export interface LessonQuestionAnswer {
   question: string;
   answer?: string;
-  options?: string[];
+  options?: Array<string | LessonQuestionOption>;
   correctAnswer?: string | number;
   explanation?: string;
+  /** Discussion-style fields produced by some AI providers. */
+  type?: string;
+  text?: string;
+  level?: "basic" | "critical" | string;
+  topic?: string;
+  introduction?: string;
+  focusVocabulary?: string[];
+  followUp?: string[];
+  paragraphContext?: string;
+  imagePrompt?: string;
+  imageBase64?: string | null;
   [key: string]: unknown;
 }
 

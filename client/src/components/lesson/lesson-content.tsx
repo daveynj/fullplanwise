@@ -1365,7 +1365,7 @@ export function LessonContent({ content }: LessonContentProps) {
   const ReadingTabSection = () => {
     const section = findSection('reading');
     // Use the imported ReadingSection component
-    return <ReadingSection section={section} />;
+    return <ReadingSection section={section ?? undefined} />;
   };
 
   const VocabularySection = () => {
@@ -1704,10 +1704,10 @@ export function LessonContent({ content }: LessonContentProps) {
                       {/* Options based on question type */}
                       <div className="space-y-2 mt-4">
                         {questions[activeQuestion].options && Array.isArray(questions[activeQuestion].options) && 
-                          questions[activeQuestion].options.map((option: string, idx: number) => (
+                          questions[activeQuestion].options!.map((option, idx: number) => (
                             <div key={`option-${idx}`} className="flex items-center p-3 border border-gray-200 rounded hover:bg-gray-50">
                               <Mic className="h-4 w-4 mr-3 text-gray-400" />
-                              <span className="font-medium text-gray-800">{option}</span>
+                              <span className="font-medium text-gray-800">{typeof option === 'string' ? option : option.text}</span>
                             </div>
                           ))
                         }

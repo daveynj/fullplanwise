@@ -18,6 +18,12 @@ import {
 import { SectionHeader } from "./shared/section-header";
 import { extractQuizQuestions } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import type {
+  ParsedLessonContent,
+  LessonSection,
+  LessonQuestionAnswer,
+  LessonQuestionOption,
+} from "../../../../types/lessonContentTypes";
 
 // Utility function to normalize text for more flexible matching
 const normalizeText = (text: string): string => {
@@ -32,23 +38,12 @@ const normalizeText = (text: string): string => {
     .replace(/\s{2,}/g, " ");
 };
 
-// Interface for object-format options (legacy support)
-interface QuizOptionObject {
-  text: string;
-  correct: boolean;
-}
-
-interface QuizQuestion {
-  question: string;
-  answer: string;
-  correctAnswer?: string;
-  explanation?: string;
-  type?: "true-false" | "multiple-choice" | string;
-  options?: Array<string | QuizOptionObject>;
-}
+// Shared lesson content types — options may be plain strings or { text, correct } objects
+type QuizOptionObject = LessonQuestionOption;
+type QuizQuestion = LessonQuestionAnswer;
 
 interface QuizExtractorProps {
-  content: any;
+  content: ParsedLessonContent;
 }
 
 export const QuizExtractor = ({ content, sectionType = "quiz" }: QuizExtractorProps & { sectionType?: string }) => {
@@ -64,7 +59,7 @@ export const QuizExtractor = ({ content, sectionType = "quiz" }: QuizExtractorPr
   console.log("EXTRACTED QUIZ QUESTIONS:", questions);
   
   // Try to find section title and introduction
-  const quizSection = content.sections?.find((s: any) => s.type === 'quiz' || s.type === 'assessment');
+  const quizSection = content.sections?.find((s: LessonSection) => s.type === 'quiz' || s.type === 'assessment');
   const title = quizSection?.title || `${sectionType.charAt(0).toUpperCase() + sectionType.slice(1)} Questions`;
   const introduction = quizSection?.introduction || "Test knowledge and understanding of the lesson";
 
@@ -75,8 +70,8 @@ export const QuizExtractor = ({ content, sectionType = "quiz" }: QuizExtractorPr
     console.log("Answer field:", question.answer);
     
     // Check for various formats of correctAnswer
-    if (question.correctAnswer) {
-      return question.correctAnswer;
+    if (question.correctAnswer !== undefined && question.correctAnswer !== null && question.correctAnswer !== '') {
+      return String(question.correctAnswer);
     }
     
     // Some AI responses use 'answer' field

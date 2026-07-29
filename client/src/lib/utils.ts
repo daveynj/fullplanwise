@@ -1,39 +1,54 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import type {
+  ParsedLessonContent,
+  LessonSection,
+  LessonQuestionAnswer,
+} from "../../../types/lessonContentTypes";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
+}
+
+/** Narrow an unknown section-questions value to a structured question array. */
+function toQuestionArray(value: unknown): LessonQuestionAnswer[] {
+  if (!Array.isArray(value)) return [];
+  return value.filter(
+    (q): q is LessonQuestionAnswer =>
+      q !== null && typeof q === 'object' && typeof (q as LessonQuestionAnswer).question === 'string'
+  );
 }
 
 /**
  * Utility to extract quiz questions from lesson content
  * Works with various AI response formats
  */
-export function extractQuizQuestions(content: any): { question: string; answer: string; type?: string; options?: string[] }[] {
+export function extractQuizQuestions(content: ParsedLessonContent | null | undefined): LessonQuestionAnswer[] {
   if (!content) return [];
-  
-  let questions: { question: string; answer: string; type?: string; options?: string[] }[] = [];
   
   try {
     // Case 1: Look for direct quiz section in the content structure
     if (content.sections && Array.isArray(content.sections)) {
-      const section = content.sections.find((s: any) => 
+      const section = content.sections.find((s: LessonSection) => 
         s.type === 'quiz' || s.type === 'assessment' || 
         (s.title && typeof s.title === 'string' && 
          (s.title.toLowerCase().includes('quiz') || s.title.toLowerCase().includes('assessment')))
       );
       
       if (section && section.questions && Array.isArray(section.questions) && section.questions.length > 0) {
-        return section.questions;
+        return toQuestionArray(section.questions);
       }
     }
     
     // Case 2: Look for quiz questions directly in the content
-    if (content.quiz && typeof content.quiz === 'object') {
-      if (Array.isArray(content.quiz)) {
-        return content.quiz;
-      } else if (content.quiz.questions && Array.isArray(content.quiz.questions)) {
-        return content.quiz.questions;
+    const quiz = content.quiz;
+    if (quiz && typeof quiz === 'object') {
+      if (Array.isArray(quiz)) {
+        return toQuestionArray(quiz);
+      }
+      const quizQuestions = (quiz as Record<string, unknown>).questions;
+      if (Array.isArray(quizQuestions)) {
+        return toQuestionArray(quizQuestions);
       }
     }
     
@@ -51,39 +66,40 @@ export function extractQuizQuestions(content: any): { question: string; answer: 
  * Utility to extract comprehension questions from lesson content
  * Works with various AI response formats
  */
-export function extractComprehensionQuestions(content: any): { question: string; answer: string; type?: string; options?: string[] }[] {
+export function extractComprehensionQuestions(content: ParsedLessonContent | null | undefined): LessonQuestionAnswer[] {
   if (!content) return [];
   
-  let questions: { question: string; answer: string; type?: string; options?: string[] }[] = [];
+  let questions: LessonQuestionAnswer[] = [];
   
   try {
     // Case 1: Look for direct comprehension section in the content structure
     if (content.sections && Array.isArray(content.sections)) {
-      const section = content.sections.find((s: any) => 
+      const section = content.sections.find((s: LessonSection) => 
         s.type === 'comprehension' || 
         (s.title && typeof s.title === 'string' && s.title.toLowerCase().includes('comprehension'))
       );
       
       if (section && section.questions && Array.isArray(section.questions) && section.questions.length > 0) {
-        return section.questions;
+        return toQuestionArray(section.questions);
       }
     }
     
     // Case 2: Look for question and answer pairs in the root content
     const questionKeys = Object.keys(content).filter(key => {
       if (typeof key !== 'string') return false;
+      const value = content[key];
       return (
         key.includes('?') && 
         key.length > 15 && 
-        typeof content[key] === 'string' &&
-        content[key].length > 10
+        typeof value === 'string' &&
+        value.length > 10
       );
     });
     
     if (questionKeys.length >= 3) {
       questions = questionKeys.map(q => ({
         question: q,
-        answer: typeof content[q] === 'string' ? content[q] : '',
+        answer: typeof content[q] === 'string' ? (content[q] as string) : '',
         type: q.toLowerCase().includes('true') || q.toLowerCase().includes('false') ? 'true-false' : 'multiple-choice'
       }));
       
@@ -106,10 +122,10 @@ export function extractComprehensionQuestions(content: any): { question: string;
  * Utility to extract discussion questions from lesson content
  * Works with various AI response formats
  */
-export function extractDiscussionQuestions(content: any): any[] {
+export function extractDiscussionQuestions(content: ParsedLessonContent | null | undefined): LessonQuestionAnswer[] {
   if (!content) return [];
   
-  const questions: any[] = [];
+  const questions: LessonQuestionAnswer[] = [];
   
   try {
     console.log("Extracting discussion questions from:", JSON.stringify(content).substring(0, 500));
@@ -118,7 +134,7 @@ export function extractDiscussionQuestions(content: any): any[] {
     // Some AI responses put the structured discussion paragraph + questions in a string within reading
     if (content.sections && Array.isArray(content.sections)) {
       // First check reading sections for discussion prompts
-      const readingSections = content.sections.filter((s: any) => 
+      const readingSections = content.sections.filter((s: LessonSection) => 
         s && typeof s === 'object' && (s.type === 'reading' || s.type === 'post-reading')
       );
       
@@ -127,8 +143,9 @@ export function extractDiscussionQuestions(content: any): any[] {
         const possibleFields = ['afterReading', 'discussion', 'discussionQuestions', 'postReading', 'followUp'];
         
         for (const field of possibleFields) {
-          if (readingSection[field] && typeof readingSection[field] === 'string') {
-            const text = readingSection[field];
+          const fieldValue = readingSection[field];
+          if (fieldValue && typeof fieldValue === 'string') {
+            const text = fieldValue;
             console.log(`Found potential discussion content in reading section.${field}:`, text.substring(0, 100));
             
             // Try to extract a paragraph and questions pattern
@@ -176,7 +193,7 @@ export function extractDiscussionQuestions(content: any): any[] {
     // Standard case: Look for discussion section in sections array
     if (content.sections && Array.isArray(content.sections)) {
       console.log("Looking for discussion section in sections array");
-      const discussionSection = content.sections.find((s: any) => 
+      const discussionSection = content.sections.find((s: LessonSection) => 
         s && typeof s === 'object' && s.type === 'discussion'
       );
       
@@ -184,10 +201,11 @@ export function extractDiscussionQuestions(content: any): any[] {
         console.log("Found discussion section:", JSON.stringify(discussionSection));
         
         // Extract introduction if available
-        let introduction = discussionSection.introduction || "";
+        const introduction = typeof discussionSection.introduction === 'string' ? discussionSection.introduction : "";
         
         // Check if we have a paragraph context at the section level
-        let sectionParagraphContext = discussionSection.paragraphContext || discussionSection.context || "";
+        const rawParagraphContext = discussionSection.paragraphContext || discussionSection.context;
+        let sectionParagraphContext = typeof rawParagraphContext === 'string' ? rawParagraphContext : "";
         
         // If introduction looks like a paragraph (has periods, no questions), it might be the paragraph context
         if (!sectionParagraphContext && introduction && introduction.includes('.') && !introduction.includes('?')) {
@@ -234,28 +252,32 @@ export function extractDiscussionQuestions(content: any): any[] {
             console.log("Discussion questions as array:", discussionSection.questions);
             
             // Map the questions, but with enhanced structure debugging
-            const processedQuestions = discussionSection.questions.map((q: any) => {
+            const processedQuestions = discussionSection.questions.map((q): LessonQuestionAnswer | null => {
               console.log("Processing discussion question item:", q);
               
               if (typeof q === 'string') {
                 return { 
                   question: q, 
                   introduction: introduction,
-                  paragraphContext: sectionParagraphContext || null
+                  paragraphContext: sectionParagraphContext || undefined
                 };
-              } else if (typeof q === 'object') {
+              } else if (q && typeof q === 'object') {
                 // Look for paragraph context, followUp, and other possible fields
                 console.log("Question object fields:", Object.keys(q));
                 
                 // Check for paragraph context in various possible field names
-                const paragraphContext = q.paragraphContext || q.context || q.paragraph || q.introduction || "";
+                const rawContext = q.paragraphContext || q.context || q.paragraph || q.introduction;
+                const paragraphContext = typeof rawContext === 'string' ? rawContext : "";
                 if (paragraphContext) {
                   console.log("Found paragraph context:", paragraphContext.substring(0, 100) + "...");
                 }
                 
                 // Check for follow-up questions in various possible field names
-                const followUp = q.followUp || q.followUpQuestions || [];
-                if (Array.isArray(followUp) && followUp.length > 0) {
+                const rawFollowUp = q.followUp || q.followUpQuestions;
+                const followUp = Array.isArray(rawFollowUp)
+                  ? rawFollowUp.filter((f): f is string => typeof f === 'string')
+                  : [];
+                if (followUp.length > 0) {
                   console.log("Found follow-up questions:", followUp);
                 } else if (typeof q.answer === 'string' && q.answer.trim()) {
                   // If there's an answer field but no followUp, the answer might contain follow-up information
@@ -271,7 +293,7 @@ export function extractDiscussionQuestions(content: any): any[] {
                 };
               }
               return null;
-            }).filter(Boolean);
+            }).filter((q): q is LessonQuestionAnswer => q !== null);
             
             console.log("Final processed questions:", processedQuestions);
             return processedQuestions;
@@ -292,7 +314,7 @@ export function extractDiscussionQuestions(content: any): any[] {
                 questions.push({
                   question: questionText.trim(),
                   introduction: introduction,
-                  paragraphContext: sectionParagraphContext || null,
+                  paragraphContext: sectionParagraphContext || undefined,
                   level: "basic"
                 });
               });
@@ -304,19 +326,20 @@ export function extractDiscussionQuestions(content: any): any[] {
             }
             
             // Standard case: Look for question keys/values
-            const questionKeys = Object.keys(discussionSection.questions).filter(
-              key => typeof discussionSection.questions[key] === 'string' && 
-                    (key.includes('question') || discussionSection.questions[key].includes('?'))
-            );
+            const questionsRecord = discussionSection.questions as Record<string, unknown>;
+            const questionKeys = Object.keys(questionsRecord).filter(key => {
+              const value = questionsRecord[key];
+              return typeof value === 'string' && (key.includes('question') || value.includes('?'));
+            });
             
             if (questionKeys.length > 0) {
               questionKeys.forEach(key => {
-                const question = discussionSection.questions[key];
+                const question = questionsRecord[key];
                 if (question && typeof question === 'string' && question.trim().length > 0) {
                   questions.push({ 
                     question: question.trim(),
                     introduction: introduction,
-                    paragraphContext: sectionParagraphContext || null,
+                    paragraphContext: sectionParagraphContext || undefined,
                     level: "basic"
                   });
                 }
@@ -335,7 +358,7 @@ export function extractDiscussionQuestions(content: any): any[] {
     // Case 2: Try to find discussion section directly in content
     if (content.discussion && typeof content.discussion === 'object') {
       console.log("Found discussion object directly in content");
-      const discussionData = content.discussion;
+      const discussionData = content.discussion as Record<string, unknown>;
       
       // Extract introduction
       let introduction = "";
@@ -347,22 +370,23 @@ export function extractDiscussionQuestions(content: any): any[] {
       if (discussionData.questions) {
         if (Array.isArray(discussionData.questions)) {
           // Handle array format
-          return discussionData.questions.map((q: any) => {
+          return discussionData.questions.map((q: unknown): LessonQuestionAnswer | null => {
             if (typeof q === 'string') {
               return { question: q, introduction: introduction };
-            } else if (typeof q === 'object') {
-              return { ...q, introduction: q.introduction || introduction };
+            } else if (q && typeof q === 'object' && typeof (q as LessonQuestionAnswer).question === 'string') {
+              const questionObj = q as LessonQuestionAnswer;
+              return { ...questionObj, introduction: questionObj.introduction || introduction };
             }
             return null;
-          }).filter(Boolean);
+          }).filter((q): q is LessonQuestionAnswer => q !== null);
         } else if (typeof discussionData.questions === 'object') {
           // Extract questions from question object (common in AI responses)
-          const extractedQuestions: any[] = [];
-          const questionValues = Object.values(discussionData.questions).filter(
-            (val: any) => typeof val === 'string' && val.includes('?')
+          const extractedQuestions: LessonQuestionAnswer[] = [];
+          const questionValues = Object.values(discussionData.questions as Record<string, unknown>).filter(
+            (val): val is string => typeof val === 'string' && val.includes('?')
           );
           
-          questionValues.forEach((q: any) => {
+          questionValues.forEach((q) => {
             if (typeof q === 'string') {
               extractedQuestions.push({
                 question: q,

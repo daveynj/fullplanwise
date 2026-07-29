@@ -8,9 +8,10 @@ import {
 } from "lucide-react";
 import { SectionHeader } from "./shared/section-header";
 import { SectionCard } from "./shared/section-card";
+import type { LessonSection } from "../../../../types/lessonContentTypes";
 
 interface ReadingSectionProps {
-  section?: any;
+  section?: LessonSection;
 }
 
 export function ReadingSection({ section }: ReadingSectionProps) {
@@ -20,10 +21,10 @@ export function ReadingSection({ section }: ReadingSectionProps) {
   let sectionParagraphs: string[] = [];
   
   if (section?.paragraphs && Array.isArray(section.paragraphs)) {
-    sectionParagraphs = section.paragraphs;
-  } else if (section?.content) {
+    sectionParagraphs = section.paragraphs.filter((p): p is string => typeof p === 'string');
+  } else if (typeof section?.content === 'string') {
     sectionParagraphs = [section.content];
-  } else if (section?.introduction) {
+  } else if (typeof section?.introduction === 'string') {
     sectionParagraphs = [section.introduction];
   }
   

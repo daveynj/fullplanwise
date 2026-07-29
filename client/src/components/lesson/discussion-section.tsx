@@ -13,21 +13,16 @@ import {
   Image as ImageIcon
 } from "lucide-react";
 import { SectionHeader } from "./shared/section-header";
+import type {
+  LessonSection,
+  LessonQuestionAnswer,
+} from "../../../../types/lessonContentTypes";
 
-interface DiscussionQuestion {
-  question: string;
-  level?: "basic" | "critical";
-  topic?: string;
-  introduction?: string; // Introduction sentence before the question
-  focusVocabulary?: string[];
-  followUp?: string[];
-  paragraphContext?: string;
-  answer?: string; // Add support for answer field
-  imageBase64?: string | null; // Added for Stability AI image
-}
+// Discussion questions reuse the shared lesson question shape
+type DiscussionQuestion = LessonQuestionAnswer;
 
 interface DiscussionSectionProps {
-  section?: any;
+  section?: LessonSection;
 }
 
 export function DiscussionSection({ section }: DiscussionSectionProps) {
@@ -50,7 +45,8 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
       if (typeof section.questions === 'object' && !Array.isArray(section.questions)) {
         console.log("Found question-answer object format");
         
-        const questionKeys = Object.keys(section.questions).filter(key => 
+        const questionsRecord = section.questions as Record<string, unknown>;
+        const questionKeys = Object.keys(questionsRecord).filter(key => 
           typeof key === 'string' && 
           key.trim().length > 0 &&
           key !== 'question' && // Skip placeholder keys
@@ -59,7 +55,7 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
         
         if (questionKeys.length > 0) {
           const validQuestions: DiscussionQuestion[] = questionKeys.map(questionText => {
-            const answer = section.questions[questionText];
+            const answer = questionsRecord[questionText];
             const level = questionText.toLowerCase().includes('critical') ? 'critical' : 'basic';
             return {
               question: questionText,
@@ -78,19 +74,21 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
         console.log("Found questions array in section:", section.questions.length, "questions");
         
         // Clean up any malformed questions and ensure paragraphContext is kept
-        const validQuestions = section.questions.filter((q: any) => 
-          q && typeof q === 'object' && (q.question || q.text)
-        ).map((q: any) => ({
-          question: q.question || q.text || "Discussion question",
-          level: q.level || "basic",
-          introduction: q.introduction || "", // Keep this if AI provides it per question
-          focusVocabulary: q.focusVocabulary || q.vocabulary || [],
-          followUp: q.followUp || [],
-          paragraphContext: q.paragraphContext || q.context || q.paragraph || "", // Prioritize paragraphContext
-          topic: q.topic || "",
-          imageBase64: q.imageBase64 || null, // Keep imageBase64
-          imagePrompt: q.imagePrompt || "" // Keep imagePrompt
-        }));
+        const validQuestions: DiscussionQuestion[] = section.questions
+          .filter((q): q is LessonQuestionAnswer =>
+            q !== null && typeof q === 'object' && Boolean((q as LessonQuestionAnswer).question || (q as LessonQuestionAnswer).text)
+          )
+          .map((q): DiscussionQuestion => ({
+            question: q.question || q.text || "Discussion question",
+            level: q.level || "basic",
+            introduction: q.introduction || "", // Keep this if AI provides it per question
+            focusVocabulary: q.focusVocabulary || (Array.isArray(q.vocabulary) ? q.vocabulary.filter((v): v is string => typeof v === 'string') : []),
+            followUp: q.followUp || [],
+            paragraphContext: q.paragraphContext || (typeof q.context === 'string' ? q.context : "") || (typeof q.paragraph === 'string' ? q.paragraph : "") || "", // Prioritize paragraphContext
+            topic: q.topic || "",
+            imageBase64: q.imageBase64 || null, // Keep imageBase64
+            imagePrompt: typeof q.imagePrompt === 'string' ? q.imagePrompt : "" // Keep imagePrompt
+          }));
         
         if (validQuestions.length > 0) {
             questions = validQuestions;
@@ -152,9 +150,15 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
     
     // Attempt to extract questions from various possible formats
     if (section.questions && Array.isArray(section.questions)) {
-      questions = section.questions;
+      questions = section.questions.map((q): DiscussionQuestion =>
+        typeof q === 'string' ? { question: q, level: 'basic' } : q
+      );
     } else if (section.discussionQuestions && Array.isArray(section.discussionQuestions)) {
-      questions = section.discussionQuestions;
+      questions = section.discussionQuestions
+        .filter((q: unknown): q is DiscussionQuestion | string =>
+          typeof q === 'string' || (q !== null && typeof q === 'object' && typeof (q as DiscussionQuestion).question === 'string')
+        )
+        .map((q): DiscussionQuestion => (typeof q === 'string' ? { question: q, level: 'basic' } : q));
     } else if (section.questions && typeof section.questions === 'object' && !Array.isArray(section.questions)) {
       // Handle questions as object where keys are questions and values might be answers or descriptions
       // This handles various AI response formats
@@ -188,15 +192,18 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
           typeof section[key] === "object"
         ) {
           // This might be a question object
-          const question: any = section[key];
+          const question = (section[key] || {}) as Record<string, unknown>;
           const qLevel = question.level || (key.includes("critical") ? "critical" : "basic");
+          const asString = (v: unknown): string | undefined => (typeof v === 'string' ? v : undefined);
+          const asStringArray = (v: unknown): string[] =>
+            Array.isArray(v) ? v.filter((item): item is string => typeof item === 'string') : [];
           extractedQuestions.push({
-            question: question.question || question.text || key,
+            question: asString(question.question) || asString(question.text) || key,
             level: qLevel as "basic" | "critical",
-            topic: question.topic || question.context,
-            focusVocabulary: question.focusVocabulary || question.vocabulary || [],
-            followUp: question.followUp || question.followUpQuestions || [],
-            paragraphContext: question.paragraphContext || question.paragraph || question.context
+            topic: asString(question.topic) || asString(question.context),
+            focusVocabulary: asStringArray(question.focusVocabulary ?? question.vocabulary),
+            followUp: asStringArray(question.followUp ?? question.followUpQuestions),
+            paragraphContext: asString(question.paragraphContext) || asString(question.paragraph) || asString(question.context)
           });
         } else if (
           (key.includes("question") || /^[0-9]+$/.test(key)) && 
@@ -204,7 +211,7 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
         ) {
           // This might be a question string directly
           extractedQuestions.push({
-            question: section[key],
+            question: section[key] as string,
             level: "basic",
             focusVocabulary: [] 
           });
@@ -248,7 +255,7 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
             question: key,
             level: qLevel as "basic" | "critical",
             focusVocabulary: vocabWords,
-            followUp: typeof section[key] === "string" ? [section[key]] : []
+            followUp: typeof section[key] === "string" ? [section[key] as string] : []
           });
         }
       }
