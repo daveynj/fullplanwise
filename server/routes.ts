@@ -2331,6 +2331,63 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
 
+  // Catch-all 404 for unknown page routes (SEO).
+  // Any GET that doesn't match a known client route, an API route, or a
+  // static asset returns a real HTTP 404 instead of the SPA shell with 200,
+  // so crawlers don't index broken URLs as duplicate homepages.
+  // Keep this list in sync with the client router in client/src/App.tsx.
+  const validClientRoutes: RegExp[] = [
+    /^\/$/,
+    /^\/dashboard$/,
+    /^\/generate$/,
+    /^\/students$/,
+    /^\/students\/[^/]+$/,
+    /^\/history$/,
+    /^\/history\/[^/]+$/,
+    /^\/lessons\/[^/]+$/,      // existence check handled by /lessons/:id route above
+    /^\/fullscreen\/[^/]+$/,
+    /^\/public-library$/,
+    /^\/buy-credits$/,
+    /^\/subscription-success$/,
+    /^\/settings$/,
+    /^\/admin$/,
+    /^\/admin\/lessons$/,
+    /^\/admin\/blog$/,
+    /^\/grammar-test$/,
+    /^\/grammar-showcase$/,
+    /^\/auth$/,
+    /^\/blog$/,
+    /^\/blog\/[^/]+$/,         // existence check handled by /blog/:slug route above
+    /^\/forgot-password$/,
+    /^\/reset-password\/[^/]+$/,
+    /^\/twitter-card$/,
+  ];
+
+  app.get("*", async (req, res, next) => {
+    const pathname = req.path;
+
+    // Let API routes, uploads, and anything with a file extension (assets,
+    // Vite module requests, source maps, favicons, etc.) pass through.
+    if (
+      pathname.startsWith("/api/") ||
+      pathname.startsWith("/uploads/") ||
+      pathname.startsWith("/@") || // Vite internals (/@vite, /@fs, /@react-refresh)
+      pathname.startsWith("/src/") || // Vite dev source modules
+      pathname.startsWith("/node_modules/") ||
+      /\.[a-zA-Z0-9]+$/.test(pathname)
+    ) {
+      return next();
+    }
+
+    // Known client routes get the SPA shell as usual.
+    if (validClientRoutes.some((re) => re.test(pathname))) {
+      return next();
+    }
+
+    console.log(`[SEO] Unknown route: ${pathname} - returning 404`);
+    await serve404Html(res, app);
+  });
+
   // Create HTTP server
   const httpServer = createServer(app);
   return httpServer;
