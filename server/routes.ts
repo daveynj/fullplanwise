@@ -16,6 +16,7 @@ import { testOpenRouterConnection } from "./services/openRouter";
 import { testImageGeneration } from "./services/image-generation.service";
 import { isFreeTrialActive, getFreeTrialEndDate } from "./features";
 import { getUncachableStripeClient } from "./stripeClient";
+import { validClientRoutes } from "@shared/client-routes";
 import Stripe from "stripe";
 // Dynamic imports for AI services - loaded only when needed
 // import { qwenService } from "./services/qwen";
@@ -2335,33 +2336,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Any GET that doesn't match a known client route, an API route, or a
   // static asset returns a real HTTP 404 instead of the SPA shell with 200,
   // so crawlers don't index broken URLs as duplicate homepages.
-  // Keep this list in sync with the client router in client/src/App.tsx.
-  const validClientRoutes: RegExp[] = [
-    /^\/$/,
-    /^\/dashboard$/,
-    /^\/generate$/,
-    /^\/students$/,
-    /^\/students\/[^/]+$/,
-    /^\/history$/,
-    /^\/history\/[^/]+$/,
-    /^\/lessons\/[^/]+$/,      // existence check handled by /lessons/:id route above
-    /^\/fullscreen\/[^/]+$/,
-    /^\/public-library$/,
-    /^\/buy-credits$/,
-    /^\/subscription-success$/,
-    /^\/settings$/,
-    /^\/admin$/,
-    /^\/admin\/lessons$/,
-    /^\/admin\/blog$/,
-    /^\/grammar-test$/,
-    /^\/grammar-showcase$/,
-    /^\/auth$/,
-    /^\/blog$/,
-    /^\/blog\/[^/]+$/,         // existence check handled by /blog/:slug route above
-    /^\/forgot-password$/,
-    /^\/reset-password\/[^/]+$/,
-    /^\/twitter-card$/,
-  ];
+  // The list of valid client routes lives in shared/client-routes.ts (a
+  // single source of truth); a test verifies it stays in sync with the
+  // client router in client/src/App.tsx.
 
   app.get("*", async (req, res, next) => {
     const pathname = req.path;
