@@ -599,7 +599,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/lessons/:id", async (req, res) => {
     try {
-      const lessonId = parseInt(req.params.id);
+      const lessonId = parseInt(req.params.id, 10);
+      if (!/^\d+$/.test(req.params.id) || !Number.isSafeInteger(lessonId)) {
+        return res.status(404).json({ message: "Lesson not found" });
+      }
       console.log(`Fetching lesson ${lessonId} for public access`);
 
       const lesson = await storage.getLesson(lessonId);
@@ -1124,7 +1127,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Generate vocabulary review PDF for a lesson
   app.get("/api/lessons/:id/pdf", async (req, res) => {
     try {
-      const lessonId = parseInt(req.params.id);
+      const lessonId = parseInt(req.params.id, 10);
+      if (!/^\d+$/.test(req.params.id) || !Number.isSafeInteger(lessonId)) {
+        return res.status(404).json({ message: "Lesson not found" });
+      }
       const lesson = await storage.getLesson(lessonId);
 
       if (!lesson) {
@@ -1735,7 +1741,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/lessons/:id/copy", async (req, res) => {
     try {
-      const lessonId = parseInt(req.params.id);
+      const lessonId = parseInt(req.params.id, 10);
+      if (!/^\d+$/.test(req.params.id) || !Number.isSafeInteger(lessonId)) {
+        return res.status(404).json({ message: "Lesson not found" });
+      }
 
       // Public access - return lesson data for anyone to use
       const lesson = await storage.getLesson(lessonId);
