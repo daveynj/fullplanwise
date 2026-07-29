@@ -641,6 +641,77 @@ BEGIN JSON:`;
   }
 
   /**
+   * Regenerate only the grammar spotlight section for a lesson. Used as a
+   * retry path when the spotlight from the full lesson generation fails
+   * runtime validation. Returns the parsed spotlight object (untrusted —
+   * caller must validate) or throws on failure.
+   */
+  async regenerateGrammarSpotlight(topic: string, cefrLevel: string): Promise<unknown> {
+    if (!this.apiKey) {
+      throw new Error('OpenRouter API key is not configured');
+    }
+
+    const prompt = `You are an ESL curriculum expert. Create a grammar spotlight for a ${cefrLevel} level ESL lesson about "${topic}".
+
+Pick ONE grammar point appropriate for ${cefrLevel} learners that naturally fits the topic.
+
+Return ONLY a JSON object (no markdown, no commentary) with this exact structure:
+{
+  "grammarType": "snake_case_identifier (e.g. present_perfect, modal_verbs)",
+  "title": "Display title of the grammar point",
+  "description": "Short description of the grammar focus at ${cefrLevel} level",
+  "examples": [
+    {
+      "sentence": "Full example sentence related to ${topic}.",
+      "highlighted": "Same sentence with the grammar element wrapped in **double asterisks**.",
+      "explanation": "Explanation of the grammar usage in this example."
+    }
+  ],
+  "logicExplanation": {
+    "communicationNeed": "The communication need this grammar addresses",
+    "logicalSolution": "How the grammar logically solves that need",
+    "usagePattern": "When/how the pattern is typically used",
+    "communicationImpact": "The effect this grammar has on communication"
+  }
+}
+
+Include 3-4 examples. All sentences must be appropriate for ${cefrLevel} level and related to "${topic}".`;
+
+    const result: AxiosResponse = await axios.post(
+      `${this.baseURL}/chat/completions`,
+      {
+        model: 'z-ai/glm-5.2',
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.3,
+        max_tokens: 3000
+      },
+      {
+        headers: {
+          'Authorization': `Bearer ${this.apiKey}`,
+          'Content-Type': 'application/json',
+          'HTTP-Referer': 'https://planwiseesl.com',
+          'X-Title': 'PlanwiseESL'
+        },
+        timeout: 30000
+      }
+    );
+
+    const text = result.data?.choices?.[0]?.message?.content;
+    if (!text || typeof text !== 'string') {
+      throw new Error('Grammar spotlight regeneration returned no content');
+    }
+
+    let cleanedContent = text.trim();
+    if (cleanedContent.startsWith('```json')) {
+      cleanedContent = cleanedContent.replace(/```json\s*/g, '').replace(/```\s*$/g, '').trim();
+    } else if (cleanedContent.startsWith('```')) {
+      cleanedContent = cleanedContent.replace(/```\s*/g, '').replace(/```\s*$/g, '').trim();
+    }
+
+    return JSON.parse(cleanedContent);
+  }
+
+  /**
    * Validate reading text paragraphs for grammar correctness using AI
    */
   private async validateReadingTextGrammar(paragraphs: string[], cefrLevel: string, topic: string): Promise<string[]> {

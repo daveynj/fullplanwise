@@ -777,8 +777,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
               // Keep the stored lesson content consistent with the validated payload
               generatedContent.grammarSpotlight = validatedSpotlight;
             } else {
-              console.warn(`[Job ${jobId}] Dropping malformed grammarSpotlight from AI output — failed runtime validation`);
-              delete generatedContent.grammarSpotlight;
+              console.warn(`[Job ${jobId}] Malformed grammarSpotlight from AI output — retrying grammar spotlight generation once`);
+              let retriedSpotlight = null;
+              try {
+                const regenerated = await openRouter.regenerateGrammarSpotlight(validatedData.topic, validatedData.cefrLevel);
+                retriedSpotlight = validateGrammarSpotlightForStorage(regenerated) ?? null;
+              } catch (retryError) {
+                console.error(`[Job ${jobId}] Grammar spotlight retry failed:`, retryError);
+              }
+              if (retriedSpotlight) {
+                console.log(`[Job ${jobId}] Grammar spotlight retry succeeded — using regenerated spotlight`);
+                grammarVisualization = retriedSpotlight;
+                generatedContent.grammarSpotlight = retriedSpotlight;
+              } else {
+                console.warn(`[Job ${jobId}] Dropping malformed grammarSpotlight from AI output — retry also failed validation`);
+                delete generatedContent.grammarSpotlight;
+              }
             }
           }
 
