@@ -47,7 +47,7 @@ export default function StudentDetailPage() {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("info");
   const [isUnassignDialogOpen, setIsUnassignDialogOpen] = useState(false);
-  const [lessonToUnassign, setLessonToUnassign] = useState<Lesson | null>(null);
+  const [unassignTarget, setUnassignTarget] = useState<{ assignmentId: number; lesson: Lesson } | null>(null);
   const [, navigate] = useLocation();
   const { logoutMutation } = useAuth();
   
@@ -118,7 +118,7 @@ export default function StudentDetailPage() {
       queryClient.invalidateQueries({ queryKey: [`/api/students/${studentId}/lessons`] });
       queryClient.invalidateQueries({ queryKey: [`/api/students/${studentId}/vocabulary`] });
       setIsUnassignDialogOpen(false);
-      setLessonToUnassign(null);
+      setUnassignTarget(null);
     },
     onError: (error: Error) => {
       toast({
@@ -127,7 +127,7 @@ export default function StudentDetailPage() {
         variant: "destructive",
       });
       setIsUnassignDialogOpen(false);
-      setLessonToUnassign(null);
+      setUnassignTarget(null);
     }
   });
 
@@ -138,24 +138,20 @@ export default function StudentDetailPage() {
 
   // Handle opening the unassign dialog
   const handleUnassignLesson = (assignmentData: { assignmentId: number, lesson: Lesson }) => {
-    setLessonToUnassign(assignmentData.lesson);
+    setUnassignTarget(assignmentData);
     setIsUnassignDialogOpen(true);
-    // Store the assignment ID for deletion
-    (window as any).__currentAssignmentId = assignmentData.assignmentId;
   };
 
   // Confirm unassignment
   const confirmUnassign = () => {
-    const assignmentId = (window as any).__currentAssignmentId;
-    if (assignmentId) {
-      unassignLessonMutation.mutate(assignmentId);
-      delete (window as any).__currentAssignmentId;
+    if (unassignTarget) {
+      unassignLessonMutation.mutate(unassignTarget.assignmentId);
     }
   };
 
   // Handle potential auth errors during fetch
   useEffect(() => {
-    if (studentError && (studentError as any).status === 401) {
+    if (studentError && (studentError as Error & { status?: number }).status === 401) {
       toast({
         title: "Authentication Error",
         description: "Your session may have expired. Please log in again.",
@@ -512,7 +508,7 @@ export default function StudentDetailPage() {
             </DialogTitle>
             <DialogDescription className="pt-2">
               Are you sure you want to unassign the lesson 
-              <span className="font-semibold"> "{lessonToUnassign?.title}" </span> 
+              <span className="font-semibold"> "{unassignTarget?.lesson.title}" </span> 
               from this student? The lesson itself will not be deleted.
             </DialogDescription>
           </DialogHeader>
