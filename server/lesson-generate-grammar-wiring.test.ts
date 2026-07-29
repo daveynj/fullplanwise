@@ -25,6 +25,19 @@ const mockStorage = {
   incrementUserCredits: vi.fn(),
 };
 
+// The route settles jobs atomically via server/lesson-jobs.ts (lesson insert
+// + job status in one transaction). Mock the module so these tests stay
+// focused on the grammar-spotlight wiring, and assert on completeJobWithLesson
+// the way they used to assert on storage.createLesson.
+const mockLessonJobs = {
+  recordJobStartOrRefund: vi.fn(async () => {}),
+  completeJobWithLesson: vi.fn(),
+  settleJobError: vi.fn(async () => false),
+  getPersistedJob: vi.fn(async () => null),
+  startJobRecoveryWithRetry: vi.fn(),
+  pruneOldJobs: vi.fn(async () => {}),
+};
+
 const mockOpenRouterService = {
   generateLesson: vi.fn(),
   regenerateGrammarSpotlight: vi.fn(),
@@ -33,6 +46,8 @@ const mockOpenRouterService = {
 };
 
 vi.mock("./storage", () => ({ storage: mockStorage }));
+
+vi.mock("./lesson-jobs", () => mockLessonJobs);
 
 vi.mock("./auth", () => ({
   setupAuth: vi.fn(),
@@ -163,6 +178,9 @@ beforeEach(() => {
     id: 42,
     ...lesson,
   }));
+  mockLessonJobs.completeJobWithLesson.mockImplementation(
+    async (_jobId: string, lesson: any) => ({ id: 42, ...lesson }),
+  );
   mockOpenRouterService.generateImagesForLesson.mockImplementation(
     () => new Promise<void>(() => {}),
   );
@@ -182,9 +200,10 @@ async function generateAndWaitForSave(): Promise<any> {
   expect(jobId).toBeTruthy();
 
   await vi.waitFor(() => {
-    expect(mockStorage.createLesson).toHaveBeenCalledTimes(1);
+    expect(mockLessonJobs.completeJobWithLesson).toHaveBeenCalledTimes(1);
   });
-  return mockStorage.createLesson.mock.calls[0][0];
+  // Second argument is the lesson payload being persisted.
+  return mockLessonJobs.completeJobWithLesson.mock.calls[0][1];
 }
 
 describe("lesson generation grammar-spotlight wiring", () => {

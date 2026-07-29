@@ -19,6 +19,14 @@ import { testImageGeneration } from "./services/image-generation.service";
 import { isFreeTrialActive, getFreeTrialEndDate } from "./features";
 import { getUncachableStripeClient } from "./stripeClient";
 import { validClientRoutes } from "@shared/client-routes";
+import {
+  recordJobStartOrRefund,
+  completeJobWithLesson,
+  settleJobError,
+  getPersistedJob,
+  startJobRecoveryWithRetry,
+  pruneOldJobs,
+} from "./lesson-jobs";
 import Stripe from "stripe";
 // Dynamic imports for AI services - loaded only when needed
 // import { qwenService } from "./services/qwen";
@@ -115,6 +123,8 @@ async function tryRecordGenerationAttempt(teacherId: number): Promise<number | n
 setInterval(() => {
   db.execute(sql`DELETE FROM lesson_generation_attempts WHERE attempted_at < now() - interval '2 hours'`)
     .catch((err) => console.error("Failed to prune lesson_generation_attempts:", err));
+  pruneOldJobs()
+    .catch((err) => console.error("Failed to prune lesson_generation_jobs:", err));
 }, 15 * 60 * 1000);
 
 // Clean up jobs older than 30 minutes every 10 minutes
@@ -159,6 +169,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return null;
     }
   };
+
+  // Recover interrupted lesson-generation jobs from previous server runs:
+  // any job still 'pending' in Postgres was cut off mid-generation, so it is
+  // flipped to 'error' and its credit refunded. Retries in the background
+  // until it succeeds so a failed first attempt can't strand credits.
+  startJobRecoveryWithRetry();
 
   // Set up authentication routes
   setupAuth(app);
@@ -653,22 +669,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Poll endpoint: check status of an async lesson generation job
-  app.get("/api/lessons/job/:jobId", ensureAuthenticated, (req, res) => {
+  app.get("/api/lessons/job/:jobId", ensureAuthenticated, async (req, res) => {
     const job = lessonJobs.get(req.params.jobId);
-    if (!job) {
+    if (job) {
+      if (job.status === 'pending') {
+        return res.json({ status: 'pending' });
+      }
+      if (job.status === 'error') {
+        lessonJobs.delete(req.params.jobId);
+        return res.status(500).json({ status: 'error', error: job.error });
+      }
+      // Complete — return lesson and clean up
+      const lesson = job.lesson;
+      lessonJobs.delete(req.params.jobId);
+      return res.json({ status: 'complete', lesson });
+    }
+
+    // In-memory miss — the server may have restarted since the job was
+    // created. Fall back to the persisted record so the client gets a
+    // definitive answer (completed lesson, or a refunded error) instead of a
+    // bare 404 that leaves the credit outcome ambiguous.
+    try {
+      const persisted = await getPersistedJob(req.params.jobId);
+      if (!persisted || persisted.teacherId !== req.user!.id) {
+        return res.status(404).json({ message: "Job not found or expired" });
+      }
+      if (persisted.status === 'error') {
+        return res.status(500).json({ status: 'error', error: persisted.error || 'Lesson generation failed' });
+      }
+      if (persisted.status === 'complete' && persisted.lessonId) {
+        const lesson = await storage.getLesson(persisted.lessonId);
+        if (lesson) {
+          return res.json({ status: 'complete', lesson });
+        }
+        return res.status(500).json({ status: 'error', error: 'The lesson was created but could not be loaded. Please check your Lesson Library.' });
+      }
+      // Persisted as 'pending' but absent from memory: the job was orphaned
+      // (e.g. recovery was bypassed). Its background work can never finish —
+      // treat as an error so the client stops polling.
+      return res.status(500).json({ status: 'error', error: 'Generation was interrupted. Please try again.' });
+    } catch (lookupError) {
+      console.error(`Error looking up persisted job ${req.params.jobId}:`, lookupError);
       return res.status(404).json({ message: "Job not found or expired" });
     }
-    if (job.status === 'pending') {
-      return res.json({ status: 'pending' });
-    }
-    if (job.status === 'error') {
-      lessonJobs.delete(req.params.jobId);
-      return res.status(500).json({ status: 'error', error: job.error });
-    }
-    // Complete — return lesson and clean up
-    const lesson = job.lesson;
-    lessonJobs.delete(req.params.jobId);
-    return res.json({ status: 'complete', lesson });
   });
 
   app.post("/api/lessons/generate", ensureAuthenticated, async (req, res) => {
@@ -748,6 +791,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
 
+      // Persist the job BEFORE generation starts — this is what makes the
+      // spent credit recoverable after a restart. If the write fails after a
+      // credit was spent, recordJobStartOrRefund refunds it; we then abort
+      // the request rather than starting unrecoverable background work.
+      try {
+        await recordJobStartOrRefund(jobId, teacherId, creditSpent);
+      } catch (persistError) {
+        console.error(`[Job ${jobId}] Failed to persist job start — aborting generation:`, persistError);
+        releaseReservation();
+        return res.status(503).json({
+          message: "Could not start lesson generation right now. Please try again in a moment — your credits were not used."
+        });
+      }
+
       // Respond immediately — generation happens in background
       console.log(`Created lesson generation job ${jobId} for user ${user.id}, topic: ${validatedData.topic}`);
       res.json({ jobId });
@@ -809,7 +866,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
             tags: validatedData.tags || []
           };
 
-          const savedLesson = await storage.createLesson(lessonToSave);
+          // Save the lesson AND settle the job in one transaction — a crash
+          // between these writes would otherwise let boot recovery refund a
+          // credit for a lesson the user actually received.
+          const savedLesson = await completeJobWithLesson(jobId, lessonToSave);
           console.log(`[Job ${jobId}] Lesson saved with permanent ID: ${savedLesson.id}`);
 
           if (validatedData.studentId) {
@@ -869,14 +929,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
             });
         } catch (err: any) {
           console.error(`[Job ${jobId}] Generation failed:`, err.message);
-          // Refund the credit spent upfront — generation did not complete
-          if (creditSpent) {
-            try {
-              await storage.incrementUserCredits(teacherId);
+          // Settle atomically: refund the credit spent upfront AND record the
+          // error state in one transaction, claimed via refund_applied so the
+          // refund can never be applied twice — even if boot recovery later
+          // picks up this same job after a crash.
+          try {
+            const refunded = await settleJobError(jobId, teacherId, creditSpent, err.message);
+            if (refunded) {
               console.log(`[Job ${jobId}] Refunded 1 credit to user ${teacherId}`);
-            } catch (refundError) {
-              console.error(`[Job ${jobId}] Failed to refund credit:`, refundError);
             }
+          } catch (settleError) {
+            console.error(`[Job ${jobId}] Failed to settle job error (boot recovery will retry):`, settleError);
           }
           if (pendingJobByTeacher.get(teacherId) === jobId) {
             pendingJobByTeacher.delete(teacherId);

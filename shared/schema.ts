@@ -36,6 +36,25 @@ export const lessonGenerationAttempts = pgTable("lesson_generation_attempts", {
   index("lesson_gen_attempts_teacher_time_idx").on(table.teacherId, table.attemptedAt),
 ]);
 
+// Async lesson generation jobs, mirrored from the in-memory job store.
+// Persisted so a server restart cannot silently strand a spent credit: on
+// boot, jobs still marked 'pending' were interrupted and their credits are
+// refunded. Also lets the poll endpoint recover completed lessons after a
+// restart. Created via CREATE TABLE IF NOT EXISTS at server startup (see
+// server/lesson-jobs.ts) rather than drizzle push, per project convention.
+export const lessonGenerationJobs = pgTable("lesson_generation_jobs", {
+  id: text("id").primaryKey(),
+  teacherId: integer("teacher_id").notNull(),
+  status: text("status").notNull(), // 'pending' | 'recovering' | 'complete' | 'error'
+  creditSpent: boolean("credit_spent").notNull().default(false),
+  // Idempotency guard: flipped in the same transaction as the credit refund
+  // so a job can never be refunded twice, even across crashes.
+  refundApplied: boolean("refund_applied").notNull().default(false),
+  lessonId: integer("lesson_id"),
+  error: text("error"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
 // Student table schema
 export const students = pgTable("students", {
   id: serial("id").primaryKey(),
