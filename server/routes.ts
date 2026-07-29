@@ -14,6 +14,7 @@ import {
 import { mailchimpService } from "./services/mailchimp.service";
 import { testOpenRouterConnection } from "./services/openRouter";
 import { validateGrammarSpotlightForStorage } from "../types/lessonContentTypes";
+import { resolveGrammarSpotlight } from "./grammarSpotlightRetry";
 import { testImageGeneration } from "./services/image-generation.service";
 import { isFreeTrialActive, getFreeTrialEndDate } from "./features";
 import { getUncachableStripeClient } from "./stripeClient";
@@ -778,28 +779,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
           let grammarVisualization = null;
           if (generatedContent.grammarSpotlight) {
-            const validatedSpotlight = validateGrammarSpotlightForStorage(generatedContent.grammarSpotlight);
-            if (validatedSpotlight) {
-              grammarVisualization = validatedSpotlight;
+            const resolvedSpotlight = await resolveGrammarSpotlight(
+              generatedContent.grammarSpotlight,
+              openRouter,
+              jobId,
+              validatedData.topic,
+              validatedData.cefrLevel,
+            );
+            if (resolvedSpotlight) {
+              grammarVisualization = resolvedSpotlight;
               // Keep the stored lesson content consistent with the validated payload
-              generatedContent.grammarSpotlight = validatedSpotlight;
+              generatedContent.grammarSpotlight = resolvedSpotlight;
             } else {
-              console.warn(`[Job ${jobId}] Malformed grammarSpotlight from AI output — retrying grammar spotlight generation once`);
-              let retriedSpotlight = null;
-              try {
-                const regenerated = await openRouter.regenerateGrammarSpotlight(validatedData.topic, validatedData.cefrLevel);
-                retriedSpotlight = validateGrammarSpotlightForStorage(regenerated) ?? null;
-              } catch (retryError) {
-                console.error(`[Job ${jobId}] Grammar spotlight retry failed:`, retryError);
-              }
-              if (retriedSpotlight) {
-                console.log(`[Job ${jobId}] Grammar spotlight retry succeeded — using regenerated spotlight`);
-                grammarVisualization = retriedSpotlight;
-                generatedContent.grammarSpotlight = retriedSpotlight;
-              } else {
-                console.warn(`[Job ${jobId}] Dropping malformed grammarSpotlight from AI output — retry also failed validation`);
-                delete generatedContent.grammarSpotlight;
-              }
+              delete generatedContent.grammarSpotlight;
             }
           }
 
