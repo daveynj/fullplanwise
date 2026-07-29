@@ -16,30 +16,34 @@ import {
   Activity
 } from "lucide-react";
 import { motion } from "framer-motion";
+import type {
+  GrammarSpotlightExample,
+  GrammarVisualStep,
+} from "../../../../types/lessonContentTypes";
 
 interface VisualGrammarDisplayProps {
   grammarType: string;
   title: string;
   description: string;
-  examples: Array<{
-    sentence: string;
-    highlighted: string;
-    explanation: string;
-  }>;
-  visualSteps: Array<{
-    stepNumber: number;
-    instruction: string;
-    visualElements: any;
-  }>;
+  examples: GrammarSpotlightExample[];
+  visualSteps: GrammarVisualStep[];
 }
 
 export function VisualGrammarDisplay({ 
   grammarType, 
   title, 
   description, 
-  examples, 
+  examples: rawExamples, 
   visualSteps 
 }: VisualGrammarDisplayProps) {
+  // Guard against malformed AI payloads: only keep object-shaped examples
+  const examples: GrammarSpotlightExample[] = Array.isArray(rawExamples)
+    ? rawExamples.filter(
+        (example): example is GrammarSpotlightExample =>
+          typeof example === 'object' && example !== null,
+      )
+    : [];
+  const safeGrammarType = typeof grammarType === 'string' ? grammarType : '';
 
   // Extract grammar words from highlighted text
   const extractGrammarWords = (highlighted: string) => {
@@ -47,7 +51,7 @@ export function VisualGrammarDisplay({
   };
 
   const renderVisualByType = () => {
-    const type = grammarType.toLowerCase().replace(/[_\s]+/g, '');
+    const type = safeGrammarType.toLowerCase().replace(/[_\s]+/g, '');
     
     switch (type) {
       case 'prepositions':
@@ -75,7 +79,7 @@ export function VisualGrammarDisplay({
       case 'simple_past':
         return <SimplePastVisual examples={examples} />;
       default:
-        return <DefaultGrammarVisual examples={examples} grammarType={grammarType} />;
+        return <DefaultGrammarVisual examples={examples} grammarType={safeGrammarType} />;
     }
   };
 
@@ -94,7 +98,7 @@ export function VisualGrammarDisplay({
 }
 
 // Prepositions Visual Component
-function PrepositionsVisual({ examples }: { examples: any[] }) {
+function PrepositionsVisual({ examples }: { examples: GrammarSpotlightExample[] }) {
   const prepositionCategories = {
     place: { 
       words: ['in', 'on', 'at', 'under', 'over', 'behind', 'beside', 'between'], 
@@ -167,7 +171,7 @@ function PrepositionsVisual({ examples }: { examples: any[] }) {
 }
 
 // Modal Verbs Visual Component
-function ModalVerbsVisual({ examples }: { examples: any[] }) {
+function ModalVerbsVisual({ examples }: { examples: GrammarSpotlightExample[] }) {
   const modalLevels = [
     { modal: 'must', certainty: 100, color: 'bg-red-500', meaning: 'Very certain / Required' },
     { modal: 'will', certainty: 95, color: 'bg-red-400', meaning: 'Very likely' },
@@ -236,7 +240,7 @@ function ModalVerbsVisual({ examples }: { examples: any[] }) {
 }
 
 // Present Perfect Visual Component
-function PresentPerfectVisual({ examples }: { examples: any[] }) {
+function PresentPerfectVisual({ examples }: { examples: GrammarSpotlightExample[] }) {
   return (
     <div className="space-y-6">
       {/* Timeline Bridge */}
@@ -288,7 +292,7 @@ function PresentPerfectVisual({ examples }: { examples: any[] }) {
 }
 
 // Articles Visual Component
-function ArticlesVisual({ examples }: { examples: any[] }) {
+function ArticlesVisual({ examples }: { examples: GrammarSpotlightExample[] }) {
   return (
     <div className="space-y-6">
       {/* Decision Tree */}
@@ -355,7 +359,7 @@ function ArticlesVisual({ examples }: { examples: any[] }) {
 }
 
 // Conditionals Visual Component
-function ConditionalsVisual({ examples }: { examples: any[] }) {
+function ConditionalsVisual({ examples }: { examples: GrammarSpotlightExample[] }) {
   const conditionalTypes = [
     { 
       type: 'Zero', 
@@ -438,7 +442,7 @@ function ConditionalsVisual({ examples }: { examples: any[] }) {
 }
 
 // Add more visual components for other grammar types...
-function RelativeClausesVisual({ examples }: { examples: any[] }) {
+function RelativeClausesVisual({ examples }: { examples: GrammarSpotlightExample[] }) {
   return (
     <div className="space-y-6">
       <div className="bg-white border border-gray-200 rounded-lg p-6">
@@ -464,7 +468,7 @@ function RelativeClausesVisual({ examples }: { examples: any[] }) {
   );
 }
 
-function PassiveVoiceVisual({ examples }: { examples: any[] }) {
+function PassiveVoiceVisual({ examples }: { examples: GrammarSpotlightExample[] }) {
   return (
     <div className="space-y-6">
       <div className="bg-white border border-gray-200 rounded-lg p-6">
@@ -523,7 +527,7 @@ function PassiveVoiceVisual({ examples }: { examples: any[] }) {
   );
 }
 
-function SimplePresentVisual({ examples }: { examples: any[] }) {
+function SimplePresentVisual({ examples }: { examples: GrammarSpotlightExample[] }) {
   return (
     <div className="space-y-6">
       <div className="bg-white border border-gray-200 rounded-lg p-6">
@@ -558,7 +562,7 @@ function SimplePresentVisual({ examples }: { examples: any[] }) {
   );
 }
 
-function SimplePastVisual({ examples }: { examples: any[] }) {
+function SimplePastVisual({ examples }: { examples: GrammarSpotlightExample[] }) {
   return (
     <div className="space-y-6">
       <div className="bg-white border border-gray-200 rounded-lg p-6">
@@ -598,7 +602,7 @@ function SimplePastVisual({ examples }: { examples: any[] }) {
 }
 
 // Default fallback component
-function DefaultGrammarVisual({ examples, grammarType }: { examples: any[], grammarType: string }) {
+function DefaultGrammarVisual({ examples, grammarType }: { examples: GrammarSpotlightExample[]; grammarType: string }) {
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-6">
       <h3 className="text-xl font-bold text-center mb-6">{grammarType.replace(/[_]/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</h3>
@@ -606,7 +610,9 @@ function DefaultGrammarVisual({ examples, grammarType }: { examples: any[], gram
         {examples.map((example, index) => (
           <div key={index} className="bg-gray-50 border border-gray-200 rounded-lg p-4">
             <p className="text-lg mb-2" dangerouslySetInnerHTML={{ 
-              __html: example.highlighted?.replace(/\*\*(.*?)\*\*/g, '<span class="bg-yellow-200 font-bold px-1 rounded">$1</span>') 
+              __html: typeof example.highlighted === 'string'
+                ? example.highlighted.replace(/\*\*(.*?)\*\*/g, '<span class="bg-yellow-200 font-bold px-1 rounded">$1</span>')
+                : '' 
             }} />
             <p className="text-sm text-gray-600">{example.explanation}</p>
           </div>

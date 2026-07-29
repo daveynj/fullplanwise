@@ -395,6 +395,297 @@ export interface LessonSection {
 }
 
 /**
+ * An example sentence in an AI-generated grammar spotlight. Fields are
+ * optional because AI providers sometimes omit them; renderers must guard.
+ */
+export interface GrammarSpotlightExample {
+  /** The full example sentence, possibly with `**bold**` markers. */
+  sentence?: string;
+  /** The sentence (or fragment) with the grammar element wrapped in `**` markers. */
+  highlighted?: string;
+  /** Explanation of the grammar usage in this example. */
+  explanation?: string;
+  [key: string]: unknown;
+}
+
+/**
+ * Why-it-exists reasoning attached to a grammar spotlight.
+ */
+export interface GrammarLogicExplanation {
+  /** The communication need this grammar addresses. */
+  communicationNeed?: string;
+  /** How the grammar logically solves that need. */
+  logicalSolution?: string;
+  /** When/how the pattern is typically used. */
+  usagePattern?: string;
+  /** The effect this grammar has on communication. */
+  communicationImpact?: string;
+  [key: string]: unknown;
+}
+
+/** A labelled part in a grammar visual breakdown (e.g. "Subject", "Verb"). */
+export interface GrammarVisualComponentPart {
+  /** Name of the part (e.g. "Subject"). */
+  part: string;
+  /** Description of the part's role. */
+  description?: string;
+  /** Example words/phrases for this part. */
+  examples?: string[];
+  [key: string]: unknown;
+}
+
+/** A category grouping in a grammar visual (e.g. modal-verb certainty bands). */
+export interface GrammarVisualCategory {
+  /** Category name. */
+  name: string;
+  /** Description of the category. */
+  description?: string;
+  /** Words belonging to this category. */
+  words?: string[];
+  /** Example sentences for this category. */
+  examples?: string[];
+  [key: string]: unknown;
+}
+
+/** A practical example inside a grammar visual component. */
+export interface GrammarVisualExample {
+  /** The example sentence. */
+  sentence?: string;
+  /** Breakdown/explanation of the sentence. */
+  breakdown?: string;
+  /** Alternative phrasings. */
+  alternatives?: string[];
+  [key: string]: unknown;
+}
+
+/**
+ * A single component in an AI-recommended grammar visual layout, keyed by
+ * `type` (e.g. "visual_breakdown", "categories_breakdown", "main_explanation",
+ * "practical_examples").
+ */
+export interface GrammarVisualComponent {
+  /** Component discriminator (e.g. "visual_breakdown"). */
+  type: string;
+  title?: string;
+  description?: string;
+  keyPoints?: string[];
+  /** Human-readable structure summary (e.g. "have/has + past participle"). */
+  structure?: string;
+  /** Parts breakdown (for visual_breakdown components). */
+  components?: GrammarVisualComponentPart[];
+  /** Categories (for categories_breakdown components). */
+  categories?: GrammarVisualCategory[];
+  /** Practical examples (for practical_examples components). */
+  examples?: GrammarVisualExample[];
+  [key: string]: unknown;
+}
+
+/** The AI-recommended visual layout for a grammar spotlight. */
+export interface GrammarVisualLayout {
+  /** Recommended visual type (e.g. "timeline_bridge", "certainty_scale"). */
+  recommendedType?: string;
+  /** Primary color name (e.g. "blue", "purple"). */
+  primaryColor?: string;
+  /** Layout components. */
+  components?: GrammarVisualComponent[];
+  [key: string]: unknown;
+}
+
+/** A step in a step-by-step grammar visual walkthrough. */
+export interface GrammarVisualStep {
+  stepNumber?: number;
+  instruction?: string;
+  /** Provider-specific visual element data; narrow before use. */
+  visualElements?: unknown;
+  [key: string]: unknown;
+}
+
+/**
+ * The AI-generated grammar spotlight content rendered by the grammar
+ * spotlight/visual components. All fields are optional because malformed or
+ * partial AI output must not crash the lesson page; renderers must guard.
+ */
+export interface GrammarSpotlight {
+  /** Grammar concept identifier (e.g. "present_perfect", "modal_verbs"). */
+  grammarType?: string;
+  /** Display title. */
+  title?: string;
+  /** Short description of the grammar focus. */
+  description?: string;
+  /** Interactive example sentences. */
+  examples?: GrammarSpotlightExample[];
+  /** Why-this-exists reasoning steps. */
+  logicExplanation?: GrammarLogicExplanation;
+  /** AI-recommended visual layout. */
+  visualLayout?: GrammarVisualLayout;
+  /** Optional step-by-step visual walkthrough. */
+  visualSteps?: GrammarVisualStep[];
+  [key: string]: unknown;
+}
+
+// ---------------------------------------------------------------------------
+// Runtime normalization for AI-generated grammar spotlight content.
+// TypeScript types only protect at compile time; AI providers can return
+// arbitrarily malformed JSON, so renderers must normalize at the boundary.
+// ---------------------------------------------------------------------------
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function asString(value: unknown): string | undefined {
+  return typeof value === "string" ? value : undefined;
+}
+
+function asStringArray(value: unknown): string[] {
+  return Array.isArray(value)
+    ? value.filter((item): item is string => typeof item === "string")
+    : [];
+}
+
+function normalizeSpotlightExample(value: unknown): GrammarSpotlightExample | null {
+  if (typeof value === "string") {
+    // Some providers return bare example sentences.
+    return { sentence: value };
+  }
+  if (!isRecord(value)) return null;
+  return {
+    ...value,
+    sentence: asString(value.sentence),
+    highlighted: asString(value.highlighted),
+    explanation: asString(value.explanation),
+  };
+}
+
+function normalizeComponentPart(value: unknown): GrammarVisualComponentPart | null {
+  if (!isRecord(value)) return null;
+  const part = asString(value.part);
+  if (!part) return null;
+  return {
+    ...value,
+    part,
+    description: asString(value.description),
+    examples: asStringArray(value.examples),
+  };
+}
+
+function normalizeCategory(value: unknown): GrammarVisualCategory | null {
+  if (!isRecord(value)) return null;
+  const name = asString(value.name);
+  if (!name) return null;
+  return {
+    ...value,
+    name,
+    description: asString(value.description),
+    words: asStringArray(value.words),
+    examples: asStringArray(value.examples),
+  };
+}
+
+function normalizeVisualExample(value: unknown): GrammarVisualExample | null {
+  if (typeof value === "string") return { sentence: value };
+  if (!isRecord(value)) return null;
+  return {
+    ...value,
+    sentence: asString(value.sentence),
+    breakdown: asString(value.breakdown),
+    alternatives: asStringArray(value.alternatives),
+  };
+}
+
+function normalizeVisualComponent(value: unknown): GrammarVisualComponent | null {
+  if (!isRecord(value)) return null;
+  const type = asString(value.type);
+  if (!type) return null;
+  return {
+    ...value,
+    type,
+    title: asString(value.title),
+    description: asString(value.description),
+    keyPoints: asStringArray(value.keyPoints),
+    structure: asString(value.structure),
+    components: Array.isArray(value.components)
+      ? value.components
+          .map(normalizeComponentPart)
+          .filter((item): item is GrammarVisualComponentPart => item !== null)
+      : [],
+    categories: Array.isArray(value.categories)
+      ? value.categories
+          .map(normalizeCategory)
+          .filter((item): item is GrammarVisualCategory => item !== null)
+      : [],
+    examples: Array.isArray(value.examples)
+      ? value.examples
+          .map(normalizeVisualExample)
+          .filter((item): item is GrammarVisualExample => item !== null)
+      : [],
+  };
+}
+
+function normalizeVisualLayout(value: unknown): GrammarVisualLayout | undefined {
+  if (!isRecord(value)) return undefined;
+  return {
+    ...value,
+    recommendedType: asString(value.recommendedType),
+    primaryColor: asString(value.primaryColor),
+    components: Array.isArray(value.components)
+      ? value.components
+          .map(normalizeVisualComponent)
+          .filter((item): item is GrammarVisualComponent => item !== null)
+      : [],
+  };
+}
+
+function normalizeLogicExplanation(value: unknown): GrammarLogicExplanation | undefined {
+  if (!isRecord(value)) return undefined;
+  return {
+    ...value,
+    communicationNeed: asString(value.communicationNeed),
+    logicalSolution: asString(value.logicalSolution),
+    usagePattern: asString(value.usagePattern),
+    communicationImpact: asString(value.communicationImpact),
+  };
+}
+
+function normalizeVisualStep(value: unknown): GrammarVisualStep | null {
+  if (!isRecord(value)) return null;
+  return {
+    ...value,
+    stepNumber: typeof value.stepNumber === "number" ? value.stepNumber : undefined,
+    instruction: asString(value.instruction),
+    visualElements: value.visualElements,
+  };
+}
+
+/**
+ * Coerces untrusted AI grammar-spotlight output into a safe GrammarSpotlight.
+ * Invalid structures (wrong types, non-array lists, items missing required
+ * keys) are dropped or replaced with safe defaults so rendering never throws.
+ * Returns undefined when the input is not an object at all.
+ */
+export function normalizeGrammarSpotlight(input: unknown): GrammarSpotlight | undefined {
+  if (!isRecord(input)) return undefined;
+  return {
+    ...input,
+    grammarType: asString(input.grammarType),
+    title: asString(input.title),
+    description: asString(input.description),
+    examples: Array.isArray(input.examples)
+      ? input.examples
+          .map(normalizeSpotlightExample)
+          .filter((item): item is GrammarSpotlightExample => item !== null)
+      : [],
+    logicExplanation: normalizeLogicExplanation(input.logicExplanation),
+    visualLayout: normalizeVisualLayout(input.visualLayout),
+    visualSteps: Array.isArray(input.visualSteps)
+      ? input.visualSteps
+          .map(normalizeVisualStep)
+          .filter((item): item is GrammarVisualStep => item !== null)
+      : [],
+  };
+}
+
+/**
  * The parsed top-level lesson content structure rendered by lesson displays.
  * AI providers sometimes attach content under arbitrary top-level keys, so
  * an index signature is kept for detection/normalization code paths.
@@ -410,7 +701,7 @@ export interface ParsedLessonContent {
   teacherNotes?: string;
   warmUpQuestions?: string[];
   rawContent?: string;
-  grammarSpotlight?: unknown;
+  grammarSpotlight?: GrammarSpotlight;
   [key: string]: unknown;
 }
 
@@ -423,6 +714,6 @@ export interface PreviewableLesson {
   title?: string;
   cefrLevel?: string;
   content?: string | ParsedLessonContent | null;
-  grammarSpotlight?: unknown;
+  grammarSpotlight?: GrammarSpotlight;
   [key: string]: unknown;
 }

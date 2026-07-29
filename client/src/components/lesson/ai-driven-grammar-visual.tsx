@@ -14,57 +14,41 @@ import {
   CheckCircle
 } from "lucide-react";
 import { motion } from "framer-motion";
+import {
+  normalizeGrammarSpotlight,
+  type GrammarSpotlight,
+  type GrammarVisualComponent,
+} from "../../../../types/lessonContentTypes";
 
-interface AIDrivenGrammarVisualProps {
-  grammarData: {
-    grammarType: string;
-    title: string;
-    description: string;
-    examples: Array<{
-      sentence: string;
-      highlighted: string;
-      explanation: string;
-    }>;
-    visualLayout?: {
-      recommendedType: string;
-      primaryColor: string;
-      components: Array<{
-        type: string;
-        title?: string;
-        description?: string;
-        keyPoints?: string[];
-        structure?: string;
-        components?: Array<{
-          part: string;
-          description: string;
-          examples: string[];
-        }>;
-        categories?: Array<{
-          name: string;
-          description: string;
-          words: string[];
-          examples: string[];
-        }>;
-        examples?: Array<{
-          sentence: string;
-          breakdown: string;
-          alternatives: string[];
-        }>;
-      }>;
-    };
-  };
+interface ColorClasses {
+  bg: string;
+  border: string;
+  text: string;
+  accent: string;
 }
 
-export function AIDrivenGrammarVisual({ grammarData }: AIDrivenGrammarVisualProps) {
+interface VisualSectionProps {
+  components: GrammarVisualComponent[];
+  colors: ColorClasses;
+}
+
+interface AIDrivenGrammarVisualProps {
+  /** Untrusted AI-generated grammar content; normalized before rendering. */
+  grammarData: GrammarSpotlight | unknown;
+}
+
+export function AIDrivenGrammarVisual({ grammarData: rawGrammarData }: AIDrivenGrammarVisualProps) {
+  // Normalize untrusted AI content so malformed payloads can't crash rendering
+  const grammarData = normalizeGrammarSpotlight(rawGrammarData) ?? {};
   const visualLayout = grammarData.visualLayout;
-  
+
   if (!visualLayout) {
     return <FallbackVisual grammarData={grammarData} />;
   }
 
   // Map AI-specified colors to Tailwind classes
-  const getColorClasses = (color: string) => {
-    const colorMap: Record<string, any> = {
+  const getColorClasses = (color: string | undefined): ColorClasses => {
+    const colorMap: Record<string, ColorClasses> = {
       blue: {
         bg: 'bg-blue-50',
         border: 'border-blue-200',
@@ -102,30 +86,31 @@ export function AIDrivenGrammarVisual({ grammarData }: AIDrivenGrammarVisualProp
         accent: 'bg-teal-100'
       }
     };
-    return colorMap[color] || colorMap.blue;
+    return (color && colorMap[color]) || colorMap.blue;
   };
 
   const colors = getColorClasses(visualLayout.primaryColor);
 
   // Render based on AI-recommended visual type
   const renderVisualType = () => {
+    const components = Array.isArray(visualLayout.components) ? visualLayout.components : [];
     switch (visualLayout.recommendedType) {
       case 'connection_flow':
-        return <ConnectionFlowVisual components={visualLayout.components} colors={colors} />;
+        return <ConnectionFlowVisual components={components} colors={colors} />;
       case 'certainty_scale':
-        return <CertaintyScaleVisual components={visualLayout.components} colors={colors} />;
+        return <CertaintyScaleVisual components={components} colors={colors} />;
       case 'timeline_bridge':
-        return <TimelineBridgeVisual components={visualLayout.components} colors={colors} />;
+        return <TimelineBridgeVisual components={components} colors={colors} />;
       case 'decision_tree':
-        return <DecisionTreeVisual components={visualLayout.components} colors={colors} />;
+        return <DecisionTreeVisual components={components} colors={colors} />;
       case 'transformation_flow':
-        return <TransformationFlowVisual components={visualLayout.components} colors={colors} />;
+        return <TransformationFlowVisual components={components} colors={colors} />;
       case 'comparison_table':
-        return <ComparisonTableVisual components={visualLayout.components} colors={colors} />;
+        return <ComparisonTableVisual components={components} colors={colors} />;
       case 'process_steps':
-        return <ProcessStepsVisual components={visualLayout.components} colors={colors} />;
+        return <ProcessStepsVisual components={components} colors={colors} />;
       default:
-        return <GenericVisual components={visualLayout.components} colors={colors} />;
+        return <GenericVisual components={components} colors={colors} />;
     }
   };
 
@@ -144,8 +129,8 @@ export function AIDrivenGrammarVisual({ grammarData }: AIDrivenGrammarVisualProp
 }
 
 // Connection Flow Visual (for prepositions, etc.)
-function ConnectionFlowVisual({ components, colors }: any) {
-  const breakdown = components.find((c: any) => c.type === 'visual_breakdown');
+function ConnectionFlowVisual({ components, colors }: VisualSectionProps) {
+  const breakdown = components.find((c) => c.type === 'visual_breakdown');
   
   return (
     <div className="space-y-6">
@@ -153,7 +138,7 @@ function ConnectionFlowVisual({ components, colors }: any) {
         <h3 className="text-xl font-bold text-center mb-6">How This Grammar Works</h3>
         {breakdown?.components && (
           <div className="flex items-center justify-center space-x-4 flex-wrap">
-            {breakdown.components.map((part: any, index: number) => (
+            {breakdown.components.map((part, index) => (
               <React.Fragment key={part.part}>
                 {index > 0 && <ArrowRight className="h-8 w-8 text-gray-500" />}
                 <motion.div
@@ -163,7 +148,7 @@ function ConnectionFlowVisual({ components, colors }: any) {
                   className={`${colors.accent} border-2 ${colors.border} rounded-lg p-3 text-center`}
                 >
                   <span className={`font-bold ${colors.text}`}>{part.part.toUpperCase()}</span>
-                  <div className="text-sm text-gray-600">{part.examples[0]}</div>
+                  <div className="text-sm text-gray-600">{part.examples?.[0]}</div>
                 </motion.div>
               </React.Fragment>
             ))}
@@ -179,15 +164,15 @@ function ConnectionFlowVisual({ components, colors }: any) {
 }
 
 // Certainty Scale Visual (for modal verbs)
-function CertaintyScaleVisual({ components, colors }: any) {
-  const categories = components.find((c: any) => c.type === 'categories_breakdown')?.categories || [];
+function CertaintyScaleVisual({ components, colors }: VisualSectionProps) {
+  const categories = components.find((c) => c.type === 'categories_breakdown')?.categories || [];
   
   return (
     <div className="space-y-6">
       <div className={`${colors.bg} border ${colors.border} rounded-lg p-6`}>
         <h3 className="text-xl font-bold text-center mb-6">Certainty and Function Scale</h3>
         <div className="space-y-3">
-          {categories.map((category: any, index: number) => (
+          {categories.map((category, index) => (
             <motion.div
               key={category.name}
               initial={{ width: 0 }}
@@ -200,7 +185,7 @@ function CertaintyScaleVisual({ components, colors }: any) {
                   <h4 className={`font-bold ${colors.text} text-lg`}>{category.name}</h4>
                   <p className="text-gray-600 text-sm">{category.description}</p>
                   <div className="flex gap-2 mt-2">
-                    {category.words.map((word: string) => (
+                    {(category.words || []).map((word) => (
                       <Badge key={word} variant="secondary">{word}</Badge>
                     ))}
                   </div>
@@ -216,8 +201,8 @@ function CertaintyScaleVisual({ components, colors }: any) {
 }
 
 // Timeline Bridge Visual (for tenses)
-function TimelineBridgeVisual({ components, colors }: any) {
-  const breakdown = components.find((c: any) => c.type === 'visual_breakdown');
+function TimelineBridgeVisual({ components, colors }: VisualSectionProps) {
+  const breakdown = components.find((c) => c.type === 'visual_breakdown');
   
   return (
     <div className="space-y-6">
@@ -248,8 +233,8 @@ function TimelineBridgeVisual({ components, colors }: any) {
 }
 
 // Decision Tree Visual (for articles, etc.)
-function DecisionTreeVisual({ components, colors }: any) {
-  const categories = components.find((c: any) => c.type === 'categories_breakdown')?.categories || [];
+function DecisionTreeVisual({ components, colors }: VisualSectionProps) {
+  const categories = components.find((c) => c.type === 'categories_breakdown')?.categories || [];
   
   return (
     <div className="space-y-6">
@@ -263,7 +248,7 @@ function DecisionTreeVisual({ components, colors }: any) {
           </div>
           
           <div className="flex justify-center space-x-4 flex-wrap">
-            {categories.map((category: any, index: number) => (
+            {categories.map((category, index) => (
               <div key={category.name} className="text-center">
                 <ArrowDown className="h-6 w-6 text-gray-500 mx-auto mb-2" />
                 <motion.div
@@ -275,7 +260,7 @@ function DecisionTreeVisual({ components, colors }: any) {
                   <span className={`font-bold ${colors.text}`}>{category.name}</span>
                   <div className="text-sm text-gray-600 mt-1">{category.description}</div>
                   <div className="mt-2 space-y-1">
-                    {category.examples.slice(0, 2).map((example: string, i: number) => (
+                    {(category.examples || []).slice(0, 2).map((example, i) => (
                       <div key={i} className="bg-white p-2 rounded text-base">{example}</div>
                     ))}
                   </div>
@@ -290,8 +275,8 @@ function DecisionTreeVisual({ components, colors }: any) {
 }
 
 // Transformation Flow Visual (for passive voice, etc.)
-function TransformationFlowVisual({ components, colors }: any) {
-  const breakdown = components.find((c: any) => c.type === 'visual_breakdown');
+function TransformationFlowVisual({ components, colors }: VisualSectionProps) {
+  const breakdown = components.find((c) => c.type === 'visual_breakdown');
   
   return (
     <div className="space-y-6">
@@ -303,12 +288,12 @@ function TransformationFlowVisual({ components, colors }: any) {
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                 <h4 className="font-bold text-blue-800 mb-3">BEFORE</h4>
                 <div className="flex items-center justify-center space-x-2">
-                  {breakdown.components.slice(0, 3).map((part: any, index: number) => (
+                  {breakdown.components.slice(0, 3).map((part, index) => (
                     <React.Fragment key={part.part}>
                       {index > 0 && <ArrowRight className="h-4 w-4 text-blue-600" />}
                       <div className="bg-white border border-blue-300 rounded p-2 text-center">
                         <span className="font-bold text-blue-800 text-sm">{part.part}</span>
-                        <div className="text-sm text-blue-600">{part.examples[0]}</div>
+                        <div className="text-sm text-blue-600">{part.examples?.[0]}</div>
                       </div>
                     </React.Fragment>
                   ))}
@@ -323,12 +308,12 @@ function TransformationFlowVisual({ components, colors }: any) {
               <div className={`${colors.accent} border ${colors.border} rounded-lg p-4`}>
                 <h4 className={`font-bold ${colors.text} mb-3`}>AFTER</h4>
                 <div className="flex items-center justify-center space-x-2">
-                  {breakdown.components.slice(0, 3).map((part: any, index: number) => (
+                  {breakdown.components.slice(0, 3).map((part, index) => (
                     <React.Fragment key={part.part}>
                       {index > 0 && <ArrowRight className={`h-4 w-4 ${colors.text}`} />}
                       <div className={`bg-white border ${colors.border} rounded p-2 text-center`}>
                         <span className={`font-bold ${colors.text} text-sm`}>{part.part}</span>
-                        <div className="text-sm text-gray-600">{part.examples[1] || part.examples[0]}</div>
+                        <div className="text-sm text-gray-600">{part.examples?.[1] || part.examples?.[0]}</div>
                       </div>
                     </React.Fragment>
                   ))}
@@ -343,15 +328,15 @@ function TransformationFlowVisual({ components, colors }: any) {
 }
 
 // Comparison Table Visual (for conditionals, etc.)
-function ComparisonTableVisual({ components, colors }: any) {
-  const categories = components.find((c: any) => c.type === 'categories_breakdown')?.categories || [];
+function ComparisonTableVisual({ components, colors }: VisualSectionProps) {
+  const categories = components.find((c) => c.type === 'categories_breakdown')?.categories || [];
   
   return (
     <div className="space-y-6">
       <div className={`${colors.bg} border ${colors.border} rounded-lg p-6`}>
         <h3 className="text-xl font-bold text-center mb-6">Types and Uses</h3>
         <div className="space-y-3">
-          {categories.map((category: any, index: number) => (
+          {categories.map((category, index) => (
             <motion.div
               key={category.name}
               initial={{ opacity: 0, x: -20 }}
@@ -365,12 +350,12 @@ function ComparisonTableVisual({ components, colors }: any) {
                 </div>
                 <div className="text-sm text-gray-600">{category.description}</div>
                 <div className="flex gap-1 flex-wrap">
-                  {category.words.map((word: string) => (
+                  {(category.words || []).map((word) => (
                     <Badge key={word} variant="outline" className="text-lg px-2 py-1">{word}</Badge>
                   ))}
                 </div>
                 <div className="bg-white p-2 rounded text-sm italic">
-                  "{category.examples[0]}"
+                  "{category.examples?.[0]}"
                 </div>
               </div>
             </motion.div>
@@ -382,15 +367,15 @@ function ComparisonTableVisual({ components, colors }: any) {
 }
 
 // Process Steps Visual (for verb formation, etc.)
-function ProcessStepsVisual({ components, colors }: any) {
-  const breakdown = components.find((c: any) => c.type === 'visual_breakdown');
+function ProcessStepsVisual({ components, colors }: VisualSectionProps) {
+  const breakdown = components.find((c) => c.type === 'visual_breakdown');
   
   return (
     <div className="space-y-6">
       <div className={`${colors.bg} border ${colors.border} rounded-lg p-6`}>
         <h3 className="text-xl font-bold text-center mb-6">Step-by-Step Process</h3>
         <div className="space-y-4">
-          {breakdown?.components?.map((step: any, index: number) => (
+          {breakdown?.components?.map((step, index) => (
             <motion.div
               key={step.part}
               initial={{ opacity: 0, y: 20 }}
@@ -405,7 +390,7 @@ function ProcessStepsVisual({ components, colors }: any) {
                 <h4 className={`font-bold ${colors.text}`}>{step.part}</h4>
                 <p className="text-gray-600 text-sm">{step.description}</p>
                 <div className="flex gap-2 mt-1">
-                  {step.examples.slice(0, 3).map((example: string, i: number) => (
+                  {(step.examples || []).slice(0, 3).map((example, i) => (
                     <Badge key={i} variant="secondary" className="text-base px-2 py-1">{example}</Badge>
                   ))}
                 </div>
@@ -419,7 +404,7 @@ function ProcessStepsVisual({ components, colors }: any) {
 }
 
 // Generic fallback visual
-function GenericVisual({ components, colors }: any) {
+function GenericVisual({ components, colors }: VisualSectionProps) {
   return (
     <div className="space-y-6">
       <MainExplanationSection components={components} colors={colors} />
@@ -430,8 +415,8 @@ function GenericVisual({ components, colors }: any) {
 }
 
 // Reusable sections
-function MainExplanationSection({ components, colors }: any) {
-  const explanation = components.find((c: any) => c.type === 'main_explanation');
+function MainExplanationSection({ components, colors }: VisualSectionProps) {
+  const explanation = components.find((c) => c.type === 'main_explanation');
   
   if (!explanation) return null;
   
@@ -441,7 +426,7 @@ function MainExplanationSection({ components, colors }: any) {
       <p className="text-gray-700 text-center mb-4">{explanation.description}</p>
       {explanation.keyPoints && (
         <div className="space-y-2">
-          {explanation.keyPoints.map((point: string, index: number) => (
+          {explanation.keyPoints.map((point, index) => (
             <div key={index} className="flex items-center space-x-2">
               <CheckCircle className={`h-4 w-4 ${colors.text}`} />
               <span className="text-sm">{point}</span>
@@ -453,14 +438,14 @@ function MainExplanationSection({ components, colors }: any) {
   );
 }
 
-function CategoriesSection({ components, colors }: any) {
-  const categoriesData = components.find((c: any) => c.type === 'categories_breakdown');
+function CategoriesSection({ components, colors }: VisualSectionProps) {
+  const categoriesData = components.find((c) => c.type === 'categories_breakdown');
   
   if (!categoriesData?.categories) return null;
   
   return (
     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {categoriesData.categories.map((category: any, index: number) => (
+      {categoriesData.categories.map((category, index) => (
         <motion.div
           key={category.name}
           initial={{ opacity: 0, y: 20 }}
@@ -471,7 +456,7 @@ function CategoriesSection({ components, colors }: any) {
           <h4 className={`font-bold ${colors.text} mb-2`}>{category.name}</h4>
           <p className="text-sm text-gray-600 mb-3">{category.description}</p>
           <div className="flex flex-wrap gap-2 mb-3">
-            {category.words.map((word: string) => (
+            {(category.words || []).map((word) => (
               <Badge key={word} variant="secondary" className="bg-white text-gray-800 text-lg px-3 py-1">
                 {word}
               </Badge>
@@ -479,7 +464,7 @@ function CategoriesSection({ components, colors }: any) {
           </div>
           {category.examples && (
             <div className="space-y-1">
-              {category.examples.slice(0, 2).map((example: string, i: number) => (
+              {category.examples.slice(0, 2).map((example, i) => (
                 <div key={i} className="bg-white p-3 rounded text-base italic">
                   {example}
                 </div>
@@ -492,8 +477,8 @@ function CategoriesSection({ components, colors }: any) {
   );
 }
 
-function FormulaSection({ components, colors }: any) {
-  const breakdown = components.find((c: any) => c.type === 'visual_breakdown');
+function FormulaSection({ components, colors }: VisualSectionProps) {
+  const breakdown = components.find((c) => c.type === 'visual_breakdown');
   
   if (!breakdown) return null;
   
@@ -501,7 +486,7 @@ function FormulaSection({ components, colors }: any) {
     <div className={`${colors.bg} border ${colors.border} rounded-lg p-6`}>
       <h3 className="text-xl font-bold text-center mb-6">Grammar Formula</h3>
       <div className="flex items-center justify-center space-x-4 text-lg flex-wrap">
-        {breakdown.components?.map((component: any, index: number) => (
+        {breakdown.components?.map((component, index) => (
           <React.Fragment key={component.part}>
             {index > 0 && <span className="text-2xl font-bold text-gray-600">+</span>}
             <div className={`bg-white border-2 ${colors.border} rounded-lg p-3 text-center`}>
@@ -515,8 +500,8 @@ function FormulaSection({ components, colors }: any) {
   );
 }
 
-function ExamplesSection({ components, colors }: any) {
-  const examples = components.find((c: any) => c.type === 'practical_examples');
+function ExamplesSection({ components, colors }: VisualSectionProps) {
+  const examples = components.find((c) => c.type === 'practical_examples');
   
   if (!examples?.examples) return null;
   
@@ -524,7 +509,7 @@ function ExamplesSection({ components, colors }: any) {
     <div className={`${colors.bg} border ${colors.border} rounded-lg p-6`}>
       <h3 className="text-xl font-bold text-center mb-6">{examples.title || 'Examples'}</h3>
       <div className="space-y-4">
-        {examples.examples.map((example: any, index: number) => (
+        {examples.examples.map((example, index) => (
           <motion.div
             key={index}
             initial={{ opacity: 0, x: -20 }}
@@ -547,15 +532,15 @@ function ExamplesSection({ components, colors }: any) {
 }
 
 // Fallback for when no visual layout is provided
-function FallbackVisual({ grammarData }: any) {
+function FallbackVisual({ grammarData }: { grammarData: GrammarSpotlight }) {
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-6">
       <h3 className="text-xl font-bold text-center mb-6">{grammarData.title}</h3>
       <div className="space-y-4">
-        {grammarData.examples.map((example: any, index: number) => (
+        {(grammarData.examples || []).map((example, index) => (
           <div key={index} className="bg-gray-50 border border-gray-200 rounded-lg p-4">
             <p className="text-lg mb-2" dangerouslySetInnerHTML={{ 
-              __html: example.highlighted?.replace(/\*\*(.*?)\*\*/g, '<span class="bg-yellow-200 font-bold px-1 rounded">$1</span>') 
+              __html: example.highlighted?.replace(/\*\*(.*?)\*\*/g, '<span class="bg-yellow-200 font-bold px-1 rounded">$1</span>') ?? '' 
             }} />
             <p className="text-sm text-gray-600">{example.explanation}</p>
           </div>

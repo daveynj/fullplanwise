@@ -9,9 +9,15 @@ import { EnhancedDecisionTree } from './enhanced-decision-tree';
 import { EnhancedPatternRecognition } from './enhanced-pattern-recognition';
 import { EnhancedTimelineConnection } from './enhanced-timeline-connection';
 import { EnhancedTransformation } from './enhanced-transformation';
+import {
+  normalizeGrammarSpotlight,
+  type GrammarSpotlight as GrammarSpotlightData,
+  type GrammarSpotlightExample,
+} from '../../../../types/lessonContentTypes';
 
 interface GrammarSpotlightProps {
-  grammarData: any;
+  /** Untrusted AI-generated grammar content; normalized before rendering. */
+  grammarData: GrammarSpotlightData | unknown;
   onSkip?: () => void;
   onComplete?: () => void;
 }
@@ -21,14 +27,17 @@ export function GrammarSpotlight({ grammarData, onSkip, onComplete }: GrammarSpo
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set());
   const [selectedExample, setSelectedExample] = useState<number>(0);
   const [highlightedPart, setHighlightedPart] = useState<string>('');
-  
-  // Use AI-generated content directly
-  const grammarType = grammarData?.grammarType || 'grammar_concept';
-  const title = grammarData?.title || 'Grammar Focus';
-  const description = grammarData?.description || '';
-  const examples = grammarData?.examples || [];
-  const logicExplanation = grammarData?.logicExplanation || {};
-  const visualLayout = grammarData?.visualLayout || {};
+
+  // Normalize untrusted AI content so malformed payloads can't crash rendering
+  const data = normalizeGrammarSpotlight(grammarData);
+  const grammarType = data?.grammarType || 'grammar_concept';
+  const title = data?.title || 'Grammar Focus';
+  const description = data?.description || '';
+  const examples: GrammarSpotlightExample[] = data?.examples || [];
+  const logicExplanation: NonNullable<GrammarSpotlightData['logicExplanation']> =
+    data?.logicExplanation || {};
+  const visualLayout: NonNullable<GrammarSpotlightData['visualLayout']> =
+    data?.visualLayout || {};
 
   // Create progressive steps from AI content
   const progressiveSteps = [
@@ -121,7 +130,7 @@ export function GrammarSpotlight({ grammarData, onSkip, onComplete }: GrammarSpo
     }
   };
 
-  const renderInteractiveExample = (example: any, index: number) => {
+  const renderInteractiveExample = (example: GrammarSpotlightExample, index: number) => {
     if (!example.sentence) return null;
     
     const highlighted = example.highlighted || '';
@@ -283,7 +292,7 @@ export function GrammarSpotlight({ grammarData, onSkip, onComplete }: GrammarSpo
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {examples.map((example: any, index: number) => renderInteractiveExample(example, index))}
+            {examples.map((example, index) => renderInteractiveExample(example, index))}
           </CardContent>
         </Card>
       )}
