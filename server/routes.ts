@@ -601,11 +601,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Lesson not found" });
       }
 
-      // Parse grammarSpotlight JSON if it exists (with error handling)
+      // Parse and validate grammarSpotlight JSON if it exists. Legacy lessons
+      // may contain malformed payloads stored before generation-time
+      // validation was added; validate on read so they never render as
+      // empty/broken grammar sections.
       let grammarSpotlight = null;
       if (lesson.grammarSpotlight) {
         try {
-          grammarSpotlight = JSON.parse(lesson.grammarSpotlight);
+          const parsed = JSON.parse(lesson.grammarSpotlight);
+          grammarSpotlight = validateGrammarSpotlightForStorage(parsed) ?? null;
+          if (!grammarSpotlight) {
+            console.warn(`Dropping invalid legacy grammarSpotlight for lesson ${lessonId}`);
+          }
         } catch (parseError) {
           console.warn(`Failed to parse grammarSpotlight for lesson ${lessonId}:`, parseError);
         }
