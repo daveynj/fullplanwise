@@ -144,6 +144,23 @@ function parseIdParam(raw: string): number | null {
   return Number.isSafeInteger(n) ? n : null;
 }
 
+// Parses a numeric query parameter safely. Returns the fallback when the raw
+// value is missing or not a plain positive integer, and clamps the result to
+// [min, max] so bad values (NaN, negatives, huge numbers) never reach the DB.
+function parseQueryInt(
+  raw: unknown,
+  fallback: number,
+  min: number = 1,
+  max: number = Number.MAX_SAFE_INTEGER
+): number {
+  if (typeof raw !== 'string' || !/^\d+$/.test(raw)) return fallback;
+  const n = parseInt(raw, 10);
+  if (!Number.isSafeInteger(n)) return fallback;
+  return Math.min(max, Math.max(min, n));
+}
+
+const MAX_PAGE_SIZE = 100;
+
 export async function registerRoutes(app: Express): Promise<Server> {
   // Dynamic AI service loader - using only Gemini for reliable lesson generation
   let openRouterService: any = null;
@@ -449,7 +466,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (studentId === null) {
         return res.status(404).json({ message: "Not found" });
       }
-      const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
+      const limit = req.query.limit !== undefined ? parseQueryInt(req.query.limit, 50, 1, 500) : undefined;
 
       const student = await storage.getStudent(studentId);
       if (!student || student.teacherId !== req.user!.id) {
@@ -482,8 +499,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/lessons", ensureAuthenticated, async (req, res) => {
     try {
       // Get pagination parameters from query string with defaults
-      const page = parseInt(req.query.page as string) || 1;
-      const pageSize = parseInt(req.query.pageSize as string) || 10;
+      const page = parseQueryInt(req.query.page, 1);
+      const pageSize = parseQueryInt(req.query.pageSize, 10, 1, MAX_PAGE_SIZE);
 
       // Get filter parameters from query string
       const search = req.query.search as string || '';
@@ -513,7 +530,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (process.env.NODE_ENV === 'production') {
         try {
           // Allow admin to view other users' lessons via teacherId parameter
-          const teacherId = req.query.teacherId ? parseInt(req.query.teacherId as string) : req.user!.id;
+          const rawTeacherId = req.query.teacherId;
+          let teacherId = req.user!.id;
+          if (rawTeacherId !== undefined) {
+            const parsed = typeof rawTeacherId === 'string' ? parseIdParam(rawTeacherId) : null;
+            if (parsed === null) {
+              return res.status(400).json({ message: "Invalid teacherId parameter" });
+            }
+            teacherId = parsed;
+          }
 
           // Only allow viewing other users' lessons if the requester is admin
           if (teacherId !== req.user!.id && !req.user!.isAdmin) {
@@ -579,7 +604,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       } else {
         // Allow admin to view other users' lessons via teacherId parameter
-        const teacherId = req.query.teacherId ? parseInt(req.query.teacherId as string) : req.user!.id;
+        const rawTeacherId = req.query.teacherId;
+        let teacherId = req.user!.id;
+        if (rawTeacherId !== undefined) {
+          const parsed = typeof rawTeacherId === 'string' ? parseIdParam(rawTeacherId) : null;
+          if (parsed === null) {
+            return res.status(400).json({ message: "Invalid teacherId parameter" });
+          }
+          teacherId = parsed;
+        }
 
         // Only allow viewing other users' lessons if the requester is admin
         if (teacherId !== req.user!.id && !req.user!.isAdmin) {
@@ -1687,8 +1720,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Unauthorized. Admin privileges required." });
       }
 
-      const page = parseInt(req.query.page as string) || 1;
-      const pageSize = parseInt(req.query.pageSize as string) || 20;
+      const page = parseQueryInt(req.query.page, 1);
+      const pageSize = parseQueryInt(req.query.pageSize, 20, 1, MAX_PAGE_SIZE);
       const search = req.query.search as string || '';
       const category = req.query.category as string || 'all';
       const cefrLevel = req.query.cefrLevel as string || 'all';
@@ -1792,8 +1825,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Public library endpoints
   app.get("/api/public-lessons", ensureAuthenticated, async (req, res) => {
     try {
-      const page = parseInt(req.query.page as string) || 1;
-      const pageSize = parseInt(req.query.pageSize as string) || 20;
+      const page = parseQueryInt(req.query.page, 1);
+      const pageSize = parseQueryInt(req.query.pageSize, 20, 1, MAX_PAGE_SIZE);
       const search = req.query.search as string || '';
       const cefrLevel = req.query.cefrLevel as string || 'all';
       const category = req.query.category as string || 'all';
@@ -1898,8 +1931,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Parse query parameters
-      const page = req.query.page ? parseInt(req.query.page as string) : 1;
-      const pageSize = req.query.pageSize ? parseInt(req.query.pageSize as string) : 10;
+      const page = parseQueryInt(req.query.page, 1);
+      const pageSize = parseQueryInt(req.query.pageSize, 10, 1, MAX_PAGE_SIZE);
       const search = req.query.search as string || undefined;
       const dateFilter = req.query.dateFilter as string || undefined;
 
@@ -1983,8 +2016,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Public route to get all blog posts (only published posts)
   app.get("/api/blog/posts", async (req, res) => {
     try {
-      const page = parseInt(req.query.page as string) || 1;
-      const pageSize = parseInt(req.query.pageSize as string) || 20;
+      const page = parseQueryInt(req.query.page, 1);
+      const pageSize = parseQueryInt(req.query.pageSize, 20, 1, MAX_PAGE_SIZE);
       const category = req.query.category as string | undefined;
       const featured = req.query.featured === 'true' ? true : req.query.featured === 'false' ? false : undefined;
 
@@ -2037,8 +2070,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Unauthorized. Admin privileges required." });
       }
 
-      const page = parseInt(req.query.page as string) || 1;
-      const pageSize = parseInt(req.query.pageSize as string) || 100;
+      const page = parseQueryInt(req.query.page, 1);
+      const pageSize = parseQueryInt(req.query.pageSize, 100, 1, 200);
 
       // Admin gets ALL posts regardless of publication status
       const result = await storage.getAllBlogPosts(page, pageSize, undefined, undefined, undefined);
