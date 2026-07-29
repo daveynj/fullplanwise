@@ -135,6 +135,15 @@ setInterval(() => {
   }
 }, 10 * 60 * 1000);
 
+// Parses a numeric route param strictly. Returns null when the raw value is
+// not a plain non-negative integer (e.g. "abc", "12abc", "1e5", huge values),
+// so routes can reject bad IDs before touching the database.
+function parseIdParam(raw: string): number | null {
+  if (!/^\d+$/.test(raw)) return null;
+  const n = parseInt(raw, 10);
+  return Number.isSafeInteger(n) ? n : null;
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
   // Dynamic AI service loader - using only Gemini for reliable lesson generation
   let openRouterService: any = null;
@@ -256,7 +265,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/students/:id", ensureAuthenticated, async (req, res) => {
     try {
-      const student = await storage.getStudent(parseInt(req.params.id));
+      const studentId = parseIdParam(req.params.id);
+      if (studentId === null) {
+        return res.status(404).json({ message: "Student not found" });
+      }
+      const student = await storage.getStudent(studentId);
       if (!student) {
         return res.status(404).json({ message: "Student not found" });
       }
@@ -287,7 +300,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.put("/api/students/:id", ensureAuthenticated, async (req, res) => {
     try {
-      const studentId = parseInt(req.params.id);
+      const studentId = parseIdParam(req.params.id);
+      if (studentId === null) {
+        return res.status(404).json({ message: "Not found" });
+      }
       const existingStudent = await storage.getStudent(studentId);
 
       if (!existingStudent) {
@@ -307,7 +323,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete("/api/students/:id", ensureAuthenticated, async (req, res) => {
     try {
-      const studentId = parseInt(req.params.id);
+      const studentId = parseIdParam(req.params.id);
+      if (studentId === null) {
+        return res.status(404).json({ message: "Not found" });
+      }
       const student = await storage.getStudent(studentId);
 
       if (!student) {
@@ -328,7 +347,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Student-Lesson Association Routes
   app.post("/api/students/:id/lessons", ensureAuthenticated, async (req, res) => {
     try {
-      const studentId = parseInt(req.params.id);
+      const studentId = parseIdParam(req.params.id);
+      if (studentId === null) {
+        return res.status(404).json({ message: "Not found" });
+      }
       const { lessonId, notes } = req.body;
 
       const student = await storage.getStudent(studentId);
@@ -356,7 +378,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/students/:id/lessons", ensureAuthenticated, async (req, res) => {
     try {
-      const studentId = parseInt(req.params.id);
+      const studentId = parseIdParam(req.params.id);
+      if (studentId === null) {
+        return res.status(404).json({ message: "Not found" });
+      }
 
       const student = await storage.getStudent(studentId);
       if (!student || student.teacherId !== req.user!.id) {
@@ -373,8 +398,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Delete lesson assignment by assignment ID (prevents duplicate deletion)
   app.delete("/api/students/:studentId/lessons/assignment/:assignmentId", ensureAuthenticated, async (req, res) => {
     try {
-      const studentId = parseInt(req.params.studentId);
-      const assignmentId = parseInt(req.params.assignmentId);
+      const studentId = parseIdParam(req.params.studentId);
+      if (studentId === null) {
+        return res.status(404).json({ message: "Not found" });
+      }
+      const assignmentId = parseIdParam(req.params.assignmentId);
+      if (assignmentId === null) {
+        return res.status(404).json({ message: "Not found" });
+      }
 
       const student = await storage.getStudent(studentId);
       if (!student || student.teacherId !== req.user!.id) {
@@ -391,8 +422,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Legacy endpoint - kept for backward compatibility
   app.delete("/api/students/:studentId/lessons/:lessonId", ensureAuthenticated, async (req, res) => {
     try {
-      const studentId = parseInt(req.params.studentId);
-      const lessonId = parseInt(req.params.lessonId);
+      const studentId = parseIdParam(req.params.studentId);
+      if (studentId === null) {
+        return res.status(404).json({ message: "Not found" });
+      }
+      const lessonId = parseIdParam(req.params.lessonId);
+      if (lessonId === null) {
+        return res.status(404).json({ message: "Not found" });
+      }
 
       const student = await storage.getStudent(studentId);
       if (!student || student.teacherId !== req.user!.id) {
@@ -408,7 +445,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/students/:id/vocabulary", ensureAuthenticated, async (req, res) => {
     try {
-      const studentId = parseInt(req.params.id);
+      const studentId = parseIdParam(req.params.id);
+      if (studentId === null) {
+        return res.status(404).json({ message: "Not found" });
+      }
       const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
 
       const student = await storage.getStudent(studentId);
@@ -425,7 +465,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.put("/api/students/lessons/:id/status", ensureAuthenticated, async (req, res) => {
     try {
-      const id = parseInt(req.params.id);
+      const id = parseIdParam(req.params.id);
+      if (id === null) {
+        return res.status(404).json({ message: "Not found" });
+      }
       const { status } = req.body;
 
       const updated = await storage.updateStudentLessonStatus(id, status);
@@ -599,8 +642,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/lessons/:id", async (req, res) => {
     try {
-      const lessonId = parseInt(req.params.id, 10);
-      if (!/^\d+$/.test(req.params.id) || !Number.isSafeInteger(lessonId)) {
+      const lessonId = parseIdParam(req.params.id);
+      if (lessonId === null) {
         return res.status(404).json({ message: "Lesson not found" });
       }
       console.log(`Fetching lesson ${lessonId} for public access`);
@@ -653,7 +696,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/lessons/student/:studentId", ensureAuthenticated, async (req, res) => {
     try {
-      const studentId = parseInt(req.params.studentId);
+      const studentId = parseIdParam(req.params.studentId);
+      if (studentId === null) {
+        return res.status(404).json({ message: "Not found" });
+      }
       const student = await storage.getStudent(studentId);
 
       if (!student) {
@@ -983,7 +1029,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Assign lesson to student (PUT /api/lessons/:id/assign)
   app.put("/api/lessons/:id/assign", ensureAuthenticated, async (req, res) => {
     try {
-      const lessonId = parseInt(req.params.id);
+      const lessonId = parseIdParam(req.params.id);
+      if (lessonId === null) {
+        return res.status(404).json({ message: "Not found" });
+      }
       const { studentId } = req.body;
 
       if (!studentId) {
@@ -1025,7 +1074,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Update lesson category (PATCH /api/lessons/:id)
   app.patch("/api/lessons/:id", ensureAuthenticated, async (req, res) => {
     try {
-      const lessonId = parseInt(req.params.id);
+      const lessonId = parseIdParam(req.params.id);
+      if (lessonId === null) {
+        return res.status(404).json({ message: "Not found" });
+      }
       const lesson = await storage.getLesson(lessonId);
 
       if (!lesson) {
@@ -1051,7 +1103,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete("/api/lessons/:id", ensureAuthenticated, async (req, res) => {
     try {
-      const lessonId = parseInt(req.params.id);
+      const lessonId = parseIdParam(req.params.id);
+      if (lessonId === null) {
+        return res.status(404).json({ message: "Not found" });
+      }
       const lesson = await storage.getLesson(lessonId);
 
       if (!lesson) {
@@ -1072,7 +1127,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get deletion info for a lesson (check assignments before deleting)
   app.get("/api/lessons/:id/deletion-info", ensureAuthenticated, async (req, res) => {
     try {
-      const lessonId = parseInt(req.params.id);
+      const lessonId = parseIdParam(req.params.id);
+      if (lessonId === null) {
+        return res.status(404).json({ message: "Not found" });
+      }
       const lesson = await storage.getLesson(lessonId);
 
       if (!lesson) {
@@ -1093,7 +1151,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Delete lesson with vocabulary strategy choice
   app.post("/api/lessons/:id/delete-with-strategy", ensureAuthenticated, async (req, res) => {
     try {
-      const lessonId = parseInt(req.params.id);
+      const lessonId = parseIdParam(req.params.id);
+      if (lessonId === null) {
+        return res.status(404).json({ message: "Not found" });
+      }
       const { strategy } = req.body;
 
       // Validate strategy
@@ -1127,8 +1188,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Generate vocabulary review PDF for a lesson
   app.get("/api/lessons/:id/pdf", async (req, res) => {
     try {
-      const lessonId = parseInt(req.params.id, 10);
-      if (!/^\d+$/.test(req.params.id) || !Number.isSafeInteger(lessonId)) {
+      const lessonId = parseIdParam(req.params.id);
+      if (lessonId === null) {
         return res.status(404).json({ message: "Lesson not found" });
       }
       const lesson = await storage.getLesson(lessonId);
@@ -1221,7 +1282,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Assign a lesson to a student
   app.put("/api/lessons/:id/assign", ensureAuthenticated, async (req, res) => {
     try {
-      const lessonId = parseInt(req.params.id);
+      const lessonId = parseIdParam(req.params.id);
+      if (lessonId === null) {
+        return res.status(404).json({ message: "Not found" });
+      }
       const { studentId } = z.object({ studentId: z.number().int() }).parse(req.body);
 
       // Check if lesson exists
@@ -1259,7 +1323,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Unassign a lesson from a student
   app.put("/api/lessons/:id/unassign", ensureAuthenticated, async (req, res) => {
     try {
-      const lessonId = parseInt(req.params.id);
+      const lessonId = parseIdParam(req.params.id);
+      if (lessonId === null) {
+        return res.status(404).json({ message: "Not found" });
+      }
 
       // Check if lesson exists
       const lesson = await storage.getLesson(lessonId);
@@ -1741,8 +1808,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/lessons/:id/copy", async (req, res) => {
     try {
-      const lessonId = parseInt(req.params.id, 10);
-      if (!/^\d+$/.test(req.params.id) || !Number.isSafeInteger(lessonId)) {
+      const lessonId = parseIdParam(req.params.id);
+      if (lessonId === null) {
         return res.status(404).json({ message: "Lesson not found" });
       }
 
@@ -1797,7 +1864,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Unauthorized. Admin privileges required." });
       }
 
-      const lessonId = parseInt(req.params.id);
+      const lessonId = parseIdParam(req.params.id);
+
+      if (lessonId === null) {
+
+        return res.status(404).json({ message: "Not found" });
+
+      }
       const { publicCategory } = req.body;
 
       console.log('Making lesson public:', { lessonId, publicCategory });
@@ -1927,7 +2000,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Public route to get a single blog post by ID
   app.get("/api/blog/posts/:id", async (req, res) => {
     try {
-      const post = await storage.getBlogPost(parseInt(req.params.id));
+      const postId = parseIdParam(req.params.id);
+      if (postId === null) {
+        return res.status(404).json({ message: "Blog post not found" });
+      }
+      const post = await storage.getBlogPost(postId);
       if (!post) {
         return res.status(404).json({ message: "Blog post not found" });
       }
@@ -2052,7 +2129,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Unauthorized. Admin privileges required." });
       }
 
-      const postId = parseInt(req.params.id);
+      const postId = parseIdParam(req.params.id);
+
+      if (postId === null) {
+
+        return res.status(404).json({ message: "Not found" });
+
+      }
       const existingPost = await storage.getBlogPost(postId);
       if (!existingPost) {
         return res.status(404).json({ message: "Blog post not found" });
@@ -2088,7 +2171,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Unauthorized. Admin privileges required." });
       }
 
-      const postId = parseInt(req.params.id);
+      const postId = parseIdParam(req.params.id);
+
+      if (postId === null) {
+
+        return res.status(404).json({ message: "Not found" });
+
+      }
       const existingPost = await storage.getBlogPost(postId);
       if (!existingPost) {
         return res.status(404).json({ message: "Blog post not found" });
