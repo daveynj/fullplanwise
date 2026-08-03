@@ -262,7 +262,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         trialDaysRemaining,
         trialExpiresAt: user.trialExpiresAt,
         freeCreditsRemaining: user.freeCreditsRemaining ?? 0,
-        canGenerateLessons: isSubscriber || globalTrialActive || (user.freeCreditsRemaining ?? 0) > 0
+        canGenerateLessons: isSubscriber || globalTrialActive || !!isInPersonalTrial || (user.freeCreditsRemaining ?? 0) > 0
       });
     } catch (error: any) {
       console.error('Error fetching trial status:', error);
@@ -859,10 +859,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // requests cannot overspend. The credit is refunded if generation fails.
       let creditSpent = false;
 
-      if (!user.isAdmin && !isSubscriber && !freeTrialActive) {
+      // Anyone inside an active trial window generates unlimited lessons —
+      // no credit is spent until the trial expires.
+      if (!user.isAdmin && !isSubscriber && !freeTrialActive && !isInPersonalTrial) {
         creditSpent = await storage.tryDecrementUserCredits(user.id);
         if (creditSpent) {
-          console.log(`User ${user.id} spent 1 credit${isInPersonalTrial ? ' during trial period' : ''}`);
+          console.log(`User ${user.id} spent 1 credit`);
         } else {
           releaseReservation();
           return res.status(402).json({

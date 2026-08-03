@@ -53,7 +53,7 @@ export const hero = {
   primaryCta: 'Start Your Transformation',
   secondaryCta: 'Explore Features',
   noCardNote: 'No credit card required',
-  freeLessonsNote: '5 free lessons',
+  freeLessonsNote: '5-day free trial',
   previewTitle: 'AI-Generated Lessons in Minutes',
   previewText: 'Complete lessons with reading, vocabulary, activities, and assessments.',
   videoUrl: 'https://www.youtube.com/embed/pcLlwL5sNK0',
@@ -150,7 +150,7 @@ export const pricing = {
       features: [
         'Access your saved lessons',
         'Explore the public lesson library',
-        'Full access during the limited-time free trial',
+        'Full access during your 5-day free trial',
       ],
       cta: 'Get Started',
       ctaHref: '/auth?register=true',
@@ -202,7 +202,7 @@ export const finalCta = {
   lead: 'Stop spending 3+ hours per lesson on preparation. Start teaching more and planning less.',
   leadEmphasis: '3+ hours per lesson',
   cta: 'Get Started for Free',
-  freeLessonsNote: '5 free lessons included',
+  freeLessonsNote: '5-day free trial included',
 };
 
 export const faq = {
@@ -256,7 +256,7 @@ export const faq = {
       answer: [
         {
           type: 'text',
-          text: 'Yes! Every new account includes 5 free lesson generations. No credit card required. This lets you experience how PlanwiseESL can transform your teaching before making any commitment.',
+          text: 'Yes! Every new account includes 5 days of unlimited lesson generation. No credit card required. This lets you experience how PlanwiseESL can transform your teaching before making any commitment. Once your trial ends, simply subscribe to keep generating lessons.',
         },
       ] as FaqAnswerPart[],
     },

@@ -128,9 +128,10 @@ export class DatabaseStorage implements IStorage {
 
   async createUser(insertUser: InsertUser): Promise<User> {
     try {
-      // Calculate trial expiry date (7 days from now)
+      // Calculate trial expiry date (5 days from now) — new accounts get
+      // unlimited lesson generation until this date.
       const trialExpiresAt = new Date();
-      trialExpiresAt.setDate(trialExpiresAt.getDate() + 7);
+      trialExpiresAt.setDate(trialExpiresAt.getDate() + 5);
 
       // Ensure default values are set
       const userToInsert = {
@@ -138,8 +139,8 @@ export class DatabaseStorage implements IStorage {
         fullName: insertUser.fullName || insertUser.username,
         isAdmin: false,
         subscriptionTier: "free",
-        freeCreditsRemaining: 2,  // 2 free lessons after trial ends
-        trialExpiresAt  // 7-day trial period
+        freeCreditsRemaining: 0,  // hard paywall after the trial — applies to new accounts only
+        trialExpiresAt  // 5-day unlimited trial for new signups
       };
 
       const [user] = await db.insert(users).values(userToInsert).returning();

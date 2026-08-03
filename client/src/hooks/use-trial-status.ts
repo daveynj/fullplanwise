@@ -27,7 +27,7 @@ async function fetchTrialStatus(): Promise<TrialStatus> {
  * Hook to fetch the current user's trial status and remaining credits.
  * Returns information about:
  * - Whether the user is a subscriber (unlimited tier)
- * - Whether the user is in their 7-day trial period
+ * - Whether the user is in their 5-day trial period
  * - How many free lesson credits remain
  * - Whether the user can generate lessons
  */
