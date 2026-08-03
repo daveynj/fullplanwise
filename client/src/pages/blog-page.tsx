@@ -185,9 +185,9 @@ export default function BlogPage() {
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
-                <Link href="/blog/14">
+                <Link href="/blog">
                   <Button variant="outline" className="border-blue-300 text-blue-700 hover:bg-blue-50">
-                    Read My Full Story
+                    Explore More Articles
                   </Button>
                 </Link>
               </div>
@@ -403,9 +403,9 @@ export default function BlogPage() {
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
-              <Link href="/blog/14">
+              <Link href="/blog">
                 <Button variant="outline" size="lg">
-                  Read Dave's Full Story
+                  Browse All Articles
                 </Button>
               </Link>
             </div>

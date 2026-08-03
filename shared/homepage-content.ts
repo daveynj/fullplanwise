@@ -245,7 +245,7 @@ export const faq = {
         },
         {
           type: 'link',
-          href: '/blog/19',
+          href: '/blog/45',
           text: 'Discover specialized niche ESL content generation',
         },
         { type: 'text', text: '.' },
@@ -278,7 +278,6 @@ export const footer = {
   quickLinks: [
     { label: 'Start Free Trial', href: '/auth' },
     { label: 'ESL Teaching Blog', href: '/blog' },
-    { label: "Dave's Story", href: '/blog/14' },
   ],
   aboutItems: ['Created by ESL Teacher', 'CEFR-Aligned Content', '15+ Hours Saved Weekly'],
   social: {
