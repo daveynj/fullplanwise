@@ -265,14 +265,8 @@ export const faq = {
       answer: [
         {
           type: 'text',
-          text: 'You can buy credits as needed or choose a subscription. Monthly plans start at just 20 credits for basic users, or you can save with our annual plan at $199/year for 250 credits (about $0.80 per lesson). Since most teachers save 15+ hours weekly, it pays for itself immediately. ',
+          text: 'After your 5-day free trial, the Unlimited plan is $19.99/month for unlimited AI lesson generations, and you can cancel anytime. Since most teachers save 15+ hours weekly, it pays for itself immediately.',
         },
-        {
-          type: 'link',
-          href: '/blog/16',
-          text: 'Read how teachers cut prep time by 90%',
-        },
-        { type: 'text', text: '.' },
       ] as FaqAnswerPart[],
     },
   ],
