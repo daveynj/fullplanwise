@@ -4,16 +4,14 @@ import { setupVite, serveStatic, log } from "./vite";
 import { runMigrations } from 'stripe-replit-sync';
 import { getStripeSync } from './stripeClient';
 import { WebhookHandlers } from './webhookHandlers';
+import { resolveDatabaseConfig } from './database-url';
+import { databaseConfig, pool } from './db';
+import { verifyManagedDatabaseCutover } from './database-cutover';
 
 const app = express();
 
 async function initStripe() {
-  const databaseUrl = process.env.NEON_DATABASE_URL || process.env.DATABASE_URL;
-
-  if (!databaseUrl || databaseUrl === 'helium') {
-    console.warn('Valid database URL not found - Stripe sync features will be limited');
-    return;
-  }
+  const { connectionString: databaseUrl } = resolveDatabaseConfig();
 
   const replitDomains = process.env.REPLIT_DOMAINS;
   if (!replitDomains) {
@@ -57,8 +55,6 @@ async function initStripe() {
     console.error('Failed to initialize Stripe:', error);
   }
 }
-
-initStripe();
 
 app.post(
   '/api/stripe/webhook',
@@ -130,6 +126,8 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  await verifyManagedDatabaseCutover(pool, databaseConfig);
+  await initStripe();
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: ExpressRequest, res: Response, _next: NextFunction) => {

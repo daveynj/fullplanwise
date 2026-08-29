@@ -49,6 +49,7 @@ Social media: LinkedIn - www.linkedin.com/in/davidjackson113, X (Twitter) - @Dav
 - **Vocabulary Management**: Lessons stored in a library; student-lesson associations track assignments without duplicating data. Vocabulary is automatically extracted and managed upon lesson assignment and removal.
 - **Deployment**: Frontend builds to `dist/public`, backend bundles to `dist/index.js`, with static file serving.
 - **Environment**: Utilizes Replit Secrets for sensitive data and separate configurations for development/production.
+- **Database cutover safety**: Runtime, Stripe sync, and Drizzle use the shared database selector. Keep `PLANWISE_DATABASE_SOURCE=legacy` until the managed copy is verified. Managed mode also requires the matching `PLANWISE_MANAGED_DATABASE_SIGNATURE`; do not run legacy root-level database helper scripts during cutover.
 - **Scaling**: Designed for autoscale deployment, connection pooling, and lazy loading of AI services.
 - **Performance Optimization**: Employs a response-first pattern for lesson generation, pre-caching, and selective field queries to manage large content efficiently.
 

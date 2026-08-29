@@ -1,4 +1,5 @@
 import Stripe from 'stripe';
+import { resolveDatabaseConfig } from './database-url';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -25,18 +26,6 @@ function getPublishableKey(): string {
   return publishableKey;
 }
 
-function getDatabaseUrl(): string {
-  // Same rule as server/db.ts: in production, DATABASE_URL is overridden by
-  // Replit's internal "helium" database and must not be used.
-  const dbUrl = isProduction
-    ? process.env.NEON_DATABASE_URL
-    : process.env.NEON_DATABASE_URL || process.env.DATABASE_URL;
-  if (!dbUrl) {
-    throw new Error('NEON_DATABASE_URL must be set in production for Stripe sync.');
-  }
-  return dbUrl;
-}
-
 export async function getUncachableStripeClient() {
   return new Stripe(getSecretKey(), {
     apiVersion: '2025-08-27.basil' as any,
@@ -57,7 +46,7 @@ export async function getStripeSync() {
   if (!stripeSync) {
     const { StripeSync } = await import('stripe-replit-sync');
     const secretKey = getSecretKey();
-    const dbUrl = getDatabaseUrl();
+    const { connectionString: dbUrl } = resolveDatabaseConfig();
 
     stripeSync = new StripeSync({
       poolConfig: {
