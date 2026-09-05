@@ -1,9 +1,9 @@
 ---
-name: GLM flash models burn the token budget on hidden reasoning
-description: z-ai/glm-5.3-flash (and likely other GLM flash models) on OpenRouter have mandatory reasoning that consumes max_tokens, truncating JSON output unless reasoning effort is set low
+name: GLM-5 series models burn the token budget on hidden reasoning
+description: GLM-5 series models (z-ai/glm-5.3-flash, z-ai/glm-5.2) on OpenRouter have mandatory reasoning that consumes max_tokens, truncating JSON output unless reasoning effort is set low
 ---
 
-`z-ai/glm-5.3-flash` on OpenRouter is a reasoning model with **mandatory** reasoning — `reasoning: {enabled: false}` returns 400 "Reasoning is mandatory for this endpoint". By default its hidden reasoning tokens (thousands) count against `max_tokens`, so the visible JSON content is truncated mid-string (`finish_reason: "length"`) and parsing fails even though the API call succeeds and credits are consumed.
+GLM-5 series models on OpenRouter are reasoning models with **mandatory** reasoning — `reasoning: {enabled: false}` returns 400 "Reasoning is mandatory for this endpoint". By default their hidden reasoning tokens (thousands) count against `max_tokens`, so the visible JSON content is truncated mid-string (`finish_reason: "length"`) and parsing fails even though the API call succeeds and credits are consumed. This applies to both `glm-5.3-flash` and `glm-5.2`.
 
 **Why:** This broke production lesson generation after a model swap: OpenRouter logs showed spend, but every job failed with "Unterminated string in JSON" because the response was cut off.
 
