@@ -13,6 +13,12 @@ export function lessonImageSrc(
 ): string | null {
   if (!image) return null;
   if (image.imageUrl) return image.imageUrl;
-  if (image.imageBase64) return `data:image/png;base64,${image.imageBase64}`;
+  if (image.imageBase64) {
+    // Base64 magic prefixes: /9j/ = JPEG, otherwise PNG.
+    const mime = image.imageBase64.startsWith("/9j/")
+      ? "image/jpeg"
+      : "image/png";
+    return `data:${mime};base64,${image.imageBase64}`;
+  }
   return null;
 }

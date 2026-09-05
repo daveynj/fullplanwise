@@ -892,13 +892,14 @@ Return ONLY a JSON array of corrected examples.`;
     }
 
     const storeImage = async (base64: string, target: any): Promise<void> => {
+      // Keep the Base64 alongside the URL until the lesson row is durably
+      // updated; routes.ts strips backed-up Base64 only for the DB write.
+      target.imageBase64 = base64;
       try {
         target.imageUrl = await uploadLessonImage(base64, lessonId ?? 'unassigned');
-        target.imageBase64 = null;
       } catch (uploadError) {
-        // Never lose a generated image: keep the Base64 inline if storage fails.
-        console.error('Image storage upload failed, keeping Base64 fallback:', uploadError);
-        target.imageBase64 = base64;
+        // Never lose a generated image: the Base64 inline fallback remains.
+        console.error('Image storage upload failed, keeping Base64 only:', uploadError);
       }
     };
 

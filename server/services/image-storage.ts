@@ -59,6 +59,28 @@ export async function uploadLessonImage(
   return `${LESSON_IMAGE_ROUTE}${key}`;
 }
 
+/**
+ * Returns a copy of lesson content with inline Base64 removed wherever an
+ * App Storage URL exists — used for the durable DB write so rows stay small.
+ * The original object (with Base64) stays in memory as a write-failure
+ * fallback.
+ */
+export function stripBackedUpBase64<T>(node: T): T {
+  if (Array.isArray(node)) {
+    return node.map(stripBackedUpBase64) as unknown as T;
+  }
+  if (node && typeof node === "object") {
+    const record = node as Record<string, unknown>;
+    const copy: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(record)) {
+      if (key === "imageBase64" && record.imageUrl) continue;
+      copy[key] = stripBackedUpBase64(value);
+    }
+    return copy as T;
+  }
+  return node;
+}
+
 export async function downloadStoredImage(
   key: string,
 ): Promise<{ buffer: Buffer; mime: string } | null> {

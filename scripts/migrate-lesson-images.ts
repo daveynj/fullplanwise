@@ -100,10 +100,22 @@ async function main(): Promise<void> {
 
       if (uploaded > 0 && !DRY_RUN) {
         const serialized = JSON.stringify(lesson);
-        await pool.query("UPDATE lessons SET content = $1 WHERE id = $2", [
-          doubleEncoded ? JSON.stringify(serialized) : serialized,
-          row.id,
-        ]);
+        // Guard against overwriting a concurrent lesson edit: only write if
+        // the row still holds the exact content we read.
+        const writeResult = await pool.query(
+          "UPDATE lessons SET content = $1 WHERE id = $2 AND content = $3",
+          [
+            doubleEncoded ? JSON.stringify(serialized) : serialized,
+            row.id,
+            content,
+          ],
+        );
+        if (writeResult.rowCount === 0) {
+          console.warn(
+            `lesson ${row.id}: content changed during migration — skipped write (uploads are idempotent; rerun to retry)`,
+          );
+          continue;
+        }
       }
 
       done++;

@@ -16,7 +16,7 @@ import { testOpenRouterConnection } from "./services/openRouter";
 import { validateGrammarSpotlightForStorage } from "../types/lessonContentTypes";
 import { resolveGrammarSpotlight } from "./grammarSpotlightRetry";
 import { testImageGeneration } from "./services/image-generation.service";
-import { downloadStoredImage, LESSON_IMAGE_PREFIX, LESSON_IMAGE_ROUTE } from "./services/image-storage";
+import { downloadStoredImage, stripBackedUpBase64, LESSON_IMAGE_PREFIX, LESSON_IMAGE_ROUTE } from "./services/image-storage";
 import { isFreeTrialActive, getFreeTrialEndDate } from "./features";
 import { getUncachableStripeClient } from "./stripeClient";
 import { validClientRoutes } from "@shared/client-routes";
@@ -222,13 +222,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (key.includes("..")) {
         return res.status(400).json({ message: "Invalid image key" });
       }
+
+      // Keys are lesson-images/<lessonId>/<hash>.<ext>. Mirror lesson access
+      // control: public lessons serve to anyone; private lessons only to the
+      // owner or an admin. Unknown scopes require authentication.
+      const scope = key.slice(LESSON_IMAGE_PREFIX.length).split("/")[0] || "";
+      const lessonId = /^\d+$/.test(scope) ? parseInt(scope, 10) : null;
+      let isPublic = false;
+      if (lessonId !== null) {
+        const result = await db.execute(
+          sql`SELECT teacher_id AS "teacherId", is_public AS "isPublic" FROM lessons WHERE id = ${lessonId}`,
+        );
+        const lessonRow = (result as any).rows?.[0];
+        if (!lessonRow) {
+          return res.status(404).json({ message: "Image not found" });
+        }
+        isPublic = !!lessonRow.isPublic;
+        const isOwnerOrAdmin = req.isAuthenticated() &&
+          (lessonRow.teacherId === req.user!.id || !!req.user!.isAdmin);
+        if (!isPublic && !isOwnerOrAdmin) {
+          // 404 (not 403) to avoid confirming the image exists.
+          return res.status(404).json({ message: "Image not found" });
+        }
+      } else if (!req.isAuthenticated()) {
+        return res.status(404).json({ message: "Image not found" });
+      }
+
       const image = await downloadStoredImage(key);
       if (!image) {
         return res.status(404).json({ message: "Image not found" });
       }
       res.set({
         "Content-Type": image.mime,
-        "Cache-Control": "public, max-age=31536000, immutable",
+        // Public-lesson images are hash-addressed and safe for shared caches;
+        // private images stay out of them.
+        "Cache-Control": isPublic
+          ? "public, max-age=31536000, immutable"
+          : "private, max-age=3600",
       });
       res.send(image.buffer);
     } catch (error) {
@@ -1024,12 +1054,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
             .then(async () => {
               console.log(`[Job ${jobId}] Image generation complete — updating lesson in DB`);
               try {
+                // Store URLs only — Base64 stays out of the database.
                 await storage.updateLesson(savedLesson.id, {
-                  content: JSON.stringify(generatedContent)
+                  content: JSON.stringify(stripBackedUpBase64(generatedContent))
                 });
                 console.log(`[Job ${jobId}] Lesson updated with images`);
               } catch (updateErr) {
-                console.error(`[Job ${jobId}] Failed to update lesson with images:`, updateErr);
+                // Never lose generated images: if the small write fails, fall
+                // back to the in-memory content that still carries Base64.
+                console.error(`[Job ${jobId}] URL-only lesson update failed, retrying with inline image fallback:`, updateErr);
+                try {
+                  await storage.updateLesson(savedLesson.id, {
+                    content: JSON.stringify(generatedContent)
+                  });
+                  console.log(`[Job ${jobId}] Lesson updated with inline image fallback`);
+                } catch (finalErr) {
+                  console.error(`[Job ${jobId}] Failed to update lesson with images:`, finalErr);
+                }
               }
             })
             .catch((imgError: any) => {
