@@ -35,7 +35,7 @@ export class OpenRouterService {
       const prompt = this.constructLessonPrompt(params, studentVocabulary);
       
       const requestData = {
-        model: 'z-ai/glm-5.3-flash',
+        model: 'z-ai/glm-5.2',
         messages: [
           {
             role: 'user',
@@ -45,8 +45,8 @@ export class OpenRouterService {
         temperature: 0.3,
         top_p: 0.9,
         max_tokens: 16384,
-        // glm-5.3-flash is a reasoning model; without a low effort its hidden
-        // reasoning tokens consume the budget and truncate the JSON mid-string.
+        // GLM-5 series models are reasoning models; without a low effort their
+        // hidden reasoning tokens consume the budget and truncate the JSON mid-string.
         reasoning: { effort: 'low' },
       };
 
@@ -683,7 +683,7 @@ Include 3-4 examples. All sentences must be appropriate for ${cefrLevel} level a
     const result: AxiosResponse = await axios.post(
       `${this.baseURL}/chat/completions`,
       {
-        model: 'z-ai/glm-5.3-flash',
+        model: 'z-ai/glm-5.2',
         messages: [{ role: 'user', content: prompt }],
         temperature: 0.3,
         max_tokens: 3000,
@@ -733,7 +733,7 @@ Return ONLY a JSON array of corrected paragraphs.`;
       const result: AxiosResponse = await axios.post(
         `${this.baseURL}/chat/completions`,
         {
-          model: 'z-ai/glm-5.3-flash',
+          model: 'z-ai/glm-5.2',
           messages: [{ role: 'user', content: validationPrompt }],
           temperature: 0.1,
           max_tokens: 3000,
@@ -791,7 +791,7 @@ Return ONLY a JSON array of corrected examples.`;
       const result: AxiosResponse = await axios.post(
         `${this.baseURL}/chat/completions`,
         {
-          model: 'z-ai/glm-5.3-flash',
+          model: 'z-ai/glm-5.2',
           messages: [{ role: 'user', content: validationPrompt }],
           temperature: 0.1,
           max_tokens: 2000,
@@ -970,7 +970,7 @@ export const testOpenRouterConnection = async (): Promise<boolean> => {
     }
 
     const testRequest = {
-      model: 'z-ai/glm-5.3-flash',
+      model: 'z-ai/glm-5.2',
       messages: [{ role: 'user', content: 'Hello, can you respond with just "OK"?' }],
       max_tokens: 20,
       reasoning: { effort: 'low' }
