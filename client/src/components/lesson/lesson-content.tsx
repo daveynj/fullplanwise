@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from "framer-motion";
+import { lessonImageSrc } from "@/lib/lesson-image";
 import { 
   Tabs, 
   TabsContent, 
@@ -877,6 +878,7 @@ export function LessonContent({ content }: LessonContentProps) {
               stressIndex: wordData.stressIndex,
               phoneticGuide: wordData.phoneticGuide,
               imageBase64: wordData.imageBase64 || null,
+              imageUrl: wordData.imageUrl || null,
               
               // New enhanced vocabulary fields
               semanticGroup: wordData.semanticGroup || wordData.category || wordData.group,
@@ -1029,10 +1031,10 @@ export function LessonContent({ content }: LessonContentProps) {
               <div className="flex flex-col md:flex-row">
                   {/* Left: Image */}
                   <div className="w-full md:w-[30%] bg-gray-100 flex items-center justify-center">
-                    {currentWord?.imageBase64 ? (
+                    {lessonImageSrc(currentWord) ? (
                       <div className="w-full h-full flex items-center justify-center">
                         <img 
-                          src={`data:image/png;base64,${currentWord.imageBase64}`}
+                          src={lessonImageSrc(currentWord) || undefined}
                           alt={`Image for ${currentWord.word}`}
                           className="w-full object-contain"
                           style={{ minHeight: '200px', maxHeight: '280px' }}
@@ -1403,6 +1405,7 @@ export function LessonContent({ content }: LessonContentProps) {
             
             phoneticGuide: wordData.phoneticGuide,
             imageBase64: wordData.imageBase64 || null,
+              imageUrl: wordData.imageUrl || null,
             
             // New enhanced vocabulary fields
             semanticGroup: wordData.semanticGroup || wordData.category || wordData.group,
@@ -1516,10 +1519,10 @@ export function LessonContent({ content }: LessonContentProps) {
                   <div className="relative w-full h-full bg-white flex flex-col items-center justify-center">
                     {/* Image background */}
                     <div className="absolute inset-0 flex items-center justify-center">
-                      {currentWord.imageBase64 ? (
+                      {lessonImageSrc(currentWord) ? (
                         /* Show actual image when available */
                         <img 
-                          src={`data:image/png;base64,${currentWord.imageBase64}`}
+                          src={lessonImageSrc(currentWord) || undefined}
                           alt={`Illustration for ${currentWord.word}`}
                           className="h-full w-full object-cover"
                         />

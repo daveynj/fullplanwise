@@ -13,6 +13,7 @@ import {
   Image as ImageIcon
 } from "lucide-react";
 import { SectionHeader } from "./shared/section-header";
+import { lessonImageSrc } from "@/lib/lesson-image";
 import type {
   LessonSection,
   LessonQuestionAnswer,
@@ -86,7 +87,8 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
             followUp: q.followUp || [],
             paragraphContext: q.paragraphContext || (typeof q.context === 'string' ? q.context : "") || (typeof q.paragraph === 'string' ? q.paragraph : "") || "", // Prioritize paragraphContext
             topic: q.topic || "",
-            imageBase64: q.imageBase64 || null, // Keep imageBase64
+            imageBase64: q.imageBase64 || null, // Legacy inline fallback
+            imageUrl: q.imageUrl || null, // App Storage serving URL
             imagePrompt: typeof q.imagePrompt === 'string' ? q.imagePrompt : "" // Keep imagePrompt
           }));
         
@@ -374,9 +376,9 @@ export function DiscussionSection({ section }: DiscussionSectionProps) {
                       
                        {/* Image Display */}
                        <div className="md:w-5/12">
-                        {q.imageBase64 ? (
+                        {lessonImageSrc(q) ? (
                           <img 
-                            src={`data:image/png;base64,${q.imageBase64}`}
+                            src={lessonImageSrc(q) || undefined}
                             alt={`Illustration for discussion question`}
                             className="rounded-lg border border-indigo-200 shadow-sm max-w-full h-auto aspect-video object-cover"
                           />

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { BookOpen, Mic, Lightbulb, MessageSquare, Heart, Users, ChevronDown, ChevronUp, Tag } from 'lucide-react';
 import { VocabularySemanticMap } from '../vocabulary-semantic-map';
+import { lessonImageSrc } from '@/lib/lesson-image';
 
 export interface VocabularyWord {
   word: string;
@@ -14,6 +15,7 @@ export interface VocabularyWord {
   stressIndex?: number;
   phoneticGuide?: string;
   imageBase64?: string | null;
+  imageUrl?: string | null;
   
   // Enhanced definition system (NEW - backwards compatible)
   coreDefinition?: string;                  // One clear sentence using vocabulary 2 levels below target CEFR
@@ -260,10 +262,10 @@ export function VocabularyCard({ word }: VocabularyCardProps) {
         {/* Pronunciation Section - Styled EXACTLY like the reference image but with DYNAMIC data */}
         <div className="grid grid-cols-2 gap-3">
           {/* Left side: Image or Example */}
-          {word.imageBase64 ? (
+          {lessonImageSrc(word) ? (
             <div className="bg-white rounded-md overflow-hidden h-[170px] border-2 border-blue-200">
               <img 
-                src={`data:image/png;base64,${word.imageBase64}`} 
+                src={lessonImageSrc(word) || undefined}
                 alt={`Visual representation of ${word.word}`}
                 className="w-full h-full object-cover"
               />

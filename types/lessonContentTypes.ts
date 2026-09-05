@@ -317,6 +317,8 @@ export interface LessonQuestionAnswer {
   paragraphContext?: string;
   imagePrompt?: string;
   imageBase64?: string | null;
+  /** App Storage serving URL; preferred over the legacy inline Base64. */
+  imageUrl?: string | null;
   [key: string]: unknown;
 }
 
@@ -341,6 +343,8 @@ export interface LessonVocabularyWord {
   stressIndex?: number;
   phoneticGuide?: string;
   imageBase64?: string | null;
+  /** App Storage serving URL; preferred over the legacy inline Base64. */
+  imageUrl?: string | null;
   semanticGroup?: string;
   category?: string;
   group?: string;

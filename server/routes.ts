@@ -16,6 +16,7 @@ import { testOpenRouterConnection } from "./services/openRouter";
 import { validateGrammarSpotlightForStorage } from "../types/lessonContentTypes";
 import { resolveGrammarSpotlight } from "./grammarSpotlightRetry";
 import { testImageGeneration } from "./services/image-generation.service";
+import { downloadStoredImage, LESSON_IMAGE_PREFIX, LESSON_IMAGE_ROUTE } from "./services/image-storage";
 import { isFreeTrialActive, getFreeTrialEndDate } from "./features";
 import { getUncachableStripeClient } from "./stripeClient";
 import { validClientRoutes } from "@shared/client-routes";
@@ -212,6 +213,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
     res.status(401).json({ message: "Unauthorized" });
   };
+
+  // Serve lesson images from App Storage. Lesson JSON only carries these
+  // small URLs; the image bytes no longer live in the database.
+  app.get(`${LESSON_IMAGE_ROUTE}${LESSON_IMAGE_PREFIX}*`, async (req, res) => {
+    try {
+      const key = `${LESSON_IMAGE_PREFIX}${(req.params as Record<string, string>)[0] || ""}`;
+      if (key.includes("..")) {
+        return res.status(400).json({ message: "Invalid image key" });
+      }
+      const image = await downloadStoredImage(key);
+      if (!image) {
+        return res.status(404).json({ message: "Image not found" });
+      }
+      res.set({
+        "Content-Type": image.mime,
+        "Cache-Control": "public, max-age=31536000, immutable",
+      });
+      res.send(image.buffer);
+    } catch (error) {
+      console.error("Error serving lesson image:", error);
+      res.status(500).json({ message: "Failed to load image" });
+    }
+  });
 
   app.get("/api/debug/env-keys", (req, res) => {
     const keys = ['STRIPE_SECRET_KEY', 'VITE_STRIPE_PUBLIC_KEY', 'STRIPE_WEBHOOK_SECRET', 'PLANWISE_STRIPE_SECRET', 'PLANWISE_STRIPE_PUBLIC', 'NEON_DATABASE_URL', 'DATABASE_URL'];
@@ -996,7 +1020,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           });
 
           // Generate images in the background — update DB when done
-          openRouter.generateImagesForLesson(generatedContent)
+          openRouter.generateImagesForLesson(generatedContent, savedLesson.id)
             .then(async () => {
               console.log(`[Job ${jobId}] Image generation complete — updating lesson in DB`);
               try {

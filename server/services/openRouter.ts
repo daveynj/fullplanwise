@@ -2,6 +2,7 @@ import axios, { AxiosResponse } from 'axios';
 import { LessonGenerateParams } from '@shared/schema';
 import * as fs from 'fs';
 import { replicateService } from './replicate.service';
+import { uploadLessonImage } from './image-storage';
 
 /**
  * Service for interacting with AI models via OpenRouter
@@ -885,10 +886,21 @@ Return ONLY a JSON array of corrected examples.`;
    * Mutates the lessonContent object in place and returns it.
    * Safe to call after the HTTP response has already been sent.
    */
-  async generateImagesForLesson(lessonContent: any): Promise<any> {
+  async generateImagesForLesson(lessonContent: any, lessonId?: number | string): Promise<any> {
     if (!lessonContent.sections || !Array.isArray(lessonContent.sections)) {
       return lessonContent;
     }
+
+    const storeImage = async (base64: string, target: any): Promise<void> => {
+      try {
+        target.imageUrl = await uploadLessonImage(base64, lessonId ?? 'unassigned');
+        target.imageBase64 = null;
+      } catch (uploadError) {
+        // Never lose a generated image: keep the Base64 inline if storage fails.
+        console.error('Image storage upload failed, keeping Base64 fallback:', uploadError);
+        target.imageBase64 = base64;
+      }
+    };
 
     console.log('Starting batched image generation for OpenRouter lesson...');
 
@@ -902,8 +914,9 @@ Return ONLY a JSON array of corrected examples.`;
             const task = async () => {
               try {
                 const requestId = `vocab_${word.term ? word.term.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 15) : 'word'}`;
-                word.imageBase64 = await replicateService.generateImage(word.imagePrompt, requestId);
-                if (word.imageBase64) {
+                const base64 = await replicateService.generateImage(word.imagePrompt, requestId);
+                if (base64) {
+                  await storeImage(base64, word);
                   console.log(`Generated image for vocab: ${word.term}`);
                 }
               } catch (imgError) {
@@ -923,8 +936,9 @@ Return ONLY a JSON array of corrected examples.`;
             const task = async () => {
               try {
                 const requestId = `disc_${question.question ? question.question.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 15) : 'question'}`;
-                question.imageBase64 = await replicateService.generateImage(question.imagePrompt, requestId);
-                if (question.imageBase64) {
+                const base64 = await replicateService.generateImage(question.imagePrompt, requestId);
+                if (base64) {
+                  await storeImage(base64, question);
                   console.log(`Generated image for discussion question`);
                 }
               } catch (imgError) {
