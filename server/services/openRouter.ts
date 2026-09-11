@@ -36,7 +36,7 @@ export class OpenRouterService {
       const prompt = this.constructLessonPrompt(params, studentVocabulary);
       
       const requestData = {
-        model: 'z-ai/glm-5.2',
+        model: 'z-ai/glm-5.3-flash',
         messages: [
           {
             role: 'user',
@@ -684,7 +684,7 @@ Include 3-4 examples. All sentences must be appropriate for ${cefrLevel} level a
     const result: AxiosResponse = await axios.post(
       `${this.baseURL}/chat/completions`,
       {
-        model: 'z-ai/glm-5.2',
+        model: 'z-ai/glm-5.3-flash',
         messages: [{ role: 'user', content: prompt }],
         temperature: 0.3,
         max_tokens: 3000,
@@ -734,7 +734,7 @@ Return ONLY a JSON array of corrected paragraphs.`;
       const result: AxiosResponse = await axios.post(
         `${this.baseURL}/chat/completions`,
         {
-          model: 'z-ai/glm-5.2',
+          model: 'z-ai/glm-5.3-flash',
           messages: [{ role: 'user', content: validationPrompt }],
           temperature: 0.1,
           max_tokens: 3000,
@@ -792,7 +792,7 @@ Return ONLY a JSON array of corrected examples.`;
       const result: AxiosResponse = await axios.post(
         `${this.baseURL}/chat/completions`,
         {
-          model: 'z-ai/glm-5.2',
+          model: 'z-ai/glm-5.3-flash',
           messages: [{ role: 'user', content: validationPrompt }],
           temperature: 0.1,
           max_tokens: 2000,
@@ -985,7 +985,7 @@ export const testOpenRouterConnection = async (): Promise<boolean> => {
     }
 
     const testRequest = {
-      model: 'z-ai/glm-5.2',
+      model: 'z-ai/glm-5.3-flash',
       messages: [{ role: 'user', content: 'Hello, can you respond with just "OK"?' }],
       max_tokens: 20,
       reasoning: { effort: 'low' }
