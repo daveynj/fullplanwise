@@ -860,7 +860,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Unauthorized. Admin privileges required." });
       }
       res.json({
-        preferredModel: currentUser.preferredAiModel ?? null,
+        // A stored preference for a removed model is reported as unset so
+        // the admin UI shows the default instead of a stale ID.
+        preferredModel: isSelectableModel(currentUser.preferredAiModel)
+          ? currentUser.preferredAiModel
+          : null,
         defaultModel: DEFAULT_MODEL_ID,
         models: SELECTABLE_MODELS,
       });
@@ -1014,7 +1018,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
           // Admin accounts may override the text model for their own
           // generations; everyone else always uses the server default.
-          const generationModel = user.isAdmin && user.preferredAiModel
+          // Re-validate against the allowlist so a stored preference for a
+          // since-removed model falls back to the default instead of
+          // silently calling a retired/invalid model ID.
+          const generationModel = user.isAdmin && isSelectableModel(user.preferredAiModel)
             ? user.preferredAiModel
             : DEFAULT_MODEL_ID;
           console.log(`[Job ${jobId}] Using text model: ${generationModel}`);

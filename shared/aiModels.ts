@@ -19,7 +19,8 @@ export const DEFAULT_MODEL_ID = 'z-ai/glm-5.3-flash';
 
 export const SELECTABLE_MODELS: SelectableModel[] = [
   { id: 'z-ai/glm-5.3-flash', label: 'GLM 5.3 Flash (Z.AI)' },
-  { id: 'anthropic/claude-sonnet-4', label: 'Claude Sonnet 4 (Anthropic)' },
+  { id: 'anthropic/claude-sonnet-5', label: 'Claude Sonnet 5 (Anthropic)' },
+  { id: 'anthropic/claude-opus-5', label: 'Claude Opus 5 (Anthropic)' },
   { id: 'openai/gpt-4o', label: 'GPT-4o (OpenAI)' },
   { id: 'google/gemini-2.5-flash', label: 'Gemini 2.5 Flash (Google)' },
   { id: 'meta-llama/llama-3.3-70b-instruct', label: 'Llama 3.3 70B (Meta)' },

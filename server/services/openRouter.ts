@@ -659,7 +659,7 @@ BEGIN JSON:`;
    * Validate and improve the generated content
    */
   private async validateAndImproveContent(content: any, params: LessonGenerateParams, model: string = DEFAULT_MODEL): Promise<any> {
-    console.log('Skipping quality control validation - trusting Claude Sonnet 4 for high-quality output');
+    console.log(`Skipping quality control validation - trusting ${model} for high-quality output`);
     return content;
   }
 
