@@ -5,7 +5,7 @@ import { validateGrammarSpotlightForStorage, type GrammarSpotlight } from "../ty
  * kept narrow so tests can pass a simple stub.
  */
 export interface GrammarSpotlightRegenerator {
-  regenerateGrammarSpotlight(topic: string, cefrLevel: string): Promise<unknown>;
+  regenerateGrammarSpotlight(topic: string, cefrLevel: string, model?: string): Promise<unknown>;
 }
 
 /**
@@ -22,6 +22,7 @@ export async function resolveGrammarSpotlight(
   jobId: string,
   topic: string,
   cefrLevel: string,
+  model?: string,
 ): Promise<GrammarSpotlight | null> {
   const validated = validateGrammarSpotlightForStorage(rawSpotlight);
   if (validated) return validated;
@@ -29,7 +30,7 @@ export async function resolveGrammarSpotlight(
   console.warn(`[Job ${jobId}] Malformed grammarSpotlight from AI output — retrying grammar spotlight generation once`);
   let retriedSpotlight: GrammarSpotlight | null = null;
   try {
-    const regenerated = await openRouter.regenerateGrammarSpotlight(topic, cefrLevel);
+    const regenerated = await openRouter.regenerateGrammarSpotlight(topic, cefrLevel, model);
     retriedSpotlight = validateGrammarSpotlightForStorage(regenerated) ?? null;
   } catch (retryError) {
     console.error(`[Job ${jobId}] Grammar spotlight retry failed:`, retryError);

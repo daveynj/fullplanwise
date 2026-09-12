@@ -18,6 +18,7 @@ import { resolveGrammarSpotlight } from "./grammarSpotlightRetry";
 import { testImageGeneration } from "./services/image-generation.service";
 import { downloadStoredImage, stripBackedUpBase64, LESSON_IMAGE_PREFIX, LESSON_IMAGE_ROUTE } from "./services/image-storage";
 import { isFreeTrialActive, getFreeTrialEndDate } from "./features";
+import { SELECTABLE_MODELS, DEFAULT_MODEL_ID, isSelectableModel } from "@shared/aiModels";
 import { getUncachableStripeClient } from "./stripeClient";
 import { validClientRoutes } from "@shared/client-routes";
 import {
@@ -850,6 +851,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Admin-only AI model preference. The curated allowlist lives in
+  // shared/aiModels.ts; null/empty preference means the server default model.
+  app.get("/api/user/preferred-model", ensureAuthenticated, async (req, res) => {
+    try {
+      const currentUser = await storage.getUser(req.user!.id);
+      if (!currentUser?.isAdmin) {
+        return res.status(403).json({ message: "Unauthorized. Admin privileges required." });
+      }
+      res.json({
+        preferredModel: currentUser.preferredAiModel ?? null,
+        defaultModel: DEFAULT_MODEL_ID,
+        models: SELECTABLE_MODELS,
+      });
+    } catch (error: any) {
+      console.error('Error fetching preferred AI model:', error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.put("/api/user/preferred-model", ensureAuthenticated, async (req, res) => {
+    try {
+      const currentUser = await storage.getUser(req.user!.id);
+      if (!currentUser?.isAdmin) {
+        return res.status(403).json({ message: "Unauthorized. Admin privileges required." });
+      }
+
+      const bodySchema = z.object({
+        model: z.string().nullable().optional(),
+      });
+      const { model } = bodySchema.parse(req.body ?? {});
+
+      // Empty string / null / undefined all reset to the server default.
+      const normalized = model && model.trim() !== "" ? model.trim() : null;
+      if (normalized !== null && !isSelectableModel(normalized)) {
+        return res.status(400).json({ message: "Unknown model. Choose one of the supported models." });
+      }
+
+      const updated = await storage.updateUserPreferredModel(currentUser.id, normalized);
+      res.json({ preferredModel: updated.preferredAiModel ?? null });
+    } catch (error: any) {
+      console.error('Error updating preferred AI model:', error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   app.post("/api/lessons/generate", ensureAuthenticated, async (req, res) => {
     const teacherId = req.user!.id;
 
@@ -966,8 +1012,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
             }
           }
 
+          // Admin accounts may override the text model for their own
+          // generations; everyone else always uses the server default.
+          const generationModel = user.isAdmin && user.preferredAiModel
+            ? user.preferredAiModel
+            : DEFAULT_MODEL_ID;
+          console.log(`[Job ${jobId}] Using text model: ${generationModel}`);
+
           const openRouter = await getOpenRouterService();
-          const generatedContent = await openRouter.generateLesson(validatedData, studentVocabulary);
+          const generatedContent = await openRouter.generateLesson(validatedData, studentVocabulary, generationModel);
 
           const textTimeTaken = (Date.now() - startTime) / 1000;
           console.log(`[Job ${jobId}] Lesson text ready in ${textTimeTaken.toFixed(1)}s — saving lesson now`);
@@ -980,6 +1033,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
               jobId,
               validatedData.topic,
               validatedData.cefrLevel,
+              generationModel,
             );
             if (resolvedSpotlight) {
               grammarVisualization = resolvedSpotlight;

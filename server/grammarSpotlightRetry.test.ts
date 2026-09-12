@@ -62,7 +62,7 @@ describe("resolveGrammarSpotlight", () => {
     );
 
     expect(regenerate).toHaveBeenCalledTimes(1);
-    expect(regenerate).toHaveBeenCalledWith("travel", "B1");
+    expect(regenerate).toHaveBeenCalledWith("travel", "B1", undefined);
     expect(result).not.toBeNull();
     expect(result!.title).toBe("Present Perfect");
     expect(result!.examples).toHaveLength(1);

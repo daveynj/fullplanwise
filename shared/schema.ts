@@ -23,6 +23,9 @@ export const users = pgTable("users", {
   trialExpiresAt: timestamp("trial_expires_at"),
   // Activity tracking
   lastLoginAt: timestamp("last_login_at"),
+  // Admin-only: per-user OpenRouter text model override for lesson generation.
+  // null = use the server default. Only honored for isAdmin accounts.
+  preferredAiModel: text("preferred_ai_model"),
 });
 
 // Lesson generation attempts, used for the per-user hourly rate limit.

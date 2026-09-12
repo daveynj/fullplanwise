@@ -4,7 +4,7 @@ import { Header } from "@/components/layout/header";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,6 +23,13 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Form,
   FormControl,
   FormDescription,
@@ -35,8 +42,9 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { User, Settings, Bell, Lock, Loader2, CreditCard, Calendar, Badge, Gift, Check, ExternalLink } from "lucide-react";
+import { User, Settings, Bell, Lock, Loader2, CreditCard, Calendar, Badge, Gift, Check, ExternalLink, Sparkles } from "lucide-react";
 import { useTrialStatus } from "@/hooks/use-trial-status";
+import { SELECTABLE_MODELS } from "@shared/aiModels";
 
 // Profile update schema
 const profileUpdateSchema = z.object({
@@ -63,7 +71,41 @@ export default function SettingsPage() {
   const { toast } = useToast();
   const [, setLocation] = useLocation();
   const { isInTrial, isPersonalTrial, trialDaysRemaining, trialExpiresAt, isSubscriber, freeCreditsRemaining } = useTrialStatus();
-  
+
+  // Admin-only: AI model preference for lesson generation. Non-admins never
+  // fetch this (the endpoint returns 403) and never see the selector.
+  const preferredModelQuery = useQuery<{ preferredModel: string | null }>({
+    queryKey: ["/api/user/preferred-model"],
+    enabled: !!user?.isAdmin,
+  });
+  const [selectedModel, setSelectedModel] = useState<string>("default");
+
+  const updatePreferredModelMutation = useMutation({
+    mutationFn: async (model: string | null) => {
+      const res = await apiRequest("PUT", "/api/user/preferred-model", { model });
+      return await res.json();
+    },
+    onSuccess: (data: { preferredModel: string | null }) => {
+      queryClient.setQueryData(["/api/user/preferred-model"], (old: any) => ({
+        ...(old ?? {}),
+        preferredModel: data.preferredModel,
+      }));
+      toast({
+        title: "AI model updated",
+        description: data.preferredModel
+          ? `Your lessons will now be generated with ${SELECTABLE_MODELS.find(m => m.id === data.preferredModel)?.label ?? data.preferredModel}.`
+          : "Your lessons will now use the default model (GLM).",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Could not update AI model",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
   // Profile update form
   const profileForm = useForm<ProfileUpdateValues>({
     resolver: zodResolver(profileUpdateSchema),
@@ -180,6 +222,11 @@ export default function SettingsPage() {
                 <TabsTrigger value="notifications" className="text-base px-6">
                   <Bell className="mr-2 h-4 w-4" /> Notifications
                 </TabsTrigger>
+                {user?.isAdmin && (
+                  <TabsTrigger value="ai-model" className="text-base px-6">
+                    <Sparkles className="mr-2 h-4 w-4" /> AI Model
+                  </TabsTrigger>
+                )}
               </TabsList>
               
               {/* Profile Tab */}
@@ -530,6 +577,69 @@ export default function SettingsPage() {
                   </CardFooter>
                 </Card>
               </TabsContent>
+
+              {/* AI Model Tab — admin only */}
+              {user?.isAdmin && (
+                <TabsContent value="ai-model" className="mt-0">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="font-nunito">Lesson AI Model</CardTitle>
+                      <CardDescription>
+                        Choose which AI model generates your lessons. This only applies to your account — all other users always use the default model.
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      {preferredModelQuery.isLoading ? (
+                        <div className="flex items-center text-gray-500">
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Loading current model…
+                        </div>
+                      ) : (
+                        <div className="space-y-4">
+                          <div>
+                            <p className="text-sm font-medium mb-2">Model for your lesson generations</p>
+                            <Select
+                              value={
+                                selectedModel !== "default" || preferredModelQuery.data?.preferredModel
+                                  ? (selectedModel !== "default" ? selectedModel : (preferredModelQuery.data?.preferredModel ?? "default"))
+                                  : "default"
+                              }
+                              onValueChange={setSelectedModel}
+                            >
+                              <SelectTrigger className="w-full md:w-96">
+                                <SelectValue placeholder="Select a model" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="default">Default (GLM 5.3 Flash)</SelectItem>
+                                {SELECTABLE_MODELS.map((m) => (
+                                  <SelectItem key={m.id} value={m.id}>
+                                    {m.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <Button
+                            className="bg-primary hover:bg-primary/90"
+                            disabled={updatePreferredModelMutation.isPending}
+                            onClick={() =>
+                              updatePreferredModelMutation.mutate(
+                                selectedModel === "default" ? null : selectedModel
+                              )
+                            }
+                          >
+                            {updatePreferredModelMutation.isPending ? (
+                              <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                Saving...
+                              </>
+                            ) : "Save Model Preference"}
+                          </Button>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+              )}
             </Tabs>
             
             {/* Account Danger Zone */}

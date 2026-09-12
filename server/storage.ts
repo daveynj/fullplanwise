@@ -25,6 +25,7 @@ export interface IStorage {
   updateUserStripeInfo(userId: number, stripeInfo: { stripeCustomerId: string, stripeSubscriptionId: string | null }): Promise<User>;
   updateUserAdminStatus(userId: number, isAdmin: boolean): Promise<User>;
   updateUser(userId: number, updates: Partial<User>): Promise<User>;
+  updateUserPreferredModel(userId: number, model: string | null): Promise<User>;
   decrementUserCredits(userId: number): Promise<void>;
   tryDecrementUserCredits(userId: number): Promise<boolean>;
   incrementUserCredits(userId: number): Promise<void>;
@@ -314,6 +315,26 @@ export class DatabaseStorage implements IStorage {
       return updatedUser;
     } catch (error) {
       console.error('Error updating user:', error);
+      throw error;
+    }
+  }
+
+  async updateUserPreferredModel(userId: number, model: string | null): Promise<User> {
+    try {
+      const [updatedUser] = await db
+        .update(users)
+        .set({ preferredAiModel: model })
+        .where(eq(users.id, userId))
+        .returning();
+
+      if (!updatedUser) {
+        throw new Error("User not found");
+      }
+
+      console.log(`User ${userId} preferred AI model set to:`, model ?? '(default)');
+      return updatedUser;
+    } catch (error) {
+      console.error('Error updating preferred AI model:', error);
       throw error;
     }
   }

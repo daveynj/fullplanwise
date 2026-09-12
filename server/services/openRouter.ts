@@ -5,6 +5,23 @@ import { replicateService } from './replicate.service';
 import { uploadLessonImage } from './image-storage';
 
 /**
+ * Default OpenRouter text model used for all lesson generation. Admins can
+ * override it per-account via their preferredAiModel setting; everyone else
+ * always gets this model.
+ */
+export const DEFAULT_MODEL = 'z-ai/glm-5.3-flash';
+
+/**
+ * GLM-5 series models are reasoning models with mandatory reasoning: without
+ * a low effort their hidden reasoning tokens consume max_tokens and truncate
+ * the JSON mid-string. Other models reject or ignore the reasoning parameter,
+ * so it is only included for models that need it.
+ */
+function needsReasoningEffort(model: string): boolean {
+  return model.startsWith('z-ai/glm-5');
+}
+
+/**
  * Service for interacting with AI models via OpenRouter
  */
 export class OpenRouterService {
@@ -21,13 +38,13 @@ export class OpenRouterService {
   /**
    * Generate a complete ESL lesson based on the provided parameters
    */
-  async generateLesson(params: LessonGenerateParams, studentVocabulary: string[] = []): Promise<any> {
+  async generateLesson(params: LessonGenerateParams, studentVocabulary: string[] = [], model: string = DEFAULT_MODEL): Promise<any> {
     try {
       if (!this.apiKey) {
         throw new Error('OpenRouter API key is not configured');
       }
 
-      console.log('Starting OpenRouter AI lesson generation...');
+      console.log(`Starting OpenRouter AI lesson generation (model: ${model})...`);
       
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
       const topicSafe = params.topic.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 20);
@@ -35,8 +52,8 @@ export class OpenRouterService {
       
       const prompt = this.constructLessonPrompt(params, studentVocabulary);
       
-      const requestData = {
-        model: 'z-ai/glm-5.3-flash',
+      const requestData: Record<string, any> = {
+        model,
         messages: [
           {
             role: 'user',
@@ -46,10 +63,12 @@ export class OpenRouterService {
         temperature: 0.3,
         top_p: 0.9,
         max_tokens: 16384,
+      };
+      if (needsReasoningEffort(model)) {
         // GLM-5 series models are reasoning models; without a low effort their
         // hidden reasoning tokens consume the budget and truncate the JSON mid-string.
-        reasoning: { effort: 'low' },
-      };
+        requestData.reasoning = { effort: 'low' };
+      }
 
       console.log('Sending request to OpenRouter API...');
       console.log('Request payload:', JSON.stringify(requestData, null, 2).substring(0, 300));
@@ -113,7 +132,7 @@ export class OpenRouterService {
             
             if (jsonContent.title && jsonContent.sections && Array.isArray(jsonContent.sections)) {
               console.log('Lesson content has valid structure, applying quality control...');
-              const validatedContent = await this.validateAndImproveContent(jsonContent, params);
+              const validatedContent = await this.validateAndImproveContent(jsonContent, params, model);
               return await this.formatLessonContent(validatedContent);
             } else {
               console.warn('Parsed JSON is missing required structure', JSON.stringify({
@@ -195,7 +214,7 @@ export class OpenRouterService {
               
               if (jsonContent.title && jsonContent.sections && Array.isArray(jsonContent.sections)) {
                 console.log('Fixed content has valid structure, applying quality control...');
-                const validatedContent = await this.validateAndImproveContent(jsonContent, params);
+                const validatedContent = await this.validateAndImproveContent(jsonContent, params, model);
                 return await this.formatLessonContent(validatedContent);
               } else {
                 throw new Error('Fixed JSON still missing required structure');
@@ -639,7 +658,7 @@ BEGIN JSON:`;
   /**
    * Validate and improve the generated content
    */
-  private async validateAndImproveContent(content: any, params: LessonGenerateParams): Promise<any> {
+  private async validateAndImproveContent(content: any, params: LessonGenerateParams, model: string = DEFAULT_MODEL): Promise<any> {
     console.log('Skipping quality control validation - trusting Claude Sonnet 4 for high-quality output');
     return content;
   }
@@ -650,7 +669,7 @@ BEGIN JSON:`;
    * runtime validation. Returns the parsed spotlight object (untrusted —
    * caller must validate) or throws on failure.
    */
-  async regenerateGrammarSpotlight(topic: string, cefrLevel: string): Promise<unknown> {
+  async regenerateGrammarSpotlight(topic: string, cefrLevel: string, model: string = DEFAULT_MODEL): Promise<unknown> {
     if (!this.apiKey) {
       throw new Error('OpenRouter API key is not configured');
     }
@@ -684,11 +703,11 @@ Include 3-4 examples. All sentences must be appropriate for ${cefrLevel} level a
     const result: AxiosResponse = await axios.post(
       `${this.baseURL}/chat/completions`,
       {
-        model: 'z-ai/glm-5.3-flash',
+        model,
         messages: [{ role: 'user', content: prompt }],
         temperature: 0.3,
         max_tokens: 3000,
-        reasoning: { effort: 'low' }
+        ...(needsReasoningEffort(model) ? { reasoning: { effort: 'low' } } : {})
       },
       {
         headers: {
@@ -719,7 +738,7 @@ Include 3-4 examples. All sentences must be appropriate for ${cefrLevel} level a
   /**
    * Validate reading text paragraphs for grammar correctness using AI
    */
-  private async validateReadingTextGrammar(paragraphs: string[], cefrLevel: string, topic: string): Promise<string[]> {
+  private async validateReadingTextGrammar(paragraphs: string[], cefrLevel: string, topic: string, model: string = DEFAULT_MODEL): Promise<string[]> {
     try {
       const validationPrompt = `You are a grammar expert for ESL content. Review these paragraphs and fix any grammar errors while maintaining the meaning and ${cefrLevel} level.
 
@@ -734,11 +753,11 @@ Return ONLY a JSON array of corrected paragraphs.`;
       const result: AxiosResponse = await axios.post(
         `${this.baseURL}/chat/completions`,
         {
-          model: 'z-ai/glm-5.3-flash',
+          model,
           messages: [{ role: 'user', content: validationPrompt }],
           temperature: 0.1,
           max_tokens: 3000,
-          reasoning: { effort: 'low' }
+          ...(needsReasoningEffort(model) ? { reasoning: { effort: 'low' } } : {})
         },
         {
           headers: {
@@ -777,7 +796,7 @@ Return ONLY a JSON array of corrected paragraphs.`;
   /**
    * Validate sentence frame examples for logical coherence
    */
-  private async validateSentenceFrameExamples(examples: any[], pattern: string, topic: string): Promise<any[]> {
+  private async validateSentenceFrameExamples(examples: any[], pattern: string, topic: string, model: string = DEFAULT_MODEL): Promise<any[]> {
     try {
       const validationPrompt = `You are a quality expert for ESL content. Review these sentence examples and ensure they correctly demonstrate the pattern while being logical and grammatically correct.
 
@@ -792,11 +811,11 @@ Return ONLY a JSON array of corrected examples.`;
       const result: AxiosResponse = await axios.post(
         `${this.baseURL}/chat/completions`,
         {
-          model: 'z-ai/glm-5.3-flash',
+          model,
           messages: [{ role: 'user', content: validationPrompt }],
           temperature: 0.1,
           max_tokens: 2000,
-          reasoning: { effort: 'low' }
+          ...(needsReasoningEffort(model) ? { reasoning: { effort: 'low' } } : {})
         },
         {
           headers: {
@@ -985,7 +1004,7 @@ export const testOpenRouterConnection = async (): Promise<boolean> => {
     }
 
     const testRequest = {
-      model: 'z-ai/glm-5.3-flash',
+      model: DEFAULT_MODEL,
       messages: [{ role: 'user', content: 'Hello, can you respond with just "OK"?' }],
       max_tokens: 20,
       reasoning: { effort: 'low' }
