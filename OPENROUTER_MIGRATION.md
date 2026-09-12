@@ -49,7 +49,7 @@ GET /api/test-openrouter
 **Option B: Via test script**
 ```bash
 # From project root
-node test-openrouter.js
+node scripts/test-openrouter.js
 ```
 
 ## Model Configuration

@@ -94,7 +94,7 @@ Seamlessly integrated semantic maps into existing vocabulary display system:
 
 ## 🧪 Demo & Testing
 
-### **Standalone Demo** (`semantic-map-demo.html`)
+### **Standalone Demo** (`docs/semantic-map-demo.html`)
 Created comprehensive demo showcasing:
 - Full vocabulary semantic map functionality
 - Interactive category selection

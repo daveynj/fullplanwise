@@ -70,7 +70,7 @@
 GET /api/test-image-generation
 
 # Or run the test script
-node test-image-generation.js
+node scripts/test-image-generation.js
 ```
 
 ### Phase 2: Gradual Rollout
@@ -101,7 +101,7 @@ OPENROUTER_API_KEY=your_openrouter_api_key_here
 GET /api/test-image-generation
 
 # Via command line
-node test-image-generation.js
+node scripts/test-image-generation.js
 ```
 
 ## Model Selection Logic
