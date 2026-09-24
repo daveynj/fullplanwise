@@ -164,6 +164,12 @@ export function parseQueryInt(
 const MAX_PAGE_SIZE = 100;
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Link sharing is separate from publishing to the public lesson library.
+  // Keep this idempotent migration here to support existing databases.
+  await db.execute(sql`
+    ALTER TABLE lessons
+    ADD COLUMN IF NOT EXISTS is_shared boolean NOT NULL DEFAULT false
+  `);
   // Dynamic AI service loader - using only Gemini for reliable lesson generation
   let openRouterService: any = null;
 
@@ -232,13 +238,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       let isPublic = false;
       if (lessonId !== null) {
         const result = await db.execute(
-          sql`SELECT teacher_id AS "teacherId", is_public AS "isPublic" FROM lessons WHERE id = ${lessonId}`,
+          sql`SELECT teacher_id AS "teacherId", is_public AS "isPublic", is_shared AS "isShared" FROM lessons WHERE id = ${lessonId}`,
         );
         const lessonRow = (result as any).rows?.[0];
         if (!lessonRow) {
           return res.status(404).json({ message: "Image not found" });
         }
-        isPublic = !!lessonRow.isPublic;
+        isPublic = !!lessonRow.isPublic || !!lessonRow.isShared;
         const isOwnerOrAdmin = req.isAuthenticated() &&
           (lessonRow.teacherId === req.user!.id || !!req.user!.isAdmin);
         if (!isPublic && !isOwnerOrAdmin) {
@@ -743,11 +749,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Lesson not found" });
       }
 
-      // Access control: public lessons are visible to anyone; private lessons
-      // only to their owner or an admin. Return 404 to avoid ID enumeration.
+      // Published and link-shared lessons are visible to anyone. Unshared
+      // lessons remain limited to their owner or an admin.
       const isOwnerOrAdmin = req.isAuthenticated() &&
         (lesson.teacherId === req.user!.id || !!req.user!.isAdmin);
-      if (!lesson.isPublic && !isOwnerOrAdmin) {
+      if (!lesson.isPublic && !lesson.isShared && !isOwnerOrAdmin) {
         console.log(`Unauthorized access attempt to private lesson ${lessonId}`);
         return res.status(404).json({ message: "Lesson not found" });
       }
@@ -1262,6 +1268,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Enable access through the lesson link without publishing it in the public
+  // library. Repeated shares are intentionally idempotent.
+  app.post("/api/lessons/:id/share", ensureAuthenticated, async (req, res) => {
+    try {
+      const lessonId = parseIdParam(req.params.id);
+      if (lessonId === null) {
+        return res.status(404).json({ message: "Lesson not found" });
+      }
+
+      const lesson = await storage.getLesson(lessonId);
+      const isOwnerOrAdmin = lesson &&
+        (lesson.teacherId === req.user!.id || !!req.user!.isAdmin);
+      if (!lesson || !isOwnerOrAdmin) {
+        return res.status(404).json({ message: "Lesson not found" });
+      }
+
+      if (!lesson.isShared) {
+        await storage.updateLesson(lessonId, { isShared: true });
+      }
+      res.json({ shareUrl: `/lessons/${lessonId}` });
+    } catch (error: any) {
+      console.error("Error enabling lesson sharing:", error);
+      res.status(500).json({ message: "Could not create share link" });
+    }
+  });
+
   app.delete("/api/lessons/:id", ensureAuthenticated, async (req, res) => {
     try {
       const lessonId = parseIdParam(req.params.id);
@@ -1359,11 +1391,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Lesson not found" });
       }
 
-      // Access control: public lessons are downloadable by anyone; private
-      // lessons only by their owner or an admin. Return 404 to avoid ID enumeration.
+      // Published and link-shared lessons are downloadable by anyone.
       const isOwnerOrAdmin = req.isAuthenticated() &&
         (lesson.teacherId === req.user!.id || !!req.user!.isAdmin);
-      if (!lesson.isPublic && !isOwnerOrAdmin) {
+      if (!lesson.isPublic && !lesson.isShared && !isOwnerOrAdmin) {
         console.log(`Unauthorized PDF download attempt for private lesson ${lessonId}`);
         return res.status(404).json({ message: "Lesson not found" });
       }
@@ -2602,11 +2633,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const { id } = req.params;
 
     try {
-      // Check if lesson exists and is public
+      // Check if lesson exists and can be opened without authentication.
       const lesson = await storage.getLesson(parseInt(id));
 
-      if (!lesson || !lesson.isPublic) {
-        console.log(`[SEO] Lesson not found or not public: ${id} - returning 404`);
+      if (!lesson || (!lesson.isPublic && !lesson.isShared)) {
+        console.log(`[SEO] Lesson not found or not shared: ${id} - returning 404`);
         await serve404Html(res, app);
         return;
       }

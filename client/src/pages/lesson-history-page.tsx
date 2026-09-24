@@ -659,20 +659,23 @@ export default function LessonHistoryPage() {
                                 size="sm" 
                                 variant="outline" 
                                 className="bg-orange-50 text-orange-600 border-orange-200 hover:bg-orange-100 hover:text-orange-700"
-                                onClick={() => {
-                                  const shareUrl = `${window.location.origin}/lessons/${lesson.id}`;
-                                  navigator.clipboard.writeText(shareUrl).then(() => {
+                                onClick={async () => {
+                                  try {
+                                    const response = await apiRequest("POST", `/api/lessons/${lesson.id}/share`);
+                                    const { shareUrl: sharePath } = await response.json();
+                                    const shareUrl = `${window.location.origin}${sharePath}`;
+                                    await navigator.clipboard.writeText(shareUrl);
                                     toast({
                                       title: "Share link copied!",
                                       description: "Students can now access this lesson without signing up.",
                                     });
-                                  }).catch(() => {
+                                  } catch {
                                     toast({
-                                      title: "Copy failed",
-                                      description: `Share this URL: ${shareUrl}`,
+                                      title: "Share failed",
+                                      description: "The lesson could not be shared. Please try again.",
                                       variant: "destructive",
                                     });
-                                  });
+                                  }
                                 }}
                               >
                                 <Share className="mr-2 h-4 w-4" /> Share

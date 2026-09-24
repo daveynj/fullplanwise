@@ -6,6 +6,7 @@ import { Edit, Download, Share, Maximize2 } from "lucide-react";
 import { LessonContent } from "./lesson-content";
 import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
 import type { ParsedLessonContent, LessonSection, PreviewableLesson } from "../../../../types/lessonContentTypes";
 
 interface LessonPreviewProps {
@@ -331,21 +332,24 @@ export function LessonPreview({ lesson }: LessonPreviewProps) {
           <div className="flex space-x-2">
             <Button 
               className="bg-[#28A745] hover:bg-green-600 text-white font-semibold px-4 py-2 rounded-lg transition"
-              onClick={() => {
+              onClick={async () => {
                 if (lesson.id) {
-                  const shareUrl = `${window.location.origin}/lessons/${lesson.id}`;
-                  navigator.clipboard.writeText(shareUrl).then(() => {
+                  try {
+                    const response = await apiRequest("POST", `/api/lessons/${lesson.id}/share`);
+                    const { shareUrl: sharePath } = await response.json();
+                    const shareUrl = `${window.location.origin}${sharePath}`;
+                    await navigator.clipboard.writeText(shareUrl);
                     toast({
                       title: "Share link copied!",
                       description: "Students can now access this lesson without signing up.",
                     });
-                  }).catch(() => {
+                  } catch {
                     toast({
                       title: "Copy failed",
-                      description: `Share this URL: ${shareUrl}`,
+                      description: "The lesson could not be shared. Please try again.",
                       variant: "destructive",
                     });
-                  });
+                  }
                 }
               }}
               disabled={!lesson.id}

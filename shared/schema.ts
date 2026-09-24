@@ -83,6 +83,7 @@ export const lessons = pgTable("lessons", {
   category: text("category").default("general"),
   tags: text("tags").array().default([]),
   isPublic: boolean("is_public").default(false).notNull(),
+  isShared: boolean("is_shared").default(false).notNull(),
   publicCategory: text("public_category"), // Category for public library organization
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
