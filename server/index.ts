@@ -111,7 +111,9 @@ app.use((req, res, next) => {
     const duration = Date.now() - start;
     if (path.startsWith("/api")) {
       let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
-      if (capturedJsonResponse) {
+      // The line is cut to 80 chars below, so skip serializing large response
+      // bodies when there is no room left for them.
+      if (capturedJsonResponse && logLine.length < 80) {
         logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
       }
 

@@ -94,8 +94,13 @@ export function serveStatic(app: Express) {
     );
   }
 
+  // The built index.html never changes while the server runs, so read it once.
+  let indexTemplate: string | undefined;
+  const readIndexTemplate = () =>
+    (indexTemplate ??= fs.readFileSync(path.resolve(distPath, "index.html"), "utf-8"));
+
   const servePrerenderedLanding = (_req: express.Request, res: express.Response) => {
-    const template = fs.readFileSync(path.resolve(distPath, "index.html"), "utf-8");
+    const template = readIndexTemplate();
     res.status(200).set({ "Content-Type": "text/html" }).end(injectLandingPrerender(template));
   };
 
@@ -109,7 +114,7 @@ export function serveStatic(app: Express) {
   // the SPA shell when the slug is missing/unpublished (routes.ts already 404s those).
   const servePrerenderedBlog = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      const template = fs.readFileSync(path.resolve(distPath, "index.html"), "utf-8");
+      const template = readIndexTemplate();
       const pathname = req.originalUrl.split("?")[0];
       const prerendered = await injectBlogPrerender(template, pathname);
       if (prerendered) {
@@ -125,7 +130,18 @@ export function serveStatic(app: Express) {
   app.get("/blog/:slug", servePrerenderedBlog);
 
   // Disable static index serving so the handlers above are not shadowed
-  app.use(express.static(distPath, { index: false }));
+  // Files in /assets have content hashes in their names, so browsers can cache
+  // them for a year; anything else (index.html, images) keeps default caching.
+  app.use(
+    express.static(distPath, {
+      index: false,
+      setHeaders: (res, filePath) => {
+        if (filePath.split(path.sep).includes("assets")) {
+          res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+        }
+      },
+    }),
+  );
 
   // fall through to index.html if the file doesn't exist
   app.use("*", (_req, res) => {
