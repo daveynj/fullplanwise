@@ -492,30 +492,7 @@ export class DatabaseStorage implements IStorage {
 
       console.log(`Final condition count for count/fetch: ${conditions.length}`); // Simplified log
 
-      // Try a direct query first to see if we can get any lessons at all for this teacher
-      // This helps us debug if the issue is with filtering or with basic data access
-      try {
-        const basicCheck = await db
-          .select({ count: count() })
-          .from(lessons)
-          .where(eq(lessons.teacherId, teacherId));
-
-        console.log(`Basic teacher lessons check: Teacher ID ${teacherId} has ${basicCheck[0]?.count || 0} total lessons in database`);
-      } catch (e) {
-        console.error('Error in basic teacher lessons check:', e);
-      }
-
-      // Make sure indexes exist
-      try {
-        await db.execute(
-          `CREATE INDEX IF NOT EXISTS idx_lessons_teacher_id ON lessons(teacher_id);
-           CREATE INDEX IF NOT EXISTS idx_lessons_created_at ON lessons(created_at);
-           CREATE INDEX IF NOT EXISTS idx_lessons_cefr_level ON lessons(cefr_level);`
-        );
-        console.log('Ensured indexes exist for optimal querying');
-      } catch (e) {
-        console.error('Error creating indexes (non-critical):', e);
-      }
+      // Indexes for these queries are created once at startup (see db-indexes.ts)
 
       // Execute count query - get total count
       console.log('Executing count query...');
@@ -1064,27 +1041,30 @@ export class DatabaseStorage implements IStorage {
         .innerJoin(users, eq(lessons.teacherId, users.id))
         .$dynamic();
 
-      // Apply search filter
+      // Collect every filter and apply them together: calling .where() more than
+      // once on a query replaces the previous condition instead of adding to it.
+      const conditions = [];
+
       if (search && search !== '') {
         const searchCondition = or(
           ilike(lessons.title, `%${search}%`),
           ilike(lessons.topic, `%${search}%`),
           ilike(users.username, `%${search}%`)
         );
-        countQuery = countQuery.where(searchCondition);
-        lessonsQuery = lessonsQuery.where(searchCondition);
+        if (searchCondition) conditions.push(searchCondition);
       }
 
-      // Apply category filter
       if (category && category !== 'all') {
-        countQuery = countQuery.where(eq(lessons.category, category));
-        lessonsQuery = lessonsQuery.where(eq(lessons.category, category));
+        conditions.push(eq(lessons.category, category));
       }
 
-      // Apply CEFR level filter
       if (cefrLevel && cefrLevel !== 'all') {
-        countQuery = countQuery.where(eq(lessons.cefrLevel, cefrLevel));
-        lessonsQuery = lessonsQuery.where(eq(lessons.cefrLevel, cefrLevel));
+        conditions.push(eq(lessons.cefrLevel, cefrLevel));
+      }
+
+      if (conditions.length > 0) {
+        countQuery = countQuery.where(and(...conditions));
+        lessonsQuery = lessonsQuery.where(and(...conditions));
       }
 
       // Execute count query
@@ -1137,28 +1117,31 @@ export class DatabaseStorage implements IStorage {
         .where(eq(lessons.isPublic, true))
         .$dynamic();
 
-      // Apply search filter
+      // Collect every filter and apply them together: calling .where() more than
+      // once on a query replaces the previous condition instead of adding to it.
+      const conditions = [eq(lessons.isPublic, true)];
+
       if (search && search !== '') {
         const searchCondition = or(
           ilike(lessons.title, `%${search}%`),
           ilike(lessons.topic, `%${search}%`),
           ilike(users.username, `%${search}%`)
         );
-        countQuery = countQuery.where(and(eq(lessons.isPublic, true), searchCondition));
-        lessonsQuery = lessonsQuery.where(and(eq(lessons.isPublic, true), searchCondition));
+        if (searchCondition) conditions.push(searchCondition);
       }
 
-      // Apply category filter (using publicCategory field)
+      // Category filter (using publicCategory field)
       if (category && category !== 'all') {
-        countQuery = countQuery.where(and(eq(lessons.isPublic, true), eq(lessons.publicCategory, category)));
-        lessonsQuery = lessonsQuery.where(and(eq(lessons.isPublic, true), eq(lessons.publicCategory, category)));
+        conditions.push(eq(lessons.publicCategory, category));
       }
 
-      // Apply CEFR level filter
+      // CEFR level filter
       if (cefrLevel && cefrLevel !== 'all') {
-        countQuery = countQuery.where(and(eq(lessons.isPublic, true), eq(lessons.cefrLevel, cefrLevel)));
-        lessonsQuery = lessonsQuery.where(and(eq(lessons.isPublic, true), eq(lessons.cefrLevel, cefrLevel)));
+        conditions.push(eq(lessons.cefrLevel, cefrLevel));
       }
+
+      countQuery = countQuery.where(and(...conditions));
+      lessonsQuery = lessonsQuery.where(and(...conditions));
 
       // Execute count query
       const [countResult] = await countQuery;
