@@ -1,3 +1,5 @@
+import { lazy, Suspense } from "react";
+import { Loader2 } from "lucide-react";
 import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -7,30 +9,46 @@ import { AuthenticatedLandingRedirect } from "./lib/authenticated-landing-redire
 import { AuthProvider } from "./hooks/use-auth";
 import TwitterCard from "@/components/TwitterCard";
 
-// Pages
+// Pages needed on first visit stay in the main bundle
 import NotFound from "@/pages/not-found";
 import AuthPage from "@/pages/auth-page";
-import DashboardPage from "@/pages/dashboard-page";
-import LessonGeneratorPage from "@/pages/lesson-generator-page";
-import StudentsPage from "@/pages/students-page";
-import StudentDetailPage from "@/pages/student-detail-page";
-import LessonHistoryPage from "@/pages/lesson-history-page";
-import BuyCreditsPage from "@/pages/buy-credits-page";
-import SettingsPage from "@/pages/settings-page";
-import FullScreenLessonPage from "@/pages/full-screen-lesson-page";
-import SubscriptionSuccessPage from "@/pages/subscription-success-page";
-import ForgotPasswordPage from "@/pages/forgot-password-page";
-import ResetPasswordPage from "@/pages/reset-password-page";
-import { AdminDashboardPage } from "@/pages/admin-dashboard-page";
 import LandingPage from "@/pages/landing-page";
-import TwitterCardPreview from "@/pages/twitter-card-preview";
-import GrammarTestPage from "@/pages/grammar-test-page";
-import { GrammarComponentShowcase } from "@/components/lesson/grammar-component-showcase";
-import PublicLibraryPage from "@/pages/public-library-page";
-import AdminLessonManagementPage from "@/pages/admin-lesson-management-page";
-import BlogIndex from "@/pages/blog-index";
-import BlogPost from "@/pages/blog-post";
-import AdminBlogPosts from "@/pages/admin-blog-posts";
+
+// Everything else is loaded on demand so first load downloads less JavaScript
+const DashboardPage = lazy(() => import("@/pages/dashboard-page"));
+const LessonGeneratorPage = lazy(() => import("@/pages/lesson-generator-page"));
+const StudentsPage = lazy(() => import("@/pages/students-page"));
+const StudentDetailPage = lazy(() => import("@/pages/student-detail-page"));
+const LessonHistoryPage = lazy(() => import("@/pages/lesson-history-page"));
+const BuyCreditsPage = lazy(() => import("@/pages/buy-credits-page"));
+const SettingsPage = lazy(() => import("@/pages/settings-page"));
+const FullScreenLessonPage = lazy(() => import("@/pages/full-screen-lesson-page"));
+const SubscriptionSuccessPage = lazy(() => import("@/pages/subscription-success-page"));
+const ForgotPasswordPage = lazy(() => import("@/pages/forgot-password-page"));
+const ResetPasswordPage = lazy(() => import("@/pages/reset-password-page"));
+const AdminDashboardPage = lazy(() =>
+  import("@/pages/admin-dashboard-page").then((m) => ({ default: m.AdminDashboardPage })),
+);
+const TwitterCardPreview = lazy(() => import("@/pages/twitter-card-preview"));
+const GrammarTestPage = lazy(() => import("@/pages/grammar-test-page"));
+const GrammarComponentShowcase = lazy(() =>
+  import("@/components/lesson/grammar-component-showcase").then((m) => ({
+    default: m.GrammarComponentShowcase,
+  })),
+);
+const PublicLibraryPage = lazy(() => import("@/pages/public-library-page"));
+const AdminLessonManagementPage = lazy(() => import("@/pages/admin-lesson-management-page"));
+const BlogIndex = lazy(() => import("@/pages/blog-index"));
+const BlogPost = lazy(() => import("@/pages/blog-post"));
+const AdminBlogPosts = lazy(() => import("@/pages/admin-blog-posts"));
+
+function PageLoader() {
+  return (
+    <div className="flex items-center justify-center min-h-screen">
+      <Loader2 className="h-8 w-8 animate-spin text-primary" />
+    </div>
+  );
+}
 
 function GrammarShowcasePage() {
   return (
@@ -84,7 +102,9 @@ function App() {
           description="Instant ESL Lessons. Smarter, Faster. Planwise generates full ESL lessons with AI — in seconds."
           image="/images/twitter-card-new-design.png"
         />
-        <Router />
+        <Suspense fallback={<PageLoader />}>
+          <Router />
+        </Suspense>
         <Toaster />
       </AuthProvider>
     </QueryClientProvider>
