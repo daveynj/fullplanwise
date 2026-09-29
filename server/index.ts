@@ -7,6 +7,7 @@ import { WebhookHandlers } from './webhookHandlers';
 import { resolveDatabaseConfig } from './database-url';
 import { databaseConfig, pool } from './db';
 import { verifyManagedDatabaseCutover } from './database-cutover';
+import { ensureDatabaseIndexes } from './db-indexes';
 
 const app = express();
 
@@ -127,6 +128,8 @@ app.use((req, res, next) => {
 
 (async () => {
   await verifyManagedDatabaseCutover(pool, databaseConfig);
+  // Not awaited: indexes only speed up queries, so don't delay startup for them.
+  void ensureDatabaseIndexes(pool);
   await initStripe();
   const server = await registerRoutes(app);
 
