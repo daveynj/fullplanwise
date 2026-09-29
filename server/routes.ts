@@ -1998,6 +1998,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Public (no login) list of library lessons for the crawlable /esl-lessons pages.
+  // Returns summaries only: no lesson content.
+  app.get("/api/public-lesson-index", async (req, res) => {
+    try {
+      const level = typeof req.query.level === 'string' ? req.query.level.toUpperCase() : undefined;
+      const validLevel = level && ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'].includes(level) ? level : undefined;
+      const lessons = await storage.getPublicLessonSummaries(validLevel);
+      res.set('Cache-Control', 'public, max-age=300');
+      res.json({ lessons });
+    } catch (error: any) {
+      console.error('Error fetching public lesson index:', error);
+      res.status(500).json({ message: 'Failed to load lessons' });
+    }
+  });
+
   app.post("/api/lessons/:id/copy", async (req, res) => {
     try {
       const lessonId = parseIdParam(req.params.id);
@@ -2649,6 +2664,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Unknown CEFR levels under /esl-lessons are real 404s (a valid level with no lessons still renders)
+  app.get("/esl-lessons/:level", async (req, res, next) => {
+    if (!["a1", "a2", "b1", "b2", "c1", "c2"].includes(req.params.level.toLowerCase())) {
+      await serve404Html(res, app);
+      return;
+    }
+    next();
+  });
+
   app.get("/llms.txt", (req, res) => {
     const filePath = path.join(process.cwd(), "public", "llms.txt");
     res.header("Content-Type", "text/plain; charset=utf-8");
@@ -2658,47 +2682,65 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Dynamic sitemap.xml generation for SEO
   app.get("/sitemap.xml", async (req, res) => {
     try {
-      // Fetch all published blog posts
-      const { posts, total } = await storage.getAllBlogPosts(1, 1000, undefined, undefined, true); // Only published posts
-      console.log(`[Sitemap] Fetched ${posts.length} published posts out of ${total} total`);
-      console.log(`[Sitemap] Post slugs:`, posts.map(p => p.slug));
+      // Only published blog posts and lessons marked public appear in the sitemap
+      const { posts } = await storage.getAllBlogPosts(1, 1000, undefined, undefined, true);
+      const publicLessons = await storage.getPublicLessonSummaries();
 
       const baseUrl = 'https://planwiseesl.com';
-      const today = new Date().toISOString().split('T')[0];
+      const toDate = (value: Date | string | null | undefined): string | undefined => {
+        if (!value) return undefined;
+        const d = new Date(value);
+        return isNaN(d.getTime()) ? undefined : d.toISOString().split('T')[0];
+      };
+      const latest = (dates: Array<string | undefined>): string | undefined =>
+        dates.filter((d): d is string => !!d).sort().pop();
 
-      // Static pages with their priority and update frequency
-      const staticPages = [
-        { url: '/', changefreq: 'weekly', priority: '1.0', lastmod: today },
-        { url: '/blog', changefreq: 'daily', priority: '0.9', lastmod: today },
-      ];
+      // lastmod is the real last-change date, or omitted when unknown: search
+      // engines stop trusting a lastmod that is always "today".
+      const entries: Array<{ url: string; lastmod?: string }> = [];
 
-      // Generate XML
+      const blogDates = posts.map((p) => toDate(p.updatedAt) || toDate(p.publishDate));
+      const lessonDates = publicLessons.map((l) => toDate(l.createdAt));
+
+      entries.push({ url: '/' });
+      entries.push({ url: '/blog', lastmod: latest(blogDates) });
+
+      if (publicLessons.length > 0) {
+        entries.push({ url: '/esl-lessons', lastmod: latest(lessonDates) });
+        for (const level of ['A1', 'A2', 'B1', 'B2', 'C1', 'C2']) {
+          const inLevel = publicLessons.filter((l) => l.cefrLevel === level);
+          if (inLevel.length > 0) {
+            entries.push({
+              url: `/esl-lessons/${level.toLowerCase()}`,
+              lastmod: latest(inLevel.map((l) => toDate(l.createdAt))),
+            });
+          }
+        }
+      }
+
+      for (const post of posts) {
+        entries.push({
+          url: `/blog/${post.slug}`,
+          lastmod: toDate(post.updatedAt) || toDate(post.publishDate),
+        });
+      }
+
+      for (const lesson of publicLessons) {
+        entries.push({ url: `/lessons/${lesson.id}`, lastmod: toDate(lesson.createdAt) });
+      }
+
       let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
       xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
-
-      // Add static pages
-      for (const page of staticPages) {
+      for (const entry of entries) {
         xml += '  <url>\n';
-        xml += `    <loc>${baseUrl}${page.url}</loc>\n`;
-        xml += `    <lastmod>${page.lastmod}</lastmod>\n`;
-        xml += `    <changefreq>${page.changefreq}</changefreq>\n`;
-        xml += `    <priority>${page.priority}</priority>\n`;
+        xml += `    <loc>${baseUrl}${entry.url}</loc>\n`;
+        if (entry.lastmod) xml += `    <lastmod>${entry.lastmod}</lastmod>\n`;
         xml += '  </url>\n';
       }
-
-      // Add blog posts
-      for (const post of posts) {
-        xml += '  <url>\n';
-        xml += `    <loc>${baseUrl}/blog/${post.slug}</loc>\n`;
-        xml += `    <lastmod>${post.publishDate}</lastmod>\n`;
-        xml += `    <changefreq>monthly</changefreq>\n`;
-        xml += `    <priority>0.7</priority>\n`;
-        xml += '  </url>\n';
-      }
-
       xml += '</urlset>';
 
       res.header('Content-Type', 'application/xml');
+      res.header('Cache-Control', 'public, max-age=3600');
       res.send(xml);
     } catch (error: any) {
       console.error('Error generating sitemap:', error);

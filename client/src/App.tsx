@@ -40,6 +40,7 @@ const PublicLibraryPage = lazy(() => import("@/pages/public-library-page"));
 const AdminLessonManagementPage = lazy(() => import("@/pages/admin-lesson-management-page"));
 const BlogIndex = lazy(() => import("@/pages/blog-index"));
 const BlogPost = lazy(() => import("@/pages/blog-post"));
+const PublicLessonsIndexPage = lazy(() => import("@/pages/public-lessons-index-page"));
 const AdminBlogPosts = lazy(() => import("@/pages/admin-blog-posts"));
 
 function PageLoader() {
@@ -82,6 +83,8 @@ function Router() {
       <ProtectedRoute path="/grammar-test" component={GrammarTestPage} />
       <ProtectedRoute path="/grammar-showcase" component={GrammarShowcasePage} />
       <Route path="/auth" component={AuthPage} />
+      <Route path="/esl-lessons" component={PublicLessonsIndexPage} />
+      <Route path="/esl-lessons/:level" component={PublicLessonsIndexPage} />
       <Route path="/blog/:slug" component={BlogPost} />
       <Route path="/blog" component={BlogIndex} />
       <Route path="/forgot-password" component={ForgotPasswordPage} />

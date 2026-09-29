@@ -7,6 +7,7 @@ interface SEOHeadProps {
   canonicalUrl?: string;
   ogImage?: string;
   contentHtml?: string;
+  noindex?: boolean; // keep this page out of search results (e.g. private share links)
   article?: {
     publishedTime: string;
     modifiedTime?: string;
@@ -23,6 +24,7 @@ export function SEOHead({
   canonicalUrl,
   ogImage = "/images/twitter-card-new-design.png",
   contentHtml,
+  noindex = false,
   article 
 }: SEOHeadProps) {
   const fullTitle = title.includes("PlanwiseESL") ? title : `${title} | PlanwiseESL - AI-Powered ESL Lessons`;
@@ -93,7 +95,7 @@ export function SEOHead({
     if (keywords.length > 0) {
       setMetaTag('keywords', keywords.join(', '));
     }
-    setMetaTag('robots', 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1');
+    setMetaTag('robots', noindex ? 'noindex, nofollow' : 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1');
     setMetaTag('language', 'en-US');
     setMetaTag('author', 'Dave Jackson, ESL Teacher & PlanwiseESL Founder');
     setMetaTag('viewport', 'width=device-width, initial-scale=1.0');
@@ -249,7 +251,7 @@ export function SEOHead({
         document.title = "PlanwiseESL - AI-Powered ESL Lessons";
       }
     };
-  }, [fullTitle, fullDescription, keywords, absoluteCanonicalUrl, ogImage, article]);
+  }, [fullTitle, fullDescription, keywords, absoluteCanonicalUrl, ogImage, article, noindex]);
   
   return null; // This component doesn't render anything
 }

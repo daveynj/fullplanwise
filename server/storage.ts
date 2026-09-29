@@ -50,6 +50,7 @@ export interface IStorage {
 
   // Public library methods
   getPublicLessons(page?: number, pageSize?: number, search?: string, cefrLevel?: string, category?: string): Promise<{ lessons: Lesson[], total: number }>;
+  getPublicLessonSummaries(cefrLevel?: string): Promise<Array<Pick<Lesson, 'id' | 'title' | 'topic' | 'cefrLevel' | 'publicCategory' | 'createdAt'>>>;
   copyLessonToUser(lessonId: number, userId: number): Promise<Lesson>;
 
   // Admin methods
@@ -1085,6 +1086,27 @@ export class DatabaseStorage implements IStorage {
       console.error('Error fetching admin lessons:', error);
       throw error;
     }
+  }
+
+  // Lightweight list of every public lesson (no content), for the crawlable
+  // browse pages and the sitemap. Optionally limited to one CEFR level.
+  async getPublicLessonSummaries(cefrLevel?: string) {
+    const conditions = [eq(lessons.isPublic, true)];
+    if (cefrLevel) conditions.push(eq(lessons.cefrLevel, cefrLevel));
+
+    return db
+      .select({
+        id: lessons.id,
+        title: lessons.title,
+        topic: lessons.topic,
+        cefrLevel: lessons.cefrLevel,
+        publicCategory: lessons.publicCategory,
+        createdAt: lessons.createdAt,
+      })
+      .from(lessons)
+      .where(and(...conditions))
+      .orderBy(desc(lessons.createdAt))
+      .limit(1000);
   }
 
   async getPublicLessons(page = 1, pageSize = 20, search = '', cefrLevel = 'all', category = 'all') {

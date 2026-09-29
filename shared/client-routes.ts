@@ -51,6 +51,8 @@ export const clientRoutePaths: string[] = [
   "/auth",
   "/blog",
   "/blog/:slug", // existence check handled by the /blog/:slug server route
+  "/esl-lessons",
+  "/esl-lessons/:level", // level validity checked by the /esl-lessons/:level server route
   "/forgot-password",
   "/reset-password/:token",
   "/twitter-card",

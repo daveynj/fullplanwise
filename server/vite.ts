@@ -10,6 +10,7 @@ import viteConfig from "../vite.config";
 import { nanoid } from "nanoid";
 import { injectLandingPrerender } from "./landing-prerender";
 import { injectBlogPrerender } from "./blog-prerender";
+import { injectLessonPrerender } from "./lesson-prerender";
 
 const viteLogger = createLogger();
 
@@ -75,6 +76,10 @@ export async function setupVite(app: Express, server: Server) {
         // Prerender blog index/post content for bots (null = not a blog page or unpublished)
         const prerendered = await injectBlogPrerender(template, pathname);
         if (prerendered) template = prerendered;
+      } else if (pathname.startsWith("/lessons/") || pathname.startsWith("/esl-lessons")) {
+        // Prerender public lesson pages and browse pages (null = private/missing/other)
+        const prerendered = await injectLessonPrerender(template, pathname);
+        if (prerendered) template = prerendered;
       }
       const page = await vite.transformIndexHtml(url, template);
       res.status(200).set({ "Content-Type": "text/html" }).end(page);
@@ -128,6 +133,27 @@ export function serveStatic(app: Express) {
   };
   app.get("/blog", servePrerenderedBlog);
   app.get("/blog/:slug", servePrerenderedBlog);
+
+  // Public lesson pages and the crawlable browse pages get the same treatment.
+  // Falls through to the SPA shell for private/missing lessons (routes.ts has
+  // already returned a 404 for those before this handler runs).
+  const servePrerenderedLesson = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+      const template = readIndexTemplate();
+      const pathname = req.originalUrl.split("?")[0];
+      const prerendered = await injectLessonPrerender(template, pathname);
+      if (prerendered) {
+        res.status(200).set({ "Content-Type": "text/html" }).end(prerendered);
+        return;
+      }
+      next();
+    } catch (e) {
+      next(e);
+    }
+  };
+  app.get("/lessons/:id", servePrerenderedLesson);
+  app.get("/esl-lessons", servePrerenderedLesson);
+  app.get("/esl-lessons/:level", servePrerenderedLesson);
 
   // Disable static index serving so the handlers above are not shadowed
   // Files in /assets have content hashes in their names, so browsers can cache

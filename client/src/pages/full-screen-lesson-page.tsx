@@ -249,6 +249,8 @@ export default function FullScreenLessonPage() {
             'reading comprehension'
           ]}
           canonicalUrl={`${window.location.origin}/lessons/${lesson.id}`}
+          // Only library (public) lessons belong in search results; private share links do not
+          noindex={!lesson.isPublic}
           ogImage={`https://planwiseesl.com/images/twitter-card-brand-updated.svg?v=2025-01-18`}
         />
       )}

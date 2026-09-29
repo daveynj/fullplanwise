@@ -277,6 +277,7 @@ export const footer = {
     'AI-powered ESL lesson generator created by ESL teacher Dave Jackson. Transform your teaching with lessons that engage students and save you 15+ hours weekly.',
   quickLinks: [
     { label: 'Start Free Trial', href: '/auth' },
+    { label: 'Free ESL Lessons', href: '/esl-lessons' },
     { label: 'ESL Teaching Blog', href: '/blog' },
   ],
   aboutItems: ['Created by ESL Teacher', 'CEFR-Aligned Content', '15+ Hours Saved Weekly'],

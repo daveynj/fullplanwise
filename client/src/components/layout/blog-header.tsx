@@ -17,6 +17,11 @@ export function BlogHeader() {
         </Link>
         
         <div className="hidden md:flex items-center gap-4">
+          <Link href="/esl-lessons">
+            <Button variant="ghost" className="text-brand-navy hover:bg-brand-navy/10">
+              Free Lessons
+            </Button>
+          </Link>
           <Link href="/blog">
             <Button variant="ghost" className="text-brand-navy hover:bg-brand-navy/10">
               Blog
@@ -42,6 +47,11 @@ export function BlogHeader() {
       <div className={`md:hidden bg-brand-light border-t border-gray-200 py-4 px-6 space-y-3 transition-all duration-300 ease-in-out overflow-hidden ${
         mobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0 py-0'
       }`}>
+        <Link href="/esl-lessons" onClick={() => setMobileMenuOpen(false)}>
+          <Button variant="ghost" className="w-full justify-start text-brand-navy hover:bg-brand-navy/10">
+            Free Lessons
+          </Button>
+        </Link>
         <Link href="/blog" onClick={() => setMobileMenuOpen(false)}>
           <Button variant="ghost" className="w-full justify-start text-brand-navy hover:bg-brand-navy/10">
             Blog
