@@ -41,6 +41,15 @@ ESL teachers typically spend 2-3 hours preparing a single lesson. This leads to 
 - **Lesson Sharing**: Share individual lessons via public URLs.
 - **Blog**: SEO-optimized blog with ESL teaching tips, strategies, and resources.
 
+## Free ESL Lessons
+
+PlanWise ESL publishes a library of free, ready-to-teach ESL lessons. Each lesson page shows the full vocabulary list, reading text, comprehension and discussion questions, and is labelled with its CEFR level and topic.
+
+- All lessons: https://planwiseesl.com/esl-lessons
+- By CEFR level: https://planwiseesl.com/esl-lessons/a1 , /a2 , /b1 , /b2 , /c1 , /c2 (all under https://planwiseesl.com/esl-lessons/)
+- Blog with teaching tips: https://planwiseesl.com/blog
+- Sitemap listing every public page: https://planwiseesl.com/sitemap.xml
+
 ## Subscription & Pricing
 
 - **Free Trial**: 2 free lesson generations to try the platform
