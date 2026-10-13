@@ -370,8 +370,11 @@ export function buildLessonPageHtml(lesson: LessonForPrerender, sections: any[],
 </div>`;
 }
 
-async function prerenderLesson(template: string, id: number): Promise<string | null> {
-  const lesson = (await storage.getLesson(id)) as (LessonForPrerender & { isPublic: boolean; isShared: boolean }) | undefined;
+async function prerenderLesson(template: string, id: number, preloaded?: unknown): Promise<string | null> {
+  // Reuse the lesson the routes.ts existence check already loaded for this
+  // request (saves a database round trip); otherwise fetch it.
+  const reuse = preloaded && (preloaded as { id?: unknown }).id === id ? preloaded : undefined;
+  const lesson = (reuse ?? (await storage.getLesson(id))) as (LessonForPrerender & { isPublic: boolean; isShared: boolean }) | undefined;
   if (!lesson || (!lesson.isPublic && !lesson.isShared)) return null;
 
   const sections = sectionsOf(lesson.content);
@@ -547,10 +550,14 @@ async function prerenderLessonIndex(template: string, level?: string): Promise<s
  * other path, or when the lesson/level is missing (callers fall through to the
  * SPA shell). Never throws: on DB errors it returns null so the page still serves.
  */
-export async function injectLessonPrerender(template: string, pathname: string): Promise<string | null> {
+export async function injectLessonPrerender(
+  template: string,
+  pathname: string,
+  preloadedLesson?: unknown,
+): Promise<string | null> {
   try {
     const lessonMatch = pathname.match(/^\/lessons\/(\d+)\/?$/);
-    if (lessonMatch) return await prerenderLesson(template, parseInt(lessonMatch[1], 10));
+    if (lessonMatch) return await prerenderLesson(template, parseInt(lessonMatch[1], 10), preloadedLesson);
 
     if (pathname === '/esl-lessons' || pathname === '/esl-lessons/') {
       return await prerenderLessonIndex(template);

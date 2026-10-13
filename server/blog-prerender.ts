@@ -133,7 +133,11 @@ function injectIntoTemplate(template: string, meta: string, bodyHtml: string): s
  * the post is missing/unpublished (callers fall through to the SPA shell).
  * Never throws: on DB errors, returns null so the page still serves.
  */
-export async function injectBlogPrerender(template: string, pathname: string): Promise<string | null> {
+export async function injectBlogPrerender(
+  template: string,
+  pathname: string,
+  preloadedPost?: BlogPost,
+): Promise<string | null> {
   try {
     if (pathname === '/blog' || pathname === '/blog/') {
       const { posts } = await storage.getAllBlogPosts(1, 100, undefined, undefined, true);
@@ -148,7 +152,8 @@ export async function injectBlogPrerender(template: string, pathname: string): P
     const match = pathname.match(/^\/blog\/([^/]+)\/?$/);
     if (match) {
       const slug = decodeURIComponent(match[1]);
-      const post = await storage.getBlogPostBySlug(slug);
+      // Reuse the post the routes.ts existence check already loaded, if any.
+      const post = preloadedPost?.slug === slug ? preloadedPost : await storage.getBlogPostBySlug(slug);
       if (!post || !post.isPublished) return null;
       const meta = headMeta(
         post.metaTitle || `${post.title} | Plan Wise ESL Blog`,

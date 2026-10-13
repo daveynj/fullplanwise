@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { Link } from 'wouter';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { SEOHead } from '@/components/SEOHead';
 import { useFreeTrial } from '@/hooks/use-free-trial';
-import { LessonContent } from '@/components/lesson/lesson-content';
 import { format } from 'date-fns';
 import {
   Clock, Target, MonitorSmartphone,
@@ -14,6 +13,12 @@ import {
   homepageMeta, hero, showcase, problem, features, steps,
   pricing, testimonials, finalCta, faq, footer, FeatureIcon, FaqAnswerPart,
 } from '@shared/homepage-content';
+
+// The lesson renderer is large; load it separately so it isn't part of the
+// homepage's first download.
+const LessonContent = lazy(() =>
+  import('@/components/lesson/lesson-content').then((m) => ({ default: m.LessonContent })),
+);
 
 const featureIcons: Record<FeatureIcon, React.ComponentType<{ className?: string }>> = {
   clock: Clock,
@@ -231,6 +236,8 @@ export default function LandingPage() {
                 <img
                   src="/reading.PNG"
                   alt="ESL Lesson Preview"
+                  width={999}
+                  height={607}
                   className="w-full h-auto"
                 />
                 <div className="p-5 border-t border-slate-100">
@@ -297,7 +304,15 @@ export default function LandingPage() {
                   </div>
                 </div>
               ) : parsedLessonContent ? (
-                <LessonContent content={parsedLessonContent} />
+                <Suspense
+                  fallback={
+                    <div className="flex items-center justify-center py-12">
+                      <div className="w-12 h-12 border-4 border-t-brand-yellow border-brand-yellow/30 rounded-full animate-spin"></div>
+                    </div>
+                  }
+                >
+                  <LessonContent content={parsedLessonContent} />
+                </Suspense>
               ) : (
                 <div className="text-center py-12">
                   <p className="text-slate-500">Unable to load lesson preview. <Link href={`/lessons/${showcase.lessonId}`} className="text-brand-navy font-medium underline">Click here to view the full lesson.</Link></p>

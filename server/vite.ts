@@ -74,11 +74,11 @@ export async function setupVite(app: Express, server: Server) {
         template = injectLandingPrerender(template);
       } else if (pathname.startsWith("/blog")) {
         // Prerender blog index/post content for bots (null = not a blog page or unpublished)
-        const prerendered = await injectBlogPrerender(template, pathname);
+        const prerendered = await injectBlogPrerender(template, pathname, res.locals.blogPost);
         if (prerendered) template = prerendered;
       } else if (pathname.startsWith("/lessons/") || pathname.startsWith("/esl-lessons")) {
         // Prerender public lesson pages and browse pages (null = private/missing/other)
-        const prerendered = await injectLessonPrerender(template, pathname);
+        const prerendered = await injectLessonPrerender(template, pathname, res.locals.lesson);
         if (prerendered) template = prerendered;
       }
       const page = await vite.transformIndexHtml(url, template);
@@ -121,7 +121,7 @@ export function serveStatic(app: Express) {
     try {
       const template = readIndexTemplate();
       const pathname = req.originalUrl.split("?")[0];
-      const prerendered = await injectBlogPrerender(template, pathname);
+      const prerendered = await injectBlogPrerender(template, pathname, res.locals.blogPost);
       if (prerendered) {
         res.status(200).set({ "Content-Type": "text/html" }).end(prerendered);
         return;
@@ -141,7 +141,7 @@ export function serveStatic(app: Express) {
     try {
       const template = readIndexTemplate();
       const pathname = req.originalUrl.split("?")[0];
-      const prerendered = await injectLessonPrerender(template, pathname);
+      const prerendered = await injectLessonPrerender(template, pathname, res.locals.lesson);
       if (prerendered) {
         res.status(200).set({ "Content-Type": "text/html" }).end(prerendered);
         return;

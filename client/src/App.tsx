@@ -11,10 +11,10 @@ import TwitterCard from "@/components/TwitterCard";
 
 // Pages needed on first visit stay in the main bundle
 import NotFound from "@/pages/not-found";
-import AuthPage from "@/pages/auth-page";
 import LandingPage from "@/pages/landing-page";
 
 // Everything else is loaded on demand so first load downloads less JavaScript
+const AuthPage = lazy(() => import("@/pages/auth-page"));
 const DashboardPage = lazy(() => import("@/pages/dashboard-page"));
 const LessonGeneratorPage = lazy(() => import("@/pages/lesson-generator-page"));
 const StudentsPage = lazy(() => import("@/pages/students-page"));

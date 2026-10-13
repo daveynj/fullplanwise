@@ -1517,17 +1517,20 @@ export class DatabaseStorage implements IStorage {
       if (whereClause) {
         query = query.where(whereClause);
       }
-      const posts = await query
-        .orderBy(desc(blogPosts.createdAt))
-        .limit(pageSize)
-        .offset(offset);
-
       // Build count query conditionally
       let countQuery = db.select({ count: count() }).from(blogPosts).$dynamic();
       if (whereClause) {
         countQuery = countQuery.where(whereClause);
       }
-      const [{ count: totalCount }] = await countQuery;
+
+      // Run both queries at once instead of one after the other.
+      const [posts, [{ count: totalCount }]] = await Promise.all([
+        query
+          .orderBy(desc(blogPosts.createdAt))
+          .limit(pageSize)
+          .offset(offset),
+        countQuery,
+      ]);
 
       return { posts, total: Number(totalCount) };
     } catch (error) {

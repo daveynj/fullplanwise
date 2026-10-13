@@ -1,4 +1,5 @@
 import express, { type Request as ExpressRequest, Response, NextFunction } from "express";
+import compression from "compression";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { runMigrations } from 'stripe-replit-sync';
@@ -84,6 +85,10 @@ app.post(
     }
   }
 );
+
+// Gzip/deflate text responses (JS bundles, CSS, HTML, JSON). Without this the
+// main JS bundle ships uncompressed (~780 KB instead of ~230 KB).
+app.use(compression());
 
 // Increased limit for base64 images in blog posts
 app.use(express.json({ limit: '10mb' }));

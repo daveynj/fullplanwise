@@ -2695,7 +2695,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return;
       }
 
-      // Post exists - continue to Vite middleware to serve normally
+      // Post exists - continue to Vite middleware to serve normally. Pass the
+      // post along so the prerenderer doesn't query it again.
+      res.locals.blogPost = post;
       next();
     } catch (error) {
       console.error(`Error checking blog post ${slug}:`, error);
@@ -2724,6 +2726,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return;
       }
 
+      // Pass the lesson along so the prerenderer doesn't query it again.
+      res.locals.lesson = lesson;
       next();
     } catch (error) {
       // Don't serve the SPA shell with 200 (crawlers would index an empty
