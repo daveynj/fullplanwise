@@ -222,7 +222,9 @@ describe("lesson generation grammar-spotlight wiring", () => {
     expect(saved.grammarSpotlight).toBeNull();
 
     // Content JSON must not contain the grammarSpotlight key at all
-    const content = JSON.parse(saved.content);
+    // Content is handed to storage as an object; the column type encodes it once.
+    const content = saved.content;
+    expect(content).toBeTypeOf("object");
     expect("grammarSpotlight" in content).toBe(false);
     // ...and the rest of the lesson content survives intact
     expect(content.title).toBe("Test Lesson");
@@ -247,7 +249,9 @@ describe("lesson generation grammar-spotlight wiring", () => {
     expect(column.title).toBe("Present Perfect");
 
     // Content JSON keeps the (validated) spotlight
-    const content = JSON.parse(saved.content);
+    // Content is handed to storage as an object; the column type encodes it once.
+    const content = saved.content;
+    expect(content).toBeTypeOf("object");
     expect(content.grammarSpotlight).toBeTruthy();
     expect(content.grammarSpotlight.title).toBe("Present Perfect");
 

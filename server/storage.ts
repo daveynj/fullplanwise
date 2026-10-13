@@ -1432,19 +1432,8 @@ export class DatabaseStorage implements IStorage {
       }
 
       const vocabularyToAdd: InsertStudentVocabulary[] = [];
-      // Parse content if it's a string
-      let content = lesson.content as any;
-      console.log(`[extractAndSaveVocabulary] Content type: ${typeof content}`);
-
-      if (typeof content === 'string') {
-        try {
-          content = JSON.parse(content);
-          console.log(`[extractAndSaveVocabulary] Parsed string content to object`);
-        } catch (parseError) {
-          console.error(`[extractAndSaveVocabulary] Failed to parse content JSON:`, parseError);
-          return 0;
-        }
-      }
+      // The lessons.content column type decodes stored JSON into an object.
+      const content = lesson.content;
 
       // Get existing vocabulary for this student to avoid duplicates
       const existingVocab = await this.getStudentVocabulary(studentId);

@@ -1,6 +1,7 @@
-import { pgTable, text, serial, integer, boolean, timestamp, jsonb, index } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, index, customType } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
+import { decodeLessonContent, encodeLessonContent, type LessonContent } from "./lesson-content";
 
 // User table schema
 export const users = pgTable("users", {
@@ -69,6 +70,15 @@ export const students = pgTable("students", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
+// lessons.content is a text column holding single-encoded lesson JSON (see
+// shared/lesson-content.ts). This type decodes legacy double-encoded rows on
+// read and always writes the canonical format, so code only sees objects.
+const lessonContentColumn = customType<{ data: LessonContent; driverData: string }>({
+  dataType: () => "text",
+  toDriver: (value) => encodeLessonContent(value),
+  fromDriver: (value) => decodeLessonContent(value),
+});
+
 // Lesson table schema
 export const lessons = pgTable("lessons", {
   id: serial("id").primaryKey(),
@@ -77,7 +87,7 @@ export const lessons = pgTable("lessons", {
   title: text("title").notNull(),
   topic: text("topic").notNull(),
   cefrLevel: text("cefr_level").notNull(),
-  content: jsonb("content").notNull(),
+  content: lessonContentColumn("content").notNull(),
   notes: text("notes"),
   grammarSpotlight: text("grammar_spotlight"), // Grammar visualization data as JSON
   category: text("category").default("general"),
@@ -141,6 +151,16 @@ export const insertLessonSchema = createInsertSchema(lessons).pick({
   grammarSpotlight: true,
   category: true,
   tags: true,
+}).extend({
+  // Accept an object or a (legacy-encoded) JSON string; always yields an object.
+  content: z.union([z.string().min(1), z.record(z.any())]).transform((value, ctx) => {
+    try {
+      return decodeLessonContent(value);
+    } catch {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Lesson content must be a JSON object" });
+      return z.NEVER;
+    }
+  }),
 });
 
 export const insertStudentLessonSchema = createInsertSchema(studentLessons).pick({

@@ -11,6 +11,7 @@
  */
 import { pool } from "../server/db";
 import { uploadLessonImage } from "../server/services/image-storage";
+import { decodeLessonContent, encodeLessonContent } from "../shared/lesson-content";
 
 const args = process.argv.slice(2);
 const DRY_RUN = args.includes("--dry-run");
@@ -21,15 +22,10 @@ const UPLOAD_CONCURRENCY = 3;
 async function extractLessonImages(
   lessonId: number,
   content: string,
-): Promise<{ lesson: unknown; uploaded: number; doubleEncoded: boolean }> {
-  // Most legacy lessons are double-encoded: the column holds
-  // JSON.stringify(JSON.stringify(lesson)), with literal \" sequences.
-  let lesson: unknown = JSON.parse(content);
-  let doubleEncoded = false;
-  if (typeof lesson === "string") {
-    lesson = JSON.parse(lesson);
-    doubleEncoded = true;
-  }
+): Promise<{ lesson: unknown; uploaded: number }> {
+  // Handles both the canonical and the legacy double-encoded format
+  // (see shared/lesson-content.ts).
+  const lesson = decodeLessonContent(content);
   const targets: Record<string, unknown>[] = [];
 
   (function collect(node: unknown): void {
@@ -59,7 +55,7 @@ async function extractLessonImages(
     }
   }
 
-  return { lesson, uploaded: targets.length, doubleEncoded };
+  return { lesson, uploaded: targets.length };
 }
 
 async function main(): Promise<void> {
@@ -93,19 +89,20 @@ async function main(): Promise<void> {
       const content: string | undefined = full.rows[0]?.content;
       if (!content) continue;
 
-      const { lesson, uploaded, doubleEncoded } = await extractLessonImages(
+      const { lesson, uploaded } = await extractLessonImages(
         row.id,
         content,
       );
 
       if (uploaded > 0 && !DRY_RUN) {
-        const serialized = JSON.stringify(lesson);
+        // Writeback always uses the canonical single-encoded format.
+        const serialized = encodeLessonContent(lesson);
         // Guard against overwriting a concurrent lesson edit: only write if
         // the row still holds the exact content we read.
         const writeResult = await pool.query(
           "UPDATE lessons SET content = $1 WHERE id = $2 AND content = $3",
           [
-            doubleEncoded ? JSON.stringify(serialized) : serialized,
+            serialized,
             row.id,
             content,
           ],
@@ -121,7 +118,7 @@ async function main(): Promise<void> {
       done++;
       totalImages += uploaded;
       console.log(
-        `[${done + failed}/${candidates.rows.length}] lesson ${row.id}: ${uploaded} images ${DRY_RUN ? "found" : "moved"} (row was ${(row.size / 1048576).toFixed(1)} MB${doubleEncoded ? ", double-encoded" : ""})`,
+        `[${done + failed}/${candidates.rows.length}] lesson ${row.id}: ${uploaded} images ${DRY_RUN ? "found" : "moved"} (row was ${(row.size / 1048576).toFixed(1)} MB)`,
       );
     } catch (error: any) {
       failed++;

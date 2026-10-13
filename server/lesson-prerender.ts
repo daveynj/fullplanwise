@@ -1,5 +1,6 @@
 import { storage } from './storage';
 import { PUBLIC_LIBRARY_LABELS } from '@shared/schema';
+import { tryDecodeLessonContent } from '@shared/lesson-content';
 
 /**
  * Server-side prerender of public lesson pages (/lessons/:id) and the public
@@ -150,21 +151,11 @@ interface LessonForPrerender {
 }
 
 /**
- * Lesson content arrives as an object, a JSON string, or a JSON string encoded
- * twice (generation saves JSON.stringify(...) into a JSON column). Unwraps up to
- * a few string layers. Never throws; returns null when nothing usable is found.
+ * Lesson rows reach the prerender already decoded by the lessons.content
+ * column type; tryDecodeLessonContent also accepts raw stored text. Never
+ * throws; returns null when nothing usable is found.
  */
-function parseContent(content: unknown): Record<string, any> | null {
-  let value: unknown = content;
-  for (let i = 0; i < 3 && typeof value === 'string'; i++) {
-    try {
-      value = JSON.parse(value);
-    } catch {
-      return null;
-    }
-  }
-  return value && typeof value === 'object' && !Array.isArray(value) ? (value as Record<string, any>) : null;
-}
+const parseContent = tryDecodeLessonContent;
 
 export function sectionsOf(content: unknown): any[] {
   return arr(parseContent(content)?.sections);

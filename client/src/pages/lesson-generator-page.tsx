@@ -8,6 +8,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { LessonGenerateParams, Student } from "@shared/schema";
+import { decodeLessonContent } from "@shared/lesson-content";
 import { useLocation } from "wouter";
 import { useTrialStatus } from "@/hooks/use-trial-status";
 
@@ -57,7 +58,7 @@ export default function LessonGeneratorPage() {
           title: lesson.title,
           topic: lesson.topic,
           cefrLevel: lesson.cefrLevel,
-          content: typeof lesson.content === 'string' ? lesson.content : JSON.stringify(lesson.content),
+          content: decodeLessonContent(lesson.content),
           grammarSpotlight: lesson.grammarSpotlight,
           teacherId: lesson.teacherId,
           studentId: lesson.studentId,

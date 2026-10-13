@@ -1064,7 +1064,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             title: generatedContent.title,
             topic: validatedData.topic,
             cefrLevel: validatedData.cefrLevel,
-            content: JSON.stringify(generatedContent),
+            content: generatedContent,
             notes: "Auto-saved lesson",
             grammarSpotlight: grammarVisualization ? JSON.stringify(grammarVisualization) : null,
             category: validatedData.category || 'general',
@@ -1123,7 +1123,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
               try {
                 // Store URLs only — Base64 stays out of the database.
                 await storage.updateLesson(savedLesson.id, {
-                  content: JSON.stringify(stripBackedUpBase64(generatedContent))
+                  content: stripBackedUpBase64(generatedContent)
                 });
                 console.log(`[Job ${jobId}] Lesson updated with images`);
               } catch (updateErr) {
@@ -1132,7 +1132,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 console.error(`[Job ${jobId}] URL-only lesson update failed, retrying with inline image fallback:`, updateErr);
                 try {
                   await storage.updateLesson(savedLesson.id, {
-                    content: JSON.stringify(generatedContent)
+                    content: generatedContent
                   });
                   console.log(`[Job ${jobId}] Lesson updated with inline image fallback`);
                 } catch (finalErr) {
@@ -1409,14 +1409,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Parse the lesson content
-      let lessonContent;
-      try {
-        lessonContent = typeof lesson.content === 'string'
-          ? JSON.parse(lesson.content)
-          : lesson.content;
-      } catch (parseError) {
-        return res.status(400).json({ message: "Invalid lesson content format" });
-      }
+      // The lessons.content column type decodes stored JSON into an object.
+      const lessonContent = lesson.content;
 
       // Check if lesson has vocabulary section
       const vocabularySection = lessonContent.sections?.find((section: any) => section.type === 'vocabulary');

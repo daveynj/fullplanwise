@@ -47,6 +47,7 @@ Social media: LinkedIn - www.linkedin.com/in/davidjackson113, X (Twitter) - @Dav
 ### System Design Choices
 - **Data Flow**: Manages user authentication, AI-powered lesson creation, grammar analysis, content storage, interactive display, and export options.
 - **Vocabulary Management**: Lessons stored in a library; student-lesson associations track assignments without duplicating data. Vocabulary is automatically extracted and managed upon lesson assignment and removal.
+- **Lesson content format**: `lessons.content` is a `text` column holding single-encoded lesson JSON (`shared/lesson-content.ts`). The Drizzle column type decodes older double-encoded rows on read and always writes the canonical format — pass content to Drizzle as an object, never pre-`JSON.stringify` it. Raw SQL scripts must use the shared decode/encode helpers.
 - **Deployment**: Frontend builds to `dist/public`, backend bundles to `dist/index.js`, with static file serving.
 - **Environment**: Utilizes Replit Secrets for sensitive data and separate configurations for development/production.
 - **Database cutover safety**: Runtime, Stripe sync, and Drizzle use the shared database selector. Keep `PLANWISE_DATABASE_SOURCE=legacy` until the managed copy is verified. Managed mode also requires the matching `PLANWISE_MANAGED_DATABASE_SIGNATURE`; do not run legacy root-level database helper scripts during cutover.

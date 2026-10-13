@@ -39,7 +39,7 @@ export default function FullScreenLessonPage() {
         if (typeof lesson.content === 'string') {
           try {
             // Try to parse it as JSON
-            console.log("LESSON CONTENT (STRING):", lesson.content.substring(0, 500) + "...");
+            console.log("LESSON CONTENT (STRING):", String(lesson.content).substring(0, 500) + "...");
             const parsed = JSON.parse(lesson.content);
             console.log("PARSED LESSON CONTENT (FIRST 100 KEYS):", 
               Object.keys(parsed).slice(0, 100));
