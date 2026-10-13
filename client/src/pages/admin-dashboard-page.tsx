@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
@@ -12,7 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
-import { Search, Calendar, UserCheck, UserX, Clock, BookOpen, Users, Activity, TrendingUp, BarChart3, Eye, Zap, Settings, Globe } from "lucide-react";
+import { Search, Calendar, UserCheck, UserX, Clock, BookOpen, Users, Activity, TrendingUp, BarChart3, Eye, Zap, Settings, Globe, Send, Loader2 } from "lucide-react";
 import { Link } from "wouter";
 import { format } from "date-fns";
 import { CATEGORY_LABELS } from "@shared/schema";
@@ -70,6 +71,26 @@ interface PaginatedLessons {
 export function AdminDashboardPage() {
   const { user, isLoading: authLoading } = useAuth();
   const { toast } = useToast();
+  const [indexNowStatus, setIndexNowStatus] = useState<{ ok: boolean; message: string } | null>(null);
+  const indexNowMutation = useMutation({
+    mutationFn: async () => {
+      const res = await apiRequest("POST", "/api/admin/indexnow/resubmit");
+      return (await res.json()) as { submitted: number; message: string };
+    },
+    onMutate: () => setIndexNowStatus(null),
+    onSuccess: (data) => setIndexNowStatus({ ok: true, message: data.message }),
+    onError: (error: Error) => {
+      // apiRequest errors look like "502: {\"message\":\"...\"}"; show just the message.
+      const match = error.message.match(/^\d+:\s*(\{.*\})$/s);
+      let message = error.message;
+      if (match) {
+        try {
+          message = JSON.parse(match[1]).message || message;
+        } catch {}
+      }
+      setIndexNowStatus({ ok: false, message });
+    },
+  });
 
   // State for users tab
   const [searchInput, setSearchInput] = useState<string>("");
@@ -894,6 +915,42 @@ export function AdminDashboardPage() {
                         </Button>
                       </Link>
                     </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Send className="h-5 w-5 text-blue-600" />
+                      Search Engine Indexing
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <p className="text-gray-600">
+                      New public lessons and published blog posts are sent to Bing automatically. Use this to resend every
+                      public lesson, the ESL lesson browse pages and all published blog posts.
+                    </p>
+                    <Button
+                      onClick={() => indexNowMutation.mutate()}
+                      disabled={indexNowMutation.isPending}
+                      data-testid="button-indexnow-resubmit"
+                    >
+                      {indexNowMutation.isPending ? (
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      ) : (
+                        <Send className="h-4 w-4 mr-2" />
+                      )}
+                      Resubmit all pages to Bing (IndexNow)
+                    </Button>
+                    {indexNowStatus && (
+                      <p
+                        role="status"
+                        className={indexNowStatus.ok ? "text-sm text-green-700" : "text-sm text-red-600"}
+                        data-testid="text-indexnow-status"
+                      >
+                        {indexNowStatus.message}
+                      </p>
+                    )}
                   </CardContent>
                 </Card>
               </TabsContent>

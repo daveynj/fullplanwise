@@ -21,6 +21,7 @@ import { isFreeTrialActive, getFreeTrialEndDate } from "./features";
 import { SELECTABLE_MODELS, DEFAULT_MODEL_ID, isSelectableModel } from "@shared/aiModels";
 import { getUncachableStripeClient } from "./stripeClient";
 import { validClientRoutes } from "@shared/client-routes";
+import { notifyIndexNow, submitToIndexNow, getIndexNowKey, lessonIndexNowPaths, blogIndexNowPaths } from "./indexnow";
 import {
   recordJobStartOrRefund,
   completeJobWithLesson,
@@ -170,6 +171,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     ALTER TABLE lessons
     ADD COLUMN IF NOT EXISTS is_shared boolean NOT NULL DEFAULT false
   `);
+
+  // IndexNow key verification file: https://planwiseesl.com/{INDEXNOW_KEY}.txt
+  // Registered first so neither the SEO catch-all nor the SPA shell can shadow it.
+  app.get("/:indexNowFile", (req, res, next) => {
+    const key = getIndexNowKey();
+    if (!key || req.params.indexNowFile !== `${key}.txt`) return next();
+    res.type("text/plain; charset=utf-8").send(key);
+  });
   // Dynamic AI service loader - using only Gemini for reliable lesson generation
   let openRouterService: any = null;
 
@@ -2082,9 +2091,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       console.log('Lesson updated successfully:', updatedLesson.id);
+      notifyIndexNow(lessonIndexNowPaths(updatedLesson));
       res.json(updatedLesson);
     } catch (error: any) {
       console.error('Error making lesson public:', error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Admin: resubmit every public page to Bing and other IndexNow search engines
+  app.post("/api/admin/indexnow/resubmit", ensureAuthenticated, async (req, res) => {
+    try {
+      const currentUser = await storage.getUser(req.user!.id);
+      if (!currentUser?.isAdmin) {
+        return res.status(403).json({ message: "Unauthorized. Admin privileges required." });
+      }
+
+      const publicLessons = await storage.getPublicLessonSummaries();
+      const { posts } = await storage.getAllBlogPosts(1, 1000, undefined, undefined, true);
+      const paths = [
+        "/esl-lessons",
+        ...["a1", "a2", "b1", "b2", "c1", "c2"].map((level) => `/esl-lessons/${level}`),
+        ...publicLessons.map((l) => `/lessons/${l.id}`),
+        "/blog",
+        ...posts.filter((p) => p.isPublished).map((p) => `/blog/${p.slug}`),
+      ];
+
+      const result = await submitToIndexNow(paths);
+      if (!result.ok) {
+        console.warn(`[IndexNow] Admin resubmit failed: ${result.error}`);
+        return res.status(502).json({ message: result.error });
+      }
+      res.json({ submitted: result.submitted, message: `Submitted ${result.submitted} URLs` });
+    } catch (error: any) {
+      console.error('Error resubmitting pages to IndexNow:', error);
       res.status(500).json({ message: error.message });
     }
   });
@@ -2312,6 +2352,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const validatedData = insertBlogPostSchema.parse(req.body);
       const post = await storage.createBlogPost(validatedData);
+      if (post.isPublished) notifyIndexNow(blogIndexNowPaths(post));
       res.status(201).json(post);
     } catch (error: any) {
       if (error instanceof z.ZodError) {
@@ -2354,6 +2395,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const updatedPost = await storage.updateBlogPost(postId, updateData);
+      // Notify when a post goes live, or when a live post moves to a new URL.
+      if (updatedPost.isPublished && (!existingPost.isPublished || updatedPost.slug !== existingPost.slug)) {
+        notifyIndexNow(blogIndexNowPaths(updatedPost));
+      }
       res.json(updatedPost);
     } catch (error: any) {
       if (error instanceof z.ZodError) {
@@ -2454,6 +2499,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       console.log(`✅ Blog post imported from BlogPilotAI: ${newPost.slug}`);
+      if (newPost.isPublished) notifyIndexNow(blogIndexNowPaths(newPost));
       res.json({
         success: true,
         id: newPost.id,

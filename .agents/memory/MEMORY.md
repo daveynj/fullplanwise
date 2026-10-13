@@ -4,4 +4,5 @@
 - [Drizzle push rename trap](drizzle-push-rename-trap.md) — legacy DB-only `credits` column makes drizzle-kit push mis-detect new user columns as renames; verify with \d users and add columns via manual SQL if needed.
 - [GLM flash reasoning tokens](glm-flash-reasoning-tokens.md) — glm-5.3-flash reasoning is mandatory and eats max_tokens; every payload needs `reasoning: {effort: 'low'}` or JSON truncates mid-string.
 - [Lesson content encoding](lesson-content-encoding.md) — lessons.content is text with canonical single-encoded JSON; legacy double-encoded rows decoded by the column type. Pass objects.
+- [Local production-build check](prod-build-local-check.md) — port 5000 is hardcoded; stop dev with pkill pattern `[i]ndex` or the tool call kills itself.
 - [Lesson image storage pressure](lesson-image-storage-pressure.md) — embedded Base64 PNGs make lessons 13–20 MB; deleting rows makes TOAST pages reusable but does not shrink Neon’s physical size.
