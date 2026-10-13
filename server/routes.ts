@@ -2613,6 +2613,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
     return true;
   };
 
+  // Canonicalize trailing slashes on known client pages (e.g. /lessons/42/ ->
+  // /lessons/42) with a 301, preserving the query string. Links pasted into
+  // chat apps or typed by hand sometimes gain a trailing slash; without this
+  // the catch-all below would serve a 404 for a page that exists. Runs before
+  // the existence guards so the redirected URL is checked normally (missing
+  // or private lessons still 404 after the redirect).
+  app.get("*", (req, res, next) => {
+    const pathname = req.path;
+    if (pathname.length <= 1 || !pathname.endsWith("/")) return next();
+
+    const stripped = pathname.replace(/\/+$/, "");
+    if (!stripped || !validClientRoutes.some((re) => re.test(stripped))) {
+      return next();
+    }
+
+    const queryIndex = req.originalUrl.indexOf("?");
+    const query = queryIndex === -1 ? "" : req.originalUrl.slice(queryIndex);
+    res.redirect(301, stripped + query);
+  });
+
   // Server-side route to handle blog post 404s properly for SEO
   // This route checks if a blog post exists and returns 404 status for missing posts
   app.get("/blog/:slug", async (req, res, next) => {

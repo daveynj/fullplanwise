@@ -162,6 +162,44 @@ describe("GET /lessons/:id lets viewable lessons through", () => {
   });
 });
 
+describe("GET /lessons/:id/ with a trailing slash", () => {
+  it("301-redirects to the canonical URL without the slash, keeping the query string", async () => {
+    const res = await fetch(`${baseUrl}/lessons/42/?ref=chat&x=1`, { redirect: "manual" });
+    expect(res.status).toBe(301);
+    expect(res.headers.get("location")).toBe("/lessons/42?ref=chat&x=1");
+    expect(mockStorage.getLesson).not.toHaveBeenCalled();
+  });
+
+  it("redirects other known client routes too", async () => {
+    const res = await fetch(`${baseUrl}/public-library/`, { redirect: "manual" });
+    expect(res.status).toBe(301);
+    expect(res.headers.get("location")).toBe("/public-library");
+  });
+
+  it("serves a viewable lesson after following the redirect", async () => {
+    mockStorage.getLesson.mockResolvedValue(lesson({ isPublic: true }));
+    const res = await fetch(`${baseUrl}/lessons/42/`);
+    expect(res.status).toBe(200);
+    expect(res.url).toBe(`${baseUrl}/lessons/42`);
+    expect(await res.text()).toBe(PASSED_THROUGH);
+  });
+
+  it("still returns a real 404 for a private lesson after the redirect", async () => {
+    mockStorage.getLesson.mockResolvedValue(lesson({ isPublic: false, isShared: false }));
+    await expectRealNotFound("/lessons/42/");
+  });
+
+  it("still returns a real 404 for a missing lesson after the redirect", async () => {
+    mockStorage.getLesson.mockResolvedValue(undefined);
+    await expectRealNotFound("/lessons/99999999/");
+  });
+
+  it("does not redirect unknown routes with a trailing slash", async () => {
+    const res = await fetch(`${baseUrl}/no-such-page/`, { redirect: "manual" });
+    expect(res.status).toBe(404);
+  });
+});
+
 describe("GET /lessons/:id when the database fails", () => {
   it("returns 503 with Retry-After instead of a 200 shell or a 404", async () => {
     mockStorage.getLesson.mockRejectedValue(new Error("db down"));
