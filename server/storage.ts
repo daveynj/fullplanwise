@@ -10,6 +10,7 @@ import createMemoryStore from "memorystore";
 import session from "express-session";
 import { Store } from "express-session";
 import { db } from "./db";
+import { extractLessonSummary, LESSON_SUMMARY_SOURCE_CHARS } from "@shared/lesson-content";
 import { SQL, eq, and, desc, count, or, ilike, gte, sql, inArray } from "drizzle-orm";
 
 // modify the interface with any CRUD methods
@@ -94,6 +95,16 @@ export interface IStorage {
 
   // Session store
   sessionStore: Store;
+}
+
+// List queries fetch only the first few KB of the raw content column
+// (`contentHead`) and turn it into a readable card summary here, instead of
+// sending encoded lesson JSON to the client.
+function withContentPreview<T extends { contentHead: string | null }>(rows: T[]) {
+  return rows.map(({ contentHead, ...rest }) => ({
+    ...rest,
+    contentPreview: extractLessonSummary(contentHead),
+  }));
 }
 
 export class DatabaseStorage implements IStorage {
@@ -1036,7 +1047,7 @@ export class DatabaseStorage implements IStorage {
           category: lessons.category,
           createdAt: lessons.createdAt,
           teacherName: users.username,
-          contentPreview: sql`substring(${lessons.content}, 1, 200)`.as('contentPreview')
+          contentHead: sql<string | null>`substring(${lessons.content}, 1, ${LESSON_SUMMARY_SOURCE_CHARS})`.as('contentHead')
         })
         .from(lessons)
         .innerJoin(users, eq(lessons.teacherId, users.id))
@@ -1079,7 +1090,7 @@ export class DatabaseStorage implements IStorage {
         .offset(offset);
 
       return {
-        lessons: lessonsResult as unknown as Lesson[],
+        lessons: withContentPreview(lessonsResult) as unknown as Lesson[],
         total
       };
     } catch (error) {
@@ -1132,7 +1143,7 @@ export class DatabaseStorage implements IStorage {
           publicCategory: lessons.publicCategory,
           createdAt: lessons.createdAt,
           teacherName: users.username,
-          contentPreview: sql`substring(${lessons.content}::text, 1, 200)`.as('contentPreview')
+          contentHead: sql<string | null>`substring(${lessons.content}, 1, ${LESSON_SUMMARY_SOURCE_CHARS})`.as('contentHead')
         })
         .from(lessons)
         .innerJoin(users, eq(lessons.teacherId, users.id))
@@ -1176,7 +1187,7 @@ export class DatabaseStorage implements IStorage {
         .offset(offset);
 
       return {
-        lessons: lessonsResult as unknown as Lesson[],
+        lessons: withContentPreview(lessonsResult) as unknown as Lesson[],
         total
       };
     } catch (error) {

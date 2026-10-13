@@ -59,7 +59,7 @@ interface AdminLesson {
   category: string;
   createdAt: string;
   teacherName: string;
-  contentPreview: string;
+  contentPreview: string | null;
 }
 
 interface PaginatedLessons {

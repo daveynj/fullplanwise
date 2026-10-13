@@ -20,7 +20,7 @@ interface PublicLesson {
   cefrLevel: string;
   category: string;
   createdAt: string;
-  contentPreview?: string;
+  contentPreview?: string | null;
 }
 
 interface PaginatedPublicLessons {
