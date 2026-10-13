@@ -149,9 +149,37 @@ interface LessonForPrerender {
   createdAt: Date | string;
 }
 
-function sectionsOf(content: unknown): any[] {
-  if (content && typeof content === 'object') return arr((content as any).sections);
-  return [];
+/**
+ * Lesson content arrives as an object, a JSON string, or a JSON string encoded
+ * twice (generation saves JSON.stringify(...) into a JSON column). Unwraps up to
+ * a few string layers. Never throws; returns null when nothing usable is found.
+ */
+function parseContent(content: unknown): Record<string, any> | null {
+  let value: unknown = content;
+  for (let i = 0; i < 3 && typeof value === 'string'; i++) {
+    try {
+      value = JSON.parse(value);
+    } catch {
+      return null;
+    }
+  }
+  return value && typeof value === 'object' && !Array.isArray(value) ? (value as Record<string, any>) : null;
+}
+
+export function sectionsOf(content: unknown): any[] {
+  return arr(parseContent(content)?.sections);
+}
+
+/** Estimated lesson length in minutes, when the content records one. */
+function estimatedMinutesOf(content: unknown): number | null {
+  const parsed = parseContent(content);
+  if (!parsed) return null;
+  const candidates = [parsed.estimatedTime, parsed.lesson?.time, parsed.time, parsed.duration];
+  for (const c of candidates) {
+    const n = typeof c === 'number' ? c : typeof c === 'string' ? parseInt(c, 10) : NaN;
+    if (Number.isFinite(n) && n > 0 && n <= 600) return Math.round(n);
+  }
+  return null;
 }
 
 function questionText(q: unknown): string {
@@ -256,8 +284,8 @@ function sectionsHtml(sections: any[]): string {
   return out.join('\n');
 }
 
-/** Short, accurate summary of what a lesson contains, built from its real sections. */
-function describeLesson(lesson: LessonForPrerender, sections: any[]): string {
+/** What a lesson contains, built from its real sections (e.g. ["12 vocabulary words", "a reading text"]). */
+function lessonContentsParts(sections: any[]): string[] {
   const has = (...types: string[]) => sections.some((s) => s && types.includes(s.type));
   const vocab = sections.find((s) => s && s.type === 'vocabulary');
   const vocabCount = vocab ? arr(vocab.words).length : 0;
@@ -268,11 +296,57 @@ function describeLesson(lesson: LessonForPrerender, sections: any[]): string {
   if (has('comprehension', 'quiz')) parts.push('comprehension questions');
   if (has('discussion', 'speaking')) parts.push('discussion questions');
   if (has('sentenceFrames', 'grammar')) parts.push('speaking patterns');
+  return parts;
+}
 
-  const levelName = CEFR_LEVEL_NAMES[lesson.cefrLevel];
-  const levelText = `${lesson.cefrLevel}${levelName ? ` (${levelName})` : ''}`;
-  const includes = parts.length ? ` Includes ${parts.slice(0, -1).join(', ')}${parts.length > 1 ? ' and ' : ''}${parts[parts.length - 1]}.` : '';
-  return truncate(`Free ${levelText} ESL lesson on ${lesson.topic}.${includes} Ready to use with your students.`, 160);
+function joinList(parts: string[]): string {
+  if (parts.length <= 1) return parts.join('');
+  return `${parts.slice(0, -1).join(', ')} and ${parts[parts.length - 1]}`;
+}
+
+function levelText(level: string): string {
+  const levelName = CEFR_LEVEL_NAMES[level];
+  return `${level}${levelName ? ` (${levelName})` : ''}`;
+}
+
+/** Short, accurate summary of what a lesson contains, built from its real sections. */
+function describeLesson(lesson: LessonForPrerender, sections: any[]): string {
+  const parts = lessonContentsParts(sections);
+  const includes = parts.length ? ` Includes ${joinList(parts)}.` : '';
+  return truncate(`Free ${levelText(lesson.cefrLevel)} ESL lesson on ${lesson.topic}.${includes} Ready to use with your students.`, 160);
+}
+
+/** "About this lesson" paragraph, built only from the lesson's own data. */
+function aboutLesson(lesson: LessonForPrerender, sections: any[]): string {
+  const label = categoryLabel(lesson.publicCategory || lesson.category);
+  const minutes = estimatedMinutesOf(lesson.content);
+  const parts = lessonContentsParts(sections);
+  const sentences = [
+    `This is a ${levelText(lesson.cefrLevel)} ESL lesson on ${lesson.topic}${label ? ` in the ${label} category` : ''}.`,
+  ];
+  if (minutes) sentences.push(`It takes about ${minutes} minutes.`);
+  if (parts.length) sentences.push(`It includes ${joinList(parts)}.`);
+  sentences.push('Suits one-to-one or small-group online classes.');
+  return sentences.join(' ');
+}
+
+function relatedLessonsHtml(level: string, related: LessonSummary[]): string {
+  if (!related.length) return '';
+  return `<section class="lp-related">
+      <h2>More ${e(level)} lessons</h2>
+      <ul>${related.map((l) => `<li><a href="/lessons/${l.id}">${e(l.title)}</a></li>`).join('')}</ul>
+    </section>`;
+}
+
+/** Up to 6 other public lessons at the same level. Failures never block the page. */
+async function relatedLessonsFor(lesson: LessonForPrerender): Promise<LessonSummary[]> {
+  try {
+    const summaries = arr(await storage.getPublicLessonSummaries(lesson.cefrLevel)) as LessonSummary[];
+    return summaries.filter((l) => l && l.id !== lesson.id).slice(0, 6);
+  } catch (error) {
+    console.warn(`[SEO] Could not load related lessons for lesson ${lesson.id}:`, error);
+    return [];
+  }
 }
 
 function toIsoDate(value: Date | string): string {
@@ -280,7 +354,7 @@ function toIsoDate(value: Date | string): string {
   return isNaN(d.getTime()) ? '' : d.toISOString();
 }
 
-export function buildLessonPageHtml(lesson: LessonForPrerender, sections: any[]): string {
+export function buildLessonPageHtml(lesson: LessonForPrerender, sections: any[], related: LessonSummary[] = []): string {
   const level = lesson.cefrLevel;
   const levelName = CEFR_LEVEL_NAMES[level];
   const label = categoryLabel(lesson.publicCategory || lesson.category);
@@ -292,9 +366,11 @@ export function buildLessonPageHtml(lesson: LessonForPrerender, sections: any[])
       <header>
         <h1>${e(lesson.title)}</h1>
         <p class="lp-meta"><span class="lp-tag">CEFR ${e(level)}${levelName ? ` &middot; ${e(levelName)}` : ''}</span>${label ? `<span class="lp-tag">${e(label)}</span>` : ''}<span class="lp-tag">Topic: ${e(lesson.topic)}</span></p>
+        <p class="lp-about"><strong>About this lesson:</strong> ${e(aboutLesson(lesson, sections))}</p>
       </header>
       ${sectionsHtml(sections)}
     </article>
+    ${relatedLessonsHtml(level, related)}
     <aside class="lp-cta">
       <h2>Use this lesson with your students</h2>
       <p>PlanWise ESL creates complete, CEFR-levelled ESL lessons on any topic in minutes. <a href="/auth?register=true">Sign up free</a> to copy this lesson, edit it, or generate your own.</p>
@@ -310,7 +386,13 @@ async function prerenderLesson(template: string, id: number): Promise<string | n
   const sections = sectionsOf(lesson.content);
   const description = describeLesson(lesson, sections);
   const canonicalPath = `/lessons/${lesson.id}`;
-  const indexable = !!lesson.isPublic;
+  let indexable = !!lesson.isPublic;
+  if (indexable && sectionsHtml(sections).trim() === '') {
+    // A lesson page with no lesson content is a soft 404; keep it out of the index.
+    console.warn(`[SEO] Public lesson ${lesson.id} rendered zero sections - serving noindex`);
+    indexable = false;
+  }
+  const related = await relatedLessonsFor(lesson);
   const levelName = CEFR_LEVEL_NAMES[lesson.cefrLevel];
   const label = categoryLabel(lesson.publicCategory || lesson.category);
   const published = toIsoDate(lesson.createdAt);
@@ -355,7 +437,7 @@ async function prerenderLesson(template: string, id: number): Promise<string | n
       ogType: 'article',
       structuredData,
     },
-    buildLessonPageHtml(lesson, sections),
+    buildLessonPageHtml(lesson, sections, related),
   );
 }
 

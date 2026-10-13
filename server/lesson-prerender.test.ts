@@ -53,6 +53,125 @@ const baseLesson = {
 beforeEach(() => {
   getLesson.mockReset();
   getPublicLessonSummaries.mockReset();
+  getPublicLessonSummaries.mockResolvedValue([]);
+});
+
+describe("injectLessonPrerender: content stored as a JSON string", () => {
+  const assertFullLesson = (html: string) => {
+    expect(html).toContain("<section>");
+    expect(html).toContain("Maria booked a flight to Lisbon.");
+    expect(html).toContain("itinerary");
+    expect(html).toContain("What makes a good holiday?");
+    expect(html).toMatch(/<meta name="description" content="[^"]*Includes [^"]*"/);
+    expect(html).toContain("index, follow");
+    // Answers and explanations never reach the public HTML
+    expect(html).not.toContain("Stated in paragraph one.");
+    expect(html).not.toContain("correctAnswer");
+  };
+
+  it("renders sections when content is a JSON string", async () => {
+    getLesson.mockResolvedValue({ ...baseLesson, content: JSON.stringify(baseLesson.content) });
+    assertFullLesson((await injectLessonPrerender(TEMPLATE, "/lessons/42"))!);
+  });
+
+  it("renders sections when content is a JSON string encoded twice", async () => {
+    getLesson.mockResolvedValue({ ...baseLesson, content: JSON.stringify(JSON.stringify(baseLesson.content)) });
+    assertFullLesson((await injectLessonPrerender(TEMPLATE, "/lessons/42"))!);
+  });
+
+  it("treats unparseable string content as zero sections without throwing", async () => {
+    getLesson.mockResolvedValue({ ...baseLesson, content: "{not json" });
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const html = (await injectLessonPrerender(TEMPLATE, "/lessons/42"))!;
+    expect(html).toContain("<h1>Travel Plans</h1>");
+    expect(html).not.toContain("<section>");
+    warn.mockRestore();
+  });
+});
+
+describe("injectLessonPrerender: About this lesson", () => {
+  it("builds the paragraph from the lesson's own data", async () => {
+    getLesson.mockResolvedValue({
+      ...baseLesson,
+      content: JSON.stringify({ estimatedTime: 60, ...baseLesson.content }),
+    });
+    const html = (await injectLessonPrerender(TEMPLATE, "/lessons/42"))!;
+    const about = html.match(/<p class="lp-about">([\s\S]*?)<\/p>/)?.[1] ?? "";
+    expect(about).toContain("About this lesson:");
+    expect(about).toContain("B1 (Intermediate)");
+    expect(about).toContain("Booking a holiday");
+    expect(about).toContain("General English");
+    expect(about).toContain("about 60 minutes");
+    expect(about).toContain("It includes 1 vocabulary words, a reading text, comprehension questions and discussion questions.");
+    expect(about).toContain("Suits one-to-one or small-group online classes.");
+    // Appears under the h1
+    expect(html.indexOf('<p class="lp-about">')).toBeGreaterThan(html.indexOf("<h1>"));
+  });
+
+  it("omits the time when the content has none", async () => {
+    getLesson.mockResolvedValue(baseLesson);
+    const html = (await injectLessonPrerender(TEMPLATE, "/lessons/42"))!;
+    const about = html.match(/<p class="lp-about">([\s\S]*?)<\/p>/)?.[1] ?? "";
+    expect(about).toContain("About this lesson:");
+    expect(about).not.toContain("minutes");
+  });
+});
+
+describe("injectLessonPrerender: More lessons at this level", () => {
+  const sameLevel = (id: number) => ({
+    id,
+    title: `B1 Lesson ${id}`,
+    topic: "Topic",
+    cefrLevel: "B1",
+    publicCategory: null,
+    createdAt: new Date("2025-01-01"),
+  });
+
+  it("links up to 6 other same-level lessons before the sign-up prompt, never the current one", async () => {
+    getLesson.mockResolvedValue(baseLesson);
+    getPublicLessonSummaries.mockResolvedValue([42, 1, 2, 3, 4, 5, 6, 7].map(sameLevel));
+    const html = (await injectLessonPrerender(TEMPLATE, "/lessons/42"))!;
+
+    expect(getPublicLessonSummaries).toHaveBeenCalledWith("B1");
+    expect(html).toContain("More B1 lessons");
+    const block = html.match(/<section class="lp-related">([\s\S]*?)<\/section>/)?.[1] ?? "";
+    const links = block.match(/<a href="\/lessons\/\d+">/g) || [];
+    expect(links).toHaveLength(6);
+    expect(block).not.toContain('href="/lessons/42"');
+    expect(block).toContain('<a href="/lessons/1">B1 Lesson 1</a>');
+    expect(block).not.toContain('href="/lessons/7"');
+    expect(html.indexOf('<section class="lp-related">')).toBeLessThan(html.indexOf('<aside class="lp-cta">'));
+  });
+
+  it("omits the block when no other lessons are left", async () => {
+    getLesson.mockResolvedValue(baseLesson);
+    getPublicLessonSummaries.mockResolvedValue([sameLevel(42)]);
+    const html = (await injectLessonPrerender(TEMPLATE, "/lessons/42"))!;
+    expect(html).not.toContain('<section class="lp-related">');
+    expect(html).not.toContain("More B1 lessons");
+  });
+
+  it("still renders the lesson when the lookup fails", async () => {
+    getLesson.mockResolvedValue(baseLesson);
+    getPublicLessonSummaries.mockRejectedValue(new Error("db down"));
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const html = (await injectLessonPrerender(TEMPLATE, "/lessons/42"))!;
+    expect(html).toContain("Maria booked a flight to Lisbon.");
+    expect(html).not.toContain('<section class="lp-related">');
+    warn.mockRestore();
+  });
+});
+
+describe("injectLessonPrerender: zero-section fallback", () => {
+  it("serves a public lesson with no renderable sections as noindex and logs the id", async () => {
+    getLesson.mockResolvedValue({ ...baseLesson, content: { sections: [] } });
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const html = (await injectLessonPrerender(TEMPLATE, "/lessons/42"))!;
+    expect(html).toContain("noindex, nofollow");
+    expect(html).not.toContain("index, follow, max-snippet");
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining("42"));
+    warn.mockRestore();
+  });
 });
 
 describe("injectLessonPrerender: lesson pages", () => {

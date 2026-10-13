@@ -2647,9 +2647,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/lessons/:id", async (req, res, next) => {
     const { id } = req.params;
 
+    // Non-numeric ids (e.g. /lessons/abc, /lessons/12abc) can never match a lesson.
+    if (!/^\d+$/.test(id) || !Number.isSafeInteger(Number(id))) {
+      console.log(`[SEO] Invalid lesson id: ${id} - returning 404`);
+      await serve404Html(res, app);
+      return;
+    }
+
     try {
       // Check if lesson exists and can be opened without authentication.
-      const lesson = await storage.getLesson(parseInt(id));
+      const lesson = await storage.getLesson(Number(id));
 
       if (!lesson || (!lesson.isPublic && !lesson.isShared)) {
         console.log(`[SEO] Lesson not found or not shared: ${id} - returning 404`);
@@ -2659,8 +2666,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       next();
     } catch (error) {
+      // Don't serve the SPA shell with 200 (crawlers would index an empty
+      // page), and don't 404 a lesson that may exist. 503 tells crawlers to
+      // retry later.
       console.error(`Error checking lesson ${id}:`, error);
-      next();
+      res
+        .status(503)
+        .set({ "Retry-After": "120", "Content-Type": "text/html" })
+        .end('<!DOCTYPE html><html><head><meta name="robots" content="noindex" /><title>Temporarily unavailable | PlanwiseESL</title></head><body><p>This lesson is temporarily unavailable. Please try again in a moment.</p></body></html>');
     }
   });
 
