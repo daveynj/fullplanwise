@@ -11,6 +11,13 @@ import { queryClient } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/use-auth";
 import { SEOHead } from "@/components/SEOHead";
 
+class LessonNotFoundError extends Error {
+  constructor() {
+    super("Lesson not found");
+    this.name = "LessonNotFoundError";
+  }
+}
+
 export default function FullScreenLessonPage() {
   const [location] = useLocation();
   const { toast } = useToast();
@@ -21,13 +28,23 @@ export default function FullScreenLessonPage() {
   // Extract lesson ID from URL
   const lessonId = location.split("/")[2];
   
-  // Fetch lesson data with optimized caching
-  const { data: lesson, isLoading, error } = useQuery<Lesson>({
+  // Fetch lesson data with optimized caching. Only a real 404 from the API
+  // counts as "not found"; any other failure (network error, blocked request,
+  // 5xx) keeps showing the loading state so the page never presents an error
+  // screen that search engines read as a missing page.
+  const { data: lesson, error } = useQuery<Lesson>({
     queryKey: [`/api/lessons/${lessonId}`],
-    retry: false,
+    queryFn: async () => {
+      const res = await fetch(`/api/lessons/${lessonId}`, { credentials: "include" });
+      if (res.status === 404) throw new LessonNotFoundError();
+      if (!res.ok) throw new Error(`Failed to load lesson (${res.status})`);
+      return res.json();
+    },
+    retry: (failureCount, err) => !(err instanceof LessonNotFoundError) && failureCount < 2,
     staleTime: 5 * 60 * 1000, // Cache for 5 minutes
     gcTime: 10 * 60 * 1000, // Keep in cache for 10 minutes
   });
+  const isNotFound = error instanceof LessonNotFoundError;
   
   // Parse the content if it's a string (from database)
   const [parsedContent, setParsedContent] = useState<any>(null);
@@ -196,30 +213,16 @@ export default function FullScreenLessonPage() {
     return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
   }, []);
 
-  // Loading state
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-light">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-t-primary border-primary/30 rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-lg font-medium text-gray-600">Loading lesson...</p>
-        </div>
-      </div>
-    );
-  }
-  
-  // Error state
-  if (error || !lesson) {
+  // Not found: only when the API actually answered 404.
+  if (isNotFound) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-light">
         <div className="text-center max-w-md mx-auto p-6 bg-white rounded-xl shadow-sm">
           <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <X className="h-8 w-8 text-red-500" />
           </div>
-          <h3 className="text-xl font-nunito font-bold mb-2">Error Loading Lesson</h3>
-          <p className="text-gray-500 mb-4">
-            {error instanceof Error ? error.message : "The requested lesson could not be found."}
-          </p>
+          <h3 className="text-xl font-nunito font-bold mb-2">Lesson Not Found</h3>
+          <p className="text-gray-500 mb-4">The requested lesson could not be found.</p>
           <Button 
             variant="default" 
             className="bg-primary text-white font-medium"
@@ -227,6 +230,23 @@ export default function FullScreenLessonPage() {
           >
             <ArrowLeft className="mr-2 h-4 w-4" /> Back to Lessons
           </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Loading, or a failed request that wasn't a 404: keep the loading state.
+  if (!lesson) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-light">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-t-primary border-primary/30 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-lg font-medium text-gray-600">Loading lesson...</p>
+          {error && (
+            <Button variant="outline" className="mt-4" onClick={() => window.location.reload()}>
+              Reload
+            </Button>
+          )}
         </div>
       </div>
     );

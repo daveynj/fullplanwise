@@ -34,7 +34,7 @@ export default function PublicLessonsIndexPage() {
   const requested = params?.level?.toUpperCase();
   const level = requested && (LEVELS as readonly string[]).includes(requested) ? requested : undefined;
 
-  const { data, isLoading } = useQuery<{ lessons: LessonSummary[] }>({
+  const { data, isLoading, isSuccess } = useQuery<{ lessons: LessonSummary[] }>({
     queryKey: ["public-lesson-index", level ?? "all"],
     queryFn: async () => {
       const res = await fetch(`/api/public-lesson-index${level ? `?level=${level}` : ""}`);
@@ -79,7 +79,9 @@ export default function PublicLessonsIndexPage() {
         }
         description={intro}
         canonicalUrl={level ? `/esl-lessons/${level.toLowerCase()}` : "/esl-lessons"}
-        noindex={!isLoading && lessons.length === 0}
+        // Only when the data really came back empty. A failed or pending request
+        // (e.g. a crawler that can't fetch the API) must not noindex the page.
+        noindex={isSuccess && lessons.length === 0}
       />
 
       <BlogHeader />

@@ -6,3 +6,4 @@
 - [Lesson content encoding](lesson-content-encoding.md) — lessons.content is text with canonical single-encoded JSON; legacy double-encoded rows decoded by the column type. Pass objects.
 - [Local production-build check](prod-build-local-check.md) — port 5000 is hardcoded; stop dev with pkill pattern `[i]ndex` or the tool call kills itself.
 - [Lesson image storage pressure](lesson-image-storage-pressure.md) — embedded Base64 PNGs make lessons 13–20 MB; deleting rows makes TOAST pages reusable but does not shrink Neon’s physical size.
+- [Robots.txt and client API fetches](robots-api-allow.md) — public pages that fetch /api/ after load need those paths allowed in robots.txt or Google sees Soft 404.
