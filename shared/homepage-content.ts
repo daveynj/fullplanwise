@@ -66,7 +66,7 @@ export const showcase = {
   sampleLabel: 'Sample Lesson',
   viewFullLabel: 'View Full Lesson',
   cta: 'Try It For Free',
-  lessonId: 1006,
+  lessonId: 1768,
 };
 
 export const problem = {

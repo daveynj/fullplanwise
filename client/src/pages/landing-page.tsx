@@ -7,7 +7,7 @@ import { useFreeTrial } from '@/hooks/use-free-trial';
 import { format } from 'date-fns';
 import {
   Clock, Target, MonitorSmartphone,
-  CheckCircle2, Sparkles, XCircle, Menu, X, Lock as LockIcon, ArrowRight
+  CheckCircle2, Sparkles, XCircle, Menu, X, Lock as LockIcon, ArrowRight, Play
 } from 'lucide-react';
 import {
   homepageMeta, hero, showcase, problem, features, steps,
@@ -19,6 +19,53 @@ import {
 const LessonContent = lazy(() =>
   import('@/components/lesson/lesson-content').then((m) => ({ default: m.LessonContent })),
 );
+
+/**
+ * Shows the YouTube thumbnail and only loads the real player when clicked.
+ * An embedded YouTube player downloads a lot of script on page load, which
+ * slows the homepage for every visitor, including those who never press play.
+ */
+const HeroVideo = ({ url }: { url: string }) => {
+  const [playing, setPlaying] = useState(false);
+  const videoId = url.match(/(?:embed\/|v=|youtu\.be\/)([\w-]{11})/)?.[1];
+
+  if (playing || !videoId) {
+    return (
+      <iframe
+        className="w-full aspect-video"
+        src={videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=1` : url}
+        title="YouTube video player"
+        frameBorder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        referrerPolicy="strict-origin-when-cross-origin"
+        allowFullScreen
+      ></iframe>
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={() => setPlaying(true)}
+      className="group relative block w-full aspect-video bg-slate-900"
+      aria-label="Play video: how PlanWise ESL works"
+    >
+      <img
+        src={`https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`}
+        alt=""
+        loading="lazy"
+        width={480}
+        height={360}
+        className="absolute inset-0 h-full w-full object-cover"
+      />
+      <span className="absolute inset-0 flex items-center justify-center">
+        <span className="flex h-16 w-16 items-center justify-center rounded-full bg-red-600 shadow-lg transition-transform group-hover:scale-110">
+          <Play className="h-7 w-7 translate-x-0.5 fill-white text-white" />
+        </span>
+      </span>
+    </button>
+  );
+};
 
 const featureIcons: Record<FeatureIcon, React.ComponentType<{ className?: string }>> = {
   clock: Clock,
@@ -217,15 +264,7 @@ export default function LandingPage() {
 
               <div className="hidden lg:block max-w-md">
                 <div className="rounded-2xl overflow-hidden shadow-xl shadow-amber-900/10 ring-1 ring-slate-900/5">
-                  <iframe
-                    className="w-full aspect-video"
-                    src={hero.videoUrl}
-                    title="YouTube video player"
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    referrerPolicy="strict-origin-when-cross-origin"
-                    allowFullScreen
-                  ></iframe>
+                  <HeroVideo url={hero.videoUrl} />
                 </div>
               </div>
             </div>
