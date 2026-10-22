@@ -81,3 +81,5 @@ server/public
 vite.config.ts.*
 attached_assets/
 cookies.txt
+# Generated reports and one-off tooling output
+/generated-artifacts/

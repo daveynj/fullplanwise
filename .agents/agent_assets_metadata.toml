@@ -1,0 +1,16 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "sMEXPF1uMTRhmtSpA-Fet"
+uri = "file://generated-artifacts/prompt-comparison/lesson-prompt-comparison.html"
+type = "html"
+title = "Lesson instructions: before and after"
+description = "24 sample lessons (A2, B1, B2, C1) written with the old and new AI instructions, side by side, with a plain-language summary."
+logical_id = "2c42b3a9-f73a-4a57-9d09-3d9cbc48b647"
+content_hash = "sha256:9b4aaae83f62e15dfbcd1f46a6c7614e1cb032819980a42e0290a57d9574b1e0"
+size = 60583
+mtime_ms = 1792673884355
+storage_uri = "gcs://replit-rams-assets-sisko/rams/assets/repl:ee7175b1-ed0f-49d8-a418-d837ab1fe6c4/2c42b3a9-f73a-4a57-9d09-3d9cbc48b647/a1deb31a-7058-4918-b625-1f3604908dcf"
+storage_version_token = "1792673985217185"
+content_type = "text/html"
