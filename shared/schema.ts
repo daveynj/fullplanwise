@@ -59,6 +59,14 @@ export const lessonGenerationJobs = pgTable("lesson_generation_jobs", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
+// When each scheduled background job last completed on any server, so only
+// one autoscale server runs each cycle. Created via CREATE TABLE IF NOT EXISTS
+// (see server/subscription-sync.ts) rather than drizzle push.
+export const scheduledJobRuns = pgTable("scheduled_job_runs", {
+  name: text("name").primaryKey(),
+  lastCompletedAt: timestamp("last_completed_at", { withTimezone: true }).notNull(),
+});
+
 // Student table schema
 export const students = pgTable("students", {
   id: serial("id").primaryKey(),

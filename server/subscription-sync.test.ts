@@ -6,6 +6,10 @@ vi.mock("./storage", () => ({ storage: { updateUser: vi.fn() } }));
 vi.mock("./stripeClient", () => ({ getStripeSecretKey: vi.fn(async () => "sk_test") }));
 
 import {
+  runScheduledSubscriptionSync,
+  startScheduledSubscriptionSync,
+  SCHEDULED_SYNC_LOCK_KEY,
+  SCHEDULED_SYNC_MIN_GAP_MS,
   decideSubscriptionChanges,
   lookupStripeState,
   type SyncUser,
@@ -146,5 +150,116 @@ describe("lookupStripeState", () => {
       fakeStripe({ subs: { sub_1: stripeSub("sub_1", "incomplete") }, customerSubs: [] }),
     ]);
     expect(result.kind).toBe("unknown");
+  });
+});
+
+describe("runScheduledSubscriptionSync", () => {
+  const HOUR = 60 * 60 * 1000;
+  const syncResult = { checked: 8, updated: [], unknown: [] };
+
+  /**
+   * In-memory stand-in for the shared database: one advisory lock and the
+   * scheduled_job_runs table, shared by every "server" (pool) made from it.
+   */
+  function fakeDatabase(opts: { lastCompletedAt?: number } = {}) {
+    const state = { lockHolder: null as object | null, lastCompletedAt: opts.lastCompletedAt ?? null as number | null };
+    function makePool() {
+      const client: any = {
+        query: vi.fn(async (text: string) => {
+          if (text.includes("pg_try_advisory_lock")) {
+            if (state.lockHolder && state.lockHolder !== client) return { rows: [{ locked: false }] };
+            state.lockHolder = client;
+            return { rows: [{ locked: true }] };
+          }
+          if (text.includes("pg_advisory_unlock")) {
+            if (state.lockHolder === client) state.lockHolder = null;
+            return { rows: [{ pg_advisory_unlock: true }] };
+          }
+          if (text.includes("elapsed_ms")) {
+            return { rows: state.lastCompletedAt === null ? [] : [{ elapsed_ms: String(Date.now() - state.lastCompletedAt) }] };
+          }
+          if (text.includes("INSERT INTO scheduled_job_runs")) {
+            state.lastCompletedAt = Date.now();
+            return { rows: [] };
+          }
+          return { rows: [] }; // CREATE TABLE
+        }),
+        release: vi.fn(),
+      };
+      return { client, pool: { connect: vi.fn(async () => client) } };
+    }
+    return { state, makePool };
+  }
+
+  it("runs the sync, records it and releases the lock when this server gets it", async () => {
+    const db = fakeDatabase();
+    const { client, pool } = db.makePool();
+    const sync = vi.fn(async () => syncResult);
+    await expect(runScheduledSubscriptionSync({ pool, sync, minGapMs: SCHEDULED_SYNC_MIN_GAP_MS })).resolves.toBe(syncResult);
+    expect(sync).toHaveBeenCalledOnce();
+    expect(client.query).toHaveBeenCalledWith(expect.stringContaining("pg_try_advisory_lock"), [SCHEDULED_SYNC_LOCK_KEY]);
+    expect(client.query).toHaveBeenLastCalledWith(expect.stringContaining("pg_advisory_unlock"), [SCHEDULED_SYNC_LOCK_KEY]);
+    expect(db.state.lastCompletedAt).not.toBeNull();
+    expect(db.state.lockHolder).toBeNull();
+    expect(client.release).toHaveBeenCalledOnce();
+  });
+
+  it("skips quietly when another server is running it right now", async () => {
+    const db = fakeDatabase();
+    db.state.lockHolder = {};
+    const { client, pool } = db.makePool();
+    const sync = vi.fn(async () => syncResult);
+    const log = vi.spyOn(console, "log");
+    await expect(runScheduledSubscriptionSync({ pool, sync, minGapMs: SCHEDULED_SYNC_MIN_GAP_MS })).resolves.toBeNull();
+    expect(sync).not.toHaveBeenCalled();
+    expect(log).not.toHaveBeenCalled();
+    expect(client.query).toHaveBeenCalledTimes(1);
+    expect(client.release).toHaveBeenCalledOnce();
+    log.mockRestore();
+  });
+
+  it("skips when another server completed a run recently", async () => {
+    const db = fakeDatabase({ lastCompletedAt: Date.now() - 20 * 60 * 1000 });
+    const { pool } = db.makePool();
+    const sync = vi.fn(async () => syncResult);
+    await expect(runScheduledSubscriptionSync({ pool, sync, minGapMs: SCHEDULED_SYNC_MIN_GAP_MS })).resolves.toBeNull();
+    expect(sync).not.toHaveBeenCalled();
+    expect(db.state.lockHolder).toBeNull();
+  });
+
+  it("releases the lock and records nothing when the sync fails, so the next server retries", async () => {
+    const db = fakeDatabase();
+    const { client, pool } = db.makePool();
+    const sync = vi.fn(async () => {
+      throw new Error("Stripe down");
+    });
+    await expect(runScheduledSubscriptionSync({ pool, sync, minGapMs: SCHEDULED_SYNC_MIN_GAP_MS })).rejects.toThrow("Stripe down");
+    expect(db.state.lastCompletedAt).toBeNull();
+    expect(db.state.lockHolder).toBeNull();
+    expect(client.release).toHaveBeenCalledOnce();
+  });
+
+  it("runs once per cycle across servers whose schedules are staggered, including after a restart", async () => {
+    vi.useFakeTimers();
+    try {
+      const db = fakeDatabase();
+      const sync = vi.fn(async () => syncResult);
+      const stops: Array<() => void> = [];
+      const startServer = () =>
+        stops.push(startScheduledSubscriptionSync({ pool: db.makePool().pool, sync, minGapMs: SCHEDULED_SYNC_MIN_GAP_MS }));
+
+      startServer(); // server A: runs at 1 min, then every 6 h
+      await vi.advanceTimersByTimeAsync(20 * 60 * 1000);
+      startServer(); // server B: 20 minutes behind A
+      await vi.advanceTimersByTimeAsync(2 * HOUR);
+      startServer(); // server C: e.g. a restart 2 h 20 min in
+
+      // Three full cycles.
+      await vi.advanceTimersByTimeAsync(18 * HOUR);
+      expect(sync).toHaveBeenCalledTimes(4); // start-up run + one per 6-hour cycle
+      stops.forEach((stop) => stop());
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

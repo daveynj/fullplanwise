@@ -5,7 +5,8 @@
  * when a subscription ended, so cancelled or unpaid customers kept access.
  * This module looks every Stripe-linked account up in Stripe and corrects it.
  * It runs on Stripe subscription webhooks, at production start-up and every
- * few hours.
+ * few hours. The scheduled runs take a Postgres advisory lock so only one
+ * autoscale server does each one.
  *
  * Safety rules:
  * - An account is only switched to free when Stripe positively reports its
@@ -18,7 +19,7 @@
  */
 import Stripe from "stripe";
 import { and, eq, isNotNull, or } from "drizzle-orm";
-import { db } from "./db";
+import { db, pool } from "./db";
 import { users } from "@shared/schema";
 import { getStripeSecretKey } from "./stripeClient";
 import { storage } from "./storage";
@@ -257,11 +258,106 @@ export async function handleSubscriptionWebhookEvent(event: { type?: string; dat
 }
 
 const SYNC_INTERVAL_MS = 6 * 60 * 60 * 1000;
+const SYNC_FIRST_RUN_DELAY_MS = 60_000;
 
-/** Production only: full sync shortly after start-up, then every 6 hours. */
+/** Postgres advisory lock name shared by every server running the scheduled sync. */
+export const SCHEDULED_SYNC_LOCK_KEY = "planwise:scheduled-subscription-sync";
+/** Row name in scheduled_job_runs for this job. */
+export const SCHEDULED_SYNC_JOB_NAME = "subscription-sync";
+/**
+ * A server skips its scheduled run if any server completed one more recently
+ * than this. Each server's timers start from its own start-up, so without a
+ * shared record every server would run once per cycle. Slightly shorter than
+ * the interval so timer jitter never makes the server that ran last cycle skip.
+ */
+export const SCHEDULED_SYNC_MIN_GAP_MS = SYNC_INTERVAL_MS - 30 * 60 * 1000;
+
+type LockClient = {
+  query: (text: string, values?: unknown[]) => Promise<{ rows: any[] }>;
+  release: (destroy?: boolean | Error) => void;
+};
+
+export interface ScheduledSyncDeps {
+  pool: { connect: () => Promise<LockClient> };
+  sync: () => Promise<SyncResult>;
+  minGapMs: number;
+}
+
+const defaultDeps = (): ScheduledSyncDeps => ({ pool, sync: syncAllSubscriptions, minGapMs: SCHEDULED_SYNC_MIN_GAP_MS });
+
+/**
+ * Runs the full sync on at most one server per cycle.
+ *
+ * - A session-level advisory lock on a dedicated connection stops two servers
+ *   running at the same moment (the database URL is a direct connection, not
+ *   a transaction pooler, so session locks are reliable).
+ * - While holding it, the server checks scheduled_job_runs and skips if any
+ *   server completed a run within minGapMs; after a successful run it records
+ *   the time. Failed runs aren't recorded, so the next server tries again.
+ *
+ * Returns null when skipped. Webhook-triggered syncs don't go through here and
+ * are never skipped. The table is created here with plain SQL, matching the
+ * project's convention of not using drizzle push on this database.
+ */
+export async function runScheduledSubscriptionSync(deps: ScheduledSyncDeps = defaultDeps()): Promise<SyncResult | null> {
+  const client = await deps.pool.connect();
+  let locked = false;
+  let releaseError: Error | undefined;
+  try {
+    const { rows } = await client.query("SELECT pg_try_advisory_lock(hashtext($1)) AS locked", [SCHEDULED_SYNC_LOCK_KEY]);
+    locked = rows[0]?.locked === true;
+    if (!locked) return null;
+
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS scheduled_job_runs (
+        name text PRIMARY KEY,
+        last_completed_at timestamptz NOT NULL
+      )
+    `);
+    // Database time, so clock differences between servers don't matter.
+    const last = await client.query(
+      "SELECT EXTRACT(EPOCH FROM (now() - last_completed_at)) * 1000 AS elapsed_ms FROM scheduled_job_runs WHERE name = $1",
+      [SCHEDULED_SYNC_JOB_NAME],
+    );
+    const elapsedMs = last.rows[0] ? Number(last.rows[0].elapsed_ms) : null;
+    if (elapsedMs !== null && elapsedMs < deps.minGapMs) return null;
+
+    const result = await deps.sync();
+    await client.query(
+      `INSERT INTO scheduled_job_runs (name, last_completed_at) VALUES ($1, now())
+       ON CONFLICT (name) DO UPDATE SET last_completed_at = EXCLUDED.last_completed_at`,
+      [SCHEDULED_SYNC_JOB_NAME],
+    );
+    return result;
+  } finally {
+    if (locked) {
+      try {
+        await client.query("SELECT pg_advisory_unlock(hashtext($1))", [SCHEDULED_SYNC_LOCK_KEY]);
+      } catch (error) {
+        // Closing the connection releases the lock anyway.
+        releaseError = error instanceof Error ? error : new Error(String(error));
+      }
+    }
+    client.release(releaseError);
+  }
+}
+
+/** Starts one server's timers: first run shortly after start-up, then every 6 hours. Returns a stop function. */
+export function startScheduledSubscriptionSync(deps: ScheduledSyncDeps = defaultDeps()): () => void {
+  const run = () =>
+    runScheduledSubscriptionSync(deps).catch((error) => console.error("[SubscriptionSync] Sync failed:", error));
+  const first = setTimeout(run, SYNC_FIRST_RUN_DELAY_MS);
+  const repeat = setInterval(run, SYNC_INTERVAL_MS);
+  first.unref();
+  repeat.unref();
+  return () => {
+    clearTimeout(first);
+    clearInterval(repeat);
+  };
+}
+
+/** Production only: the scheduled sync, done by one server per cycle. */
 export function scheduleSubscriptionSync(): void {
   if (process.env.NODE_ENV !== "production") return;
-  const run = () => syncAllSubscriptions().catch((error) => console.error("[SubscriptionSync] Sync failed:", error));
-  setTimeout(run, 60_000).unref();
-  setInterval(run, SYNC_INTERVAL_MS).unref();
+  startScheduledSubscriptionSync();
 }
