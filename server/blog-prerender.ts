@@ -1,4 +1,3 @@
-import DOMPurify from 'isomorphic-dompurify';
 import { storage } from './storage';
 import type { BlogPost } from '@shared/schema';
 
@@ -25,8 +24,17 @@ function escapeHtml(str: string): string {
 
 const e = escapeHtml;
 
+// isomorphic-dompurify loads a full DOM emulator (about 1.5 s), so it is only
+// loaded the first time a blog post is rendered, not at server start-up.
+let domPurifyPromise: Promise<typeof import('isomorphic-dompurify').default> | undefined;
+function loadDomPurify() {
+  domPurifyPromise ??= import('isomorphic-dompurify').then((m) => m.default);
+  return domPurifyPromise;
+}
+
 // Same allowlist the client-side blog post page uses, so bots see the same content.
-function sanitizeContentHtml(html: string): string {
+async function sanitizeContentHtml(html: string): Promise<string> {
+  const DOMPurify = await loadDomPurify();
   return DOMPurify.sanitize(html, {
     ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 's', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'a', 'img', 'blockquote', 'code', 'pre', 'iframe', 'div'],
     ALLOWED_ATTR: ['href', 'target', 'rel', 'src', 'alt', 'class', 'style', 'width', 'height', 'allow', 'allowfullscreen', 'frameborder'],
@@ -99,7 +107,7 @@ export function buildBlogIndexHtml(posts: BlogPost[]): string {
 }
 
 /** Builds the static, crawler-readable single blog post markup. */
-export function buildBlogPostHtml(post: BlogPost): string {
+export async function buildBlogPostHtml(post: BlogPost): Promise<string> {
   const tagsHtml = (post.tags || []).map((t) => `<span class="bp-tag">${e(t)}</span>`).join('');
   return `<div id="blog-prerender">
   ${headerHtml()}
@@ -113,7 +121,7 @@ export function buildBlogPostHtml(post: BlogPost): string {
         <p><em>${e(post.excerpt)}</em></p>
         ${post.featuredImageUrl ? `<img src="${e(post.featuredImageUrl)}" alt="${e(post.featuredImageAlt || post.title)}" />` : ''}
       </header>
-      ${sanitizeContentHtml(post.content)}
+      ${await sanitizeContentHtml(post.content)}
     </article>
   </main>
 </div>`;
@@ -160,7 +168,7 @@ export async function injectBlogPrerender(
         post.metaDescription || post.excerpt,
         `/blog/${post.slug}`,
       );
-      return injectIntoTemplate(template, meta, buildBlogPostHtml(post));
+      return injectIntoTemplate(template, meta, await buildBlogPostHtml(post));
     }
 
     return null;

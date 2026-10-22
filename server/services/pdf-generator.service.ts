@@ -1,4 +1,3 @@
-import { jsPDF } from 'jspdf';
 import { Buffer } from 'buffer';
 
 interface VocabularyWord {
@@ -1265,6 +1264,8 @@ export class PDFGeneratorService {
         throw new Error('No vocabulary words found in this lesson');
       }
       
+      // Loaded on first use so jsPDF isn't loaded at server start-up.
+      const { jsPDF } = await import('jspdf');
       // Create a new jsPDF instance (A4 size in portrait orientation)
       const doc = new jsPDF({
         orientation: 'portrait',

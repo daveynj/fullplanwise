@@ -6,10 +6,9 @@ import {
   type StudentVocabulary, type InsertStudentVocabulary,
   type BlogPost, type InsertBlogPost, type UpdateBlogPost
 } from "@shared/schema";
-import createMemoryStore from "memorystore";
-import session from "express-session";
 import { Store } from "express-session";
-import { db } from "./db";
+import { db, pool } from "./db";
+import { createSessionStore } from "./session-store";
 import { extractLessonSummary, LESSON_SUMMARY_SOURCE_CHARS } from "@shared/lesson-content";
 import { SQL, eq, and, desc, count, or, ilike, gte, sql, inArray } from "drizzle-orm";
 
@@ -111,11 +110,8 @@ export class DatabaseStorage implements IStorage {
   sessionStore: Store;
 
   constructor() {
-    const MemoryStore = createMemoryStore(session);
-    this.sessionStore = new MemoryStore({
-      checkPeriod: 86400000 // prune expired entries every 24h
-    });
-    console.log("Database storage initialized with memory session store");
+    this.sessionStore = createSessionStore(pool);
+    console.log("Database storage initialized with PostgreSQL session store");
   }
 
   // User methods

@@ -5,6 +5,8 @@
 //   1. a job pending when the server died mid-generation,
 //   2. a job stranded in 'recovering' because the server died mid-RECOVERY,
 //   3. repeated recovery runs (must not double-refund).
+// Also proves a job that is still young (possibly running on another server)
+// is never treated as abandoned.
 // Runs against the real Postgres database, like rate-limit-concurrency.test.ts.
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import { db, pool } from "./db";
@@ -16,6 +18,7 @@ import {
   completeJobWithLesson,
   settleJobError,
   recoverInterruptedJobs,
+  getPersistedJob,
 } from "./lesson-jobs";
 import { storage } from "./storage";
 
@@ -45,6 +48,13 @@ async function getJobStatus(jobId: string): Promise<string | null> {
   return (result.rows[0]?.status as string | undefined) ?? null;
 }
 
+// Make a job look old enough to count as abandoned (its server died).
+async function backdate(jobId: string) {
+  await db.execute(sql`
+    UPDATE lesson_generation_jobs SET created_at = now() - interval '20 minutes' WHERE id = ${jobId}
+  `);
+}
+
 async function cleanup() {
   await db.execute(sql`DELETE FROM lesson_generation_jobs WHERE id LIKE 'job_recovery_test_%'`);
   await db.execute(sql`DELETE FROM lessons WHERE teacher_id IN (${TEACHER_A}, ${TEACHER_B}, ${TEACHER_C})`);
@@ -64,8 +74,32 @@ describe("recoverInterruptedJobs (crash-safe credit recovery)", () => {
     await pool.end();
   });
 
+  it("leaves a young pending job alone — it may be running on another server", async () => {
+    await recordJobStart("job_recovery_test_young", TEACHER_A, true);
+    const creditsBefore = await getCredits(TEACHER_A);
+
+    const refunded = await recoverInterruptedJobs();
+
+    expect(refunded).toBe(0);
+    expect(await getCredits(TEACHER_A)).toBe(creditsBefore);
+    expect(await getJobStatus("job_recovery_test_young")).toBe("pending");
+    expect((await getPersistedJob("job_recovery_test_young"))?.abandoned).toBe(false);
+
+    // Settle it so later tests start from a known balance.
+    await settleJobError("job_recovery_test_young", TEACHER_A, true, "test cleanup");
+    await db.execute(sql`UPDATE users SET free_credits_remaining = 1 WHERE id = ${TEACHER_A}`);
+  });
+
+  it("flags an old pending job as abandoned", async () => {
+    await recordJobStart("job_recovery_test_old_flag", TEACHER_B, false);
+    await backdate("job_recovery_test_old_flag");
+    expect((await getPersistedJob("job_recovery_test_old_flag"))?.abandoned).toBe(true);
+    await settleJobError("job_recovery_test_old_flag", TEACHER_B, false, "test cleanup");
+  });
+
   it("refunds a job interrupted mid-generation and finalizes it to error", async () => {
     await recordJobStart("job_recovery_test_pending", TEACHER_A, true);
+    await backdate("job_recovery_test_pending");
 
     const refunded = await recoverInterruptedJobs();
 
@@ -91,6 +125,7 @@ describe("recoverInterruptedJobs (crash-safe credit recovery)", () => {
 
   it("is idempotent — repeated runs never double-refund", async () => {
     await recordJobStart("job_recovery_test_repeat", TEACHER_A, true);
+    await backdate("job_recovery_test_repeat");
 
     const first = await recoverInterruptedJobs();
     const second = await recoverInterruptedJobs();
@@ -104,6 +139,7 @@ describe("recoverInterruptedJobs (crash-safe credit recovery)", () => {
 
   it("finalizes interrupted jobs that never spent a credit without touching balances", async () => {
     await recordJobStart("job_recovery_test_nocredit", TEACHER_B, false);
+    await backdate("job_recovery_test_nocredit");
     const before = await getCredits(TEACHER_B);
 
     await recoverInterruptedJobs();

@@ -1,8 +1,7 @@
 import express, { type Request as ExpressRequest, Response, NextFunction } from "express";
 import compression from "compression";
 import { registerRoutes } from "./routes";
-import { setupVite, serveStatic, log } from "./vite";
-import { runMigrations } from 'stripe-replit-sync';
+import { serveStatic, log } from "./vite";
 import { getStripeSync } from './stripeClient';
 import { WebhookHandlers } from './webhookHandlers';
 import { resolveDatabaseConfig } from './database-url';
@@ -24,6 +23,7 @@ async function initStripe() {
 
   try {
     console.log('Initializing Stripe schema...');
+    const { runMigrations } = await import('stripe-replit-sync');
     await runMigrations({
       databaseUrl,
       schema: 'stripe'
@@ -147,9 +147,6 @@ app.use((req, res, next) => {
   await verifyManagedDatabaseCutover(pool, databaseConfig);
   // Not awaited: indexes only speed up queries, so don't delay startup for them.
   void ensureDatabaseIndexes(pool);
-  await initStripe();
-  // Production only: regularly correct PlanWise subscription tiers from Stripe.
-  scheduleSubscriptionSync();
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: ExpressRequest, res: Response, _next: NextFunction) => {
@@ -164,8 +161,10 @@ app.use((req, res, next) => {
 
   // importantly only setup vite in development and after
   // setting up all the other routes so the catch-all route
-  // doesn't interfere with the other routes
+  // doesn't interfere with the other routes.
+  // Dynamic import: production never loads Vite or its plugins.
   if (app.get("env") === "development") {
+    const { setupVite } = await import("./vite-dev");
     await setupVite(app, server);
   } else {
     serveStatic(app);
@@ -180,5 +179,12 @@ app.use((req, res, next) => {
     host: "0.0.0.0",
   }, () => {
     log(`serving on port 5000`);
+
+    // Stripe set-up (schema migrations, webhook registration, backfill) takes
+    // a few seconds of network calls. Run it after the server is answering so
+    // a fresh autoscale server isn't kept waiting. initStripe never throws.
+    void initStripe();
+    // Production only: regularly correct PlanWise subscription tiers from Stripe.
+    scheduleSubscriptionSync();
   });
 })();

@@ -10,3 +10,5 @@ The server always binds port 5000, so `npm start` conflicts with the dev workflo
 **How to apply:** Any time a task asks for curl output from `npm run build && npm start`.
 
 Also: server/rate-limit-concurrency.test.ts uses the real DB and occasionally fails under the full parallel suite; it passes on rerun alone.
+
+**Never run `node dist/index.js` with REPLIT_DOMAINS set.** In production mode, Stripe start-up re-registers the single live managed webhook to whatever domain REPLIT_DOMAINS names, deleting production's endpoint. Always prefix local production runs with `REPLIT_DOMAINS=`.

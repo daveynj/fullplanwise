@@ -6,6 +6,7 @@
 - [Drizzle push rename trap](drizzle-push-rename-trap.md) — legacy DB-only `credits` column makes drizzle-kit push mis-detect new user columns as renames; verify with \d users and add columns via manual SQL if needed.
 - [GLM flash reasoning tokens](glm-flash-reasoning-tokens.md) — glm-5.3-flash reasoning is mandatory and eats max_tokens; every payload needs `reasoning: {effort: 'low'}` or JSON truncates mid-string.
 - [Lesson content encoding](lesson-content-encoding.md) — lessons.content is text with canonical single-encoded JSON; legacy double-encoded rows decoded by the column type. Pass objects.
-- [Local production-build check](prod-build-local-check.md) — port 5000 is hardcoded; stop dev with pkill pattern `[i]ndex` or the tool call kills itself.
+- [Local production-build check](prod-build-local-check.md) — port 5000 hardcoded; pkill with `[i]ndex`; NEVER run prod build with REPLIT_DOMAINS set (moves live webhook).
 - [Lesson image storage pressure](lesson-image-storage-pressure.md) — embedded Base64 PNGs make lessons 13–20 MB; deleting rows makes TOAST pages reusable but does not shrink Neon’s physical size.
 - [Robots.txt and client API fetches](robots-api-allow.md) — public pages that fetch /api/ after load need those paths allowed in robots.txt or Google sees Soft 404.
+- [esbuild lazy imports](esbuild-lazy-imports.md) — keep --splitting in the build or "lazy" modules' heavy packages load at start-up; don't await DB before listen.

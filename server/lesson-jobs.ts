@@ -11,12 +11,18 @@ import { lessons, type InsertLesson, type Lesson } from "@shared/schema";
  * the refund path never runs — the user loses a credit with no lesson. This
  * module mirrors job state to Postgres so that:
  *
- *  1. On boot, jobs still marked 'pending'/'recovering' were interrupted —
- *     they are settled to 'error' and their spent credits refunded
- *     (recoverInterruptedJobs).
+ *  1. Jobs still 'pending' long after any generation could still be running
+ *     were abandoned (their server died) — they are settled to 'error' and
+ *     their spent credits refunded (recoverInterruptedJobs). This runs at
+ *     boot and periodically.
  *  2. The poll endpoint can fall back to the persisted record when the
  *     in-memory entry is gone, including returning a lesson that completed
  *     moments before the restart.
+ *
+ * MULTIPLE SERVERS: autoscale can run several instances at once and start new
+ * ones at any time. A job missing from THIS server's memory may be running
+ * on another server, so a pending job is only treated as abandoned once it is
+ * older than ABANDONED_JOB_AGE_MS. Until then it is reported as pending.
  *
  * SINGLE-SETTLEMENT GUARANTEE — every job settles exactly once:
  *
@@ -34,6 +40,13 @@ import { lessons, type InsertLesson, type Lesson } from "@shared/schema";
  * manual-SQL convention) instead of drizzle push, which is unsafe on this
  * database.
  */
+
+/**
+ * A pending job older than this is treated as abandoned. Generation normally
+ * takes well under 3 minutes (the text request times out at 60 s); the wide
+ * margin makes sure no running generation on another server is cut off.
+ */
+export const ABANDONED_JOB_AGE_MS = 15 * 60 * 1000;
 
 export async function ensureLessonJobsTable(): Promise<void> {
   await db.execute(sql`
@@ -170,6 +183,8 @@ export interface PersistedJob {
   creditSpent: boolean;
   lessonId: number | null;
   error: string | null;
+  /** Older than ABANDONED_JOB_AGE_MS (computed by the database clock). */
+  abandoned: boolean;
 }
 
 export async function getPersistedJob(jobId: string): Promise<PersistedJob | null> {
@@ -179,7 +194,8 @@ export async function getPersistedJob(jobId: string): Promise<PersistedJob | nul
            status,
            credit_spent AS "creditSpent",
            lesson_id AS "lessonId",
-           error
+           error,
+           created_at < now() - make_interval(secs => ${ABANDONED_JOB_AGE_MS / 1000}) AS abandoned
     FROM lesson_generation_jobs
     WHERE id = ${jobId}
   `);
@@ -187,27 +203,31 @@ export async function getPersistedJob(jobId: string): Promise<PersistedJob | nul
 }
 
 /**
- * Refund credits for jobs interrupted by a restart. Returns the number of
- * credits refunded.
+ * Refund credits for abandoned jobs (their server stopped mid-generation).
+ * Returns the number of credits refunded.
  *
  * Crash-safe and retry-safe by construction:
  *
- *  1. CLAIM: one atomic UPDATE flips 'pending' → 'recovering' and returns the
- *     claimed rows. Two simultaneous boots can never both claim the same job.
+ *  1. CLAIM: one atomic UPDATE flips old 'pending' rows → 'recovering' and
+ *     returns the claimed rows. Two servers recovering at once can never both
+ *     claim the same job. Only jobs older than ABANDONED_JOB_AGE_MS are
+ *     claimed, so a job still running on another server is never touched.
  *  2. SETTLE: each claimed job goes through settleJobError — refund + status
  *     in one transaction, guarded by refund_applied so even a job that was
  *     already refunded at runtime (but crashed before its status write)
  *     cannot be refunded twice.
  *  3. RETRY: the claim step also picks up 'recovering' rows — jobs stranded
- *     mid-recovery by a previous crash — so every interrupted job is retried
- *     on every boot until its settlement commits. A spent credit can never
- *     reach a terminal state without its refund resolved.
+ *     mid-recovery by a previous crash — so every abandoned job is retried on
+ *     every run until its settlement commits. A spent credit can never reach
+ *     a terminal state without its refund resolved.
  */
 export async function recoverInterruptedJobs(): Promise<number> {
+  const cutoffSeconds = ABANDONED_JOB_AGE_MS / 1000;
   const claimed = await db.execute(sql`
     UPDATE lesson_generation_jobs
     SET status = 'recovering'
-    WHERE status IN ('pending', 'recovering')
+    WHERE status = 'recovering'
+       OR (status = 'pending' AND created_at < now() - make_interval(secs => ${cutoffSeconds}))
     RETURNING id, teacher_id AS "teacherId", credit_spent AS "creditSpent"
   `);
 
@@ -224,45 +244,43 @@ export async function recoverInterruptedJobs(): Promise<number> {
       );
       if (didRefund) refunded++;
     } catch (jobError) {
-      // Left in 'recovering' — the next boot will retry this job.
-      console.error(`Failed to recover job ${row.id} (will retry on next boot):`, jobError);
+      // Left in 'recovering' — the next run will retry this job.
+      console.error(`Failed to recover job ${row.id} (will retry on next run):`, jobError);
     }
   }
   return refunded;
 }
 
 /**
- * Run boot recovery, retrying in the background until it succeeds.
+ * Settle abandoned jobs now and then every `intervalMs`.
  *
- * Recovery is mandatory for correctness — if it fails at startup (e.g. the
- * DB is briefly unreachable) and we simply logged and moved on, interrupted
- * credited jobs would sit unrefunded until the next restart. This keeps
- * retrying every `intervalMs` until the table exists and every
- * pending/recovering job is settled. Fire-and-forget: never blocks boot.
+ * Recovery is mandatory for correctness, and a job only becomes "abandoned"
+ * some time after its server died, so this cannot be a one-off boot step: it
+ * keeps running in the background. A failed run (e.g. the DB is briefly
+ * unreachable) is simply retried on the next tick. Never blocks boot.
  */
-export function startJobRecoveryWithRetry(intervalMs: number = 30_000): void {
-  const attempt = async (): Promise<boolean> => {
+export function startJobRecovery(intervalMs: number = 5 * 60 * 1000): void {
+  let running = false;
+  const run = async () => {
+    if (running) return;
+    running = true;
     try {
       await ensureLessonJobsTable();
       const refunded = await recoverInterruptedJobs();
       if (refunded > 0) {
-        console.log(`[Jobs] Recovered interrupted generation jobs — refunded ${refunded} credit(s)`);
+        console.log(`[Jobs] Recovered abandoned generation jobs — refunded ${refunded} credit(s)`);
       }
-      return true;
     } catch (recoveryError) {
-      console.error("[Jobs] Boot recovery failed — will retry:", recoveryError);
-      return false;
+      console.error("[Jobs] Job recovery failed — will retry:", recoveryError);
+    } finally {
+      running = false;
     }
   };
 
-  void (async () => {
-    if (await attempt()) return;
-    const timer = setInterval(async () => {
-      if (await attempt()) clearInterval(timer);
-    }, intervalMs);
-    // Don't hold the process open just for retries.
-    if (typeof timer.unref === 'function') timer.unref();
-  })();
+  void run();
+  const timer = setInterval(run, intervalMs);
+  // Don't hold the process open just for recovery.
+  if (typeof timer.unref === 'function') timer.unref();
 }
 
 /** Drop finished job rows older than 24 hours; the lessons they point to live in the lessons table. */

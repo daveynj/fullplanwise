@@ -27,7 +27,7 @@ import {
   completeJobWithLesson,
   settleJobError,
   getPersistedJob,
-  startJobRecoveryWithRetry,
+  startJobRecovery,
   pruneOldJobs,
 } from "./lesson-jobs";
 import Stripe from "stripe";
@@ -167,10 +167,21 @@ const MAX_PAGE_SIZE = 100;
 export async function registerRoutes(app: Express): Promise<Server> {
   // Link sharing is separate from publishing to the public lesson library.
   // Keep this idempotent migration here to support existing databases.
-  await db.execute(sql`
-    ALTER TABLE lessons
-    ADD COLUMN IF NOT EXISTS is_shared boolean NOT NULL DEFAULT false
-  `);
+  // Not awaited: opening the first database connection takes 1–2 s, and the
+  // column already exists in every live database, so start-up doesn't wait.
+  // The column check first avoids taking a table lock on every start.
+  void (async () => {
+    const existing = await db.execute(sql`
+      SELECT 1 FROM information_schema.columns
+      WHERE table_name = 'lessons' AND column_name = 'is_shared'
+    `);
+    if (existing.rows.length === 0) {
+      await db.execute(sql`
+        ALTER TABLE lessons
+        ADD COLUMN IF NOT EXISTS is_shared boolean NOT NULL DEFAULT false
+      `);
+    }
+  })().catch((err) => console.error("Failed to ensure lessons.is_shared column:", err));
 
   // IndexNow key verification file: https://planwiseesl.com/{INDEXNOW_KEY}.txt
   // Registered first so neither the SEO catch-all nor the SPA shell can shadow it.
@@ -213,11 +224,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   };
 
-  // Recover interrupted lesson-generation jobs from previous server runs:
-  // any job still 'pending' in Postgres was cut off mid-generation, so it is
-  // flipped to 'error' and its credit refunded. Retries in the background
-  // until it succeeds so a failed first attempt can't strand credits.
-  startJobRecoveryWithRetry();
+  // Settle abandoned lesson-generation jobs: a job still 'pending' in Postgres
+  // long after any generation could be running had its server stop
+  // mid-generation, so it is flipped to 'error' and its credit refunded.
+  // Runs at boot and periodically (jobs only become abandoned over time).
+  startJobRecovery();
 
   // Set up authentication routes
   setupAuth(app);
@@ -856,9 +867,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
         return res.status(500).json({ status: 'error', error: 'The lesson was created but could not be loaded. Please check your Lesson Library.' });
       }
-      // Persisted as 'pending' but absent from memory: the job was orphaned
-      // (e.g. recovery was bypassed). Its background work can never finish —
-      // treat as an error so the client stops polling.
+      // Still pending but not in this server's memory: with several servers
+      // running, another one may be generating it. Keep the client polling
+      // until it is old enough to count as abandoned (recovery then settles
+      // and refunds it).
+      if (!persisted.abandoned) {
+        return res.json({ status: 'pending' });
+      }
       return res.status(500).json({ status: 'error', error: 'Generation was interrupted. Please try again.' });
     } catch (lookupError) {
       console.error(`Error looking up persisted job ${req.params.jobId}:`, lookupError);

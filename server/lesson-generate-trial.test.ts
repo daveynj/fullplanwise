@@ -26,7 +26,7 @@ const mockLessonJobs = {
   completeJobWithLesson: vi.fn(async (_jobId: string, lesson: any) => ({ id: 42, ...lesson })),
   settleJobError: vi.fn(async () => false),
   getPersistedJob: vi.fn(async () => null),
-  startJobRecoveryWithRetry: vi.fn(),
+  startJobRecovery: vi.fn(),
   pruneOldJobs: vi.fn(async () => {}),
 };
 

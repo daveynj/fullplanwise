@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { Client } from "@replit/object-storage";
+import type { Client } from "@replit/object-storage";
 
 /**
  * Lesson images live in Replit App Storage instead of the database.
@@ -11,13 +11,13 @@ import { Client } from "@replit/object-storage";
 export const LESSON_IMAGE_PREFIX = "lesson-images/";
 export const LESSON_IMAGE_ROUTE = "/api/images/";
 
-let client: Client | null = null;
+// Loaded on first use: the SDK takes about half a second to load, which
+// would otherwise slow down every server start.
+let clientPromise: Promise<Client> | null = null;
 
-function getClient(): Client {
-  if (!client) {
-    client = new Client();
-  }
-  return client;
+function getClient(): Promise<Client> {
+  clientPromise ??= import("@replit/object-storage").then(({ Client }) => new Client());
+  return clientPromise;
 }
 
 export function detectImageFormat(base64: string): {
@@ -50,7 +50,7 @@ export async function uploadLessonImage(
 ): Promise<string> {
   const key = lessonImageKey(base64, scope);
   const buffer = Buffer.from(base64, "base64");
-  const result = await getClient().uploadFromBytes(key, buffer);
+  const result = await (await getClient()).uploadFromBytes(key, buffer);
   if (!result.ok) {
     throw new Error(
       `App Storage upload failed for ${key}: ${result.error?.message || "unknown error"}`,
@@ -84,7 +84,7 @@ export function stripBackedUpBase64<T>(node: T): T {
 export async function downloadStoredImage(
   key: string,
 ): Promise<{ buffer: Buffer; mime: string } | null> {
-  const result = await getClient().downloadAsBytes(key);
+  const result = await (await getClient()).downloadAsBytes(key);
   if (!result.ok) {
     return null;
   }

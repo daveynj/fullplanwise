@@ -34,7 +34,7 @@ const mockLessonJobs = {
   completeJobWithLesson: vi.fn(),
   settleJobError: vi.fn(async () => false),
   getPersistedJob: vi.fn(async () => null),
-  startJobRecoveryWithRetry: vi.fn(),
+  startJobRecovery: vi.fn(),
   pruneOldJobs: vi.fn(async () => {}),
 };
 
