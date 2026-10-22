@@ -1,4 +1,5 @@
 import { getStripeSync } from './stripeClient';
+import { handleSubscriptionWebhookEvent } from './subscription-sync';
 
 export class WebhookHandlers {
   static async processWebhook(payload: Buffer, signature: string): Promise<void> {
@@ -12,6 +13,18 @@ export class WebhookHandlers {
     }
 
     const sync = await getStripeSync();
+    // Verifies the signature (throws if invalid) and mirrors the event into
+    // the stripe schema tables.
     await sync.processWebhook(payload, signature);
+
+    // Signature verified: keep the user's PlanWise subscription tier in step
+    // with Stripe. Not awaited so Stripe gets its 200 straight away.
+    let event: any;
+    try {
+      event = JSON.parse(payload.toString('utf8'));
+    } catch {
+      return;
+    }
+    void handleSubscriptionWebhookEvent(event);
   }
 }

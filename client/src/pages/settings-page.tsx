@@ -348,7 +348,9 @@ export default function SettingsPage() {
                                   // Cancellation state comes from the server (user record),
                                   // so it stays consistent across devices
                                   const endDate = user?.subscriptionCurrentPeriodEnd;
-                                  if (user?.subscriptionCancelAtPeriodEnd && endDate) {
+                                  // Synced from Stripe: the end date if cancelling,
+                                  // otherwise the next renewal date.
+                                  if (endDate) {
                                     return new Date(endDate).toLocaleDateString();
                                   }
                                   

@@ -1,6 +1,7 @@
 - [Production DB connection](production-db-connection.md) — Replit overrides DATABASE_URL with "helium" in prod; use NEON_DATABASE_URL + standard pg driver instead.
 - [Stripe secrets naming](stripe-secrets-naming.md) — STRIPE_SECRET_KEY and VITE_STRIPE_PUBLIC_KEY are Replit-integration-owned names; user-set secrets with those names are silently ignored in prod. Use PLANWISE_STRIPE_SECRET and PLANWISE_STRIPE_PUBLIC instead.
 - [Stripe webhook dev/prod conflict](stripe-webhook-dev-prod.md) — only production may register the managed webhook; dev registration deletes prod’s endpoint.
+- [Two live Stripe accounts](stripe-two-accounts.md) — subscribers exist in two live Stripe accounts; sync checks both and never downgrades on "not found".
 - [Vitest JSX quirk](vitest-jsx-oxc.md) — vitest v4 uses oxc; .tsx tests fail with jsx:preserve. Write tests as .test.ts with createElement.
 - [Drizzle push rename trap](drizzle-push-rename-trap.md) — legacy DB-only `credits` column makes drizzle-kit push mis-detect new user columns as renames; verify with \d users and add columns via manual SQL if needed.
 - [GLM flash reasoning tokens](glm-flash-reasoning-tokens.md) — glm-5.3-flash reasoning is mandatory and eats max_tokens; every payload needs `reasoning: {effort: 'low'}` or JSON truncates mid-string.

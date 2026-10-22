@@ -9,6 +9,7 @@ import { resolveDatabaseConfig } from './database-url';
 import { databaseConfig, pool } from './db';
 import { verifyManagedDatabaseCutover } from './database-cutover';
 import { ensureDatabaseIndexes } from './db-indexes';
+import { scheduleSubscriptionSync } from './subscription-sync';
 
 const app = express();
 
@@ -147,6 +148,8 @@ app.use((req, res, next) => {
   // Not awaited: indexes only speed up queries, so don't delay startup for them.
   void ensureDatabaseIndexes(pool);
   await initStripe();
+  // Production only: regularly correct PlanWise subscription tiers from Stripe.
+  scheduleSubscriptionSync();
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: ExpressRequest, res: Response, _next: NextFunction) => {
