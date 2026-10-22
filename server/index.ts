@@ -31,18 +31,27 @@ async function initStripe() {
 
     const stripeSync = await getStripeSync();
 
-    console.log('Setting up managed webhook...');
-    const webhookBaseUrl = `https://${replitDomains.split(',')[0]}`;
-    const webhookUrl = `${webhookBaseUrl}/api/stripe/webhook`;
-    try {
-      const result = await stripeSync.findOrCreateManagedWebhook(webhookUrl);
-      if (result?.webhook?.url) {
-        console.log(`Webhook configured: ${result.webhook.url}`);
-      } else {
-        console.log(`Webhook setup completed for: ${webhookUrl}`);
+    // Only the published app registers the Stripe webhook. Development uses
+    // the same live Stripe account and database, and the sync library keeps
+    // a single managed webhook: registering here would delete production's
+    // endpoint and point live events at the dev URL, which fails whenever
+    // the workspace is asleep.
+    if (process.env.NODE_ENV === 'production') {
+      console.log('Setting up managed webhook...');
+      const webhookBaseUrl = `https://${replitDomains.split(',')[0]}`;
+      const webhookUrl = `${webhookBaseUrl}/api/stripe/webhook`;
+      try {
+        const result = await stripeSync.findOrCreateManagedWebhook(webhookUrl);
+        if (result?.webhook?.url) {
+          console.log(`Webhook configured: ${result.webhook.url}`);
+        } else {
+          console.log(`Webhook setup completed for: ${webhookUrl}`);
+        }
+      } catch (webhookError: any) {
+        console.warn(`Webhook setup warning: ${webhookError.message}. Webhook may need to be configured manually.`);
       }
-    } catch (webhookError: any) {
-      console.warn(`Webhook setup warning: ${webhookError.message}. Webhook may need to be configured manually.`);
+    } else {
+      console.log('Skipping Stripe webhook setup outside production');
     }
 
     console.log('Syncing Stripe data...');
