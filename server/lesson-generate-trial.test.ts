@@ -22,7 +22,9 @@ const mockStorage = {
 };
 
 const mockLessonJobs = {
-  recordJobStartOrRefund: vi.fn(async () => {}),
+  reserveGenerationJob: vi.fn(async () => ({ status: "reserved" })),
+  spendCreditForJob: vi.fn(async () => true),
+  releaseJobReservation: vi.fn(async () => {}),
   completeJobWithLesson: vi.fn(async (_jobId: string, lesson: any) => ({ id: 42, ...lesson })),
   settleJobError: vi.fn(async () => false),
   getPersistedJob: vi.fn(async () => null),
@@ -157,9 +159,9 @@ describe("lesson generation 5-day unlimited trial", () => {
     expect(res.status).toBe(200);
     const { jobId } = await res.json();
     expect(jobId).toBeTruthy();
-    // No credit touched, and the job was recorded with creditSpent = false.
-    expect(mockStorage.tryDecrementUserCredits).not.toHaveBeenCalled();
-    expect(mockLessonJobs.recordJobStartOrRefund).toHaveBeenCalledWith(jobId, teacherId, false);
+    // The job was reserved, and no credit was touched.
+    expect(mockLessonJobs.reserveGenerationJob).toHaveBeenCalledWith(jobId, teacherId, expect.any(Number), expect.any(Number));
+    expect(mockLessonJobs.spendCreditForJob).not.toHaveBeenCalled();
   });
 
   it("user past trial with 0 credits hits the paywall (402)", async () => {
@@ -170,15 +172,18 @@ describe("lesson generation 5-day unlimited trial", () => {
       trialExpiresAt: daysFromNow(-1), // expired yesterday
       freeCreditsRemaining: 0,
     }));
-    mockStorage.tryDecrementUserCredits.mockResolvedValue(false);
+    mockLessonJobs.spendCreditForJob.mockResolvedValue(false);
 
     const res = await postGenerate();
 
     expect(res.status).toBe(402);
     const body = await res.json();
     expect(body.trialExpired).toBe(true);
-    // No job was started — nothing to recover or refund.
-    expect(mockLessonJobs.recordJobStartOrRefund).not.toHaveBeenCalled();
+    // The reservation was released — nothing to recover or refund, and the
+    // teacher is not blocked from trying again.
+    const reservedJobId = (mockLessonJobs.reserveGenerationJob.mock.calls[0] as any[])[0];
+    expect(mockLessonJobs.releaseJobReservation).toHaveBeenCalledWith(reservedJobId);
+    expect(mockOpenRouterService.generateLesson).not.toHaveBeenCalled();
   });
 
   it("user past trial with credits spends exactly one", async () => {
@@ -189,13 +194,45 @@ describe("lesson generation 5-day unlimited trial", () => {
       trialExpiresAt: daysFromNow(-1),
       freeCreditsRemaining: 2,
     }));
-    mockStorage.tryDecrementUserCredits.mockResolvedValue(true);
+    mockLessonJobs.spendCreditForJob.mockResolvedValue(true);
 
     const res = await postGenerate();
 
     expect(res.status).toBe(200);
     const { jobId } = await res.json();
-    expect(mockStorage.tryDecrementUserCredits).toHaveBeenCalledTimes(1);
-    expect(mockLessonJobs.recordJobStartOrRefund).toHaveBeenCalledWith(jobId, teacherId, true);
+    // The credit is spent against the reserved job, exactly once.
+    expect(mockLessonJobs.spendCreditForJob).toHaveBeenCalledTimes(1);
+    expect(mockLessonJobs.spendCreditForJob).toHaveBeenCalledWith(jobId, teacherId);
+    expect(mockLessonJobs.releaseJobReservation).not.toHaveBeenCalled();
+  });
+});
+
+describe("one generation at a time per teacher (shared across servers)", () => {
+  it("returns 409 with the existing jobId when another server already holds a pending job", async () => {
+    // This server's memory knows nothing about the job — only the database
+    // reservation (made by another server) does.
+    mockLessonJobs.reserveGenerationJob.mockResolvedValueOnce({ status: "duplicate", jobId: "job_from_other_server" } as any);
+    mockStorage.getUser.mockImplementation(async (id: number) => ({
+      id, isAdmin: false, subscriptionTier: "free", trialExpiresAt: daysFromNow(-1), freeCreditsRemaining: 2,
+    }));
+
+    const res = await postGenerate();
+
+    expect(res.status).toBe(409);
+    expect((await res.json()).jobId).toBe("job_from_other_server");
+    // Nothing spent, nothing started, nothing released.
+    expect(mockLessonJobs.spendCreditForJob).not.toHaveBeenCalled();
+    expect(mockOpenRouterService.generateLesson).not.toHaveBeenCalled();
+    expect(mockLessonJobs.releaseJobReservation).not.toHaveBeenCalled();
+  });
+
+  it("returns 503 without spending anything when the reservation cannot be written", async () => {
+    mockLessonJobs.reserveGenerationJob.mockRejectedValueOnce(new Error("db down"));
+
+    const res = await postGenerate();
+
+    expect(res.status).toBe(503);
+    expect(mockLessonJobs.spendCreditForJob).not.toHaveBeenCalled();
+    expect(mockOpenRouterService.generateLesson).not.toHaveBeenCalled();
   });
 });

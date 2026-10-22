@@ -24,7 +24,9 @@ import { getUncachableStripeClient } from "./stripeClient";
 import { validClientRoutes } from "@shared/client-routes";
 import { notifyIndexNow, submitToIndexNow, getIndexNowKey, lessonIndexNowPaths, blogIndexNowPaths } from "./indexnow";
 import {
-  recordJobStartOrRefund,
+  reserveGenerationJob,
+  spendCreditForJob,
+  releaseJobReservation,
   completeJobWithLesson,
   settleJobError,
   getPersistedJob,
@@ -54,72 +56,13 @@ interface LessonJob {
 }
 const lessonJobs = new Map<string, LessonJob>();
 
-// Server-side idempotency guard: one pending generation job per teacher.
-// Maps teacherId -> jobId of the currently pending job.
-const pendingJobByTeacher = new Map<number, string>();
-const DUPLICATE_SUBMIT_WINDOW_MS = 10 * 1000;
-
-// Returns the existing pending jobId when the teacher already has a job that
-// is still pending, or was created within the duplicate-submit window.
-function getActivePendingJob(teacherId: number): string | null {
-  const existingJobId = pendingJobByTeacher.get(teacherId);
-  if (!existingJobId) return null;
-  const job = lessonJobs.get(existingJobId);
-  if (!job) {
-    pendingJobByTeacher.delete(teacherId);
-    return null;
-  }
-  if (job.status === 'pending' || Date.now() - job.createdAt < DUPLICATE_SUBMIT_WINDOW_MS) {
-    return existingJobId;
-  }
-  pendingJobByTeacher.delete(teacherId);
-  return null;
-}
-
 // Per-user rate limit on lesson generation: max N generations per rolling hour.
 // Caps OpenRouter/Replicate spend even for subscribers/admin/trial users who
 // bypass credit limits. Configurable via LESSON_GENERATION_HOURLY_LIMIT.
+// Enforced (together with the one-pending-job-per-teacher guard) in Postgres
+// by reserveGenerationJob, so it applies across every running server.
 const GENERATION_RATE_LIMIT = Math.max(1, parseInt(process.env.LESSON_GENERATION_HOURLY_LIMIT || "20", 10) || 20);
 const GENERATION_RATE_WINDOW_MS = 60 * 60 * 1000;
-
-// Atomically checks the per-user rate limit AND records the attempt in
-// Postgres, so counters survive restarts and are shared across instances.
-// A per-teacher advisory lock (held for the duration of the transaction)
-// serializes concurrent requests for the same teacher, so parallel requests
-// cannot both read a stale count and overshoot the cap.
-// Returns null when the attempt was recorded (under the limit), or the number
-// of minutes until the next slot frees up when over the limit.
-const RATE_LIMIT_LOCK_NAMESPACE = 42_0001; // arbitrary app-unique advisory lock class
-async function tryRecordGenerationAttempt(teacherId: number): Promise<number | null> {
-  return db.transaction(async (tx) => {
-    // Serialize per teacher: two-key advisory lock (namespace, teacherId),
-    // automatically released at transaction end.
-    await tx.execute(sql`SELECT pg_advisory_xact_lock(${RATE_LIMIT_LOCK_NAMESPACE}, ${teacherId})`);
-
-    const inserted = await tx.execute(sql`
-      INSERT INTO lesson_generation_attempts (teacher_id)
-      SELECT ${teacherId}
-      WHERE (
-        SELECT count(*) FROM lesson_generation_attempts
-        WHERE teacher_id = ${teacherId}
-          AND attempted_at > now() - interval '1 hour'
-      ) < ${GENERATION_RATE_LIMIT}
-      RETURNING id
-    `);
-    if (inserted.rows.length > 0) return null;
-
-    // Over the limit: compute when the oldest attempt in the window expires.
-    const oldest = await tx.execute(sql`
-      SELECT extract(epoch FROM min(attempted_at)) * 1000 AS oldest_ms
-      FROM lesson_generation_attempts
-      WHERE teacher_id = ${teacherId}
-        AND attempted_at > now() - interval '1 hour'
-    `);
-    const oldestMs = Number(oldest.rows[0]?.oldest_ms);
-    if (!Number.isFinite(oldestMs)) return 1;
-    return Math.max(1, Math.ceil((oldestMs + GENERATION_RATE_WINDOW_MS - Date.now()) / 60000));
-  });
-}
 
 // Prune rate-limit rows older than the window every 15 minutes so the table
 // stays small. Safe to skip on error — stale rows never affect the limit
@@ -935,26 +878,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/lessons/generate", ensureAuthenticated, async (req, res) => {
     const teacherId = req.user!.id;
 
-    // Server-side idempotency: reject a duplicate submission while a job is
-    // already pending (or was created within the last few seconds) for this
-    // teacher. No credit is spent — the client can resume polling the
-    // existing job. The check AND the reservation both happen synchronously,
-    // before any awaited work, so two near-simultaneous requests cannot both
-    // pass the guard.
-    const existingJobId = getActivePendingJob(teacherId);
-    if (existingJobId) {
-      console.log(`User ${teacherId} submitted duplicate generation request — returning existing job ${existingJobId}`);
-      return res.status(409).json({
-        message: "A lesson is already being generated. Please wait for it to finish.",
-        jobId: existingJobId
+    const jobId = `job_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+    // Server-side idempotency + rate limit, enforced in Postgres so it holds
+    // across every running server (autoscale may route a double-click to two
+    // different instances). Under a per-teacher lock, reserveGenerationJob
+    // returns the teacher's existing young pending job (no credit spent, no
+    // attempt recorded — the client resumes polling it), refuses when over
+    // the hourly cap, or persists this job as pending. Persisting BEFORE any
+    // credit is spent is what makes a later spend recoverable after a crash.
+    let reservation: Awaited<ReturnType<typeof reserveGenerationJob>>;
+    try {
+      reservation = await reserveGenerationJob(jobId, teacherId, GENERATION_RATE_LIMIT, GENERATION_RATE_WINDOW_MS);
+    } catch (reserveError) {
+      console.error(`[Job ${jobId}] Failed to reserve generation slot:`, reserveError);
+      return res.status(503).json({
+        message: "Could not start lesson generation right now. Please try again in a moment — your credits were not used."
       });
     }
-
-    // Per-user rate limit: cap generations per rolling hour, regardless of
-    // credit/subscription status, to bound AI API spend. Persisted in
-    // Postgres so it survives restarts and applies across instances.
-    const retryMinutes = await tryRecordGenerationAttempt(teacherId);
-    if (retryMinutes !== null) {
+    if (reservation.status === 'duplicate') {
+      console.log(`User ${teacherId} submitted duplicate generation request — returning existing job ${reservation.jobId}`);
+      return res.status(409).json({
+        message: "A lesson is already being generated. Please wait for it to finish.",
+        jobId: reservation.jobId
+      });
+    }
+    if (reservation.status === 'rate_limited') {
+      const retryMinutes = reservation.retryAfterMinutes;
       console.log(`User ${teacherId} hit the lesson generation rate limit (${GENERATION_RATE_LIMIT}/hour)`);
       return res.status(429).json({
         message: `You've reached the limit of ${GENERATION_RATE_LIMIT} lesson generations per hour. Please try again in about ${retryMinutes} minute${retryMinutes === 1 ? '' : 's'}.`,
@@ -962,17 +912,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
 
-    // Reserve the job slot immediately (synchronously) so concurrent requests
-    // hit the guard above. Released on every failure path before the job starts.
-    const jobId = `job_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     lessonJobs.set(jobId, { status: 'pending', createdAt: Date.now() });
-    pendingJobByTeacher.set(teacherId, jobId);
 
+    // Undo the reservation on every failure path before generation starts,
+    // so the teacher is not blocked. If the delete itself fails, the row is
+    // treated as abandoned after ABANDONED_JOB_AGE_MS and stops blocking.
     const releaseReservation = () => {
       lessonJobs.delete(jobId);
-      if (pendingJobByTeacher.get(teacherId) === jobId) {
-        pendingJobByTeacher.delete(teacherId);
-      }
+      releaseJobReservation(jobId).catch((releaseError) =>
+        console.error(`[Job ${jobId}] Failed to release reservation:`, releaseError)
+      );
     };
 
     try {
@@ -992,13 +941,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Atomically spend one credit BEFORE generation starts. The conditional
       // SQL decrement only succeeds when the balance is above zero, so parallel
-      // requests cannot overspend. The credit is refunded if generation fails.
+      // requests cannot overspend; it commits together with the job's
+      // credit_spent flag, so recovery can always refund it. The credit is
+      // refunded if generation fails.
       let creditSpent = false;
 
       // Anyone inside an active trial window generates unlimited lessons —
       // no credit is spent until the trial expires.
       if (!user.isAdmin && !isSubscriber && !freeTrialActive && !isInPersonalTrial) {
-        creditSpent = await storage.tryDecrementUserCredits(user.id);
+        creditSpent = await spendCreditForJob(jobId, user.id);
         if (creditSpent) {
           console.log(`User ${user.id} spent 1 credit`);
         } else {
@@ -1009,20 +960,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
             trialExpired: true
           });
         }
-      }
-
-      // Persist the job BEFORE generation starts — this is what makes the
-      // spent credit recoverable after a restart. If the write fails after a
-      // credit was spent, recordJobStartOrRefund refunds it; we then abort
-      // the request rather than starting unrecoverable background work.
-      try {
-        await recordJobStartOrRefund(jobId, teacherId, creditSpent);
-      } catch (persistError) {
-        console.error(`[Job ${jobId}] Failed to persist job start — aborting generation:`, persistError);
-        releaseReservation();
-        return res.status(503).json({
-          message: "Could not start lesson generation right now. Please try again in a moment — your credits were not used."
-        });
       }
 
       // Respond immediately — generation happens in background
@@ -1116,9 +1053,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
           console.log(`[Job ${jobId}] Marking complete (text only) in ${textOnlyTime.toFixed(1)}s — images generating in background`);
 
           // Mark job as complete NOW so the user can open the lesson immediately
-          if (pendingJobByTeacher.get(teacherId) === jobId) {
-            pendingJobByTeacher.delete(teacherId);
-          }
           lessonJobs.set(jobId, {
             status: 'complete',
             createdAt: Date.now(),
@@ -1182,9 +1116,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
             }
           } catch (settleError) {
             console.error(`[Job ${jobId}] Failed to settle job error (boot recovery will retry):`, settleError);
-          }
-          if (pendingJobByTeacher.get(teacherId) === jobId) {
-            pendingJobByTeacher.delete(teacherId);
           }
           lessonJobs.set(jobId, {
             status: 'error',

@@ -14,13 +14,12 @@ import { sql } from "drizzle-orm";
 import {
   ensureLessonJobsTable,
   recordJobStart,
-  recordJobStartOrRefund,
+  spendCreditForJob,
   completeJobWithLesson,
   settleJobError,
   recoverInterruptedJobs,
   getPersistedJob,
 } from "./lesson-jobs";
-import { storage } from "./storage";
 
 const TEACHER_A = 987654322; // far outside real user id range
 const TEACHER_B = 987654323;
@@ -148,33 +147,26 @@ describe("recoverInterruptedJobs (crash-safe credit recovery)", () => {
     expect(await getJobStatus("job_recovery_test_nocredit")).toBe("error");
   });
 
-  it("refunds the spent credit when job-start persistence fails (no restart can strand it)", async () => {
-    // Simulates the generate-route flow: credit decremented, THEN the job
-    // start write fails. The refund must happen immediately — the job row
-    // never exists, so boot recovery could never see this spend.
+  it("never spends a credit that recovery cannot see — spend and job flag commit together", async () => {
+    // The generate route reserves the job row first, then spends the credit
+    // with spendCreditForJob. If the job row is missing, the decrement must
+    // roll back: a credit spent without a job row could never be refunded.
     await createTeacher(TEACHER_C, 1);
-    const spent = await storage.tryDecrementUserCredits(TEACHER_C);
-    expect(spent).toBe(true);
-    expect(await getCredits(TEACHER_C)).toBe(0);
 
-    // Break persistence by renaming the jobs table away, then restore it.
-    await db.execute(sql`ALTER TABLE lesson_generation_jobs RENAME TO lesson_generation_jobs_test_bak`);
-    try {
-      await expect(
-        recordJobStartOrRefund("job_recovery_test_persist_fail", TEACHER_C, true)
-      ).rejects.toThrow();
-
-      // The credit was returned immediately — not deferred to boot recovery.
-      expect(await getCredits(TEACHER_C)).toBe(1);
-    } finally {
-      await db.execute(sql`ALTER TABLE lesson_generation_jobs_test_bak RENAME TO lesson_generation_jobs`);
-    }
-
-    // And no phantom job row exists, so nothing is recovered or refunded later.
-    expect(await getJobStatus("job_recovery_test_persist_fail")).toBeNull();
-    await recoverInterruptedJobs();
+    await expect(spendCreditForJob("job_recovery_test_no_row", TEACHER_C)).rejects.toThrow();
     expect(await getCredits(TEACHER_C)).toBe(1);
-  });
+
+    // With a reserved row, the spend succeeds and is flagged on the job, so
+    // recovery refunds it if the server dies mid-generation.
+    await recordJobStart("job_recovery_test_spend", TEACHER_C, false);
+    expect(await spendCreditForJob("job_recovery_test_spend", TEACHER_C)).toBe(true);
+    expect(await getCredits(TEACHER_C)).toBe(0);
+    expect((await getPersistedJob("job_recovery_test_spend"))?.creditSpent).toBe(true);
+
+    await backdate("job_recovery_test_spend");
+    expect(await recoverInterruptedJobs()).toBe(1);
+    expect(await getCredits(TEACHER_C)).toBe(1);
+  }, 30000);
 
   it("never refunds a completed job — lesson insert and job completion are one transaction", async () => {
     // Crash window: lesson saved but status write lost. With atomic

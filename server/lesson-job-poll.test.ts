@@ -15,7 +15,9 @@ const mockStorage = {
 };
 
 const mockLessonJobs = {
-  recordJobStartOrRefund: vi.fn(async () => {}),
+  reserveGenerationJob: vi.fn(async () => ({ status: "reserved" })),
+  spendCreditForJob: vi.fn(async () => true),
+  releaseJobReservation: vi.fn(async () => {}),
   completeJobWithLesson: vi.fn(),
   settleJobError: vi.fn(async () => false),
   getPersistedJob: vi.fn(),

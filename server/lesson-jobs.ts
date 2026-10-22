@@ -1,6 +1,5 @@
 import { db } from "./db";
 import { sql } from "drizzle-orm";
-import { storage } from "./storage";
 import { lessons, type InsertLesson, type Lesson } from "@shared/schema";
 
 /**
@@ -23,6 +22,9 @@ import { lessons, type InsertLesson, type Lesson } from "@shared/schema";
  * ones at any time. A job missing from THIS server's memory may be running
  * on another server, so a pending job is only treated as abandoned once it is
  * older than ABANDONED_JOB_AGE_MS. Until then it is reported as pending.
+ * The same rule drives the "one generation at a time per teacher" guard
+ * (reserveGenerationJob): a young pending job on ANY server blocks a new
+ * start, an abandoned one does not.
  *
  * SINGLE-SETTLEMENT GUARANTEE — every job settles exactly once:
  *
@@ -66,9 +68,14 @@ export async function ensureLessonJobsTable(): Promise<void> {
     ALTER TABLE lesson_generation_jobs
     ADD COLUMN IF NOT EXISTS refund_applied boolean NOT NULL DEFAULT false
   `);
+  // Supports the per-teacher "one pending job" lookup in reserveGenerationJob.
+  await db.execute(sql`
+    CREATE INDEX IF NOT EXISTS lesson_generation_jobs_teacher_status_idx
+    ON lesson_generation_jobs (teacher_id, status)
+  `);
 }
 
-/** Record that a job has started. Call after the credit decision is known. */
+/** Insert a pending job row directly. Used by tests to set up job state. */
 export async function recordJobStart(jobId: string, teacherId: number, creditSpent: boolean): Promise<void> {
   await db.execute(sql`
     INSERT INTO lesson_generation_jobs (id, teacher_id, status, credit_spent)
@@ -77,31 +84,133 @@ export async function recordJobStart(jobId: string, teacherId: number, creditSpe
   `);
 }
 
+// Arbitrary app-unique advisory lock class. Two-key lock (namespace,
+// teacherId) serializes generation starts for one teacher across ALL servers.
+const GENERATION_START_LOCK_NAMESPACE = 42_0001;
+
+export type ReserveJobResult =
+  | { status: 'reserved' }
+  /** The teacher already has a live pending job (on this or any server). */
+  | { status: 'duplicate'; jobId: string }
+  /** Over the hourly cap; minutes until the next slot frees up. */
+  | { status: 'rate_limited'; retryAfterMinutes: number };
+
 /**
- * Persist the job start, or unwind the credit spend.
+ * START GUARD — atomically decide whether a teacher may start a new
+ * generation, and if so persist the job row before any credit is spent.
  *
- * Call this after a credit has been spent but BEFORE generation begins. If
- * the persist write fails, the job would be invisible to boot recovery — a
- * restart would strand the spent credit. So on failure we refund the credit
- * and rethrow, letting the caller abort the request instead of starting
- * unrecoverable work.
+ * Autoscale can run several servers at once, so a double-click can land on
+ * two different servers. In-memory guards cannot see each other; this one
+ * lives in Postgres. Inside one transaction holding a per-teacher advisory
+ * lock (shared by every server):
+ *
+ *  1. If the teacher already has a 'pending' job younger than
+ *     ABANDONED_JOB_AGE_MS, return it — nothing is recorded or spent.
+ *     Older pending jobs are abandoned (their server died) and never block.
+ *  2. Otherwise record a rate-limit attempt (or refuse when over the cap).
+ *  3. Insert the new job as 'pending' with credit_spent = false. Spending a
+ *     credit later (spendCreditForJob) flips that flag in the same
+ *     transaction as the decrement.
+ *
+ * A second request waits on the lock until the first commits, then sees its
+ * pending row — so two near-simultaneous requests can never both start.
  */
-export async function recordJobStartOrRefund(jobId: string, teacherId: number, creditSpent: boolean): Promise<void> {
-  try {
-    await recordJobStart(jobId, teacherId, creditSpent);
-  } catch (persistError) {
-    if (creditSpent) {
-      try {
-        await storage.incrementUserCredits(teacherId);
-        console.log(`[Job ${jobId}] Refunded credit after job-start persistence failure`);
-      } catch (refundError) {
-        // The job row was never written, so boot recovery cannot see this
-        // spend. This is the worst case — log it loudly for manual repair.
-        console.error(`[Job ${jobId}] CRITICAL: persist failed AND refund failed for user ${teacherId} — manual credit repair needed:`, refundError);
-      }
+export async function reserveGenerationJob(
+  jobId: string,
+  teacherId: number,
+  hourlyLimit: number,
+  rateWindowMs: number = 60 * 60 * 1000,
+): Promise<ReserveJobResult> {
+  const cutoffSeconds = ABANDONED_JOB_AGE_MS / 1000;
+  const windowSeconds = rateWindowMs / 1000;
+  return db.transaction(async (tx) => {
+    await tx.execute(sql`SELECT pg_advisory_xact_lock(${GENERATION_START_LOCK_NAMESPACE}, ${teacherId})`);
+
+    const existing = await tx.execute(sql`
+      SELECT id FROM lesson_generation_jobs
+      WHERE teacher_id = ${teacherId}
+        AND status = 'pending'
+        AND created_at >= now() - make_interval(secs => ${cutoffSeconds})
+      ORDER BY created_at DESC
+      LIMIT 1
+    `);
+    const existingId = existing.rows[0]?.id as string | undefined;
+    if (existingId) return { status: 'duplicate', jobId: existingId };
+
+    const inserted = await tx.execute(sql`
+      INSERT INTO lesson_generation_attempts (teacher_id)
+      SELECT ${teacherId}
+      WHERE (
+        SELECT count(*) FROM lesson_generation_attempts
+        WHERE teacher_id = ${teacherId}
+          AND attempted_at > now() - make_interval(secs => ${windowSeconds})
+      ) < ${hourlyLimit}
+      RETURNING id
+    `);
+    if (inserted.rows.length === 0) {
+      // Over the limit: compute when the oldest attempt in the window expires.
+      const oldest = await tx.execute(sql`
+        SELECT extract(epoch FROM min(attempted_at)) * 1000 AS oldest_ms
+        FROM lesson_generation_attempts
+        WHERE teacher_id = ${teacherId}
+          AND attempted_at > now() - make_interval(secs => ${windowSeconds})
+      `);
+      const oldestMs = Number(oldest.rows[0]?.oldest_ms);
+      const retryAfterMinutes = Number.isFinite(oldestMs)
+        ? Math.max(1, Math.ceil((oldestMs + rateWindowMs - Date.now()) / 60000))
+        : 1;
+      return { status: 'rate_limited', retryAfterMinutes };
     }
-    throw persistError;
-  }
+
+    await tx.execute(sql`
+      INSERT INTO lesson_generation_jobs (id, teacher_id, status, credit_spent)
+      VALUES (${jobId}, ${teacherId}, 'pending', false)
+    `);
+    return { status: 'reserved' };
+  });
+}
+
+/**
+ * Spend one credit for a reserved job. The conditional decrement and the
+ * job's credit_spent flag commit in ONE transaction, so a spent credit is
+ * always visible to recovery (which refunds abandoned jobs) — a crash can
+ * never strand it. Returns false (nothing spent) when the balance is zero.
+ */
+export async function spendCreditForJob(jobId: string, teacherId: number): Promise<boolean> {
+  return db.transaction(async (tx) => {
+    const decremented = await tx.execute(sql`
+      UPDATE users
+      SET free_credits_remaining = COALESCE(free_credits_remaining, 0) - 1
+      WHERE id = ${teacherId}
+        AND COALESCE(free_credits_remaining, 0) > 0
+      RETURNING id
+    `);
+    if (decremented.rows.length === 0) return false;
+
+    const flagged = await tx.execute(sql`
+      UPDATE lesson_generation_jobs
+      SET credit_spent = true
+      WHERE id = ${jobId} AND status = 'pending'
+      RETURNING id
+    `);
+    if (flagged.rows.length === 0) {
+      // Without a job row recovery could never refund this spend — roll back.
+      throw new Error(`Job ${jobId} is not pending; credit not spent`);
+    }
+    return true;
+  });
+}
+
+/**
+ * Release a reservation that never started generating (validation failure,
+ * no credits, etc.) so the teacher is not blocked. Only removes a pending
+ * row that has no spent credit — anything else must go through settlement.
+ */
+export async function releaseJobReservation(jobId: string): Promise<void> {
+  await db.execute(sql`
+    DELETE FROM lesson_generation_jobs
+    WHERE id = ${jobId} AND status = 'pending' AND credit_spent = false
+  `);
 }
 
 /**
