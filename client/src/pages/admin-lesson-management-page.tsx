@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { BookOpen, Globe, Eye, ArrowLeft } from "lucide-react";
+import { BookOpen, Globe, Eye, ArrowLeft, EyeOff } from "lucide-react";
 import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
@@ -59,6 +59,24 @@ export default function AdminLessonManagementPage() {
     } catch (error: any) {
       toast({
         title: "Error making lesson public",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleRemoveFromLibrary = async (lesson: Lesson) => {
+    if (!window.confirm(`Remove "${lesson.title}" from the public library? It stays in the teacher's own account.`)) return;
+    try {
+      await apiRequest("DELETE", `/api/lessons/${lesson.id}/public`);
+      toast({
+        title: "Removed from the public library",
+        description: `"${lesson.title}" is no longer public`,
+      });
+      refetch();
+    } catch (error: any) {
+      toast({
+        title: "Could not remove the lesson",
         description: error.message,
         variant: "destructive",
       });
@@ -173,6 +191,18 @@ export default function AdminLessonManagementPage() {
                           >
                             <Globe className="h-4 w-4 mr-2" />
                             Make Public
+                          </Button>
+                        )}
+                        {lesson.isPublic && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleRemoveFromLibrary(lesson)}
+                            className="flex-1 text-red-600 hover:text-red-700"
+                            data-testid={`button-remove-public-${lesson.id}`}
+                          >
+                            <EyeOff className="h-4 w-4 mr-2" />
+                            Remove from Library
                           </Button>
                         )}
                       </div>

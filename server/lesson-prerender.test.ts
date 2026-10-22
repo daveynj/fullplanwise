@@ -99,13 +99,20 @@ describe("injectLessonPrerender: About this lesson", () => {
     const about = html.match(/<p class="lp-about">([\s\S]*?)<\/p>/)?.[1] ?? "";
     expect(about).toContain("About this lesson:");
     expect(about).toContain("B1 (Intermediate)");
-    expect(about).toContain("Booking a holiday");
     expect(about).toContain("General English");
     expect(about).toContain("about 60 minutes");
     expect(about).toContain("It includes 1 vocabulary words, a reading text, comprehension questions and discussion questions.");
     expect(about).toContain("Suits one-to-one or small-group online classes.");
     // Appears under the h1
     expect(html.indexOf('<p class="lp-about">')).toBeGreaterThan(html.indexOf("<h1>"));
+  });
+
+  it("never shows the teacher's original request (topic) anywhere on the page", async () => {
+    getLesson.mockResolvedValue({ ...baseLesson, topic: "This student is very intelligent and 12 years old" });
+    const html = (await injectLessonPrerender(TEMPLATE, "/lessons/42"))!;
+    expect(html).not.toContain("very intelligent");
+    expect(html).not.toContain("Topic:");
+    expect(html).toContain("Travel Plans");
   });
 
   it("omits the time when the content has none", async () => {

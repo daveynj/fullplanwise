@@ -50,7 +50,7 @@ export interface IStorage {
 
   // Public library methods
   getPublicLessons(page?: number, pageSize?: number, search?: string, cefrLevel?: string, category?: string): Promise<{ lessons: Lesson[], total: number }>;
-  getPublicLessonSummaries(cefrLevel?: string): Promise<Array<Pick<Lesson, 'id' | 'title' | 'topic' | 'cefrLevel' | 'publicCategory' | 'createdAt'>>>;
+  getPublicLessonSummaries(cefrLevel?: string): Promise<Array<Pick<Lesson, 'id' | 'title' | 'cefrLevel' | 'publicCategory' | 'createdAt'>>>;
   copyLessonToUser(lessonId: number, userId: number): Promise<Lesson>;
 
   // Admin methods
@@ -1105,7 +1105,6 @@ export class DatabaseStorage implements IStorage {
       .select({
         id: lessons.id,
         title: lessons.title,
-        topic: lessons.topic,
         cefrLevel: lessons.cefrLevel,
         publicCategory: lessons.publicCategory,
         createdAt: lessons.createdAt,
@@ -1133,12 +1132,10 @@ export class DatabaseStorage implements IStorage {
         .select({
           id: lessons.id,
           title: lessons.title,
-          topic: lessons.topic,
           cefrLevel: lessons.cefrLevel,
           category: lessons.category,
           publicCategory: lessons.publicCategory,
           createdAt: lessons.createdAt,
-          teacherName: users.username,
           contentHead: sql<string | null>`substring(${lessons.content}, 1, ${LESSON_SUMMARY_SOURCE_CHARS})`.as('contentHead')
         })
         .from(lessons)
@@ -1151,12 +1148,9 @@ export class DatabaseStorage implements IStorage {
       const conditions = [eq(lessons.isPublic, true)];
 
       if (search && search !== '') {
-        const searchCondition = or(
-          ilike(lessons.title, `%${search}%`),
-          ilike(lessons.topic, `%${search}%`),
-          ilike(users.username, `%${search}%`)
-        );
-        if (searchCondition) conditions.push(searchCondition);
+        // Title only: the topic holds the teacher's private request, and
+        // matching on it would let a search probe what it says.
+        conditions.push(ilike(lessons.title, `%${search}%`));
       }
 
       // Category filter (using publicCategory field)

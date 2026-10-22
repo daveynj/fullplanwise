@@ -10,3 +10,4 @@
 - [Lesson image storage pressure](lesson-image-storage-pressure.md) — embedded Base64 PNGs make lessons 13–20 MB; deleting rows makes TOAST pages reusable but does not shrink Neon’s physical size.
 - [Robots.txt and client API fetches](robots-api-allow.md) — public pages that fetch /api/ after load need those paths allowed in robots.txt or Google sees Soft 404.
 - [esbuild lazy imports](esbuild-lazy-imports.md) — keep --splitting in the build or "lazy" modules' heavy packages load at start-up; don't await DB before listen.
+- [Lesson topic is private](lesson-topic-privacy.md) — lessons.topic is the teacher's raw request (describes real students); never show it on public/shared views.

@@ -1,14 +1,24 @@
 import React, { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { BookOpen, Copy, Search, Filter, Eye, ArrowLeft } from "lucide-react";
+import { BookOpen, Copy, Search, Filter, Eye, ArrowLeft, EyeOff } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import { PUBLIC_LIBRARY_LABELS } from "@shared/schema";
 import { Sidebar } from "@/components/layout/sidebar";
 import { useAuth } from "@/hooks/use-auth";
@@ -16,7 +26,6 @@ import { useAuth } from "@/hooks/use-auth";
 interface PublicLesson {
   id: number;
   title: string;
-  topic: string;
   cefrLevel: string;
   category: string;
   createdAt: string;
@@ -37,6 +46,31 @@ export default function PublicLibraryPage() {
   const pageSize = 12;
   const { toast } = useToast();
   const { user } = useAuth();
+  const [lessonToRemove, setLessonToRemove] = useState<PublicLesson | null>(null);
+
+  const removeFromLibrary = useMutation({
+    mutationFn: async (lessonId: number) => {
+      await apiRequest("DELETE", `/api/lessons/${lessonId}/public`);
+    },
+    onSuccess: () => {
+      toast({
+        title: "Removed from the public library",
+        description: lessonToRemove
+          ? `"${lessonToRemove.title}" is no longer public. It is still in the teacher's own account.`
+          : undefined,
+      });
+      setLessonToRemove(null);
+      queryClient.invalidateQueries({ queryKey: ["/api/public-lessons"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/lessons"] });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Could not remove the lesson",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
 
   // Debounce search input
   useEffect(() => {
@@ -205,9 +239,6 @@ export default function PublicLibraryPage() {
                     {lesson.cefrLevel}
                   </Badge>
                 </div>
-                <CardDescription className="text-sm">
-                  {lesson.topic}
-                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -239,6 +270,18 @@ export default function PublicLibraryPage() {
                       Copy
                     </Button>
                   </div>
+                  {user?.isAdmin && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full text-red-600 hover:text-red-700 hover:bg-red-50"
+                      onClick={() => setLessonToRemove(lesson)}
+                      data-testid={`button-remove-public-${lesson.id}`}
+                    >
+                      <EyeOff className="h-4 w-4 mr-2" />
+                      Remove from library
+                    </Button>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -279,6 +322,32 @@ export default function PublicLibraryPage() {
           <p className="text-gray-500">Try adjusting your search filters to find more lessons.</p>
         </div>
       )}
+
+      <AlertDialog open={!!lessonToRemove} onOpenChange={(open) => !open && setLessonToRemove(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Remove this lesson from the public library?</AlertDialogTitle>
+            <AlertDialogDescription>
+              "{lessonToRemove?.title}" will no longer be listed or publicly viewable. It stays in the
+              teacher's own account, and you can make it public again later.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-red-600 hover:bg-red-700"
+              disabled={removeFromLibrary.isPending}
+              onClick={(e) => {
+                e.preventDefault();
+                if (lessonToRemove) removeFromLibrary.mutate(lessonToRemove.id);
+              }}
+              data-testid="button-confirm-remove-public"
+            >
+              {removeFromLibrary.isPending ? "Removing..." : "Remove"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
         </div>
       </main>
     </div>

@@ -21,7 +21,6 @@ const LEVEL_NAMES: Record<string, string> = {
 interface LessonSummary {
   id: number;
   title: string;
-  topic: string;
   cefrLevel: string;
   publicCategory: string | null;
 }
@@ -62,7 +61,6 @@ export default function PublicLessonsIndexPage() {
           <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
             <Badge variant="secondary">{lesson.cefrLevel}</Badge>
             {label && <Badge variant="outline">{label}</Badge>}
-            <span>Topic: {lesson.topic}</span>
           </div>
         </Card>
       </Link>

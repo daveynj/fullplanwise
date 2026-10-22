@@ -139,10 +139,11 @@ function injectPage(template: string, head: HeadOptions, bodyHtml: string): stri
 // Lesson page
 // ---------------------------------------------------------------------------
 
+// The lesson's `topic` (the teacher's original request) is deliberately not
+// used anywhere on public pages: it can describe a real student.
 interface LessonForPrerender {
   id: number;
   title: string;
-  topic: string;
   cefrLevel: string;
   category: string | null;
   publicCategory: string | null;
@@ -304,7 +305,7 @@ function levelText(level: string): string {
 function describeLesson(lesson: LessonForPrerender, sections: any[]): string {
   const parts = lessonContentsParts(sections);
   const includes = parts.length ? ` Includes ${joinList(parts)}.` : '';
-  return truncate(`Free ${levelText(lesson.cefrLevel)} ESL lesson on ${lesson.topic}.${includes} Ready to use with your students.`, 160);
+  return truncate(`Free ${levelText(lesson.cefrLevel)} ESL lesson: ${lesson.title}.${includes} Ready to use with your students.`, 160);
 }
 
 /** "About this lesson" paragraph, built only from the lesson's own data. */
@@ -313,7 +314,7 @@ function aboutLesson(lesson: LessonForPrerender, sections: any[]): string {
   const minutes = estimatedMinutesOf(lesson.content);
   const parts = lessonContentsParts(sections);
   const sentences = [
-    `This is a ${levelText(lesson.cefrLevel)} ESL lesson on ${lesson.topic}${label ? ` in the ${label} category` : ''}.`,
+    `This is a ${levelText(lesson.cefrLevel)} ESL lesson${label ? ` in the ${label} category` : ''}.`,
   ];
   if (minutes) sentences.push(`It takes about ${minutes} minutes.`);
   if (parts.length) sentences.push(`It includes ${joinList(parts)}.`);
@@ -356,7 +357,7 @@ export function buildLessonPageHtml(lesson: LessonForPrerender, sections: any[],
     <article>
       <header>
         <h1>${e(lesson.title)}</h1>
-        <p class="lp-meta"><span class="lp-tag">CEFR ${e(level)}${levelName ? ` &middot; ${e(levelName)}` : ''}</span>${label ? `<span class="lp-tag">${e(label)}</span>` : ''}<span class="lp-tag">Topic: ${e(lesson.topic)}</span></p>
+        <p class="lp-meta"><span class="lp-tag">CEFR ${e(level)}${levelName ? ` &middot; ${e(levelName)}` : ''}</span>${label ? `<span class="lp-tag">${e(label)}</span>` : ''}</p>
         <p class="lp-about"><strong>About this lesson:</strong> ${e(aboutLesson(lesson, sections))}</p>
       </header>
       ${sectionsHtml(sections)}
@@ -402,7 +403,7 @@ async function prerenderLesson(template: string, id: number, preloaded?: unknown
       inLanguage: 'en',
       learningResourceType: 'Lesson plan',
       educationalLevel: `CEFR ${lesson.cefrLevel}${levelName ? ` (${levelName})` : ''}`,
-      teaches: lesson.topic,
+      teaches: lesson.title,
       ...(label ? { about: label } : {}),
       audience: { '@type': 'EducationalAudience', educationalRole: 'teacher' },
       isAccessibleForFree: true,
@@ -442,7 +443,6 @@ async function prerenderLesson(template: string, id: number, preloaded?: unknown
 export interface LessonSummary {
   id: number;
   title: string;
-  topic: string;
   cefrLevel: string;
   publicCategory: string | null;
   createdAt: Date | string;
@@ -452,7 +452,7 @@ function lessonCardHtml(l: LessonSummary): string {
   const label = categoryLabel(l.publicCategory);
   return `<article class="lp-card">
         <h3><a href="/lessons/${l.id}">${e(l.title)}</a></h3>
-        <p class="lp-meta"><span class="lp-tag">${e(l.cefrLevel)}</span>${label ? `<span class="lp-tag">${e(label)}</span>` : ''} Topic: ${e(l.topic)}</p>
+        <p class="lp-meta"><span class="lp-tag">${e(l.cefrLevel)}</span>${label ? `<span class="lp-tag">${e(label)}</span>` : ''}</p>
       </article>`;
 }
 

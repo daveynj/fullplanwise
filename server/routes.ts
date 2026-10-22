@@ -16,6 +16,7 @@ import { testOpenRouterConnection } from "./services/openRouter";
 import { validateGrammarSpotlightForStorage } from "../types/lessonContentTypes";
 import { resolveGrammarSpotlight } from "./grammarSpotlightRetry";
 import { testImageGeneration } from "./services/image-generation.service";
+import { toPublicLessonView } from "./public-lesson-view";
 import { downloadStoredImage, stripBackedUpBase64, LESSON_IMAGE_PREFIX, LESSON_IMAGE_ROUTE } from "./services/image-storage";
 import { isFreeTrialActive, getFreeTrialEndDate } from "./features";
 import { SELECTABLE_MODELS, DEFAULT_MODEL_ID, isSelectableModel } from "@shared/aiModels";
@@ -795,8 +796,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
 
+      // Visitors never see the teacher's original request or private notes.
       const responseLesson = {
-        ...lesson,
+        ...(isOwnerOrAdmin ? lesson : toPublicLessonView(lesson)),
         grammarSpotlight
       };
 
@@ -2061,7 +2063,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         lesson: {
           id: lesson.id,
           title: lesson.title,
-          topic: lesson.topic,
+          // Only the owner/admin get the original request; others get the title.
+          topic: isOwnerOrAdmin ? lesson.topic : lesson.title,
           cefrLevel: lesson.cefrLevel,
           content: lesson.content,
           category: lesson.category,
@@ -2110,6 +2113,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(updatedLesson);
     } catch (error: any) {
       console.error('Error making lesson public:', error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Admin: remove a lesson from the public library. The lesson stays in its
+  // owner's account; it just stops being listed, indexed and publicly viewable
+  // (a link-shared lesson keeps working by link).
+  app.delete("/api/lessons/:id/public", ensureAuthenticated, async (req, res) => {
+    try {
+      const currentUser = await storage.getUser(req.user!.id);
+      if (!currentUser?.isAdmin) {
+        return res.status(403).json({ message: "Unauthorized. Admin privileges required." });
+      }
+
+      const lessonId = parseIdParam(req.params.id);
+      if (lessonId === null) {
+        return res.status(404).json({ message: "Lesson not found" });
+      }
+      const lesson = await storage.getLesson(lessonId);
+      if (!lesson) {
+        return res.status(404).json({ message: "Lesson not found" });
+      }
+
+      const updatedLesson = await storage.updateLesson(lessonId, {
+        isPublic: false,
+        publicCategory: null,
+      });
+
+      console.log(`Admin ${currentUser.id} removed lesson ${lessonId} from the public library`);
+      // Tell search engines to recrawl: the page now drops out of the index.
+      notifyIndexNow(lessonIndexNowPaths(lesson));
+      res.json(updatedLesson);
+    } catch (error: any) {
+      console.error('Error removing lesson from public library:', error);
       res.status(500).json({ message: error.message });
     }
   });
