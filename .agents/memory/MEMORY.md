@@ -11,4 +11,5 @@
 - [Robots.txt and client API fetches](robots-api-allow.md) — public pages that fetch /api/ after load need those paths allowed in robots.txt or Google sees Soft 404.
 - [esbuild lazy imports](esbuild-lazy-imports.md) — keep --splitting in the build or "lazy" modules' heavy packages load at start-up; don't await DB before listen.
 - [Lesson topic is private](lesson-topic-privacy.md) — lessons.topic is the teacher's raw request (describes real students); never show it on public/shared views.
-- [Lesson prompt tuning](lesson-prompt-tuning.md) — model copies the JSON template; "keep it simple" drags C1/C2 down; compare 3+ runs; Dave likes sentence frames as-is.
+- [Lesson prompt tuning](lesson-prompt-tuning.md) — model copies the JSON template; "keep it simple" drags C1/C2 down; compare 3+ runs; B2 sentence-frame weak spot.
+- [Fill-in-the-blank gap matching](cloze-gap-matching.md) — AI puts word forms in gaps; leniency only for answers not in the bank; re-check all stored lessons before changing rules.

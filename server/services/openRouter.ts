@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import { replicateService } from './replicate.service';
 import { uploadLessonImage } from './image-storage';
 import { buildLessonPrompt, buildGrammarSpotlightPrompt } from './lesson-prompt';
+import { findUnanswerableClozeGaps, tidyClozeText } from '@shared/cloze';
 
 /**
  * Default OpenRouter text model used for all lesson generation. Admins can
@@ -501,6 +502,19 @@ Return ONLY a JSON array of corrected examples.`;
               question.imagePrompt = `A realistic illustration showing a scenario related to: "${question.question.substring(0, 100)}". Scene includes people in a relatable situation. ${contextSnippet.includes('work') ? 'Professional setting' : contextSnippet.includes('school') || contextSnippet.includes('student') ? 'Educational environment' : contextSnippet.includes('family') || contextSnippet.includes('home') ? 'Home setting' : 'Contemporary setting'} with natural lighting. Realistic illustration, engaging composition. No text visible.`;
             }
             question.imageBase64 = null;
+          }
+        }
+
+        if (section.type === 'cloze' && typeof section.text === 'string' && Array.isArray(section.wordBank)) {
+          // Gaps must hold a word-bank word: "[4:rescued]" becomes "[4:rescue]d".
+          const tidiedText = tidyClozeText(section.text, section.wordBank);
+          if (tidiedText !== section.text) {
+            console.log('Tidied fill-in-the-blank gaps so their answers match the word bank');
+            section.text = tidiedText;
+          }
+          const unanswerable = findUnanswerableClozeGaps(tidiedText, section.wordBank);
+          if (unanswerable.length > 0) {
+            console.warn(`Fill-in-the-blank gaps with no matching word-bank word: ${unanswerable.join(', ')}`);
           }
         }
       }

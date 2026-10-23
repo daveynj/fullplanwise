@@ -8,6 +8,7 @@ This is a full-stack ESL (English as a Second Language) teaching platform design
 
 Preferred communication style: Simple, everyday language.
 User name: Dave Jackson (prefers Dave, not David).
+Lesson sentence frames: Dave is happy with them as they are (October 2026), so don't rework them unless he asks.
 Social media: LinkedIn - www.linkedin.com/in/davidjackson113, X (Twitter) - @DaveTeacher1
 
 ## System Architecture

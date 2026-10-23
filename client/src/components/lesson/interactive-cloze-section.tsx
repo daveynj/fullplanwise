@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
+import { isClozeAnswerCorrect, tidyClozeText } from "@shared/cloze";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, CheckCircle, PenTool, RefreshCw, HelpCircle } from "lucide-react";
@@ -164,13 +165,20 @@ export function InteractiveClozeSection({
     setShuffledWordBank(shuffleArray(wordBank || []));
   }, [wordBank]); // Re-shuffle if the wordBank prop changes
   
+  // Older lessons can hold a changed word form in a gap ("[4:rescued]" when the
+  // word bank shows "rescue"); tidy those into "[4:rescue]d" before parsing.
+  const clozeText = useMemo(
+    () => (typeof text === 'string' ? tidyClozeText(text, wordBank) : ''),
+    [text, wordBank]
+  );
+
   // Parse the text to extract cloze items
   const [clozeItems, setClozeItems] = useState<ClozeItem[]>(() => {
     const items: ClozeItem[] = [];
     const regex = /\[(\d+):([^\]]+)\]/g;
     let match;
     
-    while ((match = regex.exec(text)) !== null) {
+    while ((match = regex.exec(clozeText)) !== null) {
       const id = parseInt(match[1]);
       const answer = match[2];
       
@@ -279,7 +287,7 @@ export function InteractiveClozeSection({
   const checkAnswers = () => {
     const updatedItems = clozeItems.map(item => ({
       ...item,
-      isCorrect: item.userAnswer.trim().toLowerCase() === item.answer.trim().toLowerCase()
+      isCorrect: isClozeAnswerCorrect(item.userAnswer, item.answer, wordBank)
     }));
     
     setClozeItems(updatedItems);
@@ -301,7 +309,7 @@ export function InteractiveClozeSection({
   };
   
   // Prepare the text with blanks
-  const parts = text && typeof text === 'string' ? text.split(/(\[\d+:[^\]]+\])/g).filter(Boolean) : [];
+  const parts = clozeText ? clozeText.split(/(\[\d+:[^\]]+\])/g).filter(Boolean) : [];
   
   // Function to render the cloze text with draggable blanks
   const renderClozeText = () => {
