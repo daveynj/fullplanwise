@@ -996,7 +996,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           console.log(`[Job ${jobId}] Using text model: ${generationModel}`);
 
           const openRouter = await getOpenRouterService();
-          const generatedContent = await openRouter.generateLesson(validatedData, studentVocabulary, generationModel);
+          const generatedContent = await openRouter.generateLesson(validatedData, studentVocabulary, generationModel, {
+            logPrefix: `[Job ${jobId}]`,
+          });
 
           const textTimeTaken = (Date.now() - startTime) / 1000;
           console.log(`[Job ${jobId}] Lesson text ready in ${textTimeTaken.toFixed(1)}s — saving lesson now`);

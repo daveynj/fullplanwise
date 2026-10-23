@@ -3,7 +3,15 @@ import { LessonGenerateParams } from '@shared/schema';
 import * as fs from 'fs';
 import { replicateService } from './replicate.service';
 import { uploadLessonImage } from './image-storage';
-import { buildLessonPrompt, buildGrammarSpotlightPrompt } from './lesson-prompt';
+import {
+  buildLessonPrompt,
+  buildGrammarSpotlightPrompt,
+  buildLessonSectionPrompt,
+  LESSON_SECTION_NAMES,
+  type LessonSectionContext,
+  type LessonSectionType,
+} from './lesson-prompt';
+import { parseSectionJson, repairLesson } from './lesson-repair';
 import { findUnanswerableClozeGaps, tidyClozeText } from '@shared/cloze';
 
 /**
@@ -38,9 +46,15 @@ export class OpenRouterService {
   }
   
   /**
-   * Generate a complete ESL lesson based on the provided parameters
+   * Generate a complete ESL lesson based on the provided parameters.
+   * `logPrefix` starts the lesson check's log lines, e.g. "[Job 1a2b]".
    */
-  async generateLesson(params: LessonGenerateParams, studentVocabulary: string[] = [], model: string = DEFAULT_MODEL): Promise<any> {
+  async generateLesson(
+    params: LessonGenerateParams,
+    studentVocabulary: string[] = [],
+    model: string = DEFAULT_MODEL,
+    options: { logPrefix?: string } = {},
+  ): Promise<any> {
     try {
       if (!this.apiKey) {
         throw new Error('OpenRouter API key is not configured');
@@ -133,9 +147,9 @@ export class OpenRouterService {
             console.log('Successfully parsed JSON content');
             
             if (jsonContent.title && jsonContent.sections && Array.isArray(jsonContent.sections)) {
-              console.log('Lesson content has valid structure, applying quality control...');
-              const validatedContent = await this.validateAndImproveContent(jsonContent, params, model);
-              return await this.formatLessonContent(validatedContent);
+              console.log('Lesson content has valid structure, checking each section...');
+              const checkedContent = await this.checkAndRepairLesson(jsonContent, params, studentVocabulary, model, options.logPrefix);
+              return await this.formatLessonContent(checkedContent);
             } else {
               console.warn('Parsed JSON is missing required structure', JSON.stringify({
                 hasTitle: !!jsonContent.title,
@@ -215,9 +229,9 @@ export class OpenRouterService {
               console.log('Successfully parsed JSON after applying fixes!');
               
               if (jsonContent.title && jsonContent.sections && Array.isArray(jsonContent.sections)) {
-                console.log('Fixed content has valid structure, applying quality control...');
-                const validatedContent = await this.validateAndImproveContent(jsonContent, params, model);
-                return await this.formatLessonContent(validatedContent);
+                console.log('Fixed content has valid structure, checking each section...');
+                const checkedContent = await this.checkAndRepairLesson(jsonContent, params, studentVocabulary, model, options.logPrefix);
+                return await this.formatLessonContent(checkedContent);
               } else {
                 throw new Error('Fixed JSON still missing required structure');
               }
@@ -290,11 +304,69 @@ export class OpenRouterService {
   }
   
   /**
-   * Validate and improve the generated content
+   * Checks the lesson section by section before it is saved: simple slips are
+   * fixed in place and a missing, broken or incomplete section is requested
+   * again on its own (see lesson-repair.ts). An unexpected error in the check
+   * itself is logged and does not stop the lesson from being saved.
    */
-  private async validateAndImproveContent(content: any, params: LessonGenerateParams, model: string = DEFAULT_MODEL): Promise<any> {
-    console.log(`Skipping quality control validation - trusting ${model} for high-quality output`);
+  private async checkAndRepairLesson(
+    content: any,
+    params: LessonGenerateParams,
+    studentVocabulary: string[],
+    model: string,
+    logPrefix?: string,
+  ): Promise<any> {
+    try {
+      await repairLesson(content, { params, studentVocabulary, model, regenerator: this, logPrefix });
+    } catch (error) {
+      console.error(`${logPrefix ? `${logPrefix} ` : ''}Lesson check failed unexpectedly; saving the lesson without finishing the check:`, error);
+    }
     return content;
+  }
+
+  /**
+   * Writes one lesson section again, for a section that came back missing,
+   * broken or incomplete. Uses the lesson's model and generation settings.
+   * Returns the parsed reply (untrusted — lesson-repair.ts checks it) or
+   * throws on failure.
+   */
+  async regenerateLessonSection(
+    type: LessonSectionType,
+    params: LessonGenerateParams,
+    lesson: LessonSectionContext,
+    studentVocabulary: string[] = [],
+    model: string = DEFAULT_MODEL,
+  ): Promise<unknown> {
+    if (!this.apiKey) {
+      throw new Error('OpenRouter API key is not configured');
+    }
+
+    const result: AxiosResponse = await axios.post(
+      `${this.baseURL}/chat/completions`,
+      {
+        model,
+        messages: [{ role: 'user', content: buildLessonSectionPrompt(type, params, lesson, studentVocabulary) }],
+        temperature: 0.3,
+        top_p: 0.9,
+        max_tokens: 16384,
+        ...(needsReasoningEffort(model) ? { reasoning: { effort: 'low' } } : {})
+      },
+      {
+        headers: {
+          'Authorization': `Bearer ${this.apiKey}`,
+          'Content-Type': 'application/json',
+          'HTTP-Referer': 'https://planwiseesl.com',
+          'X-Title': 'PlanwiseESL'
+        },
+        timeout: 60000
+      }
+    );
+
+    const text = result.data?.choices?.[0]?.message?.content;
+    if (!text || typeof text !== 'string') {
+      throw new Error(`The ${LESSON_SECTION_NAMES[type]} section request returned no content`);
+    }
+    return parseSectionJson(text);
   }
 
   /**

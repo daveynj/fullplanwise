@@ -152,22 +152,40 @@ export function getLevelGuidance(cefrLevel: string): LevelGuidance {
 const TEACHER_NOTES_GUIDANCE =
   'The request may include notes about the student, such as their age, job, interests or things to avoid. Use these notes to shape the lesson (for example, choose situations and examples that suit the student), but do not repeat the notes themselves in the lesson. The student sees the lesson, so titles and text should talk about the topic, not describe the student.';
 
-export function buildLessonPrompt(params: LessonGenerateParams, studentVocabulary: string[] = []): string {
+/**
+ * The sections of a lesson, in the order the prompt asks for them and the
+ * lesson stores them.
+ */
+export const LESSON_SECTION_TYPES = [
+  'warmup',
+  'reading',
+  'vocabulary',
+  'comprehension',
+  'sentenceFrames',
+  'cloze',
+  'sentenceUnscramble',
+  'discussion',
+  'quiz',
+] as const;
+
+export type LessonSectionType = (typeof LESSON_SECTION_TYPES)[number];
+
+/** Plain names for the sections, used in prompts and logs. */
+export const LESSON_SECTION_NAMES: Record<LessonSectionType, string> = {
+  warmup: 'warm-up',
+  reading: 'reading text',
+  vocabulary: 'vocabulary',
+  comprehension: 'vocabulary check',
+  sentenceFrames: 'sentence frames',
+  cloze: 'fill-in-the-blank',
+  sentenceUnscramble: 'sentence unscramble',
+  discussion: 'discussion questions',
+  quiz: 'quiz',
+};
+
+/** Opening shared by the lesson and section prompts: the role, the class, the student and the level. */
+function promptIntro(params: LessonGenerateParams, g: LevelGuidance): string {
   const { cefrLevel, topic, focus, lessonLength } = params;
-  const g = getLevelGuidance(cefrLevel);
-
-  const vocabularyHistoryNote = studentVocabulary.length > 0
-    ? `
-STUDENT'S PREVIOUS VOCABULARY:
-This student has already learned these words: ${studentVocabulary.join(', ')}
-
-You may use these words naturally when they fit, but choose 5 NEW words as the focus vocabulary for this lesson. Prioritize creating engaging content over forcing in previously learned words.
-`
-    : '';
-
-  const requiredVocabularyNote = params.targetVocabulary
-    ? `\nREQUIRED VOCABULARY: Include these specific words: ${params.targetVocabulary}\n`
-    : '';
 
   return `<role>
 You are an experienced, friendly ESL teacher preparing a ${lessonLength}-minute lesson for one ${cefrLevel} (${g.description}) student.
@@ -200,21 +218,37 @@ ${g.languageNote}
 Write every question the way a friendly teacher would ask it out loud: natural, direct and personal. Avoid exam-style or essay-style wording. For example, these two questions ask about the same idea:
 - Essay style (avoid): "To what extent do socioeconomic factors shape individuals' dietary choices?"
 - Conversation style: "Do you think money decides what people eat? What about in your family?"
-</conversation_style>
-${vocabularyHistoryNote}${requiredVocabularyNote}
----
+</conversation_style>`;
+}
 
-<instructions>
-CREATING YOUR LESSON:
+/** Words the student already knows and words the teacher asked for (empty when there are none). */
+function vocabularyNotes(params: LessonGenerateParams, studentVocabulary: string[]): string {
+  const vocabularyHistoryNote = studentVocabulary.length > 0
+    ? `
+STUDENT'S PREVIOUS VOCABULARY:
+This student has already learned these words: ${studentVocabulary.join(', ')}
 
-<step number="1" title="SELECT 5 VOCABULARY WORDS">
-Choose 5 words at ${cefrLevel} level, using the Cambridge English Vocabulary Profile as a guide: words a ${cefrLevel} student is ready to learn but probably doesn't use yet, and that will be genuinely useful when talking about this topic. ${g.vocabularyGuidance}
+You may use these words naturally when they fit, but choose 5 NEW words as the focus vocabulary for this lesson. Prioritize creating engaging content over forcing in previously learned words.
+`
+    : '';
+
+  const requiredVocabularyNote = params.targetVocabulary
+    ? `\nREQUIRED VOCABULARY: Include these specific words: ${params.targetVocabulary}\n`
+    : '';
+
+  return `${vocabularyHistoryNote}${requiredVocabularyNote}`;
+}
+
+function vocabularyChoice(cefrLevel: string, g: LevelGuidance): string {
+  return `Choose 5 words at ${cefrLevel} level, using the Cambridge English Vocabulary Profile as a guide: words a ${cefrLevel} student is ready to learn but probably doesn't use yet, and that will be genuinely useful when talking about this topic. ${g.vocabularyGuidance}
 
 <guidance>
 Ask yourself: Is this word new and worth learning for a ${cefrLevel} student, rather than one they already know? Will it help them talk about the topic? Can it be explained with simpler words?
-</guidance>
+</guidance>`;
+}
 
-<requirements>
+function vocabularyRequirements(g: LevelGuidance): string {
+  return `<requirements>
 Each word needs:
 - term, partOfSpeech
 - definition (clear and simple, ${g.definitionGuidance})
@@ -225,21 +259,20 @@ Each word needs:
 - pronunciation with syllables array, stressIndex number, and phoneticGuide using English letters only (like "eg-ZAM-pul"), no IPA symbols
 - imagePrompt (40-80 words describing a scene that illustrates the word, ending with "No text visible")
 - semanticMap with synonyms, antonyms, relatedConcepts, contexts, and associatedWords
-</requirements>
-</step>
+</requirements>`;
+}
 
-<step number="2" title="WRITE THE READING TEXT">
-Write a reading text of ${g.readingLength} in exactly 5 paragraphs. Its job is to give the student something interesting to react to and talk about, such as a story, a real situation or different points of view, not to test their reading.
+function readingStep(g: LevelGuidance): string {
+  return `Write a reading text of ${g.readingLength} in exactly 5 paragraphs. Its job is to give the student something interesting to react to and talk about, such as a story, a real situation or different points of view, not to test their reading.
 
 ${g.readingGuidance}
 
 <requirements>
 Include all 5 vocabulary words naturally, each appearing 2-3 times with context clues. Keep vocabulary density to about 1 new word per 25 words.
-</requirements>
-</step>
+</requirements>`;
+}
 
-<step number="3" title="CREATE 5 VOCABULARY CHECK QUESTIONS">
-Write exactly 5 questions testing vocabulary understanding (one per word). These test whether students know the vocabulary, NOT whether they remember facts from the reading. Keep the questions and answer options simple, so the only thing being tested is the target word.
+const COMPREHENSION_STEP = `Write exactly 5 questions testing vocabulary understanding (one per word). These test whether students know the vocabulary, NOT whether they remember facts from the reading. Keep the questions and answer options simple, so the only thing being tested is the target word.
 
 <good_formats>
 - "What does [word] mean?"
@@ -251,11 +284,10 @@ Write exactly 5 questions testing vocabulary understanding (one per word). These
 "According to the passage..." or "In the reading..." - these test reading recall, not vocabulary.
 </avoid>
 
-<critical>You MUST randomize the position of the correct answer for each question. Do not always place it in the same position (e.g., always B). Distribute correct answers randomly across A, B, C, and D.</critical>
-</step>
+<critical>You MUST randomize the position of the correct answer for each question. Do not always place it in the same position (e.g., always B). Distribute correct answers randomly across A, B, C, and D.</critical>`;
 
-<step number="4" title="DESIGN 3 SENTENCE FRAMES">
-Create 3 sentence frames that help the student say the things they will want to say in this lesson's discussions. Each needs three tiers:
+function sentenceFramesStep(cefrLevel: string, g: LevelGuidance): string {
+  return `Create 3 sentence frames that help the student say the things they will want to say in this lesson's discussions. Each needs three tiers:
 - emerging (simplest, maximum support)
 - developing (moderate complexity)
 - expanding (more complex, for confident students, still natural for a ${cefrLevel} speaker)
@@ -265,11 +297,11 @@ ${g.sentenceFrameGuidance}
 <requirements>
 The pedagogicalFrames array must contain all 3 frames. Include 3 model responses per tier and teaching notes with modeling tips, guided practice, independent use guidance, and fading strategy.
 ${g.needsLowerLevelScaffolding ? 'Include a "lowerLevelScaffolding" object with sentenceWorkshop, patternTrainer, and visualMaps.' : ''}
-</requirements>
-</step>
+</requirements>`;
+}
 
-<step number="5" title="WRITE 5 DISCUSSION QUESTIONS">
-These are the heart of the lesson. Create 5 discussion questions that get the student talking about their own experiences and opinions. Each needs:
+function discussionStep(g: LevelGuidance): string {
+  return `These are the heart of the lesson. Create 5 discussion questions that get the student talking about their own experiences and opinions. Each needs:
 - paragraphContext (3-5 sentences at the student's level that set up the question with a situation or some background)
 - question (natural and conversational: one main question, optionally with a short follow-up like "Why?")
 - imagePrompt (50-80 words describing a related scene, ending with "No text visible")
@@ -278,18 +310,14 @@ ${g.discussionGuidance}
 
 <requirements>
 Make questions culturally inclusive and globally accessible.
-</requirements>
-</step>
+</requirements>`;
+}
 
-<step number="6" title="ADD PRACTICE ACTIVITIES">
-<activity name="cloze">
-Cloze exercise: Create a fill-in-the-blank paragraph in language at the student's level apart from the target words. It must contain exactly 5 blanks, one for each of the 5 vocabulary words. Use each vocabulary word from the word bank once.
+const CLOZE_ACTIVITY = `Cloze exercise: Create a fill-in-the-blank paragraph in language at the student's level apart from the target words. It must contain exactly 5 blanks, one for each of the 5 vocabulary words. Use each vocabulary word from the word bank once.
 <critical>The blanks must NOT appear in the same order as the vocabulary was taught. Randomize which vocabulary word appears in each blank position - for example, if vocabulary is taught as [word1, word2, word3, word4, word5], the blanks in the paragraph should use them in a different order like [word3, word1, word5, word2, word4].</critical>
-Format blanks as [1:word], [2:word], etc. where the number is the blank position in the text (not the vocabulary order). Always write the actual vocabulary word inside the brackets, never underscores: the app hides the word and turns it into the blank. The wordBank contains base forms; add grammatical endings after the bracket when needed (like "[1:challenge]s" for plural).
-</activity>
+Format blanks as [1:word], [2:word], etc. where the number is the blank position in the text (not the vocabulary order). Always write the actual vocabulary word inside the brackets, never underscores: the app hides the word and turns it into the blank. The wordBank contains base forms; add grammatical endings after the bracket when needed (like "[1:challenge]s" for plural).`;
 
-<activity name="sentence_unscramble">
-Sentence unscramble: Create 3 grammatically correct and natural-sounding sentences using lesson vocabulary. IMPORTANT: Sentences must sound like natural, idiomatic English that native speakers would actually say - avoid awkward literal translations.
+const UNSCRAMBLE_ACTIVITY = `Sentence unscramble: Create 3 grammatically correct and natural-sounding sentences using lesson vocabulary. IMPORTANT: Sentences must sound like natural, idiomatic English that native speakers would actually say - avoid awkward literal translations.
 <requirements>
 For each sentence:
 - First create the complete grammatically correct sentence and put it in "correctSentence"
@@ -297,38 +325,18 @@ For each sentence:
 - The words array must contain every single word from the correctSentence and nothing else
 - Include ALL words: articles (the/a/an), prepositions (in/on/at), pronouns (it/they/we), conjunctions (and/but/or), etc.
 - Do NOT add extra words or omit any words from the sentence
-</requirements>
-</activity>
-</step>
+</requirements>`;
 
-<step number="7" title="CREATE 5 QUIZ QUESTIONS">
-Write 5 quiz questions about the lesson. Mix multiple choice and true/false. Use simple, clear wording: the quiz checks what the student learned, not how well they can read difficult questions.
+const QUIZ_STEP = `Write 5 quiz questions about the lesson. Mix multiple choice and true/false. Use simple, clear wording: the quiz checks what the student learned, not how well they can read difficult questions.
 <critical>For multiple choice, you MUST randomize the position of the correct answer. Do not use a fixed pattern.</critical>
-<requirements>Include clear explanations for all answers.</requirements>
-</step>
+<requirements>Include clear explanations for all answers.</requirements>`;
 
-</instructions>
-
----
-
-<validation>
-BEFORE GENERATING:
-
-Verify: 5 vocabulary words with all fields, 5 reading paragraphs, 5 comprehension questions (one per vocab word), 3 sentence frames with tiered scaffolding, 5 discussion questions with paragraphContext and imagePrompt, 5 quiz questions. All image prompts end with "No text visible". Same 5 vocabulary words in warmup.targetVocabulary and vocabulary section. Apart from the 5 target words, everything the student reads is pitched at a ${cefrLevel} student's level, and every question sounds like natural conversation. Titles name the topic only, never notes about the student.
-</validation>
-
----
-
-<json_schema>
-JSON STRUCTURE (showing format - generate complete content for all items):
-
-{
-  "title": "Short, engaging lesson title about the topic",
-  "level": "${cefrLevel}",
-  "focus": "${focus}",
-  "estimatedTime": ${lessonLength},
-  "sections": [
-    {
+/**
+ * JSON template for each section, indented to sit inside the lesson's
+ * "sections" array. The model copies these closely, item counts included.
+ */
+const SECTION_TEMPLATES: Record<LessonSectionType, (g: LevelGuidance) => string> = {
+  warmup: () => `    {
       "type": "warmup",
       "title": "Warm-up Activity",
       "content": "Brief warm-up description",
@@ -336,15 +344,15 @@ JSON STRUCTURE (showing format - generate complete content for all items):
       "targetVocabulary": ["word1", "word2", "word3", "word4", "word5"],
       "procedure": "Step-by-step instructions",
       "teacherNotes": "Teaching tips"
-    },
-    {
+    }`,
+  reading: () => `    {
       "type": "reading",
       "title": "Reading Text: [Title]",
       "introduction": "Brief setup",
       "paragraphs": ["Paragraph 1...", "Paragraph 2...", "Paragraph 3...", "Paragraph 4...", "Paragraph 5..."],
       "teacherNotes": "How to approach the reading"
-    },
-    {
+    }`,
+  vocabulary: () => `    {
       "type": "vocabulary",
       "title": "Key Vocabulary",
       "words": [
@@ -370,8 +378,8 @@ JSON STRUCTURE (showing format - generate complete content for all items):
           }
         }
       ]
-    },
-    {
+    }`,
+  comprehension: () => `    {
       "type": "comprehension",
       "title": "Vocabulary Check",
       "questions": [
@@ -383,8 +391,8 @@ JSON STRUCTURE (showing format - generate complete content for all items):
           "explanation": "Explanation of why this is correct"
         }
       ]
-    },
-    {
+    }`,
+  sentenceFrames: (g) => `    {
       "type": "sentenceFrames",
       "version": "v2_pedagogical",
       "title": "Language Practice: [short topic name]",
@@ -430,15 +438,15 @@ JSON STRUCTURE (showing format - generate complete content for all items):
         "patternTrainer": "Repeated practice approach",
         "visualMaps": "Visual structure representations"
       }` : ''}
-    },
-    {
+    }`,
+  cloze: () => `    {
       "type": "cloze",
       "title": "Fill in the Blanks",
       "text": "Paragraph with [1:word] format blanks. Add endings outside brackets like [2:work]ed.",
       "wordBank": ["word1", "word2", "word3", "word4", "word5"],
       "teacherNotes": "How to use this exercise"
-    },
-    {
+    }`,
+  sentenceUnscramble: () => `    {
       "type": "sentenceUnscramble",
       "title": "Sentence Unscramble",
       "sentences": [
@@ -447,8 +455,8 @@ JSON STRUCTURE (showing format - generate complete content for all items):
         {"words": ["third", "example", "sentence"], "correctSentence": "Third example sentence."}
       ],
       "teacherNotes": "How to approach this activity"
-    },
-    {
+    }`,
+  discussion: () => `    {
       "type": "discussion",
       "title": "Discussion Questions",
       "questions": [
@@ -458,21 +466,202 @@ JSON STRUCTURE (showing format - generate complete content for all items):
           "imagePrompt": "Scene description (50-80 words) showing the context. Setting, characters, actions, emotions. Realistic illustration, natural lighting. No text visible."
         }
       ]
-    },
-    {
+    }`,
+  quiz: () => `    {
       "type": "quiz",
       "title": "Knowledge Check",
       "questions": [
         {"question": "Quiz question?", "options": ["Option A", "Option B", "Option C", "Option D"], "answer": "The correct option", "correctAnswer": "The correct option", "explanation": "Why correct"},
         {"question": "True or false?", "options": ["True", "False"], "answer": "True", "correctAnswer": "True", "explanation": "Why true"}
       ]
-    }
+    }`,
+};
+
+export function buildLessonPrompt(params: LessonGenerateParams, studentVocabulary: string[] = []): string {
+  const { cefrLevel, focus, lessonLength } = params;
+  const g = getLevelGuidance(cefrLevel);
+
+  return `${promptIntro(params, g)}
+${vocabularyNotes(params, studentVocabulary)}
+---
+
+<instructions>
+CREATING YOUR LESSON:
+
+<step number="1" title="SELECT 5 VOCABULARY WORDS">
+${vocabularyChoice(cefrLevel, g)}
+
+${vocabularyRequirements(g)}
+</step>
+
+<step number="2" title="WRITE THE READING TEXT">
+${readingStep(g)}
+</step>
+
+<step number="3" title="CREATE 5 VOCABULARY CHECK QUESTIONS">
+${COMPREHENSION_STEP}
+</step>
+
+<step number="4" title="DESIGN 3 SENTENCE FRAMES">
+${sentenceFramesStep(cefrLevel, g)}
+</step>
+
+<step number="5" title="WRITE 5 DISCUSSION QUESTIONS">
+${discussionStep(g)}
+</step>
+
+<step number="6" title="ADD PRACTICE ACTIVITIES">
+<activity name="cloze">
+${CLOZE_ACTIVITY}
+</activity>
+
+<activity name="sentence_unscramble">
+${UNSCRAMBLE_ACTIVITY}
+</activity>
+</step>
+
+<step number="7" title="CREATE 5 QUIZ QUESTIONS">
+${QUIZ_STEP}
+</step>
+
+</instructions>
+
+---
+
+<validation>
+BEFORE GENERATING:
+
+Verify: 5 vocabulary words with all fields, 5 reading paragraphs, 5 comprehension questions (one per vocab word), 3 sentence frames with tiered scaffolding, 5 discussion questions with paragraphContext and imagePrompt, 5 quiz questions. All image prompts end with "No text visible". Same 5 vocabulary words in warmup.targetVocabulary and vocabulary section. Apart from the 5 target words, everything the student reads is pitched at a ${cefrLevel} student's level, and every question sounds like natural conversation. Titles name the topic only, never notes about the student.
+</validation>
+
+---
+
+<json_schema>
+JSON STRUCTURE (showing format - generate complete content for all items):
+
+{
+  "title": "Short, engaging lesson title about the topic",
+  "level": "${cefrLevel}",
+  "focus": "${focus}",
+  "estimatedTime": ${lessonLength},
+  "sections": [
+${LESSON_SECTION_TYPES.map((type) => SECTION_TEMPLATES[type](g)).join(',\n')}
   ]
 }
 </json_schema>
 
 <final_instruction>
 Generate complete content for ALL items: 5 vocabulary words, 5 paragraphs, 5 comprehension questions, 3 sentence frames, 5 discussion questions, 5 quiz questions.
+</final_instruction>
+
+BEGIN JSON:`;
+}
+
+/** What the rest of the lesson already says, so a regenerated section fits in. */
+export interface LessonSectionContext {
+  title?: string;
+  /** The lesson's five target words; empty when no section lists them. */
+  targetWords: string[];
+  readingParagraphs: string[];
+  discussionQuestions: string[];
+}
+
+/** Instructions for writing one section on its own, reusing the lesson prompt's steps. */
+function sectionInstructions(
+  type: LessonSectionType,
+  cefrLevel: string,
+  g: LevelGuidance,
+  lesson: LessonSectionContext,
+): string {
+  const words = lesson.targetWords.join(', ');
+  switch (type) {
+    case 'warmup':
+      return `Write a short warm-up that gets the student talking about the topic before the reading: a brief description of the activity, 5 easy questions about the student's own life, experiences and opinions, the 5 target words in "targetVocabulary", a step-by-step procedure for the teacher and teaching tips.`;
+    case 'reading':
+      return readingStep(g);
+    case 'vocabulary':
+      if (!lesson.targetWords.length) return `${vocabularyChoice(cefrLevel, g)}\n\n${vocabularyRequirements(g)}`;
+      return `Write the vocabulary entries for exactly these 5 words, in this order: ${words}.${lesson.readingParagraphs.length ? ' Explain each word in the sense it has in the reading text.' : ''}\n\n${vocabularyRequirements(g)}`;
+    case 'comprehension':
+      return COMPREHENSION_STEP;
+    case 'sentenceFrames':
+      return sentenceFramesStep(cefrLevel, g);
+    case 'cloze':
+      return `${lesson.targetWords.length ? `The wordBank must contain exactly these 5 words: ${words}.\n\n` : ''}${CLOZE_ACTIVITY}`;
+    case 'sentenceUnscramble':
+      return UNSCRAMBLE_ACTIVITY;
+    case 'discussion':
+      return discussionStep(g);
+    case 'quiz':
+      return QUIZ_STEP;
+  }
+}
+
+const SECTION_FINAL_INSTRUCTIONS: Record<LessonSectionType, string> = {
+  warmup: 'Generate complete content: 5 warm-up questions, and the 5 target words in targetVocabulary.',
+  reading: 'Generate complete content: 5 paragraphs that use all 5 target words.',
+  vocabulary: 'Generate complete content for all 5 vocabulary words.',
+  comprehension: 'Generate complete content: 5 vocabulary check questions, one per target word.',
+  sentenceFrames: 'Generate complete content: 3 sentence frames, each with all three tiers.',
+  cloze: 'The text must contain exactly 5 blanks, one for each word in the wordBank, written as [1:word] with the actual word inside the brackets.',
+  sentenceUnscramble: 'Generate complete content: 3 sentences.',
+  discussion: 'Generate complete content: 5 discussion questions, each with paragraphContext, question and imagePrompt.',
+  quiz: 'Generate complete content: 5 quiz questions.',
+};
+
+/**
+ * Prompt for writing one section of a lesson again, when the section came
+ * back missing or incomplete from full lesson generation. It shares the lesson
+ * prompt's description of the class and level, and gives the model the parts
+ * of the lesson the new section has to fit with.
+ */
+export function buildLessonSectionPrompt(
+  type: LessonSectionType,
+  params: LessonGenerateParams,
+  lesson: LessonSectionContext,
+  studentVocabulary: string[] = [],
+): string {
+  const { cefrLevel } = params;
+  const g = getLevelGuidance(cefrLevel);
+  const choosingWords = type === 'vocabulary' && lesson.targetWords.length === 0;
+
+  const soFar = ['The rest of this lesson is already written. Write only the missing section, so that it fits with the rest.'];
+  if (lesson.title) soFar.push('', `Lesson title: "${lesson.title}"`);
+  if (lesson.targetWords.length) soFar.push('', `The 5 target words: ${lesson.targetWords.join(', ')}`);
+  if (type !== 'reading' && lesson.readingParagraphs.length) {
+    soFar.push('', 'Reading text:', lesson.readingParagraphs.join('\n\n'));
+  }
+  if (type === 'sentenceFrames' && lesson.discussionQuestions.length) {
+    soFar.push('', 'Discussion questions:', ...lesson.discussionQuestions.map((q) => `- ${q}`));
+  }
+
+  const template = SECTION_TEMPLATES[type](g)
+    .split('\n')
+    .map((line) => line.replace(/^ {4}/, ''))
+    .join('\n');
+
+  return `${promptIntro(params, g)}
+${choosingWords ? vocabularyNotes(params, studentVocabulary) : ''}
+---
+
+<the_lesson_so_far>
+${soFar.join('\n')}
+</the_lesson_so_far>
+
+<instructions>
+Write the ${LESSON_SECTION_NAMES[type]} section of this lesson.
+
+${sectionInstructions(type, cefrLevel, g, lesson)}
+</instructions>
+
+<json_schema>
+Return just this one section as a JSON object, in this format (showing format - generate complete content for all items):
+
+${template}
+</json_schema>
+
+<final_instruction>
+${SECTION_FINAL_INSTRUCTIONS[type]}
 </final_instruction>
 
 BEGIN JSON:`;
