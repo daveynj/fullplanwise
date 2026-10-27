@@ -78,6 +78,13 @@ export function serveStatic(app: Express) {
         res.status(200).set({ "Content-Type": "text/html" }).end(prerendered);
         return;
       }
+      if (pathname.startsWith("/lessons/")) {
+        // Never let a transient prerender failure cache the homepage's og:url
+        // as the destination for a real lesson link.
+        res.status(503).set({ "Content-Type": "text/html", "Retry-After": "120", "Cache-Control": "no-store" })
+          .end('<html><head><meta name="robots" content="noindex"><title>Lesson temporarily unavailable</title></head><body>Please try this lesson again shortly.</body></html>');
+        return;
+      }
       next();
     } catch (e) {
       next(e);

@@ -14,3 +14,4 @@
 - [Lesson prompt tuning](lesson-prompt-tuning.md) — model copies the JSON template; "keep it simple" drags C1/C2 down; compare 3+ runs; B2 sentence-frame weak spot.
 - [Fill-in-the-blank gap matching](cloze-gap-matching.md) — AI puts word forms in gaps; leniency only for answers not in the bank; re-check all stored lessons before changing rules.
 - [Lesson check and repair](lesson-check.md) — "usable" mirrors what the lesson page renders; calibrate rule changes on all stored lessons; one section retry has sufficed.
+- [Lesson share images](lesson-share-images.md) — authorize preview images through their shared lesson; legacy and copied image keys may not use that lesson's numeric ID.

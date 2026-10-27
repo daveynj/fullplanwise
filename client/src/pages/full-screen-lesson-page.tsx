@@ -10,6 +10,7 @@ import { Lesson } from "@shared/schema";
 import { queryClient } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/use-auth";
 import { SEOHead } from "@/components/SEOHead";
+import { lessonPublicMetadata } from "@shared/lesson-public-metadata";
 
 class LessonNotFoundError extends Error {
   constructor() {
@@ -252,26 +253,30 @@ export default function FullScreenLessonPage() {
     );
   }
 
+  const metadata = lessonPublicMetadata(lesson);
   return (
     <>
       {/* SEO meta tags for shared lessons */}
       {lesson && (
         <SEOHead
-          title={`${lesson.title} - ${lesson.cefrLevel} ESL Lesson`}
-          description={`AI-generated ${lesson.cefrLevel} level ESL lesson about ${lesson.topic}. Includes vocabulary, reading comprehension, and discussion activities.`}
+          title={metadata.title}
+          description={metadata.description}
           keywords={[
             'ESL lesson',
-            lesson.topic,
+            lesson.title,
             lesson.cefrLevel,
             'English teaching',
             'language learning',
             'vocabulary',
             'reading comprehension'
           ]}
-          canonicalUrl={`${window.location.origin}/lessons/${lesson.id}`}
+          canonicalUrl={metadata.canonicalPath}
           // Only library (public) lessons belong in search results; private share links do not
           noindex={!lesson.isPublic}
-          ogImage={`https://planwiseesl.com/images/twitter-card-brand-updated.svg?v=2025-01-18`}
+          ogImage={metadata.imagePath}
+          ogImageAlt={metadata.imageAlt}
+          ogImageDimensions={null}
+          ogType="article"
         />
       )}
       

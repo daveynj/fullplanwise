@@ -17,6 +17,7 @@ import { validateGrammarSpotlightForStorage } from "../types/lessonContentTypes"
 import { resolveGrammarSpotlight } from "./grammarSpotlightRetry";
 import { testImageGeneration } from "./services/image-generation.service";
 import { toPublicLessonView } from "./public-lesson-view";
+import { serveLessonShareImage } from "./lesson-share-image";
 import { downloadStoredImage, stripBackedUpBase64, LESSON_IMAGE_PREFIX, LESSON_IMAGE_ROUTE } from "./services/image-storage";
 import { isFreeTrialActive, getFreeTrialEndDate } from "./features";
 import { SELECTABLE_MODELS, DEFAULT_MODEL_ID, isSelectableModel } from "@shared/aiModels";
@@ -187,6 +188,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Serve lesson images from App Storage. Lesson JSON only carries these
   // small URLs; the image bytes no longer live in the database.
+  app.get("/api/lessons/:id/share-image", serveLessonShareImage);
   app.get(`${LESSON_IMAGE_ROUTE}${LESSON_IMAGE_PREFIX}*`, async (req, res) => {
     try {
       const key = `${LESSON_IMAGE_PREFIX}${(req.params as Record<string, string>)[0] || ""}`;

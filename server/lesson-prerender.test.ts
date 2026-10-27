@@ -1,4 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import { readFileSync } from "node:fs";
+import { lessonPublicMetadata } from "@shared/lesson-public-metadata";
 
 const getLesson = vi.fn();
 const getPublicLessonSummaries = vi.fn();
@@ -182,6 +184,55 @@ describe("injectLessonPrerender: zero-section fallback", () => {
 });
 
 describe("injectLessonPrerender: lesson pages", () => {
+  it.each([
+    ["public", { isPublic: true, isShared: false }],
+    ["shared by link", { isPublic: false, isShared: true }],
+  ])("serves complete %s lesson preview metadata before JavaScript runs", async (_name, flags) => {
+    const lesson = { ...baseLesson, ...flags, topic: "PRIVATE student information", notes: "PRIVATE teacher note" };
+    getLesson.mockResolvedValue(lesson);
+    const template = readFileSync("client/index.html", "utf8");
+    const html = (await injectLessonPrerender(template, "/lessons/42"))!;
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    const metadata = lessonPublicMetadata(lesson);
+    const meta = (key: string) => doc.querySelector(`meta[property="${key}"], meta[name="${key}"]`)?.getAttribute("content");
+
+    expect(doc.title).toBe(metadata.title);
+    expect(doc.querySelector('link[rel="canonical"]')?.getAttribute("href")).toBe("https://planwiseesl.com/lessons/42");
+    expect(meta("og:url")).toBe("https://planwiseesl.com/lessons/42");
+    expect(meta("og:title")).toBe(metadata.title);
+    expect(meta("og:description")).toBe(metadata.description);
+    expect(meta("twitter:title")).toBe(metadata.title);
+    expect(meta("twitter:description")).toBe(metadata.description);
+    expect(meta("og:image")).toBe("https://planwiseesl.com/api/lessons/42/share-image?v=1");
+    expect(meta("twitter:image")).toBe(meta("og:image"));
+    expect(meta("og:image:alt")).toBe(metadata.imageAlt);
+    expect(meta("twitter:image:alt")).toBe(metadata.imageAlt);
+    expect(doc.querySelector('meta[property="og:image:width"]')).toBeNull();
+    expect(doc.querySelector('meta[property="og:image:height"]')).toBeNull();
+    expect(doc.querySelector('meta[property="og:image:type"]')).toBeNull();
+    expect(html).not.toContain("twitter-card-new-design.png");
+    expect(html).not.toContain("PRIVATE");
+  });
+
+  it("replaces duplicated, reordered and unquoted homepage metadata without keeping a homepage destination", async () => {
+    getLesson.mockResolvedValue(baseLesson);
+    const template = `<html><head><title>Home</title>
+      <meta content='https://planwiseesl.com' property='og:url'>
+      <meta property=og:url content=https://planwiseesl.com>
+      <meta content="home.png" property="og:image">
+      <meta content="Old description" name="description">
+      <link href="https://planwiseesl.com" rel=canonical>
+      </head><body><div id="root"></div></body></html>`;
+    const html = (await injectLessonPrerender(template, "/lessons/42"))!;
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    expect(doc.querySelectorAll('meta[property="og:url"]')).toHaveLength(1);
+    expect(doc.querySelectorAll('link[rel="canonical"]')).toHaveLength(1);
+    expect(doc.querySelectorAll('meta[name="description"]')).toHaveLength(1);
+    expect(doc.querySelector('meta[property="og:url"]')?.getAttribute("content")).toBe("https://planwiseesl.com/lessons/42");
+    expect(doc.querySelector('meta[name="twitter:image"]')?.getAttribute("content")).toContain("/lessons/42/share-image");
+    expect(html).not.toContain("home.png");
+  });
+
   it("renders a public lesson as indexable HTML with structured data", async () => {
     getLesson.mockResolvedValue(baseLesson);
     const html = await injectLessonPrerender(TEMPLATE, "/lessons/42");

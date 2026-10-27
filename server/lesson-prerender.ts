@@ -1,6 +1,8 @@
 import { storage } from './storage';
 import { PUBLIC_LIBRARY_LABELS } from '@shared/schema';
 import { tryDecodeLessonContent } from '@shared/lesson-content';
+import { CEFR_LEVEL_NAMES, lessonContentsParts, joinList, levelText, lessonPublicMetadata } from '@shared/lesson-public-metadata';
+export { CEFR_LEVEL_NAMES } from '@shared/lesson-public-metadata';
 
 /**
  * Server-side prerender of public lesson pages (/lessons/:id) and the public
@@ -18,15 +20,6 @@ import { tryDecodeLessonContent } from '@shared/lesson-content';
 const BASE_URL = 'https://planwiseesl.com';
 
 export const CEFR_LEVELS = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'] as const;
-
-export const CEFR_LEVEL_NAMES: Record<string, string> = {
-  A1: 'Beginner',
-  A2: 'Elementary',
-  B1: 'Intermediate',
-  B2: 'Upper Intermediate',
-  C1: 'Advanced',
-  C2: 'Proficiency',
-};
 
 function escapeHtml(str: string): string {
   return str
@@ -95,13 +88,16 @@ interface HeadOptions {
   canonicalPath: string;
   indexable: boolean;
   ogType: 'website' | 'article';
+  imagePath?: string;
+  imageAlt?: string;
   structuredData: unknown[];
 }
 
-/** Replaces the content of an existing <meta> tag in the template, if present. */
+/** Replace all copies and insert missing tags, regardless of attribute order or quoting. */
 function setMetaContent(html: string, attr: 'name' | 'property', key: string, value: string): string {
-  const pattern = new RegExp(`(<meta\\s+${attr}="${key}"\\s+content=")[^"]*(")`);
-  return pattern.test(html) ? html.replace(pattern, (_m, a, b) => `${a}${e(value)}${b}`) : html;
+  const escapedKey = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const pattern = new RegExp(`<meta\\b(?=[^>]*\\s${attr}\\s*=\\s*(?:"${escapedKey}"|'${escapedKey}'|${escapedKey}(?=\\s|/?>)))[^>]*>\\s*`, 'gi');
+  return html.replace(pattern, '').replace(/<\/head>/i, `<meta ${attr}="${key}" content="${e(value)}" />\n</head>`);
 }
 
 function injectPage(template: string, head: HeadOptions, bodyHtml: string): string {
@@ -112,6 +108,9 @@ function injectPage(template: string, head: HeadOptions, bodyHtml: string): stri
     : 'noindex, nofollow';
   const canonical = `${BASE_URL}${head.canonicalPath}`;
 
+  html = html
+    .replace(/<meta\b(?=[^>]*\sname\s*=\s*["']?(?:description|robots)(?=["'\s/>]))[^>]*>\s*/gi, '')
+    .replace(/<link\b(?=[^>]*\srel\s*=\s*["']?canonical(?=["'\s/>]))[^>]*>\s*/gi, '');
   html = html.replace(
     /<title>[^<]*<\/title>/,
     `<title>${e(head.title)}</title>
@@ -127,6 +126,17 @@ function injectPage(template: string, head: HeadOptions, bodyHtml: string): stri
   html = setMetaContent(html, 'property', 'og:type', head.ogType);
   html = setMetaContent(html, 'name', 'twitter:title', head.title);
   html = setMetaContent(html, 'name', 'twitter:description', head.description);
+  if (head.imagePath) {
+    const image = `${BASE_URL}${head.imagePath}`;
+    // Lesson images can be PNG or JPEG with their original aspect ratio.
+    // Do not keep the homepage's incorrect image dimensions or MIME type.
+    html = html.replace(/<meta\b(?=[^>]*\sproperty\s*=\s*["']?og:image:(?:width|height|type|secure_url)(?=["'\s/>]))[^>]*>\s*/gi, '');
+    html = setMetaContent(html, 'property', 'og:image', image);
+    html = setMetaContent(html, 'property', 'og:image:alt', head.imageAlt || head.title);
+    html = setMetaContent(html, 'name', 'twitter:image', image);
+    html = setMetaContent(html, 'name', 'twitter:image:alt', head.imageAlt || head.title);
+    html = setMetaContent(html, 'name', 'twitter:card', 'summary_large_image');
+  }
 
   const extraHead = `${head.structuredData.map(jsonLd).join('\n    ')}
     <style>${lessonPrerenderCss}</style>`;
@@ -276,38 +286,6 @@ function sectionsHtml(sections: any[]): string {
   return out.join('\n');
 }
 
-/** What a lesson contains, built from its real sections (e.g. ["12 vocabulary words", "a reading text"]). */
-function lessonContentsParts(sections: any[]): string[] {
-  const has = (...types: string[]) => sections.some((s) => s && types.includes(s.type));
-  const vocab = sections.find((s) => s && s.type === 'vocabulary');
-  const vocabCount = vocab ? arr(vocab.words).length : 0;
-
-  const parts: string[] = [];
-  if (vocabCount) parts.push(`${vocabCount} vocabulary words`);
-  if (has('reading')) parts.push('a reading text');
-  if (has('comprehension', 'quiz')) parts.push('comprehension questions');
-  if (has('discussion', 'speaking')) parts.push('discussion questions');
-  if (has('sentenceFrames', 'grammar')) parts.push('speaking patterns');
-  return parts;
-}
-
-function joinList(parts: string[]): string {
-  if (parts.length <= 1) return parts.join('');
-  return `${parts.slice(0, -1).join(', ')} and ${parts[parts.length - 1]}`;
-}
-
-function levelText(level: string): string {
-  const levelName = CEFR_LEVEL_NAMES[level];
-  return `${level}${levelName ? ` (${levelName})` : ''}`;
-}
-
-/** Short, accurate summary of what a lesson contains, built from its real sections. */
-function describeLesson(lesson: LessonForPrerender, sections: any[]): string {
-  const parts = lessonContentsParts(sections);
-  const includes = parts.length ? ` Includes ${joinList(parts)}.` : '';
-  return truncate(`Free ${levelText(lesson.cefrLevel)} ESL lesson: ${lesson.title}.${includes} Ready to use with your students.`, 160);
-}
-
 /** "About this lesson" paragraph, built only from the lesson's own data. */
 function aboutLesson(lesson: LessonForPrerender, sections: any[]): string {
   const label = categoryLabel(lesson.publicCategory || lesson.category);
@@ -379,8 +357,8 @@ async function prerenderLesson(template: string, id: number, preloaded?: unknown
   if (!lesson || (!lesson.isPublic && !lesson.isShared)) return null;
 
   const sections = sectionsOf(lesson.content);
-  const description = describeLesson(lesson, sections);
-  const canonicalPath = `/lessons/${lesson.id}`;
+  const metadata = lessonPublicMetadata(lesson);
+  const { description, canonicalPath } = metadata;
   let indexable = !!lesson.isPublic;
   if (indexable && sectionsHtml(sections).trim() === '') {
     // A lesson page with no lesson content is a soft 404; keep it out of the index.
@@ -425,11 +403,13 @@ async function prerenderLesson(template: string, id: number, preloaded?: unknown
   return injectPage(
     template,
     {
-      title: `${lesson.title} | ${lesson.cefrLevel} ESL Lesson | PlanWise ESL`,
+      title: metadata.title,
       description,
       canonicalPath,
       indexable,
       ogType: 'article',
+      imagePath: metadata.imagePath,
+      imageAlt: metadata.imageAlt,
       structuredData,
     },
     buildLessonPageHtml(lesson, sections, related),

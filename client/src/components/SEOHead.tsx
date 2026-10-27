@@ -6,6 +6,9 @@ interface SEOHeadProps {
   keywords?: string[];
   canonicalUrl?: string;
   ogImage?: string;
+  ogImageAlt?: string;
+  ogImageDimensions?: { width: number; height: number } | null;
+  ogType?: 'website' | 'article';
   contentHtml?: string;
   noindex?: boolean; // keep this page out of search results (e.g. private share links)
   article?: {
@@ -23,6 +26,9 @@ export function SEOHead({
   keywords = [], 
   canonicalUrl,
   ogImage = "/images/twitter-card-new-design.png",
+  ogImageAlt,
+  ogImageDimensions,
+  ogType,
   contentHtml,
   noindex = false,
   article 
@@ -56,6 +62,7 @@ export function SEOHead({
   };
   
   const absoluteCanonicalUrl = generateCanonicalUrl(canonicalUrl);
+  const absoluteImageUrl = ogImage.startsWith('/') ? `https://planwiseesl.com${ogImage}` : ogImage;
   
   useEffect(() => {
     // Set document title
@@ -116,10 +123,16 @@ export function SEOHead({
     // Set Open Graph tags
     setMetaTag('og:title', fullTitle, true);
     setMetaTag('og:description', fullDescription, true);
-    setMetaTag('og:image', ogImage.startsWith('/') ? `https://planwiseesl.com${ogImage}` : ogImage, true);
-    setMetaTag('og:image:width', '1200', true);
-    setMetaTag('og:image:height', '630', true);
-    setMetaTag('og:type', article ? 'article' : 'website', true);
+    setMetaTag('og:image', absoluteImageUrl, true);
+    if (ogImageDimensions === null) {
+      ['width', 'height', 'type', 'secure_url'].forEach(key =>
+        document.querySelectorAll(`meta[property="og:image:${key}"]`).forEach(tag => tag.remove()));
+    } else {
+      setMetaTag('og:image:width', String(ogImageDimensions?.width ?? 1200), true);
+      setMetaTag('og:image:height', String(ogImageDimensions?.height ?? 630), true);
+    }
+    if (ogImageAlt) setMetaTag('og:image:alt', ogImageAlt, true);
+    setMetaTag('og:type', ogType ?? (article ? 'article' : 'website'), true);
     setMetaTag('og:url', absoluteCanonicalUrl, true);
     
     // Enhanced Twitter Card tags
@@ -128,8 +141,8 @@ export function SEOHead({
     setMetaTag('twitter:creator', '@DaveTeacher1');
     setMetaTag('twitter:title', fullTitle);
     setMetaTag('twitter:description', fullDescription);
-    setMetaTag('twitter:image', ogImage);
-    setMetaTag('twitter:image:alt', `${title} - PlanwiseESL Blog Article`);
+    setMetaTag('twitter:image', absoluteImageUrl);
+    setMetaTag('twitter:image:alt', ogImageAlt ?? `${title} - PlanwiseESL Blog Article`);
     
     // Additional social media tags
     setMetaTag('og:site_name', 'PlanwiseESL', true);
@@ -251,7 +264,7 @@ export function SEOHead({
         document.title = "PlanwiseESL - AI-Powered ESL Lessons";
       }
     };
-  }, [fullTitle, fullDescription, keywords, absoluteCanonicalUrl, ogImage, article, noindex]);
+  }, [fullTitle, fullDescription, keywords, absoluteCanonicalUrl, ogImage, absoluteImageUrl, ogImageAlt, ogImageDimensions, ogType, article, noindex]);
   
   return null; // This component doesn't render anything
 }

@@ -17,6 +17,7 @@ import type { Server } from "http";
 const mockStorage = vi.hoisted(() => ({
   getUser: vi.fn(),
   getLesson: vi.fn(),
+  updateLesson: vi.fn(),
 }));
 
 const mockLessonJobs = vi.hoisted(() => ({
@@ -66,6 +67,7 @@ const PASSED_THROUGH = "PASSED_THROUGH_TO_RENDERER";
 
 let server: Server;
 let baseUrl: string;
+let currentUserId: number | null = null;
 
 beforeAll(async () => {
   const express = (await import("express")).default;
@@ -75,7 +77,8 @@ beforeAll(async () => {
   app.use(express.json());
   // Visitors to public lesson pages are not signed in.
   app.use((req: any, _res, next) => {
-    req.isAuthenticated = () => false;
+    req.isAuthenticated = () => currentUserId !== null;
+    req.user = currentUserId === null ? undefined : { id: currentUserId, isAdmin: false };
     next();
   });
 
@@ -99,6 +102,7 @@ afterAll(async () => {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  currentUserId = null;
   vi.spyOn(console, "log").mockImplementation(() => {});
   vi.spyOn(console, "error").mockImplementation(() => {});
 });
@@ -148,6 +152,25 @@ describe("GET /lessons/:id returns a real 404 for pages that do not exist", () =
 });
 
 describe("GET /lessons/:id lets viewable lessons through", () => {
+  it("the link returned by sharing opens that lesson for a logged-out visitor, without a homepage redirect", async () => {
+    currentUserId = 7;
+    mockStorage.getLesson.mockResolvedValue(lesson({ teacherId: 7 }));
+    mockStorage.updateLesson.mockResolvedValue(lesson({ teacherId: 7, isShared: true }));
+    const shared = await fetch(`${baseUrl}/api/lessons/42/share`, { method: "POST" });
+    expect(shared.status).toBe(200);
+    const { shareUrl } = await shared.json();
+    expect(shareUrl).toBe("/lessons/42");
+    expect(mockStorage.updateLesson).toHaveBeenCalledWith(42, { isShared: true });
+
+    currentUserId = null;
+    mockStorage.getLesson.mockResolvedValue(lesson({ teacherId: 7, isShared: true }));
+    const page = await fetch(`${baseUrl}${shareUrl}`);
+    expect(page.status).toBe(200);
+    expect(page.redirected).toBe(false);
+    expect(page.url).toBe(`${baseUrl}/lessons/42`);
+    expect(await page.text()).toBe(PASSED_THROUGH);
+  });
+
   it("passes a public lesson through to the page renderer", async () => {
     mockStorage.getLesson.mockResolvedValue(lesson({ isPublic: true }));
     const res = await fetch(`${baseUrl}/lessons/42`);
