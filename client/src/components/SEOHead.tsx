@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { homepageMeta } from "@shared/homepage-content";
 
 interface SEOHeadProps {
   title: string;
@@ -27,7 +28,7 @@ export function SEOHead({
   description, 
   keywords = [], 
   canonicalUrl,
-  ogImage = "/images/twitter-card-new-design.png",
+  ogImage = homepageMeta.imagePath,
   ogImageAlt,
   ogImageDimensions,
   ogType,

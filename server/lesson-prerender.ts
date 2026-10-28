@@ -126,6 +126,7 @@ function injectPage(template: string, head: HeadOptions, bodyHtml: string): stri
   html = setMetaContent(html, 'property', 'og:type', head.ogType);
   html = setMetaContent(html, 'name', 'twitter:title', head.title);
   html = setMetaContent(html, 'name', 'twitter:description', head.description);
+  html = setMetaContent(html, 'name', 'twitter:url', canonical);
   if (head.imagePath) {
     const image = `${BASE_URL}${head.imagePath}`;
     // Lesson images can be PNG or JPEG with their original aspect ratio.

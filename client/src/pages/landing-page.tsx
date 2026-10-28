@@ -155,6 +155,8 @@ export default function LandingPage() {
         description={homepageMeta.description}
         keywords={homepageMeta.keywords}
         canonicalUrl={homepageMeta.canonicalUrl}
+        ogImage={homepageMeta.imagePath}
+        ogImageAlt={homepageMeta.imageAlt}
       />
       <FreeTrialBanner />
 

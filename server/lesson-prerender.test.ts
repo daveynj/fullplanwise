@@ -14,6 +14,23 @@ vi.mock("./storage", () => ({
 
 import { injectLessonPrerender } from "./lesson-prerender";
 
+describe("social destinations from the real homepage template", () => {
+  for (const path of ["/lessons/42", "/esl-lessons", "/esl-lessons/b1"]) {
+    it(`keeps Twitter and Open Graph pointing to ${path}`, async () => {
+      getLesson.mockResolvedValue(baseLesson);
+      getPublicLessonSummaries.mockResolvedValue([baseLesson]);
+      const html = await injectLessonPrerender(readFileSync("client/index.html", "utf8"), path);
+      expect(html).not.toBeNull();
+      const doc = new DOMParser().parseFromString(html!, "text/html");
+      for (const selector of ['meta[property="og:url"]', 'meta[name="twitter:url"]']) {
+        const tags = doc.querySelectorAll(selector);
+        expect(tags).toHaveLength(1);
+        expect(tags[0].getAttribute("content")).toBe(`https://planwiseesl.com${path}`);
+      }
+    });
+  }
+});
+
 const TEMPLATE = `<!DOCTYPE html><html><head>
 <title>PLAN WISE ESL | AI-Powered Lesson Generator for ESL Teachers</title>
 <meta property="og:title" content="Site title" />

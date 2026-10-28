@@ -34,6 +34,8 @@ export const homepageMeta = {
     'AI for English teachers',
   ],
   canonicalUrl: 'https://planwiseesl.com',
+  imagePath: '/images/homepage-share-2026-10.png',
+  imageAlt: 'Plan Wise ESL — CEFR-aligned, ready-to-teach ESL lessons in minutes.',
 };
 
 export const hero = {
