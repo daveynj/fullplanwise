@@ -152,6 +152,7 @@ export default function LandingPage() {
     <div className="flex flex-col min-h-screen font-open-sans bg-white text-brand-navy antialiased">
       <SEOHead
         title={homepageMeta.title}
+        exactTitle
         description={homepageMeta.description}
         keywords={homepageMeta.keywords}
         canonicalUrl={homepageMeta.canonicalUrl}

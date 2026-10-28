@@ -226,6 +226,23 @@ export function injectLandingPrerender(template: string): string {
   // 1. Replace the default <title> with the landing title + description/robots/canonical.
   html = html.replace(/<title>[^<]*<\/title>/, buildLandingHeadMeta());
 
+  // Keep homepage social copy current before React runs. Match SEOHead's
+  // description limit; this injector is only used for the homepage.
+  const socialDescription = homepageMeta.description.length > 160
+    ? homepageMeta.description.substring(0, 157) + '...'
+    : homepageMeta.description;
+  for (const [attribute, key, value] of [
+    ['property', 'og:title', homepageMeta.title],
+    ['property', 'og:description', socialDescription],
+    ['name', 'twitter:title', homepageMeta.title],
+    ['name', 'twitter:description', socialDescription],
+  ]) {
+    html = html.replace(
+      new RegExp(`<meta\\s+${attribute}="${key}"\\s+content="[^"]*"\\s*/?>`),
+      () => `<meta ${attribute}="${key}" content="${e(value)}" />`,
+    );
+  }
+
   // 2. Inject prerender styles before </head>.
   html = html.replace(
     '</head>',
