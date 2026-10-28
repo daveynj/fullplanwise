@@ -20,6 +20,7 @@ import {
   BookOpen
 } from "lucide-react";
 import type { BlogPost } from "@shared/schema";
+import { blogPublicMetadata } from "@shared/blog-public-metadata";
 
 // Sanitize HTML content to prevent XSS attacks
 const sanitizeHtml = (html: string): string => {
@@ -141,13 +142,18 @@ export default function BlogPost() {
     }
   };
 
+  const metadata = blogPublicMetadata(post);
   return (
     <>
       <SEOHead
-        title={post.metaTitle || `${post.title} | Plan Wise ESL Blog`}
-        description={post.metaDescription || post.excerpt}
-        canonicalUrl={`/blog/${post.slug}`}
-        ogImage={post.featuredImageUrl || undefined}
+        title={metadata.title}
+        exactTitle
+        description={metadata.description}
+        canonicalUrl={metadata.canonicalPath}
+        ogImage={metadata.imageUrl}
+        ogImageAlt={metadata.imageAlt}
+        ogImageDimensions={null}
+        ogType="article"
         contentHtml={post.content}
         article={{
           publishedTime: post.publishedAt ? new Date(post.publishedAt).toISOString() : post.publishDate,

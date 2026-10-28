@@ -1,5 +1,6 @@
 import { storage } from './storage';
 import type { BlogPost } from '@shared/schema';
+import { blogPublicMetadata } from '@shared/blog-public-metadata';
 
 /**
  * Server-side prerender of the blog index (/blog) and blog posts (/blog/:slug).
@@ -127,11 +128,19 @@ export async function buildBlogPostHtml(post: BlogPost): Promise<string> {
 </div>`;
 }
 
-function injectIntoTemplate(template: string, meta: string, bodyHtml: string): string {
+function injectIntoTemplate(template: string, meta: string, bodyHtml: string, article = false): string {
   let html = template;
-  html = html.replace(/<title>[^<]*<\/title>/, meta);
+  // Remove inherited/duplicate page metadata before adding the authoritative set.
+  html = html
+    .replace(/<meta\b(?=[^>]*\sname\s*=\s*["'](?:description|robots)["'])[^>]*>\s*/gi, '')
+    .replace(/<link\b(?=[^>]*\srel\s*=\s*["']canonical["'])[^>]*>\s*/gi, '');
+  if (article) {
+    html = html.replace(/<meta\b(?=[^>]*\s(?:name|property)\s*=\s*["'](?:og:|twitter:)[^"']*["'])[^>]*>\s*/gi, '');
+  }
+  // Callback replacement preserves literal "$&" and "$'" in author-written text.
+  html = html.replace(/<title>[^<]*<\/title>/i, () => meta);
   html = html.replace('</head>', `    <style>${blogPrerenderCss}</style>\n  </head>`);
-  html = html.replace('<div id="root"></div>', `<div id="root">${bodyHtml}</div>`);
+  html = html.replace('<div id="root"></div>', () => `<div id="root">${bodyHtml}</div>`);
   return html;
 }
 
@@ -163,12 +172,28 @@ export async function injectBlogPrerender(
       // Reuse the post the routes.ts existence check already loaded, if any.
       const post = preloadedPost?.slug === slug ? preloadedPost : await storage.getBlogPostBySlug(slug);
       if (!post || !post.isPublished) return null;
-      const meta = headMeta(
-        post.metaTitle || `${post.title} | Plan Wise ESL Blog`,
-        post.metaDescription || post.excerpt,
-        `/blog/${post.slug}`,
-      );
-      return injectIntoTemplate(template, meta, await buildBlogPostHtml(post));
+      const metadata = blogPublicMetadata(post);
+      const canonical = `${BASE_URL}${metadata.canonicalPath}`;
+      const social = [
+        ['property', 'og:title', metadata.title],
+        ['property', 'og:description', metadata.description],
+        ['property', 'og:url', canonical],
+        ['property', 'og:type', 'article'],
+        ['property', 'og:image', metadata.imageUrl],
+        ['property', 'og:image:alt', metadata.imageAlt],
+        ['property', 'og:site_name', 'PlanwiseESL'],
+        ['property', 'og:locale', 'en_US'],
+        ['name', 'twitter:card', 'summary_large_image'],
+        ['name', 'twitter:site', '@PlanwiseESL'],
+        ['name', 'twitter:creator', '@DaveTeacher1'],
+        ['name', 'twitter:title', metadata.title],
+        ['name', 'twitter:description', metadata.description],
+        ['name', 'twitter:url', canonical],
+        ['name', 'twitter:image', metadata.imageUrl],
+        ['name', 'twitter:image:alt', metadata.imageAlt],
+      ].map(([attribute, key, value]) => `<meta ${attribute}="${key}" content="${e(value)}" />`).join('\n    ');
+      const meta = `${headMeta(metadata.title, metadata.description, metadata.canonicalPath)}\n    ${social}`;
+      return injectIntoTemplate(template, meta, await buildBlogPostHtml(post), true);
     }
 
     return null;

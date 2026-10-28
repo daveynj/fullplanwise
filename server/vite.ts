@@ -58,6 +58,11 @@ export function serveStatic(app: Express) {
         res.status(200).set({ "Content-Type": "text/html" }).end(prerendered);
         return;
       }
+      if (/^\/blog\/[^/]+\/?$/.test(pathname)) {
+        res.status(503).set({ "Content-Type": "text/html", "Retry-After": "120", "Cache-Control": "no-store" })
+          .end('<html><head><meta name="robots" content="noindex"><title>Article temporarily unavailable</title></head><body>Please try this article again shortly.</body></html>');
+        return;
+      }
       next();
     } catch (e) {
       next(e);

@@ -71,6 +71,11 @@ export async function setupVite(app: Express, server: Server) {
         // Prerender blog index/post content for bots (null = not a blog page or unpublished)
         const prerendered = await injectBlogPrerender(template, pathname, res.locals.blogPost);
         if (prerendered) template = prerendered;
+        else if (/^\/blog\/[^/]+\/?$/.test(pathname)) {
+          res.status(503).set({ "Content-Type": "text/html", "Retry-After": "120", "Cache-Control": "no-store" })
+            .end('<html><head><meta name="robots" content="noindex"><title>Article temporarily unavailable</title></head><body>Please try this article again shortly.</body></html>');
+          return;
+        }
       } else if (pathname.startsWith("/lessons/") || pathname.startsWith("/esl-lessons")) {
         // Prerender public lesson pages and browse pages (null = private/missing/other)
         const prerendered = await injectLessonPrerender(template, pathname, res.locals.lesson);

@@ -2,6 +2,7 @@ import { useEffect } from "react";
 
 interface SEOHeadProps {
   title: string;
+  exactTitle?: boolean;
   description: string;
   keywords?: string[];
   canonicalUrl?: string;
@@ -22,6 +23,7 @@ interface SEOHeadProps {
 
 export function SEOHead({ 
   title, 
+  exactTitle = false,
   description, 
   keywords = [], 
   canonicalUrl,
@@ -33,7 +35,7 @@ export function SEOHead({
   noindex = false,
   article 
 }: SEOHeadProps) {
-  const fullTitle = title.includes("PlanwiseESL") ? title : `${title} | PlanwiseESL - AI-Powered ESL Lessons`;
+  const fullTitle = exactTitle || title.includes("PlanwiseESL") ? title : `${title} | PlanwiseESL - AI-Powered ESL Lessons`;
   const fullDescription = description.length > 160 ? description.substring(0, 157) + "..." : description;
   
   // Generate absolute canonical URL (stripping query parameters)
@@ -141,6 +143,7 @@ export function SEOHead({
     setMetaTag('twitter:creator', '@DaveTeacher1');
     setMetaTag('twitter:title', fullTitle);
     setMetaTag('twitter:description', fullDescription);
+    setMetaTag('twitter:url', absoluteCanonicalUrl);
     setMetaTag('twitter:image', absoluteImageUrl);
     setMetaTag('twitter:image:alt', ogImageAlt ?? `${title} - PlanwiseESL Blog Article`);
     
