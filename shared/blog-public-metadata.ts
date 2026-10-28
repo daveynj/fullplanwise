@@ -1,7 +1,7 @@
 import type { BlogPost } from "./schema";
 
 const BASE_URL = "https://planwiseesl.com";
-const DEFAULT_IMAGE = `${BASE_URL}/images/twitter-card-new-design.png`;
+const DEFAULT_IMAGE = `${BASE_URL}/images/homepage-share-2026-10.png`;
 
 /** Identical metadata for crawler HTML and client-side navigation. */
 export function blogPublicMetadata(post: Pick<BlogPost,

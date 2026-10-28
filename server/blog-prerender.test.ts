@@ -89,8 +89,14 @@ describe("blog social previews using the real client template", () => {
     "uses the default image safely when the stored value is %s", async (featuredImageUrl) => {
       const noImage = { ...post, featuredImageUrl, featuredImageAlt: null };
       getBlogPostBySlug.mockResolvedValue(noImage);
-      assertMetadata((await injectBlogPrerender(template, `/blog/${post.slug}`))!, noImage);
-      expect(blogPublicMetadata(noImage).imageUrl).toBe("https://planwiseesl.com/images/twitter-card-new-design.png");
+      const html = (await injectBlogPrerender(template, `/blog/${post.slug}`))!;
+      assertMetadata(html, noImage);
+      const doc = parse(html);
+      for (const key of ["og:image", "twitter:image"]) {
+        expect(doc.querySelector(`meta[property="${key}"],meta[name="${key}"]`)?.getAttribute("content"))
+          .toBe("https://planwiseesl.com/images/homepage-share-2026-10.png");
+      }
+      expect(html).not.toContain("/images/twitter-card-new-design.png");
     },
   );
 
