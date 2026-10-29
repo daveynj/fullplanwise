@@ -7,7 +7,7 @@ description: How the optional expressions section is generated, checked and show
 - With the switch off, or at A1, the lesson prompt is exactly as before (tests check this). With the switch on, A2 and B1 readings get one extra line asking for a few everyday phrasal verbs.
 - "Usable" follows what the tab renders: `expressionItemsOf` (expression, meaning, example, speaking question). A quoted reading sentence that is not in the reading is cleared, and the card then shows the example instead. The section is requested once more if needed, and left out (logged "Lesson repair FAILED") when neither version is usable. Its quiz question is added to the quiz only when the quiz can mark it.
 - Expressions are saved to student_vocabulary as ordinary rows when a lesson is assigned, so later lessons don't repeat them.
-- Try it on real AI output with `npx tsx scripts/try-expressions-lessons.ts` (needs OPENROUTER_API_KEY; no database, images or credits).
+- Dave tests new lesson features by generating real lessons in Replit (he can roll back to an earlier Replit build, and credits don't matter), so trial scripts aren't needed.
 
 **Why:** Dave wanted the module only for newly generated lessons, with all existing lessons staying exactly the same (October 2026).
 
