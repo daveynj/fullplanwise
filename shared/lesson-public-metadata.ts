@@ -1,4 +1,5 @@
 import { tryDecodeLessonContent } from "./lesson-content";
+import { expressionsSummary } from "./lesson-expressions";
 
 export const CEFR_LEVEL_NAMES: Record<string, string> = {
   A1: "Beginner", A2: "Elementary", B1: "Intermediate",
@@ -9,8 +10,10 @@ export function lessonContentsParts(sections: any[]): string[] {
   const has = (...types: string[]) => sections.some((s) => s && types.includes(s.type));
   const vocab = sections.find((s) => s && s.type === "vocabulary");
   const vocabCount = Array.isArray(vocab?.words) ? vocab.words.length : 0;
+  const expressions = expressionsSummary(sections.find((s) => s && s.type === "expressions"));
   const parts: string[] = [];
   if (vocabCount) parts.push(`${vocabCount} vocabulary words`);
+  if (expressions) parts.push(expressions);
   if (has("reading")) parts.push("a reading text");
   if (has("comprehension", "quiz")) parts.push("comprehension questions");
   if (has("discussion", "speaking")) parts.push("discussion questions");

@@ -1,4 +1,5 @@
 import type { LessonGenerateParams } from '@shared/schema';
+import { expressionsRulesFor, wantsExpressions, type ExpressionKind } from '@shared/lesson-expressions';
 
 /**
  * Builds the prompts sent to the AI for lesson generation.
@@ -262,10 +263,10 @@ Each word needs:
 </requirements>`;
 }
 
-function readingStep(g: LevelGuidance): string {
+function readingStep(g: LevelGuidance, expressionsNote = ''): string {
   return `Write a reading text of ${g.readingLength} in exactly 5 paragraphs. Its job is to give the student something interesting to react to and talk about, such as a story, a real situation or different points of view, not to test their reading.
 
-${g.readingGuidance}
+${g.readingGuidance}${expressionsNote ? ` ${expressionsNote}` : ''}
 
 <requirements>
 Include all 5 vocabulary words naturally, each appearing 2-3 times with context clues. Keep vocabulary density to about 1 new word per 25 words.
@@ -495,7 +496,7 @@ ${vocabularyRequirements(g)}
 </step>
 
 <step number="2" title="WRITE THE READING TEXT">
-${readingStep(g)}
+${readingStep(g, expressionsReadingNote(params))}
 </step>
 
 <step number="3" title="CREATE 5 VOCABULARY CHECK QUESTIONS">
@@ -569,16 +570,17 @@ export interface LessonSectionContext {
 /** Instructions for writing one section on its own, reusing the lesson prompt's steps. */
 function sectionInstructions(
   type: LessonSectionType,
-  cefrLevel: string,
+  params: LessonGenerateParams,
   g: LevelGuidance,
   lesson: LessonSectionContext,
 ): string {
+  const { cefrLevel } = params;
   const words = lesson.targetWords.join(', ');
   switch (type) {
     case 'warmup':
       return `Write a short warm-up that gets the student talking about the topic before the reading: a brief description of the activity, 5 easy questions about the student's own life, experiences and opinions, the 5 target words in "targetVocabulary", a step-by-step procedure for the teacher and teaching tips.`;
     case 'reading':
-      return readingStep(g);
+      return readingStep(g, expressionsReadingNote(params));
     case 'vocabulary':
       if (!lesson.targetWords.length) return `${vocabularyChoice(cefrLevel, g)}\n\n${vocabularyRequirements(g)}`;
       return `Write the vocabulary entries for exactly these 5 words, in this order: ${words}.${lesson.readingParagraphs.length ? ' Explain each word in the sense it has in the reading text.' : ''}\n\n${vocabularyRequirements(g)}`;
@@ -651,7 +653,7 @@ ${soFar.join('\n')}
 <instructions>
 Write the ${LESSON_SECTION_NAMES[type]} section of this lesson.
 
-${sectionInstructions(type, cefrLevel, g, lesson)}
+${sectionInstructions(type, params, g, lesson)}
 </instructions>
 
 <json_schema>
@@ -662,6 +664,162 @@ ${template}
 
 <final_instruction>
 ${SECTION_FINAL_INSTRUCTIONS[type]}
+</final_instruction>
+
+BEGIN JSON:`;
+}
+
+// ---------------------------------------------------------------------------
+// Idioms & phrasal verbs section
+// ---------------------------------------------------------------------------
+
+/**
+ * What to choose for the idioms & phrasal verbs section at each level. The
+ * section is not offered for A1; its titles and counts are in
+ * shared/lesson-expressions.ts.
+ */
+const EXPRESSIONS_CHOICE: Record<string, string> = {
+  A2: 'Choose common phrasal verbs with a clear, mostly literal meaning: the kind people use every day to talk about routines, home, work, travel and free time. No idioms. Skip the most basic ones an A2 student already knows.',
+  B1: 'Choose common phrasal verbs and everyday fixed expressions that B1 students hear all the time but rarely use themselves. Their meaning should be easy to work out from the reading or easy to remember; no idioms whose meaning cannot be guessed.',
+  B2: 'Choose a mix of phrasal verbs, including ones with a non-literal meaning, and common idioms, with at least one of each: the kind that is frequent in natural conversation and in the news, and that a B2 student is ready to start using.',
+  C1: 'Choose idioms, figurative phrasal verbs and idiomatic expressions that fluent speakers use, with at least one idiom and one phrasal verb. Avoid ones a B2 student would already know, and use the notes for nuance: tone, connotation and how the expression differs from a plainer word.',
+  C2: 'Choose subtle idioms, figurative phrasal verbs and set phrases that skilled native speakers use, with at least one idiom and one phrasal verb. Avoid ones a C1 student would already know, and use the notes for fine distinctions of tone and connotation.',
+};
+
+/** The kinds the JSON template shows, item by item. The model copies the template closely, so this sets the mix. */
+const EXPRESSIONS_TEMPLATE_KINDS: Record<string, ExpressionKind[]> = {
+  A2: ['phrasal verb', 'phrasal verb', 'phrasal verb'],
+  B1: ['phrasal verb', 'expression', 'phrasal verb'],
+  B2: ['phrasal verb', 'idiom', 'phrasal verb', 'idiom'],
+  C1: ['idiom', 'phrasal verb', 'idiom', 'phrasal verb'],
+  C2: ['idiom', 'phrasal verb', 'idiom', 'phrasal verb'],
+};
+
+/**
+ * An extra line for the reading text when the lesson has the section, at the
+ * levels whose reading guidance does not already invite phrasal verbs and
+ * idioms. Lessons without the section get exactly the reading prompt they
+ * always had.
+ */
+const EXPRESSIONS_READING_NOTE: Record<string, string> = {
+  A2: 'Use a few common phrasal verbs naturally, as people do in everyday speech.',
+  B1: 'Use a few common phrasal verbs and everyday expressions naturally, as people do in everyday speech.',
+};
+
+function expressionsReadingNote(params: LessonGenerateParams): string {
+  return wantsExpressions(params) ? EXPRESSIONS_READING_NOTE[params.cefrLevel] ?? '' : '';
+}
+
+function expressionTemplate(kind: ExpressionKind, detailed: boolean): string {
+  if (!detailed) {
+    return `    {"expression": "...", "kind": "${kind}", "fromText": "... **...** ...", "meaning": "...", "similar": "...", "example": "... **...** ...", "notes": [{"text": "..."}], "tone": "", "yourTurn": "...?"}`;
+  }
+  return `    {
+      "expression": "base form",
+      "kind": "${kind}",
+      "fromText": "The sentence from the reading text, copied exactly, with the **expression** marked.",
+      "meaning": "Clear, simple meaning",
+      "similar": "simpler word or phrase",
+      "example": "A new, natural example sentence with the **expression** marked.",
+      "notes": [
+        {"text": "A short tip about a common mistake:", "right": "correct form", "wrong": "common mistake"},
+        {"text": "Another short, useful tip."}
+      ],
+      "tone": "",
+      "yourTurn": "A friendly question that invites the student to use the expression about their own life?"
+    }`;
+}
+
+/**
+ * Prompt for the optional idioms & phrasal verbs section. It is written after
+ * the rest of the lesson, so the expressions can come from the lesson's
+ * reading text (see lesson-expressions.ts), and it shares the lesson prompt's
+ * description of the class and level.
+ */
+export function buildExpressionsPrompt(
+  params: LessonGenerateParams,
+  lesson: LessonSectionContext,
+  studentVocabulary: string[] = [],
+): string {
+  const { cefrLevel } = params;
+  const rules = expressionsRulesFor(cefrLevel);
+  if (!rules) throw new Error(`Idioms and phrasal verbs are not offered for ${cefrLevel} lessons`);
+  const g = getLevelGuidance(cefrLevel);
+  const kinds = EXPRESSIONS_TEMPLATE_KINDS[cefrLevel] ?? EXPRESSIONS_TEMPLATE_KINDS.B1;
+  const choice = EXPRESSIONS_CHOICE[cefrLevel] ?? EXPRESSIONS_CHOICE.B1;
+
+  const soFar = ['The rest of this lesson is already written. Write only this section, so that it fits with the rest.'];
+  if (lesson.title) soFar.push('', `Lesson title: "${lesson.title}"`);
+  if (lesson.targetWords.length) soFar.push('', `The 5 target words: ${lesson.targetWords.join(', ')}`);
+  if (lesson.readingParagraphs.length) soFar.push('', 'Reading text:', lesson.readingParagraphs.join('\n\n'));
+  if (lesson.discussionQuestions.length) {
+    soFar.push('', 'Discussion questions:', ...lesson.discussionQuestions.map((q) => `- ${q}`));
+  }
+
+  const learnedNote = studentVocabulary.length > 0
+    ? `
+STUDENT'S PREVIOUS VOCABULARY:
+This student has already learned these words and expressions: ${studentVocabulary.join(', ')}
+
+Do not choose any of them.
+`
+    : '';
+
+  const items = Array.from({ length: rules.count }, (_, i) => expressionTemplate(kinds[i % kinds.length], i === 0));
+
+  return `${promptIntro(params, g)}
+${learnedNote}
+---
+
+<the_lesson_so_far>
+${soFar.join('\n')}
+</the_lesson_so_far>
+
+<instructions>
+Write the "${rules.title}" section of this lesson: ${rules.count} ${rules.noun} that the student first meets in the reading text, works out from the context, and then uses to talk about their own life. They come on top of the 5 target words, so keep every explanation short and easy.
+
+${choice}
+
+<guidance>
+Choose expressions that:
+- appear in the reading text above, with the meaning they have there. If the reading has fewer than ${rules.count} good ones, add ones that fit the topic and would help the student answer the discussion questions, and leave "fromText" empty for those.
+- people really use in conversation today. Avoid old-fashioned, rare and cliché idioms.
+- are not one of the 5 target words.
+- the student will want to say, not just understand.
+</guidance>
+
+<requirements>
+Each expression needs:
+- expression: the base form, the way a dictionary lists it
+- kind: "phrasal verb", "idiom" or "expression"
+- fromText: the sentence from the reading text that uses it, copied exactly, with the expression marked like **this**; or "" when it is not in the reading
+- meaning: clear and simple (${g.definitionGuidance}), and easier than the expression itself
+- similar: a simpler word or phrase with a similar meaning, or "" when there is none
+- example: a new, natural sentence at the student's level, with the expression marked like **this**
+- notes: 1 or 2 short, useful tips. For a phrasal verb: whether it can be split, or what the small word adds. For an idiom: the picture behind it, when that helps the student remember it. Say if it is informal, or mainly British or American. When a tip is about a common mistake, put the correct form in "right" and the mistake in "wrong".
+- tone: "informal" or "formal" when it matters, otherwise ""
+- yourTurn: one friendly question that invites the student to use the expression to talk about their own life or opinions
+</requirements>
+
+Also write one multiple-choice question that checks the meaning of one of these expressions, for the quiz at the end of the lesson. Use simple, clear wording.
+<critical>Randomize the position of the correct answer.</critical>
+</instructions>
+
+<json_schema>
+Return just this one section as a JSON object, in this format (showing format - generate complete content for all items):
+
+{
+  "type": "expressions",
+  "title": "${rules.title}",
+  "items": [
+${items.join(',\n')}
+  ],
+  "quizQuestion": {"question": "Quiz question about one of the expressions?", "options": ["Option A", "Option B", "Option C", "Option D"], "answer": "The correct option", "correctAnswer": "The correct option", "explanation": "Why correct"}
+}
+</json_schema>
+
+<final_instruction>
+Generate complete content: exactly ${rules.count} expressions, each with every field, and one quiz question.
 </final_instruction>
 
 BEGIN JSON:`;

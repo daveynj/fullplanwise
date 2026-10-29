@@ -12,7 +12,7 @@ PlanwiseESL is a comprehensive English as a Second Language (ESL) teaching platf
 - **CEFR-Aligned Content**: Automatically generates lessons appropriate for A1-C2 levels
 - **Multi-Provider AI**: Supports OpenAI, Google Gemini, and other AI services
 - **Enhanced Vocabulary System**: Progressive definitions with multiple learning layers
-- **Grammar Spotlights**: Interactive grammar visualizations and explanations
+- **Idioms & Phrasal Verbs**: An optional section with phrasal verbs, idioms and everyday expressions from the reading, each with a speaking question
 
 ### 📚 Comprehensive Content Types
 - **Warm-up Activities**: Engaging topic introductions with discussion questions

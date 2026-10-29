@@ -2,6 +2,7 @@ import { storage } from './storage';
 import { PUBLIC_LIBRARY_LABELS } from '@shared/schema';
 import { tryDecodeLessonContent } from '@shared/lesson-content';
 import { CEFR_LEVEL_NAMES, lessonContentsParts, joinList, levelText, lessonPublicMetadata } from '@shared/lesson-public-metadata';
+import { expressionItemsOf, withoutMarks } from '@shared/lesson-expressions';
 export { CEFR_LEVEL_NAMES } from '@shared/lesson-public-metadata';
 
 /**
@@ -34,6 +35,9 @@ const e = escapeHtml;
 
 const str = (v: unknown): string => (typeof v === 'string' ? v.trim() : '');
 const arr = (v: unknown): any[] => (Array.isArray(v) ? v : []);
+
+/** A sentence frame's levels of support, simplest first. */
+const FRAME_TIERS = ['emerging', 'developing', 'expanding'] as const;
 
 function categoryLabel(category: string | null | undefined): string {
   if (!category) return '';
@@ -261,15 +265,40 @@ function sectionsHtml(sections: any[]): string {
       }
       case 'sentenceFrames':
       case 'grammar': {
+        // Like the lesson page: current lessons ("v2_pedagogical") keep each
+        // frame's three levels of support in pedagogicalFrames; older lessons
+        // keep pattern templates in frames.
+        const tiered = s.version === 'v2_pedagogical'
+          ? arr(s.pedagogicalFrames)
+              .map((f) => ({
+                fn: str(f?.languageFunction),
+                frames: FRAME_TIERS.map((tier) => str(f?.tieredFrames?.[tier]?.frame)).filter(Boolean),
+              }))
+              .filter((f) => f.frames.length)
+          : [];
         const frames = arr(s.frames).filter((f) => f && (str(f.patternTemplate) || str(f.title)));
-        if (!frames.length) break;
-        const items = frames
-          .map((f) => {
-            const fn = str(f.languageFunction);
-            return `<li><strong>${e(str(f.patternTemplate) || str(f.title))}</strong>${fn ? ` &mdash; ${e(fn)}` : ''}</li>`;
-          })
-          .join('');
+        if (!tiered.length && !frames.length) break;
+        const items = tiered.length
+          ? tiered.map((f) => `<li>${f.fn ? `<strong>${e(f.fn)}</strong>` : ''}${listHtml(f.frames)}</li>`).join('')
+          : frames
+              .map((f) => {
+                const fn = str(f.languageFunction);
+                return `<li><strong>${e(str(f.patternTemplate) || str(f.title))}</strong>${fn ? ` &mdash; ${e(fn)}` : ''}</li>`;
+              })
+              .join('');
         out.push(`<section>${heading('Speaking Patterns')}${s.introduction ? `<p>${e(str(s.introduction))}</p>` : ''}<ul>${items}</ul></section>`);
+        break;
+      }
+      case 'expressions': {
+        const items = expressionItemsOf(s);
+        if (!items.length) break;
+        const cards = items
+          .map(
+            (x) =>
+              `<div class="lp-card"><h3>${e(x.expression)} <span class="lp-meta">(${e(x.kind)})</span></h3><p>${e(x.meaning)}</p><p><em>${e(withoutMarks(x.example))}</em></p></div>`,
+          )
+          .join('');
+        out.push(`<section>${heading('Idioms & Phrasal Verbs')}${cards}</section>`);
         break;
       }
       case 'cloze': {

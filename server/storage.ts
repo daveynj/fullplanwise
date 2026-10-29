@@ -10,6 +10,7 @@ import { Store } from "express-session";
 import { db, pool } from "./db";
 import { createSessionStore } from "./session-store";
 import { extractLessonSummary, LESSON_SUMMARY_SOURCE_CHARS } from "@shared/lesson-content";
+import { EXPRESSIONS_SECTION_TYPE, expressionItemsOf } from "@shared/lesson-expressions";
 import { SQL, eq, and, desc, count, or, ilike, gte, sql, inArray } from "drizzle-orm";
 
 // modify the interface with any CRUD methods
@@ -1462,6 +1463,25 @@ export class DatabaseStorage implements IStorage {
               } else if (wordTerm) {
                 console.log(`[extractAndSaveVocabulary] Skipping duplicate word: ${wordTerm}`);
               }
+            }
+          }
+          // Lessons made with the idioms & phrasal verbs switch also teach
+          // expressions; they are tracked like words, so later lessons for
+          // this student don't teach them again.
+          if (section.type === EXPRESSIONS_SECTION_TYPE) {
+            for (const item of expressionItemsOf(section)) {
+              const term = item.expression.toLowerCase();
+              if (existingWords.has(term) || vocabularyToAdd.some((entry) => entry.word.toLowerCase() === term)) {
+                console.log(`[extractAndSaveVocabulary] Skipping duplicate expression: ${term}`);
+                continue;
+              }
+              vocabularyToAdd.push({
+                studentId,
+                lessonId,
+                word: item.expression,
+                definition: item.meaning,
+                cefrLevel: lesson.cefrLevel
+              });
             }
           }
         }

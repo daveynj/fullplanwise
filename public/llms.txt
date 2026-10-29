@@ -27,11 +27,10 @@ ESL teachers typically spend 2-3 hours preparing a single lesson. This leads to 
 
 - **AI Lesson Generation**: Generate complete, ready-to-teach ESL lessons in minutes, not hours. Lessons include warm-ups, vocabulary sections, reading passages, comprehension questions, discussion prompts, and more.
 - **CEFR Level Support**: Full support for all CEFR levels from A1 (Beginner) to C2 (Proficiency), ensuring lessons match student ability.
-- **Grammar Spotlight**: Visual grammar explanations with sentence diagrams and color-coded grammar components for clearer teaching.
+- **Idioms & Phrasal Verbs**: An optional lesson section, switched on from the lesson form (on by default from B1, off at A2, not offered at A1). It teaches 3–4 phrasal verbs, idioms and everyday expressions from the lesson's reading, each with its meaning, an example, tips and a speaking question.
 - **Semantic Maps**: Visual vocabulary maps showing word relationships to deepen student understanding.
 - **Student Vocabulary Tracking**: Tracks which words each student has learned to prevent duplicate vocabulary teaching and ensure progressive language building.
 - **Lesson Categories**: Specialized content for General English, Business English, Academic English, Medical English, Legal English, Technology English, Tourism & Hospitality, Finance, Healthcare, Science, Arts & Culture, and Sports English.
-- **Lesson Component Selection**: Teachers choose which components to include — warm-ups, vocabulary, reading, questions, discussion, grammar spotlight, semantic maps, and more.
 - **AI-Generated Images**: Contextual, pedagogically aligned images generated for vocabulary and discussion sections.
 - **PDF Export**: Download lessons as formatted PDFs for offline use or printing.
 - **Vocabulary Downloads**: Export student vocabulary lists as HTML files.

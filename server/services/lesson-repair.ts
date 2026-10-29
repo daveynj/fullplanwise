@@ -82,7 +82,7 @@ export function parseSectionJson(text: string): unknown {
  * The section in a reply: the section object itself, or the section wrapped in
  * {"section": ...}, {"<type>": ...} or a lesson-style {"sections": [...]}.
  */
-export function sectionFromReply(reply: unknown, type: LessonSectionType): Section | undefined {
+export function sectionFromReply(reply: unknown, type: string): Section | undefined {
   if (!isRecord(reply)) return undefined;
   let section: unknown = reply;
   if (Array.isArray(reply.sections)) {

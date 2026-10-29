@@ -16,7 +16,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
-import { Wand2, Bot, Sparkles, Info } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Wand2, Bot, Sparkles, Info, Quote } from "lucide-react";
+import { EXPRESSIONS_COMPONENT, expressionsRulesFor } from "@shared/lesson-expressions";
 import { useTrialStatus } from "@/hooks/use-trial-status";
 import { useAuth } from "@/hooks/use-auth";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -94,6 +97,17 @@ export function LessonForm({ students, onSubmit, initialStudentId }: LessonFormP
     },
   });
 
+  // The idioms & phrasal verbs switch follows the level's default until the
+  // teacher changes it; it is never offered for A1.
+  const [expressionsChoice, setExpressionsChoice] = useState<boolean | null>(null);
+  const includesExpressions = (level: string) => {
+    const rules = expressionsRulesFor(level);
+    return rules !== null && (expressionsChoice ?? rules.onByDefault);
+  };
+  const cefrLevel = form.watch("cefrLevel");
+  const expressionsRules = expressionsRulesFor(cefrLevel);
+  const expressionsOn = includesExpressions(cefrLevel);
+
   const handleSubmit = (values: FormValues) => {
     // Convert studentId to number if it exists and isn't 'none'
     const parsedValues = {
@@ -106,7 +120,10 @@ export function LessonForm({ students, onSubmit, initialStudentId }: LessonFormP
         ? values.targetVocabulary.trim() 
         : undefined,
       // Add required fields for the API
-      components: ["warm-up", "vocabulary", "reading", "comprehension", "sentences", "discussion", "quiz"],
+      components: [
+        "warm-up", "vocabulary", "reading", "comprehension", "sentences", "discussion", "quiz",
+        ...(includesExpressions(values.cefrLevel) ? [EXPRESSIONS_COMPONENT] : []),
+      ],
       generateImages: true,
       useStudentHistory: true
     };
@@ -220,7 +237,7 @@ export function LessonForm({ students, onSubmit, initialStudentId }: LessonFormP
                           </button>
                         </TooltipTrigger>
                         <TooltipContent className="max-w-xs">
-                          <p>Enter a real-world topic for a conversation lesson. Our AI will automatically identify a relevant grammar point and explain it in the 'Grammar Spotlight' section!</p>
+                          <p>Enter a real-world topic for a conversation lesson. You can also add notes about your student, like their job or interests, to shape the lesson.</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
@@ -259,7 +276,31 @@ export function LessonForm({ students, onSubmit, initialStudentId }: LessonFormP
                 </FormItem>
               )}
             />
-            
+
+            {/* Idioms & phrasal verbs switch */}
+            <div
+              className={`flex items-center justify-between gap-4 rounded-lg border-2 p-4 ${
+                expressionsOn ? "border-pink-200 bg-pink-50" : "border-gray-200 bg-white"
+              }`}
+            >
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2">
+                  <Quote className="h-5 w-5 text-pink-600" />
+                  <Label htmlFor="include-expressions" className="font-semibold">Idioms &amp; phrasal verbs</Label>
+                </div>
+                <p id="include-expressions-hint" className="text-sm text-gray-600 mt-1.5">
+                  {expressionsRules ? expressionsRules.formHint : "Not offered for A1 lessons. Beginners focus on the five words."}
+                </p>
+              </div>
+              <Switch
+                id="include-expressions"
+                checked={expressionsOn}
+                onCheckedChange={setExpressionsChoice}
+                disabled={!expressionsRules}
+                aria-describedby="include-expressions-hint"
+              />
+            </div>
+
             {/* AI Provider - Hidden since only Gemini */}
             <FormField
               control={form.control}

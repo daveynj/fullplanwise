@@ -44,6 +44,7 @@ import {
   CheckCircle,
   Target,
   RotateCcw,
+  Quote,
 } from "lucide-react";
 import { DiscussionSection } from './discussion-section';
 import { SentenceFramesSection } from './sentence-frames-section';
@@ -52,6 +53,7 @@ import { ReadingSection } from './reading-section';
 import { SectionHeader } from './shared/section-header';
 import { InteractiveClozeSection } from './interactive-cloze-section';
 import { SentenceUnscrambleSection } from './sentence-unscramble-section';
+import { ExpressionsSection } from './expressions-section';
 import { VocabularyCard, VocabularyWord } from "./warm-up/vocabulary-card";
 // Pronunciation section functionality moved to warm-up
 // import { PronunciationSection } from "./pronunciation-section";
@@ -1991,6 +1993,10 @@ export function LessonContent({ content }: LessonContentProps) {
   
   // Navigation logic will be updated after filtering
   
+  // Only lessons generated with the idioms & phrasal verbs switch have this
+  // section; its title follows the lesson's level (shared/lesson-expressions.ts).
+  const expressionsData = parsedContent.sections.find((s: LessonSection) => s && s.type === 'expressions');
+
   // Creating the main render tree for the lesson
   const renderTree = [
     {
@@ -2042,6 +2048,12 @@ export function LessonContent({ content }: LessonContentProps) {
           return <ComprehensionExtractor content={parsedContent} />;
         })()
       )
+    },
+    {
+      id: 'expressions',
+      label: typeof expressionsData?.title === 'string' && expressionsData.title ? expressionsData.title : 'Idioms & Phrasal Verbs',
+      icon: <Quote className="h-5 w-5" />,
+      render: expressionsData ? <ExpressionsSection section={expressionsData} /> : null
     },
     {
       id: 'sentenceFrames',

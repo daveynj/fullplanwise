@@ -355,3 +355,67 @@ describe("injectLessonPrerender: browse pages", () => {
     expect(getPublicLessonSummaries).not.toHaveBeenCalled();
   });
 });
+
+describe("injectLessonPrerender: sentence frames and idioms & phrasal verbs", () => {
+  const withSections = (...sections: Record<string, unknown>[]) => ({
+    ...baseLesson,
+    content: { sections: [...baseLesson.content.sections, ...sections] },
+  });
+  const about = (html: string) => html.match(/<p class="lp-about">([\s\S]*?)<\/p>/)?.[1] ?? "";
+
+  it("shows each current sentence frame with its three levels of support", async () => {
+    getLesson.mockResolvedValue(
+      withSections({
+        type: "sentenceFrames",
+        version: "v2_pedagogical",
+        title: "Language Practice: Travel",
+        introduction: "Practice talking about travel.",
+        pedagogicalFrames: [
+          {
+            languageFunction: "Giving opinions",
+            tieredFrames: { emerging: { frame: "I like ___." }, developing: { frame: "I like ___ because ___." }, expanding: { frame: "What I love about ___ is ___." } },
+          },
+          { languageFunction: "Empty frame", tieredFrames: {} },
+        ],
+      }),
+    );
+    const html = (await injectLessonPrerender(TEMPLATE, "/lessons/42"))!;
+    expect(html).toContain(
+      "<section><h2>Language Practice: Travel</h2><p>Practice talking about travel.</p><ul><li><strong>Giving opinions</strong><ul><li>I like ___.</li><li>I like ___ because ___.</li><li>What I love about ___ is ___.</li></ul></li></ul></section>",
+    );
+    expect(html).not.toContain("Empty frame");
+  });
+
+  it("still shows older sentence frames as pattern templates", async () => {
+    getLesson.mockResolvedValue(
+      withSections({ type: "sentenceFrames", frames: [{ patternTemplate: "I think ___ because ___", languageFunction: "Giving opinions" }] }),
+    );
+    const html = (await injectLessonPrerender(TEMPLATE, "/lessons/42"))!;
+    expect(html).toContain("<li><strong>I think ___ because ___</strong> &mdash; Giving opinions</li>");
+  });
+
+  it("shows a lesson's idioms & phrasal verbs and counts them in the summary", async () => {
+    getLesson.mockResolvedValue(
+      withSections({
+        type: "expressions",
+        title: "Phrasal Verbs & Expressions",
+        items: [
+          { expression: "set off", kind: "phrasal verb", meaning: "to start a journey", example: "We **set off** at dawn.", yourTurn: "When do you set off for work?" },
+          { expression: "get used to", kind: "expression", meaning: "to start to feel normal about something", example: "I **got used to** the food.", yourTurn: "What was hard to get used to?" },
+        ],
+      }),
+    );
+    const html = (await injectLessonPrerender(TEMPLATE, "/lessons/42"))!;
+    expect(html).toContain("<h2>Phrasal Verbs &amp; Expressions</h2>");
+    expect(html).toContain('<h3>set off <span class="lp-meta">(phrasal verb)</span></h3><p>to start a journey</p><p><em>We set off at dawn.</em></p>');
+    expect(html).not.toContain("**");
+    expect(about(html)).toContain("It includes 1 vocabulary words, 2 phrasal verbs and expressions, a reading text,");
+  });
+
+  it("leaves lessons without the section as they were", async () => {
+    getLesson.mockResolvedValue(baseLesson);
+    const html = (await injectLessonPrerender(TEMPLATE, "/lessons/42"))!;
+    expect(html).not.toContain("Idioms");
+    expect(about(html)).toContain("It includes 1 vocabulary words, a reading text, comprehension questions and discussion questions.");
+  });
+});

@@ -267,7 +267,10 @@ export function checkLesson(content: unknown): SectionCheck[] {
 const STATUS_RANK: Record<SectionStatus, number> = { missing: 0, broken: 1, incomplete: 2, ok: 3 };
 
 /** Whether check `a` describes a more usable version of a section than check `b`. */
-export function isMoreUsable(a: SectionCheck, b: SectionCheck): boolean {
+export function isMoreUsable(
+  a: Pick<SectionCheck, 'status' | 'usableItems'>,
+  b: Pick<SectionCheck, 'status' | 'usableItems'>,
+): boolean {
   if (STATUS_RANK[a.status] !== STATUS_RANK[b.status]) return STATUS_RANK[a.status] > STATUS_RANK[b.status];
   return a.usableItems > b.usableItems;
 }

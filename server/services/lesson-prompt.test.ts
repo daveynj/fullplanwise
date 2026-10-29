@@ -1,9 +1,11 @@
 import { describe, it, expect } from "vitest";
 import type { LessonGenerateParams } from "@shared/schema";
+import { expressionsRulesFor } from "@shared/lesson-expressions";
 import {
   buildLessonPrompt,
   buildGrammarSpotlightPrompt,
   buildLessonSectionPrompt,
+  buildExpressionsPrompt,
   getLevelGuidance,
   LESSON_SECTION_NAMES,
   LESSON_SECTION_TYPES,
@@ -195,5 +197,94 @@ describe("lesson section prompt", () => {
     const prompt = buildLessonSectionPrompt("reading", params("B1"), lesson);
     expect(prompt).not.toContain("The first paragraph of the reading.");
     expect(prompt).toContain("exactly 5 paragraphs");
+  });
+});
+
+describe("idioms and phrasal verbs prompt", () => {
+  const lesson: LessonSectionContext = {
+    title: "Getting to Work",
+    targetWords: ["commute", "deadline", "flexible", "balance", "routine"],
+    readingParagraphs: ["Sam puts off small jobs until the evening.", "It is hard to switch off after work."],
+    discussionQuestions: ["How do you relax after work?", "Do you put things off?"],
+  };
+  const withSwitch = (level: string, topic?: string) =>
+    ({ ...params(level, topic), components: ["warm-up", "reading", "expressions"] }) as LessonGenerateParams;
+  const readingNote = "phrasal verbs";
+  const readingStep = (prompt: string) => prompt.slice(prompt.indexOf("WRITE THE READING TEXT"), prompt.indexOf("CREATE 5 VOCABULARY CHECK QUESTIONS"));
+
+  it.each(LEVELS)("%s lesson prompt is unchanged without the switch", (level) => {
+    const formComponents = { ...params(level), components: ["warm-up", "vocabulary", "reading", "comprehension", "sentences", "discussion", "quiz"] };
+    expect(buildLessonPrompt(formComponents)).toBe(buildLessonPrompt(params(level)));
+    expect(buildLessonPrompt(params(level))).not.toContain("as people do in everyday speech");
+  });
+
+  it("asks A2 and B1 readings for a few everyday phrasal verbs when the switch is on", () => {
+    for (const level of ["A2", "B1"]) {
+      expect(readingStep(buildLessonPrompt(withSwitch(level)))).toContain("as people do in everyday speech");
+      expect(readingStep(buildLessonPrompt(withSwitch(level)))).toContain(readingNote);
+      expect(buildLessonSectionPrompt("reading", withSwitch(level), lesson)).toContain("as people do in everyday speech");
+    }
+    expect(buildLessonPrompt(withSwitch("B1"))).toContain("Use a few common phrasal verbs and everyday expressions naturally");
+  });
+
+  it("leaves the lesson prompt as it is at levels that already invite idioms, and at A1", () => {
+    for (const level of ["A1", "B2", "C1", "C2"]) {
+      expect(buildLessonPrompt(withSwitch(level))).toBe(buildLessonPrompt(params(level)));
+    }
+  });
+
+  it.each(["A2", "B1", "B2", "C1", "C2"])("%s asks for the level's expressions from this lesson's reading", (level) => {
+    const rules = expressionsRulesFor(level)!;
+    const g = getLevelGuidance(level);
+    const prompt = buildExpressionsPrompt(withSwitch(level), lesson);
+
+    expect(prompt).toContain("relaxed one-to-one conversation class");
+    expect(prompt).toContain("Return ONLY valid JSON");
+    expect(prompt).toContain(`Write the "${rules.title}" section of this lesson: ${rules.count} ${rules.noun}`);
+    expect(prompt).toContain('Lesson title: "Getting to Work"');
+    expect(prompt).toContain("The 5 target words: commute, deadline, flexible, balance, routine");
+    expect(prompt).toContain("Sam puts off small jobs until the evening.\n\nIt is hard to switch off after work.");
+    expect(prompt).toContain("- How do you relax after work?\n- Do you put things off?");
+    expect(prompt).toContain(g.definitionGuidance);
+    expect(prompt).toContain("Avoid old-fashioned, rare and cliché idioms");
+    expect(prompt).toContain('with the expression marked like **this**');
+    expect(occurrences(prompt, '"expression": ')).toBe(rules.count);
+    expect(occurrences(prompt, '"quizQuestion"')).toBe(1);
+    expect(prompt).toContain(`exactly ${rules.count} expressions`);
+    expect(prompt.trimEnd().endsWith("BEGIN JSON:")).toBe(true);
+  });
+
+  it("shows only phrasal verbs at A2, and a mix of kinds from B2", () => {
+    const template = (level: string) => {
+      const prompt = buildExpressionsPrompt(withSwitch(level), lesson);
+      return prompt.slice(prompt.indexOf("<json_schema>"));
+    };
+    expect(occurrences(template("A2"), '"kind": "phrasal verb"')).toBe(3);
+    expect(template("A2")).not.toContain('"kind": "idiom"');
+    expect(buildExpressionsPrompt(withSwitch("A2"), lesson)).toContain("No idioms.");
+    expect(template("B1")).toContain('"kind": "expression"');
+    for (const level of ["B2", "C1", "C2"]) {
+      expect(occurrences(template(level), '"kind": "idiom"')).toBe(2);
+      expect(occurrences(template(level), '"kind": "phrasal verb"')).toBe(2);
+    }
+  });
+
+  it("keeps the teacher's request out of the JSON template", () => {
+    const topic = "getting to work (she is a nurse called Ana, so avoid office examples)";
+    const prompt = buildExpressionsPrompt(withSwitch("B2", topic), lesson);
+    expect(occurrences(prompt, topic)).toBe(1);
+    expect(prompt.slice(prompt.indexOf("<json_schema>"))).not.toContain("Ana");
+    expect(prompt).toContain("do not repeat the notes themselves in the lesson");
+  });
+
+  it("tells the AI what the student has already learned", () => {
+    expect(buildExpressionsPrompt(withSwitch("B1"), lesson, ["habit", "put off"])).toContain(
+      "This student has already learned these words and expressions: habit, put off\n\nDo not choose any of them.",
+    );
+    expect(buildExpressionsPrompt(withSwitch("B1"), lesson)).not.toContain("STUDENT'S PREVIOUS VOCABULARY");
+  });
+
+  it("is not offered for A1", () => {
+    expect(() => buildExpressionsPrompt(withSwitch("A1"), lesson)).toThrow("not offered for A1 lessons");
   });
 });

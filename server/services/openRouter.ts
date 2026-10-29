@@ -7,12 +7,15 @@ import {
   buildLessonPrompt,
   buildGrammarSpotlightPrompt,
   buildLessonSectionPrompt,
+  buildExpressionsPrompt,
   LESSON_SECTION_NAMES,
   type LessonSectionContext,
   type LessonSectionType,
 } from './lesson-prompt';
 import { parseSectionJson, repairLesson } from './lesson-repair';
+import { addExpressionsSection } from './lesson-expressions';
 import { findUnanswerableClozeGaps, tidyClozeText } from '@shared/cloze';
+import { wantsExpressions } from '@shared/lesson-expressions';
 
 /**
  * Default OpenRouter text model used for all lesson generation. Admins can
@@ -149,6 +152,7 @@ export class OpenRouterService {
             if (jsonContent.title && jsonContent.sections && Array.isArray(jsonContent.sections)) {
               console.log('Lesson content has valid structure, checking each section...');
               const checkedContent = await this.checkAndRepairLesson(jsonContent, params, studentVocabulary, model, options.logPrefix);
+              await this.addExpressions(checkedContent, params, studentVocabulary, model, options.logPrefix);
               return await this.formatLessonContent(checkedContent);
             } else {
               console.warn('Parsed JSON is missing required structure', JSON.stringify({
@@ -231,6 +235,7 @@ export class OpenRouterService {
               if (jsonContent.title && jsonContent.sections && Array.isArray(jsonContent.sections)) {
                 console.log('Fixed content has valid structure, checking each section...');
                 const checkedContent = await this.checkAndRepairLesson(jsonContent, params, studentVocabulary, model, options.logPrefix);
+                await this.addExpressions(checkedContent, params, studentVocabulary, model, options.logPrefix);
                 return await this.formatLessonContent(checkedContent);
               } else {
                 throw new Error('Fixed JSON still missing required structure');
@@ -322,6 +327,69 @@ export class OpenRouterService {
       console.error(`${logPrefix ? `${logPrefix} ` : ''}Lesson check failed unexpectedly; saving the lesson without finishing the check:`, error);
     }
     return content;
+  }
+
+  /**
+   * Adds the idioms & phrasal verbs section when the teacher asked for it
+   * (see lesson-expressions.ts). Other lessons are untouched. An unexpected
+   * error is logged and the lesson is saved without the section.
+   */
+  private async addExpressions(
+    content: any,
+    params: LessonGenerateParams,
+    studentVocabulary: string[],
+    model: string,
+    logPrefix?: string,
+  ): Promise<void> {
+    if (!wantsExpressions(params)) return;
+    try {
+      await addExpressionsSection(content, { params, writer: this, studentVocabulary, model, logPrefix });
+    } catch (error) {
+      console.error(`${logPrefix ? `${logPrefix} ` : ''}Adding the idioms and phrasal verbs section failed unexpectedly; saving the lesson without it:`, error);
+    }
+  }
+
+  /**
+   * Writes the idioms & phrasal verbs section for a lesson whose other
+   * sections are already written. Returns the parsed reply (untrusted —
+   * lesson-expressions.ts checks it) or throws on failure.
+   */
+  async writeExpressionsSection(
+    params: LessonGenerateParams,
+    lesson: LessonSectionContext,
+    studentVocabulary: string[] = [],
+    model: string = DEFAULT_MODEL,
+  ): Promise<unknown> {
+    if (!this.apiKey) {
+      throw new Error('OpenRouter API key is not configured');
+    }
+
+    const result: AxiosResponse = await axios.post(
+      `${this.baseURL}/chat/completions`,
+      {
+        model,
+        messages: [{ role: 'user', content: buildExpressionsPrompt(params, lesson, studentVocabulary) }],
+        temperature: 0.3,
+        top_p: 0.9,
+        max_tokens: 16384,
+        ...(needsReasoningEffort(model) ? { reasoning: { effort: 'low' } } : {})
+      },
+      {
+        headers: {
+          'Authorization': `Bearer ${this.apiKey}`,
+          'Content-Type': 'application/json',
+          'HTTP-Referer': 'https://planwiseesl.com',
+          'X-Title': 'PlanwiseESL'
+        },
+        timeout: 60000
+      }
+    );
+
+    const text = result.data?.choices?.[0]?.message?.content;
+    if (!text || typeof text !== 'string') {
+      throw new Error('The idioms and phrasal verbs section request returned no content');
+    }
+    return parseSectionJson(text);
   }
 
   /**
