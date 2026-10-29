@@ -94,8 +94,12 @@ export function SectionCard({
       return React.cloneElement(icon as React.ReactElement, {
         className: `h-5 w-5 ${colors.icon} flex-shrink-0`
       });
-    } else if (typeof icon === 'function') {
-      // If it's a Lucide icon component
+    } else if (
+      typeof icon === 'function' ||
+      (typeof icon === 'object' && icon !== null && '$$typeof' in icon)
+    ) {
+      // If it's an icon component. Lucide icons are forwardRef objects, not
+      // functions, so check for both.
       const IconComponent = icon as LucideIcon;
       return <IconComponent className={`h-5 w-5 ${colors.icon} flex-shrink-0`} />;
     }

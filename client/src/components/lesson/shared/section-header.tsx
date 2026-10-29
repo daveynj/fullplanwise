@@ -99,8 +99,12 @@ export function SectionHeader({
       return React.cloneElement(icon as React.ReactElement, {
         className: `h-6 w-6 ${colors.icon} flex-shrink-0`
       });
-    } else if (typeof icon === 'function') {
-      // If it's a Lucide icon component
+    } else if (
+      typeof icon === 'function' ||
+      (typeof icon === 'object' && icon !== null && '$$typeof' in icon)
+    ) {
+      // If it's an icon component. Lucide icons are forwardRef objects, not
+      // functions, so check for both.
       const IconComponent = icon as LucideIcon;
       return <IconComponent className={`h-6 w-6 ${colors.icon} flex-shrink-0`} />;
     }
@@ -111,7 +115,7 @@ export function SectionHeader({
     <div className={`mb-6 ${className}`}>
       {/* Main header */}
       <div className={`${colors.bg} rounded-lg p-5 flex items-center gap-4 border ${colors.border} shadow-sm`}>
-        <div className="flex items-center justify-center w-12 h-12 rounded-full bg-white shadow-sm border border-gray-100">
+        <div className="flex items-center justify-center w-12 h-12 rounded-full bg-white shadow-sm border border-gray-100" data-testid="section-header-icon">
           {renderIcon()}
         </div>
         <div className="flex-1">
