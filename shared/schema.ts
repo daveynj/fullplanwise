@@ -80,6 +80,11 @@ export const students = pgTable("students", {
   // can switch off or replace. Added at start-up by server/student-page-schema.ts.
   pageToken: text("page_token"),
   pageEnabled: boolean("page_enabled").notNull().default(false),
+  // Students of Unlimited teachers can make their own lessons on their page;
+  // the teacher can switch this off for each student.
+  canMakeLessons: boolean("can_make_lessons").notNull().default(true),
+  // The planned lesson the student would like to do next, if they chose one.
+  nextLessonId: integer("next_lesson_id"),
 });
 
 // lessons.content is a text column holding single-encoded lesson JSON (see
@@ -122,6 +127,8 @@ export const studentLessons = pgTable("student_lessons", {
   status: text("status").default("assigned"),
   notes: text("notes"),
   completedAt: timestamp("completed_at"),
+  // The student made this lesson themselves on their page.
+  madeByStudent: boolean("made_by_student").notNull().default(false),
 });
 
 // Student vocabulary tracking table
@@ -154,6 +161,36 @@ export const studentPracticeLog = pgTable("student_practice_log", {
   practisedAt: timestamp("practised_at").notNull().defaultNow(),
 }, (table) => [
   index("idx_student_practice_log_student").on(table.studentId, table.practisedAt),
+]);
+
+// Topics a student suggests on their page, for their teacher.
+export const studentIdeas = pgTable("student_ideas", {
+  id: serial("id").primaryKey(),
+  studentId: integer("student_id").notNull(),
+  teacherId: integer("teacher_id").notNull(),
+  topic: text("topic").notNull(),
+  status: text("status").notNull().default("waiting"), // "waiting" | "made" | "dismissed"
+  // The lesson the teacher made from the idea.
+  lessonId: integer("lesson_id"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  resolvedAt: timestamp("resolved_at"),
+}, (table) => [
+  index("idx_student_ideas_student").on(table.studentId, table.status),
+  index("idx_student_ideas_teacher").on(table.teacherId, table.status),
+]);
+
+// Lessons students make on their page (server/student-lesson-making.ts).
+export const studentLessonJobs = pgTable("student_lesson_jobs", {
+  id: text("id").primaryKey(),
+  studentId: integer("student_id").notNull(),
+  teacherId: integer("teacher_id").notNull(),
+  topic: text("topic").notNull(),
+  status: text("status").notNull(), // "pending" | "complete" | "error"
+  lessonId: integer("lesson_id"),
+  error: text("error"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+}, (table) => [
+  index("idx_student_lesson_jobs_student").on(table.studentId, table.createdAt),
 ]);
 
 // Insert schemas
@@ -228,6 +265,7 @@ export type Lesson = typeof lessons.$inferSelect;
 export type StudentLesson = typeof studentLessons.$inferSelect;
 export type StudentVocabulary = typeof studentVocabulary.$inferSelect;
 export type StudentPracticeLog = typeof studentPracticeLog.$inferSelect;
+export type StudentIdea = typeof studentIdeas.$inferSelect;
 
 // AI provider enum
 export const AIProviderEnum = z.enum(['gemini']);
@@ -323,6 +361,8 @@ export const lessonGenerateSchema = z.object({
   aiProvider: AIProviderEnum.default('gemini'),
   category: LessonCategoryEnum.default('general'),
   tags: z.array(z.string()).default([]),
+  // The student's idea (student_ideas) the teacher is making this lesson from.
+  ideaId: z.number().int().positive().optional(),
 });
 
 export type LessonGenerateParams = z.infer<typeof lessonGenerateSchema>;

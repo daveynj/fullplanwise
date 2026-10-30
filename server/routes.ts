@@ -14,15 +14,15 @@ import {
 import { mailchimpService } from "./services/mailchimp.service";
 import { testOpenRouterConnection } from "./services/openRouter";
 import { validateGrammarSpotlightForStorage } from "../types/lessonContentTypes";
-import { resolveGrammarSpotlight } from "./grammarSpotlightRetry";
+import { addLessonPictures, lessonModelFor, wordsToAvoid, writeLessonText } from "./lesson-generation";
 import { testImageGeneration } from "./services/image-generation.service";
 import { toPublicLessonView } from "./public-lesson-view";
 import { serveLessonShareImage } from "./lesson-share-image";
 import { ensureStudentPageSchema } from "./student-page-schema";
 import { registerStudentPageRoutes } from "./student-page-routes";
-import { LESSON_STATUS_DONE, LESSON_STATUS_PLANNED } from "@shared/student-page";
+import { LESSON_STATUS_DONE, LESSON_STATUS_PLANNED, isLessonDone } from "@shared/student-page";
 import { randomBytes } from "crypto";
-import { downloadStoredImage, stripBackedUpBase64, LESSON_IMAGE_PREFIX, LESSON_IMAGE_ROUTE } from "./services/image-storage";
+import { downloadStoredImage, LESSON_IMAGE_PREFIX, LESSON_IMAGE_ROUTE } from "./services/image-storage";
 import { isFreeTrialActive, getFreeTrialEndDate } from "./features";
 import { SELECTABLE_MODELS, DEFAULT_MODEL_ID, isSelectableModel } from "@shared/aiModels";
 import { getUncachableStripeClient } from "./stripeClient";
@@ -77,6 +77,8 @@ setInterval(() => {
     .catch((err) => console.error("Failed to prune lesson_generation_attempts:", err));
   pruneOldJobs()
     .catch((err) => console.error("Failed to prune lesson_generation_jobs:", err));
+  storage.pruneStudentLessonJobs()
+    .catch((err) => console.error("Failed to prune student_lesson_jobs:", err));
 }, 15 * 60 * 1000);
 
 // Clean up jobs older than 30 minutes every 10 minutes
@@ -318,6 +320,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Student Routes
+  // Per student: ideas waiting and lessons they made that aren't done, for the Students page.
+  app.get("/api/student-requests", ensureAuthenticated, async (req, res) => {
+    try {
+      res.json(await storage.getStudentRequestCounts(req.user!.id));
+    } catch (error: any) {
+      console.error("Error loading student requests:", error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // The teacher's lessons that a student made on their page, for the library.
+  app.get("/api/student-made-lessons", ensureAuthenticated, async (req, res) => {
+    try {
+      res.json(await storage.getStudentMadeLessons(req.user!.id));
+    } catch (error: any) {
+      console.error("Error loading student-made lessons:", error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   app.get("/api/students", ensureAuthenticated, async (req, res) => {
     try {
       const students = await storage.getStudents(req.user!.id);
@@ -433,6 +455,62 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Let the student make their own lessons on their page, or not (students of Unlimited teachers).
+  app.put("/api/students/:id/page/lesson-making", ensureAuthenticated, async (req, res) => {
+    try {
+      const studentId = parseIdParam(req.params.id);
+      const student = studentId === null ? undefined : await storage.getStudent(studentId);
+      if (!student || student.teacherId !== req.user!.id) {
+        return res.status(404).json({ message: "Student not found" });
+      }
+      if (typeof req.body?.allowed !== "boolean") {
+        return res.status(400).json({ message: "Send allowed as true or false." });
+      }
+      const updated = await storage.updateStudent(student.id, { canMakeLessons: req.body.allowed });
+      res.json(updated);
+    } catch (error: any) {
+      console.error("Error switching student lesson making:", error);
+      res.status(500).json({ message: "Could not update the setting. Please try again." });
+    }
+  });
+
+  // Topics the student suggested on their page that are waiting for the teacher.
+  app.get("/api/students/:id/ideas", ensureAuthenticated, async (req, res) => {
+    try {
+      const studentId = parseIdParam(req.params.id);
+      const student = studentId === null ? undefined : await storage.getStudent(studentId);
+      if (!student || student.teacherId !== req.user!.id) {
+        return res.status(404).json({ message: "Student not found" });
+      }
+      const ideas = await storage.getWaitingIdeas(student.id);
+      res.json(ideas.map((idea) => ({ id: idea.id, topic: idea.topic, sentAt: new Date(idea.createdAt).toISOString() })));
+    } catch (error: any) {
+      console.error("Error loading student ideas:", error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Dismiss a student's idea ({ dismissed: true }), or bring it back ({ dismissed: false }).
+  app.put("/api/students/:id/ideas/:ideaId", ensureAuthenticated, async (req, res) => {
+    try {
+      const studentId = parseIdParam(req.params.id);
+      const ideaId = parseIdParam(req.params.ideaId);
+      const student = studentId === null ? undefined : await storage.getStudent(studentId);
+      if (!student || student.teacherId !== req.user!.id || ideaId === null) {
+        return res.status(404).json({ message: "Idea not found" });
+      }
+      if (typeof req.body?.dismissed !== "boolean") {
+        return res.status(400).json({ message: "Send dismissed as true or false." });
+      }
+      const idea = await storage.setStudentIdeaDismissed(req.user!.id, student.id, ideaId, req.body.dismissed);
+      if (!idea) return res.status(404).json({ message: "Idea not found" });
+      res.json({ id: idea.id, topic: idea.topic, sentAt: new Date(idea.createdAt).toISOString() });
+    } catch (error: any) {
+      console.error("Error updating a student idea:", error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   // How the student has been practising, for the teacher's student page.
   app.get("/api/students/:id/practice", ensureAuthenticated, async (req, res) => {
     try {
@@ -522,8 +600,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Unauthorized" });
       }
 
-      const lessons = await storage.getStudentLessons(studentId);
-      res.json(lessons);
+      const [lessons, ideaLessonIds] = await Promise.all([
+        storage.getStudentLessons(studentId),
+        storage.getIdeaLessonIds(studentId),
+      ]);
+      // Which lessons the student made or asked for, and the one they starred.
+      const fromIdea = new Set(ideaLessonIds);
+      res.json(lessons.map((row) => ({
+        ...row,
+        fromIdea: fromIdea.has(row.lessonId),
+        isNext: row.lessonId === student.nextLessonId && !isLessonDone(row.status),
+      })));
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
@@ -1074,68 +1161,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         try {
           console.log(`[Job ${jobId}] Starting lesson generation, topic: ${validatedData.topic}, level: ${validatedData.cefrLevel}`);
 
-          let studentVocabulary: string[] = [];
-          if (validatedData.studentId && validatedData.useStudentHistory !== false) {
-            try {
-              const vocabRecords = await storage.getStudentVocabulary(validatedData.studentId, 50);
-              studentVocabulary = vocabRecords.map(v => v.word).filter(Boolean);
-              if (studentVocabulary.length > 0) {
-                console.log(`[Job ${jobId}] Found ${studentVocabulary.length} learned vocabulary words`);
-              }
-            } catch (vocabError) {
-              console.error(`[Job ${jobId}] Error fetching student vocabulary:`, vocabError);
-            }
-            // Words in lessons planned but not done yet aren't in the list,
-            // but a new lesson shouldn't teach them again either.
-            try {
-              const known = new Set(studentVocabulary.map((word) => word.toLowerCase()));
-              const planned = (await storage.getPlannedLessonWords(validatedData.studentId))
-                .filter((word) => !known.has(word.toLowerCase()));
-              if (planned.length > 0) {
-                console.log(`[Job ${jobId}] Also avoiding ${planned.length} words from planned lessons`);
-                studentVocabulary = [...studentVocabulary, ...planned];
-              }
-            } catch (plannedError) {
-              console.error(`[Job ${jobId}] Error fetching planned lesson words:`, plannedError);
-            }
-          }
+          const studentVocabulary = validatedData.studentId && validatedData.useStudentHistory !== false
+            ? await wordsToAvoid(validatedData.studentId, `[Job ${jobId}]`)
+            : [];
 
-          // Admin accounts may override the text model for their own
-          // generations; everyone else always uses the server default.
-          // Re-validate against the allowlist so a stored preference for a
-          // since-removed model falls back to the default instead of
-          // silently calling a retired/invalid model ID.
-          const generationModel = user.isAdmin && isSelectableModel(user.preferredAiModel)
-            ? user.preferredAiModel
-            : DEFAULT_MODEL_ID;
+          const generationModel = lessonModelFor(user);
           console.log(`[Job ${jobId}] Using text model: ${generationModel}`);
 
           const openRouter = await getOpenRouterService();
-          const generatedContent = await openRouter.generateLesson(validatedData, studentVocabulary, generationModel, {
-            logPrefix: `[Job ${jobId}]`,
-          });
+          const { content: generatedContent, grammarSpotlight: grammarVisualization } =
+            await writeLessonText(openRouter, validatedData, studentVocabulary, generationModel, jobId);
 
           const textTimeTaken = (Date.now() - startTime) / 1000;
           console.log(`[Job ${jobId}] Lesson text ready in ${textTimeTaken.toFixed(1)}s — saving lesson now`);
-
-          let grammarVisualization = null;
-          if (generatedContent.grammarSpotlight) {
-            const resolvedSpotlight = await resolveGrammarSpotlight(
-              generatedContent.grammarSpotlight,
-              openRouter,
-              jobId,
-              validatedData.topic,
-              validatedData.cefrLevel,
-              generationModel,
-            );
-            if (resolvedSpotlight) {
-              grammarVisualization = resolvedSpotlight;
-              // Keep the stored lesson content consistent with the validated payload
-              generatedContent.grammarSpotlight = resolvedSpotlight;
-            } else {
-              delete generatedContent.grammarSpotlight;
-            }
-          }
 
           // Save to database immediately — before images
           const lessonToSave = {
@@ -1163,6 +1201,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
               console.log(`[Job ${jobId}] Student-lesson association created`);
             } catch (assocError) {
               console.error(`[Job ${jobId}] Error creating student-lesson association:`, assocError);
+            }
+            // Made from the student's idea: it leaves their waiting ideas.
+            if (validatedData.ideaId) {
+              try {
+                await storage.markStudentIdeaMade(validatedData.ideaId, validatedData.studentId, teacherId, savedLesson.id);
+              } catch (ideaError) {
+                console.error(`[Job ${jobId}] Error recording the student's idea as made:`, ideaError);
+              }
             }
           }
 
@@ -1194,32 +1240,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           });
 
           // Generate images in the background — update DB when done
-          openRouter.generateImagesForLesson(generatedContent, savedLesson.id)
-            .then(async () => {
-              console.log(`[Job ${jobId}] Image generation complete — updating lesson in DB`);
-              try {
-                // Store URLs only — Base64 stays out of the database.
-                await storage.updateLesson(savedLesson.id, {
-                  content: stripBackedUpBase64(generatedContent)
-                });
-                console.log(`[Job ${jobId}] Lesson updated with images`);
-              } catch (updateErr) {
-                // Never lose generated images: if the small write fails, fall
-                // back to the in-memory content that still carries Base64.
-                console.error(`[Job ${jobId}] URL-only lesson update failed, retrying with inline image fallback:`, updateErr);
-                try {
-                  await storage.updateLesson(savedLesson.id, {
-                    content: generatedContent
-                  });
-                  console.log(`[Job ${jobId}] Lesson updated with inline image fallback`);
-                } catch (finalErr) {
-                  console.error(`[Job ${jobId}] Failed to update lesson with images:`, finalErr);
-                }
-              }
-            })
-            .catch((imgError: any) => {
-              console.error(`[Job ${jobId}] Image generation error:`, imgError);
-            });
+          addLessonPictures(openRouter, generatedContent, savedLesson.id, jobId);
         } catch (err: any) {
           console.error(`[Job ${jobId}] Generation failed:`, err.message);
           // Settle atomically: refund the credit spent upfront AND record the

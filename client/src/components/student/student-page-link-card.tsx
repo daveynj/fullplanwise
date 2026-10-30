@@ -1,14 +1,18 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
+import { Link } from "wouter";
 import { Copy, ExternalLink, Link2, RefreshCw } from "lucide-react";
-import { studentPagePath } from "@shared/student-page";
+import { MAX_WAITING_STUDENT_LESSONS, planLetsStudentsMakeLessons, studentPagePath } from "@shared/student-page";
 import type { Student } from "@shared/schema";
 import { apiRequest, queryClient } from "@/lib/queryClient";
+import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,10 +28,12 @@ import { possessive } from "@/components/student-page/student-page-layout";
 /**
  * The teacher's controls for a student's own page (shared/student-page.ts):
  * create the private link, copy it, switch the page off, or replace the link
- * if it was shared too widely.
+ * if it was shared too widely; and, with Unlimited, whether the student can
+ * make their own lessons there.
  */
 export function StudentPageLinkCard({ student }: { student: Student }) {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [confirmNewLink, setConfirmNewLink] = useState(false);
   const name = student.name;
   const pageUrl = student.pageToken ? `${window.location.origin}${studentPagePath(student.pageToken)}` : null;
@@ -58,6 +64,16 @@ export function StudentPageLinkCard({ student }: { student: Student }) {
     onSuccess: (updated) => {
       saved(updated);
       toast({ title: updated.pageEnabled ? "Page turned on" : "Page turned off" });
+    },
+    onError: failed,
+  });
+
+  const switchLessonMaking = useMutation({
+    mutationFn: async (allowed: boolean) =>
+      (await apiRequest("PUT", `/api/students/${student.id}/page/lesson-making`, { allowed })).json() as Promise<Student>,
+    onSuccess: (updated) => {
+      saved(updated);
+      toast({ title: updated.canMakeLessons ? `${name} can make lessons` : `${name} can send ideas only` });
     },
     onError: failed,
   });
@@ -134,6 +150,38 @@ export function StudentPageLinkCard({ student }: { student: Student }) {
                 ? `Only send this link to ${name}. Anyone who has it can see the page.`
                 : `The page is off: the link shows "not available" until you turn it on.`}
             </p>
+            <div className="border-t border-gray-200 pt-4">
+              {planLetsStudentsMakeLessons(user) ? (
+                <div className="flex items-start justify-between gap-4">
+                  <div className="space-y-1">
+                    <Label htmlFor={`lesson-making-${student.id}`} className="text-base font-semibold">
+                      Let {name} make their own lessons
+                    </Label>
+                    <p className="text-sm font-normal text-gray-600">
+                      Up to {MAX_WAITING_STUDENT_LESSONS} waiting at a time, at {possessive(name)} level ({student.cefrLevel}).
+                      Your private notes about {name} are never used. Each lesson goes into your library.
+                    </p>
+                  </div>
+                  <Switch
+                    id={`lesson-making-${student.id}`}
+                    checked={student.canMakeLessons}
+                    onCheckedChange={(allowed) => switchLessonMaking.mutate(allowed)}
+                    disabled={switchLessonMaking.isPending}
+                    data-testid="switch-lesson-making"
+                  />
+                </div>
+              ) : (
+                <div className="space-y-1">
+                  <p className="text-base font-semibold">Let {name} make their own lessons</p>
+                  <p className="text-sm font-normal text-gray-600">
+                    Included with Unlimited. On your current plan, {name} can send you topic ideas.
+                  </p>
+                  <Link href="/buy-credits" className="text-sm font-semibold text-brand-navy underline underline-offset-4">
+                    See plans
+                  </Link>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </CardContent>

@@ -16,4 +16,4 @@
 - [Lesson check and repair](lesson-check.md) — "usable" mirrors what the lesson page renders; calibrate rule changes on all stored lessons; one section retry has sufficed.
 - [Lesson share images](lesson-share-images.md) — authorize preview images through their shared lesson; legacy and copied image keys may not use that lesson's numeric ID.
 - [Idioms & phrasal verbs section](lesson-expressions.md) — optional, written by its own AI request after the lesson check; switch off = unchanged prompt; only new lessons have it.
-- [Student pages](student-page.md) — /s/<code> private pages: words join the list on "We did this"; earlier lessons were marked done once; students never see requests or teacher notes; topic box and student-made lessons come next.
+- [Student pages](student-page.md) — /s/<code> private pages: words join the list on "We did this"; earlier lessons were marked done once; students never see requests or teacher notes; ideas for all, student-made lessons for Unlimited/admin, 3 waiting max plus a "next" star.

@@ -2,7 +2,7 @@ import { sql } from "drizzle-orm";
 import { db } from "./db";
 
 /**
- * Adds the student page's columns and table (see shared/schema.ts and
+ * Adds the student page's columns and tables (see shared/schema.ts and
  * shared/student-page.ts) to existing databases at start-up, following the
  * project's start-up DDL convention instead of drizzle push. It runs in the
  * background so start-up does not wait for the database; the API waits for it
@@ -25,6 +25,9 @@ const COLUMNS = [
   { table: "student_vocabulary", column: "practice_level", definition: "integer NOT NULL DEFAULT 0" },
   { table: "student_vocabulary", column: "next_practice_at", definition: "timestamp" },
   { table: "student_vocabulary", column: "last_practised_at", definition: "timestamp" },
+  { table: "students", column: "can_make_lessons", definition: "boolean NOT NULL DEFAULT true" },
+  { table: "students", column: "next_lesson_id", definition: "integer" },
+  { table: "student_lessons", column: "made_by_student", definition: "boolean NOT NULL DEFAULT false" },
 ] as const;
 
 /** Postgres error code for "column already exists" (another server got there first). */
@@ -119,6 +122,36 @@ async function migrate(): Promise<void> {
   await db.execute(sql`
     CREATE UNIQUE INDEX IF NOT EXISTS idx_students_page_token
     ON students (page_token) WHERE page_token IS NOT NULL
+  `);
+  await db.execute(sql`
+    CREATE TABLE IF NOT EXISTS student_ideas (
+      id serial PRIMARY KEY,
+      student_id integer NOT NULL,
+      teacher_id integer NOT NULL,
+      topic text NOT NULL,
+      status text NOT NULL DEFAULT 'waiting',
+      lesson_id integer,
+      created_at timestamp NOT NULL DEFAULT now(),
+      resolved_at timestamp
+    )
+  `);
+  await db.execute(sql`CREATE INDEX IF NOT EXISTS idx_student_ideas_student ON student_ideas (student_id, status)`);
+  await db.execute(sql`CREATE INDEX IF NOT EXISTS idx_student_ideas_teacher ON student_ideas (teacher_id, status)`);
+  await db.execute(sql`
+    CREATE TABLE IF NOT EXISTS student_lesson_jobs (
+      id text PRIMARY KEY,
+      student_id integer NOT NULL,
+      teacher_id integer NOT NULL,
+      topic text NOT NULL,
+      status text NOT NULL,
+      lesson_id integer,
+      error text,
+      created_at timestamp NOT NULL DEFAULT now()
+    )
+  `);
+  await db.execute(sql`
+    CREATE INDEX IF NOT EXISTS idx_student_lesson_jobs_student
+    ON student_lesson_jobs (student_id, created_at)
   `);
 }
 

@@ -3,14 +3,16 @@
  * functions that turn a student's lessons and words into the page's data,
  * kept apart from the routes so they can be tested on their own.
  */
-import type { StudentVocabulary } from "@shared/schema";
-import { EXPRESSIONS_SECTION_TYPE } from "@shared/lesson-expressions";
+import { lessonGenerateSchema, type LessonGenerateParams, type StudentVocabulary } from "@shared/schema";
+import { EXPRESSIONS_COMPONENT, EXPRESSIONS_SECTION_TYPE, expressionsRulesFor } from "@shared/lesson-expressions";
 import {
   FLASHCARD_DECK_SIZE,
+  STUDENT_LESSONS_PER_DAY,
   isLessonDone,
   wordKindOf,
   wordStatusOf,
   type StudentFlashcard,
+  type StudentNextPage,
   type StudentPageHome,
   type StudentPageLessonSummary,
   type StudentPageWord,
@@ -132,6 +134,8 @@ export interface AssignedLesson {
   status: string | null;
   assignedAt: Date | string;
   completedAt: Date | string | null;
+  /** The student made the lesson on their page. */
+  madeByStudent: boolean;
   lesson: { title: string; cefrLevel: string };
 }
 
@@ -156,10 +160,12 @@ export function isDue(word: Pick<Vocabulary, "nextPracticeAt">, now: Date): bool
 
 /** The home page: the student's lessons, how much they know, and what is ready to practise. */
 export function buildStudentPageHome(input: {
-  student: { name: string; cefrLevel: string };
+  student: { name: string; cefrLevel: string; nextLessonId: number | null };
   teacherName: string | null;
   assignments: AssignedLesson[];
   vocabulary: Vocabulary[];
+  canMakeLessons: boolean;
+  making: { topic: string } | null;
   now?: Date;
 }): StudentPageHome {
   const now = input.now ?? new Date();
@@ -183,10 +189,15 @@ export function buildStudentPageHome(input: {
     cefrLevel: assignment.lesson.cefrLevel,
     date: isoDate(date),
     ...(counts.get(assignment.lessonId) ?? { words: 0, expressions: 0 }),
+    madeByYou: assignment.madeByStudent,
   });
-  const comingUp = input.assignments
-    .filter((assignment) => !isLessonDone(assignment.status))
-    .sort((a, b) => time(a.assignedAt) - time(b.assignedAt))
+  // The star only counts while its lesson is still coming up.
+  const planned = input.assignments.filter((assignment) => !isLessonDone(assignment.status));
+  const nextLessonId = planned.some((assignment) => assignment.lessonId === input.student.nextLessonId)
+    ? input.student.nextLessonId
+    : null;
+  const comingUp = planned
+    .sort((a, b) => Number(b.lessonId === nextLessonId) - Number(a.lessonId === nextLessonId) || time(a.assignedAt) - time(b.assignedAt))
     .map((assignment) => summary(assignment, assignment.assignedAt));
   const finished = input.assignments
     .filter((assignment) => isLessonDone(assignment.status))
@@ -205,6 +216,53 @@ export function buildStudentPageHome(input: {
     },
     comingUp,
     finished,
+    nextLessonId,
+    canMakeLessons: input.canMakeLessons,
+    making: input.making,
+  };
+}
+
+/** Every part of a lesson, as the lesson form asks for them (client/src/components/lesson/lesson-form.tsx). */
+const LESSON_COMPONENTS = ["warm-up", "vocabulary", "reading", "comprehension", "sentences", "discussion", "quiz"];
+
+/**
+ * The lesson request a student's topic makes (server/student-lesson-making.ts):
+ * their level from their profile, the lesson form's defaults, and idioms &
+ * phrasal verbs when their level has them on by default.
+ */
+export function studentLessonRequest(student: { id: number; cefrLevel: string }, topic: string): LessonGenerateParams {
+  const withExpressions = expressionsRulesFor(student.cefrLevel)?.onByDefault ?? false;
+  return lessonGenerateSchema.parse({
+    cefrLevel: student.cefrLevel,
+    topic,
+    studentId: student.id,
+    components: [...LESSON_COMPONENTS, ...(withExpressions ? [EXPRESSIONS_COMPONENT] : [])],
+    generateImages: true,
+    useStudentHistory: true,
+  });
+}
+
+/** The "What should we talk about next?" page: the student's waiting ideas and the lessons they made. */
+export function buildStudentNextPage(input: {
+  student: { name: string; cefrLevel: string };
+  teacherName: string | null;
+  canMakeLessons: boolean;
+  ideas: Array<{ id: number; topic: string; createdAt: Date | string }>;
+  assignments: AssignedLesson[];
+  making: { id: string; topic: string } | null;
+  lessonsToday: number;
+}): StudentNextPage {
+  return {
+    student: { name: input.student.name, cefrLevel: input.student.cefrLevel },
+    teacherName: input.teacherName,
+    canMakeLessons: input.canMakeLessons,
+    ideas: input.ideas.map((idea) => ({ id: idea.id, topic: idea.topic, sentAt: isoDate(idea.createdAt) })),
+    madeLessons: input.assignments
+      .filter((assignment) => assignment.madeByStudent && !isLessonDone(assignment.status))
+      .sort((a, b) => time(b.assignedAt) - time(a.assignedAt))
+      .map((assignment) => ({ id: assignment.lessonId, title: assignment.lesson.title, date: isoDate(assignment.assignedAt) })),
+    making: input.making ? { jobId: input.making.id, topic: input.making.topic } : null,
+    dailyLimitReached: input.lessonsToday >= STUDENT_LESSONS_PER_DAY,
   };
 }
 

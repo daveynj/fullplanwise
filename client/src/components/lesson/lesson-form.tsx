@@ -57,6 +57,9 @@ interface LessonFormProps {
   students: Student[];
   onSubmit: (data: any) => void;
   initialStudentId?: string;
+  /** Filled in when making a lesson from a student's idea. */
+  initialTopic?: string;
+  initialCefrLevel?: string;
 }
 
 const placeholders = [
@@ -67,8 +70,9 @@ const placeholders = [
   "e.g., My favorite type of food and why",
 ];
 
-export function LessonForm({ students, onSubmit, initialStudentId }: LessonFormProps) {
-  const [selectedCefrLevel, setSelectedCefrLevel] = useState<string>("B1");
+export function LessonForm({ students, onSubmit, initialStudentId, initialTopic, initialCefrLevel }: LessonFormProps) {
+  const startLevel = initialCefrLevel && cefrLevels.some((level) => level.value === initialCefrLevel) ? initialCefrLevel : "B1";
+  const [selectedCefrLevel, setSelectedCefrLevel] = useState<string>(startLevel);
   const [placeholder, setPlaceholder] = useState(placeholders[0]);
   const { canGenerateLessons, isInTrial, isSubscriber, freeCreditsRemaining } = useTrialStatus();
   const { user } = useAuth();
@@ -87,8 +91,8 @@ export function LessonForm({ students, onSubmit, initialStudentId }: LessonFormP
     resolver: zodResolver(formSchema),
     defaultValues: {
       studentId: initialStudentId || "none",
-      cefrLevel: "B1",
-      topic: "",
+      cefrLevel: startLevel,
+      topic: initialTopic ?? "",
       targetVocabulary: "",
       aiProvider: "gemini",
       focus: "general",

@@ -1,9 +1,9 @@
 
 import {
-  users, students, lessons, studentLessons, studentVocabulary, studentPracticeLog, blogPosts,
+  users, students, lessons, studentLessons, studentVocabulary, studentPracticeLog, studentIdeas, studentLessonJobs, blogPosts,
   type User, type InsertUser, type Student, type InsertStudent,
   type Lesson, type InsertLesson, type StudentLesson, type InsertStudentLesson,
-  type StudentVocabulary, type InsertStudentVocabulary,
+  type StudentVocabulary, type InsertStudentVocabulary, type StudentIdea,
   type BlogPost, type InsertBlogPost, type UpdateBlogPost
 } from "@shared/schema";
 import { Store } from "express-session";
@@ -12,15 +12,50 @@ import { createSessionStore } from "./session-store";
 import { extractLessonSummary, LESSON_SUMMARY_SOURCE_CHARS } from "@shared/lesson-content";
 import { EXPRESSIONS_SECTION_TYPE, expressionItemsOf } from "@shared/lesson-expressions";
 import {
+  IDEA_DISMISSED,
+  IDEA_MADE,
+  IDEA_WAITING,
   LESSON_STATUS_DONE,
   LESSON_STATUS_PLANNED,
+  MAX_WAITING_IDEAS,
+  MAX_WAITING_STUDENT_LESSONS,
+  STUDENT_LESSONS_PER_DAY,
   isLessonDone,
   nextPractice,
   type PracticeResult,
   type StudentPracticeStats,
+  type StudentRequestCounts,
 } from "@shared/student-page";
 import { lessonWordDetails } from "./lesson-word-details";
+import { ABANDONED_JOB_AGE_MS } from "./lesson-jobs";
 import { SQL, eq, and, desc, count, or, ilike, gte, sql, inArray, ne, isNull } from "drizzle-orm";
+
+/** Whether a student may start making a lesson now (reserveStudentLessonJob). */
+export type StudentLessonReservation =
+  | { status: "reserved" }
+  /** A lesson is already being made: the student page follows that one. */
+  | { status: "making"; jobId: string }
+  /** MAX_WAITING_STUDENT_LESSONS lessons they made are waiting. */
+  | { status: "full" }
+  /** STUDENT_LESSONS_PER_DAY started in the last 24 hours. */
+  | { status: "daily_limit" };
+
+export interface StudentLessonJobRow {
+  id: string;
+  topic: string;
+  status: "pending" | "complete" | "error";
+  lessonId: number | null;
+  error: string | null;
+  /** Pending for longer than any generation takes: its server stopped. */
+  abandoned: boolean;
+}
+
+/**
+ * Two-key advisory lock (namespace, student id) that takes one student's
+ * ideas and lessons one at a time, so the waiting limits hold across servers.
+ * Lesson generation for teachers uses 42_0001 (server/lesson-jobs.ts).
+ */
+const STUDENT_REQUEST_LOCK_NAMESPACE = 42_0002;
 
 // modify the interface with any CRUD methods
 // you might need
@@ -102,6 +137,25 @@ export interface IStorage {
   getLessonAccess(lessonId: number): Promise<{ teacherId: number; isPublic: boolean } | undefined>;
   recordStudentPractice(studentId: number, vocabularyId: number, result: PracticeResult): Promise<StudentVocabulary | undefined>;
   getStudentPracticeStats(studentId: number): Promise<StudentPracticeStats>;
+
+  // Ideas and lessons students make on their page
+  getWaitingIdeas(studentId: number): Promise<StudentIdea[]>;
+  addStudentIdea(student: Pick<Student, "id" | "teacherId">, topic: string): Promise<StudentIdea | null>;
+  removeStudentIdea(studentId: number, ideaId: number): Promise<boolean>;
+  setStudentIdeaDismissed(teacherId: number, studentId: number, ideaId: number, dismissed: boolean): Promise<StudentIdea | undefined>;
+  markStudentIdeaMade(ideaId: number, studentId: number, teacherId: number, lessonId: number): Promise<boolean>;
+  getIdeaLessonIds(studentId: number): Promise<number[]>;
+  setStudentNextLesson(studentId: number, lessonId: number): Promise<boolean>;
+  removeStudentMadeLesson(student: Pick<Student, "id" | "teacherId">, lessonId: number): Promise<{ lessonDeleted: boolean } | null>;
+  reserveStudentLessonJob(jobId: string, student: Pick<Student, "id" | "teacherId">, topic: string): Promise<StudentLessonReservation>;
+  completeStudentLessonJob(jobId: string, student: Pick<Student, "id" | "teacherId">, lesson: InsertLesson): Promise<Lesson>;
+  failStudentLessonJob(jobId: string, message: string): Promise<void>;
+  getStudentLessonJob(jobId: string, studentId: number): Promise<StudentLessonJobRow | undefined>;
+  getStudentMakingJob(studentId: number): Promise<{ id: string; topic: string } | undefined>;
+  countStudentLessonsToday(studentId: number): Promise<number>;
+  pruneStudentLessonJobs(): Promise<void>;
+  getStudentRequestCounts(teacherId: number): Promise<StudentRequestCounts>;
+  getStudentMadeLessons(teacherId: number): Promise<Array<{ lessonId: number; studentId: number }>>;
 
   // Blog post methods
   getAllBlogPosts(page?: number, pageSize?: number, category?: string, featured?: boolean, isPublished?: boolean): Promise<{ posts: BlogPost[], total: number }>;
@@ -1280,6 +1334,7 @@ export class DatabaseStorage implements IStorage {
           status: studentLessons.status,
           notes: studentLessons.notes,
           completedAt: studentLessons.completedAt,
+          madeByStudent: studentLessons.madeByStudent,
           // Only lesson metadata - EXCLUDE content field
           lesson: {
             id: lessons.id,
@@ -1656,6 +1711,296 @@ export class DatabaseStorage implements IStorage {
       daysPractisedThisWeek: Number(summary?.daysPractisedThisWeek ?? 0),
       stillLearning: stillLearning.map((row) => row.word),
     };
+  }
+
+  // Ideas and lessons students make on their page (shared/student-page.ts)
+
+  /** Ideas the student sent that the teacher hasn't made or dismissed, newest first. */
+  async getWaitingIdeas(studentId: number): Promise<StudentIdea[]> {
+    return db
+      .select()
+      .from(studentIdeas)
+      .where(and(eq(studentIdeas.studentId, studentId), eq(studentIdeas.status, IDEA_WAITING)))
+      .orderBy(desc(studentIdeas.createdAt), desc(studentIdeas.id));
+  }
+
+  /** Saves a student's idea for their teacher, or returns null when MAX_WAITING_IDEAS are already waiting. */
+  async addStudentIdea(student: Pick<Student, "id" | "teacherId">, topic: string): Promise<StudentIdea | null> {
+    return db.transaction(async (tx) => {
+      await tx.execute(sql`SELECT pg_advisory_xact_lock(${STUDENT_REQUEST_LOCK_NAMESPACE}, ${student.id})`);
+      const [{ waiting }] = await tx
+        .select({ waiting: count() })
+        .from(studentIdeas)
+        .where(and(eq(studentIdeas.studentId, student.id), eq(studentIdeas.status, IDEA_WAITING)));
+      if (Number(waiting) >= MAX_WAITING_IDEAS) return null;
+      const [idea] = await tx
+        .insert(studentIdeas)
+        .values({ studentId: student.id, teacherId: student.teacherId, topic })
+        .returning();
+      return idea;
+    });
+  }
+
+  /** The student takes back an idea the teacher hasn't acted on yet. */
+  async removeStudentIdea(studentId: number, ideaId: number): Promise<boolean> {
+    const removed = await db
+      .delete(studentIdeas)
+      .where(and(eq(studentIdeas.id, ideaId), eq(studentIdeas.studentId, studentId), eq(studentIdeas.status, IDEA_WAITING)))
+      .returning({ id: studentIdeas.id });
+    return removed.length > 0;
+  }
+
+  /** The teacher dismisses a waiting idea, or brings a dismissed one back. */
+  async setStudentIdeaDismissed(teacherId: number, studentId: number, ideaId: number, dismissed: boolean): Promise<StudentIdea | undefined> {
+    const [idea] = await db
+      .update(studentIdeas)
+      .set(dismissed ? { status: IDEA_DISMISSED, resolvedAt: new Date() } : { status: IDEA_WAITING, resolvedAt: null })
+      .where(and(
+        eq(studentIdeas.id, ideaId),
+        eq(studentIdeas.studentId, studentId),
+        eq(studentIdeas.teacherId, teacherId),
+        eq(studentIdeas.status, dismissed ? IDEA_WAITING : IDEA_DISMISSED),
+      ))
+      .returning();
+    return idea;
+  }
+
+  /** Records the lesson the teacher made from a student's idea. */
+  async markStudentIdeaMade(ideaId: number, studentId: number, teacherId: number, lessonId: number): Promise<boolean> {
+    const updated = await db
+      .update(studentIdeas)
+      .set({ status: IDEA_MADE, lessonId, resolvedAt: new Date() })
+      .where(and(
+        eq(studentIdeas.id, ideaId),
+        eq(studentIdeas.studentId, studentId),
+        eq(studentIdeas.teacherId, teacherId),
+        inArray(studentIdeas.status, [IDEA_WAITING, IDEA_DISMISSED]),
+      ))
+      .returning({ id: studentIdeas.id });
+    return updated.length > 0;
+  }
+
+  /** Lessons the teacher made from the student's ideas. */
+  async getIdeaLessonIds(studentId: number): Promise<number[]> {
+    const rows = await db
+      .select({ lessonId: studentIdeas.lessonId })
+      .from(studentIdeas)
+      .where(and(eq(studentIdeas.studentId, studentId), eq(studentIdeas.status, IDEA_MADE)));
+    return rows.map((row) => row.lessonId).filter((id): id is number => id !== null);
+  }
+
+  /** Stars the planned lesson the student wants to do next. False when it isn't one of their planned lessons. */
+  async setStudentNextLesson(studentId: number, lessonId: number): Promise<boolean> {
+    const updated = await db
+      .update(students)
+      .set({ nextLessonId: lessonId })
+      .where(and(
+        eq(students.id, studentId),
+        sql`EXISTS (SELECT 1 FROM ${studentLessons} WHERE ${studentLessons.studentId} = ${studentId}
+          AND ${studentLessons.lessonId} = ${lessonId} AND ${studentLessons.status} = ${LESSON_STATUS_PLANNED})`,
+      ))
+      .returning({ id: students.id });
+    return updated.length > 0;
+  }
+
+  /**
+   * The student removes a lesson they made that isn't done yet. It was their
+   * draft, so it leaves the teacher's library too, unless the teacher has
+   * since given it to another student or shared it. Null when there was no
+   * such lesson to remove.
+   */
+  async removeStudentMadeLesson(student: Pick<Student, "id" | "teacherId">, lessonId: number): Promise<{ lessonDeleted: boolean } | null> {
+    return db.transaction(async (tx) => {
+      const removed = await tx
+        .delete(studentLessons)
+        .where(and(
+          eq(studentLessons.studentId, student.id),
+          eq(studentLessons.lessonId, lessonId),
+          eq(studentLessons.madeByStudent, true),
+          eq(studentLessons.status, LESSON_STATUS_PLANNED),
+        ))
+        .returning({ id: studentLessons.id });
+      if (removed.length === 0) return null;
+      await tx
+        .update(students)
+        .set({ nextLessonId: null })
+        .where(and(eq(students.id, student.id), eq(students.nextLessonId, lessonId)));
+      const deleted = await tx
+        .delete(lessons)
+        .where(and(
+          eq(lessons.id, lessonId),
+          eq(lessons.teacherId, student.teacherId),
+          eq(lessons.isPublic, false),
+          eq(lessons.isShared, false),
+          sql`NOT EXISTS (SELECT 1 FROM ${studentLessons} WHERE ${studentLessons.lessonId} = ${lessonId})`,
+        ))
+        .returning({ id: lessons.id });
+      return { lessonDeleted: deleted.length > 0 };
+    });
+  }
+
+  /**
+   * Starts a lesson the student is making, if they may: one at a time, at
+   * most MAX_WAITING_STUDENT_LESSONS they made waiting, and at most
+   * STUDENT_LESSONS_PER_DAY in 24 hours. Taken one at a time per student, so
+   * a double tap (even on two servers) never starts two.
+   */
+  async reserveStudentLessonJob(jobId: string, student: Pick<Student, "id" | "teacherId">, topic: string): Promise<StudentLessonReservation> {
+    return db.transaction(async (tx) => {
+      await tx.execute(sql`SELECT pg_advisory_xact_lock(${STUDENT_REQUEST_LOCK_NAMESPACE}, ${student.id})`);
+      const [making] = await tx
+        .select({ id: studentLessonJobs.id })
+        .from(studentLessonJobs)
+        .where(and(
+          eq(studentLessonJobs.studentId, student.id),
+          eq(studentLessonJobs.status, "pending"),
+          sql`${studentLessonJobs.createdAt} >= now() - make_interval(secs => ${ABANDONED_JOB_AGE_MS / 1000})`,
+        ))
+        .orderBy(desc(studentLessonJobs.createdAt))
+        .limit(1);
+      if (making) return { status: "making", jobId: making.id };
+
+      const [{ waiting }] = await tx
+        .select({ waiting: count() })
+        .from(studentLessons)
+        .where(and(
+          eq(studentLessons.studentId, student.id),
+          eq(studentLessons.madeByStudent, true),
+          eq(studentLessons.status, LESSON_STATUS_PLANNED),
+        ));
+      if (Number(waiting) >= MAX_WAITING_STUDENT_LESSONS) return { status: "full" };
+
+      const [{ started }] = await tx
+        .select({ started: count() })
+        .from(studentLessonJobs)
+        .where(and(
+          eq(studentLessonJobs.studentId, student.id),
+          ne(studentLessonJobs.status, "error"),
+          sql`${studentLessonJobs.createdAt} > now() - interval '24 hours'`,
+        ));
+      if (Number(started) >= STUDENT_LESSONS_PER_DAY) return { status: "daily_limit" };
+
+      await tx.insert(studentLessonJobs).values({
+        id: jobId,
+        studentId: student.id,
+        teacherId: student.teacherId,
+        topic,
+        status: "pending",
+      });
+      return { status: "reserved" };
+    });
+  }
+
+  /**
+   * Saves the lesson a student made, in one transaction: into the teacher's
+   * library, planned for the student and marked as theirs, starred as the
+   * lesson they want next, and the job settled.
+   */
+  async completeStudentLessonJob(jobId: string, student: Pick<Student, "id" | "teacherId">, lessonData: InsertLesson): Promise<Lesson> {
+    return db.transaction(async (tx) => {
+      const [lesson] = await tx.insert(lessons).values(lessonData).returning();
+      await tx.insert(studentLessons).values({
+        studentId: student.id,
+        lessonId: lesson.id,
+        teacherId: student.teacherId,
+        status: LESSON_STATUS_PLANNED,
+        madeByStudent: true,
+      });
+      await tx.update(students).set({ nextLessonId: lesson.id }).where(eq(students.id, student.id));
+      await tx
+        .update(studentLessonJobs)
+        .set({ status: "complete", lessonId: lesson.id })
+        .where(eq(studentLessonJobs.id, jobId));
+      return lesson;
+    });
+  }
+
+  async failStudentLessonJob(jobId: string, message: string): Promise<void> {
+    await db
+      .update(studentLessonJobs)
+      .set({ status: "error", error: (message || "Lesson generation failed").slice(0, 2000) })
+      .where(and(eq(studentLessonJobs.id, jobId), ne(studentLessonJobs.status, "complete")));
+  }
+
+  async getStudentLessonJob(jobId: string, studentId: number): Promise<StudentLessonJobRow | undefined> {
+    const [job] = await db
+      .select({
+        id: studentLessonJobs.id,
+        topic: studentLessonJobs.topic,
+        status: studentLessonJobs.status,
+        lessonId: studentLessonJobs.lessonId,
+        error: studentLessonJobs.error,
+        abandoned: sql<boolean>`${studentLessonJobs.createdAt} < now() - make_interval(secs => ${ABANDONED_JOB_AGE_MS / 1000})`,
+      })
+      .from(studentLessonJobs)
+      .where(and(eq(studentLessonJobs.id, jobId), eq(studentLessonJobs.studentId, studentId)))
+      .limit(1);
+    return job as StudentLessonJobRow | undefined;
+  }
+
+  /** The lesson the student is making right now, if any. */
+  async getStudentMakingJob(studentId: number): Promise<{ id: string; topic: string } | undefined> {
+    const [job] = await db
+      .select({ id: studentLessonJobs.id, topic: studentLessonJobs.topic })
+      .from(studentLessonJobs)
+      .where(and(
+        eq(studentLessonJobs.studentId, studentId),
+        eq(studentLessonJobs.status, "pending"),
+        sql`${studentLessonJobs.createdAt} >= now() - make_interval(secs => ${ABANDONED_JOB_AGE_MS / 1000})`,
+      ))
+      .orderBy(desc(studentLessonJobs.createdAt))
+      .limit(1);
+    return job;
+  }
+
+  /** Lessons the student started making in the last 24 hours (failed ones don't count). */
+  async countStudentLessonsToday(studentId: number): Promise<number> {
+    const [{ started }] = await db
+      .select({ started: count() })
+      .from(studentLessonJobs)
+      .where(and(
+        eq(studentLessonJobs.studentId, studentId),
+        ne(studentLessonJobs.status, "error"),
+        sql`${studentLessonJobs.createdAt} > now() - interval '24 hours'`,
+      ));
+    return Number(started);
+  }
+
+  /** Job rows only matter for a day (the daily limit); the lessons live in the lessons table. */
+  async pruneStudentLessonJobs(): Promise<void> {
+    await db.delete(studentLessonJobs).where(sql`${studentLessonJobs.createdAt} < now() - interval '2 days'`);
+  }
+
+  /** Per student: ideas waiting and lessons they made that aren't done, for the teacher's Students page. */
+  async getStudentRequestCounts(teacherId: number): Promise<StudentRequestCounts> {
+    const [ideas, made] = await Promise.all([
+      db
+        .select({ studentId: studentIdeas.studentId, n: count() })
+        .from(studentIdeas)
+        .where(and(eq(studentIdeas.teacherId, teacherId), eq(studentIdeas.status, IDEA_WAITING)))
+        .groupBy(studentIdeas.studentId),
+      db
+        .select({ studentId: studentLessons.studentId, n: count() })
+        .from(studentLessons)
+        .where(and(
+          eq(studentLessons.teacherId, teacherId),
+          eq(studentLessons.madeByStudent, true),
+          eq(studentLessons.status, LESSON_STATUS_PLANNED),
+        ))
+        .groupBy(studentLessons.studentId),
+    ]);
+    const counts: StudentRequestCounts = {};
+    for (const row of ideas) counts[row.studentId] = { ideas: Number(row.n), madeLessons: 0 };
+    for (const row of made) counts[row.studentId] = { ideas: counts[row.studentId]?.ideas ?? 0, madeLessons: Number(row.n) };
+    return counts;
+  }
+
+  /** The teacher's lessons that a student made, for the library. */
+  async getStudentMadeLessons(teacherId: number): Promise<Array<{ lessonId: number; studentId: number }>> {
+    return db
+      .select({ lessonId: studentLessons.lessonId, studentId: studentLessons.studentId })
+      .from(studentLessons)
+      .where(and(eq(studentLessons.teacherId, teacherId), eq(studentLessons.madeByStudent, true)));
   }
 
   // Blog post methods

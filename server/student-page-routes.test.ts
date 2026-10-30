@@ -7,7 +7,9 @@
 //    teacher's notes about the student, their email or a lesson request;
 //  - a planned lesson shows only its reading and new words; a finished one
 //    comes whole, without anything written for the teacher;
-//  - lesson pictures load through the page code.
+//  - lesson pictures load through the page code;
+//  - students suggest topics, and students of Unlimited teachers make lessons
+//    at their level, never with the teacher's notes, within the waiting limits.
 import { describe, it, expect, vi, beforeAll, afterAll, beforeEach } from "vitest";
 import type { Server } from "http";
 
@@ -26,17 +28,25 @@ const STUDENT = {
   createdAt: new Date("2026-01-01T00:00:00Z"),
   pageToken: TOKEN,
   pageEnabled: true,
+  canMakeLessons: true,
+  nextLessonId: null as number | null,
 };
+
+/** The teacher's plan in each test: "free" unless a test says otherwise. */
+let teacherTier = "free";
 
 const lessonMeta = (id: number, title: string, teacherId = OWNER_ID) => ({
   id, teacherId, title, topic: "Lesson request about Shingo", notes: "Private lesson note", cefrLevel: "B2", isPublic: false,
 });
 
 const ASSIGNMENTS = [
-  { id: 77, studentId: 5, lessonId: 42, teacherId: OWNER_ID, assignedAt: new Date("2026-10-29T00:00:00Z"), status: "assigned", completedAt: null, notes: null, lesson: lessonMeta(42, "Job Interviews") },
-  { id: 78, studentId: 5, lessonId: 43, teacherId: OWNER_ID, assignedAt: new Date("2026-10-20T00:00:00Z"), status: "completed", completedAt: new Date("2026-10-21T00:00:00Z"), notes: null, lesson: lessonMeta(43, "Working from Home") },
-  { id: 79, studentId: 5, lessonId: 99, teacherId: OWNER_ID, assignedAt: new Date("2026-10-01T00:00:00Z"), status: "completed", completedAt: new Date("2026-10-02T00:00:00Z"), notes: null, lesson: lessonMeta(99, "Someone else's lesson", OTHER_ID) },
+  { id: 77, studentId: 5, lessonId: 42, teacherId: OWNER_ID, assignedAt: new Date("2026-10-29T00:00:00Z"), status: "assigned", completedAt: null, notes: null, madeByStudent: false, lesson: lessonMeta(42, "Job Interviews") },
+  { id: 78, studentId: 5, lessonId: 43, teacherId: OWNER_ID, assignedAt: new Date("2026-10-20T00:00:00Z"), status: "completed", completedAt: new Date("2026-10-21T00:00:00Z"), notes: null, madeByStudent: false, lesson: lessonMeta(43, "Working from Home") },
+  { id: 79, studentId: 5, lessonId: 99, teacherId: OWNER_ID, assignedAt: new Date("2026-10-01T00:00:00Z"), status: "completed", completedAt: new Date("2026-10-02T00:00:00Z"), notes: null, madeByStudent: false, lesson: lessonMeta(99, "Someone else's lesson", OTHER_ID) },
+  { id: 80, studentId: 5, lessonId: 44, teacherId: OWNER_ID, assignedAt: new Date("2026-10-30T00:00:00Z"), status: "assigned", completedAt: null, notes: null, madeByStudent: true, lesson: lessonMeta(44, "Talking About Hobbies") },
 ];
+const JOB_ID = "sjob_0b7c6a52-7d8e-4b1f-9a3c-5e2d1f0a9b8c";
+const IDEA = { id: 9, studentId: 5, teacherId: OWNER_ID, topic: "Films I like", status: "waiting", lessonId: null, createdAt: new Date("2026-10-25T00:00:00Z"), resolvedAt: null };
 
 const CONTENT = {
   title: "Job Interviews",
@@ -51,7 +61,9 @@ const CONTENT = {
 };
 
 const mockStorage = {
-  getUser: vi.fn(async (id: number) => ({ id, fullName: "Dave Jackson", username: "davej", email: "dave@example.com", isAdmin: false })),
+  getUser: vi.fn(async (id: number) => ({
+    id, fullName: "Dave Jackson", username: "davej", email: "dave@example.com", isAdmin: false, subscriptionTier: teacherTier, preferredAiModel: null,
+  })),
   getStudent: vi.fn(async (id: number) => (id === STUDENT.id ? { ...STUDENT } : undefined)),
   updateStudent: vi.fn(async (id: number, data: any) => ({ ...STUDENT, id, ...data })),
   getStudentByPageToken: vi.fn(async (token: string) => (token === TOKEN ? { ...STUDENT } : undefined)),
@@ -71,7 +83,26 @@ const mockStorage = {
   assignLessonToStudent: vi.fn(),
   recordStudentPractice: vi.fn(async (_studentId: number, wordId: number) => (wordId === 3 ? { id: 3 } : undefined)),
   getStudentPracticeStats: vi.fn(async () => ({ lastPractisedAt: null, cardsThisWeek: 0, daysPractisedThisWeek: 0, stillLearning: [] })),
+  getStudentMakingJob: vi.fn(async () => undefined as { id: string; topic: string } | undefined),
+  getWaitingIdeas: vi.fn(async () => [IDEA]),
+  countStudentLessonsToday: vi.fn(async () => 0),
+  addStudentIdea: vi.fn(async (_student: unknown, topic: string) => ({ ...IDEA, id: 10, topic, createdAt: new Date("2026-10-30T00:00:00Z") }) as typeof IDEA | null),
+  removeStudentIdea: vi.fn(async (_studentId: number, ideaId: number) => ideaId === 9),
+  setStudentIdeaDismissed: vi.fn(async () => ({ ...IDEA, status: "dismissed" })),
+  getIdeaLessonIds: vi.fn(async () => [42]),
+  setStudentNextLesson: vi.fn(async (_studentId: number, lessonId: number) => lessonId === 42 || lessonId === 44),
+  removeStudentMadeLesson: vi.fn(async (_student: unknown, lessonId: number) => (lessonId === 44 ? { lessonDeleted: true } : null)),
+  reserveStudentLessonJob: vi.fn(async (): Promise<any> => ({ status: "reserved" })),
+  completeStudentLessonJob: vi.fn(async (_jobId: string, _student: unknown, lesson: any) => ({ ...lesson, id: 45 })),
+  failStudentLessonJob: vi.fn(async () => {}),
+  getStudentLessonJob: vi.fn(async (): Promise<any> => undefined),
+  getStudentRequestCounts: vi.fn(async () => ({ 5: { ideas: 1, madeLessons: 1 } })),
+  getStudentMadeLessons: vi.fn(async () => [{ lessonId: 44, studentId: 5 }]),
+  getPlannedLessonWords: vi.fn(async () => ["interview"]),
+  updateLesson: vi.fn(async () => ({})),
 };
+const generateLesson = vi.fn(async (params: any) => ({ title: `Lesson: ${params.topic}`, sections: [] }));
+const generateImagesForLesson = vi.fn(async () => {});
 const downloadStoredImage = vi.fn(async () => ({ buffer: Buffer.from("png-bytes"), mime: "image/png" }));
 const lessonHasImage = vi.fn(async () => false);
 
@@ -99,7 +130,7 @@ vi.mock("./db", () => ({
   pool: { end: vi.fn() },
 }));
 vi.mock("./services/openRouter", () => ({
-  openRouterService: {},
+  openRouterService: { generateLesson, generateImagesForLesson },
   testOpenRouterConnection: vi.fn(async () => true),
 }));
 vi.mock("./services/mailchimp.service", () => ({ mailchimpService: {} }));
@@ -145,6 +176,7 @@ beforeEach(() => {
   vi.spyOn(console, "log").mockImplementation(() => {});
   vi.spyOn(console, "error").mockImplementation(() => {});
   currentUserId = null;
+  teacherTier = "free";
 });
 
 const send = (method: string, path: string, body?: unknown) =>
@@ -228,9 +260,10 @@ describe("the student's page", () => {
     const home = JSON.parse(text);
     expect(home.student).toEqual({ name: "Shingo", cefrLevel: "B2" });
     expect(home.teacherName).toBe("Dave");
-    expect(home.comingUp.map((l: any) => l.title)).toEqual(["Job Interviews"]);
+    expect(home.comingUp.map((l: any) => [l.title, l.madeByYou])).toEqual([["Job Interviews", false], ["Talking About Hobbies", true]]);
     expect(home.finished.map((l: any) => l.title)).toEqual(["Working from Home"]);
     expect(home.stats).toEqual({ lessonsDone: 1, words: 1, expressions: 0 });
+    expect(home).toMatchObject({ nextLessonId: null, canMakeLessons: false, making: null });
   });
 
   it("shows a planned lesson's reading and new words only, with pictures through the page", async () => {
@@ -302,5 +335,165 @@ describe("the student's page", () => {
     const res = await send("GET", `/s/${TOKEN}`);
     expect(res.headers.get("x-robots-tag")).toBe("noindex, nofollow");
     expect(res.headers.get("referrer-policy")).toBe("no-referrer");
+  });
+});
+
+describe("ideas and lessons the student makes", () => {
+  it("lets every student send a topic idea, tidied, within the waiting limit", async () => {
+    const res = await send("POST", `/api/student-page/${TOKEN}/ideas`, { topic: "  Talking about\nmy hobbies " });
+    expect(res.status).toBe(201);
+    expect(await res.json()).toEqual({ id: 10, topic: "Talking about my hobbies", sentAt: "2026-10-30T00:00:00.000Z" });
+    expect(mockStorage.addStudentIdea).toHaveBeenCalledWith(expect.objectContaining({ id: 5, teacherId: OWNER_ID }), "Talking about my hobbies");
+
+    expect((await send("POST", `/api/student-page/${TOKEN}/ideas`, { topic: "  " })).status).toBe(400);
+    expect((await send("POST", `/api/student-page/${TOKEN}/ideas`, { topic: "x".repeat(121) })).status).toBe(400);
+
+    mockStorage.addStudentIdea.mockResolvedValueOnce(null);
+    const full = await send("POST", `/api/student-page/${TOKEN}/ideas`, { topic: "Travel plans" });
+    expect(full.status).toBe(409);
+    expect((await full.json()).message).toBe("You have 3 ideas waiting. Remove one to send another.");
+  });
+
+  it("removes only the student's own waiting ideas", async () => {
+    expect((await send("DELETE", `/api/student-page/${TOKEN}/ideas/9`)).status).toBe(200);
+    expect(mockStorage.removeStudentIdea).toHaveBeenCalledWith(5, 9);
+    expect((await send("DELETE", `/api/student-page/${TOKEN}/ideas/12`)).status).toBe(404);
+  });
+
+  it("won't let students of free teachers make lessons", async () => {
+    const res = await send("POST", `/api/student-page/${TOKEN}/lessons`, { topic: "Travel plans" });
+    expect(res.status).toBe(403);
+    expect(mockStorage.reserveStudentLessonJob).not.toHaveBeenCalled();
+    expect(generateLesson).not.toHaveBeenCalled();
+  });
+
+  it("makes a lesson for a student of an Unlimited teacher at their level, never with the teacher's notes", async () => {
+    teacherTier = "unlimited";
+    const res = await send("POST", `/api/student-page/${TOKEN}/lessons`, { topic: "Talking about my hobbies" });
+    expect(res.status).toBe(202);
+    const { jobId } = await res.json();
+    expect(jobId).toMatch(/^sjob_[0-9a-f-]{36}$/);
+    expect(mockStorage.reserveStudentLessonJob).toHaveBeenCalledWith(jobId, expect.objectContaining({ id: 5 }), "Talking about my hobbies");
+
+    await vi.waitFor(() => expect(mockStorage.completeStudentLessonJob).toHaveBeenCalled());
+    const [params, avoid] = generateLesson.mock.calls[0] as unknown as [any, string[]];
+    expect(params).toMatchObject({ cefrLevel: "B2", topic: "Talking about my hobbies", studentId: 5, focus: "general", lessonLength: 60 });
+    expect(params.components).toContain("expressions");
+    expect(avoid).toEqual(["commute", "interview"]);
+    expectNothingPrivate(JSON.stringify(generateLesson.mock.calls));
+
+    const [savedJob, savedFor, lesson] = mockStorage.completeStudentLessonJob.mock.calls[0];
+    expect(savedJob).toBe(jobId);
+    expect(savedFor).toMatchObject({ id: 5, teacherId: OWNER_ID });
+    expect(lesson).toMatchObject({ teacherId: OWNER_ID, studentId: 5, title: "Lesson: Talking about my hobbies", cefrLevel: "B2" });
+    await vi.waitFor(() => expect(generateImagesForLesson).toHaveBeenCalledWith(expect.anything(), 45));
+  });
+
+  it("says when a lesson is already being made, or a limit is reached", async () => {
+    teacherTier = "unlimited";
+    mockStorage.reserveStudentLessonJob.mockResolvedValueOnce({ status: "making", jobId: JOB_ID });
+    const making = await send("POST", `/api/student-page/${TOKEN}/lessons`, { topic: "Travel plans" });
+    expect(making.status).toBe(409);
+    expect((await making.json()).jobId).toBe(JOB_ID);
+
+    mockStorage.reserveStudentLessonJob.mockResolvedValueOnce({ status: "full" });
+    const full = await send("POST", `/api/student-page/${TOKEN}/lessons`, { topic: "Travel plans" });
+    expect(full.status).toBe(409);
+    expect((await full.json()).message).toBe("You have 3 lessons waiting. Remove one to make another.");
+
+    mockStorage.reserveStudentLessonJob.mockResolvedValueOnce({ status: "daily_limit" });
+    expect((await send("POST", `/api/student-page/${TOKEN}/lessons`, { topic: "Travel plans" })).status).toBe(429);
+    expect(generateLesson).not.toHaveBeenCalled();
+  });
+
+  it("lets admin accounts' students make lessons too", async () => {
+    mockStorage.getUser.mockResolvedValueOnce({ id: OWNER_ID, fullName: "Dave Jackson", isAdmin: true, subscriptionTier: "free", preferredAiModel: null } as any);
+    expect((await send("POST", `/api/student-page/${TOKEN}/lessons`, { topic: "Travel plans" })).status).toBe(202);
+  });
+
+  it("won't let a student make lessons when their teacher has switched it off", async () => {
+    teacherTier = "unlimited";
+    mockStorage.getStudentByPageToken.mockResolvedValueOnce({ ...STUDENT, canMakeLessons: false });
+    expect((await send("POST", `/api/student-page/${TOKEN}/lessons`, { topic: "Travel plans" })).status).toBe(403);
+  });
+
+  it("follows a lesson being made until it is ready", async () => {
+    expect((await send("GET", `/api/student-page/${TOKEN}/making/job_123`)).status).toBe(404);
+    expect(mockStorage.getStudentLessonJob).not.toHaveBeenCalled();
+
+    mockStorage.getStudentLessonJob.mockResolvedValueOnce({ id: JOB_ID, topic: "Hobbies", status: "pending", lessonId: null, error: null, abandoned: false });
+    expect(await (await send("GET", `/api/student-page/${TOKEN}/making/${JOB_ID}`)).json()).toEqual({ status: "pending", topic: "Hobbies" });
+    expect(mockStorage.getStudentLessonJob).toHaveBeenCalledWith(JOB_ID, 5);
+
+    mockStorage.getStudentLessonJob.mockResolvedValueOnce({ id: JOB_ID, topic: "Hobbies", status: "complete", lessonId: 44, error: null, abandoned: false });
+    expect(await (await send("GET", `/api/student-page/${TOKEN}/making/${JOB_ID}`)).json()).toEqual({
+      status: "complete", lesson: { id: 44, title: "Talking About Hobbies", cefrLevel: "B2" },
+    });
+
+    mockStorage.getStudentLessonJob.mockResolvedValueOnce({ id: JOB_ID, topic: "Hobbies", status: "pending", lessonId: null, error: null, abandoned: true });
+    const stuck = await (await send("GET", `/api/student-page/${TOKEN}/making/${JOB_ID}`)).json();
+    expect(stuck).toEqual({ status: "error", message: "Sorry, we couldn't make your lesson. Please try again." });
+  });
+
+  it("shows the next-lesson page with the student's ideas and the lessons they made, nothing private", async () => {
+    mockStorage.countStudentLessonsToday.mockResolvedValueOnce(10);
+    const res = await send("GET", `/api/student-page/${TOKEN}/next`);
+    const text = await res.text();
+    expectNothingPrivate(text);
+    expect(JSON.parse(text)).toEqual({
+      student: { name: "Shingo", cefrLevel: "B2" },
+      teacherName: "Dave",
+      canMakeLessons: false,
+      ideas: [{ id: 9, topic: "Films I like", sentAt: "2026-10-25T00:00:00.000Z" }],
+      madeLessons: [{ id: 44, title: "Talking About Hobbies", date: "2026-10-30T00:00:00.000Z" }],
+      making: null,
+      dailyLimitReached: true,
+    });
+  });
+
+  it("removes only lessons the student made and hasn't done", async () => {
+    expect((await send("DELETE", `/api/student-page/${TOKEN}/lessons/44`)).status).toBe(200);
+    expect(mockStorage.removeStudentMadeLesson).toHaveBeenCalledWith(expect.objectContaining({ id: 5 }), 44);
+    expect((await send("DELETE", `/api/student-page/${TOKEN}/lessons/42`)).status).toBe(404);
+  });
+
+  it("stars the coming-up lesson the student wants next", async () => {
+    expect((await send("PUT", `/api/student-page/${TOKEN}/next-lesson`, { lessonId: 42 })).status).toBe(200);
+    expect(mockStorage.setStudentNextLesson).toHaveBeenCalledWith(5, 42);
+    expect((await send("PUT", `/api/student-page/${TOKEN}/next-lesson`, { lessonId: "42" })).status).toBe(400);
+    expect((await send("PUT", `/api/student-page/${TOKEN}/next-lesson`, { lessonId: 43 })).status).toBe(404);
+  });
+
+  it("marks the lessons a student made or asked for, and their star, on the teacher's page", async () => {
+    currentUserId = OWNER_ID;
+    mockStorage.getStudent.mockResolvedValueOnce({ ...STUDENT, nextLessonId: 44 });
+    const lessons = await (await send("GET", "/api/students/5/lessons")).json();
+    expect(lessons.map((l: any) => [l.lessonId, l.madeByStudent, l.fromIdea, l.isNext])).toEqual([
+      [42, false, true, false], [43, false, false, false], [99, false, false, false], [44, true, false, true],
+    ]);
+  });
+
+  it("shows the student's ideas to their teacher only, who can dismiss one", async () => {
+    currentUserId = OWNER_ID;
+    expect(await (await send("GET", "/api/students/5/ideas")).json()).toEqual([{ id: 9, topic: "Films I like", sentAt: "2026-10-25T00:00:00.000Z" }]);
+    expect((await send("PUT", "/api/students/5/ideas/9", { dismissed: true })).status).toBe(200);
+    expect(mockStorage.setStudentIdeaDismissed).toHaveBeenCalledWith(OWNER_ID, 5, 9, true);
+    expect((await send("PUT", "/api/students/5/ideas/9", { dismissed: "yes" })).status).toBe(400);
+    expect(await (await send("GET", "/api/student-requests")).json()).toEqual({ 5: { ideas: 1, madeLessons: 1 } });
+
+    currentUserId = OTHER_ID;
+    expect((await send("GET", "/api/students/5/ideas")).status).toBe(404);
+    expect((await send("PUT", "/api/students/5/ideas/9", { dismissed: true })).status).toBe(404);
+    expect(mockStorage.setStudentIdeaDismissed).toHaveBeenCalledTimes(1);
+  });
+
+  it("lets only the student's teacher switch lesson making on or off", async () => {
+    currentUserId = OWNER_ID;
+    expect((await send("PUT", "/api/students/5/page/lesson-making", { allowed: false })).status).toBe(200);
+    expect(mockStorage.updateStudent).toHaveBeenCalledWith(5, { canMakeLessons: false });
+    expect((await send("PUT", "/api/students/5/page/lesson-making", { allowed: "no" })).status).toBe(400);
+    currentUserId = OTHER_ID;
+    expect((await send("PUT", "/api/students/5/page/lesson-making", { allowed: true })).status).toBe(404);
+    expect(mockStorage.updateStudent).toHaveBeenCalledTimes(1);
   });
 });

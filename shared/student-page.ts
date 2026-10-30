@@ -14,6 +14,13 @@
  *   activities is spoiled. A finished lesson opens in full, without anything
  *   written for the teacher.
  * - The student never sees the teacher's private notes or the lesson request.
+ * - Students can suggest topics. Students of Unlimited teachers (and of admin
+ *   accounts) can also make lessons themselves, unless the teacher switches it
+ *   off: at their level, never with the teacher's notes about them. Each lesson
+ *   goes into the teacher's library and is planned like any other.
+ * - So the teacher always knows what the student wants, a student can have at
+ *   most 3 ideas and 3 lessons they made waiting, and stars the lesson they
+ *   want to do next (a lesson they just made is starred for them).
  */
 import type { ExpressionKind } from "./lesson-expressions";
 
@@ -108,6 +115,8 @@ export interface StudentPageLessonSummary {
   /** Words and idioms/phrasal verbs in the student's list from this lesson. */
   words: number;
   expressions: number;
+  /** The student made this lesson on their page. */
+  madeByYou: boolean;
 }
 
 export interface StudentPageHome {
@@ -123,8 +132,15 @@ export interface StudentPageHome {
     /** Of those, last marked "Not yet". */
     again: number;
   };
+  /** Planned lessons, the one the student wants to do next first. */
   comingUp: StudentPageLessonSummary[];
   finished: StudentPageLessonSummary[];
+  /** The coming-up lesson the student starred to do next, if any. */
+  nextLessonId: number | null;
+  /** Whether the student can make lessons, not just suggest topics. */
+  canMakeLessons: boolean;
+  /** A lesson the student is making right now. */
+  making: { topic: string } | null;
 }
 
 export interface StudentPageWord {
@@ -170,6 +186,8 @@ export interface StudentPageLesson {
   grammarSpotlight: unknown | null;
   /** Planned lessons: the activities that open in class. */
   lockedActivities: string[];
+  /** The student made this lesson on their page (they can remove it until it is done). */
+  madeByYou: boolean;
 }
 
 /** The teacher's view of how a student is practising. */
@@ -182,3 +200,67 @@ export interface StudentPracticeStats {
   /** Words last marked "Not yet", newest first. */
   stillLearning: string[];
 }
+
+// ---------------------------------------------------------------------------
+// Ideas and lessons the student makes
+// ---------------------------------------------------------------------------
+
+/** Topic ideas a student can have waiting for their teacher. */
+export const MAX_WAITING_IDEAS = 3;
+/** Lessons a student can have made and not yet done with their teacher (including one being made). */
+export const MAX_WAITING_STUDENT_LESSONS = 3;
+/** A safety limit on lessons one student can start making in 24 hours. */
+export const STUDENT_LESSONS_PER_DAY = 10;
+export const TOPIC_MIN_LENGTH = 3;
+export const TOPIC_MAX_LENGTH = 120;
+
+/** student_ideas.status */
+export const IDEA_WAITING = "waiting";
+export const IDEA_MADE = "made";
+export const IDEA_DISMISSED = "dismissed";
+
+/** Whether a teacher's account lets their students make lessons: Unlimited, or an admin account. */
+export function planLetsStudentsMakeLessons(
+  teacher: { isAdmin?: boolean | null; subscriptionTier?: string | null } | null | undefined,
+): boolean {
+  return !!teacher && (!!teacher.isAdmin || teacher.subscriptionTier === "unlimited");
+}
+
+/** A topic as the student typed it, tidied up; null when it is too short or too long. */
+export function cleanTopic(value: unknown): string | null {
+  if (typeof value !== "string") return null;
+  const topic = value.replace(/[\u0000-\u001f\u007f]+/g, " ").replace(/\s+/g, " ").trim();
+  return topic.length >= TOPIC_MIN_LENGTH && topic.length <= TOPIC_MAX_LENGTH ? topic : null;
+}
+
+/** A topic the student sent their teacher. */
+export interface StudentIdeaSummary {
+  id: number;
+  topic: string;
+  /** When it was sent, as an ISO date. */
+  sentAt: string;
+}
+
+/** The student's "What should we talk about next?" page. */
+export interface StudentNextPage {
+  student: { name: string; cefrLevel: string };
+  teacherName: string | null;
+  canMakeLessons: boolean;
+  /** Ideas waiting for the teacher, newest first. */
+  ideas: StudentIdeaSummary[];
+  /** Lessons the student made that are not done yet, newest first. */
+  madeLessons: Array<{ id: number; title: string; date: string }>;
+  /** A lesson being made right now. */
+  making: { jobId: string; topic: string } | null;
+  /** The student has made STUDENT_LESSONS_PER_DAY lessons in the last 24 hours. */
+  dailyLimitReached: boolean;
+}
+
+/** How a lesson the student is making is getting on. */
+export type StudentLessonJob =
+  | { status: "pending"; topic: string }
+  | { status: "complete"; lesson: { id: number; title: string; cefrLevel: string } }
+  | { status: "error"; message: string };
+
+/** What each student has sent or made for their teacher, for the teacher's Students page. */
+export type StudentRequestCounts = Record<number, { ideas: number; madeLessons: number }>;

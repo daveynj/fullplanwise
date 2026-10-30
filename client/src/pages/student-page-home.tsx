@@ -1,8 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useParams } from "wouter";
-import { BookOpen, ChevronRight, Layers } from "lucide-react";
+import { BookOpen, ChevronRight, Layers, Lightbulb, Loader2, Star } from "lucide-react";
 import { studentPagePath, type StudentPageHome, type StudentPageLessonSummary } from "@shared/student-page";
-import { getStudentPage, studentPageUrls } from "@/lib/student-page-api";
+import { chooseNextLesson, getStudentPage, studentPageUrls } from "@/lib/student-page-api";
 import {
   BrandMark,
   LevelPill,
@@ -28,11 +28,18 @@ function lessonMeta(lesson: StudentPageLessonSummary): string {
 export default function StudentPageHomePage() {
   const { token } = useParams<{ token: string }>();
   const urls = studentPageUrls(token);
+  const queryClient = useQueryClient();
   const { data, error, isLoading } = useQuery<StudentPageHome>({
     queryKey: [urls.home],
     queryFn: () => getStudentPage<StudentPageHome>(urls.home),
+    // While a lesson is being made, look again until it is ready.
+    refetchInterval: (query) => (query.state.data?.making ? 5000 : false),
   });
   useStudentPageTitle(data ? `${possessive(data.student.name)} page` : null);
+  const choose = useMutation({
+    mutationFn: (lessonId: number) => chooseNextLesson(token, lessonId),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: [urls.home] }),
+  });
 
   if (isLoading) return <StudentPageLoading />;
   if (error || !data) return <StudentPageProblem error={error} />;
@@ -40,6 +47,10 @@ export default function StudentPageHomePage() {
   const page = studentPagePath(token);
   const { practice, stats } = data;
   const hasWords = stats.words + stats.expressions > 0;
+  const teacher = data.teacherName ?? "your teacher";
+  const Teacher = data.teacherName ?? "Your teacher";
+  // With more than one lesson coming up, the student stars the one they want next.
+  const choosing = data.comingUp.length > 1;
 
   return (
     <StudentPageFrame>
@@ -78,7 +89,7 @@ export default function StudentPageHomePage() {
               <h2 id="practise-heading" className="font-nunito text-xl font-extrabold">Practise your words</h2>
               <p className="text-sm font-normal text-gray-600">
                 {practice.due > 0
-                  ? `${plural(Math.min(practice.due, 10), "card", "cards")} ready · about ${Math.max(1, Math.ceil(Math.min(practice.due, 10) / 2))} minutes`
+                  ? `${plural(Math.min(practice.due, 10), "card", "cards")} ready · about ${plural(Math.max(1, Math.ceil(Math.min(practice.due, 10) / 2)), "minute", "minutes")}`
                   : hasWords
                     ? "All done for now. More cards will be ready soon."
                     : `Your words will appear here after your first lesson${data.teacherName ? ` with ${data.teacherName}` : ""}.`}
@@ -114,19 +125,81 @@ export default function StudentPageHomePage() {
           )}
         </section>
 
-        {data.comingUp.map((lesson) => (
-          <section key={lesson.id} className="flex flex-col gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-5" aria-label={`Coming up: ${lesson.title}`}>
-            <span className="text-xs font-bold uppercase tracking-wider text-amber-900">Coming up</span>
-            <h2 className="font-nunito text-xl font-extrabold">{lesson.title}</h2>
-            <p className="text-base font-normal text-gray-700">Read the text and learn the new words before your lesson.</p>
-            <Link
-              href={`${page}/lessons/${lesson.id}`}
-              className="flex min-h-12 items-center justify-center rounded-xl bg-brand-navy text-base font-bold text-white hover:bg-brand-navy-light"
+        {data.making && (
+          <Link href={`${page}/next`} className="flex items-center gap-3 rounded-2xl border border-blue-200 bg-blue-50 p-4 text-brand-navy">
+            <Loader2 className="h-6 w-6 shrink-0 animate-spin text-blue-700" aria-hidden="true" />
+            <span className="flex min-w-0 flex-col">
+              <span className="text-base font-bold">Making your lesson…</span>
+              <span className="text-sm font-normal text-gray-700">"{data.making.topic}" · ready in about 2 minutes</span>
+            </span>
+          </Link>
+        )}
+
+        {data.comingUp.map((lesson) => {
+          const isNext = lesson.id === data.nextLessonId;
+          return (
+            <section
+              key={lesson.id}
+              className={`flex flex-col gap-3 rounded-2xl border bg-amber-50 p-5 ${choosing && isNext ? "border-brand-yellow ring-2 ring-brand-yellow" : "border-amber-200"}`}
+              aria-label={`Coming up: ${lesson.title}`}
             >
-              Get ready for this lesson
-            </Link>
-          </section>
-        ))}
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-xs font-bold uppercase tracking-wider text-amber-900">Coming up</span>
+                {lesson.madeByYou && (
+                  <span className="rounded-full bg-purple-100 px-2.5 py-0.5 text-xs font-bold text-purple-900">Made by you</span>
+                )}
+              </div>
+              <h2 className="font-nunito text-xl font-extrabold">{lesson.title}</h2>
+              {choosing && isNext && (
+                <p className="flex items-center gap-1.5 text-sm font-bold text-brand-navy">
+                  <Star className="h-4 w-4 fill-brand-yellow text-amber-600" aria-hidden="true" />
+                  Your choice for the next class
+                </p>
+              )}
+              <p className="text-base font-normal text-gray-700">Read the text and learn the new words before your lesson.</p>
+              <Link
+                href={`${page}/lessons/${lesson.id}`}
+                className="flex min-h-12 items-center justify-center rounded-xl bg-brand-navy text-base font-bold text-white hover:bg-brand-navy-light"
+              >
+                Get ready for this lesson
+              </Link>
+              {choosing && !isNext && (
+                <button
+                  type="button"
+                  onClick={() => choose.mutate(lesson.id)}
+                  disabled={choose.isPending}
+                  className="flex min-h-11 items-center justify-center gap-1.5 rounded-xl border border-amber-300 bg-white text-base font-semibold text-brand-navy hover:bg-amber-100 disabled:opacity-50"
+                >
+                  <Star className="h-4 w-4" aria-hidden="true" />
+                  Choose for the next class
+                </button>
+              )}
+            </section>
+          );
+        })}
+        {choosing && (
+          <p className="text-sm font-normal text-gray-600">Choose the lesson you'd like to do next. {Teacher} will see your choice.</p>
+        )}
+
+        <section className="flex flex-col gap-3 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm" aria-labelledby="next-heading">
+          <div className="flex items-center gap-3">
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-amber-50 text-amber-700">
+              <Lightbulb className="h-6 w-6" aria-hidden="true" />
+            </span>
+            <h2 id="next-heading" className="font-nunito text-xl font-extrabold leading-snug">What do you want to talk about next?</h2>
+          </div>
+          <p className="text-base font-normal text-gray-700">
+            {data.canMakeLessons
+              ? `Suggest a topic, or make the lesson yourself. ${Teacher} sees it straight away.`
+              : `Tell ${teacher} what you would like to talk about. ${Teacher} sees your idea straight away.`}
+          </p>
+          <Link
+            href={`${page}/next`}
+            className="flex min-h-12 items-center justify-center rounded-xl border-2 border-brand-navy text-base font-bold text-brand-navy hover:bg-gray-50"
+          >
+            {data.canMakeLessons ? "Suggest or make a lesson" : "Suggest a topic"}
+          </Link>
+        </section>
 
         <section className="flex flex-col gap-3" aria-labelledby="finished-heading">
           <div className="flex items-baseline justify-between">

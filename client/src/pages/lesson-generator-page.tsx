@@ -23,6 +23,11 @@ export default function LessonGeneratorPage() {
 
   const urlParams = new URLSearchParams(window.location.search);
   const studentIdFromUrl = urlParams.get('studentId');
+  // "Make this lesson" on a student's idea opens the form with the idea's
+  // topic and the student's level; the idea is marked as made with the lesson.
+  const ideaIdFromUrl = Number(urlParams.get('ideaId')) || undefined;
+  const topicFromUrl = urlParams.get('topic') ?? undefined;
+  const levelFromUrl = urlParams.get('level') ?? undefined;
 
   useEffect(() => {
     setGeneratingLesson(false);
@@ -76,6 +81,11 @@ export default function LessonGeneratorPage() {
       setTimeout(() => {
         queryClient.invalidateQueries({ queryKey: ["/api/user"] });
         queryClient.invalidateQueries({ queryKey: ["/api/lessons"] });
+        if (lesson.studentId) {
+          queryClient.invalidateQueries({ queryKey: [`/api/students/${lesson.studentId}/lessons`] });
+          queryClient.invalidateQueries({ queryKey: [`/api/students/${lesson.studentId}/ideas`] });
+          queryClient.invalidateQueries({ queryKey: ["/api/student-requests"] });
+        }
       }, 100);
     } else {
       toast({
@@ -200,7 +210,7 @@ export default function LessonGeneratorPage() {
       return;
     }
 
-    generateLessonMutation.mutate(params);
+    generateLessonMutation.mutate(ideaIdFromUrl ? { ...params, ideaId: ideaIdFromUrl } : params);
   };
 
   return (
@@ -224,6 +234,8 @@ export default function LessonGeneratorPage() {
                 students={students}
                 onSubmit={handleGenerateLesson}
                 initialStudentId={studentIdFromUrl || undefined}
+                initialTopic={topicFromUrl}
+                initialCefrLevel={levelFromUrl}
               />
             </div>
           </div>

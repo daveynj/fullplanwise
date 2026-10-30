@@ -61,6 +61,7 @@ export const clientRoutePaths: string[] = [
   "/s/:token/words",
   "/s/:token/flashcards",
   "/s/:token/lessons/:lessonId",
+  "/s/:token/next",
 ];
 
 /** RegExps the server's 404 catch-all uses to recognize valid client pages. */

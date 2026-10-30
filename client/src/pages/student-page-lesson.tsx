@@ -1,9 +1,9 @@
 import { useMemo, useState, type ReactNode } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { useParams } from "wouter";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useLocation, useParams } from "wouter";
 import { Check, Layers, Lock } from "lucide-react";
 import { studentPagePath, type StudentPageLesson } from "@shared/student-page";
-import { getStudentPage, studentPageUrls } from "@/lib/student-page-api";
+import { getStudentPage, removeMadeLesson, studentPageUrls } from "@/lib/student-page-api";
 import { LessonContent } from "@/components/lesson/lesson-content";
 import type { ParsedLessonContent } from "../../../types/lessonContentTypes";
 import {
@@ -67,8 +67,53 @@ function Highlighted({ paragraph, words }: { paragraph: string; words: string[] 
 
 type Tab = "reading" | "words" | "activities";
 
+/** A lesson the student made can be removed until they do it in class (it is deleted). */
+function RemoveMadeLesson({ token, lessonId, page }: { token: string; lessonId: number; page: string }) {
+  const [confirming, setConfirming] = useState(false);
+  const [, navigate] = useLocation();
+  const queryClient = useQueryClient();
+  const urls = studentPageUrls(token);
+  const remove = useMutation({
+    mutationFn: () => removeMadeLesson(token, lessonId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [urls.home] });
+      queryClient.invalidateQueries({ queryKey: [urls.next] });
+      navigate(page);
+    },
+  });
+  if (!confirming) {
+    return (
+      <button
+        type="button"
+        onClick={() => setConfirming(true)}
+        className="min-h-11 self-center rounded-lg px-3 text-sm font-semibold text-gray-700 hover:bg-gray-100"
+      >
+        Remove this lesson
+      </button>
+    );
+  }
+  return (
+    <div className="flex flex-wrap items-center gap-2 rounded-xl bg-red-50 p-3">
+      <span className="min-w-[10rem] flex-1 text-sm font-semibold text-red-900">
+        {remove.error ? remove.error.message : "Remove this lesson? It will be deleted."}
+      </span>
+      <button
+        type="button"
+        disabled={remove.isPending}
+        onClick={() => remove.mutate()}
+        className="min-h-11 rounded-lg bg-red-700 px-3 text-sm font-bold text-white hover:bg-red-800 disabled:opacity-50"
+      >
+        Yes, remove
+      </button>
+      <button type="button" onClick={() => setConfirming(false)} className="min-h-11 rounded-lg px-3 text-sm font-semibold text-brand-navy hover:bg-white">
+        Keep it
+      </button>
+    </div>
+  );
+}
+
 /** A planned lesson: the reading and new words to prepare, with the activities kept for class. */
-function GetReady({ lesson, page }: { lesson: StudentPageLesson; page: string }) {
+function GetReady({ lesson, page, token }: { lesson: StudentPageLesson; page: string; token: string }) {
   const [tab, setTab] = useState<Tab>("reading");
   const { readingTitle, paragraphs, words } = useMemo(() => preparation(lesson.content), [lesson.content]);
   const tabs: Array<{ id: Tab; label: string }> = [
@@ -133,7 +178,10 @@ function GetReady({ lesson, page }: { lesson: StudentPageLesson; page: string })
     <div className="flex min-h-screen flex-col">
       <div className="flex flex-col gap-3 px-5 pb-4 pt-3">
         <BackLink href={page} label="My page" />
-        <span className="self-start rounded-full bg-amber-100 px-3 py-1 text-sm font-bold text-amber-900">Coming up</span>
+        <div className="flex flex-wrap gap-2">
+          <span className="rounded-full bg-amber-100 px-3 py-1 text-sm font-bold text-amber-900">Coming up</span>
+          {lesson.madeByYou && <span className="rounded-full bg-purple-100 px-3 py-1 text-sm font-bold text-purple-900">Made by you</span>}
+        </div>
         <h1 className="font-nunito text-3xl font-extrabold leading-tight">{lesson.title}</h1>
         <p className="text-base font-normal text-gray-600">Level {lesson.cefrLevel} · Read the text and learn the new words before your lesson.</p>
         <div className="grid grid-cols-3 gap-1 rounded-xl bg-gray-100 p-1" role="group" aria-label="Show">
@@ -150,7 +198,10 @@ function GetReady({ lesson, page }: { lesson: StudentPageLesson; page: string })
           ))}
         </div>
       </div>
-      <div className="flex-1 px-5 pb-4">{body}</div>
+      <div className="flex flex-1 flex-col gap-4 px-5 pb-4">
+        {body}
+        {lesson.madeByYou && <RemoveMadeLesson token={token} lessonId={lesson.id} page={page} />}
+      </div>
       <div className="flex items-center gap-3 border-t border-gray-200 bg-white px-5 pb-6 pt-3">
         <Layers className="h-5 w-5 shrink-0 text-green-700" aria-hidden="true" />
         <span className="text-sm font-normal text-gray-700">After your class, these words join your list and your flashcards.</span>
@@ -176,7 +227,7 @@ export default function StudentPageLessonPage() {
   if (data.status === "planned") {
     return (
       <StudentPageFrame>
-        <GetReady lesson={data} page={page} />
+        <GetReady lesson={data} page={page} token={token} />
       </StudentPageFrame>
     );
   }

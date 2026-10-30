@@ -1,4 +1,5 @@
 import { Student } from "@shared/schema";
+import type { StudentRequestCounts } from "@shared/student-page";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -11,14 +12,18 @@ import {
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Link } from "wouter";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { BookOpen, MoreVertical, Pencil, Trash2, User } from "lucide-react";
+import { BookOpen, Lightbulb, MoreVertical, Pencil, Sparkles, Trash2, User } from "lucide-react";
 
 interface StudentCardProps {
   student: Student;
+  /** Ideas and lessons the student sent or made on their page, waiting for the teacher. */
+  requests?: StudentRequestCounts[number];
   onDelete: () => void;
 }
 
-export function StudentCard({ student, onDelete }: StudentCardProps) {
+const plural = (count: number, one: string, many: string) => `${count} ${count === 1 ? one : many}`;
+
+export function StudentCard({ student, requests, onDelete }: StudentCardProps) {
   // Get initials for avatar
   const getInitials = (name: string) => {
     return name
@@ -122,6 +127,23 @@ export function StudentCard({ student, onDelete }: StudentCardProps) {
         {student.notes && (
           <div className="mt-4 p-3 bg-gray-50 rounded-md text-sm">
             <p className="text-gray-600">{student.notes}</p>
+          </div>
+        )}
+
+        {requests && (requests.ideas > 0 || requests.madeLessons > 0) && (
+          <div className="mt-4 flex flex-wrap gap-2">
+            {requests.ideas > 0 && (
+              <Badge variant="outline" className="bg-amber-50 text-amber-900 border-amber-200" data-testid={`student-ideas-badge-${student.id}`}>
+                <Lightbulb className="mr-1 h-3.5 w-3.5" aria-hidden="true" />
+                {plural(requests.ideas, "new idea", "new ideas")}
+              </Badge>
+            )}
+            {requests.madeLessons > 0 && (
+              <Badge variant="outline" className="bg-purple-50 text-purple-900 border-purple-200">
+                <Sparkles className="mr-1 h-3.5 w-3.5" aria-hidden="true" />
+                Made {plural(requests.madeLessons, "lesson", "lessons")}
+              </Badge>
+            )}
           </div>
         )}
       </CardContent>

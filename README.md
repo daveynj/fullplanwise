@@ -27,7 +27,7 @@ PlanwiseESL is a comprehensive English as a Second Language (ESL) teaching platf
 - **Credit System**: Usage tracking for lesson generation
 - **Lesson Library**: Personal and public lesson collections
 - **Sharing System**: Easy lesson sharing with students via clean URLs
-- **Student Pages**: A private page for each student with their finished lessons, the next lesson to prepare, their words and flashcards
+- **Student Pages**: A private page for each student with their finished lessons, the next lesson to prepare, their words and flashcards; students can suggest topics, and with Unlimited make their own lessons
 
 ### 🎨 Modern Interface
 - **Responsive Design**: Mobile-friendly interface with Tailwind CSS

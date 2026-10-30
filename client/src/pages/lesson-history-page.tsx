@@ -213,6 +213,14 @@ export default function LessonHistoryPage() {
     queryKey: ["/api/students"],
     retry: false,
   });
+
+  // Lessons a student made on their own page are marked "Made by <name>"
+  const { data: studentMadeLessons = [] } = useQuery<Array<{ lessonId: number; studentId: number }>>({
+    queryKey: ["/api/student-made-lessons"],
+    retry: false,
+  });
+  const studentNames = new Map(students.map((student) => [student.id, student.name]));
+  const madeBy = new Map(studentMadeLessons.map((row) => [row.lessonId, studentNames.get(row.studentId)]));
   
   // Check deletion info (assignments) mutation
   const checkDeletionInfoMutation = useMutation({
@@ -638,6 +646,11 @@ export default function LessonHistoryPage() {
                                   {lesson.studentId && (
                                     <Badge variant="outline" className="bg-gray-100">
                                       Student #{lesson.studentId}
+                                    </Badge>
+                                  )}
+                                  {madeBy.get(lesson.id) && (
+                                    <Badge variant="outline" className="bg-purple-100 text-purple-800">
+                                      Made by {madeBy.get(lesson.id)}
                                     </Badge>
                                   )}
                                 </div>

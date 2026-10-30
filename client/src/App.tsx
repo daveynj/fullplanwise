@@ -47,6 +47,7 @@ const StudentPageHomePage = lazy(() => import("@/pages/student-page-home"));
 const StudentPageWordsPage = lazy(() => import("@/pages/student-page-words"));
 const StudentPageFlashcardsPage = lazy(() => import("@/pages/student-page-flashcards"));
 const StudentPageLessonPage = lazy(() => import("@/pages/student-page-lesson"));
+const StudentPageNextPage = lazy(() => import("@/pages/student-page-next"));
 
 function PageLoader() {
   return (
@@ -98,6 +99,7 @@ function Router() {
       <Route path="/s/:token/words" component={StudentPageWordsPage} />
       <Route path="/s/:token/flashcards" component={StudentPageFlashcardsPage} />
       <Route path="/s/:token/lessons/:lessonId" component={StudentPageLessonPage} />
+      <Route path="/s/:token/next" component={StudentPageNextPage} />
       <Route path="/s/:token" component={StudentPageHomePage} />
       <Route component={NotFound} />
     </Switch>

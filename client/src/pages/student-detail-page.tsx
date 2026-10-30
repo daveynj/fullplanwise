@@ -24,9 +24,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { StudentForm } from "@/components/student/student-form";
 import { StudentPageLinkCard } from "@/components/student/student-page-link-card";
 import { StudentPracticeCard } from "@/components/student/student-practice-card";
+import { StudentIdeasCard } from "@/components/student/student-ideas-card";
+import { possessive } from "@/components/student-page/student-page-layout";
 import { Badge } from "@/components/ui/badge";
 import { ToastAction } from "@/components/ui/toast";
-import { Loader2, BookOpen, Edit, ArrowLeft, Plus, User, AlertTriangle, LogOut, BookMarked, Library, Check } from "lucide-react";
+import { Loader2, BookOpen, Edit, ArrowLeft, Plus, User, AlertTriangle, LogOut, BookMarked, Library, Check, Star } from "lucide-react";
 import { Student, Lesson } from "@shared/schema";
 import { LESSON_STATUS_DONE, LESSON_STATUS_PLANNED, isLessonDone } from "@shared/student-page";
 
@@ -36,6 +38,12 @@ interface StudentLessonAssignment {
   /** "assigned" while planned, "completed" once marked done (shared/student-page.ts). */
   status?: string | null;
   completedAt?: string | null;
+  /** The student made it on their page. */
+  madeByStudent?: boolean;
+  /** Made from one of the student's ideas. */
+  fromIdea?: boolean;
+  /** The planned lesson the student chose to do next. */
+  isNext?: boolean;
 }
 
 interface StudentVocabularyItem {
@@ -349,6 +357,9 @@ export default function StudentDetailPage() {
               </div>
             )}
 
+            {/* Topics the student suggested on their page */}
+            {student && <StudentIdeasCard student={student} className="mb-6" />}
+
             {/* Content tabs */}
             {student && (
               <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -461,6 +472,22 @@ export default function StudentDetailPage() {
                                     <Badge variant="outline" className="bg-blue-100 text-blue-800">
                                       CEFR {lesson.cefrLevel}
                                     </Badge>
+                                    {sl.madeByStudent && (
+                                      <Badge variant="outline" className="bg-purple-100 text-purple-800" data-testid={`lesson-made-by-student-${assignmentId}`}>
+                                        Made by {student.name}
+                                      </Badge>
+                                    )}
+                                    {sl.fromIdea && (
+                                      <Badge variant="outline" className="bg-purple-50 text-purple-800">
+                                        From {possessive(student.name)} idea
+                                      </Badge>
+                                    )}
+                                    {sl.isNext && (
+                                      <Badge variant="outline" className="bg-yellow-100 text-yellow-900" data-testid={`lesson-next-${assignmentId}`}>
+                                        <Star className="mr-1 h-3 w-3 fill-current" aria-hidden="true" />
+                                        {possessive(student.name)} choice for next class
+                                      </Badge>
+                                    )}
                                     <span className="text-sm text-gray-500">
                                       {formatDate(lesson.createdAt)}
                                     </span>

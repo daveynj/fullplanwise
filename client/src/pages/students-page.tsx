@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { Plus, Search, Users } from "lucide-react";
 import { Student, InsertStudent } from "@shared/schema";
+import type { StudentRequestCounts } from "@shared/student-page";
 
 export default function StudentsPage() {
   const { toast } = useToast();
@@ -21,6 +22,12 @@ export default function StudentsPage() {
   // Fetch students
   const { data: students = [], isLoading } = useQuery<Student[]>({
     queryKey: ["/api/students"],
+    retry: false,
+  });
+
+  // Ideas and lessons each student sent or made on their page
+  const { data: requests = {} } = useQuery<StudentRequestCounts>({
+    queryKey: ["/api/student-requests"],
     retry: false,
   });
   
@@ -140,6 +147,7 @@ export default function StudentsPage() {
                   <StudentCard 
                     key={student.id} 
                     student={student} 
+                    requests={requests[student.id]}
                     onDelete={() => handleDeleteStudent(student.id)} 
                   />
                 ))}
