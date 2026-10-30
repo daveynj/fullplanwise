@@ -1712,7 +1712,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const stripe = await getStripe();
       if (!stripe) {
         console.error("Stripe API key not configured when attempting to create subscription");
-        return res.status(500).json({ message: "Stripe API key not configured" });
+        return res.status(503).json({
+          message: "Subscriptions are temporarily unavailable. Please contact support before trying again.",
+          code: "BILLING_UNAVAILABLE",
+        });
       }
 
       const { planId, priceId } = subscriptionSchema.parse(req.body);
@@ -1838,7 +1841,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Invalid subscription data", errors: error.errors });
       }
 
-      console.error("Subscription creation error:", error);
+      // Stripe authentication errors can include fragments of the secret key.
+      // Keep provider messages out of both customer responses and logs.
+      console.error("Subscription creation failed", {
+        userId: req.user!.id,
+        type: error.type,
+        code: error.code,
+        statusCode: error.statusCode,
+      });
+
+      if (error.type === "StripeAuthenticationError" ||
+          error.type === "StripePermissionError" ||
+          error.statusCode === 401 || error.statusCode === 403) {
+        return res.status(503).json({
+          message: "Subscriptions are temporarily unavailable. Please contact support before trying again.",
+          code: "BILLING_UNAVAILABLE",
+        });
+      }
 
       // Handle "no such customer" error specifically
       if (error.code === 'resource_missing' && error.param === 'customer') {
@@ -1866,14 +1885,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
               retryNeeded: true
             });
           }
-        } catch (retryError) {
-          console.error("Error resetting customer ID:", retryError);
+        } catch {
+          console.error("Failed to reset customer ID during subscription creation");
         }
       }
 
       res.status(500).json({
-        message: "Error creating subscription: " + error.message,
-        details: error.type || error.code || "Unknown error"
+        message: "We couldn't open the payment page. Please try again later or contact support.",
+        code: "CHECKOUT_FAILED",
       });
     }
   });

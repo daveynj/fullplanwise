@@ -13,6 +13,8 @@ const TEST_USER_ID = 1;
 // --- Mocks -----------------------------------------------------------------
 
 const mockStripe = {
+  customers: { retrieve: vi.fn(), create: vi.fn() },
+  checkout: { sessions: { create: vi.fn() } },
   subscriptions: {
     retrieve: vi.fn(),
     update: vi.fn(),
@@ -29,6 +31,7 @@ vi.mock("./stripeClient", () => ({
 const mockStorage = {
   getUser: vi.fn(),
   updateUser: vi.fn(),
+  updateUserStripeInfo: vi.fn(),
 };
 
 vi.mock("./storage", () => ({
@@ -99,6 +102,10 @@ afterAll(async () => {
 });
 
 beforeEach(() => {
+  mockStripe.customers.retrieve.mockReset();
+  mockStripe.customers.create.mockReset();
+  mockStripe.checkout.sessions.create.mockReset();
+  mockStorage.updateUserStripeInfo.mockReset();
   mockStripe.subscriptions.retrieve.mockReset();
   mockStripe.subscriptions.update.mockReset();
   mockStorage.getUser.mockReset();
@@ -118,6 +125,62 @@ async function cancel() {
   });
   return { status: res.status, body: await res.json() };
 }
+
+describe("POST /api/subscriptions/create", () => {
+  async function create() {
+    const response = await fetch(`${baseUrl}/api/subscriptions/create`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ planId: "unlimited_monthly", priceId: "price_unlimited_monthly" }),
+    });
+    return { status: response.status, body: await response.json() };
+  }
+
+  it("does not change the customer or subscription on expired credentials and keeps provider details private", async () => {
+    mockStorage.getUser.mockResolvedValue({
+      id: TEST_USER_ID, stripeCustomerId: "cus_existing", stripeSubscriptionId: "sub_canceled", subscriptionTier: "free",
+    });
+    const logger = vi.spyOn(console, "error").mockImplementation(() => {});
+    mockStripe.customers.retrieve.mockRejectedValue({
+      type: "StripeAuthenticationError", statusCode: 401,
+      message: "Expired API Key provided: secret-must-not-appear",
+    });
+    try {
+      const result = await create();
+      expect(result.status).toBe(503);
+      expect(result.body.code).toBe("BILLING_UNAVAILABLE");
+      expect(result.body.message).toMatch(/temporarily unavailable.*contact support/i);
+      expect(JSON.stringify(result)).not.toContain("secret-must-not-appear");
+      expect(JSON.stringify(logger.mock.calls)).not.toContain("secret-must-not-appear");
+      expect(mockStripe.customers.create).not.toHaveBeenCalled();
+      expect(mockStripe.checkout.sessions.create).not.toHaveBeenCalled();
+      expect(mockStorage.updateUserStripeInfo).not.toHaveBeenCalled();
+      expect(mockStorage.updateUser).not.toHaveBeenCalled();
+    } finally {
+      logger.mockRestore();
+    }
+  });
+
+  it("opens checkout for a returning unsubscribed customer using their existing customer ID", async () => {
+    mockStorage.getUser.mockResolvedValue({
+      id: TEST_USER_ID, stripeCustomerId: "cus_existing", stripeSubscriptionId: "sub_canceled", subscriptionTier: "free",
+    });
+    mockStripe.customers.retrieve.mockResolvedValue({ id: "cus_existing" });
+    mockStripe.checkout.sessions.create.mockResolvedValue({ id: "cs_mock", url: "https://checkout.stripe.com/mock" });
+    const result = await create();
+    expect(result.status).toBe(200);
+    expect(result.body.url).toBe("https://checkout.stripe.com/mock");
+    expect(mockStripe.checkout.sessions.create).toHaveBeenCalledWith(expect.objectContaining({
+      customer: "cus_existing", mode: "subscription",
+      line_items: [{ price: "price_1Timp4Bnt8Mku7BYBMYUVYrF", quantity: 1 }],
+      payment_method_types: ["card"],
+    }));
+    expect(mockStripe.customers.create).not.toHaveBeenCalled();
+    expect(mockStorage.updateUserStripeInfo).not.toHaveBeenCalled();
+    expect(mockStorage.updateUser).not.toHaveBeenCalled();
+    expect(mockStripe.subscriptions.update).not.toHaveBeenCalled();
+  });
+});
 
 // --- Tests -------------------------------------------------------------
 
