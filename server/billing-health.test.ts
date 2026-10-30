@@ -159,11 +159,13 @@ describe("read-only billing health", () => {
       statusCode: 401, message: "SECRET_MUST_NOT_ESCAPE", raw: { apiKey: "SECRET_MUST_NOT_ESCAPE" },
     });
     const report = vi.fn();
-    const stop = startBillingHealthChecks(f.monitor, report);
+    const notify = vi.fn().mockResolvedValue(undefined);
+    const stop = startBillingHealthChecks(f.monitor, report, notify);
     await vi.advanceTimersByTimeAsync(20_000);
     expect(report).toHaveBeenCalledWith("[BillingHealth] primary=invalid_credentials, legacy=healthy");
     await vi.advanceTimersByTimeAsync(BILLING_HEALTH_INTERVAL_MS);
     expect(report).toHaveBeenCalledTimes(1);
+    expect(notify).toHaveBeenCalledTimes(2);
     f.primary.accounts.retrieve.mockResolvedValue({ id: "acct_example" });
     f.advance();
     await vi.advanceTimersByTimeAsync(BILLING_HEALTH_INTERVAL_MS);

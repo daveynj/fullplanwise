@@ -2,6 +2,7 @@ import type Stripe from "stripe";
 import type { BillingAccountHealth, BillingHealth, BillingHealthStatus } from "@shared/billing-health";
 import { CHECKOUT_PRICES, LEGACY_STRIPE_ACCOUNT_ID } from "./billing-config";
 import { getBillingHealthAccounts } from "./stripeClient";
+import { processBillingAlerts } from "./billing-alerts";
 
 type Account = { account: BillingAccountHealth["account"]; client: Stripe | null };
 
@@ -83,6 +84,7 @@ export const billingHealthMonitor = createBillingHealthMonitor();
 export function startBillingHealthChecks(
   monitor = billingHealthMonitor,
   report: (message: string) => void = (message) => console.warn(message),
+  notify: (health: BillingHealth, report: (message: string) => void) => Promise<void> = processBillingAlerts,
 ): () => void {
   let previous = "";
   const run = async () => {
@@ -94,6 +96,7 @@ export function startBillingHealthChecks(
         report(`[BillingHealth] ${summary}`);
         previous = summary;
       }
+      await notify(result, report);
     } catch {
       report("[BillingHealth] Health check could not complete");
     }

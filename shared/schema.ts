@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp, index, customType } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, index, customType, jsonb } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 import { decodeLessonContent, encodeLessonContent, type LessonContent } from "./lesson-content";
@@ -65,6 +65,13 @@ export const lessonGenerationJobs = pgTable("lesson_generation_jobs", {
 export const scheduledJobRuns = pgTable("scheduled_job_runs", {
   name: text("name").primaryKey(),
   lastCompletedAt: timestamp("last_completed_at", { withTimezone: true }).notNull(),
+});
+
+// Shared confirmation state and durable alert queue; created lazily by
+// server/billing-alert-store.ts when production notifications are configured.
+export const billingAlertState = pgTable("billing_alert_state", {
+  name: text("name").primaryKey(),
+  state: jsonb("state").notNull(),
 });
 
 // Student table schema
