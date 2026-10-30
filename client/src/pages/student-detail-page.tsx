@@ -22,13 +22,20 @@ import {
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { StudentForm } from "@/components/student/student-form";
+import { StudentPageLinkCard } from "@/components/student/student-page-link-card";
+import { StudentPracticeCard } from "@/components/student/student-practice-card";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, BookOpen, Edit, ArrowLeft, Plus, User, AlertTriangle, LogOut, BookMarked, Library } from "lucide-react";
+import { ToastAction } from "@/components/ui/toast";
+import { Loader2, BookOpen, Edit, ArrowLeft, Plus, User, AlertTriangle, LogOut, BookMarked, Library, Check } from "lucide-react";
 import { Student, Lesson } from "@shared/schema";
+import { LESSON_STATUS_DONE, LESSON_STATUS_PLANNED, isLessonDone } from "@shared/student-page";
 
 interface StudentLessonAssignment {
   id: number;
   lesson?: Lesson | null;
+  /** "assigned" while planned, "completed" once marked done (shared/student-page.ts). */
+  status?: string | null;
+  completedAt?: string | null;
 }
 
 interface StudentVocabularyItem {
@@ -131,8 +138,47 @@ export default function StudentDetailPage() {
     }
   });
 
+  // "We did this": the lesson's words join the student's list. "Undo" plans it again.
+  const lessonStatusMutation = useMutation({
+    mutationFn: async ({ assignmentId, status }: { assignmentId: number; status: string }) => {
+      const res = await apiRequest("PUT", `/api/students/lessons/${assignmentId}/status`, { status });
+      return await res.json() as { wordsAdded: number };
+    },
+    onSuccess: (result, { assignmentId, status }) => {
+      queryClient.invalidateQueries({ queryKey: [`/api/students/${studentId}/lessons`] });
+      queryClient.invalidateQueries({ queryKey: [`/api/students/${studentId}/vocabulary`] });
+      queryClient.invalidateQueries({ queryKey: [`/api/students/${studentId}/practice`] });
+      const name = student?.name ?? "the student";
+      if (status === LESSON_STATUS_DONE) {
+        toast({
+          title: "Marked as done",
+          description: result.wordsAdded > 0
+            ? `${result.wordsAdded} new ${result.wordsAdded === 1 ? "word" : "words"} added to ${name}'s list.`
+            : `Its words were already in ${name}'s list.`,
+          action: (
+            <ToastAction
+              altText="Undo marking this lesson as done"
+              onClick={() => lessonStatusMutation.mutate({ assignmentId, status: LESSON_STATUS_PLANNED })}
+            >
+              Undo
+            </ToastAction>
+          ),
+        });
+      } else {
+        toast({ title: "Back to planned", description: `The lesson's words were taken off ${name}'s list.` });
+      }
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Couldn't update the lesson",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
   // Handle form submission for student edit
-  const handleUpdateStudent = (data: Omit<Student, 'id' | 'teacherId' | 'createdAt'>) => {
+  const handleUpdateStudent = (data: Pick<Student, 'name' | 'cefrLevel' | 'email' | 'notes'>) => {
     updateStudentMutation.mutate(data);
   };
 
@@ -296,6 +342,13 @@ export default function StudentDetailPage() {
               ) : null}
             </div>
             
+            {/* The student's own page (private link) */}
+            {student && (
+              <div className="mb-6">
+                <StudentPageLinkCard student={student} />
+              </div>
+            )}
+
             {/* Content tabs */}
             {student && (
               <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -387,15 +440,25 @@ export default function StudentDetailPage() {
                             .map((sl) => {
                             const lesson = sl.lesson!;
                             const assignmentId = sl.id;
+                            const done = isLessonDone(sl.status);
                             return (
-                              <div key={assignmentId} className="flex items-center p-4 bg-gray-50 rounded-lg">
+                              <div key={assignmentId} className="flex flex-wrap items-center gap-y-3 p-4 bg-gray-50 rounded-lg">
                                 <div className="bg-primary/10 p-2 rounded-lg mr-4">
                                   <BookOpen className="h-6 w-6 text-primary" />
                                 </div>
-                                <div className="flex-1">
+                                <div className="flex-1 min-w-[12rem]">
                                   <h4 className="font-semibold">{lesson.title}</h4>
-                                  <div className="flex items-center mt-1">
-                                    <Badge variant="outline" className="mr-2 bg-blue-100 text-blue-800">
+                                  <div className="flex flex-wrap items-center gap-2 mt-1">
+                                    {done ? (
+                                      <Badge variant="outline" className="bg-green-100 text-green-800" data-testid={`lesson-status-${assignmentId}`}>
+                                        Done{sl.completedAt ? ` · ${new Date(sl.completedAt).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}` : ""}
+                                      </Badge>
+                                    ) : (
+                                      <Badge variant="outline" className="bg-amber-100 text-amber-800" data-testid={`lesson-status-${assignmentId}`}>
+                                        Planned
+                                      </Badge>
+                                    )}
+                                    <Badge variant="outline" className="bg-blue-100 text-blue-800">
                                       CEFR {lesson.cefrLevel}
                                     </Badge>
                                     <span className="text-sm text-gray-500">
@@ -403,7 +466,18 @@ export default function StudentDetailPage() {
                                     </span>
                                   </div>
                                 </div>
-                                <div className="flex items-center space-x-2">
+                                <div className="flex flex-wrap items-center gap-2">
+                                  {!done && (
+                                    <Button
+                                      size="sm"
+                                      className="bg-green-700 text-white hover:bg-green-800"
+                                      onClick={() => lessonStatusMutation.mutate({ assignmentId, status: LESSON_STATUS_DONE })}
+                                      disabled={lessonStatusMutation.isPending}
+                                      data-testid={`button-lesson-done-${assignmentId}`}
+                                    >
+                                      <Check className="mr-1 h-4 w-4" /> We did this
+                                    </Button>
+                                  )}
                                   <Link href={`/history/${lesson.id}`}>
                                     <Button variant="outline" size="sm">View</Button>
                                   </Link>
@@ -440,7 +514,8 @@ export default function StudentDetailPage() {
                 </TabsContent>
                 
                 {/* Vocabulary Tab */}
-                <TabsContent value="vocabulary" className="mt-0">
+                <TabsContent value="vocabulary" className="mt-0 space-y-6">
+                  <StudentPracticeCard student={student} />
                   <Card>
                     <CardHeader>
                       <CardTitle className="font-nunito">Learned Vocabulary</CardTitle>
@@ -480,7 +555,7 @@ export default function StudentDetailPage() {
                           <BookMarked className="h-12 w-12 text-gray-300 mx-auto mb-4" />
                           <h3 className="text-lg font-semibold mb-2">No vocabulary yet</h3>
                           <p className="text-gray-500 mb-6">
-                            Vocabulary will appear here once lessons are assigned to this student.
+                            A lesson's words appear here when you mark it as done ("We did this").
                           </p>
                           <Link href={`/generate?studentId=${student.id}`}>
                             <Button className="bg-primary hover:bg-primary/90">

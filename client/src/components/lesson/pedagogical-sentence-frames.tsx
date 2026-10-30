@@ -246,7 +246,8 @@ export function PedagogicalSentenceFramesSection({ section }: PedagogicalSentenc
               </div>
             </div>
 
-            {/* Teaching Notes - Expandable */}
+            {/* Teaching Notes - Expandable (students' pages receive frames without them) */}
+            {frame.teachingNotes && (
             <div className="border-t-2 border-gray-200 pt-4">
               <Button
                 variant="outline"
@@ -309,6 +310,7 @@ export function PedagogicalSentenceFramesSection({ section }: PedagogicalSentenc
                 </div>
               )}
             </div>
+            )}
           </CardContent>
         </Card>
       ))}

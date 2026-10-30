@@ -1,9 +1,9 @@
 // @vitest-environment node
 //
-// When a lesson is assigned to a student, its vocabulary goes into the
-// student's record so later lessons choose new words. Lessons made with the
-// idioms & phrasal verbs switch add their expressions too; every other lesson
-// adds exactly the words it always did.
+// When the teacher marks a student's lesson done, its vocabulary goes into
+// the student's record so later lessons choose new words. Lessons made with
+// the idioms & phrasal verbs switch add their expressions too, with their
+// kind; every other lesson adds exactly the words it always did.
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
 vi.mock("./db", () => ({ db: {}, pool: { end: vi.fn() } }));
@@ -43,14 +43,14 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-describe("student vocabulary from an assigned lesson", () => {
+describe("student vocabulary from a finished lesson", () => {
   it("adds only the lesson's words when it has no idioms & phrasal verbs section", async () => {
     const add = useLesson([VOCABULARY]);
 
     expect(await storage.extractAndSaveVocabulary(3, 7)).toBe(2);
     expect(add).toHaveBeenCalledWith([
-      { studentId: 3, lessonId: 7, word: "commute", definition: "a journey to work", cefrLevel: "B2" },
-      { studentId: 3, lessonId: 7, word: "deadline", definition: "the time by which you must finish", cefrLevel: "B2" },
+      { studentId: 3, lessonId: 7, word: "commute", definition: "a journey to work", cefrLevel: "B2", kind: "word" },
+      { studentId: 3, lessonId: 7, word: "deadline", definition: "the time by which you must finish", cefrLevel: "B2", kind: "word" },
     ]);
   });
 
@@ -59,9 +59,9 @@ describe("student vocabulary from an assigned lesson", () => {
 
     expect(await storage.extractAndSaveVocabulary(3, 7)).toBe(3);
     expect(add).toHaveBeenCalledWith([
-      { studentId: 3, lessonId: 7, word: "commute", definition: "a journey to work", cefrLevel: "B2" },
-      { studentId: 3, lessonId: 7, word: "deadline", definition: "the time by which you must finish", cefrLevel: "B2" },
-      { studentId: 3, lessonId: 7, word: "put off", definition: "to decide to do something later", cefrLevel: "B2" },
+      { studentId: 3, lessonId: 7, word: "commute", definition: "a journey to work", cefrLevel: "B2", kind: "word" },
+      { studentId: 3, lessonId: 7, word: "deadline", definition: "the time by which you must finish", cefrLevel: "B2", kind: "word" },
+      { studentId: 3, lessonId: 7, word: "put off", definition: "to decide to do something later", cefrLevel: "B2", kind: "phrasal verb" },
     ]);
   });
 });

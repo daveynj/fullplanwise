@@ -76,6 +76,10 @@ export const students = pgTable("students", {
   email: text("email"),
   notes: text("notes"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
+  // The student's own page (/s/<pageToken>): a long random code the teacher
+  // can switch off or replace. Added at start-up by server/student-page-schema.ts.
+  pageToken: text("page_token"),
+  pageEnabled: boolean("page_enabled").notNull().default(false),
 });
 
 // lessons.content is a text column holding single-encoded lesson JSON (see
@@ -113,8 +117,11 @@ export const studentLessons = pgTable("student_lessons", {
   lessonId: integer("lesson_id").notNull(),
   teacherId: integer("teacher_id").notNull(),
   assignedAt: timestamp("assigned_at").notNull().defaultNow(),
-  status: text("status").default("assigned"), // assigned, completed, in-progress
+  // "assigned" = planned; "completed" = done ("We did this"). A lesson's words
+  // join the student's list when it is done (see shared/student-page.ts).
+  status: text("status").default("assigned"),
   notes: text("notes"),
+  completedAt: timestamp("completed_at"),
 });
 
 // Student vocabulary tracking table
@@ -128,7 +135,26 @@ export const studentVocabulary = pgTable("student_vocabulary", {
   learnedAt: timestamp("learned_at").notNull().defaultNow(),
   source: text("source").default("lesson"), // "lesson" or "manual" - tracks origin
   originLessonTitle: text("origin_lesson_title"), // Preserves lesson title if lesson is deleted
+  // "word", or an idioms & phrasal verbs kind ("phrasal verb", "idiom",
+  // "expression"). Null on rows saved before kinds were recorded: a word.
+  kind: text("kind"),
+  // Flashcard progress: 0 = new or "Not yet"; each "Got it" moves the word up
+  // a level and further into the future (shared/student-page.ts).
+  practiceLevel: integer("practice_level").notNull().default(0),
+  nextPracticeAt: timestamp("next_practice_at"),
+  lastPractisedAt: timestamp("last_practised_at"),
 });
+
+// One row per flashcard answer, for the teacher's "How <student> is practising".
+export const studentPracticeLog = pgTable("student_practice_log", {
+  id: serial("id").primaryKey(),
+  studentId: integer("student_id").notNull(),
+  vocabularyId: integer("vocabulary_id").notNull(),
+  result: text("result").notNull(), // "got" | "again"
+  practisedAt: timestamp("practised_at").notNull().defaultNow(),
+}, (table) => [
+  index("idx_student_practice_log_student").on(table.studentId, table.practisedAt),
+]);
 
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).pick({
@@ -185,6 +211,7 @@ export const insertStudentVocabularySchema = createInsertSchema(studentVocabular
   word: true,
   definition: true,
   cefrLevel: true,
+  kind: true,
 });
 
 // Types for inserts
@@ -200,6 +227,7 @@ export type Student = typeof students.$inferSelect;
 export type Lesson = typeof lessons.$inferSelect;
 export type StudentLesson = typeof studentLessons.$inferSelect;
 export type StudentVocabulary = typeof studentVocabulary.$inferSelect;
+export type StudentPracticeLog = typeof studentPracticeLog.$inferSelect;
 
 // AI provider enum
 export const AIProviderEnum = z.enum(['gemini']);

@@ -42,6 +42,11 @@ const BlogIndex = lazy(() => import("@/pages/blog-index"));
 const BlogPost = lazy(() => import("@/pages/blog-post"));
 const PublicLessonsIndexPage = lazy(() => import("@/pages/public-lessons-index-page"));
 const AdminBlogPosts = lazy(() => import("@/pages/admin-blog-posts"));
+// A student's own page (/s/<code>), reached by the private link from their teacher
+const StudentPageHomePage = lazy(() => import("@/pages/student-page-home"));
+const StudentPageWordsPage = lazy(() => import("@/pages/student-page-words"));
+const StudentPageFlashcardsPage = lazy(() => import("@/pages/student-page-flashcards"));
+const StudentPageLessonPage = lazy(() => import("@/pages/student-page-lesson"));
 
 function PageLoader() {
   return (
@@ -90,6 +95,10 @@ function Router() {
       <Route path="/forgot-password" component={ForgotPasswordPage} />
       <Route path="/reset-password/:token" component={ResetPasswordPage} />
       <Route path="/twitter-card" component={TwitterCardPreview} />
+      <Route path="/s/:token/words" component={StudentPageWordsPage} />
+      <Route path="/s/:token/flashcards" component={StudentPageFlashcardsPage} />
+      <Route path="/s/:token/lessons/:lessonId" component={StudentPageLessonPage} />
+      <Route path="/s/:token" component={StudentPageHomePage} />
       <Route component={NotFound} />
     </Switch>
   );

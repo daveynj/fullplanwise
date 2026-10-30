@@ -1,6 +1,6 @@
 
 import {
-  users, students, lessons, studentLessons, studentVocabulary, blogPosts,
+  users, students, lessons, studentLessons, studentVocabulary, studentPracticeLog, blogPosts,
   type User, type InsertUser, type Student, type InsertStudent,
   type Lesson, type InsertLesson, type StudentLesson, type InsertStudentLesson,
   type StudentVocabulary, type InsertStudentVocabulary,
@@ -11,7 +11,16 @@ import { db, pool } from "./db";
 import { createSessionStore } from "./session-store";
 import { extractLessonSummary, LESSON_SUMMARY_SOURCE_CHARS } from "@shared/lesson-content";
 import { EXPRESSIONS_SECTION_TYPE, expressionItemsOf } from "@shared/lesson-expressions";
-import { SQL, eq, and, desc, count, or, ilike, gte, sql, inArray } from "drizzle-orm";
+import {
+  LESSON_STATUS_DONE,
+  LESSON_STATUS_PLANNED,
+  isLessonDone,
+  nextPractice,
+  type PracticeResult,
+  type StudentPracticeStats,
+} from "@shared/student-page";
+import { lessonWordDetails } from "./lesson-word-details";
+import { SQL, eq, and, desc, count, or, ilike, gte, sql, inArray, ne, isNull } from "drizzle-orm";
 
 // modify the interface with any CRUD methods
 // you might need
@@ -78,12 +87,21 @@ export interface IStorage {
   removeStudentLesson(studentId: number, lessonId: number): Promise<boolean>;
   removeStudentLessonByAssignmentId(assignmentId: number, studentId: number): Promise<boolean>;
   checkLessonAssignment(studentId: number, lessonId: number): Promise<StudentLesson | undefined>;
-  updateStudentLessonStatus(id: number, status: string): Promise<StudentLesson>;
+  getStudentLessonAssignment(assignmentId: number): Promise<StudentLesson | undefined>;
+  markStudentLessonDone(assignmentId: number): Promise<{ assignment: StudentLesson; wordsAdded: number }>;
+  markStudentLessonPlanned(assignmentId: number): Promise<StudentLesson>;
+  getPlannedLessonWords(studentId: number): Promise<string[]>;
 
   // Student vocabulary methods
   addStudentVocabulary(vocabulary: InsertStudentVocabulary[]): Promise<StudentVocabulary[]>;
   getStudentVocabulary(studentId: number, limit?: number): Promise<StudentVocabulary[]>;
   extractAndSaveVocabulary(studentId: number, lessonId: number): Promise<number>;
+
+  // The student's own page (shared/student-page.ts)
+  getStudentByPageToken(token: string): Promise<Student | undefined>;
+  getLessonAccess(lessonId: number): Promise<{ teacherId: number; isPublic: boolean } | undefined>;
+  recordStudentPractice(studentId: number, vocabularyId: number, result: PracticeResult): Promise<StudentVocabulary | undefined>;
+  getStudentPracticeStats(studentId: number): Promise<StudentPracticeStats>;
 
   // Blog post methods
   getAllBlogPosts(page?: number, pageSize?: number, category?: string, featured?: boolean, isPublished?: boolean): Promise<{ posts: BlogPost[], total: number }>;
@@ -1224,6 +1242,11 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Student-Lesson association methods
+
+  /**
+   * Plans a lesson for a student. Its words join the student's list only when
+   * the teacher marks it done (markStudentLessonDone).
+   */
   async assignLessonToStudent(studentId: number, lessonId: number, teacherId: number, notes?: string): Promise<StudentLesson> {
     try {
       const [studentLesson] = await db.insert(studentLessons).values({
@@ -1231,11 +1254,8 @@ export class DatabaseStorage implements IStorage {
         lessonId,
         teacherId,
         notes: notes || null,
-        status: 'assigned'
+        status: LESSON_STATUS_PLANNED
       }).returning();
-
-      // Extract and save vocabulary from this lesson
-      await this.extractAndSaveVocabulary(studentId, lessonId);
 
       return studentLesson;
     } catch (error) {
@@ -1259,6 +1279,7 @@ export class DatabaseStorage implements IStorage {
           assignedAt: studentLessons.assignedAt,
           status: studentLessons.status,
           notes: studentLessons.notes,
+          completedAt: studentLessons.completedAt,
           // Only lesson metadata - EXCLUDE content field
           lesson: {
             id: lessons.id,
@@ -1378,18 +1399,79 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
-  async updateStudentLessonStatus(id: number, status: string): Promise<StudentLesson> {
+  async getStudentLessonAssignment(assignmentId: number): Promise<StudentLesson | undefined> {
     try {
-      const [updated] = await db
-        .update(studentLessons)
-        .set({ status })
-        .where(eq(studentLessons.id, id))
-        .returning();
-      return updated;
+      const [assignment] = await db
+        .select()
+        .from(studentLessons)
+        .where(eq(studentLessons.id, assignmentId))
+        .limit(1);
+      return assignment;
     } catch (error) {
-      console.error('Error updating student lesson status:', error);
+      console.error('Error getting student lesson assignment:', error);
       throw error;
     }
+  }
+
+  /**
+   * "We did this": the lesson's words join the student's list and the lesson
+   * counts as done. The words are added first, so a failure leaves the lesson
+   * planned and the teacher can simply try again.
+   */
+  async markStudentLessonDone(assignmentId: number): Promise<{ assignment: StudentLesson; wordsAdded: number }> {
+    const existing = await this.getStudentLessonAssignment(assignmentId);
+    if (!existing) throw new Error("Lesson assignment not found");
+    if (isLessonDone(existing.status)) return { assignment: existing, wordsAdded: 0 };
+
+    const wordsAdded = await this.extractAndSaveVocabulary(existing.studentId, existing.lessonId);
+    const [assignment] = await db
+      .update(studentLessons)
+      .set({ status: LESSON_STATUS_DONE, completedAt: new Date() })
+      .where(eq(studentLessons.id, assignmentId))
+      .returning();
+    console.log(`[Student lessons] Lesson ${existing.lessonId} done for student ${existing.studentId}: ${wordsAdded} words added`);
+    return { assignment, wordsAdded };
+  }
+
+  /**
+   * Undoes "We did this": the lesson is planned again and the words it added
+   * leave the student's list, as when a lesson is unassigned.
+   */
+  async markStudentLessonPlanned(assignmentId: number): Promise<StudentLesson> {
+    const existing = await this.getStudentLessonAssignment(assignmentId);
+    if (!existing) throw new Error("Lesson assignment not found");
+    if (!isLessonDone(existing.status)) return existing;
+
+    await db.delete(studentVocabulary)
+      .where(and(
+        eq(studentVocabulary.studentId, existing.studentId),
+        eq(studentVocabulary.lessonId, existing.lessonId)
+      ));
+    const [assignment] = await db
+      .update(studentLessons)
+      .set({ status: LESSON_STATUS_PLANNED, completedAt: null })
+      .where(eq(studentLessons.id, assignmentId))
+      .returning();
+    return assignment;
+  }
+
+  /**
+   * Words in the student's planned lessons. New lessons avoid them as well as
+   * the words the student has learned, though they are not in the list yet.
+   */
+  async getPlannedLessonWords(studentId: number): Promise<string[]> {
+    const planned = await db
+      .select({ lessonId: studentLessons.lessonId })
+      .from(studentLessons)
+      .where(and(
+        eq(studentLessons.studentId, studentId),
+        or(isNull(studentLessons.status), ne(studentLessons.status, LESSON_STATUS_DONE))
+      ));
+    const words = new Set<string>();
+    for (const { lessonId } of planned) {
+      for (const detail of await lessonWordDetails(lessonId)) words.add(detail.term.trim());
+    }
+    return [...words];
   }
 
   // Student vocabulary methods
@@ -1458,7 +1540,8 @@ export class DatabaseStorage implements IStorage {
                   lessonId,
                   word: word.term || word.word || '',
                   definition: word.coreDefinition || word.definition || '',
-                  cefrLevel: lesson.cefrLevel
+                  cefrLevel: lesson.cefrLevel,
+                  kind: 'word'
                 });
               } else if (wordTerm) {
                 console.log(`[extractAndSaveVocabulary] Skipping duplicate word: ${wordTerm}`);
@@ -1480,7 +1563,8 @@ export class DatabaseStorage implements IStorage {
                 lessonId,
                 word: item.expression,
                 definition: item.meaning,
-                cefrLevel: lesson.cefrLevel
+                cefrLevel: lesson.cefrLevel,
+                kind: item.kind
               });
             }
           }
@@ -1502,6 +1586,76 @@ export class DatabaseStorage implements IStorage {
       console.error('Error extracting and saving vocabulary:', error);
       throw error;
     }
+  }
+
+  // The student's own page
+
+  /** The student whose page has this code, while the teacher has the page switched on. */
+  async getStudentByPageToken(token: string): Promise<Student | undefined> {
+    const [student] = await db
+      .select()
+      .from(students)
+      .where(and(eq(students.pageToken, token), eq(students.pageEnabled, true)))
+      .limit(1);
+    return student;
+  }
+
+  /** Who owns a lesson and whether it is public, without loading its content. */
+  async getLessonAccess(lessonId: number): Promise<{ teacherId: number; isPublic: boolean } | undefined> {
+    const [lesson] = await db
+      .select({ teacherId: lessons.teacherId, isPublic: lessons.isPublic })
+      .from(lessons)
+      .where(eq(lessons.id, lessonId))
+      .limit(1);
+    return lesson;
+  }
+
+  /** Saves one flashcard answer: the word's next practice date, and a row for the teacher's practice summary. */
+  async recordStudentPractice(studentId: number, vocabularyId: number, result: PracticeResult): Promise<StudentVocabulary | undefined> {
+    const [word] = await db
+      .select()
+      .from(studentVocabulary)
+      .where(and(eq(studentVocabulary.id, vocabularyId), eq(studentVocabulary.studentId, studentId)))
+      .limit(1);
+    if (!word) return undefined;
+
+    const now = new Date();
+    const [updated] = await db
+      .update(studentVocabulary)
+      .set({ ...nextPractice(word.practiceLevel, result, now), lastPractisedAt: now })
+      .where(eq(studentVocabulary.id, vocabularyId))
+      .returning();
+    await db.insert(studentPracticeLog).values({ studentId, vocabularyId, result, practisedAt: now });
+    return updated;
+  }
+
+  /** How the student has practised in the last 7 days, and the words they are still learning. */
+  async getStudentPracticeStats(studentId: number): Promise<StudentPracticeStats> {
+    const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+    const [summary] = await db
+      .select({
+        lastPractisedAt: sql<Date | null>`max(${studentPracticeLog.practisedAt})`,
+        cardsThisWeek: sql<number>`count(*) filter (where ${studentPracticeLog.practisedAt} >= ${weekAgo})`,
+        daysPractisedThisWeek: sql<number>`count(distinct date(${studentPracticeLog.practisedAt})) filter (where ${studentPracticeLog.practisedAt} >= ${weekAgo})`,
+      })
+      .from(studentPracticeLog)
+      .where(eq(studentPracticeLog.studentId, studentId));
+    const stillLearning = await db
+      .select({ word: studentVocabulary.word })
+      .from(studentVocabulary)
+      .where(and(
+        eq(studentVocabulary.studentId, studentId),
+        eq(studentVocabulary.practiceLevel, 0),
+        sql`${studentVocabulary.lastPractisedAt} IS NOT NULL`
+      ))
+      .orderBy(desc(studentVocabulary.lastPractisedAt))
+      .limit(8);
+    return {
+      lastPractisedAt: summary?.lastPractisedAt ? new Date(summary.lastPractisedAt).toISOString() : null,
+      cardsThisWeek: Number(summary?.cardsThisWeek ?? 0),
+      daysPractisedThisWeek: Number(summary?.daysPractisedThisWeek ?? 0),
+      stillLearning: stillLearning.map((row) => row.word),
+    };
   }
 
   // Blog post methods

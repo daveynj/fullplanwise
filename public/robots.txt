@@ -42,5 +42,7 @@ Disallow: /grammar-showcase
 Disallow: /twitter-card
 Disallow: /forgot-password
 Disallow: /reset-password/
+# Students' private pages
+Disallow: /s/
 
 Sitemap: https://planwiseesl.com/sitemap.xml

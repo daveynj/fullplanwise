@@ -56,6 +56,11 @@ export const clientRoutePaths: string[] = [
   "/forgot-password",
   "/reset-password/:token",
   "/twitter-card",
+  // A student's own page; an unknown or switched-off code shows "not available"
+  "/s/:token",
+  "/s/:token/words",
+  "/s/:token/flashcards",
+  "/s/:token/lessons/:lessonId",
 ];
 
 /** RegExps the server's 404 catch-all uses to recognize valid client pages. */

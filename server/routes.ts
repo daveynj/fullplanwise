@@ -18,6 +18,10 @@ import { resolveGrammarSpotlight } from "./grammarSpotlightRetry";
 import { testImageGeneration } from "./services/image-generation.service";
 import { toPublicLessonView } from "./public-lesson-view";
 import { serveLessonShareImage } from "./lesson-share-image";
+import { ensureStudentPageSchema } from "./student-page-schema";
+import { registerStudentPageRoutes } from "./student-page-routes";
+import { LESSON_STATUS_DONE, LESSON_STATUS_PLANNED } from "@shared/student-page";
+import { randomBytes } from "crypto";
 import { downloadStoredImage, stripBackedUpBase64, LESSON_IMAGE_PREFIX, LESSON_IMAGE_ROUTE } from "./services/image-storage";
 import { isFreeTrialActive, getFreeTrialEndDate } from "./features";
 import { SELECTABLE_MODELS, DEFAULT_MODEL_ID, isSelectableModel } from "@shared/aiModels";
@@ -110,6 +114,22 @@ export function parseQueryInt(
 const MAX_PAGE_SIZE = 100;
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // The student page's columns (server/student-page-schema.ts). Started now
+  // without delaying start-up; API requests wait for it only while it runs,
+  // because student queries select the new columns.
+  void ensureStudentPageSchema();
+  app.use("/api", async (_req, _res, next) => {
+    await ensureStudentPageSchema();
+    next();
+  });
+
+  // Students' own pages (/s/<code>) are private: keep them out of search
+  // engines and don't send the code to other sites as a referrer.
+  app.use("/s", (_req, res, next) => {
+    res.set({ "X-Robots-Tag": "noindex, nofollow", "Referrer-Policy": "no-referrer" });
+    next();
+  });
+
   // Link sharing is separate from publishing to the public lesson library.
   // Keep this idempotent migration here to support existing databases.
   // Not awaited: opening the first database connection takes 1–2 s, and the
@@ -358,9 +378,72 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Unauthorized access to student" });
       }
 
-      const student = await storage.updateStudent(studentId, req.body);
+      // Only the profile fields: the page code and owner change through
+      // their own routes, never through an edit.
+      const updates = insertStudentSchema.omit({ teacherId: true }).partial().parse(req.body);
+      const student = await storage.updateStudent(studentId, updates);
       res.json(student);
     } catch (error: any) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid student data", errors: error.errors });
+      }
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // The student's own page link (shared/student-page.ts). A new link gets a
+  // fresh code, so any earlier link stops working.
+  app.post("/api/students/:id/page", ensureAuthenticated, async (req, res) => {
+    try {
+      const studentId = parseIdParam(req.params.id);
+      const student = studentId === null ? undefined : await storage.getStudent(studentId);
+      if (!student || student.teacherId !== req.user!.id) {
+        return res.status(404).json({ message: "Student not found" });
+      }
+      const updated = await storage.updateStudent(student.id, {
+        pageToken: randomBytes(18).toString("base64url"),
+        pageEnabled: true,
+      });
+      res.json(updated);
+    } catch (error: any) {
+      console.error("Error creating a student page link:", error);
+      res.status(500).json({ message: "Could not create the link. Please try again." });
+    }
+  });
+
+  // Switch the student's page on or off; the link stays the same.
+  app.put("/api/students/:id/page", ensureAuthenticated, async (req, res) => {
+    try {
+      const studentId = parseIdParam(req.params.id);
+      const student = studentId === null ? undefined : await storage.getStudent(studentId);
+      if (!student || student.teacherId !== req.user!.id) {
+        return res.status(404).json({ message: "Student not found" });
+      }
+      if (typeof req.body?.enabled !== "boolean") {
+        return res.status(400).json({ message: "Send enabled as true or false." });
+      }
+      if (req.body.enabled && !student.pageToken) {
+        return res.status(400).json({ message: "Create the link first." });
+      }
+      const updated = await storage.updateStudent(student.id, { pageEnabled: req.body.enabled });
+      res.json(updated);
+    } catch (error: any) {
+      console.error("Error switching a student page:", error);
+      res.status(500).json({ message: "Could not update the page. Please try again." });
+    }
+  });
+
+  // How the student has been practising, for the teacher's student page.
+  app.get("/api/students/:id/practice", ensureAuthenticated, async (req, res) => {
+    try {
+      const studentId = parseIdParam(req.params.id);
+      const student = studentId === null ? undefined : await storage.getStudent(studentId);
+      if (!student || student.teacherId !== req.user!.id) {
+        return res.status(404).json({ message: "Student not found" });
+      }
+      res.json(await storage.getStudentPracticeStats(student.id));
+    } catch (error: any) {
+      console.error("Error loading practice stats:", error);
       res.status(500).json({ message: error.message });
     }
   });
@@ -395,11 +478,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (studentId === null) {
         return res.status(404).json({ message: "Not found" });
       }
-      const { lessonId, notes } = req.body;
+      const { notes } = req.body;
+      const lessonId = parseIdParam(String(req.body?.lessonId ?? ""));
 
       const student = await storage.getStudent(studentId);
       if (!student || student.teacherId !== req.user!.id) {
         return res.status(403).json({ message: "Unauthorized" });
+      }
+
+      // Only the teacher's own lessons: the student's page shows assigned lessons.
+      const lessonAccess = lessonId === null ? undefined : await storage.getLessonAccess(lessonId);
+      if (lessonId === null || !lessonAccess || lessonAccess.teacherId !== req.user!.id) {
+        return res.status(403).json({ message: "Unauthorized access to lesson" });
       }
 
       // Check if this lesson is already assigned to this student
@@ -507,20 +597,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // "We did this" (status "completed"): the lesson's words join the student's
+  // list. Setting it back to "assigned" undoes that (shared/student-page.ts).
   app.put("/api/students/lessons/:id/status", ensureAuthenticated, async (req, res) => {
     try {
       const id = parseIdParam(req.params.id);
-      if (id === null) {
-        return res.status(404).json({ message: "Not found" });
+      const assignment = id === null ? undefined : await storage.getStudentLessonAssignment(id);
+      if (!assignment || assignment.teacherId !== req.user!.id) {
+        return res.status(404).json({ message: "Lesson assignment not found" });
       }
-      const { status } = req.body;
-
-      const updated = await storage.updateStudentLessonStatus(id, status);
-      res.json(updated);
+      const { status } = req.body ?? {};
+      if (status === LESSON_STATUS_DONE) {
+        return res.json(await storage.markStudentLessonDone(assignment.id));
+      }
+      if (status === LESSON_STATUS_PLANNED) {
+        return res.json({ assignment: await storage.markStudentLessonPlanned(assignment.id), wordsAdded: 0 });
+      }
+      res.status(400).json({ message: `Status must be "${LESSON_STATUS_DONE}" or "${LESSON_STATUS_PLANNED}".` });
     } catch (error: any) {
+      console.error("Error updating a lesson's status:", error);
       res.status(500).json({ message: error.message });
     }
   });
+
+  registerStudentPageRoutes(app);
 
   // Lesson Routes
   app.get("/api/lessons", ensureAuthenticated, async (req, res) => {
@@ -985,6 +1085,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
             } catch (vocabError) {
               console.error(`[Job ${jobId}] Error fetching student vocabulary:`, vocabError);
             }
+            // Words in lessons planned but not done yet aren't in the list,
+            // but a new lesson shouldn't teach them again either.
+            try {
+              const known = new Set(studentVocabulary.map((word) => word.toLowerCase()));
+              const planned = (await storage.getPlannedLessonWords(validatedData.studentId))
+                .filter((word) => !known.has(word.toLowerCase()));
+              if (planned.length > 0) {
+                console.log(`[Job ${jobId}] Also avoiding ${planned.length} words from planned lessons`);
+                studentVocabulary = [...studentVocabulary, ...planned];
+              }
+            } catch (plannedError) {
+              console.error(`[Job ${jobId}] Error fetching planned lesson words:`, plannedError);
+            }
           }
 
           // Admin accounts may override the text model for their own
@@ -1183,7 +1296,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Unauthorized access to student" });
       }
 
-      // Create the student-lesson association and extract vocabulary
+      // Plan the lesson for the student; its words join their list when the
+      // teacher marks it done.
       console.log(`Assigning lesson ${lessonId} to student ${studentId}`);
       const studentLesson = await storage.assignLessonToStudent(
         studentId,
