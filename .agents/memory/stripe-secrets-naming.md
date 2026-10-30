@@ -14,3 +14,10 @@ Never use `STRIPE_SECRET_KEY` or `VITE_STRIPE_PUBLIC_KEY` as user-set Replit sec
 
 ## Related
 - The `initStripe()` in `server/index.ts` also had a bug using `DATABASE_URL` (which is "helium" in production) instead of `NEON_DATABASE_URL || DATABASE_URL` — fixed at the same time.
+
+## Validating replacement keys
+Treat a secure-form confirmation as proof that a value was saved, not proof that Stripe accepts it.
+
+**Why:** A replacement value can be invalid even after the form reports success. A working credential from another connected account is not a safe substitute for the existing merchant account.
+
+**How to apply:** Use read-only Stripe calls to confirm authentication, the merchant account identity, and the existing active live price before declaring recovery. Verify production separately after publishing; never charge a real customer as a credential test.
