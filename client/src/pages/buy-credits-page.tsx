@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest, queryClient } from "@/lib/queryClient";
+import { queryClient } from "@/lib/queryClient";
 import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { 
@@ -42,41 +42,37 @@ const unlimitedPlan = {
 export default function BuyCreditsPage() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const submitting = useRef(false);
+  const [redirecting, setRedirecting] = useState(false);
+  const isSubscriber = user?.subscriptionTier === "unlimited";
   const { isInTrial, isPersonalTrial, trialDaysRemaining, trialExpiresAt, freeCreditsRemaining } = useTrialStatus();
   
   // Create subscription mutation
   const createSubscriptionMutation = useMutation({
     mutationFn: async ({ planId, priceId }: { planId: string, priceId: string }) => {
-      console.log(`Creating subscription: planId=${planId}, priceId=${priceId}`);
-      const res = await apiRequest("POST", "/api/subscriptions/create", { planId, priceId });
-      
+      const res = await fetch("/api/subscriptions/create", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ planId, priceId }),
+      });
+      const data = await res.json();
       if (!res.ok) {
-        const data = await res.json();
-        
-        if (res.status === 409 && data.retryNeeded) {
-          await new Promise(resolve => setTimeout(resolve, 1000));
-          console.log("Customer ID reset, retrying subscription creation...");
-          const retryRes = await apiRequest("POST", "/api/subscriptions/create", { planId, priceId });
-          
-          if (!retryRes.ok) {
-            const retryError = await retryRes.json();
-            throw new Error(retryError.message || "Failed on retry attempt. Please try again later.");
-          }
-          
-          return await retryRes.json();
+        if (data.code === "ALREADY_SUBSCRIBED") {
+          void queryClient.invalidateQueries({ queryKey: ["/api/user"] });
         }
-        
         throw new Error(data.message || `Subscription error (${res.status}): Please try again.`);
       }
-      
-      return await res.json();
+      if (!data.url) throw new Error("Checkout is unavailable. Please contact support.");
+      return data;
     },
+    retry: false,
     onSuccess: (data) => {
-      if (data.url) {
-        window.location.href = data.url;
-      }
+      setRedirecting(true);
+      window.location.href = data.url;
     },
     onError: (error: any) => {
+      submitting.current = false;
       toast({
         title: "Error Creating Subscription",
         description: error.message || "Failed to create subscription. Please try again.",
@@ -97,10 +93,10 @@ export default function BuyCreditsPage() {
             {/* Page header */}
             <div className="mb-8 text-center">
               <h1 className="text-3xl md:text-4xl font-nunito font-bold">
-                {isInTrial ? "Free Trial Active" : "Subscribe for Unlimited Access"}
+                {isSubscriber ? "Your Unlimited Subscription" : isInTrial ? "Free Trial Active" : "Subscribe for Unlimited Access"}
               </h1>
               <p className="text-gray-600 mt-2">
-                {isInTrial 
+                {isSubscriber ? "You already have Unlimited access. Manage your subscription from your account." : isInTrial
                   ? `You have ${trialDaysRemaining} day${trialDaysRemaining !== 1 ? 's' : ''} of unlimited lesson generation remaining${freeCreditsRemaining > 0 ? `, plus ${freeCreditsRemaining} free credit${freeCreditsRemaining !== 1 ? 's' : ''} after trial ends` : ''}.`
                   : freeCreditsRemaining > 0 
                     ? `You have ${freeCreditsRemaining} free lesson credit${freeCreditsRemaining !== 1 ? 's' : ''} remaining. Subscribe for unlimited access.`
@@ -109,7 +105,17 @@ export default function BuyCreditsPage() {
               </p>
             </div>
 
-            {isInTrial ? (
+            {isSubscriber ? (
+              <Card className="max-w-3xl mx-auto text-center py-12">
+                <CardHeader>
+                  <CardTitle>Your subscription is already set up</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p>No need to subscribe again, including if cancellation is scheduled.</p>
+                  <Button className="mt-4" asChild><a href="/settings">Manage subscription</a></Button>
+                </CardContent>
+              </Card>
+            ) : isInTrial ? (
               <Card className="max-w-3xl mx-auto text-center py-12">
                 <CardHeader>
                   <CardTitle className="text-2xl font-nunito">Free Trial Active</CardTitle>
@@ -149,15 +155,17 @@ export default function BuyCreditsPage() {
                     <Button
                       className="w-full bg-primary hover:bg-primary/90"
                       onClick={() => {
+                        if (!user || isSubscriber || submitting.current || redirecting) return;
+                        submitting.current = true;
                         const priceId = 'price_unlimited_monthly'; // This should match the key in your server's stripeProductMap
                         createSubscriptionMutation.mutate({ 
                           planId: unlimitedPlan.id, 
                           priceId 
                         });
                       }}
-                      disabled={createSubscriptionMutation.isPending}
+                      disabled={!user || isSubscriber || createSubscriptionMutation.isPending || redirecting}
                     >
-                      {createSubscriptionMutation.isPending ? (
+                      {createSubscriptionMutation.isPending || redirecting ? (
                         <>
                           <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                           Processing...

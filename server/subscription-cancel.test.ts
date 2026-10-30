@@ -13,18 +13,24 @@ const TEST_USER_ID = 1;
 // --- Mocks -----------------------------------------------------------------
 
 const mockStripe = {
-  customers: { retrieve: vi.fn(), create: vi.fn() },
-  checkout: { sessions: { create: vi.fn() } },
+  customers: { retrieve: vi.fn(), create: vi.fn(), list: vi.fn() },
+  checkout: { sessions: { create: vi.fn(), list: vi.fn() } },
   subscriptions: {
     retrieve: vi.fn(),
     update: vi.fn(),
+    list: vi.fn(),
   },
 };
+
+vi.mock("stripe", () => ({
+  default: vi.fn(function () { return mockStripe; }),
+}));
 
 vi.mock("./stripeClient", () => ({
   getUncachableStripeClient: vi.fn(async () => mockStripe),
   getStripePublishableKey: vi.fn(async () => "pk_test"),
   getStripeSecretKey: vi.fn(async () => "sk_test"),
+  getLegacyStripeSecretKey: vi.fn(() => undefined),
   getStripeSync: vi.fn(async () => ({})),
 }));
 
@@ -67,7 +73,13 @@ vi.mock("./features", () => ({
 // Avoid touching the real database or third-party services at import time.
 vi.mock("./db", () => ({
   db: { execute: vi.fn(), transaction: vi.fn() },
-  pool: { query: vi.fn(), end: vi.fn() },
+  pool: {
+    query: vi.fn(), end: vi.fn(),
+    connect: vi.fn(async () => ({
+      query: vi.fn(async () => ({ rows: [{ locked: true }] })),
+      release: vi.fn(),
+    })),
+  },
 }));
 vi.mock("./services/mailchimp.service", () => ({
   mailchimpService: {},
@@ -110,6 +122,9 @@ beforeEach(() => {
   mockStripe.subscriptions.update.mockReset();
   mockStorage.getUser.mockReset();
   mockStorage.updateUser.mockReset();
+  mockStripe.customers.list.mockResolvedValue({ data: [], has_more: false });
+  mockStripe.subscriptions.list.mockResolvedValue({ data: [], has_more: false });
+  mockStripe.checkout.sessions.list.mockResolvedValue({ data: [], has_more: false });
 
   mockStorage.getUser.mockResolvedValue({
     id: TEST_USER_ID,
@@ -149,7 +164,7 @@ describe("POST /api/subscriptions/create", () => {
       const result = await create();
       expect(result.status).toBe(503);
       expect(result.body.code).toBe("BILLING_UNAVAILABLE");
-      expect(result.body.message).toMatch(/temporarily unavailable.*contact support/i);
+      expect(result.body.message).toMatch(/contact support/i);
       expect(JSON.stringify(result)).not.toContain("secret-must-not-appear");
       expect(JSON.stringify(logger.mock.calls)).not.toContain("secret-must-not-appear");
       expect(mockStripe.customers.create).not.toHaveBeenCalled();
@@ -166,6 +181,9 @@ describe("POST /api/subscriptions/create", () => {
       id: TEST_USER_ID, stripeCustomerId: "cus_existing", stripeSubscriptionId: "sub_canceled", subscriptionTier: "free",
     });
     mockStripe.customers.retrieve.mockResolvedValue({ id: "cus_existing" });
+    mockStripe.subscriptions.retrieve.mockResolvedValue({
+      id: "sub_canceled", customer: "cus_existing", status: "canceled",
+    });
     mockStripe.checkout.sessions.create.mockResolvedValue({ id: "cs_mock", url: "https://checkout.stripe.com/mock" });
     const result = await create();
     expect(result.status).toBe(200);
@@ -174,7 +192,7 @@ describe("POST /api/subscriptions/create", () => {
       customer: "cus_existing", mode: "subscription",
       line_items: [{ price: "price_1Timp4Bnt8Mku7BYBMYUVYrF", quantity: 1 }],
       payment_method_types: ["card"],
-    }));
+    }), expect.objectContaining({ idempotencyKey: expect.any(String) }));
     expect(mockStripe.customers.create).not.toHaveBeenCalled();
     expect(mockStorage.updateUserStripeInfo).not.toHaveBeenCalled();
     expect(mockStorage.updateUser).not.toHaveBeenCalled();

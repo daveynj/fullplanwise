@@ -7,7 +7,6 @@ import {
   insertStudentSchema,
   insertLessonSchema,
   lessonGenerateSchema,
-  subscriptionSchema,
   insertBlogPostSchema,
   updateBlogPostSchema
 } from "@shared/schema";
@@ -26,7 +25,7 @@ import { downloadStoredImage, LESSON_IMAGE_PREFIX, LESSON_IMAGE_ROUTE } from "./
 import { isFreeTrialActive, getFreeTrialEndDate } from "./features";
 import { SELECTABLE_MODELS, DEFAULT_MODEL_ID, isSelectableModel } from "@shared/aiModels";
 import { getUncachableStripeClient } from "./stripeClient";
-import { CHECKOUT_PRICES } from "./billing-config";
+import { subscriptionCheckoutRoute } from "./subscription-checkout-route";
 import { billingHealthMonitor } from "./billing-health";
 import { registerBillingHealthRoute } from "./billing-health-route";
 import { validClientRoutes } from "@shared/client-routes";
@@ -1708,196 +1707,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/subscriptions/create", ensureAuthenticated, async (req, res) => {
-    if (isFreeTrialActive()) {
-      return res.status(403).json({ message: "Subscriptions are disabled during the free trial period." });
-    }
-    try {
-      const stripe = await getStripe();
-      if (!stripe) {
-        console.error("Stripe API key not configured when attempting to create subscription");
-        return res.status(503).json({
-          message: "Subscriptions are temporarily unavailable. Please contact support before trying again.",
-          code: "BILLING_UNAVAILABLE",
-        });
-      }
-
-      const { planId, priceId } = subscriptionSchema.parse(req.body);
-      const userId = req.user!.id;
-
-      // Map generic price IDs to actual Stripe price IDs
-      const stripeProductMap = CHECKOUT_PRICES;
-
-      // Get the actual price ID from our map, or use the provided one if not found
-      const actualPriceId = stripeProductMap[priceId] || priceId;
-
-      console.log(`Creating subscription for user ${userId}, plan: ${planId}, mapped price: ${actualPriceId} (from ${priceId})`);
-
-      // Get the user from the database
-      const user = await storage.getUser(userId);
-      if (!user) {
-        console.error(`User not found for subscription creation: ${userId}`);
-        return res.status(404).json({ message: "User not found" });
-      }
-
-      // Create or get Stripe customer
-      let customerId = user.stripeCustomerId;
-
-      // If no customer ID or empty string, create a new customer
-      if (!customerId || customerId === '') {
-        // Create a new customer in Stripe
-        const customer = await stripe.customers.create({
-          email: user.email,
-          name: user.fullName || user.username,
-          metadata: {
-            userId: userId.toString()
-          }
-        });
-
-        customerId = customer.id;
-
-        // Update the user in the database with the Stripe customer ID
-        await storage.updateUserStripeInfo(userId, {
-          stripeCustomerId: customerId,
-          stripeSubscriptionId: null
-        });
-
-        console.log(`Created new Stripe customer: ${customerId} for user ${userId}`);
-      } else {
-        // Verify the customer exists in Stripe
-        try {
-          await stripe.customers.retrieve(customerId);
-          console.log(`Verified existing Stripe customer: ${customerId} for user ${userId}`);
-        } catch (customerError: any) {
-          // If the customer doesn't exist in Stripe anymore, create a new one
-          if (customerError.code === 'resource_missing') {
-            console.log(`Customer ${customerId} not found in Stripe, creating new one`);
-
-            const customer = await stripe.customers.create({
-              email: user.email,
-              name: user.fullName || user.username,
-              metadata: {
-                userId: userId.toString()
-              }
-            });
-
-            customerId = customer.id;
-
-            // Update the user in the database with the new Stripe customer ID
-            await storage.updateUserStripeInfo(userId, {
-              stripeCustomerId: customerId,
-              stripeSubscriptionId: null
-            });
-
-            console.log(`Created replacement Stripe customer: ${customerId} for user ${userId}`);
-          } else {
-            throw customerError;
-          }
-        }
-      }
-
-      console.log(`Creating checkout session for customer: ${customerId}, priceId: ${actualPriceId}`);
-
-      // Start the subscription checkout session
-      // Get the host from the request for dynamic URLs
-      const host = req.headers.host || '';
-      const protocol = req.headers['x-forwarded-proto'] || 'http';
-      const baseUrl = `${protocol}://${host}`;
-
-      console.log(`Using base URL for redirection: ${baseUrl}`);
-
-      const session = await stripe.checkout.sessions.create({
-        customer: customerId,
-        payment_method_types: ['card'],
-        line_items: [
-          {
-            price: actualPriceId,
-            quantity: 1,
-          },
-        ],
-        mode: 'subscription',
-        success_url: `${baseUrl}/subscription-success?session_id={CHECKOUT_SESSION_ID}&plan=${planId}`,
-        cancel_url: `${baseUrl}/buy-credits`,
-        metadata: {
-          userId: userId.toString(),
-          planId: planId
-        },
-        // Add subscription_data to ensure metadata is transferred to the subscription
-        subscription_data: {
-          metadata: {
-            userId: userId.toString(),
-            planId: planId
-          }
-        }
-      });
-
-      console.log(`Subscription checkout session created: ${session.id}`);
-      console.log(`Session URL: ${session.url}`);
-
-      res.json({
-        sessionId: session.id,
-        url: session.url
-      });
-    } catch (error: any) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ message: "Invalid subscription data", errors: error.errors });
-      }
-
-      // Stripe authentication errors can include fragments of the secret key.
-      // Keep provider messages out of both customer responses and logs.
-      console.error("Subscription creation failed", {
-        userId: req.user!.id,
-        type: error.type,
-        code: error.code,
-        statusCode: error.statusCode,
-      });
-
-      if (error.type === "StripeAuthenticationError" ||
-          error.type === "StripePermissionError" ||
-          error.statusCode === 401 || error.statusCode === 403) {
-        return res.status(503).json({
-          message: "Subscriptions are temporarily unavailable. Please contact support before trying again.",
-          code: "BILLING_UNAVAILABLE",
-        });
-      }
-
-      // Handle "no such customer" error specifically
-      if (error.code === 'resource_missing' && error.param === 'customer') {
-        // The customer ID in our database doesn't exist in Stripe anymore
-        // Let's reset the user's customer ID and try again
-        try {
-          // Get user ID from the request
-          const userId = req.user!.id;
-
-          // Get the user record
-          const userRecord = await storage.getUser(userId);
-
-          if (userRecord) {
-            console.log(`Customer ID ${userRecord.stripeCustomerId} doesn't exist in Stripe. Resetting and retrying...`);
-
-            // Reset the user's customer ID
-            await storage.updateUserStripeInfo(userId, {
-              stripeCustomerId: '',  // Use empty string instead of null to avoid type errors
-              stripeSubscriptionId: null
-            });
-
-            // Redirect the user to try again
-            return res.status(409).json({
-              message: "Your customer record needed to be reset. Please try subscribing again.",
-              retryNeeded: true
-            });
-          }
-        } catch {
-          console.error("Failed to reset customer ID during subscription creation");
-        }
-      }
-
-      res.status(500).json({
-        message: "We couldn't open the payment page. Please try again later or contact support.",
-        code: "CHECKOUT_FAILED",
-      });
-    }
-  });
+  app.post("/api/subscriptions/create", ensureAuthenticated, subscriptionCheckoutRoute);
   app.post("/api/subscriptions/cancel", ensureAuthenticated, async (req, res) => {
     if (isFreeTrialActive()) {
       return res.status(403).json({ message: "Subscriptions are disabled during the free trial period." });
