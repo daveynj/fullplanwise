@@ -40,6 +40,28 @@ export async function getStripeSecretKey() {
   return getSecretKey();
 }
 
+/** User-owned name works in production; integration injection remains a dev fallback. */
+export function getLegacyStripeSecretKey(): string | undefined {
+  return process.env.PLANWISE_STRIPE_LEGACY_SECRET || process.env.STRIPE_SECRET_KEY;
+}
+
+/** Independent, bounded read-only probes; never fall back to another merchant. */
+export function getBillingHealthAccounts() {
+  const options = {
+    apiVersion: '2025-08-27.basil' as any,
+    timeout: 8000,
+    maxNetworkRetries: 0,
+  };
+  // Unlike the development checkout fallback, the primary health check must
+  // report a missing primary credential, not call the legacy account healthy.
+  const primaryKey = process.env.PLANWISE_STRIPE_SECRET;
+  const legacyKey = getLegacyStripeSecretKey();
+  return [
+    { account: "primary" as const, client: primaryKey ? new Stripe(primaryKey, options) : null },
+    { account: "legacy" as const, client: legacyKey ? new Stripe(legacyKey, options) : null },
+  ];
+}
+
 let stripeSync: any = null;
 
 export async function getStripeSync() {

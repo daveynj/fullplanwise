@@ -12,3 +12,9 @@ description: PlanWise has subscribers in two live Stripe accounts; subscription 
 **Why:** a subscription missing from the main account may live in the legacy one. In production the integration key may not reach the legacy account, so a "not found" downgrade would cut off a paying customer.
 
 **How to apply:** any billing or access change must handle both accounts. Ask Dave before moving subscribers between the two accounts.
+
+**Credential validation rule:** Successful authentication alone does not prove that an existing merchant's billing is healthy. Verify identity against an independently trusted merchant identifier or an account-specific resource.
+
+**Why:** A valid main-account key can accidentally replace the legacy key. Authentication then succeeds, but existing legacy subscribers remain inaccessible.
+
+**How to apply:** Never learn or overwrite the expected merchant identity from the replacement key being tested, and never treat a main-account key as a repair for legacy access.

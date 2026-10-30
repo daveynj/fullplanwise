@@ -17,6 +17,7 @@ import { Search, Calendar, UserCheck, UserX, Clock, BookOpen, Users, Activity, T
 import { Link } from "wouter";
 import { format } from "date-fns";
 import { CATEGORY_LABELS } from "@shared/schema";
+import { BillingHealthCard } from "@/components/admin/billing-health-card";
 
 interface UserWithLessonStats {
   id: number;
@@ -251,6 +252,8 @@ export function AdminDashboardPage() {
               <h1 className="text-2xl md:text-3xl font-bold mb-2">Admin Dashboard</h1>
               <p className="text-gray-600">Comprehensive analytics and user management for your ESL platform.</p>
             </div>
+
+            {user?.isAdmin && <BillingHealthCard />}
 
             {/* Quick Action Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">

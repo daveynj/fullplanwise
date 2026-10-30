@@ -9,6 +9,7 @@ import { databaseConfig, pool } from './db';
 import { verifyManagedDatabaseCutover } from './database-cutover';
 import { ensureDatabaseIndexes } from './db-indexes';
 import { scheduleSubscriptionSync } from './subscription-sync';
+import { billingFailureStatus, startBillingHealthChecks } from './billing-health';
 
 const app = express();
 
@@ -49,7 +50,7 @@ async function initStripe() {
           console.log(`Webhook setup completed for: ${webhookUrl}`);
         }
       } catch (webhookError: any) {
-        console.warn(`Webhook setup warning: ${webhookError.message}. Webhook may need to be configured manually.`);
+        console.warn(`Webhook setup warning: ${billingFailureStatus(webhookError)}. Webhook may need to be configured manually.`);
       }
     } else {
       console.log('Skipping Stripe webhook setup outside production');
@@ -61,10 +62,10 @@ async function initStripe() {
         console.log('Stripe data synced');
       })
       .catch((err: any) => {
-        console.error('Error syncing Stripe data:', err);
+        console.error('Error syncing Stripe data:', billingFailureStatus(err));
       });
   } catch (error) {
-    console.error('Failed to initialize Stripe:', error);
+    console.error('Failed to initialize Stripe:', billingFailureStatus(error));
   }
 }
 
@@ -186,5 +187,6 @@ app.use((req, res, next) => {
     void initStripe();
     // Production only: regularly correct PlanWise subscription tiers from Stripe.
     scheduleSubscriptionSync();
+    if (process.env.NODE_ENV === "production") startBillingHealthChecks();
   });
 })();

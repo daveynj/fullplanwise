@@ -21,8 +21,9 @@ import Stripe from "stripe";
 import { and, eq, isNotNull, or } from "drizzle-orm";
 import { db, pool } from "./db";
 import { users } from "@shared/schema";
-import { getStripeSecretKey } from "./stripeClient";
+import { getLegacyStripeSecretKey, getStripeSecretKey } from "./stripeClient";
 import { storage } from "./storage";
+import { billingFailureStatus } from "./billing-health";
 
 /** Statuses where the customer still has a live, paying (or retrying) subscription. */
 const PAID_STATUSES = new Set(["active", "trialing", "past_due"]);
@@ -114,7 +115,7 @@ function isMissing(error: any): boolean {
 async function stripeAccounts(): Promise<Stripe[]> {
   const primaryKey = await getStripeSecretKey();
   const clients = [new Stripe(primaryKey, { apiVersion: STRIPE_API_VERSION })];
-  const legacyKey = process.env.STRIPE_SECRET_KEY;
+  const legacyKey = getLegacyStripeSecretKey();
   if (legacyKey && legacyKey !== primaryKey) {
     clients.push(new Stripe(legacyKey, { apiVersion: STRIPE_API_VERSION }));
   }
@@ -194,7 +195,7 @@ async function syncUsers(rows: Array<SyncUser & { stripeCustomerId: string | nul
         `[SubscriptionSync] User ${user.id}: Stripe ${lookup.subscription.status} -> ${JSON.stringify(changes)}`,
       );
     } catch (error: any) {
-      result.unknown.push({ userId: user.id, reason: error?.message || String(error) });
+      result.unknown.push({ userId: user.id, reason: billingFailureStatus(error) });
     }
   }
   return result;
@@ -253,7 +254,7 @@ export async function handleSubscriptionWebhookEvent(event: { type?: string; dat
     const customerId = typeof customer === "string" ? customer : customer?.id;
     if (customerId) await syncSubscriptionsForCustomer(customerId);
   } catch (error) {
-    console.error("[SubscriptionSync] Webhook sync failed:", error);
+    console.error("[SubscriptionSync] Webhook sync failed:", billingFailureStatus(error));
   }
 }
 
@@ -345,7 +346,7 @@ export async function runScheduledSubscriptionSync(deps: ScheduledSyncDeps = def
 /** Starts one server's timers: first run shortly after start-up, then every 6 hours. Returns a stop function. */
 export function startScheduledSubscriptionSync(deps: ScheduledSyncDeps = defaultDeps()): () => void {
   const run = () =>
-    runScheduledSubscriptionSync(deps).catch((error) => console.error("[SubscriptionSync] Sync failed:", error));
+    runScheduledSubscriptionSync(deps).catch((error) => console.error("[SubscriptionSync] Sync failed:", billingFailureStatus(error)));
   const first = setTimeout(run, SYNC_FIRST_RUN_DELAY_MS);
   const repeat = setInterval(run, SYNC_INTERVAL_MS);
   first.unref();

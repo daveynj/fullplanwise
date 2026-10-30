@@ -26,6 +26,9 @@ import { downloadStoredImage, LESSON_IMAGE_PREFIX, LESSON_IMAGE_ROUTE } from "./
 import { isFreeTrialActive, getFreeTrialEndDate } from "./features";
 import { SELECTABLE_MODELS, DEFAULT_MODEL_ID, isSelectableModel } from "@shared/aiModels";
 import { getUncachableStripeClient } from "./stripeClient";
+import { CHECKOUT_PRICES } from "./billing-config";
+import { billingHealthMonitor } from "./billing-health";
+import { registerBillingHealthRoute } from "./billing-health-route";
 import { validClientRoutes } from "@shared/client-routes";
 import { notifyIndexNow, submitToIndexNow, getIndexNowKey, lessonIndexNowPaths, blogIndexNowPaths } from "./indexnow";
 import {
@@ -199,6 +202,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Set up authentication routes
   setupAuth(app);
+  registerBillingHealthRoute(app, (id) => storage.getUser(id), () => billingHealthMonitor.check());
 
   // Authentication middleware
   const ensureAuthenticated = (req: any, res: any, next: any) => {
@@ -1722,9 +1726,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = req.user!.id;
 
       // Map generic price IDs to actual Stripe price IDs
-      const stripeProductMap: Record<string, string> = {
-        'price_unlimited_monthly': 'price_1Timp4Bnt8Mku7BYBMYUVYrF',
-      };
+      const stripeProductMap = CHECKOUT_PRICES;
 
       // Get the actual price ID from our map, or use the provided one if not found
       const actualPriceId = stripeProductMap[priceId] || priceId;

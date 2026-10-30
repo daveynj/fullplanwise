@@ -3,7 +3,10 @@ import { describe, it, expect, vi } from "vitest";
 
 vi.mock("./db", () => ({ db: {}, pool: {} }));
 vi.mock("./storage", () => ({ storage: { updateUser: vi.fn() } }));
-vi.mock("./stripeClient", () => ({ getStripeSecretKey: vi.fn(async () => "sk_test") }));
+vi.mock("./stripeClient", () => ({
+  getStripeSecretKey: vi.fn(async () => "sk_test"),
+  getLegacyStripeSecretKey: vi.fn(() => undefined),
+}));
 
 import {
   runScheduledSubscriptionSync,
