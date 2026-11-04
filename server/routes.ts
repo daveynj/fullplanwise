@@ -26,6 +26,7 @@ import { isFreeTrialActive, getFreeTrialEndDate } from "./features";
 import { SELECTABLE_MODELS, DEFAULT_MODEL_ID, isSelectableModel } from "@shared/aiModels";
 import { getUncachableStripeClient } from "./stripeClient";
 import { subscriptionCheckoutRoute } from "./subscription-checkout-route";
+import { subscriptionCancelRoute } from "./subscription-cancel-route";
 import { billingHealthMonitor } from "./billing-health";
 import { registerBillingHealthRoute } from "./billing-health-route";
 import { validClientRoutes } from "@shared/client-routes";
@@ -1708,71 +1709,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   app.post("/api/subscriptions/create", ensureAuthenticated, subscriptionCheckoutRoute);
-  app.post("/api/subscriptions/cancel", ensureAuthenticated, async (req, res) => {
-    if (isFreeTrialActive()) {
-      return res.status(403).json({ message: "Subscriptions are disabled during the free trial period." });
-    }
-    try {
-      const stripe = await getStripe();
-      if (!stripe) {
-        return res.status(500).json({ message: "Stripe API key not configured" });
-      }
-
-      const userId = req.user!.id;
-      const user = await storage.getUser(userId);
-
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
-      }
-
-      if (!user.stripeSubscriptionId) {
-        return res.status(400).json({ message: "No active subscription found" });
-      }
-
-      // First retrieve the subscription to get current period end
-      const subscription = await stripe.subscriptions.retrieve(user.stripeSubscriptionId);
-
-      // Newer Stripe API versions expose current_period_end on subscription
-      // items; older versions have it on the subscription itself. Support both.
-      const periodEnd: unknown =
-        subscription.items?.data?.[0]?.current_period_end ??
-        (subscription as any).current_period_end;
-
-      if (typeof periodEnd !== "number" || !Number.isFinite(periodEnd)) {
-        return res.status(500).json({
-          message: "Could not determine the billing period end for this subscription. The subscription was not cancelled; please try again or contact support."
-        });
-      }
-
-      // Cancel the subscription at the end of the current period
-      await stripe.subscriptions.update(user.stripeSubscriptionId, {
-        cancel_at_period_end: true
-      });
-
-      // Convert the Unix timestamp to a JavaScript Date
-      const endDate = new Date(periodEnd * 1000);
-      const formattedEndDate = endDate.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      });
-
-      // Persist the pending cancellation on the user record so the settings
-      // page can read it from the server (consistent across devices)
-      await storage.updateUser(userId, {
-        subscriptionCancelAtPeriodEnd: true,
-        subscriptionCurrentPeriodEnd: endDate,
-      });
-
-      res.json({
-        message: "Subscription scheduled for cancellation at the end of the current billing period",
-        endDate: formattedEndDate,
-        endTimestamp: periodEnd
-      });
-    } catch (error: any) {
-      res.status(500).json({ message: "Error cancelling subscription: " + error.message });
-    }
-  });
+  app.post("/api/subscriptions/cancel", ensureAuthenticated, subscriptionCancelRoute);
 
   // Admin analytics endpoint  
   app.get("/api/admin/analytics", ensureAuthenticated, async (req, res) => {

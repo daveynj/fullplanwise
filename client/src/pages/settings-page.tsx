@@ -67,6 +67,7 @@ type PasswordUpdateValues = z.infer<typeof passwordUpdateSchema>;
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState("profile");
+  const [isCancelling, setIsCancelling] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
   const [, setLocation] = useLocation();
@@ -414,28 +415,33 @@ export default function SettingsPage() {
                           <Button 
                             variant="outline" 
                             className="text-red-600 border-red-200 hover:bg-red-50"
+                            disabled={isCancelling}
                             onClick={async () => {
                               if (confirm("Are you sure you want to cancel your subscription? Your subscription will remain active until the end of your current billing period.")) {
+                                setIsCancelling(true);
                                 try {
                                   const response = await apiRequest("POST", "/api/subscriptions/cancel");
                                   const result = await response.json();
                                   toast({
-                                    title: "Subscription cancelled",
-                                    description: `Your subscription has been scheduled for cancellation and will end on ${result.endDate}.`,
+                                    title: "Cancellation scheduled",
+                                    description: `Your subscription will end on ${result.endDate}. You keep your current access until then.`,
                                   });
 
                                   queryClient.invalidateQueries({ queryKey: ["/api/user"] });
                                 } catch (error) {
                                   toast({
-                                    title: "Error",
-                                    description: "Failed to cancel subscription. Please try again.",
+                                    title: "Cancellation not confirmed",
+                                    description: "We couldn't confirm your cancellation. Your access has not changed, but your subscription may still renew. Please refresh your account or contact support to confirm.",
                                     variant: "destructive"
                                   });
+                                  queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+                                } finally {
+                                  setIsCancelling(false);
                                 }
                               }
                             }}
                           >
-                            Cancel Subscription
+                            {isCancelling ? "Cancelling…" : "Cancel Subscription"}
                           </Button>
                         )}
                       </div>

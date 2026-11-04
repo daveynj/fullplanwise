@@ -18,3 +18,9 @@ description: PlanWise has subscribers in two live Stripe accounts; subscription 
 **Why:** A valid main-account key can accidentally replace the legacy key. Authentication then succeeds, but existing legacy subscribers remain inaccessible.
 
 **How to apply:** Never learn or overwrite the expected merchant identity from the replacement key being tested, and never treat a main-account key as a repair for legacy access.
+
+**Cancellation rule:** Cancellation must stay in the owning merchant, be scheduled for the end of the billing period, and preserve current access. Do not move subscriptions or change the merchant used for new checkout to solve cancellation.
+
+**Why:** Looking up access is read-only; cancelling changes future charges. An incomplete or ambiguous merchant lookup is not sufficient evidence for that change, even when it would be acceptable to leave access untouched during sync.
+
+**How to apply:** Require a single confirmed owner and no unavailable merchant lookups before cancellation. If a write may have reached Stripe but its result is uncertain, ask the customer to confirm the renewal state rather than claiming nothing happened.
