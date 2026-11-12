@@ -1,4 +1,10 @@
 import mailchimp from '@mailchimp/mailchimp_marketing';
+import { createHash } from 'crypto';
+
+/** Mailchimp identifies a member by the MD5 hash of their lower-cased email. */
+export function subscriberHash(email: string): string {
+  return createHash('md5').update(email.trim().toLowerCase()).digest('hex');
+}
 
 /**
  * Service for interacting with Mailchimp email marketing API
@@ -98,6 +104,31 @@ export class MailchimpService {
     }
   }
   
+  /**
+   * Adds (active = true) or removes (active = false) one tag on an existing
+   * audience member. Never creates a member: people who aren't on the list,
+   * or who were deleted from it, come back as notOnList.
+   */
+  public async setMemberTag(
+    email: string,
+    tagName: string,
+    active: boolean,
+  ): Promise<{ success: boolean; notOnList?: boolean; error?: string }> {
+    if (!this.initialized) {
+      return { success: false, error: 'Service not initialized' };
+    }
+    try {
+      await this.client.lists.updateListMemberTags(this.listId, subscriberHash(email), {
+        tags: [{ name: tagName, status: active ? 'active' : 'inactive' }],
+      });
+      return { success: true };
+    } catch (error: any) {
+      const status = error?.status ?? error?.response?.status;
+      if (status === 404) return { success: false, notOnList: true };
+      return { success: false, error: error?.message || 'Unknown error occurred' };
+    }
+  }
+
   /**
    * Check if the service is properly initialized
    */

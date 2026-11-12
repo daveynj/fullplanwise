@@ -24,6 +24,7 @@ import { users } from "@shared/schema";
 import { getLegacyStripeSecretKey, getStripeSecretKey } from "./stripeClient";
 import { storage } from "./storage";
 import { billingFailureStatus } from "./billing-health";
+import { syncAllMailchimpPlanTags, syncMailchimpPlanTagsForUsers } from "./mailchimp-plan-tags";
 
 /** Statuses where the customer still has a live, paying (or retrying) subscription. */
 const PAID_STATUSES = new Set(["active", "trialing", "past_due"]);
@@ -223,6 +224,8 @@ export async function syncAllSubscriptions(): Promise<SyncResult> {
         ? `, could not confirm ${result.unknown.length}: ${result.unknown.map((u) => `user ${u.userId} (${u.reason})`).join(", ")}`
         : ""),
   );
+  // Mailchimp's "Unlimited" tag follows the tiers just confirmed (never throws).
+  await syncAllMailchimpPlanTags();
   return result;
 }
 
@@ -232,7 +235,11 @@ export async function syncSubscriptionsForCustomer(customerId: string): Promise<
     .select(syncColumns)
     .from(users)
     .where(and(isNotNull(users.stripeCustomerId), eq(users.stripeCustomerId, customerId)));
-  return syncUsers(rows);
+  const result = await syncUsers(rows);
+  // Tag even when the tier didn't change here: checkout may already have set
+  // it to "unlimited" before this webhook arrived (never throws).
+  await syncMailchimpPlanTagsForUsers(rows.map((row) => row.id));
+  return result;
 }
 
 const SUBSCRIPTION_EVENTS = new Set([

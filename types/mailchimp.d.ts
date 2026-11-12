@@ -28,6 +28,11 @@ declare module '@mailchimp/mailchimp_marketing' {
     updateListMember(listId: string, subscriberHash: string, data: MailchimpMemberData): Promise<MailchimpResponse>;
     getListMember(listId: string, subscriberHash: string): Promise<MailchimpResponse>;
     getAllLists(params?: any): Promise<{ lists: any[] }>;
+    updateListMemberTags(
+      listId: string,
+      subscriberHash: string,
+      body: { tags: Array<{ name: string; status: 'active' | 'inactive' }> },
+    ): Promise<unknown>;
   }
 
   interface Mailchimp {
