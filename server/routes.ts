@@ -48,6 +48,7 @@ import Stripe from "stripe";
 
 import { db } from "./db";
 import { sql } from "drizzle-orm";
+import { syncMailchimpPlanTagsForUsers } from "./mailchimp-plan-tags";
 // Dynamic import for PDF service - loaded only when needed
 // import { pdfGeneratorService } from "./services/pdf-generator.service";
 import fs from 'fs/promises';
@@ -1691,6 +1692,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       console.log(`Manual subscription activation: User ${userId} subscribed to unlimited plan.`);
+
+      // Tag them "Unlimited" in Mailchimp so the trial emails stop (never throws).
+      void syncMailchimpPlanTagsForUsers([userId]);
 
       // Return the updated user info
       const { password, ...userWithoutPassword } = updatedUser;

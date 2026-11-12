@@ -18,3 +18,4 @@
 - [Lesson share images](lesson-share-images.md) — authorize preview images through their shared lesson; legacy and copied image keys may not use that lesson's numeric ID.
 - [Idioms & phrasal verbs section](lesson-expressions.md) — optional, written by its own AI request after the lesson check; switch off = unchanged prompt; only new lessons have it.
 - [Student pages](student-page.md) — /s/<code> private pages: words join the list on "We did this"; earlier lessons were marked done once; students never see requests or teacher notes; ideas for all, student-made lessons for Unlimited/admin, 3 waiting max plus a "next" star.
+- [Mailchimp "Unlimited" tag](mailchimp-plan-tags.md) — the tag follows subscription_tier (webhooks, checkout confirm, 6-hourly sync); Mailchimp trial emails and Unlimited pitches rely on it to skip paying users.
