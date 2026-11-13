@@ -29,6 +29,7 @@ import { subscriptionCheckoutRoute } from "./subscription-checkout-route";
 import { subscriptionCancelRoute } from "./subscription-cancel-route";
 import { billingHealthMonitor } from "./billing-health";
 import { registerBillingHealthRoute } from "./billing-health-route";
+import { registerMailchimpPlanTagsRoute } from "./mailchimp-plan-tags-route";
 import { validClientRoutes } from "@shared/client-routes";
 import { notifyIndexNow, submitToIndexNow, getIndexNowKey, lessonIndexNowPaths, blogIndexNowPaths } from "./indexnow";
 import {
@@ -48,7 +49,7 @@ import Stripe from "stripe";
 
 import { db } from "./db";
 import { sql } from "drizzle-orm";
-import { syncMailchimpPlanTagsForUsers } from "./mailchimp-plan-tags";
+import { syncAllMailchimpPlanTags, syncMailchimpPlanTagsForUsers } from "./mailchimp-plan-tags";
 // Dynamic import for PDF service - loaded only when needed
 // import { pdfGeneratorService } from "./services/pdf-generator.service";
 import fs from 'fs/promises';
@@ -204,6 +205,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Set up authentication routes
   setupAuth(app);
   registerBillingHealthRoute(app, (id) => storage.getUser(id), () => billingHealthMonitor.check());
+  registerMailchimpPlanTagsRoute(app, (id) => storage.getUser(id), () => mailchimpService.isInitialized(), syncAllMailchimpPlanTags);
 
   // Authentication middleware
   const ensureAuthenticated = (req: any, res: any, next: any) => {

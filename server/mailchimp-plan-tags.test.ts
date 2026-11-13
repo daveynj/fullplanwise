@@ -39,14 +39,14 @@ describe("applyPlanTags", () => {
     const result = await applyPlanTags([row(1, "paid@example.com", "unlimited"), row(2, "ended@example.com", "free")], service);
     expect(service.setMemberTag).toHaveBeenCalledWith("paid@example.com", UNLIMITED_TAG, true);
     expect(service.setMemberTag).toHaveBeenCalledWith("ended@example.com", UNLIMITED_TAG, false);
-    expect(result).toEqual({ tagged: 1, untagged: 1, notOnList: 0, failed: 0 });
+    expect(result).toEqual({ unlimited: 1, tagged: 1, untagged: 1, notOnList: 0, failed: 0 });
   });
 
   it("skips accounts without an email and counts people who are not on the list", async () => {
     const service = fakeService({ "gone@example.com": { success: false, notOnList: true } });
     const result = await applyPlanTags([row(1, null, "unlimited"), row(2, "gone@example.com", "unlimited")], service);
     expect(service.setMemberTag).toHaveBeenCalledTimes(1);
-    expect(result).toEqual({ tagged: 0, untagged: 0, notOnList: 1, failed: 0 });
+    expect(result).toEqual({ unlimited: 1, tagged: 0, untagged: 0, notOnList: 1, failed: 0 });
   });
 
   it("never throws: failures are counted and the remaining accounts still get updated", async () => {
@@ -59,7 +59,7 @@ describe("applyPlanTags", () => {
       [row(1, "error@example.com", "unlimited"), row(2, "throws@example.com", "unlimited"), row(3, "ok@example.com", "unlimited")],
       service,
     );
-    expect(result).toEqual({ tagged: 1, untagged: 0, notOnList: 0, failed: 2 });
+    expect(result).toEqual({ unlimited: 3, tagged: 1, untagged: 0, notOnList: 0, failed: 2 });
     expect(service.setMemberTag).toHaveBeenCalledWith("ok@example.com", UNLIMITED_TAG, true);
     errorLog.mockRestore();
   });
@@ -69,7 +69,7 @@ describe("applyPlanTags", () => {
     service.isInitialized.mockReturnValue(false);
     const result = await applyPlanTags([row(1, "paid@example.com", "unlimited")], service);
     expect(service.setMemberTag).not.toHaveBeenCalled();
-    expect(result).toEqual({ tagged: 0, untagged: 0, notOnList: 0, failed: 0 });
+    expect(result).toEqual({ unlimited: 0, tagged: 0, untagged: 0, notOnList: 0, failed: 0 });
   });
 });
 

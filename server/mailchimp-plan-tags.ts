@@ -11,8 +11,10 @@
  *
  * Runs for one customer after each Stripe subscription webhook, for one user
  * after checkout confirmation, and for every paying or previously-paying
- * account with the scheduled subscription sync (at production start-up and
- * every few hours), so the first sync after deploy tags existing customers.
+ * account with the scheduled subscription sync. That sync runs at most once
+ * every few hours across all servers and can be skipped at start-up (and its
+ * timers don't fire while autoscale has the app scaled down), so after a
+ * deploy an admin can run it at once with POST /api/admin/mailchimp/sync-plan-tags.
  *
  * Best effort: Mailchimp problems are logged and never affect billing or
  * access. Members are never created here; people not on the list are skipped.
@@ -31,6 +33,8 @@ export interface PlanTagTarget {
 }
 
 export interface PlanTagResult {
+  /** Accounts (with an email) that should carry the tag. */
+  unlimited: number;
   tagged: number;
   untagged: number;
   notOnList: number;
@@ -46,7 +50,7 @@ export function shouldHaveUnlimitedTag(tier: string | null | undefined): boolean
 
 /** Sets or removes the tag for each account. Never throws. */
 export async function applyPlanTags(rows: PlanTagTarget[], service: TagService = mailchimpService): Promise<PlanTagResult> {
-  const result: PlanTagResult = { tagged: 0, untagged: 0, notOnList: 0, failed: 0 };
+  const result: PlanTagResult = { unlimited: 0, tagged: 0, untagged: 0, notOnList: 0, failed: 0 };
   try {
     if (!rows.length || !service.isInitialized()) return result;
   } catch {
@@ -56,6 +60,7 @@ export async function applyPlanTags(rows: PlanTagTarget[], service: TagService =
   for (const row of rows) {
     if (!row.email) continue;
     const active = shouldHaveUnlimitedTag(row.subscriptionTier);
+    if (active) result.unlimited++;
     try {
       const outcome = await service.setMemberTag(row.email, UNLIMITED_TAG, active);
       if (outcome.notOnList) result.notOnList++;
@@ -99,7 +104,7 @@ export async function syncAllMailchimpPlanTags(): Promise<PlanTagResult | null> 
       .where(or(eq(users.subscriptionTier, "unlimited"), isNotNull(users.stripeSubscriptionId), isNotNull(users.stripeCustomerId)));
     const result = await applyPlanTags(rows);
     console.log(
-      `[MailchimpPlanTags] ${UNLIMITED_TAG} tag: ${result.tagged} on, ${result.untagged} off, ` +
+      `[MailchimpPlanTags] ${UNLIMITED_TAG} tag: ${result.unlimited} Unlimited accounts, ${result.tagged} on, ${result.untagged} off, ` +
         `${result.notOnList} not on the list, ${result.failed} failed`,
     );
     return result;
