@@ -1,3 +1,4 @@
+import { trackEvent } from "@/lib/analytics";
 import { useState, useEffect, useRef } from "react";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
@@ -52,6 +53,7 @@ export default function LessonGeneratorPage() {
     setGeneratingLesson(false);
 
     if (lesson && lesson.id) {
+      trackEvent("lesson_generated", { cefr_level: lesson.cefrLevel, for_student: !!lesson.studentId });
       toast({
         title: "Lesson generated successfully!",
         description: "Opening your new lesson...",

@@ -1,3 +1,4 @@
+import { trackEvent } from "@/lib/analytics";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { Link } from "wouter";
@@ -50,6 +51,7 @@ export function StudentPageLinkCard({ student }: { student: Student }) {
     mutationFn: async () => (await apiRequest("POST", `/api/students/${student.id}/page`)).json() as Promise<Student>,
     onSuccess: (updated) => {
       saved(updated);
+      if (!pageUrl) trackEvent("student_page_created");
       toast({
         title: pageUrl ? "New link ready" : `${possessive(name)} page is ready`,
         description: pageUrl ? "The old link no longer works." : `Copy the link and send it to ${name}.`,
