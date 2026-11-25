@@ -52,7 +52,17 @@ Lessons open full screen for screen sharing and can be downloaded for printing o
 
 ## Free ESL lessons
 
-PlanWise ESL publishes free, ready-to-teach ESL lessons, each labelled with its CEFR level and showing the full vocabulary, reading text, comprehension and discussion questions.
+PlanWise ESL publishes free, ready-to-teach ESL conversation lessons. Each is a complete lesson, not a worksheet or a single activity, and each page shows the whole lesson: its key vocabulary with definitions and examples, the reading, the comprehension, discussion and quiz questions, and the speaking frames.
+
+What each current PlanWise lesson includes:
+
+- A full teaching sequence in one lesson: warm-up, pre-taught vocabulary, a reading at the CEFR level, comprehension, sentence frames, discussion, and review (gap-fill and quiz).
+- New words taught before the reading (5 per lesson), designed so each is met five or six times across the lesson, with new words kept to about 1 in 25 in the reading.
+- Speaking support at three levels (emerging, developing, expanding) with model answers, so the same lesson works for a hesitant and a confident student.
+- Most of the lesson spent on the student talking, through discussion questions that move from the text to the student's own life.
+- Lessons made since October 2026 are checked section by section before they are saved.
+
+Each lesson page states its own design under "How this lesson is built", and its structured data (schema.org LearningResource) lists the CEFR level, the words and speaking functions it teaches, and each part of the lesson. The research behind the sequence is explained, with references, at https://planwiseesl.com/how-it-works
 
 - All free lessons: https://planwiseesl.com/esl-lessons
 - By level: https://planwiseesl.com/esl-lessons/a1 , https://planwiseesl.com/esl-lessons/a2 , https://planwiseesl.com/esl-lessons/b1 , https://planwiseesl.com/esl-lessons/b2 , https://planwiseesl.com/esl-lessons/c1

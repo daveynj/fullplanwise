@@ -1,4 +1,5 @@
 import { Link, useRoute } from "wouter";
+import { libraryDesign, lessonDesign } from "@shared/lesson-pedagogy";
 import { useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -47,8 +48,8 @@ export default function PublicLessonsIndexPage() {
 
   const heading = level ? `${level} (${levelName}) ESL Lessons` : "Free ESL Lessons by CEFR Level";
   const intro = level
-    ? `Ready-to-teach ${level} ${levelName.toLowerCase()} ESL lessons. Each one includes vocabulary, a reading text, comprehension and discussion activities.`
-    : "Browse ready-to-teach ESL lessons for every CEFR level from A1 to C2. Each lesson includes vocabulary, a reading text, comprehension and discussion activities.";
+    ? `Ready-to-teach ${level} ${levelName.toLowerCase()} ESL conversation lessons. ${libraryDesign}`
+    : `Browse ready-to-teach ESL conversation lessons for every CEFR level from A1 to C2. ${libraryDesign}`;
 
   const renderCard = (lesson: LessonSummary) => {
     const label = lesson.publicCategory
@@ -75,7 +76,9 @@ export default function PublicLessonsIndexPage() {
             ? `${level} (${levelName}) ESL Lessons - Free Lesson Plans | PlanWise ESL`
             : "Free ESL Lessons by CEFR Level (A1-C2) | PlanWise ESL"
         }
-        description={intro}
+        description={level
+          ? `Free ${level} (${levelName}) ESL conversation lessons with pre-taught vocabulary, a levelled reading, speaking support and discussion. Ready to teach.`
+          : 'Free ESL conversation lessons for every CEFR level (A1–C2) with pre-taught vocabulary, a levelled reading, speaking support and discussion.'}
         canonicalUrl={level ? `/esl-lessons/${level.toLowerCase()}` : "/esl-lessons"}
         // Only when the data really came back empty. A failed or pending request
         // (e.g. a crawler that can't fetch the API) must not noindex the page.
@@ -88,7 +91,12 @@ export default function PublicLessonsIndexPage() {
           <h1 className="text-3xl md:text-4xl font-bold mb-4" data-testid="text-lessons-title">
             {heading}
           </h1>
-          <p className="text-lg text-muted-foreground mb-6">{intro}</p>
+          <p className="text-lg text-muted-foreground mb-6">
+            {intro}{" "}
+            <Link href={lessonDesign.href} className="font-medium text-brand-navy underline decoration-brand-yellow decoration-2 underline-offset-2">
+              {lessonDesign.linkLabel}
+            </Link>
+          </p>
 
           <nav aria-label="CEFR levels" className="flex flex-wrap gap-2 mb-10">
             <Link href="/esl-lessons">

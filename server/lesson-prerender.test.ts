@@ -268,6 +268,25 @@ describe("injectLessonPrerender: lesson pages", () => {
     expect(html).not.toContain('content="Site title"');
   });
 
+  it("explains how the lesson is built, to readers and in its structured data", async () => {
+    getLesson.mockResolvedValue({ ...baseLesson, topic: "PRIVATE student information" });
+    const html = (await injectLessonPrerender(TEMPLATE, "/lessons/42"))!;
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    const design = doc.querySelector("section.lp-design");
+    expect(design?.querySelector("h2")?.textContent).toBe("How this lesson is built");
+    expect(design?.querySelectorAll("li").length).toBeGreaterThanOrEqual(3);
+    expect(design?.querySelector('a[href="/how-it-works"]')).not.toBeNull();
+    expect(doc.querySelectorAll("h1")).toHaveLength(1);
+
+    const resource = [...doc.querySelectorAll('script[type="application/ld+json"]')]
+      .map((el) => JSON.parse(el.textContent!))
+      .find((b) => b["@type"] === "LearningResource");
+    expect(resource.educationalAlignment).toMatchObject({ educationalFramework: expect.stringContaining("CEFR"), targetName: baseLesson.cefrLevel });
+    expect(resource.teaches).toContain("Vocabulary: itinerary");
+    expect(resource.hasPart.length).toBeGreaterThanOrEqual(3);
+    expect(html).not.toContain("PRIVATE");
+  });
+
   it("does not leak quiz answers or explanations", async () => {
     getLesson.mockResolvedValue(baseLesson);
     const html = (await injectLessonPrerender(TEMPLATE, "/lessons/42"))!;

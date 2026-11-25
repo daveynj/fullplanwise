@@ -4,6 +4,7 @@ import { tryDecodeLessonContent } from '@shared/lesson-content';
 import { CEFR_LEVEL_NAMES, lessonContentsParts, joinList, levelText, lessonPublicMetadata } from '@shared/lesson-public-metadata';
 import { expressionItemsOf, withoutMarks } from '@shared/lesson-expressions';
 import { publicNav } from '@shared/marketing-pages';
+import { lessonStages, lessonTeaches, lessonDesign, lessonDifference, libraryDesign } from '@shared/lesson-pedagogy';
 export { CEFR_LEVEL_NAMES } from '@shared/lesson-public-metadata';
 
 /**
@@ -330,6 +331,20 @@ function aboutLesson(lesson: LessonForPrerender, sections: any[]): string {
   return sentences.join(' ');
 }
 
+/** "How this lesson is built": the purpose of each stage this lesson has (shared with the React page). */
+function lessonDesignHtml(content: unknown): string {
+  const stages = lessonStages(content);
+  if (stages.length < 3) return '';
+  const difference = lessonDifference(stages, content);
+  return `<section class="lp-design">
+      <h2>${e(lessonDesign.heading)}</h2>
+      <p>${e(lessonDesign.intro)}</p>
+      <ol>${stages.map((s) => `<li><strong>${e(s.name)}:</strong> ${e(s.purpose)}</li>`).join('')}</ol>
+      ${difference ? `<p>${e(difference)} ${e(lessonDesign.tracking)}</p>` : ''}
+      <p><a href="${e(lessonDesign.href)}">${e(lessonDesign.linkLabel)}</a></p>
+    </section>`;
+}
+
 function relatedLessonsHtml(level: string, related: LessonSummary[]): string {
   if (!related.length) return '';
   return `<section class="lp-related">
@@ -368,6 +383,7 @@ export function buildLessonPageHtml(lesson: LessonForPrerender, sections: any[],
         <p class="lp-meta"><span class="lp-tag">CEFR ${e(level)}${levelName ? ` &middot; ${e(levelName)}` : ''}</span>${label ? `<span class="lp-tag">${e(label)}</span>` : ''}</p>
         <p class="lp-about"><strong>About this lesson:</strong> ${e(aboutLesson(lesson, sections))}</p>
       </header>
+      ${lessonDesignHtml(lesson.content)}
       ${sectionsHtml(sections)}
     </article>
     ${relatedLessonsHtml(level, related)}
@@ -401,6 +417,9 @@ async function prerenderLesson(template: string, id: number, preloaded?: unknown
   const published = toIsoDate(lesson.createdAt);
 
   const structuredData: unknown[] = [];
+  const stages = lessonStages(lesson.content);
+  const teaches = lessonTeaches(lesson.content);
+  const minutes = estimatedMinutesOf(lesson.content);
   if (indexable) {
     structuredData.push({
       '@context': 'https://schema.org',
@@ -410,8 +429,20 @@ async function prerenderLesson(template: string, id: number, preloaded?: unknown
       url: `${BASE_URL}${canonicalPath}`,
       inLanguage: 'en',
       learningResourceType: 'Lesson plan',
+      educationalUse: 'Conversation lesson',
       educationalLevel: `CEFR ${lesson.cefrLevel}${levelName ? ` (${levelName})` : ''}`,
-      teaches: lesson.title,
+      educationalAlignment: {
+        '@type': 'AlignmentObject',
+        alignmentType: 'educationalLevel',
+        educationalFramework: 'Common European Framework of Reference for Languages (CEFR)',
+        targetName: lesson.cefrLevel,
+      },
+      teaches: teaches.length ? teaches : lesson.title,
+      ...(minutes ? { timeRequired: `PT${minutes}M` } : {}),
+      ...(stages.length
+        ? { hasPart: stages.map((s, i) => ({ '@type': 'CreativeWork', position: i + 1, name: s.name, description: s.purpose })) }
+        : {}),
+      isBasedOn: `${BASE_URL}${lessonDesign.href}`,
       ...(label ? { about: label } : {}),
       audience: { '@type': 'EducationalAudience', educationalRole: 'teacher' },
       isAccessibleForFree: true,
@@ -479,8 +510,8 @@ export function buildLessonIndexHtml(lessons: LessonSummary[], level?: string): 
   const levelName = level ? CEFR_LEVEL_NAMES[level] : '';
   const heading = level ? `${level} (${levelName}) ESL Lessons` : 'Free ESL Lessons by CEFR Level';
   const intro = level
-    ? `Ready-to-teach ${level} ${levelName.toLowerCase()} ESL lessons. Each one includes vocabulary, a reading text, comprehension and discussion activities.`
-    : 'Browse ready-to-teach ESL lessons for every CEFR level from A1 to C2. Each lesson includes vocabulary, a reading text, comprehension and discussion activities.';
+    ? `Ready-to-teach ${level} ${levelName.toLowerCase()} ESL conversation lessons. ${libraryDesign}`
+    : `Browse ready-to-teach ESL conversation lessons for every CEFR level from A1 to C2. ${libraryDesign}`;
 
   let listing: string;
   if (level) {
@@ -498,7 +529,7 @@ export function buildLessonIndexHtml(lessons: LessonSummary[], level?: string): 
   <main class="lp-main">
     <nav aria-label="Breadcrumb"><a href="/">Home</a> &rsaquo; ${level ? `<a href="/esl-lessons">ESL Lessons</a> &rsaquo; ${e(level)}` : 'ESL Lessons'}</nav>
     <h1>${e(heading)}</h1>
-    <p>${e(intro)}</p>
+    <p>${e(intro)} <a href="${e(lessonDesign.href)}">${e(lessonDesign.linkLabel)}</a>.</p>
     ${levelLinksHtml(level)}
     ${listing}
     <aside class="lp-cta">
