@@ -11,6 +11,7 @@ import { queryClient } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/use-auth";
 import { SEOHead } from "@/components/SEOHead";
 import { lessonPublicMetadata } from "@shared/lesson-public-metadata";
+import { LessonDesignPanel } from "@/components/lesson/lesson-design-panel";
 
 class LessonNotFoundError extends Error {
   constructor() {
@@ -387,6 +388,10 @@ export default function FullScreenLessonPage() {
           </TabsList>
           
           <TabsContent value="lesson" className="flex-1 overflow-y-auto p-6 m-0">
+            {/* Library lessons explain their design to visitors (not to the teacher who owns them). */}
+            {parsedContent && lesson.isPublic && lesson.teacherId !== user?.id && (
+              <LessonDesignPanel content={parsedContent} signedIn={!!user} />
+            )}
             {parsedContent && <LessonContent content={parsedContent} />}
           </TabsContent>
           
