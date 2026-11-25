@@ -16,7 +16,7 @@ export function blogPublicMetadata(post: Pick<BlogPost,
     // An invalid stored image must not produce an unsafe social preview URL.
   }
   return {
-    title: post.metaTitle || `${post.title} | Plan Wise ESL Blog`,
+    title: post.metaTitle || `${post.title} | PlanWise ESL Blog`,
     description: description.length > 160 ? description.substring(0, 157) + "..." : description,
     canonicalPath: `/blog/${encodeURIComponent(post.slug)}`,
     imageUrl,

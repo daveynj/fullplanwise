@@ -48,7 +48,7 @@ export default function BlogIndex() {
   return (
     <>
       <SEOHead
-        title="Blog - ESL Teaching Tips & Resources | Plan Wise ESL"
+        title="Blog - ESL Teaching Tips & Resources | PlanWise ESL"
         description="Discover expert ESL teaching strategies, lesson planning tips, and professional development resources for English language educators."
         canonicalUrl="/blog"
       />

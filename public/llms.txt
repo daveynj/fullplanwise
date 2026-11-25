@@ -1,76 +1,70 @@
 # PlanWise ESL
 
-> PlanWise ESL is an AI-powered lesson planning platform for ESL (English as a Second Language) teachers. It transforms hours of lesson preparation into minutes by generating complete, customized, CEFR-aligned lessons using artificial intelligence.
+> PlanWise ESL (planwiseesl.com) is an AI lesson planner for ESL and EFL teachers and online English tutors. A teacher chooses a CEFR level (A1–C2) and any topic, and in about 2 minutes PlanWise ESL writes a complete, ready-to-teach lesson. It remembers the vocabulary each student has learned, so lessons build on each other, and it gives every student a private page for practice between classes. It was created by Dave Jackson, a working ESL teacher.
 
-## About
+Also written as: PlanwiseESL, Plan Wise ESL.
 
-PlanWise ESL was created by Dave Jackson, an experienced ESL teacher who understands the pain of spending 2-3 hours preparing a single lesson. The platform uses AI (leading models via OpenRouter) to generate comprehensive, pedagogically sound lessons in approximately 2-3 minutes.
+## Who it is for
 
-The platform is live at https://planwiseesl.com
+- Online ESL tutors on Preply, italki, Cambly and similar platforms
+- Independent and private English teachers with regular one-to-one students
+- Small language schools and agencies
+- Teachers of teenagers and adults, in one-to-one or small-group classes, online or in person
 
-## Ideal Customer Profile
+## What a lesson contains
 
-PlanWise ESL is built for:
+Every lesson follows the same structure, written at the CEFR level the teacher chooses:
 
-- ESL/EFL teachers who spend too much time on lesson planning
-- Language school administrators managing multiple teachers
-- Private English tutors looking to scale their lesson quality
-- Teachers preparing students for exams like IELTS
-- Business English instructors needing specialized content
-- Teachers at any experience level, from new to veteran
+- Warm-up questions to introduce the topic
+- Key vocabulary, pre-taught with definitions, examples, pronunciation and pictures
+- A levelled reading text that uses the new words
+- Reading comprehension questions
+- Sentence frames at three levels of support (emerging, developing, expanding) with model answers
+- Discussion questions
+- A fill-in-the-blank exercise and a quiz
+- Optional idioms and phrasal verbs from the reading (A2 and up)
+- Teacher notes
 
-## Core Problem Solved
+Lessons open full screen for screen sharing and can be downloaded for printing or saving as a PDF. Teachers can choose any topic, one of 12 subject areas (general, business, academic, medical, legal, technology, tourism, finance, healthcare, science, arts and sports English), and their own target vocabulary.
 
-ESL teachers typically spend 2-3 hours preparing a single lesson. This leads to burnout, inconsistent lesson quality, and less time for actual teaching. PlanWise ESL reduces lesson prep time to approximately 3 minutes while maintaining or improving lesson quality.
+## What makes it different
 
-## Key Features
+- **It remembers each student.** When a lesson is made for a student, PlanWise ESL avoids words the student has already learned or has planned, and reuses known words naturally in new readings. When the teacher marks a lesson as done ("We did this"), its words join the student's word list.
+- **Student pages.** Each student can have a private page (no login needed) with finished lessons, a preview of the next lesson's reading and new words, their word list and flashcards. Students can suggest topics, and students of Unlimited teachers can make lessons themselves.
+- **Every lesson is checked before it is saved.** Each section is checked automatically; a broken exercise is fixed or written again before the teacher sees the lesson.
+- **Consistent structure.** Unlike a general-purpose chatbot, which returns free text and forgets the student, PlanWise ESL produces the same complete lesson structure every time.
 
-- **AI Lesson Generation**: Generate complete, ready-to-teach ESL lessons in minutes, not hours. Lessons include warm-ups, vocabulary sections, reading passages, comprehension questions, discussion prompts, and more.
-- **CEFR Level Support**: Full support for all CEFR levels from A1 (Beginner) to C2 (Proficiency), ensuring lessons match student ability.
-- **Idioms & Phrasal Verbs**: An optional lesson section, switched on from the lesson form (on by default from B1, off at A2, not offered at A1). It teaches 3–4 phrasal verbs, idioms and everyday expressions from the lesson's reading, each with its meaning, an example, tips and a speaking question.
-- **Semantic Maps**: Visual vocabulary maps showing word relationships to deepen student understanding.
-- **Student Vocabulary Tracking**: Tracks which words each student has learned to prevent duplicate vocabulary teaching and ensure progressive language building.
-- **Lesson Categories**: Specialized content for General English, Business English, Academic English, Medical English, Legal English, Technology English, Tourism & Hospitality, Finance, Healthcare, Science, Arts & Culture, and Sports English.
-- **AI-Generated Images**: Contextual, pedagogically aligned images generated for vocabulary and discussion sections.
-- **PDF Export**: Download lessons as formatted PDFs for offline use or printing.
-- **Vocabulary Downloads**: Export student vocabulary lists as HTML files.
-- **Lesson Library**: Save and organize all generated lessons for reuse.
-- **Student Management**: Track students, assign lessons, and monitor vocabulary progress.
-- **Public Lesson Library**: Share lessons publicly for other teachers to discover and use.
-- **Lesson Sharing**: Share individual lessons via public URLs.
-- **Blog**: SEO-optimized blog with ESL teaching tips, strategies, and resources.
+## Not designed for
 
-## Free ESL Lessons
+- Subject teachers outside English language teaching
+- Very young learners (lessons are written for teenagers and adults)
+- Grading student writing or running a whole school's timetable
 
-PlanWise ESL publishes a library of free, ready-to-teach ESL lessons. Each lesson page shows the full vocabulary list, reading text, comprehension and discussion questions, and is labelled with its CEFR level and topic.
+## Pricing
 
-- All lessons: https://planwiseesl.com/esl-lessons
-- By CEFR level: https://planwiseesl.com/esl-lessons/a1 , /a2 , /b1 , /b2 , /c1 , /c2 (all under https://planwiseesl.com/esl-lessons/)
-- Blog with teaching tips: https://planwiseesl.com/blog
-- Sitemap listing every public page: https://planwiseesl.com/sitemap.xml
+- **Free trial:** every new account gets a 5-day free trial with unlimited lesson generation. No credit card is needed. Lessons made during the trial stay in the account afterwards.
+- **Unlimited plan:** $19.99/month for unlimited lessons, cancel anytime.
 
-## Subscription & Pricing
+## Free ESL lessons
 
-- **Free Trial**: 2 free lesson generations to try the platform
-- **Unlimited Plan**: Subscription-based access for unlimited lesson generation, powered by Stripe
+PlanWise ESL publishes free, ready-to-teach ESL lessons, each labelled with its CEFR level and showing the full vocabulary, reading text, comprehension and discussion questions.
 
-## Technology
+- All free lessons: https://planwiseesl.com/esl-lessons
+- By level: https://planwiseesl.com/esl-lessons/a1 , https://planwiseesl.com/esl-lessons/a2 , https://planwiseesl.com/esl-lessons/b1 , https://planwiseesl.com/esl-lessons/b2 , https://planwiseesl.com/esl-lessons/c1
+- Example B2 lesson: https://planwiseesl.com/lessons/1768
 
-- Frontend: React with TypeScript, Tailwind CSS, shadcn/ui
-- Backend: Express.js with TypeScript on Node.js
-- Database: PostgreSQL (Neon serverless)
-- AI: Leading models via OpenRouter for lesson content; Replicate (FLUX Schnell) for image generation
-- Payments: Stripe for subscriptions
+## About the founder
 
-## Contact
+Dave Jackson is an ESL teacher who teaches English online. He built PlanWise ESL to plan the kind of lessons he teaches himself: one-to-one, conversation-led, at the student's level, and building from one lesson to the next.
 
-- Created by: Dave Jackson
 - LinkedIn: https://www.linkedin.com/in/davidjackson113
 - X (Twitter): https://x.com/DaveTeacher1
+- Contact: dave@planwiseesl.com
 
 ## Pages
 
 - [Home](https://planwiseesl.com/)
+- [Free ESL lessons](https://planwiseesl.com/esl-lessons)
 - [Blog](https://planwiseesl.com/blog)
-- [Public Lesson Library](https://planwiseesl.com/library)
-- [Sign Up / Log In](https://planwiseesl.com/auth)
+- [Start a free trial](https://planwiseesl.com/auth?register=true)
+- [Sitemap](https://planwiseesl.com/sitemap.xml)

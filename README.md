@@ -1,186 +1,84 @@
-# PlanwiseESL
+# PlanWise ESL
 
-An advanced AI-powered ESL teaching platform that delivers personalized, intelligent language learning experiences through adaptive multi-provider AI technology.
+**PlanWise ESL** ([planwiseesl.com](https://planwiseesl.com)) is an AI lesson planner for ESL and EFL teachers and online English tutors. A teacher chooses a CEFR level (A1–C2) and any topic, and in about 2 minutes PlanWise ESL writes a complete, ready-to-teach lesson. It remembers the vocabulary each student has learned, so lessons build on each other, and it gives every student a private page for practice between classes.
 
-## Overview
+PlanWise ESL was created by [Dave Jackson](https://www.linkedin.com/in/davidjackson113), a working ESL teacher. New accounts get a 5-day free trial with unlimited lessons (no credit card); the Unlimited plan is $19.99/month.
 
-PlanwiseESL is a comprehensive English as a Second Language (ESL) teaching platform designed to help teachers create engaging, CEFR-aligned lessons (A1-C2) with AI assistance. The platform combines modern web technologies with multiple AI providers to generate high-quality educational content.
+- **Try it:** [planwiseesl.com](https://planwiseesl.com)
+- **Free sample lessons at every level:** [planwiseesl.com/esl-lessons](https://planwiseesl.com/esl-lessons)
 
-## Features
+## Who it is for
 
-### 🎓 Intelligent Lesson Generation
-- **CEFR-Aligned Content**: Automatically generates lessons appropriate for A1-C2 levels
-- **Multi-Provider AI**: Supports OpenAI, Google Gemini, and other AI services
-- **Enhanced Vocabulary System**: Progressive definitions with multiple learning layers
-- **Idioms & Phrasal Verbs**: An optional section with phrasal verbs, idioms and everyday expressions from the reading, each with a speaking question
+- Online ESL tutors on Preply, italki, Cambly and similar platforms
+- Independent English teachers with regular one-to-one students
+- Small language schools and agencies
 
-### 📚 Comprehensive Content Types
-- **Warm-up Activities**: Engaging topic introductions with discussion questions
-- **Reading Texts**: Context-rich passages with integrated vocabulary
-- **Vocabulary Cards**: Multi-layered definitions with pronunciation guides
-- **Comprehension Questions**: Reading comprehension with varied question types
-- **Discussion Activities**: Structured conversation prompts
-- **Sentence Frames**: Language patterns for authentic communication
+## What a lesson contains
 
-### 👥 User Management
-- **Role-Based Access**: Teacher and admin roles with appropriate permissions
-- **Credit System**: Usage tracking for lesson generation
-- **Lesson Library**: Personal and public lesson collections
-- **Sharing System**: Easy lesson sharing with students via clean URLs
-- **Student Pages**: A private page for each student with their finished lessons, the next lesson to prepare, their words and flashcards; students can suggest topics, and with Unlimited make their own lessons
+Every lesson follows the same structure, written at the chosen CEFR level:
 
-### 🎨 Modern Interface
-- **Responsive Design**: Mobile-friendly interface with Tailwind CSS
-- **Interactive Components**: Drag-and-drop activities and visual elements
-- **Export Options**: PDF and HTML lesson downloads
-- **Real-time Updates**: Live lesson generation with progress indicators
+1. **Warm-up** questions to introduce the topic
+2. **Key vocabulary**, pre-taught with definitions, examples, pronunciation and pictures
+3. A **levelled reading** that uses the new words
+4. **Comprehension** questions
+5. **Sentence frames** at three levels of support (emerging, developing, expanding), with model answers
+6. **Discussion** questions
+7. A **fill-in-the-blank** exercise and a **quiz**
+8. Optional **idioms and phrasal verbs** from the reading (A2 and up)
+9. **Teacher notes**
 
-## Technology Stack
+Lessons open full screen for screen sharing and can be downloaded for printing or saving as a PDF.
 
-### Frontend
-- **React** with TypeScript for robust component development
-- **Tailwind CSS** with shadcn/ui for modern, accessible design
-- **Vite** for fast development and optimized builds
-- **Framer Motion** for smooth animations and interactions
+## What makes it different
 
-### Backend
-- **Express.js** with TypeScript for API development
-- **Drizzle ORM** for type-safe database operations
-- **Passport.js** for authentication and session management
-- **PostgreSQL** via Neon serverless for data persistence
-
-### AI Integration
-- **Google Gemini 2.0 Flash** for primary lesson generation
-- **OpenAI GPT** for alternative content creation
-- **Stability AI** for educational image generation
-
-### Deployment
-- **Replit Deployments** for hosting and scaling
-- **Neon Database** for serverless PostgreSQL
-- **Environment-based configuration** for development and production
-
-## Getting Started
-
-### Prerequisites
-- Node.js 20 or higher
-- PostgreSQL database
-- API keys for AI services (Gemini, OpenAI, etc.)
-
-### Installation
-
-1. Clone the repository:
-```bash
-git clone https://github.com/yourusername/planwiseesl.git
-cd planwiseesl
-```
-
-2. Install dependencies:
-```bash
-npm install
-```
-
-3. Set up environment variables:
-```bash
-cp .env.example .env
-# Edit .env with your database credentials and API keys
-```
-
-4. Set up the database:
-```bash
-npm run db:push
-```
-
-5. Start the development server:
-```bash
-npm run dev
-```
-
-The application will be available at `http://localhost:5000`
-
-## Environment Variables
-
-Create a `.env` file with the following variables:
-
-```env
-# Database
-DATABASE_URL=your_postgresql_connection_string
-
-# AI Services
-GEMINI_API_KEY=your_gemini_api_key
-OPENAI_API_KEY=your_openai_api_key
-STABILITY_API_KEY=your_stability_api_key
-
-# Authentication
-SESSION_SECRET=your_session_secret
-
-# Email (optional)
-MAILCHIMP_API_KEY=your_mailchimp_key
-MAILCHIMP_SERVER_PREFIX=your_server_prefix
-
-# Payment (optional)
-STRIPE_SECRET_KEY=your_stripe_secret_key
-```
-
-## Project Structure
-
-```
-├── client/                 # Frontend React application
-│   ├── src/
-│   │   ├── components/    # Reusable UI components
-│   │   ├── pages/        # Page components
-│   │   └── lib/          # Utilities and configurations
-├── server/                # Backend Express application
-│   ├── routes.ts         # API route definitions
-│   ├── storage.ts        # Database operations
-│   └── services/         # AI service integrations
-├── shared/               # Shared types and schemas
-│   └── schema.ts        # Database schema definitions
-├── public/              # Static assets
-└── docs/               # Documentation
-```
-
-## Key Features in Detail
-
-### Enhanced Vocabulary System
-- **Progressive Definitions**: Multi-layered explanations with CEFR-appropriate language
-- **Contextual Integration**: Words appear naturally 2-3 times in reading texts
-- **Usage Examples**: Formal, informal, and personal context demonstrations
-- **Word Families**: Related terms and collocations for deeper understanding
-
-### Reading Text Enhancement
-- **Vocabulary Integration**: Natural word usage with sufficient context clues
-- **Structural Requirements**: Logical progression through connected ideas
-- **Engagement Factors**: Storytelling elements and relatable scenarios
-- **Quality Validation**: Comprehensive checks for authenticity and effectiveness
-
-### AI-Powered Content Generation
-- **Multi-Provider Support**: Fallback systems ensure reliable generation
-- **Optimized Prompts**: Streamlined for speed while maintaining quality
-- **Response-First Pattern**: Immediate user feedback with background processing
-- **Quality Assurance**: Built-in validation for educational effectiveness
-
-## Contributing
-
-We welcome contributions to PlanwiseESL! Please see our contributing guidelines for more information.
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Support
-
-For support and questions, please contact:
-- **Email**: support@planwiseesl.com
-- **Website**: [planwiseesl.com](https://planwiseesl.com)
-- **LinkedIn**: [Dave Jackson](https://www.linkedin.com/in/davidjackson113)
-- **Twitter**: [@DaveTeacher1](https://twitter.com/DaveTeacher1)
-
-## Acknowledgments
-
-- Built with modern web technologies and AI services
-- Designed for ESL teachers worldwide
-- Continuously improved based on educator feedback
+- **It remembers each student.** Lessons made for a student avoid words they have already learned or have planned, and reuse known words naturally in new readings. When the teacher marks a lesson "We did this", its words join the student's list.
+- **Student pages.** Each student can have a private page with finished lessons, a preview of the next lesson, their words and flashcards. Students can suggest topics, and students of Unlimited teachers can make lessons themselves.
+- **Checked before it is saved.** Every new lesson is checked section by section; a broken exercise is fixed or written again before the teacher sees it.
+- **Consistent structure.** Unlike a general chatbot, PlanWise ESL produces the same complete lesson structure every time and keeps a record of each student.
 
 ---
 
-**PlanwiseESL** - Empowering ESL teachers with AI-driven lesson creation tools.
+## For developers
+
+PlanWise ESL is a TypeScript web app: React + Vite on the front end, Express on the back end, PostgreSQL via Drizzle ORM. Lessons are written by an LLM through OpenRouter and illustrated with Replicate (FLUX Schnell). Payments use Stripe; email lists use Mailchimp.
+
+### Running locally
+
+Requires Node.js 20+ and PostgreSQL.
+
+```bash
+npm install
+cp .env.example .env   # then fill in the values
+npm run db:push
+npm run dev            # http://localhost:5000
+```
+
+Main environment variables: `DATABASE_URL`, `SESSION_SECRET`, `OPENROUTER_API_KEY`, `REPLICATE_API_TOKEN`, and optionally `PLANWISE_STRIPE_SECRET` / `PLANWISE_STRIPE_PUBLIC`, `MAILCHIMP_API_KEY` / `MAILCHIMP_SERVER_PREFIX` / `MAILCHIMP_LIST_ID`, `INDEXNOW_KEY`.
+
+### Tests
+
+```bash
+npm test        # vitest
+npm run check   # TypeScript
+```
+
+### Project structure
+
+```
+client/   React app (pages, components)
+server/   Express API, lesson generation, crawler-readable page rendering
+shared/   Types, database schema and copy shared by client and server
+public/   Static files, including robots.txt and llms.txt
+```
+
+Public pages (home, blog, free lessons) are rendered on the server as plain HTML as well, so search engines and AI assistants can read them without running JavaScript. Homepage copy lives in `shared/homepage-content.ts`, and the facts repeated across pages (price, trial, timing) live in `shared/site-facts.ts`; a test keeps `public/llms.txt` in line with them.
+
+## Contact
+
+- **Email:** dave@planwiseesl.com
+- **LinkedIn:** [Dave Jackson](https://www.linkedin.com/in/davidjackson113)
+- **X:** [@DaveTeacher1](https://x.com/DaveTeacher1)
+
+## License
+
+MIT. See [LICENSE](LICENSE).

@@ -6,7 +6,7 @@ import { SEOHead } from '@/components/SEOHead';
 import { useFreeTrial } from '@/hooks/use-free-trial';
 import { format } from 'date-fns';
 import {
-  Clock, Target, MonitorSmartphone,
+  Clock, Target, MonitorSmartphone, Users, Layers, ShieldCheck,
   CheckCircle2, Sparkles, XCircle, Menu, X, Lock as LockIcon, ArrowRight, Play
 } from 'lucide-react';
 import {
@@ -71,6 +71,9 @@ const featureIcons: Record<FeatureIcon, React.ComponentType<{ className?: string
   clock: Clock,
   target: Target,
   monitor: MonitorSmartphone,
+  users: Users,
+  layers: Layers,
+  shield: ShieldCheck,
 };
 
 const FreeTrialBanner = () => {
@@ -165,8 +168,8 @@ export default function LandingPage() {
       <header className="bg-white/90 backdrop-blur border-b border-slate-100 sticky top-0 z-50">
         <nav className="container mx-auto px-6 py-3 flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <img src="/PlanWise_ESL_logo.png" alt="PlanwiseESL AI-powered ESL lesson generator logo" className="h-14 sm:h-16 w-auto" />
-            <span className="text-lg sm:text-xl font-nunito font-bold text-brand-navy tracking-tight">PLAN WISE ESL</span>
+            <img src="/PlanWise_ESL_logo.png" alt="PlanWise ESL logo" className="h-14 sm:h-16 w-auto" />
+            <span className="text-lg sm:text-xl font-nunito font-bold text-brand-navy tracking-tight uppercase">PlanWise ESL</span>
           </div>
 
           {/* Desktop Navigation */}
@@ -277,7 +280,7 @@ export default function LandingPage() {
               <div className="rounded-2xl overflow-hidden shadow-2xl shadow-amber-900/15 ring-1 ring-slate-900/5 bg-white">
                 <img
                   src="/reading.PNG"
-                  alt="ESL Lesson Preview"
+                  alt="Reading section of a PlanWise ESL lesson"
                   width={999}
                   height={607}
                   className="w-full h-auto"
@@ -594,8 +597,8 @@ export default function LandingPage() {
             {/* Brand Section */}
             <div className="md:col-span-2">
               <div className="flex items-center space-x-3 mb-4">
-                <img src="/PlanWise_ESL_logo.png" alt="PlanwiseESL Logo" className="h-16 w-auto" />
-                <span className="text-xl font-nunito font-bold">PlanwiseESL</span>
+                <img src="/PlanWise_ESL_logo.png" alt="PlanWise ESL logo" className="h-16 w-auto" />
+                <span className="text-xl font-nunito font-bold">PlanWise ESL</span>
               </div>
               <p className="text-white/60 text-sm mb-5 max-w-md leading-relaxed">
                 {footer.brandLine}

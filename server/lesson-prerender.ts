@@ -72,7 +72,7 @@ export const lessonPrerenderCss = `
 
 function headerHtml(): string {
   return `<header class="lp-header">
-    <strong><a href="/">PLAN WISE ESL</a></strong>
+    <strong><a href="/">PlanWise ESL</a></strong>
     <nav>
       <a href="/esl-lessons">Free ESL Lessons</a>
       <a href="/blog">Blog</a>
@@ -416,7 +416,7 @@ async function prerenderLesson(template: string, id: number, preloaded?: unknown
       audience: { '@type': 'EducationalAudience', educationalRole: 'teacher' },
       isAccessibleForFree: true,
       ...(published ? { datePublished: published } : {}),
-      publisher: { '@type': 'Organization', name: 'PlanwiseESL', url: BASE_URL },
+      publisher: { '@type': 'Organization', name: 'PlanWise ESL', url: BASE_URL },
     });
     structuredData.push({
       '@context': 'https://schema.org',

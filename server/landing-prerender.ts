@@ -11,6 +11,7 @@ import {
   faq,
   footer,
 } from '@shared/homepage-content';
+import { siteFacts, trialText } from '@shared/site-facts';
 
 /**
  * Server-side prerender of the landing page.
@@ -94,7 +95,7 @@ export function buildLandingPrerenderHtml(): string {
 
   return `<div id="landing-prerender">
   <header class="lp-header">
-    <strong>PLAN WISE ESL</strong>
+    <strong>PlanWise ESL</strong>
     <nav>
       <a href="/blog">Blog</a>
       <a href="/auth">Login</a>
@@ -169,7 +170,7 @@ export function buildLandingPrerenderHtml(): string {
   </section>
 
   <footer class="lp-footer">
-    <p><strong>PlanwiseESL</strong> &mdash; ${e(footer.brandLine)}</p>
+    <p><strong>PlanWise ESL</strong> &mdash; ${e(footer.brandLine)}</p>
     <ul>${quickLinksHtml}</ul>
     <ul>${footer.aboutItems.map((i) => `<li>${e(i)}</li>`).join('')}</ul>
     <p>
@@ -216,6 +217,81 @@ export function buildLandingHeadMeta(): string {
     <link rel="canonical" href="${e(homepageMeta.canonicalUrl)}" />`;
 }
 
+/** JSON for a <script type="application/ld+json"> block; '<' is escaped so content cannot close the tag. */
+function jsonLd(data: unknown): string {
+  return `<script type="application/ld+json">${JSON.stringify(data).replace(/</g, '\\u003c')}</script>`;
+}
+
+function faqAnswerText(parts: { type: string; text: string }[]): string {
+  return parts.map((part) => part.text).join('').trim();
+}
+
+/**
+ * Homepage structured data: the product (with its real offers) and the FAQ.
+ * Search engines and AI assistants read these to answer "what is it, who is
+ * it for, what does it cost". No ratings are included: only add an
+ * aggregateRating once there are real, published reviews to back it.
+ */
+export function buildLandingStructuredData(): string {
+  const software = {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    '@id': `${siteFacts.url}/#software`,
+    name: siteFacts.brand,
+    alternateName: [...siteFacts.alternateNames],
+    url: siteFacts.url,
+    description: homepageMeta.description,
+    applicationCategory: 'EducationalApplication',
+    applicationSubCategory: 'ESL lesson planning',
+    operatingSystem: 'Web browser',
+    inLanguage: 'en',
+    image: `${siteFacts.url}${homepageMeta.imagePath}`,
+    audience: {
+      '@type': 'EducationalAudience',
+      educationalRole: 'teacher',
+      audienceType: 'ESL and EFL teachers, online English tutors, language schools',
+    },
+    featureList: features.items.map((f) => f.title),
+    offers: [
+      {
+        '@type': 'Offer',
+        name: `Free (${trialText})`,
+        price: '0',
+        priceCurrency: siteFacts.currency,
+        url: `${siteFacts.url}/auth?register=true`,
+      },
+      {
+        '@type': 'Offer',
+        name: 'Unlimited',
+        price: siteFacts.priceValue,
+        priceCurrency: siteFacts.currency,
+        url: `${siteFacts.url}/buy-credits`,
+        priceSpecification: {
+          '@type': 'UnitPriceSpecification',
+          price: siteFacts.priceValue,
+          priceCurrency: siteFacts.currency,
+          referenceQuantity: { '@type': 'QuantitativeValue', value: 1, unitCode: 'MON' },
+        },
+      },
+    ],
+    creator: { '@id': `${siteFacts.url}/#organization` },
+    publisher: { '@id': `${siteFacts.url}/#organization` },
+  };
+
+  const faqPage = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    '@id': `${siteFacts.url}/#faq`,
+    mainEntity: faq.items.map((item) => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: { '@type': 'Answer', text: faqAnswerText(item.answer) },
+    })),
+  };
+
+  return [software, faqPage].map(jsonLd).join('\n    ');
+}
+
 /**
  * Injects prerendered landing content + meta into a served index.html string.
  * Safe no-op if the placeholders are missing.
@@ -243,10 +319,10 @@ export function injectLandingPrerender(template: string): string {
     );
   }
 
-  // 2. Inject prerender styles before </head>.
+  // 2. Inject structured data and prerender styles before </head>.
   html = html.replace(
     '</head>',
-    `    <style>${landingPrerenderCss}</style>\n  </head>`,
+    () => `    ${buildLandingStructuredData()}\n    <style>${landingPrerenderCss}</style>\n  </head>`,
   );
 
   // 3. Inject the static content inside the root div so bots can read it.

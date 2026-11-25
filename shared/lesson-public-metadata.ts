@@ -40,7 +40,7 @@ export function lessonPublicMetadata(lesson: {
   const description = summary.length <= 160
     ? summary : summary.slice(0, 159).replace(/\s+\S*$/, "") + "…";
   return {
-    title: `${lesson.title} | ${lesson.cefrLevel} ESL Lesson | PlanwiseESL`,
+    title: `${lesson.title} | ${lesson.cefrLevel} ESL Lesson | PlanWise ESL`,
     description,
     canonicalPath: `/lessons/${lesson.id}`,
     // A lesson-authorized image endpoint also works for legacy inline images,

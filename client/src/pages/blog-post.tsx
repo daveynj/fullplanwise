@@ -39,6 +39,13 @@ const extractHeadingsAndAddIds = (html: string): {
 } => {
   const tempDiv = document.createElement('div');
   tempDiv.innerHTML = html;
+  // The post title is the page's only H1; demote any H1 written in the body.
+  tempDiv.querySelectorAll('h1').forEach((h1) => {
+    const h2 = document.createElement('h2');
+    for (const attr of Array.from(h1.attributes)) h2.setAttribute(attr.name, attr.value);
+    h2.innerHTML = h1.innerHTML;
+    h1.replaceWith(h2);
+  });
   const headings: { id: string; text: string; level: number }[] = [];
   
   const headingElements = tempDiv.querySelectorAll('h1, h2, h3');

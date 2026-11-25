@@ -11,8 +11,8 @@ export function BlogHeader() {
       <nav className="container mx-auto px-6 py-3 flex justify-between items-center">
         <Link href="/">
           <div className="flex items-center gap-2 cursor-pointer">
-            <img src="/PlanWise_ESL_logo.png" alt="PlanwiseESL AI-powered ESL lesson generator logo" className="h-16 sm:h-20 w-auto" /> 
-            <span className="text-lg sm:text-xl font-nunito font-bold text-brand-navy">PLAN WISE ESL</span>
+            <img src="/PlanWise_ESL_logo.png" alt="PlanWise ESL logo" className="h-16 sm:h-20 w-auto" /> 
+            <span className="text-lg sm:text-xl font-nunito font-bold text-brand-navy uppercase">PlanWise ESL</span>
           </div>
         </Link>
         
