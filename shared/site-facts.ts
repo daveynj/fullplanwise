@@ -11,6 +11,8 @@ export const siteFacts = {
   url: 'https://planwiseesl.com',
   founder: 'Dave Jackson',
   founderRole: 'ESL teacher and founder of PlanWise ESL',
+  /** Dave's own tutoring site, where his background and student reviews live. */
+  founderSite: 'https://speakwithdave.com',
   /** Price of the Unlimited plan. */
   price: '$19.99',
   priceValue: '19.99',
@@ -21,6 +23,30 @@ export const siteFacts = {
   /** How long a lesson usually takes to generate. Pictures follow about a minute later, while the lesson is already open. */
   generationTime: '1–2 minutes',
   levels: 'A1–C2',
+} as const;
+
+/**
+ * The founder as structured data (schema.org Person), from his own site
+ * speakwithdave.com/about. Used everywhere PlanWise names its founder, so
+ * search engines and AI assistants connect the same person across sites.
+ */
+export const founderPerson = {
+  '@type': 'Person',
+  name: siteFacts.founder,
+  jobTitle: siteFacts.founderRole,
+  url: siteFacts.founderSite,
+  sameAs: [
+    siteFacts.founderSite,
+    'https://www.linkedin.com/in/davidjackson113',
+    'https://x.com/DaveTeacher1',
+  ],
+  nationality: 'British',
+  alumniOf: { '@type': 'CollegeOrUniversity', name: 'University of Southampton' },
+  hasCredential: [
+    { '@type': 'EducationalOccupationalCredential', name: 'TEFL certificate (Teaching English as a Foreign Language)' },
+    { '@type': 'EducationalOccupationalCredential', name: 'BA Business Administration, University of Southampton' },
+  ],
+  knowsAbout: ['Teaching English as a foreign language', 'One-to-one English conversation lessons', 'Business English', 'CEFR'],
 } as const;
 
 export const trialText = `${siteFacts.trialDays}-day free trial`;

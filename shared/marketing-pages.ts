@@ -222,12 +222,12 @@ const about: MarketingPage = {
   path: '/about',
   title: `About ${brand}: Built by an ESL Teacher, for ESL Teachers`,
   description:
-    `${brand} was built by Dave Jackson, an ESL teacher who loves teaching but not the hours of making and personalising materials. This is why it exists.`,
+    `${brand} was built by Dave Jackson, a British English teacher since 2015 with over 2,000 students taught, who still plans every one-to-one lesson with it.`,
   navLabel: 'About',
   eyebrow: 'About',
   h1: 'Built by an ESL teacher who loves teaching, and hated making materials',
   intro: [
-    'Hi, I’m Dave Jackson. I teach English, mostly one to one, and I built PlanWise ESL for myself first.',
+    'Hi, I’m Dave Jackson. I’m a British English teacher, I’ve taught English online since 2015, and I built PlanWise ESL for myself first. I still plan every lesson for my own students with it.',
   ],
   sections: [
     {
@@ -236,6 +236,18 @@ const about: MarketingPage = {
         'I love teaching. What I never loved was the hours before teaching: finding a text at the right level, writing the questions, making vocabulary cards, building activities, and then doing it all again for the next student, because every student is different.',
         'Personalising lessons properly is what makes one-to-one teaching work, and it is also what eats your evenings and weekends. Generic materials are quicker, but students can tell, and they stop booking.',
         'So I built a tool that does the preparation the way I would do it myself: at the student’s level, on the topic they care about, building on the words they already know, with every activity in place and ready to teach.',
+      ],
+    },
+    {
+      heading: 'My background',
+      bullets: [
+        '**Teaching English since 2015,** with over 2,000 students taught, many of whom stay with me for years.',
+        '**One-to-one, online, every week:** I teach private conversation lessons six days a week from Cambodia, mostly to working professionals at B1 and above, in finance, healthcare, sales, engineering, IT and law.',
+        '**Qualifications:** a TEFL certificate, and a BA in Business Administration from the University of Southampton.',
+        '**Before teaching,** 13 years in financial sales, including at HSBC. It is why I know what a real meeting, pitch or client call sounds like, and it shapes the business English lessons PlanWise makes.',
+      ],
+      paragraphs: [
+        'You can see my teaching, and read my students’ reviews, on my tutoring site, [speakwithdave.com](https://speakwithdave.com).',
       ],
     },
     {
@@ -260,7 +272,7 @@ const about: MarketingPage = {
     {
       heading: 'Get in touch',
       paragraphs: [
-        'I read every message, and many of PlanWise ESL’s features came from teachers’ suggestions. Email me at [dave@planwiseesl.com](mailto:dave@planwiseesl.com), or find me on [LinkedIn](https://www.linkedin.com/in/davidjackson113) and [X](https://x.com/DaveTeacher1).',
+        'I read every message, and many of PlanWise ESL’s features came from teachers’ suggestions. Email me at [dave@planwiseesl.com](mailto:dave@planwiseesl.com), or find me on [LinkedIn](https://www.linkedin.com/in/davidjackson113), [X](https://x.com/DaveTeacher1) and my tutoring site, [speakwithdave.com](https://speakwithdave.com).',
       ],
     },
   ],

@@ -46,6 +46,16 @@ describe("public information pages", () => {
     });
   }
 
+  it("describes the founder with his tutoring site, so search engines connect the two", () => {
+    const html = injectMarketingPrerender(template, "/about")!;
+    const blocks = [...new DOMParser().parseFromString(html, "text/html").querySelectorAll('script[type="application/ld+json"]')]
+      .map((s) => JSON.parse(s.textContent!));
+    const aboutPage = blocks.find((b) => b["@type"] === "AboutPage");
+    expect(aboutPage.mainEntity.name).toBe("Dave Jackson");
+    expect(aboutPage.mainEntity.sameAs).toContain("https://speakwithdave.com");
+    expect(html).toContain('href="https://speakwithdave.com"');
+  });
+
   it("ignores other paths", () => {
     expect(injectMarketingPrerender(template, "/blog")).toBeNull();
     expect(marketingPageByPath("/about/")).toBeDefined();
