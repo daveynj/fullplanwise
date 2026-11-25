@@ -31,6 +31,7 @@ import { billingHealthMonitor } from "./billing-health";
 import { registerBillingHealthRoute } from "./billing-health-route";
 import { validClientRoutes } from "@shared/client-routes";
 import { notifyIndexNow, submitToIndexNow, getIndexNowKey, lessonIndexNowPaths, blogIndexNowPaths } from "./indexnow";
+import { marketingPages } from "@shared/marketing-pages";
 import {
   reserveGenerationJob,
   spendCreditForJob,
@@ -2674,6 +2675,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const lessonDates = publicLessons.map((l) => toDate(l.createdAt));
 
       entries.push({ url: '/' });
+      for (const page of marketingPages) entries.push({ url: page.path, lastmod: page.updated });
       entries.push({ url: '/blog', lastmod: latest(blogDates) });
 
       if (publicLessons.length > 0) {

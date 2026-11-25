@@ -3,6 +3,7 @@ import { PUBLIC_LIBRARY_LABELS } from '@shared/schema';
 import { tryDecodeLessonContent } from '@shared/lesson-content';
 import { CEFR_LEVEL_NAMES, lessonContentsParts, joinList, levelText, lessonPublicMetadata } from '@shared/lesson-public-metadata';
 import { expressionItemsOf, withoutMarks } from '@shared/lesson-expressions';
+import { publicNav } from '@shared/marketing-pages';
 export { CEFR_LEVEL_NAMES } from '@shared/lesson-public-metadata';
 
 /**
@@ -74,8 +75,7 @@ function headerHtml(): string {
   return `<header class="lp-header">
     <strong><a href="/">PlanWise ESL</a></strong>
     <nav>
-      <a href="/esl-lessons">Free ESL Lessons</a>
-      <a href="/blog">Blog</a>
+      ${publicNav.map((l) => `<a href="${l.href}">${l.label}</a>`).join('\n      ')}
       <a href="/auth">Login</a>
       <a href="/auth?register=true">Sign Up Free</a>
     </nav>

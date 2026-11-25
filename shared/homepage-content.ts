@@ -44,11 +44,13 @@ export const homepageMeta = {
 };
 
 export const hero = {
+  badge: 'Conversation lessons for Preply, italki, Cambly & independent tutors',
   heading: 'The AI ESL lesson planner that remembers every student',
   subheading:
-    `Complete, CEFR-levelled lessons on any topic in ${generationTime}, built around each student's level, interests and the words they already know.`,
+    `Complete, CEFR-levelled conversation lessons on any topic in ${generationTime}, built around each student's level, interests and the words they already know.`,
   benefits: [
     'A full lesson every time: warm-up, key vocabulary, a levelled reading, comprehension, speaking practice and a quiz.',
+    'Ready in 1–2 minutes, so you can make one on the spot when a student arrives with a new topic.',
     'Tracks the words each student has learned, so every lesson builds on the last instead of repeating it.',
     'Gives each student a private page with their lessons, words and flashcards to practise between classes.',
   ],
@@ -63,8 +65,51 @@ export const hero = {
   noCardNote: 'No credit card required',
   freeLessonsNote: trialText,
   previewTitle: 'A real PlanWise ESL lesson',
-  previewText: 'Reading, vocabulary, activities and speaking practice, all written at one CEFR level.',
+  previewText: 'Every new word comes with a picture, pronunciation, a definition at the student\u2019s level and example sentences.',
+  image: '/images/lesson-vocabulary-2026-11.webp',
+  imageAlt: 'Vocabulary card from a PlanWise ESL B2 lesson: the word "affluence" with a picture, syllable-by-syllable pronunciation, a definition and example sentences',
+  imageWidth: 1650,
+  imageHeight: 1040,
   videoUrl: 'https://www.youtube.com/embed/pcLlwL5sNK0',
+};
+
+/**
+ * A plain answer to "what is it?", shown near the top of the page. AI
+ * assistants and search snippets quote short definitions like this.
+ */
+export const definition = {
+  heading: `What is ${brand}?`,
+  text: `${brand} is an AI lesson planner for ESL and EFL teachers that makes topic-based conversation lessons. You choose a CEFR level (A1 to C2) and any topic, and in ${generationTime} it writes a complete, ready-to-teach lesson: a warm-up, five key words with pictures, a levelled reading, comprehension questions, sentence frames at three levels of support, discussion questions, a gap-fill and a quiz. It keeps track of the words each of your students has learned, so lessons build on each other, and gives every student a private page for practice between classes. It was created by Dave Jackson, a working ESL teacher.`,
+};
+
+/** Real lesson titles from two of Dave's courses (one personalised, one general). */
+export const personalisation = {
+  heading: 'One Student, One Course',
+  intro:
+    'Generic materials are the same for everyone. PlanWise builds lessons around the student in front of you. These are real lesson titles from two courses made with it:',
+  personal: {
+    label: 'For a B2\u2013C1 student who works in China\u2019s fashion industry',
+    titles: [
+      'The Rise of Luxury Chinese Fashion Brands',
+      'Swipe, Stream, Sell: Live Commerce vs Traditional Retail in the Fashion World',
+      'The "Guochao" (National Trend) Phenomenon Beyond Fashion',
+      'The Evolution of Chinese Workplace Culture: "Quiet Quitting" vs. Extreme Ambition',
+      'The Silver Economy: The Changing Face of Aging and Retirement',
+    ],
+  },
+  general: {
+    label: 'A general B2 conversation course for adults',
+    titles: [
+      'Bucket Lists: Dreams Worth Chasing',
+      'Money for Everyone? Exploring Universal Basic Income',
+      'The Attention Economy: Who Profits From Your Focus?',
+      'The Longevity Race: Can Science Help Us Live Forever?',
+      'Financial Independence, Retire Early: The F.I.R.E. Movement Explained',
+    ],
+  },
+  note: 'In both, each lesson avoids words the student already knows and recycles them in new readings.',
+  cta: 'Browse free lessons at every level',
+  href: '/esl-lessons',
 };
 
 export const showcase = {
@@ -110,8 +155,8 @@ export const features = {
   items: [
     {
       icon: 'clock' as FeatureIcon,
-      title: 'A Complete Lesson in About 2 Minutes',
-      text: 'Choose a level from A1 to C2 and any topic. PlanWise writes the warm-up, pre-teaches the key vocabulary with examples and pictures, writes a reading at the right level, then checks understanding and gets your student talking.',
+      title: 'A Complete Lesson in 1–2 Minutes',
+      text: 'Choose a level from A1 to C2 and any topic. PlanWise writes the warm-up, pre-teaches the key vocabulary with examples and pictures, writes a reading at the right level, then checks understanding and gets your student talking. Pictures fill in while you do the warm-up, so you can even make a lesson at the start of class.',
     },
     {
       icon: 'users' as FeatureIcon,
@@ -139,6 +184,39 @@ export const features = {
       text: 'Lessons open full screen for screen sharing and download for printing or saving as a PDF. Add your own target words, and include idioms and phrasal verbs from A2 up.',
     },
   ],
+};
+
+/** The research-based lesson sequence, summarised (full version: /how-it-works). */
+export const science = {
+  heading: 'Built on How People Actually Learn Languages',
+  intro: 'Every lesson follows the same research-based sequence, and each step is there for a reason.',
+  points: [
+    { title: 'Activate', text: 'Warm-up questions switch on what the student already knows about the topic.' },
+    { title: 'Pre-teach', text: 'Five key words taught before the reading, so about 96% of the text is familiar.' },
+    { title: 'Read', text: 'A reading written for the CEFR level that uses each new word two or three times.' },
+    { title: 'Check', text: 'One comprehension question per new word: retrieval, not rereading.' },
+    { title: 'Scaffold', text: 'Sentence frames at three levels of support, so every student can answer.' },
+    { title: 'Speak', text: "Five discussion questions that take the topic into the student's own life." },
+    { title: 'Retrieve', text: 'A shuffled gap-fill and a quiz bring every word back once more.' },
+    { title: 'Recycle', text: 'Words are tracked and reused in later lessons, then reviewed with flashcards.' },
+  ],
+  cta: 'See the research behind each step',
+  href: '/how-it-works',
+  image: '/images/lesson-sentence-frames-2026-11.webp',
+  imageAlt: 'Sentence frames from a PlanWise ESL B2 lesson at three levels of support: emerging, developing and expanding',
+  imageCaption: 'Sentence frames at three levels of support, from a real B2 lesson.',
+};
+
+/** Founder story, in Dave's words (full version: /about). */
+export const founder = {
+  heading: 'Built by a Teacher Who Hated Making Materials',
+  quote:
+    "I love teaching. I never loved the hours before it: finding a text at the right level, writing the questions, making vocabulary cards, then doing it all again for the next student, because every student is different. So I built PlanWise to do the preparation the way I'd do it myself.",
+  name: 'Dave Jackson',
+  role: 'ESL teacher and founder of PlanWise ESL',
+  initials: 'DJ',
+  linkLabel: 'Read why I built it',
+  href: '/about',
 };
 
 export const steps = {
@@ -219,9 +297,10 @@ export const testimonials = {
 export const finalCta = {
   heading: 'Plan Less. Teach Better Lessons.',
   stats: [
-    { value: '~2 min', label: 'To a complete lesson' },
+    { value: '1–2 min', label: 'To a complete lesson' },
     { value: 'A1–C2', label: 'Every CEFR level' },
     { value: '1 page', label: 'For each of your students' },
+    { value: '5', label: 'New words per lesson, each met 5–6 times' },
   ],
   lead: `Try ${brand} free for ${siteFacts.trialDays} days and make as many lessons as you like.`,
   leadEmphasis: `free for ${siteFacts.trialDays} days`,
@@ -234,13 +313,8 @@ export const faq = {
   subheading: `Everything you need to know about ${brand}`,
   items: [
     {
-      question: `What is ${brand}?`,
-      answer: [
-        {
-          type: 'text',
-          text: `${brand} is an AI lesson planner for ESL and EFL teachers. You choose a CEFR level (A1 to C2) and a topic, and in ${generationTime} it writes a complete, ready-to-teach lesson: a warm-up, key vocabulary, a levelled reading, comprehension questions, sentence frames, discussion questions, a fill-in-the-blank exercise and a quiz. It keeps track of the words each of your students has learned, and gives every student a private page for practice between classes. It was created by Dave Jackson, a working ESL teacher.`,
-        },
-      ] as FaqAnswerPart[],
+      question: definition.heading,
+      answer: [{ type: 'text', text: definition.text }] as FaqAnswerPart[],
     },
     {
       question: `Who is ${brand} for?`,
@@ -261,11 +335,22 @@ export const faq = {
       ] as FaqAnswerPart[],
     },
     {
+      question: `Can ${brand} make grammar lessons?`,
+      answer: [
+        {
+          type: 'text',
+          text: `${brand} makes topic-based conversation lessons, not grammar-rule lessons. Grammar is practised through the sentence frames, which give students useful structures for the topic at three levels of support. To practise a particular structure, choose a topic that naturally uses it: "Life experiences" for the present perfect, or "What would you do if you won the lottery?" for the second conditional. `,
+        },
+        { type: 'link', href: '/how-it-works', text: 'See how a lesson is built' },
+        { type: 'text', text: '.' },
+      ] as FaqAnswerPart[],
+    },
+    {
       question: 'Are the lessons really at the right CEFR level?',
       answer: [
         {
           type: 'text',
-          text: 'You choose the level, and the vocabulary, grammar and reading length are written for it. Every new lesson is checked section by section before it is saved. You can judge for yourself: ',
+          text: 'You choose the level, and the reading length, sentence style and the words used in definitions follow fixed rules for that level: at A1, for example, definitions use only the 500 most common English words. Every new lesson is checked section by section before it is saved. You can judge for yourself: ',
         },
         {
           type: 'link',
@@ -290,6 +375,15 @@ export const faq = {
         {
           type: 'text',
           text: 'Yes. Each student can have a private page (no login needed) with their finished lessons, a preview of the next lesson’s reading and new words, all their words, and flashcards. Students can also suggest topics for future lessons.',
+        },
+      ] as FaqAnswerPart[],
+    },
+    {
+      question: 'Can I make a lesson during a class?',
+      answer: [
+        {
+          type: 'text',
+          text: 'Yes. A lesson is ready in 1–2 minutes and opens straight away; the pictures for the vocabulary and discussion appear about a minute later, while you are doing the warm-up. So when a student arrives wanting to talk about something new, you can make a lesson on that topic there and then.',
         },
       ] as FaqAnswerPart[],
     },
@@ -343,8 +437,12 @@ export const footer = {
     `${brand} is an AI lesson planner for ESL teachers, created by ESL teacher Dave Jackson. Complete CEFR-levelled lessons that build on what each student already knows.`,
   quickLinks: [
     { label: 'Start Free Trial', href: '/auth?register=true' },
+    { label: 'How It Works', href: '/how-it-works' },
     { label: 'Free ESL Lessons', href: '/esl-lessons' },
+    { label: 'Pricing', href: '/pricing' },
+    { label: 'PlanWise vs ChatGPT', href: '/compare/chatgpt' },
     { label: 'ESL Teaching Blog', href: '/blog' },
+    { label: 'About', href: '/about' },
   ],
   aboutItems: ['Created by an ESL teacher', 'CEFR A1–C2', 'Built for one-to-one and online classes'],
   social: {

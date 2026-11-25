@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Menu, X } from 'lucide-react';
+import { publicNav } from '@shared/marketing-pages';
 
 export function BlogHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -16,17 +17,14 @@ export function BlogHeader() {
           </div>
         </Link>
         
-        <div className="hidden md:flex items-center gap-4">
-          <Link href="/esl-lessons">
-            <Button variant="ghost" className="text-brand-navy hover:bg-brand-navy/10">
-              Free Lessons
-            </Button>
-          </Link>
-          <Link href="/blog">
-            <Button variant="ghost" className="text-brand-navy hover:bg-brand-navy/10">
-              Blog
-            </Button>
-          </Link>
+        <div className="hidden md:flex items-center gap-1 lg:gap-2">
+          {publicNav.map((item) => (
+            <Link key={item.href} href={item.href}>
+              <Button variant="ghost" className="text-brand-navy hover:bg-brand-navy/10 px-3">
+                {item.label}
+              </Button>
+            </Link>
+          ))}
           <Link href="/auth">
             <Button variant="outline" className="mr-2 border-brand-navy text-brand-navy hover:bg-brand-navy/10">Login</Button>
           </Link>
@@ -45,18 +43,15 @@ export function BlogHeader() {
       </nav>
 
       <div className={`md:hidden bg-brand-light border-t border-gray-200 py-4 px-6 space-y-3 transition-all duration-300 ease-in-out overflow-hidden ${
-        mobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0 py-0'
+        mobileMenuOpen ? 'max-h-[32rem] opacity-100' : 'max-h-0 opacity-0 py-0'
       }`}>
-        <Link href="/esl-lessons" onClick={() => setMobileMenuOpen(false)}>
-          <Button variant="ghost" className="w-full justify-start text-brand-navy hover:bg-brand-navy/10">
-            Free Lessons
-          </Button>
-        </Link>
-        <Link href="/blog" onClick={() => setMobileMenuOpen(false)}>
-          <Button variant="ghost" className="w-full justify-start text-brand-navy hover:bg-brand-navy/10">
-            Blog
-          </Button>
-        </Link>
+        {publicNav.map((item) => (
+          <Link key={item.href} href={item.href} onClick={() => setMobileMenuOpen(false)}>
+            <Button variant="ghost" className="w-full justify-start text-brand-navy hover:bg-brand-navy/10">
+              {item.label}
+            </Button>
+          </Link>
+        ))}
         <Link href="/auth" onClick={() => setMobileMenuOpen(false)}>
           <Button variant="outline" className="w-full border-brand-navy text-brand-navy hover:bg-brand-navy/10">
             Login

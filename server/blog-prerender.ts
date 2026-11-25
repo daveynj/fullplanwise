@@ -1,6 +1,7 @@
 import { storage } from './storage';
 import type { BlogPost } from '@shared/schema';
 import { blogPublicMetadata } from '@shared/blog-public-metadata';
+import { publicNav } from '@shared/marketing-pages';
 
 /**
  * Server-side prerender of the blog index (/blog) and blog posts (/blog/:slug).
@@ -129,7 +130,7 @@ function headerHtml(): string {
   return `<header class="bp-header">
     <strong><a href="/">PlanWise ESL</a></strong>
     <nav>
-      <a href="/blog">Blog</a>
+      ${publicNav.map((l) => `<a href="${l.href}">${l.label}</a>`).join('\n      ')}
       <a href="/auth">Login</a>
       <a href="/auth?register=true">Sign Up Free</a>
     </nav>

@@ -1,3 +1,5 @@
+import { trackEvent } from "@/lib/analytics";
+import { siteFacts } from "@shared/site-facts";
 import { useEffect, useState } from "react";
 import { useLocation, useRoute } from "wouter";
 import { Sidebar } from "@/components/layout/sidebar";
@@ -37,6 +39,10 @@ export default function SubscriptionSuccessPage() {
   useEffect(() => {
     // First refresh user data
     queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+    // GA4 de-duplicates purchases by transaction_id, so a reload is not counted twice.
+    if (sessionId) {
+      trackEvent("purchase", { transaction_id: sessionId, currency: siteFacts.currency, value: Number(siteFacts.priceValue) });
+    }
   }, []);
   
   // Handle subscription processing with session ID

@@ -82,7 +82,7 @@ export default function AuthPage() {
     <div className="flex min-h-screen bg-brand-light">
       <SEOHead
         title="Log In or Start Your Free Trial | PlanWise ESL"
-        description="Log in to PlanWise ESL, or create a free account: complete CEFR-levelled ESL lessons in about 2 minutes. 5-day free trial, no credit card needed."
+        description="Log in to PlanWise ESL, or create a free account: complete CEFR-levelled ESL lessons in 1–2 minutes. 5-day free trial, no credit card needed."
         keywords={[
           "ESL teacher login",
           "AI lesson planning account",
