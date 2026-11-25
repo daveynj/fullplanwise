@@ -5,6 +5,7 @@ import { z } from "zod";
 import { insertUserSchema } from "@shared/schema";
 import { useAuth } from "@/hooks/use-auth";
 import { useLocation, Link } from "wouter";
+import { afterSignInPath } from "@shared/auth-redirect";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -34,12 +35,14 @@ export default function AuthPage() {
   const [location, navigate] = useLocation();
   const { user, loginMutation, registerMutation, isLoading } = useAuth();
 
-  // Redirect if already logged in
+  // Once signed in (or already signed in), go to the page the teacher was
+  // trying to open, e.g. /generate from an email link; otherwise the dashboard.
+  const [afterSignIn] = useState(() => afterSignInPath(window.location.search));
   useEffect(() => {
     if (user) {
-      navigate("/dashboard");
+      navigate(afterSignIn);
     }
-  }, [user, navigate]);
+  }, [user, navigate, afterSignIn]);
 
   // Set active tab from URL query param
   useEffect(() => {

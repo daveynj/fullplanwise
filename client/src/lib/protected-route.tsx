@@ -1,6 +1,7 @@
 import { useAuth } from "@/hooks/use-auth";
 import { Loader2 } from "lucide-react";
 import { Redirect, Route } from "wouter";
+import { signInPathFor } from "@shared/auth-redirect";
 
 export function ProtectedRoute({
   path,
@@ -24,9 +25,11 @@ export function ProtectedRoute({
   }
 
   if (!user) {
+    // Come back to this exact page (including its query, e.g. a topic and
+    // level from a student's idea) after signing in.
     return (
       <Route path={path}>
-        <Redirect to="/auth" />
+        <Redirect to={signInPathFor(window.location.pathname + window.location.search)} />
       </Route>
     );
   }

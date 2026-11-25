@@ -212,31 +212,31 @@ export default function LandingPage() {
         <nav className="container mx-auto px-6 py-3 flex justify-between items-center">
           <Link href="/" className="flex items-center gap-2">
             <img src="/PlanWise_ESL_logo.png" alt="PlanWise ESL logo" className="h-14 sm:h-16 w-auto" />
-            <span className="text-lg sm:text-xl font-nunito font-bold text-brand-navy tracking-tight uppercase">PlanWise ESL</span>
+            <span className="text-lg sm:text-xl font-nunito font-bold text-brand-navy tracking-tight uppercase whitespace-nowrap">PlanWise ESL</span>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-1 lg:gap-2">
+          <div className="hidden lg:flex items-center gap-0.5 xl:gap-2">
             {publicNav.map((item) => (
               <Link key={item.href} href={item.href}>
-                <Button variant="ghost" className="text-brand-navy/80 hover:text-brand-navy hover:bg-amber-50 rounded-full px-3 lg:px-4">
+                <Button variant="ghost" className="text-brand-navy/80 hover:text-brand-navy hover:bg-amber-50 rounded-full px-2.5 xl:px-4">
                   {item.label}
                 </Button>
               </Link>
             ))}
             <Link href="/auth">
-              <Button variant="ghost" className="text-brand-navy/80 hover:text-brand-navy hover:bg-amber-50 rounded-full px-3 lg:px-4">
+              <Button variant="ghost" className="text-brand-navy/80 hover:text-brand-navy hover:bg-amber-50 rounded-full px-2.5 xl:px-4">
                 Login
               </Button>
             </Link>
             <Link href="/auth?register=true" onClick={() => trackCta('header', 'Sign Up Free')}>
-              <Button variant="brand" className="rounded-full px-6 shadow-md shadow-brand-yellow/30">Sign Up Free</Button>
+              <Button variant="brand" className="rounded-full px-5 xl:px-6 shadow-md shadow-brand-yellow/30">Sign Up Free</Button>
             </Link>
           </div>
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden p-2 text-brand-navy hover:bg-amber-50 rounded-full"
+            className="lg:hidden p-2 text-brand-navy hover:bg-amber-50 rounded-full"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle menu"
           >
@@ -245,7 +245,7 @@ export default function LandingPage() {
         </nav>
 
         {/* Mobile Navigation Menu */}
-        <div className={`md:hidden bg-white border-t border-slate-100 px-6 space-y-3 transition-all duration-300 ease-in-out overflow-hidden ${mobileMenuOpen ? 'max-h-[32rem] opacity-100 py-4' : 'max-h-0 opacity-0 py-0'}`}>
+        <div className={`lg:hidden bg-white border-t border-slate-100 px-6 space-y-3 transition-all duration-300 ease-in-out overflow-hidden ${mobileMenuOpen ? 'max-h-[32rem] opacity-100 py-4' : 'max-h-0 opacity-0 py-0'}`}>
           {publicNav.map((item) => (
             <Link key={item.href} href={item.href} onClick={() => setMobileMenuOpen(false)}>
               <Button variant="ghost" className="w-full justify-start text-brand-navy hover:bg-amber-50 rounded-full">

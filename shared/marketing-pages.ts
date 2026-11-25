@@ -11,6 +11,7 @@
  * the lesson prompt (server/services/lesson-prompt.ts).
  */
 import { siteFacts, trialText, priceText } from './site-facts';
+import { cefrLevelsGuide, planConversationLessonGuide, topicsByLevelGuide, personaliseGuide, guidesIndex } from './guides';
 
 export interface MarketingTable {
   headers: string[];
@@ -549,7 +550,10 @@ const camblyGuide: MarketingPage = {
   updated: '2026-11-25',
 };
 
-export const marketingPages: MarketingPage[] = [howItWorks, about, pricing, compareChatGpt, camblyGuide];
+/** Guides, in the order the /guides page lists them. */
+export const guidePages: MarketingPage[] = [planConversationLessonGuide, topicsByLevelGuide, cefrLevelsGuide, personaliseGuide, camblyGuide];
+
+export const marketingPages: MarketingPage[] = [howItWorks, about, pricing, compareChatGpt, guidesIndex(guidePages), ...guidePages];
 
 export function marketingPageByPath(pathname: string): MarketingPage | undefined {
   const clean = pathname.replace(/\/+$/, '') || '/';
@@ -560,8 +564,8 @@ export function marketingPageByPath(pathname: string): MarketingPage | undefined
 export const publicNav: { label: string; href: string }[] = [
   { label: 'How It Works', href: '/how-it-works' },
   { label: 'Free Lessons', href: '/esl-lessons' },
+  { label: 'Guides', href: '/guides' },
   { label: 'Pricing', href: '/pricing' },
-  { label: 'Blog', href: '/blog' },
   { label: 'About', href: '/about' },
 ];
 
