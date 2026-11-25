@@ -6,7 +6,7 @@ import {
   type MarketingPage,
   type MarketingSection,
 } from '@shared/marketing-pages';
-import { siteFacts } from '@shared/site-facts';
+import { siteFacts, founderPerson } from '@shared/site-facts';
 
 /**
  * Server-side prerender of the public information pages (/how-it-works,
@@ -115,13 +115,7 @@ export function buildMarketingPageHtml(page: MarketingPage): string {
 /** Structured data: the page itself, its breadcrumb and (when present) its FAQ. */
 export function marketingStructuredData(page: MarketingPage): unknown[] {
   const url = `${BASE_URL}${page.path}`;
-  const founderAuthor = {
-    '@type': 'Person',
-    name: siteFacts.founder,
-    jobTitle: siteFacts.founderRole,
-    url: `${BASE_URL}/about`,
-    sameAs: ['https://www.linkedin.com/in/davidjackson113', 'https://x.com/DaveTeacher1'],
-  };
+  const founderAuthor = founderPerson;
   const data: unknown[] = [
     page.schemaType === 'Article'
       ? {
@@ -154,12 +148,7 @@ export function marketingStructuredData(page: MarketingPage): unknown[] {
       about: { '@id': `${BASE_URL}/#software` },
       ...(page.schemaType === 'AboutPage'
         ? {
-            mainEntity: {
-              '@type': 'Person',
-              name: siteFacts.founder,
-              jobTitle: siteFacts.founderRole,
-              sameAs: ['https://www.linkedin.com/in/davidjackson113', 'https://x.com/DaveTeacher1'],
-            },
+            mainEntity: founderPerson,
           }
         : {}),
       ...(page.references?.length ? { citation: page.references } : {}),

@@ -2,6 +2,7 @@ import { storage } from './storage';
 import type { BlogPost } from '@shared/schema';
 import { blogPublicMetadata } from '@shared/blog-public-metadata';
 import { publicNav } from '@shared/marketing-pages';
+import { founderPerson } from '@shared/site-facts';
 
 /**
  * Server-side prerender of the blog index (/blog) and blog posts (/blog/:slug).
@@ -84,11 +85,10 @@ export function blogPostingJsonLd(post: BlogPost): string {
     ...(post.category ? { articleSection: post.category } : {}),
     ...(post.tags?.length ? { keywords: post.tags.join(', ') } : {}),
     inLanguage: 'en',
-    author: {
-      '@type': 'Person',
-      name: post.author || 'Dave Jackson',
-      sameAs: ['https://www.linkedin.com/in/davidjackson113', 'https://x.com/DaveTeacher1'],
-    },
+    // Posts by Dave (stored as "Dave Jackson" or "David Jackson") carry his full profile.
+    author: !post.author || /jackson/i.test(post.author)
+      ? { ...founderPerson, name: post.author || founderPerson.name }
+      : { '@type': 'Person', name: post.author },
     publisher: {
       '@type': 'Organization',
       '@id': `${BASE_URL}/#organization`,

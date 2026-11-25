@@ -79,7 +79,7 @@ export const hero = {
  */
 export const definition = {
   heading: `What is ${brand}?`,
-  text: `${brand} is an AI lesson planner for ESL and EFL teachers that makes topic-based conversation lessons. You choose a CEFR level (A1 to C2) and any topic, and in ${generationTime} it writes a complete, ready-to-teach lesson: a warm-up, five key words with pictures, a levelled reading, comprehension questions, sentence frames at three levels of support, discussion questions, a gap-fill and a quiz. It keeps track of the words each of your students has learned, so lessons build on each other, and gives every student a private page for practice between classes. It was created by Dave Jackson, a working ESL teacher.`,
+  text: `${brand} is an AI lesson planner for ESL and EFL teachers that makes topic-based conversation lessons. You choose a CEFR level (A1 to C2) and any topic, and in ${generationTime} it writes a complete, ready-to-teach lesson: a warm-up, five key words with pictures, a levelled reading, comprehension questions, sentence frames at three levels of support, discussion questions, a gap-fill and a quiz. It keeps track of the words each of your students has learned, so lessons build on each other, and gives every student a private page for practice between classes. It was created by Dave Jackson, a British English teacher who has taught online since 2015 and still plans his own students’ lessons with it.`,
 };
 
 /** Real lesson titles from two of Dave's courses (one personalised, one general). */
@@ -213,7 +213,7 @@ export const founder = {
   quote:
     "I love teaching. I never loved the hours before it: finding a text at the right level, writing the questions, making vocabulary cards, then doing it all again for the next student, because every student is different. So I built PlanWise to do the preparation the way I'd do it myself.",
   name: 'Dave Jackson',
-  role: 'ESL teacher and founder of PlanWise ESL',
+  role: 'English teacher since 2015, 2,000+ students taught · founder of PlanWise ESL',
   initials: 'DJ',
   linkLabel: 'Read why I built it',
   href: '/about',

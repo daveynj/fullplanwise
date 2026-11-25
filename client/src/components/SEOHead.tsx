@@ -186,8 +186,9 @@ export function SEOHead({
             "@type": "Organization",
             "name": "PlanWise ESL"
           },
-          "url": "https://planwiseesl.com/about",
+          "url": "https://speakwithdave.com",
           "sameAs": [
+            "https://speakwithdave.com",
             "https://www.linkedin.com/in/davidjackson113",
             "https://x.com/DaveTeacher1"
           ]
