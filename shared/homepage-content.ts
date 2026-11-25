@@ -52,7 +52,7 @@ export const hero = {
     'A full lesson every time: warm-up, key vocabulary, a levelled reading, comprehension, speaking practice and a quiz.',
     'Ready in 1–2 minutes, so you can make one on the spot when a student arrives with a new topic.',
     'Tracks the words each student has learned, so every lesson builds on the last instead of repeating it.',
-    'Gives each student a private page with their lessons, words and flashcards to practise between classes.',
+    'Gives each student a private page with their lessons, words and flashcards, where they can suggest what to talk about next.',
   ],
   audienceIntro: "Who it's for:",
   audience: [
@@ -107,7 +107,7 @@ export const personalisation = {
       'Financial Independence, Retire Early: The F.I.R.E. Movement Explained',
     ],
   },
-  note: 'In both, each lesson avoids words the student already knows and recycles them in new readings.',
+  note: 'In both, each lesson avoids words the student already knows and recycles them in new readings, and students can suggest the next topic from their own page.',
   cta: 'Browse free lessons at every level',
   href: '/esl-lessons',
 };
@@ -170,8 +170,8 @@ export const features = {
     },
     {
       icon: 'target' as FeatureIcon,
-      title: 'A Page for Each Student',
-      text: 'Share a private link. Your student reviews finished lessons, reads ahead for the next one, practises their words with flashcards and suggests topics they want to talk about.',
+      title: 'Students Choose What to Talk About',
+      text: 'Share a private link. Your student reviews finished lessons, reads ahead for the next one, practises with flashcards and suggests topics for your next class: make the lesson in one click. On Unlimited, students can even make their own lessons, which land in your library.',
     },
     {
       icon: 'shield' as FeatureIcon,
@@ -366,6 +366,15 @@ export const faq = {
         {
           type: 'text',
           text: 'Yes. When you make a lesson for a student, PlanWise avoids words they already know and words planned in their upcoming lessons, and reuses known words naturally in the reading. When you press "We did this" after class, that lesson’s words join the student’s list.',
+        },
+      ] as FaqAnswerPart[],
+    },
+    {
+      question: 'Can my students choose what we talk about?',
+      answer: [
+        {
+          type: 'text',
+          text: 'Yes. On their private page, students suggest topics for the next class. You see their ideas on their profile and can turn one into a lesson in one click, with the topic and level already filled in. If you are on Unlimited, students can also make lessons themselves, at their own level; each one is saved in your library and planned for that student, and they star the one they want to do next. You can switch this off for any student.',
         },
       ] as FaqAnswerPart[],
     },

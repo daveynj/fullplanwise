@@ -2005,6 +2005,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const publicLessons = await storage.getPublicLessonSummaries();
       const { posts } = await storage.getAllBlogPosts(1, 1000, undefined, undefined, true);
       const paths = [
+        "/",
+        ...marketingPages.map((p) => p.path),
         "/esl-lessons",
         ...["a1", "a2", "b1", "b2", "c1", "c2"].map((level) => `/esl-lessons/${level}`),
         ...publicLessons.map((l) => `/lessons/${l.id}`),

@@ -34,7 +34,7 @@ Lessons open full screen for screen sharing and can be downloaded for printing o
 ## What makes it different
 
 - **It remembers each student.** When a lesson is made for a student, PlanWise ESL avoids words the student has already learned or has planned, and reuses known words naturally in new readings. When the teacher marks a lesson as done ("We did this"), its words join the student's word list.
-- **Student pages.** Each student can have a private page (no login needed) with finished lessons, a preview of the next lesson's reading and new words, their word list and flashcards. Students can suggest topics, and students of Unlimited teachers can make lessons themselves.
+- **Student pages.** Each student can have a private page (no login needed) with finished lessons, a preview of the next lesson's reading and new words, their word list and flashcards. Students suggest topics for the next class, and the teacher turns an idea into a lesson in one click. Students of Unlimited teachers can also make lessons themselves, at their own level; each is saved in the teacher's library and planned for that student, and the teacher can switch this off per student.
 - **Every lesson is checked before it is saved.** Each section is checked automatically; a broken exercise is fixed or written again before the teacher sees the lesson.
 - **Consistent structure.** Unlike a general-purpose chatbot, which returns free text and forgets the student, PlanWise ESL produces the same complete lesson structure every time.
 
