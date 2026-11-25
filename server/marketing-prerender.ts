@@ -95,7 +95,7 @@ export function buildMarketingPageHtml(page: MarketingPage): string {
       <header>
         <p>${e(page.eyebrow)}</p>
         <h1>${renderInline(page.h1)}</h1>
-        ${page.byline ? `<p>By ${e(page.byline.author)}, ${e(siteFacts.founderRole)} &bull; <time datetime="${e(page.byline.published)}">${e(page.byline.published)}</time>${page.byline.note ? ` &bull; ${e(page.byline.note)}` : ''}</p>` : ''}
+        ${page.byline ? `<p>By ${e(page.byline.author)}${page.byline.author === siteFacts.founder ? `, ${e(siteFacts.founderRole)}` : ''} &bull; <time datetime="${e(page.byline.published)}">${e(page.byline.published)}</time>${page.byline.note ? ` &bull; ${e(page.byline.note)}` : ''}</p>` : ''}
         ${page.intro.map((p) => `<p>${renderInline(p)}</p>`).join('\n        ')}
       </header>
       ${page.sections.map(sectionHtml).join('\n      ')}
@@ -115,7 +115,7 @@ export function buildMarketingPageHtml(page: MarketingPage): string {
 /** Structured data: the page itself, its breadcrumb and (when present) its FAQ. */
 export function marketingStructuredData(page: MarketingPage): unknown[] {
   const url = `${BASE_URL}${page.path}`;
-  const author = {
+  const founderAuthor = {
     '@type': 'Person',
     name: siteFacts.founder,
     jobTitle: siteFacts.founderRole,
@@ -133,7 +133,9 @@ export function marketingStructuredData(page: MarketingPage): unknown[] {
           headline: page.h1,
           description: page.description,
           inLanguage: 'en',
-          author,
+          author: page.byline && page.byline.author !== siteFacts.founder
+            ? { '@type': 'Organization', '@id': `${BASE_URL}/#organization`, name: page.byline.author, url: BASE_URL }
+            : founderAuthor,
           publisher: { '@id': `${BASE_URL}/#organization`, '@type': 'Organization', name: siteFacts.brand },
           datePublished: page.byline?.published ?? page.updated,
           dateModified: page.updated,

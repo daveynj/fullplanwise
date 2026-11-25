@@ -448,6 +448,7 @@ export const footer = {
     { label: 'Start Free Trial', href: '/auth?register=true' },
     { label: 'How It Works', href: '/how-it-works' },
     { label: 'Free ESL Lessons', href: '/esl-lessons' },
+    { label: 'Guides for ESL Teachers', href: '/guides' },
     { label: 'Pricing', href: '/pricing' },
     { label: 'PlanWise vs ChatGPT', href: '/compare/chatgpt' },
     { label: 'ESL Teaching Blog', href: '/blog' },

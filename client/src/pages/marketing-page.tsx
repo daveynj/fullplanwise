@@ -24,7 +24,7 @@ function Section({ section }: { section: MarketingSection }) {
         <Inline key={i} as="p" text={p} className="text-slate-700 leading-relaxed mb-4 [&_a]:text-brand-navy [&_a]:font-semibold [&_a]:underline [&_a]:decoration-brand-yellow [&_a]:decoration-2 [&_a]:underline-offset-2" />
       ))}
       {section.bullets && (
-        <ul className="space-y-2 mb-4 list-disc pl-6 text-slate-700 leading-relaxed">
+        <ul className="space-y-2 mb-4 list-disc pl-6 text-slate-700 leading-relaxed [&_a]:text-brand-navy [&_a]:font-semibold [&_a]:underline [&_a]:decoration-brand-yellow [&_a]:decoration-2 [&_a]:underline-offset-2">
           {section.bullets.map((b, i) => (
             <Inline key={i} as="li" text={b} />
           ))}
@@ -85,7 +85,8 @@ export default function MarketingPage() {
             <Inline as="h1" text={page.h1} className="text-4xl md:text-5xl font-nunito font-bold leading-tight tracking-tight mb-6" />
             {page.byline && (
               <p className="text-sm text-slate-500 mb-6">
-                By <Link href="/about" className="font-semibold text-brand-navy hover:underline">{page.byline.author}</Link>, ESL teacher and founder of PlanWise ESL
+                By <Link href="/about" className="font-semibold text-brand-navy hover:underline">{page.byline.author}</Link>
+                {page.byline.author === 'Dave Jackson' ? ', ESL teacher and founder of PlanWise ESL' : null}
                 {page.byline.note ? <> · {page.byline.note}</> : null}
               </p>
             )}

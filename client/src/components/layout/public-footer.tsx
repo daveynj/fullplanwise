@@ -12,7 +12,7 @@ export function PublicFooter() {
           <p className="text-white/60 text-sm max-w-md leading-relaxed">{footer.brandLine}</p>
         </div>
         <ul className="space-y-2 text-sm">
-          {[...publicNav, { label: 'Start Free Trial', href: '/auth?register=true' }].map((l) => (
+          {[...publicNav, { label: 'Blog', href: '/blog' }, { label: 'Start Free Trial', href: '/auth?register=true' }].map((l) => (
             <li key={l.href}>
               <Link href={l.href} className="text-white/60 hover:text-white">{l.label}</Link>
             </li>

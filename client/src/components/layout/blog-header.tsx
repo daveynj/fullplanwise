@@ -13,11 +13,11 @@ export function BlogHeader() {
         <Link href="/">
           <div className="flex items-center gap-2 cursor-pointer">
             <img src="/PlanWise_ESL_logo.png" alt="PlanWise ESL logo" className="h-16 sm:h-20 w-auto" /> 
-            <span className="text-lg sm:text-xl font-nunito font-bold text-brand-navy uppercase">PlanWise ESL</span>
+            <span className="text-lg sm:text-xl font-nunito font-bold text-brand-navy uppercase whitespace-nowrap">PlanWise ESL</span>
           </div>
         </Link>
         
-        <div className="hidden md:flex items-center gap-1 lg:gap-2">
+        <div className="hidden lg:flex items-center gap-1 xl:gap-2">
           {publicNav.map((item) => (
             <Link key={item.href} href={item.href}>
               <Button variant="ghost" className="text-brand-navy hover:bg-brand-navy/10 px-3">
@@ -34,7 +34,7 @@ export function BlogHeader() {
         </div>
 
         <button
-          className="md:hidden p-2 text-brand-navy hover:bg-brand-navy/10 rounded"
+          className="lg:hidden p-2 text-brand-navy hover:bg-brand-navy/10 rounded"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           aria-label="Toggle menu"
         >
@@ -42,7 +42,7 @@ export function BlogHeader() {
         </button>
       </nav>
 
-      <div className={`md:hidden bg-brand-light border-t border-gray-200 py-4 px-6 space-y-3 transition-all duration-300 ease-in-out overflow-hidden ${
+      <div className={`lg:hidden bg-brand-light border-t border-gray-200 py-4 px-6 space-y-3 transition-all duration-300 ease-in-out overflow-hidden ${
         mobileMenuOpen ? 'max-h-[32rem] opacity-100' : 'max-h-0 opacity-0 py-0'
       }`}>
         {publicNav.map((item) => (
