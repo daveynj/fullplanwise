@@ -7,6 +7,7 @@ import { createServer as createViteServer, createLogger } from "vite";
 import { nanoid } from "nanoid";
 import viteConfig from "../vite.config";
 import { injectLandingPrerender } from "./landing-prerender";
+import { injectMarketingPrerender } from "./marketing-prerender";
 import { injectBlogPrerender } from "./blog-prerender";
 import { injectLessonPrerender } from "./lesson-prerender";
 
@@ -65,8 +66,11 @@ export async function setupVite(app: Express, server: Server) {
       );
       // Prerender landing content for bots/crawlers on the homepage only
       // (match on pathname so query strings like /?utm=... still get prerendered output)
+      const marketing = injectMarketingPrerender(template, pathname);
       if (pathname === "/" || pathname === "/index.html") {
         template = injectLandingPrerender(template);
+      } else if (marketing) {
+        template = marketing;
       } else if (pathname.startsWith("/blog")) {
         // Prerender blog index/post content for bots (null = not a blog page or unpublished)
         const prerendered = await injectBlogPrerender(template, pathname, res.locals.blogPost);

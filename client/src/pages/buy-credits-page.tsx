@@ -1,3 +1,5 @@
+import { trackEvent } from "@/lib/analytics";
+import { siteFacts } from "@shared/site-facts";
 import { useRef, useState } from "react";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
@@ -69,6 +71,7 @@ export default function BuyCreditsPage() {
     retry: false,
     onSuccess: (data) => {
       setRedirecting(true);
+      trackEvent("begin_checkout", { currency: siteFacts.currency, value: Number(siteFacts.priceValue) });
       window.location.href = data.url;
     },
     onError: (error: any) => {

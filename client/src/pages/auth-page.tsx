@@ -81,13 +81,13 @@ export default function AuthPage() {
   return (
     <div className="flex min-h-screen bg-brand-light">
       <SEOHead
-        title="Login | Join PlanwiseESL - AI ESL Lesson Generator"
-        description="Sign in to PlanwiseESL to access AI-powered ESL lesson planning. Join 2,847+ teachers saving 15+ hours weekly with automated CEFR-level lesson generation."
+        title="Log In or Start Your Free Trial | PlanWise ESL"
+        description="Log in to PlanWise ESL, or create a free account: complete CEFR-levelled ESL lessons in 1–2 minutes. 5-day free trial, no credit card needed."
         keywords={[
           "ESL teacher login",
           "AI lesson planning account",
           "ESL teacher registration", 
-          "PlanwiseESL sign up",
+          "PlanWise ESL sign up",
           "ESL lesson generator login",
           "CEFR lesson planning tool",
           "AI ESL teaching platform"
@@ -98,9 +98,9 @@ export default function AuthPage() {
       <div className="flex flex-col justify-center w-full lg:w-1/2 px-4 sm:px-6 lg:px-8 py-12">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <div className="flex justify-center mb-6">
-            <img src="/PlanWise_ESL_logo.png" alt="Plan Wise ESL Logo" className="h-12 w-auto" />
-            <h2 className="text-center text-3xl font-nunito font-bold text-brand-navy ml-3">
-              PLAN WISE ESL
+            <img src="/PlanWise_ESL_logo.png" alt="PlanWise ESL logo" className="h-12 w-auto" />
+            <h2 className="text-center text-3xl font-nunito font-bold text-brand-navy ml-3 uppercase">
+              PlanWise ESL
             </h2>
           </div>
           

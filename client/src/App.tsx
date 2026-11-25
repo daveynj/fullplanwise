@@ -41,6 +41,7 @@ const AdminLessonManagementPage = lazy(() => import("@/pages/admin-lesson-manage
 const BlogIndex = lazy(() => import("@/pages/blog-index"));
 const BlogPost = lazy(() => import("@/pages/blog-post"));
 const PublicLessonsIndexPage = lazy(() => import("@/pages/public-lessons-index-page"));
+const MarketingPage = lazy(() => import("@/pages/marketing-page"));
 const AdminBlogPosts = lazy(() => import("@/pages/admin-blog-posts"));
 // A student's own page (/s/<code>), reached by the private link from their teacher
 const StudentPageHomePage = lazy(() => import("@/pages/student-page-home"));
@@ -93,6 +94,11 @@ function Router() {
       <Route path="/esl-lessons/:level" component={PublicLessonsIndexPage} />
       <Route path="/blog/:slug" component={BlogPost} />
       <Route path="/blog" component={BlogIndex} />
+      <Route path="/how-it-works" component={MarketingPage} />
+      <Route path="/about" component={MarketingPage} />
+      <Route path="/pricing" component={MarketingPage} />
+      <Route path="/compare/chatgpt" component={MarketingPage} />
+      <Route path="/guides/cambly-feedback-score-super-tutor" component={MarketingPage} />
       <Route path="/forgot-password" component={ForgotPasswordPage} />
       <Route path="/reset-password/:token" component={ResetPasswordPage} />
       <Route path="/twitter-card" component={TwitterCardPreview} />

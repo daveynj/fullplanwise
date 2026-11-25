@@ -7,6 +7,8 @@ const __dirname = dirname(__filename);
 import { injectLandingPrerender } from "./landing-prerender";
 import { injectBlogPrerender } from "./blog-prerender";
 import { injectLessonPrerender } from "./lesson-prerender";
+import { injectMarketingPrerender } from "./marketing-prerender";
+import { marketingPages } from "@shared/marketing-pages";
 
 // Development-only Vite middleware lives in ./vite-dev, which index.ts loads
 // with a dynamic import so production never loads Vite or its plugins.
@@ -95,6 +97,15 @@ export function serveStatic(app: Express) {
       next(e);
     }
   };
+  // Public information pages (how it works, about, pricing, comparisons).
+  for (const page of marketingPages) {
+    app.get(page.path, (_req, res, next) => {
+      const prerendered = injectMarketingPrerender(readIndexTemplate(), page.path);
+      if (!prerendered) return next();
+      res.status(200).set({ "Content-Type": "text/html" }).end(prerendered);
+    });
+  }
+
   app.get("/lessons/:id", servePrerenderedLesson);
   app.get("/esl-lessons", servePrerenderedLesson);
   app.get("/esl-lessons/:level", servePrerenderedLesson);

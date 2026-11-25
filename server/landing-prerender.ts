@@ -1,16 +1,22 @@
 import {
   homepageMeta,
   hero,
+  definition,
+  personalisation,
   showcase,
   problem,
   features,
+  science,
   steps,
+  founder,
   pricing,
   testimonials,
   finalCta,
   faq,
   footer,
 } from '@shared/homepage-content';
+import { siteFacts, trialText } from '@shared/site-facts';
+import { publicNav } from '@shared/marketing-pages';
 
 /**
  * Server-side prerender of the landing page.
@@ -43,14 +49,14 @@ function faqAnswerHtml(parts: { type: string; text: string; href?: string }[]): 
     .join('');
 }
 
-/** Builds the static, crawler-readable landing page markup. */
+/** Builds the static, crawler-readable landing page markup (same order as the React page). */
 export function buildLandingPrerenderHtml(): string {
-  const benefitsHtml = hero.benefits.map((b) => `<li>${e(b)}</li>`).join('');
-  const audienceHtml = hero.audience.map((a) => `<li>${e(a)}</li>`).join('');
-  const traditionalHtml = problem.traditional.items.map((i) => `<li>${e(i)}</li>`).join('');
-  const withPlanwiseHtml = problem.withPlanwise.items.map((i) => `<li>${e(i)}</li>`).join('');
+  const list = (items: string[]) => items.map((i) => `<li>${e(i)}</li>`).join('');
   const featuresHtml = features.items
     .map((f) => `<div class="lp-card"><h3>${e(f.title)}</h3><p>${e(f.text)}</p></div>`)
+    .join('');
+  const sciencePointsHtml = science.points
+    .map((p) => `<li><strong>${e(p.title)}:</strong> ${e(p.text)}</li>`)
     .join('');
   const stepsHtml = steps.items
     .map(
@@ -64,7 +70,7 @@ export function buildLandingPrerenderHtml(): string {
         <h3>${e(p.name)}</h3>
         <p>${e(p.description)}</p>
         <p class="lp-price">${e(p.price)}<span>${e(p.priceSuffix)}</span></p>
-        <ul>${p.features.map((f) => `<li>${e(f)}</li>`).join('')}</ul>
+        <ul>${list(p.features)}</ul>
         <a class="lp-btn" href="${e(p.ctaHref)}">${e(p.cta)}</a>
       </div>`,
     )
@@ -91,33 +97,53 @@ export function buildLandingPrerenderHtml(): string {
   const quickLinksHtml = footer.quickLinks
     .map((l) => `<li><a href="${e(l.href)}">${e(l.label)}</a></li>`)
     .join('');
+  const courseHtml = (course: { label: string; titles: string[] }) =>
+    `<div class="lp-card"><h3>${e(course.label)}</h3><ol>${list(course.titles)}</ol></div>`;
 
   return `<div id="landing-prerender">
   <header class="lp-header">
-    <strong>PLAN WISE ESL</strong>
+    <strong>PlanWise ESL</strong>
     <nav>
-      <a href="/blog">Blog</a>
+      ${publicNav.map((l) => `<a href="${l.href}">${l.label}</a>`).join('\n      ')}
       <a href="/auth">Login</a>
       <a href="/auth?register=true">Sign Up Free</a>
     </nav>
   </header>
 
+  <main>
   <section class="lp-section lp-hero">
+    <p>${e(hero.badge)}</p>
     <h1>${e(hero.heading)}</h1>
     <p class="lp-lead">${e(hero.subheading)}</p>
-    <ul>${benefitsHtml}</ul>
-    <p><strong>${e(hero.audienceIntro)}</strong></p>
-    <ul>${audienceHtml}</ul>
+    <ul>${list(hero.benefits)}</ul>
     <p>
       <a class="lp-btn" href="/auth?register=true">${e(hero.primaryCta)}</a>
-      <a class="lp-btn lp-btn-alt" href="#features">${e(hero.secondaryCta)}</a>
+      <a class="lp-btn lp-btn-alt" href="#sample-lesson">${e(hero.secondaryCta)}</a>
     </p>
     <p>${e(hero.noCardNote)} &bull; ${e(hero.freeLessonsNote)}</p>
-    <h2>${e(hero.previewTitle)}</h2>
-    <p>${e(hero.previewText)}</p>
+    <figure>
+      <img src="${e(hero.image)}" alt="${e(hero.imageAlt)}" width="${hero.imageWidth}" height="${hero.imageHeight}" />
+      <figcaption><strong>${e(hero.previewTitle)}</strong> ${e(hero.previewText)}</figcaption>
+    </figure>
+    <p><strong>${e(hero.audienceIntro)}</strong></p>
+    <ul>${list(hero.audience)}</ul>
+  </section>
+
+  <section id="what-is-planwise" class="lp-section">
+    <h2>${e(definition.heading)}</h2>
+    <p>${e(definition.text)}</p>
+    <div class="lp-stats">${statsHtml}</div>
   </section>
 
   <section class="lp-section">
+    <h2>${e(personalisation.heading)}</h2>
+    <p>${e(personalisation.intro)}</p>
+    <div class="lp-grid-2">${courseHtml(personalisation.personal)}${courseHtml(personalisation.general)}</div>
+    <p>${e(personalisation.note)}</p>
+    <p><a href="${e(personalisation.href)}">${e(personalisation.cta)}</a></p>
+  </section>
+
+  <section id="sample-lesson" class="lp-section">
     <h2>${e(showcase.heading)}</h2>
     <p>${e(showcase.subheading)}</p>
     <p><a href="/lessons/${showcase.lessonId}">${e(showcase.viewFullLabel)}</a></p>
@@ -128,10 +154,11 @@ export function buildLandingPrerenderHtml(): string {
     <h2>${e(problem.heading)}</h2>
     <p>${e(problem.intro)}</p>
     <div class="lp-grid-2">
-      <div class="lp-card"><h3>${e(problem.traditional.title)}</h3><ul>${traditionalHtml}</ul></div>
-      <div class="lp-card"><h3>${e(problem.withPlanwise.title)}</h3><ul>${withPlanwiseHtml}</ul></div>
+      <div class="lp-card"><h3>${e(problem.traditional.title)}</h3><ul>${list(problem.traditional.items)}</ul></div>
+      <div class="lp-card"><h3>${e(problem.withPlanwise.title)}</h3><ul>${list(problem.withPlanwise.items)}</ul></div>
     </div>
     <p><strong>${e(problem.conclusion)}</strong></p>
+    <p><a href="/compare/chatgpt">Read the full PlanWise vs ChatGPT comparison</a></p>
   </section>
 
   <section id="features" class="lp-section">
@@ -140,13 +167,28 @@ export function buildLandingPrerenderHtml(): string {
   </section>
 
   <section class="lp-section">
+    <h2>${e(science.heading)}</h2>
+    <p>${e(science.intro)}</p>
+    <ol>${sciencePointsHtml}</ol>
+    <figure>
+      <img src="${e(science.image)}" alt="${e(science.imageAlt)}" width="1650" height="900" loading="lazy" />
+      <figcaption>${e(science.imageCaption)}</figcaption>
+    </figure>
+    <p><a href="${e(science.href)}">${e(science.cta)}</a></p>
+  </section>
+
+  <section class="lp-section">
     <h2>${e(steps.heading)}</h2>
     <div class="lp-grid-3">${stepsHtml}</div>
   </section>
 
-  <section id="pricing" class="lp-section">
-    <h2>${e(pricing.heading)}</h2>
-    <div class="lp-grid-2">${plansHtml}</div>
+  <section class="lp-section">
+    <h2>${e(founder.heading)}</h2>
+    <blockquote class="lp-card">
+      <p>&ldquo;${e(founder.quote)}&rdquo;</p>
+      <footer>&ndash; ${e(founder.name)}, ${e(founder.role)}</footer>
+    </blockquote>
+    <p><a href="${e(founder.href)}">${e(founder.linkLabel)}</a></p>
   </section>
 
   <section class="lp-section">
@@ -154,12 +196,10 @@ export function buildLandingPrerenderHtml(): string {
     ${testimonialsHtml}
   </section>
 
-  <section class="lp-section">
-    <h2>${e(finalCta.heading)}</h2>
-    <div class="lp-stats">${statsHtml}</div>
-    <p>${e(finalCta.lead)}</p>
-    <p><a class="lp-btn" href="/auth?register=true">${e(finalCta.cta)}</a></p>
-    <p>${e(hero.noCardNote)} &bull; ${e(finalCta.freeLessonsNote)}</p>
+  <section id="pricing" class="lp-section">
+    <h2>${e(pricing.heading)}</h2>
+    <div class="lp-grid-2">${plansHtml}</div>
+    <p><a href="/pricing">Compare plans in detail</a></p>
   </section>
 
   <section class="lp-section">
@@ -168,8 +208,16 @@ export function buildLandingPrerenderHtml(): string {
     ${faqHtml}
   </section>
 
+  <section class="lp-section">
+    <h2>${e(finalCta.heading)}</h2>
+    <p>${e(finalCta.lead)}</p>
+    <p><a class="lp-btn" href="/auth?register=true">${e(finalCta.cta)}</a></p>
+    <p>${e(hero.noCardNote)} &bull; ${e(finalCta.freeLessonsNote)}</p>
+  </section>
+  </main>
+
   <footer class="lp-footer">
-    <p><strong>PlanwiseESL</strong> &mdash; ${e(footer.brandLine)}</p>
+    <p><strong>PlanWise ESL</strong> &mdash; ${e(footer.brandLine)}</p>
     <ul>${quickLinksHtml}</ul>
     <ul>${footer.aboutItems.map((i) => `<li>${e(i)}</li>`).join('')}</ul>
     <p>
@@ -205,6 +253,7 @@ export const landingPrerenderCss = `
 #landing-prerender .lp-stats strong { font-size: 1.6rem; color: #b8912a; }
 #landing-prerender .lp-footer { background: #051d40; color: #fdfdfd; padding: 32px 24px; }
 #landing-prerender .lp-footer a { color: #edc437; }
+#landing-prerender img { max-width: 100%; height: auto; border-radius: 12px; }
 `;
 
 /** Builds the <head> meta snippet for the landing page (title, description, robots, canonical). */
@@ -214,6 +263,81 @@ export function buildLandingHeadMeta(): string {
     <meta name="keywords" content="${e(homepageMeta.keywords.join(', '))}" />
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
     <link rel="canonical" href="${e(homepageMeta.canonicalUrl)}" />`;
+}
+
+/** JSON for a <script type="application/ld+json"> block; '<' is escaped so content cannot close the tag. */
+function jsonLd(data: unknown): string {
+  return `<script type="application/ld+json">${JSON.stringify(data).replace(/</g, '\\u003c')}</script>`;
+}
+
+function faqAnswerText(parts: { type: string; text: string }[]): string {
+  return parts.map((part) => part.text).join('').trim();
+}
+
+/**
+ * Homepage structured data: the product (with its real offers) and the FAQ.
+ * Search engines and AI assistants read these to answer "what is it, who is
+ * it for, what does it cost". No ratings are included: only add an
+ * aggregateRating once there are real, published reviews to back it.
+ */
+export function buildLandingStructuredData(): string {
+  const software = {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    '@id': `${siteFacts.url}/#software`,
+    name: siteFacts.brand,
+    alternateName: [...siteFacts.alternateNames],
+    url: siteFacts.url,
+    description: homepageMeta.description,
+    applicationCategory: 'EducationalApplication',
+    applicationSubCategory: 'ESL lesson planning',
+    operatingSystem: 'Web browser',
+    inLanguage: 'en',
+    image: `${siteFacts.url}${homepageMeta.imagePath}`,
+    audience: {
+      '@type': 'EducationalAudience',
+      educationalRole: 'teacher',
+      audienceType: 'ESL and EFL teachers, online English tutors, language schools',
+    },
+    featureList: features.items.map((f) => f.title),
+    offers: [
+      {
+        '@type': 'Offer',
+        name: `Free (${trialText})`,
+        price: '0',
+        priceCurrency: siteFacts.currency,
+        url: `${siteFacts.url}/auth?register=true`,
+      },
+      {
+        '@type': 'Offer',
+        name: 'Unlimited',
+        price: siteFacts.priceValue,
+        priceCurrency: siteFacts.currency,
+        url: `${siteFacts.url}/buy-credits`,
+        priceSpecification: {
+          '@type': 'UnitPriceSpecification',
+          price: siteFacts.priceValue,
+          priceCurrency: siteFacts.currency,
+          referenceQuantity: { '@type': 'QuantitativeValue', value: 1, unitCode: 'MON' },
+        },
+      },
+    ],
+    creator: { '@id': `${siteFacts.url}/#organization` },
+    publisher: { '@id': `${siteFacts.url}/#organization` },
+  };
+
+  const faqPage = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    '@id': `${siteFacts.url}/#faq`,
+    mainEntity: faq.items.map((item) => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: { '@type': 'Answer', text: faqAnswerText(item.answer) },
+    })),
+  };
+
+  return [software, faqPage].map(jsonLd).join('\n    ');
 }
 
 /**
@@ -243,10 +367,10 @@ export function injectLandingPrerender(template: string): string {
     );
   }
 
-  // 2. Inject prerender styles before </head>.
+  // 2. Inject structured data and prerender styles before </head>.
   html = html.replace(
     '</head>',
-    `    <style>${landingPrerenderCss}</style>\n  </head>`,
+    () => `    ${buildLandingStructuredData()}\n    <style>${landingPrerenderCss}</style>\n  </head>`,
   );
 
   // 3. Inject the static content inside the root div so bots can read it.

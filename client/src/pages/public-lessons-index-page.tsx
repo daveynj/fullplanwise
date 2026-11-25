@@ -72,8 +72,8 @@ export default function PublicLessonsIndexPage() {
       <SEOHead
         title={
           level
-            ? `${level} (${levelName}) ESL Lessons - Free Lesson Plans | Plan Wise ESL`
-            : "Free ESL Lessons by CEFR Level (A1-C2) | Plan Wise ESL"
+            ? `${level} (${levelName}) ESL Lessons - Free Lesson Plans | PlanWise ESL`
+            : "Free ESL Lessons by CEFR Level (A1-C2) | PlanWise ESL"
         }
         description={intro}
         canonicalUrl={level ? `/esl-lessons/${level.toLowerCase()}` : "/esl-lessons"}

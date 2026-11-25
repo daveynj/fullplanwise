@@ -3,7 +3,13 @@
  * Imported by BOTH the React landing page (client/src/pages/landing-page.tsx)
  * and the server prerender (server/landing-prerender.ts) so crawler-visible
  * HTML always matches the hydrated page.
+ *
+ * Every claim here must be true of the product today. Search engines and AI
+ * assistants quote this page, and contradictory numbers make them hedge or
+ * leave PlanWise out. Shared facts (price, trial, generation time) come from
+ * shared/site-facts.ts.
  */
+import { siteFacts, trialText, priceText } from './site-facts';
 
 export interface FaqLinkPart {
   type: 'link';
@@ -16,127 +22,220 @@ export interface FaqTextPart {
 }
 export type FaqAnswerPart = FaqTextPart | FaqLinkPart;
 
+const { brand, generationTime } = siteFacts;
+
 export const homepageMeta = {
-  title: 'Plan Wise ESL: AI Lesson Generator for ESL Teachers',
+  title: `${brand} – AI Lesson Planner for ESL Teachers & Tutors`,
   description:
-    'Transform your lesson planning from exhausting to effortless. Go from 3-hour prep sessions to 3-minute lesson generation. CEFR-aligned, ready-to-teach ESL lessons with vocabulary, reading, grammar, and activities.',
+    `Complete, CEFR-levelled ESL lessons on any topic in ${generationTime}, built around each student's level and vocabulary. ${trialText}, no card needed.`,
   keywords: [
-    'ESL teacher burnout solution',
-    'AI ESL lesson generator',
-    'lesson planning takes too long',
-    'how to plan ESL lessons faster',
-    'tired of ESL lesson prep',
-    'save time ESL teaching',
-    'ESL lesson planning software',
-    'automated ESL lessons',
-    'CEFR lesson planning',
-    'ESL teacher productivity',
+    'AI ESL lesson planner',
+    'ESL lesson plan generator',
+    'AI lesson planner for ESL teachers',
+    'CEFR lesson plans',
+    'lesson plans for online English tutors',
+    'Preply italki Cambly lesson planning',
+    'ESL vocabulary tracking',
     'AI for English teachers',
   ],
   canonicalUrl: 'https://planwiseesl.com',
   imagePath: '/images/homepage-share-2026-10.png',
-  imageAlt: 'Plan Wise ESL — CEFR-aligned, ready-to-teach ESL lessons in minutes.',
+  imageAlt: `${brand} — CEFR-aligned, ready-to-teach ESL lessons in minutes.`,
 };
 
 export const hero = {
-  heading: 'Steal back hours of prep. Get a complete ESL lesson in 45 seconds',
+  badge: 'Conversation lessons for Preply, italki, Cambly & independent tutors',
+  heading: 'The AI ESL lesson planner that remembers every student',
   subheading:
-    'Built for online ESL tutors on Preply, italki, Cambly and beyond. CEFR-based, fully editable, and ready to teach in your next class.',
+    `Complete, CEFR-levelled conversation lessons on any topic in ${generationTime}, built around each student's level, interests and the words they already know.`,
   benefits: [
-    'Save 20–60 minutes per lesson prep.',
-    'Look more professional with structured, engaging materials.',
-    'Tailor lessons to any student\u2019s level, interests, or goals instantly.',
+    'A full lesson every time: warm-up, key vocabulary, a levelled reading, comprehension, speaking practice and a quiz.',
+    'Ready in 1–2 minutes, so you can make one on the spot when a student arrives with a new topic.',
+    'Tracks the words each student has learned, so every lesson builds on the last instead of repeating it.',
+    'Gives each student a private page with their lessons, words and flashcards to practise between classes.',
   ],
   audienceIntro: "Who it's for:",
   audience: [
-    'Online ESL tutors on Preply, italki, Cambly, and private ESL tutors.',
+    'Online ESL tutors on Preply, italki, Cambly and other platforms.',
+    'Independent and private English teachers.',
     'Language schools and small agencies.',
   ],
-  primaryCta: 'Start Your Transformation',
-  secondaryCta: 'Explore Features',
+  primaryCta: 'Try It Free for 5 Days',
+  secondaryCta: "See What's in a Lesson",
   noCardNote: 'No credit card required',
-  freeLessonsNote: '5-day free trial',
-  previewTitle: 'AI-Generated Lessons in Minutes',
-  previewText: 'Complete lessons with reading, vocabulary, activities, and assessments.',
+  freeLessonsNote: trialText,
+  previewTitle: 'A real PlanWise ESL lesson',
+  previewText: 'Every new word comes with a picture, pronunciation, a definition at the student\u2019s level and example sentences.',
+  image: '/images/lesson-vocabulary-2026-11.webp',
+  imageAlt: 'Vocabulary card from a PlanWise ESL B2 lesson: the word "affluence" with a picture, syllable-by-syllable pronunciation, a definition and example sentences',
+  imageWidth: 1650,
+  imageHeight: 1040,
   videoUrl: 'https://www.youtube.com/embed/pcLlwL5sNK0',
 };
 
+/**
+ * A plain answer to "what is it?", shown near the top of the page. AI
+ * assistants and search snippets quote short definitions like this.
+ */
+export const definition = {
+  heading: `What is ${brand}?`,
+  text: `${brand} is an AI lesson planner for ESL and EFL teachers that makes topic-based conversation lessons. You choose a CEFR level (A1 to C2) and any topic, and in ${generationTime} it writes a complete, ready-to-teach lesson: a warm-up, five key words with pictures, a levelled reading, comprehension questions, sentence frames at three levels of support, discussion questions, a gap-fill and a quiz. It keeps track of the words each of your students has learned, so lessons build on each other, and gives every student a private page for practice between classes. It was created by Dave Jackson, a working ESL teacher.`,
+};
+
+/** Real lesson titles from two of Dave's courses (one personalised, one general). */
+export const personalisation = {
+  heading: 'One Student, One Course',
+  intro:
+    'Generic materials are the same for everyone. PlanWise builds lessons around the student in front of you. These are real lesson titles from two courses made with it:',
+  personal: {
+    label: 'For a B2\u2013C1 student who works in China\u2019s fashion industry',
+    titles: [
+      'The Rise of Luxury Chinese Fashion Brands',
+      'Swipe, Stream, Sell: Live Commerce vs Traditional Retail in the Fashion World',
+      'The "Guochao" (National Trend) Phenomenon Beyond Fashion',
+      'The Evolution of Chinese Workplace Culture: "Quiet Quitting" vs. Extreme Ambition',
+      'The Silver Economy: The Changing Face of Aging and Retirement',
+    ],
+  },
+  general: {
+    label: 'A general B2 conversation course for adults',
+    titles: [
+      'Bucket Lists: Dreams Worth Chasing',
+      'Money for Everyone? Exploring Universal Basic Income',
+      'The Attention Economy: Who Profits From Your Focus?',
+      'The Longevity Race: Can Science Help Us Live Forever?',
+      'Financial Independence, Retire Early: The F.I.R.E. Movement Explained',
+    ],
+  },
+  note: 'In both, each lesson avoids words the student already knows and recycles them in new readings.',
+  cta: 'Browse free lessons at every level',
+  href: '/esl-lessons',
+};
+
 export const showcase = {
-  heading: 'See Real AI-Generated Lessons',
+  heading: 'See a Real Lesson, Exactly as PlanWise Made It',
   subheading:
-    'Each lesson comes with a complete suite of activities - from warm-up exercises to vocabulary practice, reading comprehension, interactive activities, and assessment tools.',
+    'Every lesson follows the same proven shape: warm up, pre-teach the key words, read, check understanding, practise the language, then talk. Scroll through this B2 lesson to see each part.',
   sampleLabel: 'Sample Lesson',
   viewFullLabel: 'View Full Lesson',
-  cta: 'Try It For Free',
+  cta: 'Make Your First Lesson Free',
   lessonId: 1768,
 };
 
 export const problem = {
-  heading: 'Tired of Spending Hours on Lesson Prep?',
+  heading: 'Why Not Just Ask ChatGPT?',
   intro:
-    'Online ESL teachers face the constant challenge of creating CEFR-aligned, engaging, and individualized lessons for one-on-one sessions. Finding the right materials takes time you could be spending teaching.',
+    'A general chatbot can write a reading text. A lesson your student actually learns from takes more than that, and the chatbot forgets your student the moment you close the chat.',
   traditional: {
-    title: 'Traditional Lesson Planning',
+    title: 'Prompting a general chatbot',
     items: [
-      '1-2 hours of hunting for materials online',
-      'Piecing together activities from multiple sources',
-      "Adapting content to match your student's level",
-      'Less time for actual teaching or more students',
+      'Re-explain your student, their level and their goals every time',
+      'One long block of text to copy, check and format',
+      'The level drifts: a B1 reading comes back full of C1 words',
+      'No record of the words you have already taught',
     ],
   },
   withPlanwise: {
-    title: 'With Plan Wise ESL',
+    title: `With ${brand}`,
     items: [
-      'Complete lessons generated in just 3 minutes',
-      'All sections perfectly integrated and cohesive',
-      'Perfect CEFR level matching for your students',
-      'Teach more students and increase your income',
+      'Pick the student, the level and a topic. That is all.',
+      'A structured, ready-to-screen-share lesson with every activity in place',
+      'Written for the CEFR level you choose and checked before you see it',
+      "Each student's words tracked, so nothing is taught twice by accident",
     ],
   },
   conclusion:
-    'Plan Wise ESL is your solution \u2013 generate complete, ready-to-teach lessons in minutes.',
+    `${brand} does the planning a good teacher would do, for every student, every week.`,
 };
 
-export type FeatureIcon = 'clock' | 'target' | 'monitor';
+export type FeatureIcon = 'clock' | 'target' | 'monitor' | 'users' | 'layers' | 'shield';
 
 export const features = {
-  heading: 'Everything You Need for Effective Online Lessons',
+  heading: 'Built for How Tutors Really Teach',
   items: [
     {
       icon: 'clock' as FeatureIcon,
-      title: '3-Minute Lesson Generation',
-      text: 'Generate a full, ready-to-go lesson \u2013 complete with warm-up, vocabulary, activities, and more \u2013 in under 3 minutes, freeing you to focus on student interaction and personalized feedback, not tedious prep.',
+      title: 'A Complete Lesson in 1–2 Minutes',
+      text: 'Choose a level from A1 to C2 and any topic. PlanWise writes the warm-up, pre-teaches the key vocabulary with examples and pictures, writes a reading at the right level, then checks understanding and gets your student talking. Pictures fill in while you do the warm-up, so you can even make a lesson at the start of class.',
+    },
+    {
+      icon: 'users' as FeatureIcon,
+      title: 'It Remembers Every Student',
+      text: 'Choose the student and PlanWise avoids the words they have already learned and reuses them naturally in new readings. When you press "We did this", the lesson’s words join their list.',
+    },
+    {
+      icon: 'layers' as FeatureIcon,
+      title: 'Speaking Support at Three Levels',
+      text: 'Sentence frames come at three levels of support (emerging, developing and expanding), each with model answers, so a nervous student and a confident one can both answer the same question.',
     },
     {
       icon: 'target' as FeatureIcon,
-      title: 'CEFR Level Selection (A1-C2)',
-      text: "Ensure lessons perfectly match your students' proficiency levels, ensuring every lesson perfectly targets their level and boosts their confidence.",
+      title: 'A Page for Each Student',
+      text: 'Share a private link. Your student reviews finished lessons, reads ahead for the next one, practises their words with flashcards and suggests topics they want to talk about.',
+    },
+    {
+      icon: 'shield' as FeatureIcon,
+      title: 'Checked Before You See It',
+      text: 'Every new lesson is checked section by section before it is saved. A broken exercise is fixed or written again, so you do not discover problems in the middle of a class.',
     },
     {
       icon: 'monitor' as FeatureIcon,
-      title: 'Designed for Online Teaching',
-      text: 'Lessons are structured for easy screen sharing, making screen sharing seamless and keeping your online students engaged from start to finish.',
+      title: 'Made for Online Classes',
+      text: 'Lessons open full screen for screen sharing and download for printing or saving as a PDF. Add your own target words, and include idioms and phrasal verbs from A2 up.',
     },
   ],
 };
 
+/** The research-based lesson sequence, summarised (full version: /how-it-works). */
+export const science = {
+  heading: 'Built on How People Actually Learn Languages',
+  intro: 'Every lesson follows the same research-based sequence, and each step is there for a reason.',
+  points: [
+    { title: 'Activate', text: 'Warm-up questions switch on what the student already knows about the topic.' },
+    { title: 'Pre-teach', text: 'Five key words taught before the reading, so about 96% of the text is familiar.' },
+    { title: 'Read', text: 'A reading written for the CEFR level that uses each new word two or three times.' },
+    { title: 'Check', text: 'One comprehension question per new word: retrieval, not rereading.' },
+    { title: 'Scaffold', text: 'Sentence frames at three levels of support, so every student can answer.' },
+    { title: 'Speak', text: "Five discussion questions that take the topic into the student's own life." },
+    { title: 'Retrieve', text: 'A shuffled gap-fill and a quiz bring every word back once more.' },
+    { title: 'Recycle', text: 'Words are tracked and reused in later lessons, then reviewed with flashcards.' },
+  ],
+  cta: 'See the research behind each step',
+  href: '/how-it-works',
+  image: '/images/lesson-sentence-frames-2026-11.webp',
+  imageAlt: 'Sentence frames from a PlanWise ESL B2 lesson at three levels of support: emerging, developing and expanding',
+  imageCaption: 'Sentence frames at three levels of support, from a real B2 lesson.',
+};
+
+/** Founder story, in Dave's words (full version: /about). */
+export const founder = {
+  heading: 'Built by a Teacher Who Hated Making Materials',
+  quote:
+    "I love teaching. I never loved the hours before it: finding a text at the right level, writing the questions, making vocabulary cards, then doing it all again for the next student, because every student is different. So I built PlanWise to do the preparation the way I'd do it myself.",
+  name: 'Dave Jackson',
+  role: 'ESL teacher and founder of PlanWise ESL',
+  initials: 'DJ',
+  linkLabel: 'Read why I built it',
+  href: '/about',
+};
+
 export const steps = {
-  heading: 'Generate Lessons in 3 Simple Steps',
+  heading: 'Your Next Lesson in 3 Steps',
   items: [
     {
       number: 1,
-      title: 'Select CEFR Level',
-      text: 'Choose the appropriate level (A1-C2) for your student.',
+      title: 'Choose Student and Level',
+      text: 'Pick one of your students (or none) and a CEFR level from A1 to C2.',
     },
     {
       number: 2,
-      title: 'Enter Your Topic',
-      text: 'Provide the subject or theme for the lesson.',
+      title: 'Give It a Topic',
+      text: 'Anything your student cares about: job interviews, football, their favourite series. Add target words if you like.',
     },
     {
       number: 3,
-      title: 'Generate Lesson',
-      text: 'Let our AI create a complete, ready-to-teach lesson.',
+      title: 'Teach',
+      text: `In ${generationTime} you have a complete lesson to screen-share, print or send to your student's page.`,
     },
   ],
 };
@@ -146,27 +245,28 @@ export const pricing = {
   plans: [
     {
       name: 'Free',
-      description: 'For exploring and occasional use.',
+      description: 'Try everything, then keep what you made.',
       price: '$0',
       priceSuffix: '',
       features: [
-        'Access your saved lessons',
-        'Explore the public lesson library',
-        'Full access during your 5-day free trial',
+        `Unlimited lessons during your ${trialText}`,
+        'Keep and reuse every lesson you have made',
+        'Private pages for your students',
+        'Browse the free ESL lesson library',
       ],
-      cta: 'Get Started',
+      cta: 'Start Free',
       ctaHref: '/auth?register=true',
       highlighted: false,
     },
     {
       name: 'Unlimited',
-      description: 'For active and professional teachers.',
-      price: '$19.99',
-      priceSuffix: '/month',
+      description: 'For tutors and teachers with regular students.',
+      price: siteFacts.price,
+      priceSuffix: `/${siteFacts.pricePeriod}`,
       features: [
         'Unlimited AI lesson generations',
-        'Access to all lesson components',
-        'Save and manage all your lessons',
+        'Vocabulary tracking for every student',
+        'Students can make their own lessons from their page',
         'Cancel anytime',
       ],
       cta: 'Go Unlimited',
@@ -195,46 +295,104 @@ export const testimonials = {
 };
 
 export const finalCta = {
-  heading: 'Ready to Revolutionize Your Lesson Planning?',
+  heading: 'Plan Less. Teach Better Lessons.',
   stats: [
-    { value: '3', label: 'Minutes to Create Complete Lessons' },
-    { value: '6+', label: 'Hours Saved Weekly' },
-    { value: 'A1-C2', label: 'CEFR Levels Supported' },
+    { value: '1–2 min', label: 'To a complete lesson' },
+    { value: 'A1–C2', label: 'Every CEFR level' },
+    { value: '1 page', label: 'For each of your students' },
+    { value: '5', label: 'New words per lesson, each met 5–6 times' },
   ],
-  lead: 'Stop spending 3+ hours per lesson on preparation. Start teaching more and planning less.',
-  leadEmphasis: '3+ hours per lesson',
-  cta: 'Get Started for Free',
-  freeLessonsNote: '5-day free trial included',
+  lead: `Try ${brand} free for ${siteFacts.trialDays} days and make as many lessons as you like.`,
+  leadEmphasis: `free for ${siteFacts.trialDays} days`,
+  cta: 'Start My Free Trial',
+  freeLessonsNote: `${trialText} included`,
 };
 
 export const faq = {
   heading: 'Frequently Asked Questions',
-  subheading: 'Everything you need to know about PlanwiseESL and AI-powered lesson planning',
+  subheading: `Everything you need to know about ${brand}`,
   items: [
     {
-      question: 'How does AI lesson planning save me time?',
+      question: definition.heading,
+      answer: [{ type: 'text', text: definition.text }] as FaqAnswerPart[],
+    },
+    {
+      question: `Who is ${brand} for?`,
       answer: [
         {
           type: 'text',
-          text: 'Our AI generates complete CEFR-leveled lessons in under 2 minutes, including vocabulary cards, reading texts, comprehension questions, and discussion activities. What used to take 3+ hours now takes minutes, saving you 15+ hours weekly.',
+          text: 'Online ESL tutors on Preply, italki, Cambly and other platforms, independent English teachers, and small language schools. It is designed for one-to-one and small-group classes with teenagers and adults.',
         },
       ] as FaqAnswerPart[],
     },
     {
-      question: 'Are the lessons really CEFR-aligned?',
+      question: `How is ${brand} different from ChatGPT?`,
       answer: [
         {
           type: 'text',
-          text: "Yes! Our AI is specifically trained on CEFR standards (A1-C2) and creates content appropriate for each level. Vocabulary, grammar structures, and reading complexity are automatically adjusted to match your students' proficiency level.",
+          text: `A general chatbot starts from nothing every time and returns a block of text. ${brand} knows each student's level and the words they have already learned, produces the same complete lesson structure every time, checks every section before saving it, and gives your student a page to practise on.`,
         },
       ] as FaqAnswerPart[],
     },
     {
-      question: 'Can I specify what vocabulary to target?',
+      question: `Can ${brand} make grammar lessons?`,
       answer: [
         {
           type: 'text',
-          text: 'Yes! Before generating a lesson, you can specify particular vocabulary words you want the AI to focus on. This ensures the lesson targets exactly the language points your students need to practice.',
+          text: `${brand} makes topic-based conversation lessons, not grammar-rule lessons. Grammar is practised through the sentence frames, which give students useful structures for the topic at three levels of support. To practise a particular structure, choose a topic that naturally uses it: "Life experiences" for the present perfect, or "What would you do if you won the lottery?" for the second conditional. `,
+        },
+        { type: 'link', href: '/how-it-works', text: 'See how a lesson is built' },
+        { type: 'text', text: '.' },
+      ] as FaqAnswerPart[],
+    },
+    {
+      question: 'Are the lessons really at the right CEFR level?',
+      answer: [
+        {
+          type: 'text',
+          text: 'You choose the level, and the reading length, sentence style and the words used in definitions follow fixed rules for that level: at A1, for example, definitions use only the 500 most common English words. Every new lesson is checked section by section before it is saved. You can judge for yourself: ',
+        },
+        {
+          type: 'link',
+          href: '/esl-lessons',
+          text: 'browse free sample lessons at every level',
+        },
+        { type: 'text', text: '.' },
+      ] as FaqAnswerPart[],
+    },
+    {
+      question: 'Does it remember what my students have already learned?',
+      answer: [
+        {
+          type: 'text',
+          text: 'Yes. When you make a lesson for a student, PlanWise avoids words they already know and words planned in their upcoming lessons, and reuses known words naturally in the reading. When you press "We did this" after class, that lesson’s words join the student’s list.',
+        },
+      ] as FaqAnswerPart[],
+    },
+    {
+      question: 'Can my students practise between lessons?',
+      answer: [
+        {
+          type: 'text',
+          text: 'Yes. Each student can have a private page (no login needed) with their finished lessons, a preview of the next lesson’s reading and new words, all their words, and flashcards. Students can also suggest topics for future lessons.',
+        },
+      ] as FaqAnswerPart[],
+    },
+    {
+      question: 'Can I make a lesson during a class?',
+      answer: [
+        {
+          type: 'text',
+          text: 'Yes. A lesson is ready in 1–2 minutes and opens straight away; the pictures for the vocabulary and discussion appear about a minute later, while you are doing the warm-up. So when a student arrives wanting to talk about something new, you can make a lesson on that topic there and then.',
+        },
+      ] as FaqAnswerPart[],
+    },
+    {
+      question: 'Can I choose the vocabulary?',
+      answer: [
+        {
+          type: 'text',
+          text: 'Yes. Before generating a lesson you can list the words you want it to teach, and the lesson is built around them.',
         },
       ] as FaqAnswerPart[],
     },
@@ -243,12 +401,12 @@ export const faq = {
       answer: [
         {
           type: 'text',
-          text: 'Any topic! From business English and travel to current events and specialized subjects. Our AI draws from extensive knowledge to create engaging, relevant content for any subject your students need to learn. ',
+          text: 'Any topic, in 12 subject areas including general, business, academic, medical, legal, technology, tourism and finance English. ',
         },
         {
           type: 'link',
-          href: '/blog/45',
-          text: 'Discover specialized niche ESL content generation',
+          href: '/esl-lessons',
+          text: 'See free example lessons',
         },
         { type: 'text', text: '.' },
       ] as FaqAnswerPart[],
@@ -258,7 +416,7 @@ export const faq = {
       answer: [
         {
           type: 'text',
-          text: 'Yes! Every new account includes 5 days of unlimited lesson generation. No credit card required. This lets you experience how PlanwiseESL can transform your teaching before making any commitment. Once your trial ends, simply subscribe to keep generating lessons.',
+          text: `Yes. Every new account gets a ${trialText} with unlimited lesson generation, and no credit card is needed. When the trial ends, every lesson you made stays in your account.`,
         },
       ] as FaqAnswerPart[],
     },
@@ -267,7 +425,7 @@ export const faq = {
       answer: [
         {
           type: 'text',
-          text: 'After your 5-day free trial, the Unlimited plan is $19.99/month for unlimited AI lesson generations, and you can cancel anytime. Since most teachers save 15+ hours weekly, it pays for itself immediately.',
+          text: `The Unlimited plan is ${priceText} for unlimited lessons, and you can cancel anytime.`,
         },
       ] as FaqAnswerPart[],
     },
@@ -276,17 +434,21 @@ export const faq = {
 
 export const footer = {
   brandLine:
-    'AI-powered ESL lesson generator created by ESL teacher Dave Jackson. Transform your teaching with lessons that engage students and save you 15+ hours weekly.',
+    `${brand} is an AI lesson planner for ESL teachers, created by ESL teacher Dave Jackson. Complete CEFR-levelled lessons that build on what each student already knows.`,
   quickLinks: [
-    { label: 'Start Free Trial', href: '/auth' },
+    { label: 'Start Free Trial', href: '/auth?register=true' },
+    { label: 'How It Works', href: '/how-it-works' },
     { label: 'Free ESL Lessons', href: '/esl-lessons' },
+    { label: 'Pricing', href: '/pricing' },
+    { label: 'PlanWise vs ChatGPT', href: '/compare/chatgpt' },
     { label: 'ESL Teaching Blog', href: '/blog' },
+    { label: 'About', href: '/about' },
   ],
-  aboutItems: ['Created by ESL Teacher', 'CEFR-Aligned Content', '15+ Hours Saved Weekly'],
+  aboutItems: ['Created by an ESL teacher', 'CEFR A1–C2', 'Built for one-to-one and online classes'],
   social: {
     linkedin: 'https://www.linkedin.com/in/davidjackson113',
     twitter: 'https://x.com/DaveTeacher1',
   },
-  copyright: '\u00a9 2025 PlanwiseESL. Created by Dave Jackson, ESL Teacher.',
+  copyright: `© ${new Date().getFullYear()} ${brand}. Created by Dave Jackson, ESL Teacher.`,
   tagline: 'Built for ESL Teachers, by an ESL Teacher',
 };

@@ -36,7 +36,7 @@ export function SEOHead({
   noindex = false,
   article 
 }: SEOHeadProps) {
-  const fullTitle = exactTitle || title.includes("PlanwiseESL") ? title : `${title} | PlanwiseESL - AI-Powered ESL Lessons`;
+  const fullTitle = exactTitle || title.includes("PlanWise ESL") || title.includes("PlanwiseESL") ? title : `${title} | PlanWise ESL`;
   const fullDescription = description.length > 160 ? description.substring(0, 157) + "..." : description;
   
   // Generate absolute canonical URL (stripping query parameters)
@@ -107,7 +107,7 @@ export function SEOHead({
     }
     setMetaTag('robots', noindex ? 'noindex, nofollow' : 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1');
     setMetaTag('language', 'en-US');
-    setMetaTag('author', 'Dave Jackson, ESL Teacher & PlanwiseESL Founder');
+    setMetaTag('author', 'Dave Jackson, ESL Teacher & PlanWise ESL Founder');
     setMetaTag('viewport', 'width=device-width, initial-scale=1.0');
     setMetaTag('theme-color', '#2563eb');
     
@@ -149,7 +149,7 @@ export function SEOHead({
     setMetaTag('twitter:image:alt', ogImageAlt ?? `${title} - PlanwiseESL Blog Article`);
     
     // Additional social media tags
-    setMetaTag('og:site_name', 'PlanwiseESL', true);
+    setMetaTag('og:site_name', 'PlanWise ESL', true);
     setMetaTag('og:locale', 'en_US', true);
     
     // Set article-specific Open Graph tags
@@ -181,10 +181,10 @@ export function SEOHead({
         "author": {
           "@type": "Person",
           "name": "Dave Jackson",
-          "jobTitle": "ESL Teacher & AI Education Specialist",
+          "jobTitle": "ESL Teacher and Founder of PlanWise ESL",
           "worksFor": {
             "@type": "Organization",
-            "name": "PlanwiseESL"
+            "name": "PlanWise ESL"
           },
           "url": "https://planwiseesl.com/about",
           "sameAs": [
@@ -194,8 +194,8 @@ export function SEOHead({
         },
         "publisher": {
           "@type": "Organization",
-          "name": "PlanwiseESL",
-          "description": "AI-powered ESL lesson planning platform for English teachers worldwide",
+          "name": "PlanWise ESL",
+          "description": "AI lesson planner for ESL teachers and online English tutors",
           "url": "https://planwiseesl.com",
           "logo": {
             "@type": "ImageObject",
@@ -248,14 +248,12 @@ export function SEOHead({
         ]
       };
       
-      // Remove existing structured data script
-      const existingScript = document.querySelector('script[type="application/ld+json"]');
-      if (existingScript) {
-        existingScript.remove();
-      }
-      
-      // Add new structured data script
+      // Replace only this component's own structured data. The page template
+      // carries the site-wide WebSite/Organization block, which must stay.
+      document.getElementById('seo-article-jsonld')?.remove();
+
       const script = document.createElement('script');
+      script.id = 'seo-article-jsonld';
       script.type = 'application/ld+json';
       script.textContent = JSON.stringify(structuredData);
       document.head.appendChild(script);
@@ -265,7 +263,7 @@ export function SEOHead({
     return () => {
       // Reset title to default if needed
       if (document.title === fullTitle) {
-        document.title = "PlanwiseESL - AI-Powered ESL Lessons";
+        document.title = homepageMeta.title;
       }
     };
   }, [fullTitle, fullDescription, keywords, absoluteCanonicalUrl, ogImage, absoluteImageUrl, ogImageAlt, ogImageDimensions, ogType, article, noindex]);

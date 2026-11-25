@@ -1,3 +1,4 @@
+import { trackEvent } from "@/lib/analytics";
 import { createContext, ReactNode, useContext } from "react";
 import {
   useQuery,
@@ -59,6 +60,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     onSuccess: (user: Omit<SelectUser, 'password'>) => {
       queryClient.setQueryData(["/api/user"], user);
+      trackEvent("sign_up", { method: "email" });
       toast({
         title: "Registration successful",
         description: `Welcome, ${user.fullName}!`,

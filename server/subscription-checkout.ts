@@ -153,6 +153,10 @@ export async function createGuardedCheckout(
     payment_method_types: ["card"],
     line_items: [{ price: input.priceId, quantity: 1 }],
     mode: "subscription",
+    // Lets a teacher type a promotion code (created in the Stripe dashboard)
+    // on the checkout page. A code only discounts the same price, so plan
+    // detection and access are unchanged.
+    allow_promotion_codes: true,
     success_url: `${input.baseUrl}/subscription-success?session_id={CHECKOUT_SESSION_ID}&plan=${input.planId}`,
     cancel_url: `${input.baseUrl}/buy-credits`,
     metadata: { userId: String(user.id), planId: input.planId },

@@ -20,6 +20,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Wand2, Bot, Sparkles, Info, Quote } from "lucide-react";
 import { EXPRESSIONS_COMPONENT, expressionsRulesFor } from "@shared/lesson-expressions";
+import { grammarTopicHint } from "@shared/topic-hints";
 import { useTrialStatus } from "@/hooks/use-trial-status";
 import { useAuth } from "@/hooks/use-auth";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -255,6 +256,25 @@ export function LessonForm({ students, onSubmit, initialStudentId, initialTopic,
                     />
                   </FormControl>
                   <p className="text-xs text-blue-600 mt-2 italic">Be specific - a good topic helps generate better lessons</p>
+                  {(() => {
+                    const hint = grammarTopicHint(field.value || "");
+                    if (!hint) return null;
+                    return (
+                      <div className="mt-3 rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900" data-testid="grammar-topic-hint">
+                        <p>
+                          PlanWise makes <strong>conversation lessons</strong>: grammar is practised in the sentence frames, not taught as rules.
+                          To practise {hint.grammar}, try a topic where your student will naturally use it, for example:
+                        </p>
+                        <button
+                          type="button"
+                          className="mt-2 font-semibold underline decoration-amber-500 underline-offset-2 hover:text-amber-700"
+                          onClick={() => form.setValue("topic", hint.suggestion, { shouldValidate: true, shouldDirty: true })}
+                        >
+                          Use "{hint.suggestion}"
+                        </button>
+                      </div>
+                    );
+                  })()}
                   <FormMessage />
                 </FormItem>
               )}

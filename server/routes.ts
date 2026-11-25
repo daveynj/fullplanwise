@@ -31,6 +31,7 @@ import { billingHealthMonitor } from "./billing-health";
 import { registerBillingHealthRoute } from "./billing-health-route";
 import { validClientRoutes } from "@shared/client-routes";
 import { notifyIndexNow, submitToIndexNow, getIndexNowKey, lessonIndexNowPaths, blogIndexNowPaths } from "./indexnow";
+import { marketingPages } from "@shared/marketing-pages";
 import {
   reserveGenerationJob,
   spendCreditForJob,
@@ -2463,7 +2464,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             slug,
             content: convertToHTML(post.content || post.excerpt),
             excerpt: post.excerpt,
-            author: post.author || "The Plan Wise ESL Team",
+            author: post.author || "The PlanWise ESL Team",
             publishDate: post.publishDate || post.date,
             category: post.category,
             tags: post.tags || [],
@@ -2502,7 +2503,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Inject a real 404 title, noindex meta, and description so crawlers
         // and link previews see an unambiguous "Page Not Found" document
         // instead of the generic homepage metadata from the SPA shell.
-        html = html.replace(/<title>[\s\S]*?<\/title>/i, '<title>Page Not Found | PlanwiseESL</title>');
+        html = html.replace(/<title>[\s\S]*?<\/title>/i, '<title>Page Not Found | PlanWise ESL</title>');
         html = html.replace(
           /<meta\s+name=["']description["'][^>]*>/i,
           '<meta name="description" content="The page you\'re looking for doesn\'t exist or has been removed." />'
@@ -2529,7 +2530,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Page Not Found | PlanwiseESL</title>
+  <title>Page Not Found | PlanWise ESL</title>
   <link rel="canonical" href="https://planwiseesl.com${res.req.originalUrl.split('?')[0]}" />
   <meta name="robots" content="noindex, follow" />
   <style>
@@ -2631,7 +2632,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res
         .status(503)
         .set({ "Retry-After": "120", "Content-Type": "text/html" })
-        .end('<!DOCTYPE html><html><head><meta name="robots" content="noindex" /><title>Temporarily unavailable | PlanwiseESL</title></head><body><p>This lesson is temporarily unavailable. Please try again in a moment.</p></body></html>');
+        .end('<!DOCTYPE html><html><head><meta name="robots" content="noindex" /><title>Temporarily unavailable | PlanWise ESL</title></head><body><p>This lesson is temporarily unavailable. Please try again in a moment.</p></body></html>');
     }
   });
 
@@ -2674,6 +2675,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const lessonDates = publicLessons.map((l) => toDate(l.createdAt));
 
       entries.push({ url: '/' });
+      for (const page of marketingPages) entries.push({ url: page.path, lastmod: page.updated });
       entries.push({ url: '/blog', lastmod: latest(blogDates) });
 
       if (publicLessons.length > 0) {

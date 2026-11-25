@@ -53,6 +53,12 @@ export const clientRoutePaths: string[] = [
   "/blog/:slug", // existence check handled by the /blog/:slug server route
   "/esl-lessons",
   "/esl-lessons/:level", // level validity checked by the /esl-lessons/:level server route
+  // Public information pages (shared/marketing-pages.ts)
+  "/how-it-works",
+  "/about",
+  "/pricing",
+  "/compare/chatgpt",
+  "/guides/cambly-feedback-score-super-tutor",
   "/forgot-password",
   "/reset-password/:token",
   "/twitter-card",

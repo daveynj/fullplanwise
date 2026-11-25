@@ -1,6 +1,7 @@
 import { storage } from './storage';
 import type { BlogPost } from '@shared/schema';
 import { blogPublicMetadata } from '@shared/blog-public-metadata';
+import { publicNav } from '@shared/marketing-pages';
 
 /**
  * Server-side prerender of the blog index (/blog) and blog posts (/blog/:slug).
@@ -44,6 +45,59 @@ async function sanitizeContentHtml(html: string): Promise<string> {
   });
 }
 
+/** The post title is the page's only H1; any H1 written in the post body becomes an H2. */
+export function demoteH1(html: string): string {
+  return html.replace(/<h1(?=[\s>])/gi, '<h2').replace(/<\/h1\s*>/gi, '</h2>');
+}
+
+/** JSON for a <script type="application/ld+json"> block; '<' is escaped so content cannot close the tag. */
+function jsonLd(data: unknown, id?: string): string {
+  return `<script type="application/ld+json"${id ? ` id="${id}"` : ''}>${JSON.stringify(data).replace(/</g, '\\u003c')}</script>`;
+}
+
+function isoDate(value: string | Date | null | undefined): string | undefined {
+  if (!value) return undefined;
+  const d = new Date(value);
+  return isNaN(d.getTime()) ? undefined : d.toISOString();
+}
+
+/**
+ * BlogPosting structured data for a post, in the HTML crawlers receive (most
+ * AI crawlers do not run JavaScript). The id matches the client SEOHead's own
+ * article block, so the client replaces it instead of adding a duplicate.
+ */
+export function blogPostingJsonLd(post: BlogPost): string {
+  const metadata = blogPublicMetadata(post);
+  const url = `${BASE_URL}${metadata.canonicalPath}`;
+  const published = isoDate(post.publishDate);
+  const modified = isoDate(post.updatedAt) || published;
+  return jsonLd({
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: post.title,
+    description: metadata.description,
+    image: metadata.imageUrl,
+    url,
+    mainEntityOfPage: { '@type': 'WebPage', '@id': url },
+    ...(published ? { datePublished: published } : {}),
+    ...(modified ? { dateModified: modified } : {}),
+    ...(post.category ? { articleSection: post.category } : {}),
+    ...(post.tags?.length ? { keywords: post.tags.join(', ') } : {}),
+    inLanguage: 'en',
+    author: {
+      '@type': 'Person',
+      name: post.author || 'Dave Jackson',
+      sameAs: ['https://www.linkedin.com/in/davidjackson113', 'https://x.com/DaveTeacher1'],
+    },
+    publisher: {
+      '@type': 'Organization',
+      '@id': `${BASE_URL}/#organization`,
+      name: 'PlanWise ESL',
+      logo: { '@type': 'ImageObject', url: `${BASE_URL}/PlanWise_ESL_logo.png` },
+    },
+  }, 'seo-article-jsonld');
+}
+
 function formatDate(dateStr: string): string {
   const d = new Date(dateStr);
   if (isNaN(d.getTime())) return dateStr;
@@ -74,9 +128,9 @@ export const blogPrerenderCss = `
 
 function headerHtml(): string {
   return `<header class="bp-header">
-    <strong><a href="/">PLAN WISE ESL</a></strong>
+    <strong><a href="/">PlanWise ESL</a></strong>
     <nav>
-      <a href="/blog">Blog</a>
+      ${publicNav.map((l) => `<a href="${l.href}">${l.label}</a>`).join('\n      ')}
       <a href="/auth">Login</a>
       <a href="/auth?register=true">Sign Up Free</a>
     </nav>
@@ -122,7 +176,7 @@ export async function buildBlogPostHtml(post: BlogPost): Promise<string> {
         <p><em>${e(post.excerpt)}</em></p>
         ${post.featuredImageUrl ? `<img src="${e(post.featuredImageUrl)}" alt="${e(post.featuredImageAlt || post.title)}" />` : ''}
       </header>
-      ${await sanitizeContentHtml(post.content)}
+      ${demoteH1(await sanitizeContentHtml(post.content))}
     </article>
   </main>
 </div>`;
@@ -159,7 +213,7 @@ export async function injectBlogPrerender(
     if (pathname === '/blog' || pathname === '/blog/') {
       const { posts } = await storage.getAllBlogPosts(1, 100, undefined, undefined, true);
       const meta = headMeta(
-        'Blog - ESL Teaching Tips & Resources | Plan Wise ESL',
+        'Blog - ESL Teaching Tips & Resources | PlanWise ESL',
         'Discover expert ESL teaching strategies, lesson planning tips, and professional development resources for English language educators.',
         '/blog',
       );
@@ -181,7 +235,7 @@ export async function injectBlogPrerender(
         ['property', 'og:type', 'article'],
         ['property', 'og:image', metadata.imageUrl],
         ['property', 'og:image:alt', metadata.imageAlt],
-        ['property', 'og:site_name', 'PlanwiseESL'],
+        ['property', 'og:site_name', 'PlanWise ESL'],
         ['property', 'og:locale', 'en_US'],
         ['name', 'twitter:card', 'summary_large_image'],
         ['name', 'twitter:site', '@PlanwiseESL'],
@@ -192,7 +246,7 @@ export async function injectBlogPrerender(
         ['name', 'twitter:image', metadata.imageUrl],
         ['name', 'twitter:image:alt', metadata.imageAlt],
       ].map(([attribute, key, value]) => `<meta ${attribute}="${key}" content="${e(value)}" />`).join('\n    ');
-      const meta = `${headMeta(metadata.title, metadata.description, metadata.canonicalPath)}\n    ${social}`;
+      const meta = `${headMeta(metadata.title, metadata.description, metadata.canonicalPath)}\n    ${social}\n    ${blogPostingJsonLd(post)}`;
       return injectIntoTemplate(template, meta, await buildBlogPostHtml(post), true);
     }
 

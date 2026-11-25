@@ -90,6 +90,13 @@ describe("duplicate subscription guard (all Stripe operations mocked)", () => {
     );
   });
 
+  it("lets teachers enter a promotion code at checkout", async () => {
+    await expect(run()).resolves.toMatchObject({ sessionId: "cs_new" });
+    expect(primary.checkout.sessions.create).toHaveBeenCalledWith(
+      expect.objectContaining({ allow_promotion_codes: true, mode: "subscription" }), expect.anything(),
+    );
+  });
+
   it("does not select an untagged shared-email customer for a new purchase", async () => {
     primary.customers.list.mockResolvedValue(page([{ id: "cus_untagged", metadata: {} }]));
     await expect(run()).resolves.toMatchObject({ sessionId: "cs_new" });
