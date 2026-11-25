@@ -150,6 +150,7 @@ const howItWorks: MarketingPage = {
         'New lessons for a student avoid words they have already learned or have planned, and reuse known words naturally in new readings.',
         'When the teacher presses "We did this", the lesson’s words join the student’s word list.',
         'On their own page, students practise their words with flashcards, and words they find hard come back sooner. Spacing practice over time leads to much better long-term memory than cramming (Cepeda et al., 2006).',
+        'Students suggest topics for the next class from their page, so lessons stay on what they actually want to talk about. Topics learners choose themselves keep motivation high, which matters as much as any activity.',
       ],
     },
     {
@@ -293,6 +294,7 @@ const pricing: MarketingPage = {
           ['Every lesson section (incl. idioms & phrasal verbs)', 'During the trial', 'Yes'],
           ['Vocabulary tracking for each student', 'During the trial', 'Yes'],
           ['Private student pages with flashcards', 'Yes', 'Yes'],
+          ['Students suggest topics for the next class', 'Yes', 'Yes'],
           ['Students can make their own lessons', 'No', 'Yes'],
           ['Keep every lesson you made', 'Yes', 'Yes'],
           ['Free ESL lesson library', 'Yes', 'Yes'],
