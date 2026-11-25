@@ -1,3 +1,4 @@
+import { trackEvent } from "@/lib/analytics";
 import { useEffect, useState } from "react";
 import { useParams, Link, useLocation } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -158,6 +159,7 @@ export default function StudentDetailPage() {
       queryClient.invalidateQueries({ queryKey: [`/api/students/${studentId}/practice`] });
       const name = student?.name ?? "the student";
       if (status === LESSON_STATUS_DONE) {
+        trackEvent("lesson_marked_done", { words_added: result.wordsAdded });
         toast({
           title: "Marked as done",
           description: result.wordsAdded > 0

@@ -1,3 +1,4 @@
+import { GettingStartedChecklist } from "@/components/getting-started-checklist";
 import { useAuth } from "@/hooks/use-auth";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
@@ -10,7 +11,6 @@ import {
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Lesson, Student } from "@shared/schema";
-import { useState } from "react";
 import { useTrialStatus } from "@/hooks/use-trial-status";
 import { format } from 'date-fns';
 
@@ -119,7 +119,6 @@ const TrialStatusBanner = () => {
 
 export default function DashboardPage() {
   const { user } = useAuth();
-  const [showSteps, setShowSteps] = useState(false);
   const { isSubscriber, isInTrial, isPersonalTrial, trialDaysRemaining, freeCreditsRemaining } = useTrialStatus();
 
   // Fetch students for quick access
@@ -183,88 +182,16 @@ export default function DashboardPage() {
 
             <TrialStatusBanner />
 
-            {/* Onboarding Widget - Only shown when user has 0 lessons */}
-            {totalLessons === 0 && (
-              <Card className="mb-8 border-2 border-primary/30 bg-primary/5 shadow-lg">
-                <CardContent className="p-6">
-                  <div className="flex flex-col md:flex-row items-center gap-6">
-                    <div className="shrink-0 bg-primary/10 p-4 rounded-full">
-                      <BookOpen className="h-12 w-12 text-primary" />
-                    </div>
-                    <div className="flex-1">
-                      <h2 className="text-xl font-nunito font-bold mb-2">Get Started with Your First Lesson</h2>
-                      <p className="text-gray-600 mb-4">
-                        Create your first AI-powered ESL lesson in just a few simple steps. In about 2-3 minutes, our system will generate a complete lesson with warm-up activities, reading materials, vocabulary, and more!
-                      </p>
-                      <div className="flex flex-wrap gap-4">
-                        <Link href="/generate">
-                          <Button size="lg" className="bg-primary hover:bg-primary/90">
-                            Create My First Lesson
-                          </Button>
-                        </Link>
-                        <Button
-                          variant="outline"
-                          onClick={() => setShowSteps(!showSteps)}
-                          className="flex items-center"
-                        >
-                          {showSteps ? 'Hide Steps' : 'Show How It Works'}
-                          {showSteps ? null : <ArrowRight className="ml-1 h-4 w-4" />}
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Step-by-step guide - toggleable */}
-                  {showSteps && (
-                    <div className="mt-6 pt-6 border-t border-gray-200">
-                      <h3 className="font-nunito font-bold text-2xl mb-6">How to Create Your First Lesson:</h3>
-                      <div className="space-y-6">
-                        <div className="flex gap-5 items-start">
-                          <div className="bg-primary text-white rounded-full w-10 h-10 flex items-center justify-center shrink-0 text-lg font-bold">1</div>
-                          <div>
-                            <h4 className="font-bold text-xl text-gray-900 mb-1">Choose a Topic</h4>
-                            <p className="text-gray-700 text-lg">Enter any topic you're interested in teaching. For example: "Environmental Conservation" or "Food and Culture".</p>
-                          </div>
-                        </div>
-
-                        <div className="flex gap-5 items-start">
-                          <div className="bg-primary text-white rounded-full w-10 h-10 flex items-center justify-center shrink-0 text-lg font-bold">2</div>
-                          <div>
-                            <h4 className="font-bold text-xl text-gray-900 mb-1">Select Proficiency Level</h4>
-                            <p className="text-gray-700 text-lg">Choose the CEFR level that matches your students' ability (A1-C2).</p>
-                          </div>
-                        </div>
-
-                        <div className="flex gap-5 items-start">
-                          <div className="bg-primary text-white rounded-full w-10 h-10 flex items-center justify-center shrink-0 text-lg font-bold">3</div>
-                          <div>
-                            <h4 className="font-bold text-xl text-gray-900 mb-1">Click Generate</h4>
-                            <p className="text-gray-700 text-lg">Our AI will create a complete lesson in 2-3 minutes. You can use it immediately or make adjustments.</p>
-                          </div>
-                        </div>
-
-                        <div className="flex gap-5 items-start">
-                          <div className="bg-green-600 text-white rounded-full w-10 h-10 flex items-center justify-center shrink-0">
-                            <CheckCircle2 className="h-6 w-6" />
-                          </div>
-                          <div>
-                            <h4 className="font-bold text-xl text-gray-900 mb-1">That's it! Your lesson is ready to use</h4>
-                            <p className="text-gray-700 text-lg">All lessons include warm-up activities, vocabulary, reading materials, comprehension questions, and more!</p>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="mt-8 flex justify-center">
-                        <Link href="/generate">
-                          <Button className="bg-green-600 hover:bg-green-700 px-8 py-6 text-lg font-bold">
-                            Start Creating Now
-                          </Button>
-                        </Link>
-                      </div>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
+            {/* The three steps that make PlanWise click; ticks itself off and disappears when done. */}
+            {user && (
+              <GettingStartedChecklist
+                userId={user.id}
+                state={{
+                  hasStudent: students.length > 0,
+                  hasLessonForStudent: lessons.some((l) => !!l.studentId),
+                  hasStudentPage: students.some((st) => !!st.pageEnabled),
+                }}
+              />
             )}
 
             {/* Stats Cards */}
