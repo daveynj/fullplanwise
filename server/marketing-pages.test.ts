@@ -56,6 +56,16 @@ describe("public information pages", () => {
     expect(html).toContain('href="https://speakwithdave.com"');
   });
 
+  it("renders answer-first verdicts, workflow proofs, and subtle founder attribution in comparison SSR HTML", () => {
+    for (const path of ["/compare/twee", "/compare/esl-joy", "/compare/magicschool-diffit"]) {
+      const html = injectMarketingPrerender(template, path)!;
+      const doc = new DOMParser().parseFromString(html, "text/html");
+      expect(doc.querySelector(".mp-verdict h2")?.textContent?.length).toBeGreaterThan(10);
+      expect(doc.querySelectorAll("ol").length).toBeGreaterThanOrEqual(2);
+      expect(html).toContain('href="https://speakwithdave.com"');
+    }
+  });
+
   it("ignores other paths", () => {
     expect(injectMarketingPrerender(template, "/blog")).toBeNull();
     expect(marketingPageByPath("/about/")).toBeDefined();

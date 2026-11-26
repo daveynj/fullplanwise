@@ -3,6 +3,7 @@
  *  - /compare (decision hub covering pre-made libraries, AI worksheet tools & chatbots)
  *  - /compare/esl-joy
  *  - /compare/twee
+ *  - /compare/magicschool-diffit
  *  - /compare/esl-brains
  *  - /compare/fluentize
  *  - /compare/linguahouse
@@ -51,6 +52,7 @@ export const compareHubPage: MarketingPage = {
       bullets: [
         '[PlanWise ESL vs. ESL Joy](/compare/esl-joy) — Flexible AI slide decks with student tracking vs. an enforced 8-stage CEFR lesson sequence, natural vocabulary recycling, zero-login student dashboards and color-coded Vocabulary Review PDFs.',
         '[PlanWise ESL vs. Twee](/compare/twee) — Modular single-task AI tools vs. one cohesive, quality-checked pedagogical lesson with student vocabulary memory.',
+        '[PlanWise ESL vs. MagicSchool AI & Diffit](/compare/magicschool-diffit) — US K–12 school tools (US grade levels & isolated worksheets) vs. true CEFR A1–C2 adult 1-on-1 conversation lessons, vocabulary recycling and zero-login student dashboards.',
         '[PlanWise ESL vs. ESL Brains](/compare/esl-brains) — Fixed adult video-lesson catalogue vs. unlimited custom student topics, vocabulary recycling and learner dashboards.',
         '[PlanWise ESL vs. Fluentize](/compare/fluentize) — Static 700+ YouTube video lesson library vs. unlimited custom A1–C2 lessons, zero link rot, natural vocabulary recycling and learner dashboards.',
         '[PlanWise ESL vs. Linguahouse](/compare/linguahouse) — Large static worksheet library + static Expemo decks vs. bespoke lessons that dynamically recycle each student’s vocabulary.',
@@ -76,7 +78,7 @@ export const compareHubPage: MarketingPage = {
       bullets: [
         '**A1 Beginner proof:** [Let’s Talk About Video Games! (A1)](/lessons/1774) — or browse all [A1 Beginner lessons](/esl-lessons/a1).',
         '**B2 Upper-Intermediate proof:** [Can Money Buy Happiness? (B2)](/lessons/1768) and [AI and Tomorrow’s World (B2)](/lessons/1801).',
-        '**C1 Business & Career proof:** [The Price of Doing Right: Ethics in the Boardroom (C1)](/lessons/1731) and [Founders, Failures and Pivots (C1)](/lessons/1750).',
+        '**C1 Business & Career proof:** [Between Two Worlds: Identity and Feeling at Home (C1)](/lessons/2037), [The Price of Doing Right: Ethics in the Boardroom (C1)](/lessons/1731), and [Founders, Failures and Pivots (C1)](/lessons/1750).',
         '**Study PDF & Learner Dashboard proof:** [Student Experience & Vocabulary Review PDF excerpt](/student-experience), our [9-point CEFR Quality Benchmark](/compare/cefr-benchmark), and the full [free A1–C2 public library](/esl-lessons).',
       ],
     },
@@ -116,6 +118,10 @@ export const compareTweePage: MarketingPage = {
     'Twee is one of the best-known AI toolkits built specifically for English teachers. Both Twee and PlanWise ESL are CEFR-aware and designed for ELT—not US K–12 classrooms—but they solve the job in two very different ways.',
     'Twee gives you **individual modular AI tools** (reading generator, question generator, YouTube transcript tools, CEFR checker) that you stitch together yourself. PlanWise ESL builds **one complete, quality-checked pedagogical lesson** in 1–2 minutes—and remembers every student’s vocabulary across weeks.',
   ],
+  verdict: {
+    heading: 'PlanWise ESL vs. Twee: Which is better for 1-on-1 online ESL tutors?',
+    text: `**Choose ${brand}** (${priceText} Unlimited after a ${trialText}, no card) if you teach regular 1-on-1 students on [Preply, italki](/for/online-tutors), or privately and want a complete, verified CEFR A1–C2 conversation lesson ready in ${generationTime}—where words learned in earlier lessons reappear naturally in future readings, quizzes, and discussion/practice sections, backed by a zero-login student dashboard with **spaced-repetition flashcards** and a printable color-coded Vocabulary Review PDF. **Choose Twee** if you primarily want standalone, modular activity generators (like YouTube transcript questions or single-task worksheets) that you assemble into Google Docs yourself and do not need per-student memory.`,
+  },
   sections: [
     {
       heading: 'Side by side: PlanWise ESL vs. Twee',
@@ -124,12 +130,34 @@ export const compareTweePage: MarketingPage = {
         rows: [
           ['Core approach', 'Modular single-task AI tools that you run separately and assemble into a lesson', 'One cohesive 8-stage scientific pedagogical lesson generated in a single pass'],
           ['What is inside one lesson', 'Depends on which tools you combine (readings, questions, media transcripts, vocab tasks)', 'Warm-up recall, 5 pre-taught words (pronunciation, word families, collocations, usage notes, pictures), levelled reading, comprehension, recall flashcards, 5-part semantic maps, quiz, tiered sentence frames, fill-in-the-blanks, sentence unscramble & deep discussion'],
-          ['Per-student vocabulary memory', 'None — does not track what each learner has already studied across classes', 'Tracks learned words per student, avoids repeats and recycles earlier vocabulary into future readings & questions'],
-          ['Student-facing portal', 'Shareable interactive activity links per task', 'Persistent private learner dashboard (no login): all past lessons, cumulative word list, spaced flashcards, topic suggestions & student-created custom lessons (Unlimited)'],
+          ['Per-student vocabulary memory', 'None — does not track what each learner has already studied across classes', 'Tracks learned words per student, avoids repeats, and recycles earlier vocabulary naturally into future readings, quizzes & practice sections'],
+          ['Student-facing portal', 'Shareable interactive activity links per task', 'Persistent private learner dashboard (no login): all past lessons, cumulative word list, spaced-repetition flashcards, topic suggestions & student-created custom lessons (Unlimited)'],
           ['Printable student review', 'Export to PDF/Docs/Forms on paid plans', 'Complete printable Vocabulary Review study PDF (color-coded by part of speech, 4 examples per word, word families, common collocations, usage notes & semantic map)'],
           ['Quality checking', 'Teacher reviews each generated module manually', 'Automated section-by-section verification and repair before saving'],
           ['Free trial', 'Restricted free trial (5 runs)', `${trialText} with unlimited lesson generations, no credit card`],
           ['Individual paid pricing', 'Tiered paid plans (check twee.com/price for current rates)', `${priceText} Unlimited, cancel anytime`],
+        ],
+      },
+    },
+    {
+      heading: 'Real-World Prep Test: Preparing a B2/C1 1-on-1 lesson 10 minutes before class',
+      paragraphs: [
+        'Here is what happens when an online tutor prepares a personalised adult conversation lesson right before a booking:',
+      ],
+      workflowProof: {
+        planwiseTitle: `${brand} Workflow (${generationTime})`,
+        planwiseSteps: [
+          'Select your student, pick their CEFR level (A1–C2), and enter their topic.',
+          'In 1–2 minutes, open a complete screen-shareable lesson with 5 illustrated target words (10 layers each), ~96%-familiar magazine reading, reading-sourced idioms with right/wrong notes, 3-tier speaking frames, cloze, unscramble, illustrated discussion, and quiz.',
+          'Words your student mastered in earlier lessons are excluded from pre-teaching and woven naturally into future readings, quizzes, and exercises.',
+          'After class, your student revises on their zero-login spaced-repetition flashcard dashboard or via the color-coded Vocabulary Review PDF.',
+        ],
+        competitorTitle: 'Twee Workflow (Manual Module Assembly)',
+        competitorSteps: [
+          'Generate a reading passage in one Twee activity tool.',
+          'Open a second tool for comprehension questions, a third for vocabulary tasks, and a fourth for discussion prompts.',
+          'Copy, paste, and manually format the separate outputs into a document or slide deck for screen sharing.',
+          'Track what the student learned manually in notes—there is no automatic cross-lesson vocabulary recycling or persistent spaced-repetition flashcard hub.',
         ],
       },
     },
@@ -146,16 +174,19 @@ export const compareTweePage: MarketingPage = {
       bullets: [
         'You want a complete, ready-to-screen-share conversation lesson in 1–2 minutes without stitching five separate tool outputs together.',
         'You teach regular one-to-one or small-group students on [Preply or italki](/for/online-tutors), [privately](/for/freelance-esl-teachers), or at a [language school](/for/language-schools) and want each lesson to build on the words the student already learned.',
-        'You want every student to leave class with a polished Vocabulary Review study PDF (including common collocations, word families, usage notes and synonyms/antonyms) plus a private learner dashboard with flashcards.',
+        'You want every student to leave class with a polished Vocabulary Review study PDF (including common collocations, word families, usage notes and synonyms/antonyms) plus a private learner dashboard with spaced-repetition flashcards.',
         'You want students to suggest topics or create their own custom lessons on any subject between classes.',
       ],
     },
     {
-      heading: 'Why tutors switch from Twee to PlanWise ESL',
+      heading: 'Inspect real PlanWise ESL lessons with zero login',
+      paragraphs: [
+        'Do not take our word for it—open full lessons from our [free public library](/esl-lessons) with **no account required** and download the Vocabulary Review PDF at the top of each page:',
+      ],
       bullets: [
-        '**1 click instead of 6 separate tools:** Twee makes you run a reading generator, vocab generator, gap-fill generator, and discussion generator separately and stitch them together. PlanWise ESL builds all 8 connected stages in one pass.',
-        '**Real student continuity:** Twee forgets your student the moment you close the tab. PlanWise ESL tracks every student’s vocabulary, avoids repeats, recycles earlier words naturally when relevant, and gives each student a zero-login [learner dashboard](/student-experience).',
-        '**See a full lesson with zero signup:** Open any complete A1–C2 lesson in our [free public library](/esl-lessons) (including the downloadable color-coded Vocabulary Review PDF) or read our [CEFR Quality Benchmark](/compare/cefr-benchmark).',
+        '**C1 Advanced adult depth:** [Between Two Worlds: Identity and Feeling at Home (C1)](/lessons/2037) — inspect the 5-paragraph narrative, 10-layer vocabulary cards, idioms with right/wrong notes, and 3-tier speaking frames.',
+        '**A1 Beginner scaffolding:** [Let’s Talk About Video Games! (A1)](/lessons/1774) — see `< 8`-word definitions and 3-tier speaking support.',
+        '**B2 Conversation & CEFR audit:** [Can Money Buy Happiness? (B2)](/lessons/1768), our [9-point CEFR Quality Benchmark](/compare/cefr-benchmark), and the [Student Experience](/student-experience) preview.',
       ],
     },
   ],
@@ -505,6 +536,10 @@ export const compareEslJoyPage: MarketingPage = {
     'ESL Joy (`esljoy.com`) is one of the closest AI rivals to PlanWise ESL because both platforms are built specifically for independent English teachers who want lessons remembered and tailored per student—not static catalogues or generic K–12 worksheets.',
     'The real difference comes down to **flexible editable slide decks vs. a complete, enforced 8-stage pedagogical lesson**: ESL Joy focuses on flexible slide decks you can manually edit line by line with lower starter tiers, whereas PlanWise ESL generates a full, verified 8-stage CEFR A1–C2 conversation lesson in 1–2 minutes—complete with deep multi-layer vocabulary cards, ~96%-familiar readings, recall flashcards, 5-part semantic maps, tiered speaking frames, a zero-login student dashboard, and a printable color-coded Vocabulary Review PDF.',
   ],
+  verdict: {
+    heading: 'PlanWise ESL vs. ESL Joy: Which is better for 1-on-1 tutors?',
+    text: `**Choose ${brand}** (${priceText} Unlimited after a ${trialText}, no card) if you want a complete, automatically verified CEFR A1–C2 lesson ready in ${generationTime} without editing slides before class—plus automatic cross-lesson vocabulary recycling (so earlier words reappear naturally inside **future readings, quizzes, and practice sections**), a zero-login student dashboard with **spaced-repetition flashcards**, and a printable color-coded **Vocabulary Review PDF**. **Choose ESL Joy** if you teach 1–5 regular students on a lower starter budget and prefer manually editing flexible slide decks line by line.`,
+  },
   sections: [
     {
       heading: 'Side by side: PlanWise ESL vs. ESL Joy',
@@ -513,11 +548,33 @@ export const compareEslJoyPage: MarketingPage = {
         rows: [
           ['Core lesson format', 'Flexible AI slide decks, manually editable line by line', `Complete 8-stage scientific CEFR A1–C2 lesson generated in ${generationTime}, verified section by section before saving`],
           ['Pedagogical depth inside one lesson', 'Customisable slide sequence', 'Warm-up recall → 5 illustrated pre-taught words (pronunciation, levelled definition, 4 examples, word families, collocations, usage notes) → ~96%-familiar reading & comprehension → recall flashcards & 5-part semantic maps → quiz, 3-tier sentence frames, shuffled gap-fill, sentence unscramble → deep discussion'],
-          ['Per-student memory & recycling', 'Remembers each student across lessons', 'Tracks each student’s learned words, strictly avoids duplicates, and recycles earlier vocabulary into future readings & questions only when natural and relevant'],
-          ['Student review portal', 'Student progress tracked inside the tutor workflow', 'Persistent zero-login private learner dashboard: all past lessons, cumulative word list, spaced flashcards, topic suggestions & student-created custom lessons (Unlimited)'],
+          ['Per-student memory & recycling', 'Remembers each student across lessons', 'Tracks each student’s learned words, strictly avoids duplicates, and recycles earlier vocabulary naturally into future readings, quizzes & practice sections'],
+          ['Student review portal', 'Student progress tracked inside the tutor workflow', 'Persistent zero-login private learner dashboard: all past lessons, cumulative word list, spaced-repetition flashcards, topic suggestions & student-created custom lessons (Unlimited)'],
           ['Take-home printable study PDF', 'Slide-based teaching flow', 'Dedicated color-coded printable Vocabulary Review study PDF (pronunciation, levelled definitions, 4 examples/word, word families, collocations, usage notes & 5-part semantic map)'],
           ['Free tier & trial', 'Free tier (1 student, 5 custom lessons) + 30-day trial (15 AI lessons)', `${trialText} with unlimited lesson generation and no credit card required`],
           ['Paid plans', 'Plus: $9.99/mo regular ($7.99 founding until Nov 30, 2026; up to 5 students, 300 AI uses/mo). Pro: $15.99/mo regular ($12.99 founding until Nov 30, 2026; unlimited students)', `One simple plan: ${priceText} Unlimited lessons & unlimited students, cancel anytime`],
+        ],
+      },
+    },
+    {
+      heading: 'Real-World Prep Test: Preparing a C1 adult lesson 10 minutes before class',
+      paragraphs: [
+        'Compare what a tutor gets right out of the box when preparing an advanced adult conversation class on identity and living abroad:',
+      ],
+      workflowProof: {
+        planwiseTitle: `${brand} Workflow (${generationTime})`,
+        planwiseSteps: [
+          'Choose your student, select C1 Advanced, and enter the topic (e.g. identity and feeling at home between two cultures).',
+          'Open a complete, quality-checked lesson like [Between Two Worlds: Identity and Feeling at Home (C1)](/lessons/2037) in 1–2 minutes: 5-paragraph magazine narrative, 5 illustrated words with nuance/usage notes, 4 reading-sourced idioms with right/wrong mistake pairs, and 3-tier speaking frames with 27 model responses.',
+          'Mark the lesson "We did this": its vocabulary is excluded from future pre-teaching and surfaces naturally inside later readings, quizzes, and exercises.',
+          'Send the student’s zero-login spaced-repetition flashcard link and color-coded Vocabulary Review PDF in one click.',
+        ],
+        competitorTitle: 'ESL Joy Workflow (Slide-by-Slide Editing)',
+        competitorSteps: [
+          'Generate an AI slide deck inside ESL Joy’s tutor workflow.',
+          'Review and manually edit individual slides line by line if wording or pacing needs tightening before class.',
+          'Teach from the slide deck without a standalone color-coded Vocabulary Review study PDF export or 3-tier emerging/developing/expanding speaking frames.',
+          'Track student progress inside the tutor workflow without a public zero-login library for learners/tutors to inspect upfront.',
         ],
       },
     },
@@ -535,7 +592,7 @@ export const compareEslJoyPage: MarketingPage = {
         'You want a complete, research-backed 8-stage CEFR lesson ready in 1–2 minutes without manually editing slides before class—with automated section-by-section quality verification.',
         'You want deep vocabulary instruction in every lesson: phonetic pronunciation, levelled definitions, 4 real-world examples, word families with explanations, common collocations, usage notes, illustrations, recall flashcards, and 5-part semantic maps.',
         'You teach beginner or mixed-confidence students who benefit from ~96%-familiar readings, 3-tier sentence frames (emerging/developing/expanding), shuffled fill-in-the-blanks, and sentence unscramble activities.',
-        'You want every student to have a **zero-login private learner dashboard** plus a **printable color-coded Vocabulary Review PDF** you can send straight after class (especially useful for [Preply](/for/preply-tutors), [italki](/for/italki-tutors), and [freelance](/for/freelance-esl-teachers) tutors).',
+        'You want every student to have a **zero-login private learner dashboard** with **spaced-repetition flashcards** plus a **printable color-coded Vocabulary Review PDF** you can send straight after class (especially useful for [Preply](/for/preply-tutors), [italki](/for/italki-tutors), and [freelance](/for/freelance-esl-teachers) tutors).',
       ],
     },
     {
@@ -545,7 +602,7 @@ export const compareEslJoyPage: MarketingPage = {
       ],
       bullets: [
         '**A1 Beginner scaffolding proof:** [Let’s Talk About Video Games! (A1)](/lessons/1774) and all [free A1 Beginner lessons](/esl-lessons/a1).',
-        '**B2 & C1 Adult/Business proof:** [Can Money Buy Happiness? (B2)](/lessons/1768), [The Price of Doing Right: Ethics in the Boardroom (C1)](/lessons/1731), and [Founders, Failures and Pivots (C1)](/lessons/1750).',
+        '**B2 & C1 Adult/Culture/Business proof:** [Between Two Worlds: Identity and Feeling at Home (C1)](/lessons/2037), [Can Money Buy Happiness? (B2)](/lessons/1768), [The Price of Doing Right: Ethics in the Boardroom (C1)](/lessons/1731), and [Founders, Failures and Pivots (C1)](/lessons/1750).',
         '**Study PDF, Learner Hub & CEFR Benchmark:** [Zero-login Student Experience](/student-experience), [9-point CEFR Quality Benchmark](/compare/cefr-benchmark), and the full [free A1–C2 public library](/esl-lessons).',
       ],
     },
@@ -661,10 +718,117 @@ export const compareFluentizePage: MarketingPage = {
   updated,
 };
 
+export const compareMagicSchoolDiffitPage: MarketingPage = {
+  path: '/compare/magicschool-diffit',
+  title: `${brand} vs MagicSchool AI & Diffit for ESL Teachers`,
+  description:
+    `Honest comparison of ${brand} vs MagicSchool AI & Diffit: US K–12 grade worksheets vs. CEFR A1–C2 ESL lessons, vocab recycling & student hubs.`,
+  navLabel: 'PlanWise vs MagicSchool & Diffit',
+  eyebrow: 'Comparison',
+  h1: 'PlanWise ESL vs. MagicSchool AI & Diffit for adult ESL teachers',
+  intro: [
+    'MagicSchool AI and Diffit are popular teacher productivity platforms built primarily for **US K–12 school classrooms**. Because many English tutors try them first when searching for "AI lesson tools", it helps to see clearly where K–12 school tools diverge from dedicated adult and teen ESL/EFL instruction.',
+    'Where Diffit levels reading passages by **US school grades (K2–K11+)** and MagicSchool offers general classroom admin utilities, **PlanWise ESL** is engineered from the ground up for **CEFR A1–C2 conversation teaching**—with 5 illustrated pre-taught words, ~96%-familiar readings, reading-sourced idioms with right/wrong usage notes, 3-tier speaking frames, cross-lesson vocabulary recycling, and zero-login student dashboards.',
+  ],
+  verdict: {
+    heading: 'PlanWise ESL vs. MagicSchool AI & Diffit: Which should ESL tutors choose?',
+    text: `**Choose ${brand}** (${priceText} Unlimited after a ${trialText}, no card) if you teach teenage or adult ESL/EFL learners (on [Preply, italki](/for/online-tutors), [privately](/for/freelance-esl-teachers), or in a [language school](/for/language-schools)) and need true **CEFR A1–C2 calibration**, explicit adult speaking scaffolding (3-tier frames + idioms with right/wrong notes), cross-lesson vocabulary recycling across future readings and quizzes, a zero-login student flashcard hub, and a printable Vocabulary Review PDF. **Choose MagicSchool AI or Diffit** if you teach US K–12 school subjects and want grade-level reading differentiation, IEP helpers, or Google Classroom exports.`,
+  },
+  sections: [
+    {
+      heading: 'Side by side: PlanWise ESL vs. MagicSchool AI & Diffit',
+      table: {
+        headers: ['', 'MagicSchool AI / Diffit', brand],
+        rows: [
+          ['Built for', 'US K–12 school teachers, school admin & general classroom subjects', 'ESL/EFL conversation tutors & language schools teaching teens and adults'],
+          ['Levelling framework', 'US school grade levels (e.g. Grade 2–Grade 11+) rather than adult ESL progression', 'Strict CEFR A1–C2 rules per level (e.g. A1 definitions capped to the 500 most common words, <8 words; C1–C2 rich magazine nuance)'],
+          ['Speaking scaffolding', 'General reading comprehension & classroom prompts; no adult ESL speaking frames', '3-tier v2_pedagogical speaking frames (Emerging, Developing, Expanding) + idioms/phrasal verbs with explicit right vs. wrong usage pairs'],
+          ['Vocabulary instruction depth', 'Basic glossary or vocabulary list per passage', '5 pre-taught illustrated words: phonetic guide, levelled definition, 4 real-world examples, word family, collocations, usage notes & 5-part semantic map'],
+          ['Per-student memory & recycling', 'None — each generated resource starts fresh with no student word history', 'Tracks every word taught per student, avoids duplicates & recycles earlier words naturally into future readings, quizzes & practice sections'],
+          ['Between-class student review', 'Google Docs / Classroom exports for K–12 classes', 'Zero-login student dashboard (past lessons + spaced-repetition flashcards + custom lessons on Unlimited) & printable color-coded Vocabulary Review PDF'],
+          ['Pricing & trial', 'Free tiers with paid individual/school plans', `${trialText} (no credit card), then flat ${priceText} Unlimited lessons & students, cancel anytime`],
+        ],
+      },
+    },
+    {
+      heading: 'Real-World Prep Test: Adapting a topic for a 1-on-1 adult learner',
+      paragraphs: [
+        'Compare how each approach handles an adult learner who wants a structured 60-minute speaking lesson at their exact CEFR level:',
+      ],
+      workflowProof: {
+        planwiseTitle: `${brand} Workflow (${generationTime})`,
+        planwiseSteps: [
+          'Pick your student and select their exact CEFR level (A1, A2, B1, B2, C1, or C2) plus any topic.',
+          'Generate one complete 9-section lesson automatically verified before saving: warm-up, ~96%-familiar reading, 5 illustrated 10-layer vocab cards, idioms with right/wrong notes, 3-tier speaking frames, cloze, unscramble, illustrated discussion, and quiz.',
+          'Words learned in previous weeks resurface naturally in future readings, quizzes, and exercises.',
+          'Share the student’s zero-login spaced-repetition flashcard link and printable color-coded Vocabulary Review PDF right after class.',
+        ],
+        competitorTitle: 'MagicSchool AI / Diffit Workflow (K–12 Adaptation)',
+        competitorSteps: [
+          'Estimate which US school grade (e.g. Grade 4 vs. Grade 8) approximates an adult learner’s CEFR level.',
+          'Generate an adapted reading passage or isolated classroom worksheet activity.',
+          'Write your own ESL pronunciation guides, collocations, L1-friendly usage notes, 3-tier adult speaking frames, and conversation questions by hand.',
+          'Maintain your own external spreadsheet for student vocabulary—there is no automatic cross-lesson ESL recycling or spaced-repetition flashcard portal.',
+        ],
+      },
+    },
+    {
+      heading: 'When MagicSchool AI or Diffit is the better choice',
+      bullets: [
+        'You teach K–12 school students inside a US-style school curriculum and need grade-level reading differentiation across science, history, or ELA.',
+        'You need school-focused admin tools such as rubric builders, parent emails, or IEP support.',
+        'You export primarily to Google Classroom or Microsoft Teams for school-age classes.',
+      ],
+    },
+    {
+      heading: `When ${brand} is the better choice`,
+      bullets: [
+        'You teach adult or teen ESL/EFL learners who want mature, magazine-style topics calibrated strictly from **A1 to C2**—never childish K–12 worksheets.',
+        'You want every lesson to include pronunciation guides, collocations, word families, 5-part semantic maps, idioms with right/wrong usage notes, and 3-tier speaking frames ready in 1–2 minutes.',
+        'You want words learned in earlier lessons to reappear naturally inside **future readings, quizzes, and exercises**, paired with a zero-login **spaced-repetition flashcard dashboard** and printable **Vocabulary Review PDF**.',
+      ],
+    },
+    {
+      heading: 'Inspect real A1 vs. C1 CEFR calibration with zero login',
+      paragraphs: [
+        'Compare how strictly PlanWise ESL separates beginner simplicity from native-grade nuance—no login required:',
+      ],
+      bullets: [
+        '**A1 Beginner calibration proof:** [Let’s Talk About Video Games! (A1)](/lessons/1774) — simple concrete sentences, `< 8`-word definitions, and 3-tier beginner speaking frames.',
+        '**C1 Advanced adult proof:** [Between Two Worlds: Identity and Feeling at Home (C1)](/lessons/2037) — nuanced narrative prose, `assimilate` vs. `integrate` usage notes, and 27 C1 model responses.',
+        '**Full audit & student portal:** [9-point CEFR Quality Benchmark](/compare/cefr-benchmark), [Student Experience & PDF preview](/student-experience), and the full [free A1–C2 library](/esl-lessons).',
+      ],
+    },
+  ],
+  faq: [
+    {
+      question: 'Why does CEFR A1–C2 matter more than US grade levels for ESL teachers?',
+      answer: 'An adult A2 beginner has mature life experience and needs adult-relevant topics written in simple, high-frequency English with speaking frames—not a Grade 2 children’s reading. PlanWise ESL separates topic maturity from CEFR lexical difficulty across all six levels from A1 to C2.',
+    },
+    {
+      question: 'Does MagicSchool AI or Diffit track an ESL student’s vocabulary across lessons?',
+      answer: 'No. Both tools generate standalone classroom resources rather than maintaining a per-student ESL vocabulary record that recycles earlier words into future readings, quizzes, and spaced-repetition flashcards.',
+    },
+    {
+      question: 'Can I preview PlanWise ESL lessons before starting a free trial?',
+      answer: `Yes. Open any lesson in our free library at /esl-lessons with zero login—and start a ${trialText} (no credit card needed) whenever you want to test full student tracking.`,
+    },
+  ],
+  disclaimer: 'PlanWise ESL is not affiliated with or endorsed by MagicSchool AI or Diffit. Product features and positioning are based on public documentation and subject to change.',
+  cta: {
+    heading: 'Teach true CEFR A1–C2 lessons—not adapted K–12 worksheets',
+    text: `Generate a complete adult ESL lesson in ${generationTime} with per-student memory and zero-login review included. Your ${trialText} needs no credit card.`,
+    ...trialCta,
+  },
+  schemaType: 'WebPage',
+  updated,
+};
+
 export const comparisonPages: MarketingPage[] = [
   compareHubPage,
   compareEslJoyPage,
   compareTweePage,
+  compareMagicSchoolDiffitPage,
   compareEslBrainsPage,
   compareFluentizePage,
   compareLinguahousePage,

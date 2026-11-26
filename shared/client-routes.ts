@@ -67,6 +67,7 @@ export const clientRoutePaths: string[] = [
   "/compare",
   "/compare/esl-joy",
   "/compare/twee",
+  "/compare/magicschool-diffit",
   "/compare/esl-brains",
   "/compare/fluentize",
   "/compare/linguahouse",

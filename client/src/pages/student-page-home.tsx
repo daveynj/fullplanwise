@@ -233,9 +233,20 @@ export default function StudentPageHomePage() {
         </section>
 
         <p className="mt-2 text-center text-sm font-normal text-gray-600">
-          This is your private page. Please don't share the link.
+          This is your private page. Please don&apos;t share the link.
           <br />
-          Made with PlanwiseESL
+          <span className="text-xs text-slate-400">
+            Powered by{" "}
+            <a
+              href="https://planwiseesl.com/?ref=student-dashboard"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-brand-navy/75 underline decoration-brand-yellow decoration-2 underline-offset-2 hover:text-brand-navy"
+            >
+              PlanWise ESL
+            </a>{" "}
+            · AI lesson planner for English teachers
+          </span>
         </p>
       </main>
     </StudentPageFrame>

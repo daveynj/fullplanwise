@@ -21,11 +21,24 @@ export interface MarketingTable {
   rows: string[][];
 }
 
+export interface MarketingVerdict {
+  heading: string;
+  text: string;
+}
+
+export interface MarketingWorkflowProof {
+  planwiseTitle: string;
+  planwiseSteps: string[];
+  competitorTitle: string;
+  competitorSteps: string[];
+}
+
 export interface MarketingSection {
   heading: string;
   paragraphs?: string[];
   bullets?: string[];
   table?: MarketingTable;
+  workflowProof?: MarketingWorkflowProof;
 }
 
 export interface MarketingFaq {
@@ -45,6 +58,8 @@ export interface MarketingPage {
   /** Short line above the H1. */
   eyebrow: string;
   intro: string[];
+  /** Answer-first summary block placed directly above the detailed sections for visitors and AI extraction. */
+  verdict?: MarketingVerdict;
   sections: MarketingSection[];
   faq?: MarketingFaq[];
   references?: string[];

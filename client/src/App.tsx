@@ -106,6 +106,7 @@ function Router() {
       <Route path="/compare" component={MarketingPage} />
       <Route path="/compare/esl-joy" component={MarketingPage} />
       <Route path="/compare/twee" component={MarketingPage} />
+      <Route path="/compare/magicschool-diffit" component={MarketingPage} />
       <Route path="/compare/esl-brains" component={MarketingPage} />
       <Route path="/compare/fluentize" component={MarketingPage} />
       <Route path="/compare/linguahouse" component={MarketingPage} />

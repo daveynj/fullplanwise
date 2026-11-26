@@ -21,7 +21,7 @@ export function BrandMark({ className = "" }: { className?: string }) {
   return (
     <span className={`flex items-center gap-2 font-nunito text-base font-extrabold ${className}`}>
       <span className="h-3 w-3 rounded bg-brand-yellow" aria-hidden="true" />
-      PlanwiseESL
+      PlanWise ESL
     </span>
   );
 }
@@ -47,7 +47,7 @@ export function BackLink({ href, label }: { href: string; label: string }) {
 /** Sets the browser tab's title, e.g. "Shingo's words". */
 export function useStudentPageTitle(title: string | null | undefined) {
   useEffect(() => {
-    if (title) document.title = `${title} | PlanwiseESL`;
+    if (title) document.title = `${title} | PlanWise ESL`;
   }, [title]);
 }
 
