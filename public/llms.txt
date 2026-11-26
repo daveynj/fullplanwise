@@ -85,6 +85,7 @@ Dave Jackson is a British English teacher who has taught English online since 20
 - [PlanWise ESL vs Linguahouse](https://planwiseesl.com/compare/linguahouse)
 - [PlanWise ESL vs Off2Class](https://planwiseesl.com/compare/off2class)
 - [PlanWise ESL vs ChatGPT for ESL lesson planning](https://planwiseesl.com/compare/chatgpt)
+- [Same-topic CEFR quality benchmark: PlanWise ESL vs raw AI & generic worksheets](https://planwiseesl.com/compare/cefr-benchmark)
 - [About the founder](https://planwiseesl.com/about)
 - [Guides for ESL teachers and online tutors](https://planwiseesl.com/guides)
 - [Guide: how to plan an ESL conversation lesson, step by step](https://planwiseesl.com/guides/how-to-plan-an-esl-conversation-lesson)
