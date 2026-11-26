@@ -52,6 +52,7 @@ export const compareHubPage: MarketingPage = {
         '[PlanWise ESL vs. Linguahouse](/compare/linguahouse) — Large static worksheet library + static Expemo decks vs. bespoke lessons that dynamically recycle each student’s vocabulary.',
         '[PlanWise ESL vs. Off2Class](/compare/off2class) — Browser-locked sequential curriculum (no printing) vs. flexible conversation lessons with printable study PDFs and unlimited students.',
         '[PlanWise ESL vs. ChatGPT](/compare/chatgpt) — Prompting a general chatbot from scratch vs. enforced CEFR rules, verified exercises, student memory and learner dashboards.',
+        '[Same-Topic CEFR Quality Benchmark](/compare/cefr-benchmark) — A concrete side-by-side audit of a raw AI prompt, a generic ESL worksheet, and a real PlanWise ESL B2 lesson on Work-Life Balance.',
       ],
     },
     {
@@ -368,10 +369,87 @@ export const compareOff2ClassPage: MarketingPage = {
   updated,
 };
 
+export const cefrBenchmarkPage: MarketingPage = {
+  path: '/compare/cefr-benchmark',
+  title: `ESL Lesson Quality Benchmark: ${brand} vs Raw AI & Worksheets`,
+  description:
+    `Side-by-side CEFR quality audit on the same B2 topic: raw chatbot prompt vs. generic worksheet vs. a real ${brand} 8-stage lesson & study PDF.`,
+  navLabel: 'CEFR Quality Benchmark',
+  eyebrow: 'Quality benchmark',
+  h1: 'Same topic, same CEFR level: raw AI prompt vs. generic worksheet vs. PlanWise ESL',
+  byline: {
+    author: siteFacts.founder,
+    published: updated,
+    note: 'Audited by a working British ESL teacher (11 years teaching, 2,000+ students).',
+  },
+  intro: [
+    'Every ESL tool claims its lessons are "CEFR-aligned" and "ready to teach". The fastest way to see the real difference is to put three approaches side by side on the **exact same adult B2 conversation topic**: *Work-Life Balance: Can You Really Have It All?*',
+    'Below is a concrete, criterion-by-criterion audit of what a teacher actually gets from a raw general chatbot prompt, a typical pre-made ESL worksheet, and a real PlanWise ESL lesson generated in 1–2 minutes.',
+  ],
+  sections: [
+    {
+      heading: '1. Nine-point pedagogical audit (B2: Work-Life Balance)',
+      table: {
+        headers: ['Quality criterion', 'Raw ChatGPT / LLM prompt', 'Typical pre-made worksheet', `${brand} (real B2 output)`],
+        rows: [
+          ['Prep & formatting time', '20–60 min (prompting, fixing CEFR drift, formatting)', '5–15 min searching catalogue (if topic exists)', `${generationTime} — ready to screen-share immediately`],
+          ['Warm-up vocabulary recall', 'Generic icebreakers', '2–3 short lead-in questions', 'Targeted warm-up discussion questions that activate prior topic vocabulary before pre-teaching'],
+          ['Vocabulary depth per word', 'Word + 1 definition (often using harder words than the target)', 'Word + matching definition', '5 target words (e.g. juggle, boundary, workload, neglect, fulfilment) with phonetic pronunciation (/JUG-ul/), B1-level definition, 4 real-world examples, word family + explanation, common collocations, usage notes & picture'],
+          ['Reading calibration & coverage', 'Frequently drifts into C1/C2 prose; target words appear once or inconsistently', 'Fixed text; cannot adapt to your student’s known words', '5-paragraph B2 magazine-style reading using each target word 2–3 times (~96% familiar text) + 5 comprehension checks'],
+          ['Active recall & lexical depth', 'None — passive reading list only', 'Usually a single fill-in-the-blank', 'Interactive flip flashcards (recall meaning + build an original sentence) + 5-part Semantic Map (synonyms, antonyms, related concepts, contexts, associated words)'],
+          ['Speaking & accuracy practice', 'Unverified questions; occasional broken answer keys', 'Static exercises without tiered speaking support', 'Quiz + 3 tiered sentence frames (emerging/developing/expanding, especially helpful for beginners) + shuffled fill-in-the-blanks + sentence unscramble + deep target-vocab discussion'],
+          ['Automated quality verification', 'None — teacher checks every line', 'Human-edited once, static forever', 'Section-by-section automated check & repair before the teacher sees it'],
+          ['Take-home student study sheet', 'None unless formatted manually', 'Plain black-and-white worksheet (or unprintable on browser-locked sites)', 'Color-coded printable Vocabulary Review PDF (HTML → Print to PDF) with all 8 vocabulary layers — downloadable with zero login on every public lesson'],
+          ['Cross-lesson memory & portal', 'Resets every chat', 'None (or static flashcard deck)', 'Strictly avoids re-teaching known words, recycles earlier words naturally when relevant, plus zero-login learner dashboard with spaced flashcards & student-created custom lessons'],
+        ],
+      },
+    },
+    {
+      heading: '2. Why raw AI prompts fail the CEFR test (and how PlanWise prevents it)',
+      paragraphs: [
+        'When you ask a general chatbot for an A2 or B1 lesson, it routinely writes definitions that are harder than the word being taught, slips C1 idioms into the reading, and puts gap-fill answers in the exact same order as the vocabulary list. PlanWise ESL enforces fixed CEFR rules at every level from A1 to C2:',
+      ],
+      bullets: [
+        '**Controlled definition vocabulary:** At A1, definitions use only the 500 most common English words (under 8 words); at B2, definitions are written in B1 language (under 15 words) so the student never needs a dictionary to read a definition.',
+        '**96% lexical familiarity in the reading:** Keeping new words to roughly 1 in 25 matches second-language reading research (Hu & Nation, 2000; Laufer & Ravenhorst-Kalovski, 2010) so the reading triggers conversation rather than frustration.',
+        '**Shuffled retrieval & verified keys:** Gap-fills are shuffled and verified automatically so every blank has a clean, unambiguous answer before class.',
+      ],
+    },
+    {
+      heading: '3. Verify it yourself with zero login',
+      paragraphs: [
+        'You do not have to take this benchmark on trust. Open any free lesson in our [public ESL lesson library](/esl-lessons)—such as our [B2 lesson on money and happiness](/lessons/1768)—click the download button at the top to inspect the printable Vocabulary Review study sheet, or read the full breakdown on our [Student Experience page](/student-experience) and [How It Works research page](/how-it-works).',
+      ],
+    },
+  ],
+  faq: [
+    {
+      question: 'How does PlanWise ESL prevent CEFR level drift compared to ChatGPT?',
+      answer: 'PlanWise ESL enforces explicit CEFR rules per level for reading length, sentence complexity, and definition vocabulary (for example, A1 definitions use only the 500 most common words), then validates every section automatically before saving the lesson.',
+    },
+    {
+      question: 'Can I inspect a real PlanWise ESL lesson and Vocabulary Review PDF before signing up?',
+      answer: 'Yes. Every lesson in our public library at /esl-lessons is open with zero login—including the one-click Vocabulary Review download at the top of the page.',
+    },
+    {
+      question: 'How does PlanWise ESL compare to big pre-made libraries like ESL Brains, Linguahouse and Off2Class?',
+      answer: 'See our full side-by-side comparisons at /compare, including head-to-head pages for Twee, ESL Brains, Linguahouse, Off2Class and ChatGPT.',
+    },
+  ],
+  cta: {
+    heading: 'Run the benchmark on your own student’s topic',
+    text: `Generate a complete CEFR A1–C2 lesson in ${generationTime} and compare it side by side with what you use today. Your ${trialText} needs no credit card.`,
+    ...trialCta,
+  },
+  schemaType: 'Article',
+  updated,
+};
+
 export const comparisonPages: MarketingPage[] = [
   compareHubPage,
   compareTweePage,
   compareEslBrainsPage,
   compareLinguahousePage,
   compareOff2ClassPage,
+  cefrBenchmarkPage,
 ];

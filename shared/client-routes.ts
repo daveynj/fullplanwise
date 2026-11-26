@@ -67,6 +67,7 @@ export const clientRoutePaths: string[] = [
   "/compare/linguahouse",
   "/compare/off2class",
   "/compare/chatgpt",
+  "/compare/cefr-benchmark",
   "/guides",
   "/guides/how-to-plan-an-esl-conversation-lesson",
   "/guides/esl-conversation-topics-by-level",
