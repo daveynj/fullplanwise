@@ -1083,9 +1083,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     // attempt recorded — the client resumes polling it), refuses when over
     // the hourly cap, or persists this job as pending. Persisting BEFORE any
     // credit is spent is what makes a later spend recoverable after a crash.
+    // Admin accounts can batch-generate public library packs without hitting the
+    // standard 20/hour user cap; normal user accounts keep GENERATION_RATE_LIMIT.
+    const effectiveRateLimit = req.user?.isAdmin ? 500 : GENERATION_RATE_LIMIT;
+
     let reservation: Awaited<ReturnType<typeof reserveGenerationJob>>;
     try {
-      reservation = await reserveGenerationJob(jobId, teacherId, GENERATION_RATE_LIMIT, GENERATION_RATE_WINDOW_MS);
+      reservation = await reserveGenerationJob(jobId, teacherId, effectiveRateLimit, GENERATION_RATE_WINDOW_MS);
     } catch (reserveError) {
       console.error(`[Job ${jobId}] Failed to reserve generation slot:`, reserveError);
       return res.status(503).json({
@@ -1101,9 +1105,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
     if (reservation.status === 'rate_limited') {
       const retryMinutes = reservation.retryAfterMinutes;
-      console.log(`User ${teacherId} hit the lesson generation rate limit (${GENERATION_RATE_LIMIT}/hour)`);
+      console.log(`User ${teacherId} hit the lesson generation rate limit (${effectiveRateLimit}/hour)`);
       return res.status(429).json({
-        message: `You've reached the limit of ${GENERATION_RATE_LIMIT} lesson generations per hour. Please try again in about ${retryMinutes} minute${retryMinutes === 1 ? '' : 's'}.`,
+        message: `You've reached the limit of ${effectiveRateLimit} lesson generations per hour. Please try again in about ${retryMinutes} minute${retryMinutes === 1 ? '' : 's'}.`,
         retryAfterMinutes: retryMinutes
       });
     }
