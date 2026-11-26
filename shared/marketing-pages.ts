@@ -459,6 +459,7 @@ export function marketingPageByPath(pathname: string): MarketingPage | undefined
 export const publicNav: { label: string; href: string }[] = [
   { label: 'How It Works', href: '/how-it-works' },
   { label: 'Free Lessons', href: '/esl-lessons' },
+  { label: 'Compare', href: '/compare' },
   { label: 'Guides', href: '/guides' },
   { label: 'Pricing', href: '/pricing' },
   { label: 'About', href: '/about' },

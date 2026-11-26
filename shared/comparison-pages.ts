@@ -33,6 +33,10 @@ export const compareHubPage: MarketingPage = {
     'Most ESL teaching tools fall into three camps: **static pre-made lesson libraries** (like ESL Brains, Fluentize, Linguahouse, Off2Class and Ellii), **modular AI worksheet generators or slide tools** (like ESL Joy, Twee, MagicSchool and Diffit), and **general chatbots** (like ChatGPT).',
     'Each has genuine strengths—and clear trade-offs for one-to-one tutors and small to medium language schools. Here is an honest, side-by-side decision guide with live zero-login proof links so you can inspect the actual lessons yourself.',
   ],
+  verdict: {
+    heading: 'Why teachers switch to PlanWise ESL (and how to verify it in 60 seconds)',
+    text: `Static ESL libraries (ESL Brains, Fluentize, Linguahouse, Off2Class) lock you into fixed catalogues with zero student vocabulary memory, while modular AI tools and chatbots (Twee, ESL Joy, MagicSchool, ChatGPT) force you to assemble prompts and reset every class. **${brand}** (${priceText} Unlimited after a ${trialText}, no card) builds a complete, CEFR-calibrated A1–C2 lesson on any niche topic in ${generationTime}, tracks and recycles each student’s words across future lessons ([inspect our live 4-lesson, 0-duplicate proof](/compare/student-memory-proof)), and includes a zero-login student flashcard dashboard and printable color-coded Vocabulary Review PDF.`,
+  },
   sections: [
     {
       heading: 'How the four approaches compare',
