@@ -416,7 +416,7 @@ export const italkiTutorsPage: MarketingPage = {
     {
       heading: 'Preview real lessons free with zero signup',
       paragraphs: [
-        'Open any complete A1–C2 lesson in our [public free ESL lesson library](/esl-lessons) right now (zero login required), download the color-coded Vocabulary Review PDF at the top, or see how PlanWise ESL compares against [ESL Joy](/compare/esl-joy), [Twee](/compare/twee), [ESL Brains](/compare/esl-brains), and [Linguahouse](/compare/linguahouse).',
+        'Open any complete A1–C2 lesson in our [public free ESL lesson library](/esl-lessons) right now (zero login required), download the color-coded Vocabulary Review PDF at the top, or see how PlanWise ESL compares against [ESL Joy](/compare/esl-joy), [Fluentize](/compare/fluentize), [Twee](/compare/twee), [ESL Brains](/compare/esl-brains), and [Linguahouse](/compare/linguahouse).',
       ],
     },
   ],
