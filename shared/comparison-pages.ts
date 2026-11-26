@@ -80,7 +80,7 @@ export const compareHubPage: MarketingPage = {
       bullets: [
         '**A1 Beginner proof:** [First Day at a New Job: Meeting Your Team (A1)](/lessons/2046) and [Let’s Talk About Video Games! (A1)](/lessons/1774) — or browse all [A1 Beginner lessons](/esl-lessons/a1).',
         '**B1 & B2 Workplace/Conversation proof:** [Handling Difficult Guests Like a Pro (B1)](/lessons/2047), [Can Money Buy Happiness? (B2)](/lessons/1768), and [AI and Tomorrow’s World (B2)](/lessons/1801).',
-        '**C1 Business & Career proof:** [Between Two Worlds: Identity and Feeling at Home (C1)](/lessons/2037), [The Price of Doing Right: Ethics in the Boardroom (C1)](/lessons/1731), and [Founders, Failures and Pivots (C1)](/lessons/1750).',
+        '**C1 Business & Career proof:** [Delivering the Numbers: Talking About Risk and Uncertainty (C1)](/lessons/2048) (*caveat*, *hedge*, *contingency*, *downplay*, *scrutiny* + 3-tier boardroom speaking frames), [Between Two Worlds: Identity and Feeling at Home (C1)](/lessons/2037), [The Price of Doing Right: Ethics in the Boardroom (C1)](/lessons/1731), and [Founders, Failures and Pivots (C1)](/lessons/1750).',
         '**Study PDF & Learner Dashboard proof:** [Student Experience & Vocabulary Review PDF excerpt](/student-experience), our [9-point CEFR Quality Benchmark](/compare/cefr-benchmark), and the full [free A1–C2 public library](/esl-lessons).',
       ],
     },
@@ -228,6 +228,10 @@ export const compareEslBrainsPage: MarketingPage = {
     'ESL Brains has earned a strong reputation among online ESL tutors for engaging, video-based adult conversation lessons. If you want polished, human-curated lessons built around YouTube videos, it is one of the best pre-made libraries available.',
     'The limit of any pre-made library shows up when you teach regular one-to-one students week after week: heavy-volume tutors eventually exhaust the catalogue at a student’s level, niche work or hobby topics are missing, and the library has no memory of what your student already learned. That is the gap PlanWise ESL was built to close.',
   ],
+  verdict: {
+    heading: 'PlanWise ESL vs. ESL Brains: Which should adult ESL tutors choose?',
+    text: `**Choose ${brand}** (${priceText} Unlimited after a ${trialText}, no card) if you teach ongoing 1-on-1 or small-group adults who want unlimited custom career, industry, or hobby topics without hitting a catalogue ceiling—plus strict CEFR A1–C2 calibration, cross-lesson vocabulary recycling into future readings, quizzes and discussions ([see our 4-lesson live proof](/compare/student-memory-proof)), a zero-login student flashcard portal, and a printable color-coded Vocabulary Review PDF. **Choose ESL Brains** if you specifically want human-curated YouTube and podcast video lessons from a pre-made adult catalogue and do not need bespoke student topics or per-student vocabulary memory.`,
+  },
   sections: [
     {
       heading: 'Side by side: PlanWise ESL vs. ESL Brains',
@@ -242,6 +246,28 @@ export const compareEslBrainsPage: MarketingPage = {
           ['Between-class learner portal', 'Screen-shareable e-lessons; no cumulative student flashcard dashboard', 'Private learner dashboard (no login): all past lessons, word list, spaced flashcards & next-lesson preview'],
           ['Take-home vocabulary study PDF', 'Lesson worksheet PDF', 'Dedicated Vocabulary Review study PDF (color-coded by part of speech, 4 examples/word, word families, collocations, usage notes & 5-part semantic map)'],
           ['Other languages', 'English only', 'Built for ESL/EFL; tutors can also specify another target language in the topic box'],
+        ],
+      },
+    },
+    {
+      heading: 'Real-world prep test: teaching a C1 executive forecast lesson',
+      paragraphs: [
+        'Suppose your C1 finance director student messages two hours before class: *"Can we practise presenting quarterly risks and uncertain forecasts to our board?"* Compare both workflows:',
+      ],
+      workflowProof: {
+        planwiseTitle: `${brand} Workflow (${generationTime})`,
+        planwiseSteps: [
+          'Pick your student, select C1, and enter "Presenting Quarterly Risks and Uncertain Forecasts to Executives".',
+          'Open a complete, verified 9-section lesson ([inspect live Lesson 2048](/lessons/2048)): warm-up, boardroom reading (*The Quarterly Meeting Maya Dreaded*), 5 C1 words (`caveat`, `hedge`, `contingency`, `downplay`, `scrutiny`) with collocations & semantic maps, 4 idioms (`warts and all`, `blow up`, `walk someone through`, `push back`), 3-tier qualifying/conceding speaking frames, cloze, unscramble, discussion, and quiz. Custom illustrations finish loading about a minute later—usually ready by the time you finish the warm-up.',
+          'Mark the lesson "We did this" so all 9 items log to the student’s memory and resurface naturally in future lessons with zero duplicate target teaching ([4-lesson proof](/compare/student-memory-proof)).',
+          'Share the student’s zero-login spaced-repetition flashcard link and one-click printable Vocabulary Review PDF.',
+        ],
+        competitorTitle: 'ESL Brains Workflow (Fixed Video Catalogue)',
+        competitorSteps: [
+          'Search the fixed ESL Brains catalogue for a C1 risk-forecasting video lesson—or pick the closest general business video if that exact scenario is not in the library.',
+          'Double-check that your regular student has not already completed that catalogue lesson and that the embedded YouTube video still loads cleanly.',
+          'Teach the curated video worksheet; if you want explicit 3-tier boardroom speaking frames (qualifying, adding caveats, conceding under questioning), build them yourself.',
+          'Track learned vocabulary manually outside ESL Brains—there is no automatic cross-lesson vocabulary recycling or cumulative spaced-repetition flashcard dashboard.',
         ],
       },
     },
@@ -266,8 +292,8 @@ export const compareEslBrainsPage: MarketingPage = {
       heading: 'Why high-volume tutors switch from ESL Brains to PlanWise ESL',
       bullets: [
         '**Never run out of topics at your student’s level:** Fixed catalogues eventually run dry for long-term 1-on-1 students—or miss niche career, tech, medical and hobby topics altogether. PlanWise ESL generates a full 8-stage CEFR A1–C2 lesson on any topic in 1–2 minutes.',
-        '**Vocabulary that actually sticks across weeks:** ESL Brains lessons are isolated one-offs. PlanWise ESL tracks learned words per student, prevents duplicates, recycles earlier vocabulary naturally when relevant, and gives learners a zero-login [student dashboard](/student-experience).',
-        '**Inspect full lessons free with no login:** Browse our [public A1–C2 ESL lesson library](/esl-lessons) and download any lesson’s color-coded Vocabulary Review PDF before starting a trial.',
+        '**Vocabulary that actually sticks across weeks:** ESL Brains lessons are isolated one-offs. PlanWise ESL tracks learned words per student, prevents duplicates, recycles earlier vocabulary naturally when relevant ([live 4-lesson memory proof](/compare/student-memory-proof)), and gives learners a zero-login [student dashboard](/student-experience).',
+        '**Inspect full lessons free with no login:** Compare live public lessons across levels—[First Day at a New Job (A1)](/lessons/2046), [Handling Difficult Guests Like a Pro (B1)](/lessons/2047), [Delivering the Numbers: Talking About Risk and Uncertainty (C1)](/lessons/2048), and [Between Two Worlds (C1)](/lessons/2037)—or browse the full [public A1–C2 ESL lesson library](/esl-lessons) and download any Vocabulary Review PDF before starting a trial.',
       ],
     },
   ],
@@ -645,6 +671,10 @@ export const compareFluentizePage: MarketingPage = {
     'Fluentize (`fluentize.com`) is a well-liked static library of 700+ hand-written ESL lesson plans built around authentic YouTube videos (adding 6–10 new lessons a month) with printable PDFs, fillable PDFs, and Google Slides—at a very affordable annual price for teachers who want ready-made B1–C1 listening lessons.',
     'PlanWise ESL is not trying to compete with Fluentize on being a low-cost static video catalogue. Instead, it solves everything a fixed YouTube library cannot do for active 1-on-1 tutors: generating a complete 8-stage CEFR A1–C2 lesson on **any niche student topic in 1–2 minutes**, supporting true A1–A2 beginners without fast YouTube audio, eliminating YouTube link rot and paid-call video dead air, tracking and naturally recycling each student’s vocabulary across weeks, and giving every student a zero-login learner dashboard and printable color-coded Vocabulary Review PDF.',
   ],
+  verdict: {
+    heading: 'PlanWise ESL vs. Fluentize: Which should online tutors choose?',
+    text: `**Choose ${brand}** (${priceText} Unlimited after a ${trialText}, no card) if you teach ongoing 1-on-1 students who want bespoke topics across **all six CEFR levels (A1–C2)**, maximum live speaking time with zero YouTube link rot or silent clip-watching dead air, true beginner A1–A2 scaffolding, cross-lesson vocabulary recycling ([live 4-lesson proof](/compare/student-memory-proof)), a zero-login student flashcard dashboard, and a printable color-coded Vocabulary Review PDF. **Choose Fluentize** ($79/year, ~$6.58/mo) if you specifically want an affordable static library of 700+ hand-written YouTube video lessons for B1–C1 listening classes and do not need custom topics or per-student vocabulary memory.`,
+  },
   sections: [
     {
       heading: 'Side by side: PlanWise ESL vs. Fluentize',
@@ -658,6 +688,28 @@ export const compareFluentizePage: MarketingPage = {
           ['Per-student vocabulary memory', 'None — static lessons do not track what each student already knows', 'Logs learned words per student, strictly avoids duplicates & recycles earlier words into future readings & questions only when natural and relevant'],
           ['Between-class student portal', 'No persistent student dashboard', 'Zero-login private learner dashboard per student: past lessons, cumulative word list, spaced flashcards, topic ideas & custom lessons on Unlimited ([preview](/student-experience))'],
           ['Pricing (verified Nov 2026)', '$3.49/credit (5 for $14.99, 10 for $26.49), $49/6 months, or $79/year (~$6.58/mo); school plans $45–$60/teacher/year', `${trialText} (no credit card), then flat ${priceText} Unlimited lessons & students, cancel anytime`],
+        ],
+      },
+    },
+    {
+      heading: 'Real-world prep test: bespoke workplace lesson vs. static YouTube library',
+      paragraphs: [
+        'Compare preparing a 50-minute 1-on-1 class for a hotel receptionist (B1) or a finance executive (C1) right before the lesson starts:',
+      ],
+      workflowProof: {
+        planwiseTitle: `${brand} Workflow (${generationTime})`,
+        planwiseSteps: [
+          'Pick the student, select their exact CEFR level (A1–C2), and enter their real workplace topic—no searching through a fixed catalogue.',
+          'Generate a complete, self-contained 9-section lesson ([B1 Hospitality: Handling Difficult Guests](/lessons/2047) or [C1 Executive Risk: Delivering the Numbers](/lessons/2048)): zero external video links to break, zero paid-call dead air watching clips, and custom illustrations that finish loading while you run the warm-up.',
+          'Mark the lesson "We did this" so learned words log automatically and reappear naturally in future readings, cloze passages, quizzes, and discussions—with zero duplicate target words ([4-lesson proof](/compare/student-memory-proof)).',
+          'Send the student’s zero-login spaced-repetition flashcard link and one-click printable color-coded Vocabulary Review PDF right after class.',
+        ],
+        competitorTitle: 'Fluentize Workflow (Static YouTube Catalogue)',
+        competitorSteps: [
+          'Browse the 700+ static YouTube lesson library for the closest B1 or C1 match—or compromise on topic if the student’s exact niche is missing.',
+          'Preview the linked YouTube video beforehand to verify it is still live, region-available, and paced appropriately for your student.',
+          'Spend 4–8 minutes of a paid 1-on-1 session playing the clip (or rely on the student watching it as homework beforehand).',
+          'Track learned vocabulary manually in your own notes—static lessons do not recycle prior vocabulary into future lessons or feed a student flashcard dashboard.',
         ],
       },
     },
@@ -691,7 +743,7 @@ export const compareFluentizePage: MarketingPage = {
       ],
       bullets: [
         '**A1 Beginner scaffolding proof:** [First Day at a New Job: Meeting Your Team (A1)](/lessons/2046) and [Let’s Talk About Video Games! (A1)](/lessons/1774) — plus all [free A1 Beginner lessons](/esl-lessons/a1).',
-        '**Niche B1, B2 & C1 Career/Business proof:** [Handling Difficult Guests Like a Pro (B1)](/lessons/2047), [Between Two Worlds: Identity and Feeling at Home (C1)](/lessons/2037), [The Price of Doing Right: Ethics in the Boardroom (C1)](/lessons/1731), [Founders, Failures and Pivots (C1)](/lessons/1750), and [Can Money Buy Happiness? (B2)](/lessons/1768).',
+        '**Niche B1, B2 & C1 Career/Business proof:** [Handling Difficult Guests Like a Pro (B1)](/lessons/2047), [Delivering the Numbers: Talking About Risk and Uncertainty (C1)](/lessons/2048), [Between Two Worlds: Identity and Feeling at Home (C1)](/lessons/2037), [The Price of Doing Right: Ethics in the Boardroom (C1)](/lessons/1731), [Founders, Failures and Pivots (C1)](/lessons/1750), and [Can Money Buy Happiness? (B2)](/lessons/1768).',
         '**Vocabulary Recycling, Study PDF & Student Hub proof:** [Live 4-lesson Student Memory Proof](/compare/student-memory-proof), [Student Experience page](/student-experience) (with a real Vocabulary Review study PDF excerpt), and the full [free A1–C2 public library](/esl-lessons).',
       ],
     },
