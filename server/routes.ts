@@ -32,7 +32,7 @@ import { registerBillingHealthRoute } from "./billing-health-route";
 import { validClientRoutes } from "@shared/client-routes";
 import { notifyIndexNow, submitToIndexNow, getIndexNowKey, lessonIndexNowPaths, blogIndexNowPaths } from "./indexnow";
 import { marketingPages } from "@shared/marketing-pages";
-import { getLlmsFullTxt } from "./llms-full";
+import { buildLlmsFullTxt, getLlmsFullTxt } from "./llms-full";
 import {
   reserveGenerationJob,
   spendCreditForJob,
@@ -2658,10 +2658,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.sendFile(filePath);
   });
 
-  app.get("/llms-full.txt", (_req, res) => {
+  app.get("/llms-full.txt", async (_req, res) => {
     res.header("Content-Type", "text/plain; charset=utf-8");
-    res.header("Cache-Control", "public, max-age=3600");
-    res.send(getLlmsFullTxt());
+    res.header("Cache-Control", "public, max-age=600");
+    try {
+      const publicLessons = await storage.getPublicLessonSummaries();
+      res.send(buildLlmsFullTxt(publicLessons));
+    } catch {
+      res.send(getLlmsFullTxt());
+    }
   });
 
   // Dynamic sitemap.xml generation for SEO

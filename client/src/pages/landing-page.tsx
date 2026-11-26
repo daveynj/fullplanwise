@@ -554,6 +554,48 @@ export default function LandingPage() {
           </div>
         </section>
 
+        {/* Free Public ESL Lesson Library (A1-C2) — No Login Required */}
+        <section className="py-12 md:py-14 px-6 bg-brand-navy text-white">
+          <div className="container mx-auto max-w-5xl text-center">
+            <span className="inline-block rounded-full bg-brand-yellow/20 border border-brand-yellow/40 text-brand-yellow text-xs font-bold uppercase tracking-wider px-3.5 py-1 mb-3">
+              100% Free • No Login Required
+            </span>
+            <h2 className="text-2xl md:text-3xl font-nunito font-bold mb-3">
+              Browse Free Teacher-Led ESL Lessons by CEFR Level
+            </h2>
+            <p className="text-slate-200 max-w-2xl mx-auto mb-6 text-sm md:text-base">
+              Inspect complete 8-stage lessons before signing up — complete with phonetic pronunciation, word families, collocations, levelled readings, semantic maps, and downloadable Vocabulary Review PDFs.
+            </p>
+            <div className="flex flex-wrap justify-center gap-2.5 mb-6">
+              {(
+                [
+                  ["A1", "Beginner"],
+                  ["A2", "Elementary"],
+                  ["B1", "Intermediate"],
+                  ["B2", "Upper Int."],
+                  ["C1", "Advanced"],
+                  ["C2", "Proficiency"],
+                ] as const
+              ).map(([lv, label]) => (
+                <Link key={lv} href={`/esl-lessons/${lv.toLowerCase()}`}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="rounded-full border-white/25 bg-white/10 text-white hover:bg-brand-yellow hover:text-brand-navy hover:border-brand-yellow font-semibold"
+                  >
+                    {lv} {label}
+                  </Button>
+                </Link>
+              ))}
+            </div>
+            <Link href="/esl-lessons">
+              <Button variant="brand" size="lg" className="rounded-full px-8 shadow-lg shadow-brand-yellow/20">
+                Browse All Free ESL Lessons →
+              </Button>
+            </Link>
+          </div>
+        </section>
+
         {/* Features */}
         <section id="features" className="py-16 md:py-20 px-6 bg-white">
           <div className="container mx-auto max-w-5xl">

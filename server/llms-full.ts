@@ -194,8 +194,34 @@ function renderHomepageMarkdown(): string {
   return blocks.join('\n\n');
 }
 
-/** Builds the complete /llms-full.txt Markdown document from shared site data. */
-export function buildLlmsFullTxt(): string {
+export interface PublicLessonLlmsItem {
+  id: number;
+  title: string;
+  cefrLevel: string;
+  publicCategory?: string | null;
+}
+
+const CEFR_ORDER = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'] as const;
+
+function renderPublicLessonsMarkdown(publicLessons: PublicLessonLlmsItem[]): string {
+  if (publicLessons.length === 0) return '';
+  const blocks: string[] = [
+    `## Free Public ESL Lesson Library (No Login Required)\nURL: ${BASE_URL}/esl-lessons\n\nEvery lesson below is open to inspect, teach, and download as a printable Vocabulary Review PDF with zero signup:`,
+  ];
+  for (const level of CEFR_ORDER) {
+    const inLevel = publicLessons.filter((l) => l.cefrLevel.toUpperCase() === level);
+    if (inLevel.length === 0) continue;
+    const lines = inLevel.map((l) => {
+      const cat = l.publicCategory ? ` [${l.publicCategory}]` : '';
+      return `- [${l.title}](${BASE_URL}/lessons/${l.id})${cat}`;
+    });
+    blocks.push(`### ${level} Lessons (${BASE_URL}/esl-lessons/${level.toLowerCase()})\n${lines.join('\n')}`);
+  }
+  return blocks.join('\n\n');
+}
+
+/** Builds the complete /llms-full.txt Markdown document from shared site data + live public lessons. */
+export function buildLlmsFullTxt(publicLessons: PublicLessonLlmsItem[] = []): string {
   // Collect all unique pages across marketingPages, guidePages, and shared/guides.ts.
   const allPages = new Map<string, MarketingPage>();
   for (const page of [
@@ -228,9 +254,12 @@ export function buildLlmsFullTxt(): string {
     ].join('\n'),
   ].join('\n\n');
 
+  const publicLessonsSection = renderPublicLessonsMarkdown(publicLessons);
+
   const sections = [
     header,
     renderHomepageMarkdown(),
+    ...(publicLessonsSection ? [publicLessonsSection] : []),
     ...[...allPages.values()].map(renderPageMarkdown),
   ];
 
@@ -239,7 +268,7 @@ export function buildLlmsFullTxt(): string {
 
 let cachedLlmsFullTxt: string | undefined;
 
-/** Returns the cached /llms-full.txt text (generated once per server process). */
+/** Returns the cached static /llms-full.txt text (used as fallback when DB is unavailable). */
 export function getLlmsFullTxt(): string {
   return (cachedLlmsFullTxt ??= buildLlmsFullTxt());
 }
