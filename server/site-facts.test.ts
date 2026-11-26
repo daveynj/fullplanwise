@@ -67,7 +67,6 @@ describe("site facts stay consistent", () => {
       "flashcards",
       "sentence unscramble",
       "study pdf",
-      "cambly",
       "preply",
       "italki",
       "freelance",
@@ -98,7 +97,7 @@ describe("homepage structured data", () => {
     const software = products[0];
     expect(software.description).toContain(`CEFR ${siteFacts.levels}`);
     expect(software.description).toContain(siteFacts.generationTime);
-    expect(software.description).toContain("Preply, Cambly, and italki");
+    expect(software.description).toContain("Preply and italki");
     expect(software.description).toContain("per-student vocabulary memory");
     expect(software.description).toContain("private student flashcard dashboards");
     expect(software.author).toEqual({

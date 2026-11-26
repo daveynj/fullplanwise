@@ -170,7 +170,7 @@ const howItWorks: MarketingPage = {
     {
       heading: 'What PlanWise ESL does not do',
       paragraphs: [
-        'It does not replace the teacher. You guide the conversation, listen for natural errors, and build the relationship with your student. PlanWise ESL does the hours of structured pedagogical preparation in 1–2 minutes, whether you teach on Cambly, Preply or italki, run an independent tutoring practice, or manage a small to medium language school.',
+        'It does not replace the teacher. You guide the conversation, listen for natural errors, and build the relationship with your student. PlanWise ESL does the hours of structured pedagogical preparation in 1–2 minutes, whether you teach on Preply or italki, run an independent tutoring practice, or manage a small to medium language school.',
       ],
     },
   ],
@@ -192,8 +192,8 @@ const howItWorks: MarketingPage = {
       answer: 'You choose the level, from A1 to C2, and the reading length, sentence style and the words used in definitions follow fixed rules for that level (see the table on this page). Every lesson is then checked section by section before it is saved.',
     },
     {
-      question: 'Does it work for Cambly, Preply, italki, freelance teachers and language schools?',
-      answer: 'Yes. Lessons are built specifically for online tutors on Cambly, Preply and italki, independent freelance English teachers, and small to medium language schools teaching one-to-one or small-group teenage and adult classes.',
+      question: 'Does it work for Preply and italki tutors, freelance teachers and language schools?',
+      answer: 'Yes. Lessons are built specifically for online tutors on Preply and italki, independent freelance English teachers, and small to medium language schools teaching one-to-one or small-group teenage and adult classes.',
     },
   ],
   references: [
@@ -271,7 +271,7 @@ const about: MarketingPage = {
     {
       heading: 'Who it is for',
       paragraphs: [
-        'PlanWise ESL is built for [Cambly, Preply and italki tutors](/for/online-tutors), [freelance and independent English teachers](/for/freelance-esl-teachers), and [small to medium language schools](/for/language-schools). It works for any ESL or EFL teacher with teenage or adult learners who wants structured, high-quality, personalised conversation lessons instead of generic off-the-shelf material.',
+        'PlanWise ESL is built for [Preply and italki tutors](/for/online-tutors), [freelance and independent English teachers](/for/freelance-esl-teachers), and [small to medium language schools](/for/language-schools). It works for any ESL or EFL teacher with teenage or adult learners who wants structured, high-quality, personalised conversation lessons instead of generic off-the-shelf material.',
       ],
     },
     {
@@ -324,7 +324,7 @@ const pricing: MarketingPage = {
     {
       heading: 'What one lesson costs you',
       paragraphs: [
-        `If you teach 20 one-to-one lessons a month on Cambly, Preply, italki or privately, Unlimited works out at about $1 per lesson for a complete, personalised lesson made in ${generationTime}. If a lesson took you even 30 minutes to prepare by hand, that is ten hours a month back.`,
+        `If you teach 20 one-to-one lessons a month on Preply, italki or privately, Unlimited works out at about $1 per lesson for a complete, personalised lesson made in ${generationTime}. If a lesson took you even 30 minutes to prepare by hand, that is ten hours a month back.`,
       ],
     },
   ],
@@ -398,7 +398,7 @@ const compareChatGpt: MarketingPage = {
     {
       heading: `When ${brand} is the better choice`,
       bullets: [
-        'You teach regular students on Cambly, Preply, italki, privately, or at a small to medium language school and want each lesson to build on the last.',
+        'You teach regular students on Preply, italki, privately, or at a small to medium language school and want each lesson to build on the last.',
         'You want every lesson to follow a complete scientific pedagogical sequence—vocab depth, reading, recall flashcards, synonyms/antonyms, guided exercises and deep discussion—without prompting each part by hand.',
         'You want reliable CEFR levelling and verified exercises without checking every line.',
         'You want your students to practise between classes on their own learner dashboard, study from a full vocabulary PDF, and even create custom lessons on subjects they love.',
@@ -428,148 +428,8 @@ const compareChatGpt: MarketingPage = {
   updated: '2026-11-26',
 };
 
-const camblyGuide: MarketingPage = {
-  path: '/guides/cambly-feedback-score-super-tutor',
-  title: 'How to Get a 100% Feedback Score on Cambly (and Reach Super Tutor)',
-  description:
-    'A first-lesson routine for Cambly tutors from ESL teacher Dave Jackson: introductions, setting expectations, the island question and the follow-up message.',
-  navLabel: 'Cambly feedback score guide',
-  eyebrow: 'Guide for Cambly tutors',
-  h1: 'How to get a 100% feedback score on Cambly, and reach Super Tutor',
-  byline: {
-    author: 'Dave Jackson',
-    published: '2026-11-25',
-    note: 'First shared in the Unofficial Cambly Corner Facebook group.',
-  },
-  intro: [
-    'I wrote this for tutors who want their feedback score at 100% and a shot at Super Tutor status. It does not take much effort. It is a pattern I follow with every new student, and it works because a first lesson is really about one thing: making the student want a second one.',
-  ],
-  sections: [
-    {
-      heading: 'The short version',
-      bullets: [
-        '**Introduce yourself** and get the student talking about themselves for a few minutes.',
-        '**Set expectations:** explain the three options (free talk, a lesson, or a mix) and recommend free talk for a first lesson.',
-        '**Hand over the questions:** invite them to ask you anything.',
-        '**Ask the island question**, a fun, open question that tells you far more than "What are your hobbies?".',
-        '**Send a message after class** with your schedule, so the trial student becomes a regular student.',
-      ],
-    },
-    {
-      heading: 'Remember who you are talking to',
-      paragraphs: [
-        'You have a new student. You have never met them, you know nothing about them, and they know nothing about you. They are probably nervous, maybe a little shy, and they may give one-word answers. That is not a problem. The routine below is designed for exactly that.',
-      ],
-    },
-    {
-      heading: 'Step 1: Introduce yourself and get them talking',
-      paragraphs: [
-        'Keep it simple and friendly:',
-      ],
-      bullets: [
-        '**You:** "Hi, is it Chen?" **Student:** "Yes, I\u2019m Chen."',
-        '**You:** "Hi Chen, I\u2019m Dave. Good to meet you. Where are you from?" **Student:** "China."',
-        '**You:** "Cool. Whereabouts in China? Which city? And why are you learning English: for work, study, a hobby?"',
-      ],
-    },
-    {
-      heading: '',
-      paragraphs: [
-        'Spend a minute or more on small talk, depending on the student\u2019s level. It is the quickest way to gauge their vocabulary and grammar, and to get to know them a little.',
-      ],
-    },
-    {
-      heading: 'Step 2: Set expectations',
-      paragraphs: [
-        'Next, explain how you can help. Something like: "Since this is the first time we\u2019ve met, let me explain a few options." There are three:',
-      ],
-      bullets: [
-        '**Free talk.** Great for confidence, listening and simply practising conversation. Its limit is vocabulary: people tend to stick to the words they already know. It is a good choice when a student just wants to talk, or is too tired for a full lesson.',
-        '**A formal lesson.** Cambly has its own lessons (conversation, business English, technology and more). I also use my own material, which I make with [PlanWise ESL](/), but you don\u2019t need to if you use Cambly\u2019s.',
-        '**A mix of both.** Many tutors use news-article sites: some vocabulary, a short article, then discussion. Less formal than a lesson, more structured than free talk.',
-      ],
-    },
-    {
-      heading: 'Step 3: Recommend free talk for the first lesson',
-      paragraphs: [
-        'Check they understand the options, then say: "Since we\u2019ve never met, I usually recommend we do some free talk." Explain why: you will both feel comfortable, and you will learn their strengths, weaknesses and interests, so next lesson can be properly suited to them.',
-        '**Assume there will be a next lesson.** This is about the student wanting you as their tutor, not the other way around. Almost every student goes with the recommendation. If one would rather jump straight into something else, that is fine, but agree clearly on what they want before you start: a student who expects one thing and gets another is the one who leaves low feedback.',
-      ],
-    },
-    {
-      heading: 'Step 4: Hand over the questions',
-      paragraphs: [
-        'You have done a lot of talking by now, so give the student some control: "Before I ask you my question, do you have any questions for me? You\u2019re free to ask me anything." They will probably ask where you live or where you are from. Enjoy the small talk. When it dries up, you will usually have about 20 minutes left of a 30-minute booking.',
-      ],
-    },
-    {
-      heading: 'Step 5: Ask the island question',
-      paragraphs: [
-        '"I\u2019m going to ask you a question. There\u2019s no right or wrong answer. Imagine you\u2019re on a beautiful island, alone. You have unlimited food, water, fire and a house, but no internet and no power. You can bring three things, anything you like. One of them can be people, and you can bring as many people as you want, but they still count as one thing. What are your three things?"',
-        'Here is why it works:',
-      ],
-      bullets: [
-        '**The first thing is usually people:** husband, wife, children, a partner, friends. You learn who matters to them without asking anything personal. Lots of people suggests an extrovert; a few suggests an introvert.',
-        '**The second is often books.** Tell them they can bring unlimited books, then ask what they read. You will learn a lot about their interests, or discover they don\u2019t like reading at all.',
-        '**The third is where they struggle,** so offer ideas: a musical instrument, a surfboard, a horse, sports equipment.',
-        '**How easily they answer, and in how much detail,** shows you their creativity, vocabulary and grammar, while the conversation keeps flowing and feels nothing like the generic chat they have with every other tutor.',
-      ],
-    },
-    {
-      heading: '',
-      paragraphs: [
-        'Keep it light. By now most students are talking freely. If they finish before time is up, ask them to ask you a question: they will be much more relaxed and will often ask something more interesting.',
-      ],
-    },
-    {
-      heading: 'Step 6: Send a message after class',
-      paragraphs: [
-        'If you enjoyed the lesson, message the student straight away with a short note and your schedule. I use a template. That is how a trial student becomes a regular one, and in my experience regular students and high feedback are what Super Tutor status comes down to. (Cambly sets and updates its own criteria, so check the Tutor Hub for the current details.)',
-      ],
-    },
-    {
-      heading: 'From the second lesson: make it about them',
-      paragraphs: [
-        'The first lesson gave you everything you need: their level, their job, who matters to them, what they read and what they enjoy. Use it. A lesson about the student\u2019s own world is what keeps them booking.',
-        'That is exactly what I built PlanWise ESL for. Type the topic and a note about the student ("works in fashion, loves travel, B2"), and it writes a complete conversation lesson at their level in 1\u20132 minutes, keeps track of the words they have learned, and gives them a page to practise on between classes.',
-      ],
-    },
-  ],
-  faq: [
-    {
-      question: 'How do I get a 100% feedback score on Cambly?',
-      answer: 'Make every first lesson about the student: introduce yourself and get them talking, explain the options and recommend free talk for the first session, let them ask you questions, then ask a fun open question (like the island question) that keeps them talking. Students who enjoy the first lesson leave high feedback and book again.',
-    },
-    {
-      question: 'How do I become a Cambly Super Tutor?',
-      answer: 'In my experience it comes down to consistently high feedback and turning trial students into regular students, so focus on making first lessons enjoyable and following up with a message and your schedule. Cambly sets its own criteria, so check the Tutor Hub for the current details.',
-    },
-    {
-      question: 'What should I do in a first lesson with a new ESL student?',
-      answer: 'Introduce yourself, gauge their level through small talk, explain how you can help, agree on free talk for the first session, and use an open, fun question to learn about their interests. Use what you learn to personalise the second lesson.',
-    },
-    {
-      question: 'What is a good icebreaker question for a new ESL student?',
-      answer: 'The island question: "You are alone on an island with food, water and a house, but no internet or power. You can bring three things, and one of them can be people. What do you bring?" It is fun, has no wrong answer, and tells you who and what matters to the student.',
-    },
-    {
-      question: 'Should I do free talk or a lesson with a new student?',
-      answer: 'For a first lesson I recommend free talk: it puts the student at ease and shows you their level and interests, so the next lesson can be built around them.',
-    },
-  ],
-  cta: {
-    heading: 'Plan their second lesson in 2 minutes',
-    text: `Turn what you learned in the first lesson into a complete conversation lesson about the student\u2019s own world. The ${trialText} needs no credit card.`,
-    label: 'Try PlanWise ESL Free',
-    href: '/auth?register=true',
-  },
-  disclaimer: 'PlanWise ESL is not affiliated with or endorsed by Cambly. Cambly and Super Tutor are names used by Cambly.',
-  schemaType: 'Article',
-  updated: '2026-11-25',
-};
-
 /** Guides, in the order the /guides page lists them. */
-export const guidePages: MarketingPage[] = [planConversationLessonGuide, topicsByLevelGuide, cefrLevelsGuide, personaliseGuide, camblyGuide];
+export const guidePages: MarketingPage[] = [planConversationLessonGuide, topicsByLevelGuide, cefrLevelsGuide, personaliseGuide];
 
 export { icpPages, comparisonPages, studentExperiencePage };
 

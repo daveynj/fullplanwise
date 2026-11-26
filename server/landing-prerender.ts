@@ -302,7 +302,7 @@ export function buildLandingStructuredData(): string {
     name: siteFacts.brand,
     alternateName: [...siteFacts.alternateNames],
     url: siteFacts.url,
-    description: `AI-powered CEFR ${siteFacts.levels} lesson planner for 1-on-1 online ESL tutors on Preply, Cambly, and italki. Generates complete conversation lessons in ${siteFacts.generationTime} with per-student vocabulary memory and private student flashcard dashboards.`,
+    description: `AI-powered CEFR ${siteFacts.levels} lesson planner for 1-on-1 online ESL tutors on Preply and italki. Generates complete conversation lessons in ${siteFacts.generationTime} with per-student vocabulary memory and private student flashcard dashboards.`,
     applicationCategory: 'EducationalApplication',
     applicationSubCategory: 'ESL lesson planning',
     operatingSystem: 'Web browser',
@@ -311,7 +311,7 @@ export function buildLandingStructuredData(): string {
     audience: {
       '@type': 'EducationalAudience',
       educationalRole: 'teacher',
-      audienceType: 'Cambly, Preply and italki tutors, freelance ESL and EFL teachers, and small to medium language schools',
+      audienceType: 'Preply and italki tutors, freelance ESL and EFL teachers, and small to medium language schools',
     },
     featureList: features.items.map((f) => f.title),
     offers: [

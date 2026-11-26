@@ -4,7 +4,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "fs";
 import path from "path";
-import { clientRoutePaths, validClientRoutes, routePathToRegex } from "@shared/client-routes";
+import { clientRoutePaths, validClientRoutes, routePathToRegex, retiredPageRedirects } from "@shared/client-routes";
 
 function extractRouterRoutePaths(): string[] {
   const appTsx = fs.readFileSync(
@@ -62,5 +62,15 @@ describe("client routes stay in sync with the server 404 catch-all", () => {
     expect(re.test("/students/42/extra")).toBe(false);
     expect(routePathToRegex("/").test("/")).toBe(true);
     expect(routePathToRegex("/").test("/x")).toBe(false);
+  });
+});
+
+describe("retired pages", () => {
+  it("send their old address to a page that still exists", () => {
+    for (const [from, to] of Object.entries(retiredPageRedirects)) {
+      expect(to, `${from} redirects to ${to}`).not.toBe(from);
+      expect(retiredPageRedirects[to], `${to} is itself retired`).toBeUndefined();
+      expect(validClientRoutes.some((re) => re.test(to)), `${to} is not a live page`).toBe(true);
+    }
   });
 });

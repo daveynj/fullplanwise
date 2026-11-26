@@ -9,7 +9,7 @@ PlanWise ESL was created by [Dave Jackson](https://www.linkedin.com/in/davidjack
 
 ## Who it is for
 
-- Online ESL tutors on Preply, italki, Cambly and similar platforms
+- Online ESL tutors on Preply, italki and similar platforms
 - Independent English teachers with regular one-to-one students
 - Small language schools and agencies
 

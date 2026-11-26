@@ -47,7 +47,7 @@ export const studentExperiencePage: MarketingPage = {
     {
       heading: '2. Inside the printable Vocabulary Review study sheet (HTML to PDF)',
       paragraphs: [
-        'At the top of every lesson—including every free lesson at [/esl-lessons](/esl-lessons) with no login required—there is a one-click download for the **Vocabulary Review** study sheet. It downloads as a clean, print-ready HTML document that prints to PDF cleanly for offline study or sending in Preply, Cambly, italki or email chat.',
+        'At the top of every lesson—including every free lesson at [/esl-lessons](/esl-lessons) with no login required—there is a one-click download for the **Vocabulary Review** study sheet. It downloads as a clean, print-ready HTML document that prints to PDF cleanly for offline study or sending in Preply, italki or email chat.',
         'Instead of a bare word-and-definition list, every target word is **color-coded by part of speech** (nouns, verbs, adjectives, adverbs) and includes eight structured learning layers. Here is a real excerpt from a B2 lesson (*Work-Life Balance: Can You Really Have It All?*):',
       ],
       table: {
@@ -78,7 +78,7 @@ export const studentExperiencePage: MarketingPage = {
     {
       heading: 'Why students stay longer with teachers who use it',
       paragraphs: [
-        `For [Cambly, Preply and italki tutors](/for/online-tutors), [freelance teachers](/for/freelance-esl-teachers), and [small to medium language schools](/for/language-schools), student retention is everything. Giving a learner a custom lesson built around their own life, a zero-login dashboard with their full history and flashcards, and a rich color-coded Vocabulary Review PDF after every call makes your classes feel unmistakably personal—and takes **${generationTime}** to prepare on a flat **${priceText}** Unlimited plan (after a **${trialText}**, no credit card needed).`,
+        `For [Preply and italki tutors](/for/online-tutors), [freelance teachers](/for/freelance-esl-teachers), and [small to medium language schools](/for/language-schools), student retention is everything. Giving a learner a custom lesson built around their own life, a zero-login dashboard with their full history and flashcards, and a rich color-coded Vocabulary Review PDF after every call makes your classes feel unmistakably personal—and takes **${generationTime}** to prepare on a flat **${priceText}** Unlimited plan (after a **${trialText}**, no credit card needed).`,
       ],
     },
   ],

@@ -124,7 +124,7 @@ export const ADMIN_BATCH_PRESET_PACKS: BatchPresetPack[] = [
   {
     id: "career",
     label: "Job Interviews & Career (15)",
-    description: "High-intent career & interview lessons adult learners on Preply/Cambly/italki search for.",
+    description: "High-intent career & interview lessons adult learners on Preply and italki search for.",
     defaultLessonCategory: "business",
     lines: [
       "A2 | workplace-communication | Answering Tell Me About Yourself in a Job Interview",

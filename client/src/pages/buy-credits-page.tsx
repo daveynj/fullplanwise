@@ -172,7 +172,7 @@ export default function BuyCreditsPage() {
 
                   <CardHeader className="pb-2">
                     <CardDescription className="text-slate-600 text-base">
-                      Everything you need to teach personalised, high-retention ESL classes—for Cambly, Preply, italki, freelance teachers and language schools.
+                      Everything you need to teach personalised, high-retention ESL classes—for Preply and italki tutors, freelance teachers and language schools.
                     </CardDescription>
                   </CardHeader>
 
