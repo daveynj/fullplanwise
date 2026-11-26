@@ -206,7 +206,7 @@ export default function PublicLessonsIndexPage() {
               </span>
               <Link href="/esl-lessons">
                 <Button variant={level ? "outline" : "default"} size="sm">
-                  All levels ({lessons.length})
+                  {level ? "All levels" : `All levels (${lessons.length})`}
                 </Button>
               </Link>
               {LEVELS.map((lv) => (
@@ -267,12 +267,24 @@ export default function PublicLessonsIndexPage() {
                     Reset filters
                   </Button>
                 )}
-                <Link href="/auth?register=true">
-                  <Button variant="brand">
-                    <Sparkles className="h-4 w-4 mr-1.5" />
-                    Generate this topic free (5-day trial)
-                  </Button>
-                </Link>
+                {(() => {
+                  const trimmedQuery = searchQuery.trim();
+                  const generateHref = trimmedQuery
+                    ? `/auth?register=true&redirect=${encodeURIComponent(
+                        `/generate?topic=${encodeURIComponent(trimmedQuery)}${level ? `&level=${encodeURIComponent(level)}` : ""}`
+                      )}`
+                    : "/auth?register=true";
+                  return (
+                    <Link href={generateHref}>
+                      <Button variant="brand">
+                        <Sparkles className="h-4 w-4 mr-1.5" />
+                        {trimmedQuery
+                          ? `Generate “${trimmedQuery}” free (5-day trial)`
+                          : "Generate this topic free (5-day trial)"}
+                      </Button>
+                    </Link>
+                  );
+                })()}
               </div>
             </div>
           ) : level || hasActiveFilters ? (
