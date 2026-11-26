@@ -13,6 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2 } from "lucide-react";
 import { SEOHead } from "@/components/SEOHead";
+import { siteFacts, trialText } from "@shared/site-facts";
 
 const loginSchema = z.object({
   username: z.string().min(1, "Email or username is required"),
@@ -84,8 +85,8 @@ export default function AuthPage() {
   return (
     <div className="flex min-h-screen bg-brand-light">
       <SEOHead
-        title="Log In or Start Your Free Trial | PlanWise ESL"
-        description="Log in to PlanWise ESL, or create a free account: complete CEFR-levelled ESL lessons in 1–2 minutes. 5-day free trial, no credit card needed."
+        title={`Log In or Start Your Free Trial | ${siteFacts.brand}`}
+        description={`Log in to ${siteFacts.brand}, or create a free account: complete CEFR-levelled ESL lessons in ${siteFacts.generationTime}. ${trialText}, no credit card needed.`}
         keywords={[
           "ESL teacher login",
           "AI lesson planning account",
@@ -95,7 +96,9 @@ export default function AuthPage() {
           "CEFR lesson planning tool",
           "AI ESL teaching platform"
         ]}
-        canonicalUrl="https://planwiseesl.com/auth"
+        canonicalUrl={`${siteFacts.url}/auth`}
+        noindex
+        robots="noindex, follow"
       />
       {/* Left side - Auth forms */}
       <div className="flex flex-col justify-center w-full lg:w-1/2 px-4 sm:px-6 lg:px-8 py-12">

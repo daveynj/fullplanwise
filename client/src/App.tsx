@@ -7,7 +7,6 @@ import { Toaster } from "@/components/ui/toaster";
 import { ProtectedRoute } from "./lib/protected-route";
 import { AuthenticatedLandingRedirect } from "./lib/authenticated-landing-redirect";
 import { AuthProvider } from "./hooks/use-auth";
-import TwitterCard from "@/components/TwitterCard";
 
 // Pages needed on first visit stay in the main bundle
 import NotFound from "@/pages/not-found";
@@ -121,12 +120,6 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        {/* Twitter Card for social sharing */}
-        <TwitterCard 
-          title="Create CEFR leveled ESL lessons on any topic"
-          description="Instant ESL Lessons. Smarter, Faster. Planwise generates full ESL lessons with AI — in seconds."
-          image="/images/twitter-card-new-design.png"
-        />
         <Suspense fallback={<PageLoader />}>
           <Router />
         </Suspense>

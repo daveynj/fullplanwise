@@ -10,6 +10,7 @@ import { injectLandingPrerender } from "./landing-prerender";
 import { injectMarketingPrerender } from "./marketing-prerender";
 import { injectBlogPrerender } from "./blog-prerender";
 import { injectLessonPrerender } from "./lesson-prerender";
+import { AUTH_ROBOTS_DIRECTIVE, injectAuthNoindex } from "./auth-prerender";
 
 /**
  * Development-only: Vite dev server middleware. Loaded by index.ts through a
@@ -69,6 +70,9 @@ export async function setupVite(app: Express, server: Server) {
       const marketing = injectMarketingPrerender(template, pathname);
       if (pathname === "/" || pathname === "/index.html") {
         template = injectLandingPrerender(template);
+      } else if (pathname === "/auth" || pathname === "/auth/") {
+        template = injectAuthNoindex(template);
+        res.set("X-Robots-Tag", AUTH_ROBOTS_DIRECTIVE);
       } else if (marketing) {
         template = marketing;
       } else if (pathname.startsWith("/blog")) {

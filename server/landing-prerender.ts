@@ -313,7 +313,7 @@ export function buildLandingStructuredData(): string {
         name: 'Unlimited',
         price: siteFacts.priceValue,
         priceCurrency: siteFacts.currency,
-        url: `${siteFacts.url}/buy-credits`,
+        url: `${siteFacts.url}/pricing`,
         priceSpecification: {
           '@type': 'UnitPriceSpecification',
           price: siteFacts.priceValue,
@@ -337,7 +337,23 @@ export function buildLandingStructuredData(): string {
     })),
   };
 
-  return [software, faqPage].map(jsonLd).join('\n    ');
+  const videoId = hero.videoUrl.match(/(?:embed\/|v=|youtu\.be\/)([\w-]{11})/)?.[1];
+  const video = videoId
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'VideoObject',
+        '@id': `${siteFacts.url}/#demo-video`,
+        name: hero.videoTitle,
+        description: homepageMeta.description,
+        thumbnailUrl: `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`,
+        embedUrl: hero.videoUrl,
+        contentUrl: `https://www.youtube.com/watch?v=${videoId}`,
+        inLanguage: 'en',
+        publisher: { '@id': `${siteFacts.url}/#organization` },
+      }
+    : null;
+
+  return [software, faqPage, ...(video ? [video] : [])].map(jsonLd).join('\n    ');
 }
 
 /**

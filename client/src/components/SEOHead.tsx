@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { homepageMeta } from "@shared/homepage-content";
+import { siteFacts, founderPerson, organizationSameAs } from "@shared/site-facts";
 
 interface SEOHeadProps {
   title: string;
@@ -13,6 +14,7 @@ interface SEOHeadProps {
   ogType?: 'website' | 'article';
   contentHtml?: string;
   noindex?: boolean; // keep this page out of search results (e.g. private share links)
+  robots?: string; // explicit robots directive override (e.g. "noindex, follow")
   article?: {
     publishedTime: string;
     modifiedTime?: string;
@@ -34,6 +36,7 @@ export function SEOHead({
   ogType,
   contentHtml,
   noindex = false,
+  robots,
   article 
 }: SEOHeadProps) {
   const fullTitle = exactTitle || title.includes("PlanWise ESL") || title.includes("PlanwiseESL") ? title : `${title} | PlanWise ESL`;
@@ -105,9 +108,9 @@ export function SEOHead({
     if (keywords.length > 0) {
       setMetaTag('keywords', keywords.join(', '));
     }
-    setMetaTag('robots', noindex ? 'noindex, nofollow' : 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1');
+    setMetaTag('robots', robots ?? (noindex ? 'noindex, nofollow' : 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1'));
     setMetaTag('language', 'en-US');
-    setMetaTag('author', 'Dave Jackson, ESL Teacher & PlanWise ESL Founder');
+    setMetaTag('author', `${siteFacts.founder}, ${siteFacts.founderRole}`);
     setMetaTag('viewport', 'width=device-width, initial-scale=1.0');
     setMetaTag('theme-color', '#2563eb');
     
@@ -146,10 +149,10 @@ export function SEOHead({
     setMetaTag('twitter:description', fullDescription);
     setMetaTag('twitter:url', absoluteCanonicalUrl);
     setMetaTag('twitter:image', absoluteImageUrl);
-    setMetaTag('twitter:image:alt', ogImageAlt ?? `${title} - PlanwiseESL Blog Article`);
+    setMetaTag('twitter:image:alt', ogImageAlt ?? `${title} - ${siteFacts.brand}`);
     
     // Additional social media tags
-    setMetaTag('og:site_name', 'PlanWise ESL', true);
+    setMetaTag('og:site_name', siteFacts.brand, true);
     setMetaTag('og:locale', 'en_US', true);
     
     // Set article-specific Open Graph tags
@@ -179,35 +182,27 @@ export function SEOHead({
           "height": 630
         },
         "author": {
-          "@type": "Person",
-          "name": "Dave Jackson",
-          "jobTitle": "ESL Teacher and Founder of PlanWise ESL",
+          ...founderPerson,
           "worksFor": {
             "@type": "Organization",
-            "name": "PlanWise ESL"
-          },
-          "url": "https://speakwithdave.com",
-          "sameAs": [
-            "https://speakwithdave.com",
-            "https://www.linkedin.com/in/davidjackson113",
-            "https://x.com/DaveTeacher1"
-          ]
+            "@id": `${siteFacts.url}/#organization`,
+            "name": siteFacts.brand
+          }
         },
         "publisher": {
           "@type": "Organization",
-          "name": "PlanWise ESL",
+          "@id": `${siteFacts.url}/#organization`,
+          "name": siteFacts.brand,
           "description": "AI lesson planner for ESL teachers and online English tutors",
-          "url": "https://planwiseesl.com",
+          "url": siteFacts.url,
+          "email": siteFacts.email,
           "logo": {
             "@type": "ImageObject",
-            "url": "https://planwiseesl.com/PlanWise_ESL_logo.png",
+            "url": `${siteFacts.url}/PlanWise_ESL_logo.png`,
             "width": 200,
             "height": 200
           },
-          "sameAs": [
-            "https://x.com/DaveTeacher1",
-            "https://www.linkedin.com/in/davidjackson113"
-          ]
+          "sameAs": [...organizationSameAs]
         },
         "datePublished": article.publishedTime,
         "dateModified": article.modifiedTime || article.publishedTime,
@@ -267,7 +262,7 @@ export function SEOHead({
         document.title = homepageMeta.title;
       }
     };
-  }, [fullTitle, fullDescription, keywords, absoluteCanonicalUrl, ogImage, absoluteImageUrl, ogImageAlt, ogImageDimensions, ogType, article, noindex]);
+  }, [fullTitle, fullDescription, keywords, absoluteCanonicalUrl, ogImage, absoluteImageUrl, ogImageAlt, ogImageDimensions, ogType, article, noindex, robots]);
   
   return null; // This component doesn't render anything
 }
