@@ -22,9 +22,12 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { PUBLIC_LIBRARY_LABELS } from "@shared/schema";
 import { Sidebar } from "@/components/layout/sidebar";
 import { useAuth } from "@/hooks/use-auth";
+import { lessonPath } from "@shared/lesson-url";
 
 interface PublicLesson {
   id: number;
+  publicSlug?: string | null;
+  publicLevel?: string | null;
   title: string;
   cefrLevel: string;
   category: string;
@@ -255,7 +258,7 @@ export default function PublicLibraryPage() {
                   )}
                   
                   <div className="flex gap-2">
-                    <Link href={`/lessons/${lesson.id}`} className="flex-1">
+                    <Link href={lessonPath(lesson)} className="flex-1">
                       <Button variant="outline" size="sm" className="w-full">
                         <Eye className="h-4 w-4 mr-2" />
                         Preview

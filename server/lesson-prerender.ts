@@ -1,4 +1,5 @@
 import { storage } from './storage';
+import { lessonPath } from '@shared/lesson-url';
 import { PUBLIC_LIBRARY_LABELS } from '@shared/schema';
 import { tryDecodeLessonContent } from '@shared/lesson-content';
 import { CEFR_LEVEL_NAMES, lessonContentsParts, joinList, levelText, lessonPublicMetadata, publicLessonRemixHref } from '@shared/lesson-public-metadata';
@@ -159,6 +160,8 @@ function injectPage(template: string, head: HeadOptions, bodyHtml: string): stri
 // used anywhere on public pages: it can describe a real student.
 interface LessonForPrerender {
   id: number;
+  publicSlug?: string | null;
+  publicLevel?: string | null;
   title: string;
   cefrLevel: string;
   isPublic?: boolean;
@@ -376,7 +379,7 @@ function relatedLessonsHtml(level: string, related: LessonSummary[]): string {
   if (!related.length) return '';
   return `<section class="lp-related">
       <h2>More ${e(level)} lessons</h2>
-      <ul>${related.map((l) => `<li><a href="/lessons/${l.id}">${e(l.title)}</a></li>`).join('')}</ul>
+      <ul>${related.map((l) => `<li><a href="${e(lessonPath(l))}">${e(l.title)}</a></li>`).join('')}</ul>
     </section>`;
 }
 
@@ -518,6 +521,8 @@ async function prerenderLesson(template: string, id: number, preloaded?: unknown
 
 export interface LessonSummary {
   id: number;
+  publicSlug?: string | null;
+  publicLevel?: string | null;
   title: string;
   cefrLevel: string;
   publicCategory: string | null;
@@ -527,7 +532,7 @@ export interface LessonSummary {
 function lessonCardHtml(l: LessonSummary): string {
   const label = categoryLabel(l.publicCategory);
   return `<article class="lp-card">
-        <h3><a href="/lessons/${l.id}">${e(l.title)}</a></h3>
+        <h3><a href="${e(lessonPath(l))}">${e(l.title)}</a></h3>
         <p class="lp-meta"><span class="lp-tag">${e(l.cefrLevel)}</span>${label ? `<span class="lp-tag">${e(label)}</span>` : ''}</p>
       </article>`;
 }
@@ -600,7 +605,7 @@ async function prerenderLessonIndex(template: string, level?: string): Promise<s
       itemListElement: lessons.slice(0, 100).map((l, i) => ({
         '@type': 'ListItem',
         position: i + 1,
-        url: `${BASE_URL}/lessons/${l.id}`,
+        url: `${BASE_URL}${lessonPath(l)}`,
         name: l.title,
       })),
     },
@@ -634,6 +639,13 @@ export async function injectLessonPrerender(
   try {
     const lessonMatch = pathname.match(/^\/lessons\/(\d+)\/?$/);
     if (lessonMatch) return await prerenderLesson(template, parseInt(lessonMatch[1], 10), preloadedLesson);
+
+    const slugMatch = pathname.match(/^\/esl-lessons\/([^/]+)\/([^/]+)\/?$/);
+    if (slugMatch) {
+      const lesson = preloadedLesson ?? await storage.getLessonByPublicSlug(slugMatch[2]);
+      if (!lesson || lessonPath(lesson as LessonSummary) !== pathname.replace(/\/$/, "")) return null;
+      return await prerenderLesson(template, (lesson as LessonSummary).id, lesson);
+    }
 
     if (pathname === '/esl-lessons' || pathname === '/esl-lessons/') {
       return await prerenderLessonIndex(template);

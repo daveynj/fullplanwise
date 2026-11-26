@@ -1,5 +1,6 @@
 import { tryDecodeLessonContent } from "./lesson-content";
 import { expressionsSummary } from "./lesson-expressions";
+import { lessonPath } from "./lesson-url";
 
 export const CEFR_LEVEL_NAMES: Record<string, string> = {
   A1: "Beginner", A2: "Elementary", B1: "Intermediate",
@@ -32,6 +33,7 @@ export function levelText(level: string): string {
 // Deliberately accept only public-safe fields. Never use topic, notes or student data.
 export function lessonPublicMetadata(lesson: {
   id: number; title: string; cefrLevel: string; content: unknown;
+  publicSlug?: string | null; publicLevel?: string | null;
 }) {
   const content = tryDecodeLessonContent(lesson.content);
   const parts = lessonContentsParts(Array.isArray(content?.sections) ? content.sections : []);
@@ -42,7 +44,7 @@ export function lessonPublicMetadata(lesson: {
   return {
     title: `${lesson.title} | ${lesson.cefrLevel} ESL Lesson | PlanWise ESL`,
     description,
-    canonicalPath: `/lessons/${lesson.id}`,
+    canonicalPath: lessonPath(lesson),
     // A lesson-authorized image endpoint also works for legacy inline images,
     // copied lessons and images uploaded before a lesson received its numeric ID.
     imagePath: `/api/lessons/${lesson.id}/share-image?v=1`,

@@ -3,11 +3,13 @@ import { readFileSync } from "node:fs";
 import { lessonPublicMetadata, publicLessonRemixHref } from "@shared/lesson-public-metadata";
 
 const getLesson = vi.fn();
+const getLessonByPublicSlug = vi.fn();
 const getPublicLessonSummaries = vi.fn();
 
 vi.mock("./storage", () => ({
   storage: {
     getLesson: (...args: unknown[]) => getLesson(...args),
+    getLessonByPublicSlug: (...args: unknown[]) => getLessonByPublicSlug(...args),
     getPublicLessonSummaries: (...args: unknown[]) => getPublicLessonSummaries(...args),
   },
 }));
@@ -89,8 +91,46 @@ const baseLesson = {
 
 beforeEach(() => {
   getLesson.mockReset();
+  getLessonByPublicSlug.mockReset();
   getPublicLessonSummaries.mockReset();
   getPublicLessonSummaries.mockResolvedValue([]);
+});
+
+describe("slug lesson prerendering", () => {
+  const publicLesson = () => ({ ...baseLesson, publicSlug: "travel-plans", publicLevel: "b1" });
+
+  it("uses the same slug for canonical, social metadata, structured data and library links", async () => {
+    const lesson = publicLesson();
+    getLessonByPublicSlug.mockResolvedValue(lesson);
+    getPublicLessonSummaries.mockResolvedValue([lesson]);
+    const path = "/esl-lessons/b1/travel-plans";
+    const html = (await injectLessonPrerender(TEMPLATE, path))!;
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    expect(doc.querySelector('link[rel="canonical"]')?.getAttribute("href")).toBe(`https://planwiseesl.com${path}`);
+    expect(doc.querySelector('meta[property="og:url"]')?.getAttribute("content")).toBe(`https://planwiseesl.com${path}`);
+    expect(html).not.toContain(baseLesson.topic);
+    const data = [...doc.querySelectorAll('script[type="application/ld+json"]')].map((el) => JSON.parse(el.textContent!));
+    expect(data.find((d) => d["@type"] === "LearningResource").url).toBe(`https://planwiseesl.com${path}`);
+    const listing = (await injectLessonPrerender(TEMPLATE, "/esl-lessons"))!;
+    expect(listing).toContain(`href="${path}"`);
+    expect(listing).toContain(`"url":"https://planwiseesl.com${path}"`);
+    expect(listing).not.toContain('href="/lessons/42"');
+  });
+
+  it("keeps a previously public link-only slug noindex with no LearningResource", async () => {
+    getLessonByPublicSlug.mockResolvedValue({ ...publicLesson(), isPublic: false, isShared: true });
+    const html = (await injectLessonPrerender(TEMPLATE, "/esl-lessons/b1/travel-plans"))!;
+    expect(html).toContain("noindex, nofollow");
+    expect(html).not.toContain('"@type":"LearningResource"');
+  });
+
+  it("does not prerender missing, private, or wrong-level URLs", async () => {
+    expect(await injectLessonPrerender(TEMPLATE, "/esl-lessons/b1/missing")).toBeNull();
+    getLessonByPublicSlug.mockResolvedValue({ ...publicLesson(), isPublic: false, isShared: false });
+    expect(await injectLessonPrerender(TEMPLATE, "/esl-lessons/b1/travel-plans")).toBeNull();
+    getLessonByPublicSlug.mockResolvedValue(publicLesson());
+    expect(await injectLessonPrerender(TEMPLATE, "/esl-lessons/c2/travel-plans")).toBeNull();
+  });
 });
 
 describe("injectLessonPrerender: content stored as a JSON string", () => {
