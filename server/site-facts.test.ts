@@ -56,6 +56,27 @@ describe("site facts stay consistent", () => {
     const alternates = /"alternateName": \[[^\]]*\]/g;
     expect(withoutHandle.replace(alternates, "")).not.toMatch(/PlanwiseESL|Plan Wise ESL|PLAN WISE ESL/);
   });
+
+  it("llms.txt documents the full pedagogical sequence, study PDF, student-created lessons and exact ICP", () => {
+    const lower = llms.toLowerCase();
+    for (const phrase of [
+      "word families",
+      "usage notes",
+      "synonyms",
+      "antonyms",
+      "flashcards",
+      "sentence unscramble",
+      "study pdf",
+      "cambly",
+      "preply",
+      "italki",
+      "freelance",
+      "small to medium language schools",
+      "create custom lessons",
+    ]) {
+      expect(lower, phrase).toContain(phrase);
+    }
+  });
 });
 
 describe("homepage structured data", () => {
