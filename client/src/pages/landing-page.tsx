@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import {
   homepageMeta, hero, definition, personalisation, showcase, problem, features, science, steps,
-  founder, pricing, testimonials, finalCta, faq, footer, FeatureIcon, FaqAnswerPart,
+  founder, pricing, verifiableProof, finalCta, faq, footer, FeatureIcon, FaqAnswerPart,
 } from '@shared/homepage-content';
 import { publicNav } from '@shared/marketing-pages';
 
@@ -706,22 +706,30 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Testimonials */}
+        {/* Inspect Real Proof (Zero Login) */}
         <section className="py-16 md:py-20 px-6 bg-white">
-          <div className="container mx-auto max-w-4xl">
-            <SectionHeading>{testimonials.heading}</SectionHeading>
-            <div className="grid md:grid-cols-2 gap-6">
-              {testimonials.items.map((t, i) => (
-                <figure key={i} className="bg-white rounded-2xl p-7 ring-1 ring-slate-900/5 shadow-lg shadow-slate-900/5">
-                  <div className="text-brand-yellow text-4xl font-serif leading-none mb-3">"</div>
-                  <blockquote className="text-slate-700 italic leading-relaxed mb-5">{t.quote}</blockquote>
-                  <figcaption className="flex items-center gap-3">
-                    <span className="w-10 h-10 rounded-full bg-brand-navy text-brand-yellow flex items-center justify-center font-nunito font-bold text-sm">
-                      {t.initials}
+          <div className="container mx-auto max-w-5xl">
+            <SectionHeading sub={verifiableProof.subheading}>{verifiableProof.heading}</SectionHeading>
+            <div className="grid md:grid-cols-3 gap-6">
+              {verifiableProof.items.map((item) => (
+                <div
+                  key={item.href}
+                  className="flex flex-col justify-between bg-slate-50/70 rounded-2xl p-7 ring-1 ring-slate-900/5 shadow-sm"
+                >
+                  <div>
+                    <span className="inline-block rounded-full bg-brand-yellow/25 text-brand-navy text-xs font-bold uppercase tracking-wider px-3 py-1 mb-4">
+                      {item.badge}
                     </span>
-                    <span className="text-slate-600 font-semibold text-sm">{t.author}</span>
-                  </figcaption>
-                </figure>
+                    <h3 className="text-xl font-nunito font-bold text-brand-navy mb-2">{item.title}</h3>
+                    <p className="text-slate-600 text-sm leading-relaxed mb-5">{item.text}</p>
+                  </div>
+                  <Link
+                    href={item.href}
+                    className="inline-flex items-center gap-1.5 font-semibold text-sm text-brand-navy underline decoration-brand-yellow decoration-2 underline-offset-4 hover:text-brand-navy-light"
+                  >
+                    {item.linkLabel} <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
               ))}
             </div>
           </div>

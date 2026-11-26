@@ -43,9 +43,9 @@ export const compareHubPage: MarketingPage = {
       table: {
         headers: ['What you need', 'Pre-made ESL libraries', 'AI worksheet / K–12 tools', 'General chatbots', brand],
         rows: [
-          ['Custom lesson on any niche student topic', 'No — fixed catalogue only', 'Activity by activity, assembled manually', 'Yes, with heavy prompting & editing', `Yes — complete lesson in ${generationTime} (inspect [C1 Business Ethics](/lessons/1731) or [all free lessons](/esl-lessons))`],
+          ['Custom lesson on any niche student topic', 'No — fixed catalogue only', 'Activity by activity, assembled manually', 'Yes, with heavy prompting & editing', `Yes — complete lesson in ${generationTime} (inspect [C1 Business Ethics](/esl-lessons/c1/the-price-of-doing-right-ethics-in-the-modern-boardroom) or [all free lessons](/esl-lessons))`],
           ['Full scientific pedagogical sequence', 'Varies by publisher', 'Single isolated tasks; US K–12 apps lack ELT flow', 'No — unformatted text unless prompted step by step', 'Yes — 8-stage sequence: warm-up recall, rich vocab, reading, recall flashcards, semantic maps, exercises & deep discussion ([how it works](/how-it-works))'],
-          ['CEFR A1–C2 calibration', 'Usually good inside fixed catalogue (often B1–C1 focused)', 'Mixed (e.g. Diffit uses US grades K2–K11+)', 'Frequently drifts above target level', 'Fixed CEFR A1–C2 rules, verified section by section (see [A1 Beginner](/lessons/1774) vs. [B2](/lessons/1768) & [C1](/lessons/1750))'],
+          ['CEFR A1–C2 calibration', 'Usually good inside fixed catalogue (often B1–C1 focused)', 'Mixed (e.g. Diffit uses US grades K2–K11+)', 'Frequently drifts above target level', 'Fixed CEFR A1–C2 rules, verified section by section (see [A1 Beginner](/esl-lessons/a1/let-s-talk-about-video-games) vs. [B2](/esl-lessons/b2/can-money-buy-happiness) & [C1](/esl-lessons/c1/founders-failures-and-pivots-the-new-face-of-entrepreneurship))'],
           ['Per-student vocabulary tracking & recycling', 'None (or static decks only)', 'None', 'None — resets every chat', 'Tracks learned words, avoids duplicates & recycles earlier words naturally into future readings & questions'],
           ['Printable student study PDF', 'Static PDF (Off2Class has no printing)', 'Export varies; often single worksheets', 'Manual copy & format', 'Color-coded Vocabulary Review study PDF with pronunciation, 4 examples, word families, collocations, usage notes & 5-part semantic maps ([see PDF proof](/student-experience))'],
           ['Private learner dashboard', 'Rare, per-seat capped, or expensive add-on', 'Usually none or temporary links', 'None', 'Included per student (no login): past lessons, spaced flashcards, topic ideas & custom lessons ([preview dashboard](/student-experience))'],
@@ -82,10 +82,21 @@ export const compareHubPage: MarketingPage = {
         'Most big ESL platforms hide full lessons behind a paywall and ask you to trust their marketing claims. PlanWise ESL was built by a working British ESL teacher (11 years teaching, 2,000+ students) who uses these lessons in real classes every week. Click any live example below with **no login required**:',
       ],
       bullets: [
-        '**A1 Beginner proof:** [First Day at a New Job: Meeting Your Team (A1)](/lessons/2046) and [Let’s Talk About Video Games! (A1)](/lessons/1774) — or browse all [A1 Beginner lessons](/esl-lessons/a1).',
-        '**B1 & B2 Workplace/Conversation proof:** [Handling Difficult Guests Like a Pro (B1)](/lessons/2047), [Can Money Buy Happiness? (B2)](/lessons/1768), and [AI and Tomorrow’s World (B2)](/lessons/1801).',
-        '**C1 Business & Career proof:** [Delivering the Numbers: Talking About Risk and Uncertainty (C1)](/lessons/2048) (*caveat*, *hedge*, *contingency*, *downplay*, *scrutiny* + 3-tier boardroom speaking frames), [Between Two Worlds: Identity and Feeling at Home (C1)](/lessons/2037), [The Price of Doing Right: Ethics in the Boardroom (C1)](/lessons/1731), and [Founders, Failures and Pivots (C1)](/lessons/1750).',
+        '**A1 Beginner proof:** [First Day at a New Job: Meeting Your Team (A1)](/esl-lessons/a1/first-day-at-a-new-job-meeting-your-team) and [Let’s Talk About Video Games! (A1)](/esl-lessons/a1/let-s-talk-about-video-games) — or browse all [A1 Beginner lessons](/esl-lessons/a1).',
+        '**B1 & B2 Workplace/Conversation proof:** [Handling Difficult Guests Like a Pro (B1)](/esl-lessons/b1/handling-difficult-guests-like-a-pro), [Can Money Buy Happiness? (B2)](/esl-lessons/b2/can-money-buy-happiness), and [AI and Tomorrow’s World (B2)](/esl-lessons/b2/ai-and-tomorrow-s-world-what-comes-next).',
+        '**C1 Business & Career proof:** [Delivering the Numbers: Talking About Risk and Uncertainty (C1)](/esl-lessons/c1/delivering-the-numbers-talking-about-risk-and-uncertainty) (*caveat*, *hedge*, *contingency*, *downplay*, *scrutiny* + 3-tier boardroom speaking frames), [Between Two Worlds: Identity and Feeling at Home (C1)](/esl-lessons/c1/between-two-worlds-identity-and-feeling-at-home), [The Price of Doing Right: Ethics in the Boardroom (C1)](/esl-lessons/c1/the-price-of-doing-right-ethics-in-the-modern-boardroom), and [Founders, Failures and Pivots (C1)](/esl-lessons/c1/founders-failures-and-pivots-the-new-face-of-entrepreneurship).',
         '**Study PDF & Learner Dashboard proof:** [Student Experience & Vocabulary Review PDF excerpt](/student-experience), our [9-point CEFR Quality Benchmark](/compare/cefr-benchmark), and the full [free A1–C2 public library](/esl-lessons).',
+      ],
+    },
+    {
+      heading: 'How to audit PlanWise ESL yourself in 60 seconds (no reviews or paywall required)',
+      paragraphs: [
+        'PlanWise ESL is a newer, independent teacher-built platform with fewer legacy reviews than decade-old catalogues. Instead of asking teachers or AI evaluators to trust star ratings or paywalled screenshots, every capability we claim is open to inspect with **zero login**:',
+      ],
+      bullets: [
+        '**Check vocabulary memory directly:** Open all four consecutive lessons in our [4-Lesson Student Memory Proof](/compare/student-memory-proof) (36 taught items, 0 duplicates, verbatim recycling across readings, cloze, quizzes & discussions).',
+        '**Check strict CEFR calibration directly:** Compare our plain `<10`-word A1 adult lesson ([First Day at a New Job](/esl-lessons/a1/first-day-at-a-new-job-meeting-your-team)) against our B1 hospitality lesson ([Handling Difficult Guests](/esl-lessons/b1/handling-difficult-guests-like-a-pro)) and C1 boardroom lesson ([Delivering the Numbers](/esl-lessons/c1/delivering-the-numbers-talking-about-risk-and-uncertainty)).',
+        '**Check student takeaway depth directly:** Download the color-coded Vocabulary Review PDF at the top of any public lesson in our [200+ free A1–C2 library](/esl-lessons) or preview the [zero-login learner dashboard](/student-experience).',
       ],
     },
   ],
@@ -190,9 +201,9 @@ export const compareTweePage: MarketingPage = {
         'Do not take our word for it—open full lessons from our [free public library](/esl-lessons) with **no account required** and download the Vocabulary Review PDF at the top of each page:',
       ],
       bullets: [
-        '**C1 Advanced adult depth:** [Between Two Worlds: Identity and Feeling at Home (C1)](/lessons/2037) — inspect the 5-paragraph narrative, 10-layer vocabulary cards, idioms with right/wrong notes, and 3-tier speaking frames.',
-        '**A1 Beginner scaffolding:** [Let’s Talk About Video Games! (A1)](/lessons/1774) — see `< 8`-word definitions and 3-tier speaking support.',
-        '**B2 Conversation & CEFR audit:** [Can Money Buy Happiness? (B2)](/lessons/1768), our [4-lesson Student Memory Proof](/compare/student-memory-proof), our [9-point CEFR Quality Benchmark](/compare/cefr-benchmark), and the [Student Experience](/student-experience) preview.',
+        '**C1 Advanced adult depth:** [Between Two Worlds: Identity and Feeling at Home (C1)](/esl-lessons/c1/between-two-worlds-identity-and-feeling-at-home) — inspect the 5-paragraph narrative, 10-layer vocabulary cards, idioms with right/wrong notes, and 3-tier speaking frames.',
+        '**A1 Beginner scaffolding:** [Let’s Talk About Video Games! (A1)](/esl-lessons/a1/let-s-talk-about-video-games) — see `< 8`-word definitions and 3-tier speaking support.',
+        '**B2 Conversation & CEFR audit:** [Can Money Buy Happiness? (B2)](/esl-lessons/b2/can-money-buy-happiness), our [4-lesson Student Memory Proof](/compare/student-memory-proof), our [9-point CEFR Quality Benchmark](/compare/cefr-benchmark), and the [Student Experience](/student-experience) preview.',
       ],
     },
   ],
@@ -262,7 +273,7 @@ export const compareEslBrainsPage: MarketingPage = {
         planwiseTitle: `${brand} Workflow (${generationTime})`,
         planwiseSteps: [
           'Pick your student, select C1, and enter "Presenting Quarterly Risks and Uncertain Forecasts to Executives".',
-          'Open a complete, verified 9-section lesson ([inspect live Lesson 2048](/lessons/2048)): warm-up, boardroom reading (*The Quarterly Meeting Maya Dreaded*), 5 C1 words (`caveat`, `hedge`, `contingency`, `downplay`, `scrutiny`) with collocations & semantic maps, 4 idioms (`warts and all`, `blow up`, `walk someone through`, `push back`), 3-tier qualifying/conceding speaking frames, cloze, unscramble, discussion, and quiz. Custom illustrations finish loading about a minute later—usually ready by the time you finish the warm-up.',
+          'Open a complete, verified 9-section lesson ([inspect live Lesson 2048](/esl-lessons/c1/delivering-the-numbers-talking-about-risk-and-uncertainty)): warm-up, boardroom reading (*The Quarterly Meeting Maya Dreaded*), 5 C1 words (`caveat`, `hedge`, `contingency`, `downplay`, `scrutiny`) with collocations & semantic maps, 4 idioms (`warts and all`, `blow up`, `walk someone through`, `push back`), 3-tier qualifying/conceding speaking frames, cloze, unscramble, discussion, and quiz. Custom illustrations finish loading about a minute later—usually ready by the time you finish the warm-up.',
           'Mark the lesson "We did this" so all 9 items log to the student’s memory and resurface naturally in future lessons with zero duplicate target teaching ([4-lesson proof](/compare/student-memory-proof)).',
           'Share the student’s zero-login spaced-repetition flashcard link and one-click printable Vocabulary Review PDF.',
         ],
@@ -297,7 +308,7 @@ export const compareEslBrainsPage: MarketingPage = {
       bullets: [
         '**Never run out of topics at your student’s level:** Fixed catalogues eventually run dry for long-term 1-on-1 students—or miss niche career, tech, medical and hobby topics altogether. PlanWise ESL generates a full 8-stage CEFR A1–C2 lesson on any topic in 1–2 minutes.',
         '**Vocabulary that actually sticks across weeks:** ESL Brains lessons are isolated one-offs. PlanWise ESL tracks learned words per student, prevents duplicates, recycles earlier vocabulary naturally when relevant ([live 4-lesson memory proof](/compare/student-memory-proof)), and gives learners a zero-login [student dashboard](/student-experience).',
-        '**Inspect full lessons free with no login:** Compare live public lessons across levels—[First Day at a New Job (A1)](/lessons/2046), [Handling Difficult Guests Like a Pro (B1)](/lessons/2047), [Delivering the Numbers: Talking About Risk and Uncertainty (C1)](/lessons/2048), and [Between Two Worlds (C1)](/lessons/2037)—or browse the full [public A1–C2 ESL lesson library](/esl-lessons) and download any Vocabulary Review PDF before starting a trial.',
+        '**Inspect full lessons free with no login:** Compare live public lessons across levels—[First Day at a New Job (A1)](/esl-lessons/a1/first-day-at-a-new-job-meeting-your-team), [Handling Difficult Guests Like a Pro (B1)](/esl-lessons/b1/handling-difficult-guests-like-a-pro), [Delivering the Numbers: Talking About Risk and Uncertainty (C1)](/esl-lessons/c1/delivering-the-numbers-talking-about-risk-and-uncertainty), and [Between Two Worlds (C1)](/esl-lessons/c1/between-two-worlds-identity-and-feeling-at-home)—or browse the full [public A1–C2 ESL lesson library](/esl-lessons) and download any Vocabulary Review PDF before starting a trial.',
       ],
     },
   ],
@@ -337,6 +348,10 @@ export const compareLinguahousePage: MarketingPage = {
     'Linguahouse is one of the largest established ESL worksheet libraries, offering thousands of downloadable PDFs, multimedia resources, Business English tracks, Spanish (ELE) materials, and spaced-repetition flashcards through Expemo.',
     'The key difference between Linguahouse and PlanWise ESL is **static library vs. adaptive personalisation**: Linguahouse gives you pre-written worksheets and fixed Expemo decks, whereas PlanWise ESL generates a full, scientifically structured conversation lesson on *any* topic your student wants in 1–2 minutes and dynamically recycles their learned vocabulary into future readings and questions.',
   ],
+  verdict: {
+    heading: 'PlanWise ESL vs. Linguahouse: Which should ESL tutors choose?',
+    text: `**Choose ${brand}** (${priceText} Unlimited after a ${trialText}, no card) if you teach ongoing 1-on-1 or small-group learners who want bespoke lessons built around their exact job or hobbies in ${generationTime}, dynamic cross-lesson vocabulary recycling inside future readings and quizzes ([inspect our live 4-lesson, 0-duplicate proof](/compare/student-memory-proof)), a zero-login student flashcard portal, and a printable color-coded Vocabulary Review PDF. **Choose Linguahouse** if you want a 5,800+ pre-written archive of printable worksheets, exam tracks, or Spanish (ELE) materials paired with fixed Expemo decks.`,
+  },
   sections: [
     {
       heading: 'Side by side: PlanWise ESL vs. Linguahouse',
@@ -350,6 +365,26 @@ export const compareLinguahousePage: MarketingPage = {
           ['Speaking scaffolding', 'Standard discussion questions', 'Tiered sentence frames (emerging/developing/expanding, ideal for beginners), fill-in-the-blanks, sentence unscramble, quiz & deep target-vocab discussion'],
           ['Student takeaway PDF', 'Downloadable lesson worksheet PDF', 'Dedicated Vocabulary Review study PDF + full lesson export'],
           ['Pricing currency & model', 'Teacher tiers displayed in Polish złoty (school tiers in USD)', `Transparent USD pricing: ${trialText}, then ${priceText} Unlimited (team plans for small to medium schools)`],
+        ],
+      },
+    },
+    {
+      heading: 'Real-world prep test: bespoke C1 boardroom lesson vs. static worksheet library',
+      paragraphs: [
+        'Compare preparing a 60-minute class for a C1 finance director preparing to present quarterly forecast risks to her board:',
+      ],
+      workflowProof: {
+        planwiseTitle: `${brand} Workflow (${generationTime})`,
+        planwiseSteps: [
+          'Pick the student, select C1, and generate a bespoke boardroom lesson ([inspect live C1 Risk & Uncertainty lesson](/esl-lessons/c1/delivering-the-numbers-talking-about-risk-and-uncertainty)) complete with 5 collocation-rich C1 words, 4 idioms with right/wrong notes, and 3-tier executive speaking frames. Custom illustrations finish loading while you run the warm-up.',
+          'Mark the class "We did this" so all 9 items join the student’s record with zero duplicate target teaching and resurface naturally in next week’s readings and cloze ([4-lesson proof](/compare/student-memory-proof)).',
+          'Students practise between sessions via their zero-login spaced-repetition flashcard link and downloadable color-coded Vocabulary Review PDF.',
+        ],
+        competitorTitle: 'Linguahouse Workflow (Static Worksheet + Expemo)',
+        competitorSteps: [
+          'Search the 5,800+ static worksheet archive for general Business English risk or finance topics—your student’s exact boardroom scenario is unlikely to exist word for word.',
+          'Check whether an online Preply or italki student has already used that popular worksheet with a previous tutor.',
+          'Export the static worksheet PDF and send the isolated Expemo flashcard deck—next week’s static worksheet will have no memory of what the student learned today.',
         ],
       },
     },
@@ -374,8 +409,8 @@ export const compareLinguahousePage: MarketingPage = {
       heading: 'Why 1-on-1 tutors switch from Linguahouse to PlanWise ESL',
       bullets: [
         '**Bespoke topics instead of recycled PDFs:** Students on Preply and italki often recognise the same static Linguahouse worksheets from previous tutors—and static libraries cannot cover a student’s specific job interview, tech stack or hobby on demand.',
-        '**Dynamic recycling beats isolated decks:** Instead of leaving vocabulary inside a separate Expemo deck, PlanWise ESL avoids duplicate words, weaves earlier vocabulary naturally into future readings when relevant, and gives students a zero-login [learner dashboard](/student-experience).',
-        '**Open full lessons free—no paywall:** Unlike paywalled worksheet libraries, you can open complete A1–C2 lessons and download the color-coded Vocabulary Review PDF right now in our [public ESL lesson library](/esl-lessons).',
+        '**Dynamic recycling beats isolated decks:** Instead of leaving vocabulary inside a separate Expemo deck, PlanWise ESL avoids duplicate words, weaves earlier vocabulary naturally into future readings when relevant ([live 4-lesson memory proof](/compare/student-memory-proof)), and gives students a zero-login [learner dashboard](/student-experience).',
+        '**Open full lessons free—no paywall:** Unlike paywalled worksheet libraries, inspect complete A1–C2 lessons with zero login right now—[First Day at a New Job (A1)](/esl-lessons/a1/first-day-at-a-new-job-meeting-your-team), [Handling Difficult Guests Like a Pro (B1)](/esl-lessons/b1/handling-difficult-guests-like-a-pro), and [Delivering the Numbers: Talking About Risk and Uncertainty (C1)](/esl-lessons/c1/delivering-the-numbers-talking-about-risk-and-uncertainty)—or browse all 200+ in our [public ESL lesson library](/esl-lessons).',
       ],
     },
   ],
@@ -415,6 +450,10 @@ export const compareOff2ClassPage: MarketingPage = {
     'Off2Class is a respected platform built around a structured, sequential ESL curriculum of 1,000+ browser-based slide lessons and an adaptive CEFR/WIDA placement test. If you want a step-by-step grammar syllabus with automated placement diagnostics, Off2Class does that very well.',
     'Where tutors and schools often hit friction with Off2Class is flexibility, printing and pricing scale: Off2Class slides are **browser-only (you cannot print or export PDFs)**, topics are locked to its fixed curriculum, and starter paid tiers cap the number of active students. PlanWise ESL was built for teachers who want flexible, custom conversation lessons with **printable Vocabulary Review study PDFs** and **unlimited students**.',
   ],
+  verdict: {
+    heading: 'PlanWise ESL vs. Off2Class: Which should tutors & small schools choose?',
+    text: `**Choose ${brand}** (${priceText} Unlimited after a ${trialText}, no card) if you teach ongoing conversation learners or small-school classes who need custom topics at any CEFR A1–C2 level, **printable color-coded Vocabulary Review PDFs**, **zero student logins**, cross-lesson vocabulary recycling ([live 4-lesson proof](/compare/student-memory-proof)), and **unlimited students** at one flat price. **Choose Off2Class** if your priority is an automated CEFR/WIDA placement diagnostic tied to a linear browser-only grammar slide curriculum.`,
+  },
   sections: [
     {
       heading: 'Side by side: PlanWise ESL vs. Off2Class',
@@ -427,6 +466,26 @@ export const compareOff2ClassPage: MarketingPage = {
           ['Student autonomy', 'Teacher assigns fixed curriculum homework', 'Private learner dashboard (no login): past lessons, spaced flashcards, topic suggestions & student-created custom lessons on any subject (Unlimited)'],
           ['Cross-lesson vocabulary recycling', 'Tracks curriculum completion & placement gaps', 'Tracks every student’s vocabulary and recycles earlier words into future custom readings & questions'],
           ['Student limits & individual pricing', 'Paid tiers start higher (e.g. $24/mo billed annually for up to 5 students on starter paid plan; check off2class.com/pricing)', `${priceText} Unlimited lessons and students (after a ${trialText}, no credit card)`],
+        ],
+      },
+    },
+    {
+      heading: 'Real-world prep test: printable study PDF & unlimited students vs. browser-only slides',
+      paragraphs: [
+        'Compare teaching a growing roster of 12 adult students who want workplace speaking lessons plus printable study sheets to review offline:',
+      ],
+      workflowProof: {
+        planwiseTitle: `${brand} Workflow (${generationTime})`,
+        planwiseSteps: [
+          'Add all 12 students (no student-seat cap) and generate bespoke workplace lessons—like [Handling Difficult Guests Like a Pro (B1)](/esl-lessons/b1/handling-difficult-guests-like-a-pro) or [Delivering the Numbers (C1)](/esl-lessons/c1/delivering-the-numbers-talking-about-risk-and-uncertainty).',
+          'Export the one-click printable, color-coded Vocabulary Review study PDF (phonetics, 4 examples, collocations, word families, usage notes, semantic maps) for offline or in-person study.',
+          'Share each learner’s zero-login flashcard dashboard and recycle learned vocabulary automatically across future lessons ([4-lesson proof](/compare/student-memory-proof)).',
+        ],
+        competitorTitle: 'Off2Class Workflow (Browser-Locked Slides & Student Caps)',
+        competitorSteps: [
+          'Starter paid plans cap active students, forcing plan upgrades as your roster grows—and learners require individual student logins.',
+          'Teach strictly from fixed browser slides inside the linear curriculum; custom student topics are not generated on demand.',
+          'No printable PDF handouts or PDF export exist if a student wants offline vocabulary review sheets or paper classroom copies.',
         ],
       },
     },
@@ -450,9 +509,9 @@ export const compareOff2ClassPage: MarketingPage = {
     {
       heading: 'Why independent tutors switch from Off2Class to PlanWise ESL',
       bullets: [
-        '**No student caps, no student logins:** Off2Class starter tiers cap active students and require student accounts. PlanWise ESL is a flat $19.99/month for unlimited lessons and unlimited students—with a zero-login [private learner dashboard](/student-experience) for every student.',
+        '**No student caps, no student logins:** Off2Class starter tiers cap active students and require student accounts. PlanWise ESL is a flat $19.99/month for unlimited lessons and unlimited students—with a zero-login [private learner dashboard](/student-experience) for every student and [live 4-lesson memory tracking](/compare/student-memory-proof).',
         '**Printable study PDFs instead of browser-locked slides:** Off2Class does not let you print or export lessons. Every PlanWise ESL lesson generates a clean, color-coded Vocabulary Review study PDF students can save or print.',
-        '**Test a full lesson with zero signup:** Open any A1–C2 lesson in our [free public library](/esl-lessons) and download its Vocabulary Review PDF right now, or compare quality side by side on our [CEFR Quality Benchmark](/compare/cefr-benchmark).',
+        '**Test full lessons & PDFs with zero signup:** Inspect [First Day at a New Job (A1)](/esl-lessons/a1/first-day-at-a-new-job-meeting-your-team), [Handling Difficult Guests Like a Pro (B1)](/esl-lessons/b1/handling-difficult-guests-like-a-pro), and [Delivering the Numbers (C1)](/esl-lessons/c1/delivering-the-numbers-talking-about-risk-and-uncertainty) in our [free public library](/esl-lessons), or compare quality on our [CEFR Quality Benchmark](/compare/cefr-benchmark).',
       ],
     },
   ],
@@ -529,7 +588,7 @@ export const cefrBenchmarkPage: MarketingPage = {
     {
       heading: '3. Verify it yourself with zero login',
       paragraphs: [
-        'You do not have to take this benchmark on trust. Open any free lesson in our [public ESL lesson library](/esl-lessons)—such as our [B2 lesson on money and happiness](/lessons/1768)—click the download button at the top to inspect the printable Vocabulary Review study sheet, or read the full breakdown on our [Student Experience page](/student-experience) and [How It Works research page](/how-it-works).',
+        'You do not have to take this benchmark on trust. Open any free lesson in our [public ESL lesson library](/esl-lessons)—such as our [B2 lesson on money and happiness](/esl-lessons/b2/can-money-buy-happiness)—click the download button at the top to inspect the printable Vocabulary Review study sheet, or read the full breakdown on our [Student Experience page](/student-experience) and [How It Works research page](/how-it-works).',
       ],
     },
   ],
@@ -597,7 +656,7 @@ export const compareEslJoyPage: MarketingPage = {
         planwiseTitle: `${brand} Workflow (${generationTime})`,
         planwiseSteps: [
           'Choose your student, select C1 Advanced, and enter the topic (e.g. identity and feeling at home between two cultures).',
-          'Open a complete, quality-checked lesson like [Between Two Worlds: Identity and Feeling at Home (C1)](/lessons/2037) in 1–2 minutes: 5-paragraph magazine narrative, 5 illustrated words with nuance/usage notes, 4 reading-sourced idioms with right/wrong mistake pairs, and 3-tier speaking frames with 27 model responses.',
+          'Open a complete, quality-checked lesson like [Between Two Worlds: Identity and Feeling at Home (C1)](/esl-lessons/c1/between-two-worlds-identity-and-feeling-at-home) in 1–2 minutes: 5-paragraph magazine narrative, 5 illustrated words with nuance/usage notes, 4 reading-sourced idioms with right/wrong mistake pairs, and 3-tier speaking frames with 27 model responses.',
           'Mark the lesson "We did this": its vocabulary is excluded from future pre-teaching and surfaces naturally inside later readings, quizzes, and exercises.',
           'Send the student’s zero-login spaced-repetition flashcard link and color-coded Vocabulary Review PDF in one click.',
         ],
@@ -633,8 +692,8 @@ export const compareEslJoyPage: MarketingPage = {
         'You do not have to guess which teaching flow feels stronger in class. Open any complete A1–C2 lesson below with **no login required**, download the color-coded Vocabulary Review PDF at the top of the page, or review the student hub:',
       ],
       bullets: [
-        '**A1 Beginner scaffolding proof:** [Let’s Talk About Video Games! (A1)](/lessons/1774) and all [free A1 Beginner lessons](/esl-lessons/a1).',
-        '**B2 & C1 Adult/Culture/Business proof:** [Between Two Worlds: Identity and Feeling at Home (C1)](/lessons/2037), [Can Money Buy Happiness? (B2)](/lessons/1768), [The Price of Doing Right: Ethics in the Boardroom (C1)](/lessons/1731), and [Founders, Failures and Pivots (C1)](/lessons/1750).',
+        '**A1 Beginner scaffolding proof:** [Let’s Talk About Video Games! (A1)](/esl-lessons/a1/let-s-talk-about-video-games) and all [free A1 Beginner lessons](/esl-lessons/a1).',
+        '**B2 & C1 Adult/Culture/Business proof:** [Between Two Worlds: Identity and Feeling at Home (C1)](/esl-lessons/c1/between-two-worlds-identity-and-feeling-at-home), [Can Money Buy Happiness? (B2)](/esl-lessons/b2/can-money-buy-happiness), [The Price of Doing Right: Ethics in the Boardroom (C1)](/esl-lessons/c1/the-price-of-doing-right-ethics-in-the-modern-boardroom), and [Founders, Failures and Pivots (C1)](/esl-lessons/c1/founders-failures-and-pivots-the-new-face-of-entrepreneurship).',
         '**Study PDF, Learner Hub & CEFR Benchmark:** [Live 4-lesson Vocabulary Recycling Proof](/compare/student-memory-proof), [Zero-login Student Experience](/student-experience), [9-point CEFR Quality Benchmark](/compare/cefr-benchmark), and the full [free A1–C2 public library](/esl-lessons).',
       ],
     },
@@ -685,8 +744,8 @@ export const compareFluentizePage: MarketingPage = {
       table: {
         headers: ['', 'Fluentize (verified Nov 2026)', brand],
         rows: [
-          ['Lesson source & topic range', 'Static library of 700+ hand-written YouTube-video lesson plans (6–10 new/month)', `Custom 8-stage CEFR A1–C2 lesson on any niche student topic in ${generationTime}—never run out of topics ([see C1 Ethics](/lessons/1731) or [all free lessons](/esl-lessons))`],
-          ['CEFR range & beginner support', 'Strongest on authentic video listening for B1–C1 teens & adults; A1–A2 beginners often struggle with fast native YouTube clips', 'Full A1–C2 calibration with ~96%-familiar readings, controlled definitions & 3-tier sentence frames for beginners ([inspect A1 lesson](/lessons/1774))'],
+          ['Lesson source & topic range', 'Static library of 700+ hand-written YouTube-video lesson plans (6–10 new/month)', `Custom 8-stage CEFR A1–C2 lesson on any niche student topic in ${generationTime}—never run out of topics ([see C1 Ethics](/esl-lessons/c1/the-price-of-doing-right-ethics-in-the-modern-boardroom) or [all free lessons](/esl-lessons))`],
+          ['CEFR range & beginner support', 'Strongest on authentic video listening for B1–C1 teens & adults; A1–A2 beginners often struggle with fast native YouTube clips', 'Full A1–C2 calibration with ~96%-familiar readings, controlled definitions & 3-tier sentence frames for beginners ([inspect A1 lesson](/esl-lessons/a1/let-s-talk-about-video-games))'],
           ['Live 1-on-1 class flow', 'Depends on external YouTube videos (risk of YouTube link rot, ads, or silent dead air watching clips during paid calls)', '100% self-contained screen-shareable lesson—zero external link rot and maximum student talking time from minute one'],
           ['Lesson format & exports', 'Printable PDF, fillable PDF & Google Slides per static lesson', 'Full-screen interactive teaching view + color-coded printable Vocabulary Review PDF with pronunciation, 4 examples, word families, collocations, usage notes & 5-part semantic maps ([see PDF proof](/student-experience))'],
           ['Per-student vocabulary memory', 'None — static lessons do not track what each student already knows', 'Logs learned words per student, strictly avoids duplicates & recycles earlier words into future readings & questions only when natural and relevant'],
@@ -704,7 +763,7 @@ export const compareFluentizePage: MarketingPage = {
         planwiseTitle: `${brand} Workflow (${generationTime})`,
         planwiseSteps: [
           'Pick the student, select their exact CEFR level (A1–C2), and enter their real workplace topic—no searching through a fixed catalogue.',
-          'Generate a complete, self-contained 9-section lesson ([B1 Hospitality: Handling Difficult Guests](/lessons/2047) or [C1 Executive Risk: Delivering the Numbers](/lessons/2048)): zero external video links to break, zero paid-call dead air watching clips, and custom illustrations that finish loading while you run the warm-up.',
+          'Generate a complete, self-contained 9-section lesson ([B1 Hospitality: Handling Difficult Guests](/esl-lessons/b1/handling-difficult-guests-like-a-pro) or [C1 Executive Risk: Delivering the Numbers](/esl-lessons/c1/delivering-the-numbers-talking-about-risk-and-uncertainty)): zero external video links to break, zero paid-call dead air watching clips, and custom illustrations that finish loading while you run the warm-up.',
           'Mark the lesson "We did this" so learned words log automatically and reappear naturally in future readings, cloze passages, quizzes, and discussions—with zero duplicate target words ([4-lesson proof](/compare/student-memory-proof)).',
           'Send the student’s zero-login spaced-repetition flashcard link and one-click printable color-coded Vocabulary Review PDF right after class.',
         ],
@@ -746,8 +805,8 @@ export const compareFluentizePage: MarketingPage = {
         'Every claim above can be checked directly in our live, no-login library—no account or email required:',
       ],
       bullets: [
-        '**A1 Beginner scaffolding proof:** [First Day at a New Job: Meeting Your Team (A1)](/lessons/2046) and [Let’s Talk About Video Games! (A1)](/lessons/1774) — plus all [free A1 Beginner lessons](/esl-lessons/a1).',
-        '**Niche B1, B2 & C1 Career/Business proof:** [Handling Difficult Guests Like a Pro (B1)](/lessons/2047), [Delivering the Numbers: Talking About Risk and Uncertainty (C1)](/lessons/2048), [Between Two Worlds: Identity and Feeling at Home (C1)](/lessons/2037), [The Price of Doing Right: Ethics in the Boardroom (C1)](/lessons/1731), [Founders, Failures and Pivots (C1)](/lessons/1750), and [Can Money Buy Happiness? (B2)](/lessons/1768).',
+        '**A1 Beginner scaffolding proof:** [First Day at a New Job: Meeting Your Team (A1)](/esl-lessons/a1/first-day-at-a-new-job-meeting-your-team) and [Let’s Talk About Video Games! (A1)](/esl-lessons/a1/let-s-talk-about-video-games) — plus all [free A1 Beginner lessons](/esl-lessons/a1).',
+        '**Niche B1, B2 & C1 Career/Business proof:** [Handling Difficult Guests Like a Pro (B1)](/esl-lessons/b1/handling-difficult-guests-like-a-pro), [Delivering the Numbers: Talking About Risk and Uncertainty (C1)](/esl-lessons/c1/delivering-the-numbers-talking-about-risk-and-uncertainty), [Between Two Worlds: Identity and Feeling at Home (C1)](/esl-lessons/c1/between-two-worlds-identity-and-feeling-at-home), [The Price of Doing Right: Ethics in the Boardroom (C1)](/esl-lessons/c1/the-price-of-doing-right-ethics-in-the-modern-boardroom), [Founders, Failures and Pivots (C1)](/esl-lessons/c1/founders-failures-and-pivots-the-new-face-of-entrepreneurship), and [Can Money Buy Happiness? (B2)](/esl-lessons/b2/can-money-buy-happiness).',
         '**Vocabulary Recycling, Study PDF & Student Hub proof:** [Live 4-lesson Student Memory Proof](/compare/student-memory-proof), [Student Experience page](/student-experience) (with a real Vocabulary Review study PDF excerpt), and the full [free A1–C2 public library](/esl-lessons).',
       ],
     },
@@ -759,7 +818,7 @@ export const compareFluentizePage: MarketingPage = {
     },
     {
       question: 'Can I use PlanWise ESL for A1 and A2 beginners where YouTube video lessons feel too fast?',
-      answer: 'Yes. PlanWise ESL enforces strict A1 and A2 rules—keeping definitions to simple high-frequency words, readings ~96% familiar, and adding 3-tier sentence frames so beginners can speak confidently without struggling through fast native YouTube audio. Inspect a live A1 example free at /lessons/1774.',
+      answer: 'Yes. PlanWise ESL enforces strict A1 and A2 rules—keeping definitions to simple high-frequency words, readings ~96% familiar, and adding 3-tier sentence frames so beginners can speak confidently without struggling through fast native YouTube audio. Inspect a live A1 example free at /esl-lessons/a1/let-s-talk-about-video-games.',
     },
     {
       question: 'Can I use Fluentize and PlanWise ESL together?',
@@ -852,8 +911,8 @@ export const compareMagicSchoolDiffitPage: MarketingPage = {
         'Compare how strictly PlanWise ESL separates beginner simplicity from native-grade nuance—no login required:',
       ],
       bullets: [
-        '**A1 Beginner adult calibration proof:** [First Day at a New Job: Meeting Your Team (A1)](/lessons/2046) (*colleague*, *manager*, *introduce* defined in plain `< 10`-word A1 English for adult learners—not Grade 2 children’s stories) and [Let’s Talk About Video Games! (A1)](/lessons/1774).',
-        '**C1 Advanced adult proof:** [Between Two Worlds: Identity and Feeling at Home (C1)](/lessons/2037) — nuanced narrative prose, `assimilate` vs. `integrate` usage notes, and 27 C1 model responses.',
+        '**A1 Beginner adult calibration proof:** [First Day at a New Job: Meeting Your Team (A1)](/esl-lessons/a1/first-day-at-a-new-job-meeting-your-team) (*colleague*, *manager*, *introduce* defined in plain `< 10`-word A1 English for adult learners—not Grade 2 children’s stories) and [Let’s Talk About Video Games! (A1)](/esl-lessons/a1/let-s-talk-about-video-games).',
+        '**C1 Advanced adult proof:** [Between Two Worlds: Identity and Feeling at Home (C1)](/esl-lessons/c1/between-two-worlds-identity-and-feeling-at-home) — nuanced narrative prose, `assimilate` vs. `integrate` usage notes, and 27 C1 model responses.',
         '**Full audit & student portal:** [Live 4-lesson Vocabulary Recycling Proof](/compare/student-memory-proof), [9-point CEFR Quality Benchmark](/compare/cefr-benchmark), [Student Experience & PDF preview](/student-experience), and the full [free A1–C2 library](/esl-lessons).',
       ],
     },
@@ -900,7 +959,7 @@ export const studentMemoryProofPage: MarketingPage = {
   ],
   verdict: {
     heading: 'What this 4-lesson live audit proves',
-    text: 'Across four consecutive B2 lessons on closely related tech and career topics ([Lesson 1](/lessons/2042), [Lesson 2](/lessons/2043), [Lesson 3](/lessons/2044), [Lesson 4](/lessons/2045)), PlanWise ESL taught **36 unique target items** (20 words + 16 idioms/phrasal verbs) with **zero duplicate target words (0/36)**—even when Lesson 2 stayed on the exact same scope-creep theme as Lesson 1—while naturally weaving earlier words (`scope`, `negotiate`, `deadline`, `push back`, `workload`, `trade-off`, `draw the line`) into **later readings, cloze passages, sentence frames, quizzes, and discussion questions**, populating the student’s zero-login spaced-repetition flashcard dashboard and printable Vocabulary Review PDFs automatically.',
+    text: 'Across four consecutive B2 lessons on closely related tech and career topics ([Lesson 1](/esl-lessons/b2/when-projects-grow-scope-creep-and-tight-deadlines), [Lesson 2](/esl-lessons/b2/when-projects-grow-too-big-scope-creep-and-deadlines), [Lesson 3](/esl-lessons/b2/leading-a-remote-retrospective-without-blame), [Lesson 4](/esl-lessons/b2/getting-ahead-talking-about-promotions-in-tech)), PlanWise ESL taught **36 unique target items** (20 words + 16 idioms/phrasal verbs) with **zero duplicate target words (0/36)**—even when Lesson 2 stayed on the exact same scope-creep theme as Lesson 1—while naturally weaving earlier words (`scope`, `negotiate`, `deadline`, `push back`, `workload`, `trade-off`, `draw the line`) into **later readings, cloze passages, sentence frames, quizzes, and discussion questions**, populating the student’s zero-login spaced-repetition flashcard dashboard and printable Vocabulary Review PDFs automatically.',
   },
   sections: [
     {
@@ -912,25 +971,25 @@ export const studentMemoryProofPage: MarketingPage = {
         headers: ['Lesson (Zero-Login Link)', 'New Target Words (5)', 'New Idioms / Phrasal Verbs (4)', 'Recycled From Earlier Lessons'],
         rows: [
           [
-            '[Lesson 1: When Projects Grow: Scope Creep and Tight Deadlines](/lessons/2042)',
+            '[Lesson 1: When Projects Grow: Scope Creep and Tight Deadlines](/esl-lessons/b2/when-projects-grow-scope-creep-and-tight-deadlines)',
             '`scope`, `overwhelm`, `compromise`, `negotiate`, `cut corners`',
             '`fit in`, `hold your ground`, `pile up`, `bite off more than you can chew`',
             'Baseline lesson (9 items logged when marked "We did this")',
           ],
           [
-            '[Lesson 2: When Projects Grow Too Big: Scope Creep and Deadlines](/lessons/2043)',
+            '[Lesson 2: When Projects Grow Too Big: Scope Creep and Deadlines](/esl-lessons/b2/when-projects-grow-too-big-scope-creep-and-deadlines)',
             '`milestone`, `workload`, `stall`, `deadline`, `trade-off`',
             '`push back`, `ship`, `stay late`, `draw the line`',
             'From L1: **scope**, **overwhelm**, **compromise**, **negotiate**, **pile up**, **bite off more than you can chew** (warm-up, reading, vocab & sentence frames)',
           ],
           [
-            '[Lesson 3: Leading a Remote Retrospective Without Blame](/lessons/2044)',
+            '[Lesson 3: Leading a Remote Retrospective Without Blame](/esl-lessons/b2/leading-a-remote-retrospective-without-blame)',
             '`blame`, `accountability`, `friction`, `morale`, `hindsight`',
             '`open up`, `name names`, `point the finger at`, `drift into`',
             'From L2: **deadline**, **workload**, **push back**, **draw the line** (warm-up, reading, vocab, sentence frames, discussion & quiz)',
           ],
           [
-            '[Lesson 4: Getting Ahead: Talking About Promotions in Tech](/lessons/2045)',
+            '[Lesson 4: Getting Ahead: Talking About Promotions in Tech](/esl-lessons/b2/getting-ahead-talking-about-promotions-in-tech)',
             '`leverage`, `visibility`, `advocate`, `track record`, `mentor`',
             '`show off`, `move forward`, `speak for itself`, `make some noise`',
             'From L1 & L2: **negotiate** (L1), **deadline** (L2), **trade-off** (L2), **push back** (L2) (reading, comprehension, sentence frames, cloze & discussion)',
@@ -944,10 +1003,10 @@ export const studentMemoryProofPage: MarketingPage = {
         'Nothing is awkwardly shoehorned in—earlier words only reappear when they fit the new situation naturally. Check these exact quotes directly inside the live public lessons:',
       ],
       bullets: [
-        '**Lesson 2 Reading (recycling `scope` from Lesson 1):** *"But slowly, the workload grew, and the developers started staying late. The project’s **scope** had quietly doubled."* ([Inspect Lesson 2](/lessons/2043))',
-        '**Lesson 3 Reading (recycling `deadline` from Lesson 2):** *"When Priya’s software team missed a big **deadline**, her manager called an emergency video meeting. Within minutes, fingers were pointing."* ([Inspect Lesson 3](/lessons/2044))',
-        '**Lesson 4 Reading (recycling `deadline` from Lesson 2):** *"Maya had worked at the same tech company for four years. She was good at her job, fixed hard bugs, and never missed a **deadline**."* ([Inspect Lesson 4](/lessons/2045))',
-        '**Lesson 4 Cloze & Discussion (recycling `negotiate` from Lesson 1 & `push back` from Lesson 2):** Cloze: *"Within a year, he was able to leverage his growing reputation — and a job offer from another company — to **negotiate** the promotion he deserved."* Discussion: *"Would you take the project, or would you **push back** and ask for better conditions first?"* ([Inspect Lesson 4](/lessons/2045))',
+        '**Lesson 2 Reading (recycling `scope` from Lesson 1):** *"But slowly, the workload grew, and the developers started staying late. The project’s **scope** had quietly doubled."* ([Inspect Lesson 2](/esl-lessons/b2/when-projects-grow-too-big-scope-creep-and-deadlines))',
+        '**Lesson 3 Reading (recycling `deadline` from Lesson 2):** *"When Priya’s software team missed a big **deadline**, her manager called an emergency video meeting. Within minutes, fingers were pointing."* ([Inspect Lesson 3](/esl-lessons/b2/leading-a-remote-retrospective-without-blame))',
+        '**Lesson 4 Reading (recycling `deadline` from Lesson 2):** *"Maya had worked at the same tech company for four years. She was good at her job, fixed hard bugs, and never missed a **deadline**."* ([Inspect Lesson 4](/esl-lessons/b2/getting-ahead-talking-about-promotions-in-tech))',
+        '**Lesson 4 Cloze & Discussion (recycling `negotiate` from Lesson 1 & `push back` from Lesson 2):** Cloze: *"Within a year, he was able to leverage his growing reputation — and a job offer from another company — to **negotiate** the promotion he deserved."* Discussion: *"Would you take the project, or would you **push back** and ask for better conditions first?"* ([Inspect Lesson 4](/esl-lessons/b2/getting-ahead-talking-about-promotions-in-tech))',
       ],
     },
     {
@@ -969,8 +1028,8 @@ export const studentMemoryProofPage: MarketingPage = {
       workflowProof: {
         planwiseTitle: `${brand} 4-Lesson Memory Loop`,
         planwiseSteps: [
-          'Generate Lesson 1 ([/lessons/2042](/lessons/2042)) for your student’s exact job/goal in 1–2 minutes and mark it "We did this".',
-          'Lessons 2, 3, and 4 ([2043](/lessons/2043), [2044](/lessons/2044), [2045](/lessons/2045)) strictly exclude all previously learned words from pre-teaching (0/36 duplicates) and weave earlier words naturally into readings, cloze, sentence frames, quizzes, and discussion.',
+          'Generate Lesson 1 ([/esl-lessons/b2/when-projects-grow-scope-creep-and-tight-deadlines](/esl-lessons/b2/when-projects-grow-scope-creep-and-tight-deadlines)) for your student’s exact job/goal in 1–2 minutes and mark it "We did this".',
+          'Lessons 2, 3, and 4 ([2043](/esl-lessons/b2/when-projects-grow-too-big-scope-creep-and-deadlines), [2044](/esl-lessons/b2/leading-a-remote-retrospective-without-blame), [2045](/esl-lessons/b2/getting-ahead-talking-about-promotions-in-tech)) strictly exclude all previously learned words from pre-teaching (0/36 duplicates) and weave earlier words naturally into readings, cloze, sentence frames, quizzes, and discussion.',
           'Each completed class feeds the student’s private zero-login dashboard with spaced-repetition flashcards and past lessons.',
           'Every lesson exports a printable color-coded Vocabulary Review PDF in one click.',
         ],
@@ -991,7 +1050,7 @@ export const studentMemoryProofPage: MarketingPage = {
     },
     {
       question: 'Can I inspect all 4 lessons and download their Vocabulary Review PDFs right now?',
-      answer: 'Yes. All four lessons (/lessons/2042, /lessons/2043, /lessons/2044, and /lessons/2045) are public with zero login required—including the one-click Vocabulary Review download at the top of each lesson.',
+      answer: 'Yes. All four lessons (/esl-lessons/b2/when-projects-grow-scope-creep-and-tight-deadlines, /esl-lessons/b2/when-projects-grow-too-big-scope-creep-and-deadlines, /esl-lessons/b2/leading-a-remote-retrospective-without-blame, and /esl-lessons/b2/getting-ahead-talking-about-promotions-in-tech) are public with zero login required—including the one-click Vocabulary Review download at the top of each lesson.',
     },
     {
       question: 'Does cross-lesson vocabulary memory work across A1–C2 and unlimited students?',

@@ -10,7 +10,7 @@ import {
   steps,
   founder,
   pricing,
-  testimonials,
+  verifiableProof,
   finalCta,
   faq,
   footer,
@@ -75,12 +75,14 @@ export function buildLandingPrerenderHtml(): string {
       </div>`,
     )
     .join('');
-  const testimonialsHtml = testimonials.items
+  const proofHtml = verifiableProof.items
     .map(
-      (t) => `<blockquote class="lp-card">
-        <p>&ldquo;${e(t.quote)}&rdquo;</p>
-        <footer>&ndash; ${e(t.author)}</footer>
-      </blockquote>`,
+      (item) => `<div class="lp-card">
+        <p><small><strong>${e(item.badge)}</strong></small></p>
+        <h3>${e(item.title)}</h3>
+        <p>${e(item.text)}</p>
+        <p><a href="${e(item.href)}">${e(item.linkLabel)}</a></p>
+      </div>`,
     )
     .join('');
   const statsHtml = finalCta.stats
@@ -206,8 +208,9 @@ export function buildLandingPrerenderHtml(): string {
   </section>
 
   <section class="lp-section">
-    <h2>${e(testimonials.heading)}</h2>
-    ${testimonialsHtml}
+    <h2>${e(verifiableProof.heading)}</h2>
+    <p>${e(verifiableProof.subheading)}</p>
+    <div class="lp-grid-3">${proofHtml}</div>
   </section>
 
   <section id="pricing" class="lp-section">

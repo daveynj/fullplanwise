@@ -252,12 +252,15 @@ function sectionsHtml(sections: any[]): string {
                 : str(w.pronunciation?.value) || str(w.pronunciation?.ipa) || str(w.pronunciation?.phoneticGuide) || str(w.phoneticGuide);
             const def = str(w.definition) || str(w.coreDefinition);
             const example = str(w.example) || str(w.levelAppropriateExample);
+            const moreExamples = arr(w.additionalExamples).map(str).filter(Boolean).slice(0, 3);
             const family = listOf(w.wordFamily?.words);
+            const collocations = listOf(w.collocations);
             const usage = str(w.usageNotes);
             const synonyms = listOf(w.semanticMap?.synonyms);
             const antonyms = listOf(w.semanticMap?.antonyms);
             const related = listOf(w.semanticMap?.relatedConcepts);
-            return `<div class="lp-card"><h3>${e(label)}${pos ? ` <span class="lp-meta">(${e(pos)})</span>` : ''}${pron ? ` <span class="lp-meta">${e(pron)}</span>` : ''}</h3>${def ? `<p>${e(def)}</p>` : ''}${example ? `<p><em>${e(example)}</em></p>` : ''}${family.length ? `<p><strong>Word family:</strong> ${e(family.join(', '))}</p>` : ''}${synonyms.length ? `<p><strong>Synonyms:</strong> ${e(synonyms.join(', '))}</p>` : ''}${antonyms.length ? `<p><strong>Antonyms:</strong> ${e(antonyms.join(', '))}</p>` : ''}${related.length ? `<p><strong>Related concepts:</strong> ${e(related.join(', '))}</p>` : ''}${usage ? `<p><strong>Usage note:</strong> ${e(usage)}</p>` : ''}</div>`;
+            const contexts = listOf(w.semanticMap?.contexts);
+            return `<div class="lp-card"><h3>${e(label)}${pos ? ` <span class="lp-meta">(${e(pos)})</span>` : ''}${pron ? ` <span class="lp-meta">${e(pron)}</span>` : ''}</h3>${def ? `<p>${e(def)}</p>` : ''}${example ? `<p><em>${e(example)}</em></p>` : ''}${moreExamples.length ? `<p><strong>More examples:</strong> ${e(moreExamples.join(' • '))}</p>` : ''}${collocations.length ? `<p><strong>Common collocations:</strong> ${e(collocations.join(', '))}</p>` : ''}${family.length ? `<p><strong>Word family:</strong> ${e(family.join(', '))}</p>` : ''}${synonyms.length ? `<p><strong>Synonyms:</strong> ${e(synonyms.join(', '))}</p>` : ''}${antonyms.length ? `<p><strong>Antonyms:</strong> ${e(antonyms.join(', '))}</p>` : ''}${related.length ? `<p><strong>Related concepts:</strong> ${e(related.join(', '))}</p>` : ''}${contexts.length ? `<p><strong>Contexts:</strong> ${e(contexts.join(', '))}</p>` : ''}${usage ? `<p><strong>Usage note:</strong> ${e(usage)}</p>` : ''}</div>`;
           })
           .join('');
         out.push(`<section>${heading('Key Vocabulary')}${items}</section>`);
@@ -280,9 +283,16 @@ function sectionsHtml(sections: any[]): string {
       }
       case 'discussion':
       case 'speaking': {
-        const qs = arr(s.questions).map(questionText).filter(Boolean);
-        if (!qs.length) break;
-        out.push(`<section>${heading('Discussion Questions')}${listHtml(qs, true)}</section>`);
+        const items = arr(s.questions)
+          .map((item) => {
+            const q = questionText(item);
+            if (!q) return '';
+            const ctx = item && typeof item === 'object' ? str((item as any).paragraphContext) : '';
+            return ctx ? `<li><p>${e(ctx)}</p><p><strong>${e(q)}</strong></p></li>` : `<li>${e(q)}</li>`;
+          })
+          .filter(Boolean);
+        if (!items.length) break;
+        out.push(`<section>${heading('Discussion Questions')}<ol>${items.join('')}</ol></section>`);
         break;
       }
       case 'sentenceFrames':
@@ -290,18 +300,28 @@ function sectionsHtml(sections: any[]): string {
         // Like the lesson page: current lessons ("v2_pedagogical") keep each
         // frame's three levels of support in pedagogicalFrames; older lessons
         // keep pattern templates in frames.
+        const tierLabels: Record<(typeof FRAME_TIERS)[number], string> = {
+          emerging: 'Emerging',
+          developing: 'Developing',
+          expanding: 'Expanding',
+        };
         const tiered = s.version === 'v2_pedagogical'
           ? arr(s.pedagogicalFrames)
               .map((f) => ({
                 fn: str(f?.languageFunction),
-                frames: FRAME_TIERS.map((tier) => str(f?.tieredFrames?.[tier]?.frame)).filter(Boolean),
+                frames: FRAME_TIERS.map((tier) => {
+                  const frame = str(f?.tieredFrames?.[tier]?.frame);
+                  if (!frame) return '';
+                  const model = arr(f?.modelResponses?.[tier]).map(str).find(Boolean) || '';
+                  return `<li><strong>${e(tierLabels[tier])}:</strong> ${e(frame)}${model ? ` &mdash; <em>${e(model)}</em>` : ''}</li>`;
+                }).filter(Boolean),
               }))
               .filter((f) => f.frames.length)
           : [];
         const frames = arr(s.frames).filter((f) => f && (str(f.patternTemplate) || str(f.title)));
         if (!tiered.length && !frames.length) break;
         const items = tiered.length
-          ? tiered.map((f) => `<li>${f.fn ? `<strong>${e(f.fn)}</strong>` : ''}${listHtml(f.frames)}</li>`).join('')
+          ? tiered.map((f) => `<li>${f.fn ? `<strong>${e(f.fn)}</strong>` : ''}<ul>${f.frames.join('')}</ul></li>`).join('')
           : frames
               .map((f) => {
                 const fn = str(f.languageFunction);
@@ -315,10 +335,19 @@ function sectionsHtml(sections: any[]): string {
         const items = expressionItemsOf(s);
         if (!items.length) break;
         const cards = items
-          .map(
-            (x) =>
-              `<div class="lp-card"><h3>${e(x.expression)} <span class="lp-meta">(${e(x.kind)})</span></h3><p>${e(x.meaning)}</p><p><em>${e(withoutMarks(x.example))}</em></p></div>`,
-          )
+          .map((x) => {
+            const notesHtml = x.notes
+              .slice(0, 2)
+              .map((n) => {
+                const parts: string[] = [];
+                if (n.text) parts.push(e(n.text));
+                if (n.right) parts.push(`Right: ${e(n.right)}`);
+                if (n.wrong) parts.push(`Avoid: ${e(n.wrong)}`);
+                return parts.length ? `<p><strong>Usage note:</strong> ${parts.join(' · ')}</p>` : '';
+              })
+              .join('');
+            return `<div class="lp-card"><h3>${e(x.expression)} <span class="lp-meta">(${e(x.kind)})</span></h3><p>${e(x.meaning)}</p><p><em>${e(withoutMarks(x.example))}</em></p>${notesHtml}</div>`;
+          })
           .join('');
         out.push(`<section>${heading('Idioms & Phrasal Verbs')}${cards}</section>`);
         break;
@@ -419,7 +448,7 @@ export function buildLessonPageHtml(lesson: LessonForPrerender, sections: any[],
       ${sectionsHtml(sections)}
     </article>
     ${relatedLessonsHtml(level, related)}
-    ${lesson.isPublic ? `<aside class="lp-cta lp-vocab"><h2>Help students remember these words beyond today's lesson.</h2><p>Mark lessons complete from a student's page to add their vocabulary to spaced-repetition flashcards and recycle it in future lessons.</p><p><a href="/auth?register=true&amp;source=vocab-cta">Try PlanWise ESL free</a></p></aside>` : ''}
+    ${lesson.isPublic ? `<aside class="lp-cta lp-vocab"><h2>Help students remember these words beyond today's lesson.</h2><p>Mark lessons complete from a student's page to add their vocabulary to spaced-repetition flashcards and recycle it in future lessons (<a href="/compare/student-memory-proof">see our live 4-lesson, 0-duplicate recycling proof</a>).</p><p><a href="/auth?register=true&amp;source=vocab-cta">Try PlanWise ESL free</a></p></aside>` : ''}
     <aside class="lp-cta">
       <h2>Use this lesson with your students</h2>
       <p>PlanWise ESL creates complete, CEFR-levelled ESL lessons on any topic in minutes. <a href="/auth?register=true">Sign up free</a> to copy this lesson, edit it, or generate your own.</p>
