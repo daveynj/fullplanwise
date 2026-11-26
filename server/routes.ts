@@ -29,7 +29,7 @@ import { subscriptionCheckoutRoute } from "./subscription-checkout-route";
 import { subscriptionCancelRoute } from "./subscription-cancel-route";
 import { billingHealthMonitor } from "./billing-health";
 import { registerBillingHealthRoute } from "./billing-health-route";
-import { validClientRoutes } from "@shared/client-routes";
+import { validClientRoutes, retiredPageRedirects } from "@shared/client-routes";
 import { notifyIndexNow, submitToIndexNow, getIndexNowKey, lessonIndexNowPaths, blogIndexNowPaths } from "./indexnow";
 import { marketingPages } from "@shared/marketing-pages";
 import { buildLlmsFullTxt, getLlmsFullTxt } from "./llms-full";
@@ -2560,6 +2560,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.status(404).type('html').send(html404);
     return true;
   };
+
+  // Pages that were taken down send their old address to a live page with a
+  // 301, keeping the query string, so old links and search results still work.
+  for (const [from, to] of Object.entries(retiredPageRedirects)) {
+    app.get([from, `${from}/`], (req, res) => {
+      const queryIndex = req.originalUrl.indexOf("?");
+      const query = queryIndex === -1 ? "" : req.originalUrl.slice(queryIndex);
+      res.redirect(301, to + query);
+    });
+  }
 
   // Canonicalize trailing slashes on known client pages (e.g. /lessons/42/ ->
   // /lessons/42) with a 301, preserving the query string. Links pasted into

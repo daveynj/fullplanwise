@@ -34,7 +34,7 @@ export const homepageMeta = {
     'AI lesson planner for ESL teachers',
     'CEFR lesson plans',
     'lesson plans for online English tutors',
-    'Preply italki Cambly lesson planning',
+    'Preply italki lesson planning',
     'ESL vocabulary tracking',
     'AI for English teachers',
   ],
@@ -44,7 +44,7 @@ export const homepageMeta = {
 };
 
 export const hero = {
-  badge: 'For Cambly, Preply, italki, freelance teachers & language schools',
+  badge: 'For Preply & italki tutors, freelance teachers & language schools',
   heading: 'The AI ESL lesson planner that remembers every student',
   subheading:
     `Complete, CEFR-levelled conversation lessons on any topic in ${generationTime}, built on a scientific pedagogical sequence around each student's level, interests and vocabulary.`,
@@ -56,7 +56,7 @@ export const hero = {
   ],
   audienceIntro: "Who it's for:",
   audience: [
-    'Online ESL tutors on Cambly, Preply, italki and other platforms.',
+    'Online ESL tutors on Preply, italki and other platforms.',
     'Freelance and independent private English teachers.',
     'Small to medium language schools.',
   ],
@@ -324,7 +324,7 @@ export const faq = {
       answer: [
         {
           type: 'text',
-          text: 'Online ESL tutors on Cambly, Preply, italki and other platforms, freelance and independent English teachers, and small to medium language schools. It is built for one-to-one and small-group classes with teenagers and adults.',
+          text: 'Online ESL tutors on Preply, italki and other platforms, freelance and independent English teachers, and small to medium language schools. It is built for one-to-one and small-group classes with teenagers and adults.',
         },
       ] as FaqAnswerPart[],
     },

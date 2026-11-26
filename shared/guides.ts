@@ -376,7 +376,7 @@ export const personaliseGuide: MarketingPage = {
     {
       heading: '1. Learn about the student in the first lesson',
       paragraphs: [
-        'Use the first lesson to find out who they are: their job, why they are learning English, what they enjoy, who matters to them. A fun open question works better than a questionnaire; see the island question in our [first-lesson guide for Cambly tutors](/guides/cambly-feedback-score-super-tutor).',
+        'Use the first lesson to find out who they are: their job, why they are learning English, what they enjoy, who matters to them. A fun open question works better than a questionnaire. Try the island question: "You are alone on an island with food, water and a house, but no internet or power. You can bring three things, and one of them can be people. What do you bring?" There is no wrong answer, and it tells you who and what matters to the student.',
       ],
     },
     {
@@ -435,13 +435,13 @@ export const personaliseGuide: MarketingPage = {
   updated: published,
 };
 
-/** The /guides index. Lists every guide, including the Cambly guide defined in marketing-pages.ts. */
+/** The /guides index. Lists every guide in guidePages (marketing-pages.ts). */
 export function guidesIndex(guides: MarketingPage[]): MarketingPage {
   return {
     path: '/guides',
     title: `Guides for ESL Teachers and Online Tutors | ${brand}`,
     description:
-      'Practical guides for ESL teachers and online tutors on Cambly, Preply and italki: CEFR levels, conversation lessons, topics by level and personalising.',
+      'Practical guides for ESL teachers and online tutors on Preply and italki: CEFR levels, conversation lessons, topics by level and personalising.',
     navLabel: 'Guides',
     eyebrow: 'Guides',
     h1: 'Guides for ESL teachers and online tutors',
