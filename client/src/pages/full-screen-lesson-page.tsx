@@ -393,6 +393,27 @@ export default function FullScreenLessonPage() {
               <LessonDesignPanel content={parsedContent} signedIn={!!user} />
             )}
             {parsedContent && <LessonContent content={parsedContent} />}
+            {parsedContent && lesson.isPublic && !user && (
+              <aside className="mt-10 max-w-4xl mx-auto rounded-2xl bg-brand-navy text-white p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 print:hidden">
+                <div>
+                  <p className="text-xs uppercase tracking-wider text-brand-yellow font-semibold mb-1">
+                    5-day free trial · No credit card
+                  </p>
+                  <h2 className="font-nunito text-xl md:text-2xl font-bold">
+                    Want a lesson like this on your student’s exact topic?
+                  </h2>
+                  <p className="text-sm text-white/80 mt-1">
+                    Generate a complete CEFR A1–C2 lesson in 1–2 minutes—complete with learner dashboard, flashcards and printable Vocabulary Review PDF.
+                  </p>
+                </div>
+                <a
+                  href="/auth?register=true"
+                  className="flex-shrink-0 inline-flex items-center justify-center rounded-full bg-brand-yellow text-brand-navy font-bold px-6 py-3 text-sm hover:bg-amber-300 transition-colors shadow-lg"
+                >
+                  Make Your First Lesson Free →
+                </a>
+              </aside>
+            )}
           </TabsContent>
           
           <TabsContent value="notes" className="flex-1 overflow-y-auto p-6 m-0">

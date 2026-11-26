@@ -4,12 +4,13 @@ import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/re
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 const mocks = vi.hoisted(() => ({
   user: { id: 1, subscriptionTier: "free" } as any,
+  trial: { isInTrial: false, isPersonalTrial: false, isGlobalTrial: false, trialDaysRemaining: 0, freeCreditsRemaining: 0 },
   toast: vi.fn(),
 }));
 vi.mock("@/hooks/use-auth", () => ({ useAuth: () => ({ user: mocks.user }) }));
 vi.mock("@/hooks/use-toast", () => ({ useToast: () => ({ toast: mocks.toast }) }));
 vi.mock("@/hooks/use-trial-status", () => ({
-  useTrialStatus: () => ({ isInTrial: false, freeCreditsRemaining: 0 }),
+  useTrialStatus: () => mocks.trial,
 }));
 vi.mock("@/components/layout/sidebar", () => ({ Sidebar: () => null }));
 vi.mock("@/components/layout/header", () => ({ Header: () => null }));
@@ -22,6 +23,7 @@ function show() {
 }
 beforeEach(() => {
   mocks.user = { id: 1, subscriptionTier: "free" };
+  mocks.trial = { isInTrial: false, isPersonalTrial: false, isGlobalTrial: false, trialDaysRemaining: 0, freeCreditsRemaining: 0 };
   mocks.toast.mockReset();
 });
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); });
@@ -32,6 +34,15 @@ describe("subscription action", () => {
     show();
     expect(screen.queryByRole("button", { name: /Subscribe Now/i })).toBeNull();
     expect(screen.getByRole("link", { name: /Manage subscription/i }).getAttribute("href")).toBe("/settings");
+  });
+
+  it("allows users in a personal 5-day trial to subscribe immediately without Fair use or Credits copy", () => {
+    mocks.trial = { isInTrial: true, isPersonalTrial: true, isGlobalTrial: false, trialDaysRemaining: 3, freeCreditsRemaining: 0 };
+    show();
+    expect(screen.getByRole("button", { name: /Subscribe Now/i })).toBeTruthy();
+    expect(document.body.textContent).toContain("3 days left in your free trial");
+    expect(document.body.textContent).not.toMatch(/fair use/i);
+    expect(document.body.textContent).not.toMatch(/credits/i);
   });
 
   it("sends one request for repeated clicks and stays disabled while checkout is pending", async () => {

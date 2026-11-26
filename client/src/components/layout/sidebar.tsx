@@ -103,9 +103,9 @@ export function Sidebar() {
           <Sparkles className="mx-auto text-brand-yellow h-6 w-6 mb-2" />
           <p className="text-sm font-medium text-brand-light/80">Subscription Status</p>
           <p className="text-lg font-nunito font-bold text-brand-light">
-            {isSubscriber ? 'Unlimited' : (isInTrial ? 'Free Trial' : (freeCreditsRemaining > 0 ? `${freeCreditsRemaining} Credits` : 'Free Tier'))}
+            {isSubscriber ? 'Unlimited' : (isInTrial ? 'Free Trial' : 'Free Plan')}
           </p>
-          {!isSubscriber && !isInTrial && (
+          {!isSubscriber && (
              <Button 
               variant="brand"
               className="font-bold px-3 py-2 rounded-lg text-sm shadow-sm mt-3 w-full"

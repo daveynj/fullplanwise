@@ -148,6 +148,7 @@ export default function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [parsedLessonContent, setParsedLessonContent] = useState<any>(null);
   const [showStickyCta, setShowStickyCta] = useState(false);
+  const [monthlyLessons, setMonthlyLessons] = useState(20);
 
   // Fetch live lesson data for the showcase
   const { data: lesson, isLoading: isLessonLoading } = useQuery<any>({
@@ -306,8 +307,17 @@ export default function LandingPage() {
                 </div>
                 <p className="flex items-center justify-center lg:justify-start text-slate-500 text-sm">
                   <LockIcon className="h-3 w-3 mr-1.5" />
-                  {trialNote}
+                  {trialNote} · Keep every lesson you make
                 </p>
+                <div className="mt-5 pt-4 border-t border-amber-200/70 flex flex-wrap items-center justify-center lg:justify-start gap-x-5 gap-y-2 text-xs text-slate-600">
+                  <span className="font-semibold text-brand-navy">Built by Dave Jackson · 11 yrs teaching ESL · 2,000+ students</span>
+                  <Link href="/esl-lessons" className="underline decoration-brand-yellow decoration-2 underline-offset-2 font-medium text-brand-navy hover:text-brand-navy-light">
+                    Browse free lessons (no login) →
+                  </Link>
+                  <Link href="/student-experience" className="underline decoration-brand-yellow decoration-2 underline-offset-2 font-medium text-brand-navy hover:text-brand-navy-light">
+                    See student dashboard &amp; PDF →
+                  </Link>
+                </div>
               </div>
 
               <div className="w-full max-w-xl mx-auto">
@@ -485,7 +495,7 @@ export default function LandingPage() {
               {problem.conclusion}
             </p>
             <p className="text-center mt-4">
-              <TextLink href="/compare/chatgpt">Read the full PlanWise vs ChatGPT comparison →</TextLink>
+              <TextLink href="/compare">Compare PlanWise ESL vs. Twee, ESL Brains, Linguahouse, Off2Class &amp; ChatGPT →</TextLink>
             </p>
           </div>
         </section>
@@ -520,7 +530,7 @@ export default function LandingPage() {
                 {science.points.map((point, i) => (
                   <li key={i} className="bg-white rounded-2xl p-5 ring-1 ring-slate-900/5 shadow-sm">
                     <p className="flex items-center gap-2 font-nunito font-bold text-brand-navy">
-                      <span className="w-7 h-7 rounded-full bg-brand-yellow text-brand-navy text-sm flex items-center justify-center">{i + 1}</span>
+                      <span className="w-7 h-7 rounded-full bg-brand-yellow text-brand-navy text-sm flex items-center justify-center flex-shrink-0">{i + 1}</span>
                       {point.title}
                     </p>
                     <p className="text-slate-600 text-sm leading-relaxed mt-2">{point.text}</p>
@@ -612,6 +622,49 @@ export default function LandingPage() {
         <section id="pricing" className="py-16 md:py-20 px-6 bg-gradient-to-b from-amber-50/60 to-white scroll-mt-24">
           <div className="container mx-auto max-w-4xl">
             <SectionHeading>{pricing.heading}</SectionHeading>
+
+            {/* Interactive Tutor ROI & Prep-Time Savings Calculator */}
+            <div className="mb-10 rounded-3xl bg-white p-6 md:p-8 ring-1 ring-amber-200/80 shadow-lg shadow-amber-900/5">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-wider text-amber-800">See what Unlimited saves you</p>
+                  <label htmlFor="lessons-per-month" className="block font-nunito text-lg md:text-xl font-bold text-brand-navy mt-1">
+                    How many classes do you teach per month? <span className="text-amber-700">{monthlyLessons}</span>
+                  </label>
+                </div>
+                <input
+                  id="lessons-per-month"
+                  type="range"
+                  min={5}
+                  max={80}
+                  step={5}
+                  value={monthlyLessons}
+                  onChange={(e) => setMonthlyLessons(Number(e.target.value))}
+                  className="w-full md:w-64 accent-brand-navy cursor-pointer"
+                />
+              </div>
+              <div className="grid grid-cols-3 gap-3 text-center">
+                <div className="rounded-2xl bg-amber-50/70 p-4 border border-amber-100">
+                  <p className="text-2xl md:text-3xl font-nunito font-bold text-brand-navy">
+                    ${(19.99 / monthlyLessons).toFixed(2)}
+                  </p>
+                  <p className="text-xs text-slate-600 mt-1">Cost per complete lesson</p>
+                </div>
+                <div className="rounded-2xl bg-amber-50/70 p-4 border border-amber-100">
+                  <p className="text-2xl md:text-3xl font-nunito font-bold text-brand-navy">
+                    {Math.round((monthlyLessons * 25) / 60)} hrs
+                  </p>
+                  <p className="text-xs text-slate-600 mt-1">Prep time saved / month</p>
+                </div>
+                <div className="rounded-2xl bg-amber-50/70 p-4 border border-amber-100">
+                  <p className="text-2xl md:text-3xl font-nunito font-bold text-emerald-700">
+                    $0
+                  </p>
+                  <p className="text-xs text-slate-600 mt-1">To try free for 5 days</p>
+                </div>
+              </div>
+            </div>
+
             <div className="grid md:grid-cols-2 gap-6 items-stretch">
               {pricing.plans.map((plan) => (
                 <div

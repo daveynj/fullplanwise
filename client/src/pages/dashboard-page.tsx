@@ -158,9 +158,9 @@ export default function DashboardPage() {
     },
     {
       title: "Account Status",
-      value: isSubscriber ? 'Unlimited' : (isInTrial ? 'Free Trial' : `${freeCreditsRemaining} Credits`),
+      value: isSubscriber ? 'Unlimited' : (isInTrial ? 'Free Trial' : 'Free Plan'),
       icon: <Sparkles className="h-10 w-10 text-[#28A745]" />,
-      trend: isSubscriber ? 'Unlimited lessons' : (isPersonalTrial ? `${trialDaysRemaining} days remaining` : 'Subscribe for unlimited'),
+      trend: isSubscriber ? 'Unlimited lessons' : (isPersonalTrial ? `${trialDaysRemaining} day${trialDaysRemaining !== 1 ? 's' : ''} remaining` : 'Upgrade for unlimited'),
       color: "bg-green-50"
     },
   ];
@@ -177,7 +177,7 @@ export default function DashboardPage() {
             {/* Welcome section */}
             <div className="mb-8">
               <h1 className="text-3xl md:text-4xl font-nunito font-bold mb-3">Welcome, {user?.fullName}!</h1>
-              <p className="text-gray-700 text-xl font-medium">Here's what's happening with your PLAN WISE ESL teaching</p>
+              <p className="text-gray-700 text-xl font-medium">Here's what's happening with your PlanWise ESL teaching</p>
             </div>
 
             <TrialStatusBanner />
@@ -232,7 +232,7 @@ export default function DashboardPage() {
                         {totalLessons === 0 ? 'Create Your First Lesson' : 'Generate New Lesson'}
                       </p>
                       <p className="text-sm text-white/90 mt-1">
-                        {totalLessons === 0 ? 'Ready in about 2-3 minutes' : 'Create a lesson plan'}
+                        {totalLessons === 0 ? 'Ready in 1–2 minutes' : 'Create a lesson plan'}
                       </p>
                     </div>
                   </Button>
@@ -246,13 +246,13 @@ export default function DashboardPage() {
                   </Button>
                 </Link>
                 <Link href="/buy-credits">
-                  <Button variant="outline" className="w-full h-auto py-5 text-center" disabled={isInTrial || isSubscriber}>
+                  <Button variant="outline" className="w-full h-auto py-5 text-center" disabled={isSubscriber}>
                     <div>
                       <p className="font-bold text-lg">
-                        {isSubscriber ? 'Subscribed' : 'Upgrade to Unlimited'}
+                        {isSubscriber ? 'Unlimited Active' : 'Upgrade to Unlimited'}
                       </p>
                       <p className="text-sm text-gray-600 mt-1">
-                        {isInTrial ? "Manage after trial" : "Get unlimited lessons"}
+                        {isSubscriber ? 'Manage in Settings' : '$19.99/mo · Cancel anytime'}
                       </p>
                     </div>
                   </Button>

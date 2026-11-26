@@ -138,30 +138,48 @@ export function setupAuth(app: Express) {
 
   app.post("/api/register", async (req, res, next) => {
     try {
+      const rawEmail = typeof req.body.email === "string" ? req.body.email.trim().toLowerCase() : "";
+      let username = typeof req.body.username === "string" ? req.body.username.trim() : "";
+
       console.log("Registration attempt:", { 
-        username: req.body.username,
-        email: req.body.email,
+        username: username || "(auto)",
+        email: rawEmail,
         // don't log password
         hasPassword: !!req.body.password
       });
-      
-      const existingUser = await storage.getUserByUsername(req.body.username);
-      if (existingUser) {
-        console.log("Registration failed: Username already exists");
-        return res.status(400).json({ message: "Username already exists" });
-      }
 
       // Reject registration when the email is already in use
-      if (req.body.email) {
-        const usersWithEmail = await storage.getUsersByEmail(req.body.email);
+      if (rawEmail) {
+        const usersWithEmail = await storage.getUsersByEmail(rawEmail);
         if (usersWithEmail.length > 0) {
           console.log("Registration failed: Email already in use");
           return res.status(409).json({ message: "An account with that email already exists" });
         }
       }
 
+      if (username) {
+        const existingUser = await storage.getUserByUsername(username);
+        if (existingUser) {
+          console.log("Registration failed: Username already exists");
+          return res.status(400).json({ message: "Username already exists" });
+        }
+      } else {
+        const base = (rawEmail.split("@")[0] || req.body.fullName || "teacher")
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "")
+          .slice(0, 18) || "teacher";
+        username = base;
+        let suffix = 0;
+        while (await storage.getUserByUsername(username)) {
+          suffix += 1;
+          username = `${base}${suffix === 1 ? Math.floor(100 + Math.random() * 900) : Math.floor(1000 + Math.random() * 9000)}`;
+        }
+      }
+
       const user = await storage.createUser({
         ...req.body,
+        email: rawEmail || req.body.email,
+        username,
         password: await hashPassword(req.body.password),
       });
       
