@@ -57,4 +57,31 @@ describe("how a public lesson is built", () => {
     expect(text).not.toContain("talking");
     expect(lessonStages(older).find((s) => s.type === "sentenceFrames")?.purpose).not.toContain("three levels");
   });
+
+  it("mentions word families, usage notes and synonyms/antonyms only when present in the lesson", () => {
+    const plainVocab = lessonStages(fullLesson).find((s) => s.type === "vocabulary")!.purpose;
+    expect(plainVocab).not.toContain("word families");
+    expect(plainVocab).not.toContain("usage notes");
+    expect(plainVocab).not.toContain("synonyms/antonyms");
+
+    const richLesson = {
+      sections: [
+        {
+          type: "vocabulary",
+          words: [
+            {
+              term: "affluence",
+              wordFamily: { words: ["affluent"] },
+              usageNotes: "Usually formal.",
+              semanticMap: { synonyms: ["wealth"], antonyms: ["poverty"] },
+            },
+          ],
+        },
+      ],
+    };
+    const richVocab = lessonStages(richLesson).find((s) => s.type === "vocabulary")!.purpose;
+    expect(richVocab).toContain("word families");
+    expect(richVocab).toContain("usage notes");
+    expect(richVocab).toContain("recall flashcards and synonyms/antonyms");
+  });
 });

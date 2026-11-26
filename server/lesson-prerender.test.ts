@@ -437,4 +437,55 @@ describe("injectLessonPrerender: sentence frames and idioms & phrasal verbs", ()
     expect(html).not.toContain("Idioms");
     expect(about(html)).toContain("It includes 1 vocabulary words, a reading text, comprehension questions and discussion questions.");
   });
+
+  it("renders rich vocabulary fields (pronunciation, word family, semantic map, usage notes) and sentence unscramble prompts without leaking answers", async () => {
+    getLesson.mockResolvedValue({
+      ...baseLesson,
+      content: {
+        sections: [
+          {
+            type: "vocabulary",
+            title: "Key Vocabulary",
+            words: [
+              {
+                term: "itinerary",
+                partOfSpeech: "noun",
+                pronunciation: "eye-TIN-er-air-ee",
+                definition: "A detailed plan of a journey.",
+                example: "Our itinerary includes three cities.",
+                wordFamily: { words: ["itinerant", "itineraries"] },
+                usageNotes: "Often used for business or multi-stop trips.",
+                semanticMap: {
+                  synonyms: ["schedule", "route"],
+                  antonyms: ["improvisation"],
+                  relatedConcepts: ["travel planning"],
+                },
+              },
+            ],
+          },
+          {
+            type: "sentenceUnscramble",
+            title: "Sentence Unscramble",
+            sentences: [
+              {
+                words: ["our", "full", "itinerary", "is"],
+                correctSentence: "Our itinerary is full.",
+              },
+            ],
+          },
+        ],
+      },
+    });
+    const html = (await injectLessonPrerender(TEMPLATE, "/lessons/42"))!;
+    expect(html).toContain("eye-TIN-er-air-ee");
+    expect(html).toContain("<strong>Word family:</strong> itinerant, itineraries");
+    expect(html).toContain("<strong>Synonyms:</strong> schedule, route");
+    expect(html).toContain("<strong>Antonyms:</strong> improvisation");
+    expect(html).toContain("<strong>Related concepts:</strong> travel planning");
+    expect(html).toContain("<strong>Usage note:</strong> Often used for business or multi-stop trips.");
+    expect(html).toContain("<h2>Sentence Unscramble</h2>");
+    expect(html).toContain("<li>our / full / itinerary / is</li>");
+    // Answer key never leaks into public crawler HTML
+    expect(html).not.toContain("Our itinerary is full.");
+  });
 });

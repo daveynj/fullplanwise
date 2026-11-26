@@ -66,34 +66,34 @@ const howItWorks: MarketingPage = {
   path: '/how-it-works',
   title: `How ${brand} Works: The Research Behind Every Lesson`,
   description:
-    `Every ${brand} lesson follows a research-based sequence: activate, pre-teach, read, check, scaffold, speak, retrieve and recycle. Here is how, and why.`,
+    `Every ${brand} lesson follows a scientific sequence: warm-up recall, rich vocab, reading, flashcards, semantic maps, practice, discussion & recycling.`,
   navLabel: 'How It Works',
   eyebrow: 'The pedagogy',
   h1: 'The research behind every PlanWise ESL lesson',
   intro: [
-    `A ${brand} lesson is not a random mix of activities. Every lesson follows the same sequence, and each step is there because second-language research shows it helps students learn. This page explains what happens in a lesson, the rules ${brand} follows at each CEFR level, and the research behind them.`,
-    `In short: **5 new words per lesson, each met five or six times, in a reading the student can actually understand, followed by supported speaking, retrieval practice, and recycling in later lessons.**`,
+    `A ${brand} lesson is not generic worksheet material or a random mix of activities. Every lesson follows the same scientific pedagogical formula, and each stage is there because second-language research shows it helps students actually retain and use new language. This page explains every stage in a lesson, the CEFR rules ${brand} enforces, and the research behind them.`,
+    `In short: **warm-up vocabulary recall, five deeply pre-taught words (pronunciation, levelled definition, examples, word families, usage notes and pictures), a levelled reading in context, recall flashcards and synonyms/antonyms, targeted practice (quiz, beginner-friendly tiered sentence frames, fill-in-the-blanks and sentence unscramble), deep target-vocabulary discussion, spaced recycling across future lessons, a private learner dashboard and a complete downloadable study PDF.**`,
   ],
   sections: [
     {
-      heading: '1. Warm-up: activate what the student already knows',
+      heading: '1. Warm-up: recall existing vocabulary around the subject',
       paragraphs: [
-        'Every lesson opens with conversation questions on the topic, and the warm-up already names the lesson’s five target words.',
-        '**Why:** readers understand far more when relevant background knowledge is switched on before they read (Carrell & Eisterhold, 1983). It also means the student is talking from the first minute, which matters in a one-to-one class.',
+        'Every lesson opens with warm-up discussion questions on the topic. They get the student speaking from the first minute and activate the vocabulary and ideas they already know about the subject before any new words are introduced.',
+        '**Why:** readers understand far more when relevant background knowledge and known vocabulary are switched on before they read (Carrell & Eisterhold, 1983). In a one-to-one class, opening with conversation also lowers anxiety and lets the teacher gauge what the student can already say.',
       ],
     },
     {
-      heading: '2. Pre-teach five key words',
+      heading: '2. Pre-teach five key words with full lexical grounding',
       paragraphs: [
-        'Each lesson teaches **five target words**. Each one comes with its part of speech, pronunciation, a definition written in easier words than the word itself, an example at the student’s level, and a picture.',
-        '**Why:** learners need to know roughly 95–98% of the words in a text to read it comfortably (Hu & Nation, 2000; Laufer & Ravenhorst-Kalovski, 2010). Teaching the key new words first turns the reading into a text the student can understand. Pairing a word with a picture gives the learner two routes to remember it (Paivio, 1986).',
+        'Next, the lesson introduces **five target words**. Each word comes with its **part of speech, pronunciation guide, a definition written in simpler words than the word itself, example sentences at the student’s level, word families, usage notes and a picture**. That gives the student a strong grounding before they ever meet the word in a text.',
+        '**Why:** learners need to know roughly 95–98% of the words in a text to read it comfortably (Hu & Nation, 2000; Laufer & Ravenhorst-Kalovski, 2010). Teaching the key words first—together with word families and practical usage notes—builds depth of vocabulary knowledge (Nation, 2013), while pairing each word with an image gives the learner two memory pathways (Paivio, 1986).',
       ],
     },
     {
-      heading: '3. A reading written for the student’s level',
+      heading: '3. Levelled reading and comprehension in context',
       paragraphs: [
-        'The reading is five paragraphs long and uses each target word two or three times, with context clues. New words are kept to about **one in every 25 words**, so around 96% of the text is familiar. Its job is to give the student something interesting to react to and talk about, not to test them.',
-        '**Why:** learners acquire language from input they can understand that stretches them slightly (Krashen, 1982). Meeting each new word again in a meaningful context is the next of the many encounters a word needs before it is learned (Webb, 2007).',
+        'The reading is five paragraphs long and uses each target word two or three times in natural context, with context clues. New words are kept to about **one in every 25 words**, so around 96% of the text is familiar. Five comprehension questions follow—one per target word—to check understanding in context rather than trivial detail recall.',
+        '**Why:** learners acquire language from comprehensible input that stretches them slightly (Krashen, 1982). Seeing every target word multiple times in meaningful prose deepens contextual understanding and provides the repeated encounters vocabulary acquisition requires (Webb, 2007).',
       ],
       table: {
         headers: ['Level', 'Reading length', 'Definitions written in', 'Reading style'],
@@ -108,87 +108,89 @@ const howItWorks: MarketingPage = {
       },
     },
     {
-      heading: '4. Check understanding of the new words',
+      heading: '4. Active recall flashcards and semantic maps (synonyms & antonyms)',
       paragraphs: [
-        'Five comprehension questions follow the reading, one for each target word. They test whether the student understands the word, not whether they remember details of the text.',
-        '**Why:** retrieving something from memory strengthens it far more than reading it again (Roediger & Karpicke, 2006), and keeping the question simple means the only thing being tested is the target word.',
+        'After the reading, the student moves into interactive **flashcards**: they see the word, recall its meaning from memory before flipping the card, and create their own original sentence. Right below each card, a **semantic map** explores **synonyms, antonyms, related concepts, common contexts and associated words**.',
+        '**Why:** actively retrieving a meaning from memory—and producing an original sentence with it—strengthens retention far more than rereading a list (Roediger & Karpicke, 2006; Swain, 1985). Mapping synonyms, antonyms and related concepts connects the new word into the student’s wider mental lexicon so they truly understand how and when to use it (Nation, 2013).',
       ],
     },
     {
-      heading: '5. Speak with support: sentence frames at three levels',
+      heading: '5. Guided practice: quiz, sentence frames, fill-in-the-blanks and sentence unscramble',
       paragraphs: [
-        'Each lesson has three sentence frames for useful language functions (for example, giving an opinion or comparing). Every frame comes at three levels of support, **emerging, developing and expanding**, each with model answers.',
-        '**Why:** scaffolding is temporary support that lets a learner do what they cannot yet do alone, withdrawn as they improve (Wood, Bruner & Ross, 1976). Producing language, not just understanding it, pushes learners to notice what they cannot yet say (Swain, 1985). Three levels let a hesitant student and a confident one answer the same question.',
-      ],
-    },
-    {
-      heading: '6. Discussion: the heart of a conversation lesson',
-      paragraphs: [
-        'Five discussion questions, each with a short context and a picture, take the student from the reading to their own life and opinions.',
-        '**Why:** negotiating meaning in conversation, asking for clarification and reformulating, is one of the main ways learners develop (Long, 1996). For one-to-one tutors this is where most of the class time goes.',
-      ],
-    },
-    {
-      heading: '7. Gap-fill and quiz: retrieve, don’t reread',
-      paragraphs: [
-        'A gap-fill paragraph uses all five words, with the gaps deliberately in a different order from the one the words were taught in, followed by a five-question quiz.',
-        '**Why:** more retrieval practice (Roediger & Karpicke, 2006), and shuffling the order stops students answering by position instead of by meaning.',
-      ],
-    },
-    {
-      heading: '8. Optional: idioms and phrasal verbs from the reading',
-      paragraphs: [
-        'From A2 up, a lesson can add three or four phrasal verbs, idioms or everyday expressions taken from its own reading, each with its meaning, an example, a tip on common mistakes and a speaking question.',
-        '**Why:** fluent speakers rely heavily on ready-made chunks of language (Wray, 2002), and learning them from a text the student has just read gives them a context to hang on (Boers & Lindstromberg, 2009).',
-      ],
-    },
-    {
-      heading: 'Across lessons: recycle, space and remember',
-      paragraphs: [
-        'Learners usually need many encounters with a word, often around ten, before they know it well (Webb, 2007; Nation, 2013). One lesson cannot do that alone, so PlanWise ESL keeps a record for each student:',
+        'Once the student has a firm grasp of the vocabulary, four focused practice stages lock in accuracy, grammar and recall:',
       ],
       bullets: [
-        'New lessons for a student avoid words they have already learned or have planned, and reuse known words naturally in new readings.',
-        'When the teacher presses "We did this", the lesson’s words join the student’s word list.',
-        'On their own page, students practise their words with flashcards, and words they find hard come back sooner. Spacing practice over time leads to much better long-term memory than cramming (Cepeda et al., 2006).',
-        'Students suggest topics for the next class from their page, so lessons stay on what they actually want to talk about. Topics learners choose themselves keep motivation high, which matters as much as any activity.',
+        '**Quiz:** a five-question check that brings every target word back in fresh scenarios.',
+        '**Tiered sentence frames (especially helpful for beginners):** three useful speaking functions, each scaffolded at three levels of support (**emerging, developing and expanding**) with model answers so hesitant or lower-level students can express complex ideas without freezing (Wood, Bruner & Ross, 1976).',
+        '**Fill in the blanks (cloze):** a paragraph using all five target words in a shuffled order so the student must choose by meaning rather than position.',
+        '**Sentence unscramble:** natural sentences containing the target vocabulary for the student to put back in order, reinforcing word order and collocation.',
+      ],
+    },
+    {
+      heading: '6. Deep discussion using the target vocabulary',
+      paragraphs: [
+        'The lesson finishes with five open **deep discussion** questions, each with a short context and a picture. The questions are designed to get the student talking deeply about the subject while actively deploying the lesson’s target vocabulary.',
+        '**Why:** negotiating meaning in real conversation—expressing opinions, explaining reasons, clarifying and reformulating—is where receptive knowledge turns into fluent spoken English (Long, 1996). In one-to-one classes, this is where the richest speaking happens.',
+      ],
+    },
+    {
+      heading: '7. Optional: idioms and phrasal verbs from the reading (A2 and up)',
+      paragraphs: [
+        'From A2 up, a lesson can add three or four phrasal verbs, idioms or everyday expressions drawn directly from its own reading, each with its meaning, an example, a tip on common mistakes and a speaking prompt.',
+        '**Why:** fluent speakers rely heavily on ready-made chunks of language (Wray, 2002), and learning them from a text the student has just read gives them immediate context to anchor to (Boers & Lindstromberg, 2009).',
+      ],
+    },
+    {
+      heading: '8. Across lessons: spaced recycling, learner dashboard, custom student lessons & study PDF',
+      paragraphs: [
+        'Research shows learners usually need around ten meaningful encounters with a word across time before it sticks (Webb, 2007; Nation, 2013). One isolated worksheet cannot do that, so PlanWise ESL extends the method beyond a single class:',
+      ],
+      bullets: [
+        '**Spaced vocabulary recycling:** new lessons for a student avoid words they have already learned or planned, and weave previous vocabulary back into future readings and questions to aid long-term recall. When the teacher presses "We did this", the lesson’s words join the student’s record.',
+        '**Private learner dashboard:** every student gets a personal page (no login required) containing all their finished lessons, a preview of the next lesson, their cumulative word list, and spaced flashcards where harder words return sooner (Cepeda et al., 2006).',
+        '**Students can create custom lessons on any subject:** from their dashboard, students suggest topics for the next class—and on Unlimited they can generate custom lessons themselves on any topic they care about at their own CEFR level, saved straight into their teacher’s library.',
+        '**Downloadable study PDF:** teachers can download and send a complete study PDF with all the lesson’s vocabulary, definitions, example sentences, word families, synonyms, antonyms, usage notes and activities so the student can revise offline.',
       ],
     },
     {
       heading: 'A balanced lesson: the four strands',
       paragraphs: [
-        'Paul Nation argues that a well-balanced course gives roughly equal time to four strands: meaning-focused input, meaning-focused output, language-focused learning and fluency development (Nation, 2007). Every PlanWise ESL lesson covers the first three: the reading (input), sentence frames and discussion (output), and vocabulary, gap-fill and idioms (language-focused learning). Recycling known words and reviewing them on the student page supports the fourth.',
+        'Paul Nation argues that a well-balanced language course gives roughly equal weight to four strands: meaning-focused input, meaning-focused output, language-focused learning and fluency development (Nation, 2007). Every PlanWise ESL lesson covers the first three directly—the reading (input), sentence frames and deep discussion (output), and vocabulary cards, semantic maps, gap-fill, sentence unscramble and idioms (language-focused learning)—while cross-lesson vocabulary recycling, the learner dashboard flashcards and the study PDF drive fluency and retention.',
       ],
     },
     {
-      heading: 'Checked before the teacher sees it',
+      heading: 'Checked section by section before the teacher sees it',
       paragraphs: [
-        'Every new lesson is checked section by section before it is saved: that there are five usable vocabulary words, three complete sentence frames, five discussion and quiz questions, and a gap-fill whose every gap can actually be filled. A section that fails is repaired, or written again on its own. A broken exercise in the middle of a class costs a tutor more than it costs us.',
+        'Every new lesson is checked automatically before it is saved: verifying usable vocabulary cards, tiered sentence frames, comprehension, quiz, discussion questions, and a gap-fill whose every blank has a valid answer. Any section that fails is repaired or regenerated automatically. A broken exercise in the middle of a class costs a tutor trust.',
       ],
     },
     {
       heading: 'What PlanWise ESL does not do',
       paragraphs: [
-        'It does not replace the teacher. You choose the topic your student cares about and the level, you run the conversation, and you give the feedback. PlanWise ESL does the hours of preparation in 1–2 minutes, so your time goes on the student.',
+        'It does not replace the teacher. You guide the conversation, listen for natural errors, and build the relationship with your student. PlanWise ESL does the hours of structured pedagogical preparation in 1–2 minutes, whether you teach on Cambly, Preply or italki, run an independent tutoring practice, or manage a small to medium language school.',
       ],
     },
   ],
   faq: [
     {
-      question: `Is ${brand} based on research?`,
-      answer: `Yes. Each stage of a ${brand} lesson follows well-established findings from second-language research: activating background knowledge before reading, pre-teaching vocabulary so 95–98% of a text is familiar, comprehensible input, scaffolded output with sentence frames, interaction through discussion, retrieval practice, and recycling words across lessons with spaced review.`,
+      question: `Is ${brand} based on scientific pedagogy?`,
+      answer: `Yes. Every ${brand} lesson follows an explicit, research-backed sequence: warm-up vocabulary recall, deep pre-teaching (pronunciation, levelled definition, examples, word families, usage notes and pictures) so 95–98% of the reading is familiar, comprehensible input in context, active recall flashcards and semantic maps (synonyms/antonyms), guided practice (quiz, tiered sentence frames, fill-in-the-blanks, sentence unscramble), deep target-vocabulary discussion, and spaced vocabulary recycling across future lessons.`,
+    },
+    {
+      question: `How is ${brand} different from generic pre-made ESL lesson libraries?`,
+      answer: `Pre-made ESL libraries offer fixed catalogues of generic lessons that do not adapt to your student’s exact topic or track what they have already learned. ${brand} builds a custom, CEFR-levelled lesson on any subject in ${generationTime} using the full pedagogical sequence above, recycles each student’s previous vocabulary into future readings and questions, lets students create custom lessons on any subject, and includes a learner dashboard and complete vocabulary study PDF.`,
     },
     {
       question: `How many new words does a ${brand} lesson teach?`,
-      answer: 'Five target words per lesson. Each appears in the warm-up, the vocabulary section, two or three times in the reading, in its own comprehension question and in the gap-fill, so the student meets it five or six times in one lesson.',
+      answer: 'Five target words per lesson. Each appears in the warm-up, pre-teaching cards (with word families and usage notes), two or three times in the reading, recall flashcards, semantic maps (synonyms and antonyms), comprehension, gap-fill, sentence unscramble, quiz and deep discussion—then gets recycled into future lessons for that student.',
     },
     {
       question: `Are ${brand} lessons CEFR-aligned?`,
-      answer: 'You choose the level, from A1 to C2, and the reading length, sentence style and the words used in definitions follow fixed rules for that level (see the table on this page). Every lesson is then checked before it is saved.',
+      answer: 'You choose the level, from A1 to C2, and the reading length, sentence style and the words used in definitions follow fixed rules for that level (see the table on this page). Every lesson is then checked section by section before it is saved.',
     },
     {
-      question: 'Does it work for one-to-one and online lessons?',
-      answer: 'Yes. Lessons were designed first for one-to-one online classes: conversation-led, ready to screen-share, and personalised to the student’s level, interests and vocabulary. They also work for small groups and in-person classes.',
+      question: 'Does it work for Cambly, Preply, italki, freelance teachers and language schools?',
+      answer: 'Yes. Lessons are built specifically for online tutors on Cambly, Preply and italki, independent freelance English teachers, and small to medium language schools teaching one-to-one or small-group teenage and adult classes.',
     },
   ],
   references: [
@@ -215,7 +217,7 @@ const howItWorks: MarketingPage = {
     ...trialCta,
   },
   schemaType: 'WebPage',
-  updated: '2026-11-25',
+  updated: '2026-11-26',
 };
 
 const about: MarketingPage = {
@@ -227,15 +229,15 @@ const about: MarketingPage = {
   eyebrow: 'About',
   h1: 'Built by an ESL teacher who loves teaching, and hated making materials',
   intro: [
-    'Hi, I’m Dave Jackson. I’m a British English teacher, I’ve taught English online since 2015, and I built PlanWise ESL for myself first. I still plan every lesson for my own students with it.',
+    'Hi, I’m Dave Jackson. I’m a British English teacher, I’ve taught English online since 2015, and I built PlanWise ESL as a solo working teacher who cares deeply about lesson quality. I still plan every lesson for my own students with it.',
   ],
   sections: [
     {
       heading: 'Why I built it',
       paragraphs: [
-        'I love teaching. What I never loved was the hours before teaching: finding a text at the right level, writing the questions, making vocabulary cards, building activities, and then doing it all again for the next student, because every student is different.',
-        'Personalising lessons properly is what makes one-to-one teaching work, and it is also what eats your evenings and weekends. Generic materials are quicker, but students can tell, and they stop booking.',
-        'So I built a tool that does the preparation the way I would do it myself: at the student’s level, on the topic they care about, building on the words they already know, with every activity in place and ready to teach.',
+        'I love teaching. What I never loved was the hours before teaching: finding a text at the right level, writing comprehension and discussion questions, building vocabulary cards with word families, synonyms, antonyms and usage notes, preparing study PDFs, and then doing it all again for the next student—because every student is different.',
+        'Personalising lessons properly is what makes teaching work, and it is also what eats your evenings and weekends. High-budget generic lesson libraries are quicker, but they give every student the same fixed catalogue and never remember what your student learned last week. Students can tell, and they stop booking.',
+        'So I built PlanWise ESL to follow the scientific pedagogical sequence I use in my own classes: at the student’s CEFR level, on any topic they care about, building on the words they already know, with flashcards, semantic maps, guided exercises, a learner dashboard and a complete study PDF ready to teach.',
       ],
     },
     {
@@ -253,11 +255,11 @@ const about: MarketingPage = {
     {
       heading: 'What I believe a good lesson needs',
       bullets: [
-        '**A topic the student actually cares about.** Motivation does more than any worksheet.',
-        '**Text the student can understand.** If too many words are new, the lesson becomes a dictionary exercise.',
-        '**Support for speaking.** Sentence frames at the right level turn "I don’t know how to say it" into an answer.',
-        '**Memory across lessons.** Students need to meet words again and again, so each lesson should build on the last.',
-        '**Lots of talking.** In a conversation class, the student should be speaking most of the time.',
+        '**A topic the student actually cares about.** Motivation does more than any generic worksheet—and students can even create custom lessons on any subject from their own dashboard.',
+        '**Deep vocabulary grounding before reading.** Pronunciation, levelled definitions, examples, word families and usage notes make the reading enjoyable instead of a dictionary exercise.',
+        '**Active recall and lexical connections.** Flashcards where students recall meanings and make sentences, plus synonyms and antonyms, turn passive recognition into active vocabulary.',
+        '**Right-sized scaffolding and deep speaking.** Tiered sentence frames help beginners find their voice, while closing discussion questions push every student to talk deeply using the target vocabulary.',
+        '**Memory across lessons.** Students need repeated encounters over time, so future lessons recycle earlier vocabulary, backed by a learner dashboard and a downloadable study PDF.',
       ],
       paragraphs: [
         'Each of these is backed by second-language research. You can read [how a PlanWise lesson is built and the research behind it](/how-it-works).',
@@ -266,7 +268,7 @@ const about: MarketingPage = {
     {
       heading: 'Who it is for',
       paragraphs: [
-        'PlanWise ESL started with online one-to-one teaching, the kind of classes tutors teach on Preply, italki and Cambly or with their own private students. It works for any ESL or EFL teacher with teenage or adult learners: private tutors, language schools, business English trainers and classroom teachers who want lessons at the right level.',
+        'PlanWise ESL is built for **Cambly, Preply and italki tutors**, **freelance and independent English teachers**, and **small to medium language schools**. It works for any ESL or EFL teacher with teenage or adult learners who wants structured, high-quality, personalised conversation lessons instead of generic off-the-shelf material.',
       ],
     },
     {
@@ -282,7 +284,7 @@ const about: MarketingPage = {
     ...trialCta,
   },
   schemaType: 'AboutPage',
-  updated: '2026-11-25',
+  updated: '2026-11-26',
 };
 
 const pricing: MarketingPage = {
@@ -292,9 +294,9 @@ const pricing: MarketingPage = {
     `${brand} has a ${trialText} with unlimited lessons and no card needed. The Unlimited plan is ${priceText}, cancel anytime.`,
   navLabel: 'Pricing',
   eyebrow: 'Pricing',
-  h1: 'Simple pricing for ESL teachers',
+  h1: 'Simple pricing for ESL teachers and language schools',
   intro: [
-    `Start with a ${trialText}: unlimited lessons and every feature, no credit card. Then keep going on the Unlimited plan for ${priceText}, or stop and keep everything you made.`,
+    `Start with a ${trialText}: unlimited lessons and every pedagogical feature, no credit card. Then keep going on the Unlimited plan for ${priceText}, or stop and keep everything you made.`,
   ],
   sections: [
     {
@@ -303,12 +305,13 @@ const pricing: MarketingPage = {
         headers: ['', 'Free', 'Unlimited'],
         rows: [
           ['Price', '$0', `${priceText}`],
-          ['Lesson generation', `Unlimited during the ${trialText}`, 'Unlimited'],
-          ['Every lesson section (incl. idioms & phrasal verbs)', 'During the trial', 'Yes'],
-          ['Vocabulary tracking for each student', 'During the trial', 'Yes'],
-          ['Private student pages with flashcards', 'Yes', 'Yes'],
+          ['Lesson generation on any topic (CEFR A1–C2)', `Unlimited during the ${trialText}`, 'Unlimited'],
+          ['Full pedagogical sequence (vocab, word families, flashcards, semantic maps, exercises, discussion, idioms)', 'During the trial', 'Yes'],
+          ['Downloadable study PDF (vocab, examples, synonyms/antonyms, usage notes)', 'Yes', 'Yes'],
+          ['Per-student vocabulary tracking & spaced recycling', 'During the trial', 'Yes'],
+          ['Private learner dashboards with past lessons & flashcards', 'Yes', 'Yes'],
           ['Students suggest topics for the next class', 'Yes', 'Yes'],
-          ['Students can make their own lessons', 'No', 'Yes'],
+          ['Students can create custom lessons on any subject', 'No', 'Yes'],
           ['Keep every lesson you made', 'Yes', 'Yes'],
           ['Free ESL lesson library', 'Yes', 'Yes'],
           ['Cancel anytime', '–', 'Yes'],
@@ -318,7 +321,7 @@ const pricing: MarketingPage = {
     {
       heading: 'What one lesson costs you',
       paragraphs: [
-        `If you teach 20 one-to-one lessons a month, Unlimited works out at about $1 per lesson for a complete, personalised lesson made in ${generationTime}. If a lesson took you even 30 minutes to prepare by hand, that is ten hours a month back.`,
+        `If you teach 20 one-to-one lessons a month on Cambly, Preply, italki or privately, Unlimited works out at about $1 per lesson for a complete, personalised lesson made in ${generationTime}. If a lesson took you even 30 minutes to prepare by hand, that is ten hours a month back.`,
       ],
     },
   ],
@@ -329,15 +332,15 @@ const pricing: MarketingPage = {
     },
     {
       question: 'What happens when the trial ends?',
-      answer: 'Every lesson you made stays in your account and your students keep their pages. To make new lessons, upgrade to Unlimited.',
+      answer: 'Every lesson you made stays in your account and your students keep their learner dashboards. To make new lessons, upgrade to Unlimited.',
     },
     {
       question: 'Can I cancel anytime?',
       answer: 'Yes. Cancel from your account settings and you keep Unlimited until the end of the period you have paid for.',
     },
     {
-      question: 'Is there a plan for schools?',
-      answer: 'Email dave@planwiseesl.com with the number of teachers and we will set something up.',
+      question: 'Is there a plan for small to medium language schools?',
+      answer: 'Yes. Email dave@planwiseesl.com with the number of teachers in your school and we will set up a plan that fits your team.',
     },
     {
       question: 'What currency are prices in?',
@@ -350,19 +353,19 @@ const pricing: MarketingPage = {
     ...trialCta,
   },
   schemaType: 'WebPage',
-  updated: '2026-11-25',
+  updated: '2026-11-26',
 };
 
 const compareChatGpt: MarketingPage = {
   path: '/compare/chatgpt',
   title: `${brand} vs ChatGPT for ESL Lesson Planning`,
   description:
-    `Can't you just use ChatGPT to plan ESL lessons? An honest comparison of ${brand} and general chatbots: structure, CEFR level, student memory and price.`,
+    `Can't you just use ChatGPT for ESL lessons? An honest comparison with ${brand}: pedagogy, CEFR level, student memory, study PDF and price.`,
   navLabel: 'PlanWise vs ChatGPT',
   eyebrow: 'Comparison',
   h1: 'PlanWise ESL vs ChatGPT for ESL lesson planning',
   intro: [
-    'Many teachers already use ChatGPT (or Claude, or Gemini) to help with lessons, and for plenty of tasks it is excellent. So why use a dedicated ESL lesson planner? Here is an honest comparison.',
+    'Many teachers already use ChatGPT (or Claude, or Gemini) to help with lessons, and for plenty of tasks it is excellent. So why use a dedicated ESL lesson planner built around a scientific pedagogical sequence? Here is an honest comparison.',
   ],
   sections: [
     {
@@ -370,11 +373,11 @@ const compareChatGpt: MarketingPage = {
       table: {
         headers: ['', 'General chatbot (ChatGPT, Claude, Gemini)', brand],
         rows: [
-          ['What you get', 'Whatever your prompt asks for, usually a block of text to copy and format', 'A complete, formatted lesson with the same structure every time, ready to screen-share or print'],
-          ['Lesson structure', 'Depends on your prompt', 'Warm-up, 5 pre-taught words, levelled reading, comprehension, 3 tiered sentence frames, discussion, gap-fill, quiz'],
-          ['CEFR level', 'You describe the level; text often drifts above it', 'Fixed rules per level for reading length, sentence style and definitions, and every lesson is checked before saving'],
-          ['Your students', 'Starts fresh each time unless you paste the context in again', 'Remembers each student’s words: avoids repeats and recycles known words'],
-          ['Student practice', 'None built in', 'Private student page with lessons, words and flashcards'],
+          ['What you get', 'Whatever your prompt asks for, usually a block of text to copy and format', 'A complete, formatted lesson with the same pedagogical structure every time, ready to screen-share or export as a study PDF'],
+          ['Lesson sequence', 'Depends on your prompt every time', 'Warm-up recall, 5 pre-taught words (pronunciation, word families, usage notes), levelled reading, comprehension, recall flashcards, semantic maps (synonyms/antonyms), quiz, tiered sentence frames, fill-in-the-blanks, sentence unscramble, and deep discussion'],
+          ['CEFR level', 'You describe the level; text often drifts above it', 'Fixed rules per level for reading length, sentence style and definitions, checked section by section before saving'],
+          ['Your students', 'Starts fresh each time unless you paste context in again', 'Remembers each student’s vocabulary: avoids repeats and recycles previous words into future readings and questions'],
+          ['Student practice & autonomy', 'None built in', 'Private learner dashboard with past lessons and flashcards, downloadable study PDF, and students can create custom lessons on any subject (Unlimited)'],
           ['Pictures', 'Possible if you ask, one at a time', 'Added to each vocabulary word and discussion question automatically'],
           ['Time per lesson', 'Prompting, checking, fixing and formatting, often 20–60 minutes', `${generationTime}; pictures follow about a minute later, while you teach the warm-up`],
           ['Price', 'Free tier, or about $20/month for paid plans', `${trialText}, then ${priceText}`],
@@ -392,25 +395,25 @@ const compareChatGpt: MarketingPage = {
     {
       heading: `When ${brand} is the better choice`,
       bullets: [
-        'You teach regular students and want each lesson to build on the last.',
-        'You want every lesson to have the full shape (input, practice, speaking and review) without writing a prompt for each part.',
-        'You want the level to stay right, and exercises that work, without checking every line.',
-        'You want your students to practise between classes.',
+        'You teach regular students on Cambly, Preply, italki, privately, or at a small to medium language school and want each lesson to build on the last.',
+        'You want every lesson to follow a complete scientific pedagogical sequence—vocab depth, reading, recall flashcards, synonyms/antonyms, guided exercises and deep discussion—without prompting each part by hand.',
+        'You want reliable CEFR levelling and verified exercises without checking every line.',
+        'You want your students to practise between classes on their own learner dashboard, study from a full vocabulary PDF, and even create custom lessons on subjects they love.',
       ],
     },
   ],
   faq: [
     {
       question: 'Can I use ChatGPT to make ESL lessons?',
-      answer: 'Yes, and many teachers do. It works best with detailed prompts and careful checking: the level tends to drift upwards, exercises can contain errors, and it does not keep a record of the words each student has learned. A dedicated planner does that structure, levelling, checking and memory for you.',
+      answer: 'Yes, and many teachers do. It works best with detailed prompts and careful checking: the level tends to drift upwards, exercises can contain errors, and it does not keep a record of the words each student has learned or give them flashcards and a study PDF. A dedicated planner handles that pedagogy, levelling, checking and student memory for you.',
     },
     {
       question: `Is ${brand} built on ChatGPT?`,
-      answer: `${brand} uses large language models behind the scenes, plus its own lesson structure, CEFR-level rules, per-student vocabulary records, picture generation and quality checks. The model writes; ${brand} decides what a good lesson needs and checks it was delivered.`,
+      answer: `${brand} uses large language models behind the scenes, plus its own scientific lesson sequence, CEFR-level rules, per-student vocabulary tracking and recycling, semantic maps, picture generation, study PDF export and section-by-section quality checks. The model writes; ${brand} enforces the pedagogy and checks it was delivered.`,
     },
     {
       question: `Is ${brand} worth it if I already pay for ChatGPT?`,
-      answer: `If you teach regular one-to-one or small-group ESL classes, the time saved on each lesson and the student memory usually make it worth it. The ${trialText} needs no card, so you can compare them on your own students.`,
+      answer: `If you teach regular one-to-one or small-group ESL classes, the prep time saved on each lesson, the consistent pedagogical sequence, the student memory and the learner dashboard usually make it worth it. The ${trialText} needs no card, so you can compare them on your own students.`,
     },
   ],
   cta: {
@@ -419,7 +422,7 @@ const compareChatGpt: MarketingPage = {
     ...trialCta,
   },
   schemaType: 'WebPage',
-  updated: '2026-11-25',
+  updated: '2026-11-26',
 };
 
 const camblyGuide: MarketingPage = {

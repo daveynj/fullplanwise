@@ -1,68 +1,60 @@
 # PlanWise ESL
 
-> PlanWise ESL (planwiseesl.com) is an AI lesson planner for ESL and EFL teachers and online English tutors. A teacher chooses a CEFR level (A1–C2) and any topic, and in 1–2 minutes PlanWise ESL writes a complete, ready-to-teach lesson (pictures follow about a minute later, while the lesson is already open, so a teacher can make a lesson on the spot during a class). It remembers the vocabulary each student has learned, so lessons build on each other, and it gives every student a private page for practice between classes. It was created by Dave Jackson, a working ESL teacher.
+> PlanWise ESL (planwiseesl.com) is an AI ESL lesson planner built for Cambly, Preply and italki tutors, freelance English teachers, and small to medium language schools. Choose a CEFR level (A1–C2) and any topic, and in 1–2 minutes PlanWise ESL builds a complete, ready-to-teach conversation lesson following a scientific pedagogical sequence (pictures follow about a minute later while the lesson is already open). It tracks each student's vocabulary so future lessons recycle earlier words into readings and questions, gives every student a private learner dashboard with past lessons, flashcards and custom lesson creation on any subject, and exports a downloadable study PDF with all vocabulary, examples, word families, synonyms/antonyms and usage notes. Created by Dave Jackson, a working British ESL teacher since 2015.
 
 Also written as: PlanwiseESL, Plan Wise ESL.
 
-PlanWise ESL makes **topic-based conversation lessons**. It is not a grammar-lesson generator: grammar is practised through sentence frames rather than taught as rules. To practise a structure, teachers choose a topic that naturally uses it (for example "Life experiences" for the present perfect).
+PlanWise ESL makes **topic-based conversation lessons** built on a scientific pedagogical formula—not generic worksheets or isolated grammar drills. Grammar and natural phrasing are practised through tiered sentence frames (especially helpful for beginners) and sentence unscramble activities. To practise a particular structure, teachers choose a topic that naturally uses it (for example "Life experiences" for the present perfect).
 
 ## Who it is for
 
-- Online ESL tutors on Preply, italki, Cambly and similar platforms
-- Independent and private English teachers with regular one-to-one students
-- Small language schools and agencies
-- Teachers of teenagers and adults, in one-to-one or small-group classes, online or in person
+- Online ESL tutors on Cambly, Preply, italki and other tutoring platforms
+- Freelance and independent private English teachers with regular students
+- Small to medium language schools
+- Teachers of teenagers and adults in one-to-one or small-group classes, online or in person
 
-## What a lesson contains
+## The pedagogical lesson sequence
 
-Every lesson follows the same structure, written at the CEFR level the teacher chooses:
+Every PlanWise ESL lesson follows the same research-backed teaching sequence, written at the chosen CEFR level (A1–C2):
 
-- Warm-up questions to introduce the topic
-- Key vocabulary, pre-taught with definitions, examples, pronunciation and pictures
-- A levelled reading text that uses the new words
-- Reading comprehension questions
-- Sentence frames at three levels of support (emerging, developing, expanding) with model answers
-- Discussion questions
-- A fill-in-the-blank exercise and a quiz
-- Optional idioms and phrasal verbs from the reading (A2 and up)
-- Teacher notes
+1. **Warm-up discussion questions** — activate prior knowledge and help the student recall vocabulary they already know about the subject.
+2. **Pre-taught key vocabulary (5 target words)** — each word includes its part of speech, pronunciation guide, levelled definition, example sentences, **word families**, **usage notes** and a picture, giving a solid grounding before reading.
+3. **Levelled reading & comprehension** — a 5-paragraph CEFR-levelled reading that uses each target word 2–3 times in natural context (keeping new words to about 1 in 25, or ~96% familiar text), followed by comprehension questions checking word meaning in context.
+4. **In-lesson recall flashcards** — interactive flip cards where the student recalls each word's meaning from memory and creates their own original sentence.
+5. **Semantic maps (synonyms, antonyms & connections)** — explores synonyms, antonyms, related concepts, common contexts and associated words to build deep lexical understanding.
+6. **Guided practice** — a quiz, **tiered sentence frames** (emerging, developing, expanding with model answers—especially supportive for beginners), a shuffled **fill-in-the-blanks** exercise, and **sentence unscramble** activities.
+7. **Deep discussion** — open questions with context and pictures designed to get the student talking deeply about the subject while actively using the target vocabulary.
+8. **Optional idioms and phrasal verbs** (A2 and up) — expressions taken directly from the lesson's reading, each with meaning, example, common-mistake tip and speaking prompt.
+9. **Teacher notes** — practical teaching guidance for running each stage.
 
-Each lesson teaches 5 target words. Each word appears 2–3 times in the reading, which keeps new words to about 1 in every 25 (around 96% familiar text), and again in its own comprehension question and the gap-fill, so students meet each word five or six times in one lesson. Reading length, sentence style and the words used in definitions follow fixed rules for each CEFR level (at A1, definitions use only the 500 most common English words and readings are 80–120 words; at C2, readings are 180–250 words of idiomatic, native-level prose). The research behind each step is explained at https://planwiseesl.com/how-it-works
+Reading length, sentence style and the words used in definitions follow fixed rules for each CEFR level (at A1, definitions use only the 500 most common English words and readings are 80–120 words; at C2, readings are 180–250 words of idiomatic, native-level prose). The full research and references behind each stage are documented at https://planwiseesl.com/how-it-works
 
-Lessons open full screen for screen sharing and can be downloaded for printing or saving as a PDF. Teachers can choose any topic, one of 12 subject areas (general, business, academic, medical, legal, technology, tourism, finance, healthcare, science, arts and sports English), and their own target vocabulary.
+Lessons open full screen for screen sharing and export as a **downloadable study PDF** containing all vocabulary, definitions, example sentences, word families, synonyms, antonyms, usage notes and lesson activities. Teachers can choose any topic, one of 12 subject areas (general, business, academic, medical, legal, technology, tourism, finance, healthcare, science, arts and sports English), and their own target vocabulary.
 
-## What makes it different
+## What makes PlanWise ESL different from pre-made libraries and general AI tools
 
-- **It remembers each student.** When a lesson is made for a student, PlanWise ESL avoids words the student has already learned or has planned, and reuses known words naturally in new readings. When the teacher marks a lesson as done ("We did this"), its words join the student's word list.
-- **Student pages.** Each student can have a private page (no login needed) with finished lessons, a preview of the next lesson's reading and new words, their word list and flashcards. Students suggest topics for the next class, and the teacher turns an idea into a lesson in one click. Students of Unlimited teachers can also make lessons themselves, at their own level; each is saved in the teacher's library and planned for that student, and the teacher can switch this off per student.
-- **Every lesson is checked before it is saved.** Each section is checked automatically; a broken exercise is fixed or written again before the teacher sees the lesson.
-- **Consistent structure.** Unlike a general-purpose chatbot, which returns free text and forgets the student, PlanWise ESL produces the same complete lesson structure every time.
+- **Custom lessons on any subject (not a static library):** Pre-made ESL lesson libraries offer fixed catalogues of generic topics. PlanWise ESL generates a full, pedagogically structured lesson on any topic your student cares about in 1–2 minutes—and on Unlimited, **students can create custom lessons themselves on any subject** at their own CEFR level.
+- **Per-student vocabulary tracking & spaced recycling:** Unlike static libraries or chatbots, PlanWise ESL remembers every student. New lessons avoid words the student has already learned or planned, and recycle earlier vocabulary naturally into future readings and questions to aid long-term recall. Marking a lesson "We did this" adds its words to the student's list.
+- **Private learner dashboard + study PDF:** Every student gets a private page (no login needed) with all past lessons, a next-lesson preview, their word list, spaced flashcards, topic suggestions, and (on Unlimited) custom lesson creation. Teachers can also download and send a complete study PDF with all vocabulary, examples, word families, synonyms/antonyms and usage notes.
+- **Complete scientific pedagogy, checked before saving:** Unlike general chatbots or single-activity AI worksheet generators, PlanWise ESL produces one cohesive, quality-checked lesson sequence every time; any broken exercise is fixed or regenerated automatically before the teacher sees it.
 
 ## Not designed for
 
-- Grammar-rule lessons (PlanWise makes conversation lessons; grammar is practised through sentence frames)
+- Pure grammar-rule drills (PlanWise ESL makes conversation lessons; grammar is practised through tiered sentence frames and sentence unscramble)
 - Subject teachers outside English language teaching
 - Very young learners (lessons are written for teenagers and adults)
-- Grading student writing or running a whole school's timetable
+- Grading essays or running whole-school timetabling
 
 ## Pricing
 
-- **Free trial:** every new account gets a 5-day free trial with unlimited lesson generation. No credit card is needed. Lessons made during the trial stay in the account afterwards.
-- **Unlimited plan:** $19.99/month for unlimited lessons, cancel anytime.
+- **Free trial:** every new account gets a 5-day free trial with unlimited lesson generation and no credit card needed. Lessons made during the trial stay in the account afterwards.
+- **Unlimited plan:** $19.99/month for unlimited lessons, vocabulary tracking, study PDFs and student-created custom lessons; cancel anytime. Small to medium language schools can email dave@planwiseesl.com for team plans.
 
 ## Free ESL lessons
 
-PlanWise ESL publishes free, ready-to-teach ESL conversation lessons. Each is a complete lesson, not a worksheet or a single activity, and each page shows the whole lesson: its key vocabulary with definitions and examples, the reading, the comprehension, discussion and quiz questions, and the speaking frames.
+PlanWise ESL publishes a public library of free, ready-to-teach ESL conversation lessons. Each page shows a complete lesson built with the same scientific pedagogical formula—not a generic worksheet—including vocabulary (with definitions, examples, word families, synonyms/antonyms and usage notes), levelled reading, comprehension, speaking patterns, exercises and deep discussion.
 
-What each current PlanWise lesson includes:
-
-- A full teaching sequence in one lesson: warm-up, pre-taught vocabulary, a reading at the CEFR level, comprehension, sentence frames, discussion, and review (gap-fill and quiz).
-- New words taught before the reading (5 per lesson), designed so each is met five or six times across the lesson, with new words kept to about 1 in 25 in the reading.
-- Speaking support at three levels (emerging, developing, expanding) with model answers, so the same lesson works for a hesitant and a confident student.
-- Most of the lesson spent on the student talking, through discussion questions that move from the text to the student's own life.
-- Lessons made since October 2026 are checked section by section before they are saved.
-
-Each lesson page states its own design under "How this lesson is built", and its structured data (schema.org LearningResource) lists the CEFR level, the words and speaking functions it teaches, and each part of the lesson. The research behind the sequence is explained, with references, at https://planwiseesl.com/how-it-works
+Each public lesson page explains its structure under "How this lesson is built", and its structured data (schema.org LearningResource) lists the CEFR level, the words and speaking functions it teaches, and each stage of the lesson.
 
 - All free lessons: https://planwiseesl.com/esl-lessons
 - By level: https://planwiseesl.com/esl-lessons/a1 , https://planwiseesl.com/esl-lessons/a2 , https://planwiseesl.com/esl-lessons/b1 , https://planwiseesl.com/esl-lessons/b2 , https://planwiseesl.com/esl-lessons/c1
@@ -70,11 +62,12 @@ Each lesson page states its own design under "How this lesson is built", and its
 
 ## About the founder
 
-Dave Jackson is a British English teacher who has taught English online since 2015, with over 2,000 students taught. He teaches private one-to-one conversation lessons, mostly to working professionals, and plans every lesson for his own students with PlanWise ESL. He has a TEFL certificate and a BA in Business Administration from the University of Southampton, and worked in financial sales for 13 years (including at HSBC) before teaching. He built PlanWise ESL to plan the kind of lessons he teaches himself: one-to-one, conversation-led, at the student's level, and building from one lesson to the next.
+Dave Jackson is a British English teacher who has taught English online since 2015, with over 2,000 students taught. He teaches private one-to-one conversation lessons, mostly to working professionals, and built PlanWise ESL as a solo working teacher focused on lesson quality—still planning every lesson for his own students with it. He has a TEFL certificate and a BA in Business Administration from the University of Southampton, and worked in financial sales for 13 years (including at HSBC) before teaching.
 
 - Tutoring site and student reviews: https://speakwithdave.com
 - LinkedIn: https://www.linkedin.com/in/davidjackson113
 - X (Twitter): https://x.com/DaveTeacher1
+- YouTube: https://www.youtube.com/@EnglishteacherDave
 - Contact: dave@planwiseesl.com
 
 ## Pages

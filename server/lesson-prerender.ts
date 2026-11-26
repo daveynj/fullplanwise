@@ -229,14 +229,30 @@ function sectionsHtml(sections: any[]): string {
         break;
       }
       case 'vocabulary': {
-        const words = arr(s.words).filter((w) => w && str(w.term));
+        const words = arr(s.words).filter((w) => w && (str(w.term) || str(w.word)));
         if (!words.length) break;
+        const listOf = (v: unknown): string[] =>
+          Array.isArray(v)
+            ? v.map(str).filter(Boolean)
+            : typeof v === 'string'
+              ? v.split(',').map((x) => x.trim()).filter(Boolean)
+              : [];
         const items = words
           .map((w) => {
+            const label = str(w.term) || str(w.word);
             const pos = str(w.partOfSpeech);
+            const pron =
+              typeof w.pronunciation === 'string'
+                ? str(w.pronunciation)
+                : str(w.pronunciation?.value) || str(w.pronunciation?.ipa) || str(w.pronunciation?.phoneticGuide) || str(w.phoneticGuide);
             const def = str(w.definition) || str(w.coreDefinition);
             const example = str(w.example) || str(w.levelAppropriateExample);
-            return `<div class="lp-card"><h3>${e(str(w.term))}${pos ? ` <span class="lp-meta">(${e(pos)})</span>` : ''}</h3>${def ? `<p>${e(def)}</p>` : ''}${example ? `<p><em>${e(example)}</em></p>` : ''}</div>`;
+            const family = listOf(w.wordFamily?.words);
+            const usage = str(w.usageNotes);
+            const synonyms = listOf(w.semanticMap?.synonyms);
+            const antonyms = listOf(w.semanticMap?.antonyms);
+            const related = listOf(w.semanticMap?.relatedConcepts);
+            return `<div class="lp-card"><h3>${e(label)}${pos ? ` <span class="lp-meta">(${e(pos)})</span>` : ''}${pron ? ` <span class="lp-meta">${e(pron)}</span>` : ''}</h3>${def ? `<p>${e(def)}</p>` : ''}${example ? `<p><em>${e(example)}</em></p>` : ''}${family.length ? `<p><strong>Word family:</strong> ${e(family.join(', '))}</p>` : ''}${synonyms.length ? `<p><strong>Synonyms:</strong> ${e(synonyms.join(', '))}</p>` : ''}${antonyms.length ? `<p><strong>Antonyms:</strong> ${e(antonyms.join(', '))}</p>` : ''}${related.length ? `<p><strong>Related concepts:</strong> ${e(related.join(', '))}</p>` : ''}${usage ? `<p><strong>Usage note:</strong> ${e(usage)}</p>` : ''}</div>`;
           })
           .join('');
         out.push(`<section>${heading('Key Vocabulary')}${items}</section>`);
@@ -307,6 +323,16 @@ function sectionsHtml(sections: any[]): string {
         if (!text) break;
         const bank = arr(s.wordBank).map(str).filter(Boolean);
         out.push(`<section>${heading('Fill in the Blanks')}<p>${e(text)}</p>${bank.length ? `<p><strong>Word bank:</strong> ${e(bank.join(', '))}</p>` : ''}</section>`);
+        break;
+      }
+      case 'sentenceUnscramble': {
+        // Scrambled words only: correctSentence stays inside the app.
+        const items = arr(s.sentences)
+          .map((item) => arr(item?.words).map(str).filter(Boolean))
+          .filter((words) => words.length > 0)
+          .map((words) => words.join(' / '));
+        if (!items.length) break;
+        out.push(`<section>${heading('Sentence Unscramble')}${listHtml(items, true)}</section>`);
         break;
       }
       default:
