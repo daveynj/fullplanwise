@@ -14,6 +14,7 @@ import { siteFacts, trialText, priceText } from './site-facts';
 import { cefrLevelsGuide, planConversationLessonGuide, topicsByLevelGuide, personaliseGuide, guidesIndex } from './guides';
 import { icpPages } from './icp-pages';
 import { comparisonPages } from './comparison-pages';
+import { studentExperiencePage } from './student-experience-page';
 
 export interface MarketingTable {
   headers: string[];
@@ -148,10 +149,10 @@ const howItWorks: MarketingPage = {
         'Research shows learners usually need around ten meaningful encounters with a word across time before it sticks (Webb, 2007; Nation, 2013). One isolated worksheet cannot do that, so PlanWise ESL extends the method beyond a single class:',
       ],
       bullets: [
-        '**Spaced vocabulary recycling:** new lessons for a student avoid words they have already learned or planned, and weave previous vocabulary back into future readings and questions to aid long-term recall. When the teacher presses "We did this", the lesson’s words join the student’s record.',
-        '**Private learner dashboard:** every student gets a personal page (no login required) containing all their finished lessons, a preview of the next lesson, their cumulative word list, and spaced flashcards where harder words return sooner (Cepeda et al., 2006).',
+        '**Natural spaced vocabulary recycling:** new lessons strictly exclude words the student has already learned or planned, and pass their previous vocabulary to lesson generation so earlier words reappear in future readings and questions **only when they fit the new topic naturally and relevantly** (never forced awkwardly). Pressing "We did this" adds the lesson’s words to their record.',
+        '**Private learner dashboard:** every student gets a zero-login personal page containing all their finished lessons, a preview of the next lesson, their cumulative word list, and spaced flashcards where harder words return sooner (Cepeda et al., 2006).',
         '**Students can create custom lessons on any subject:** from their dashboard, students suggest topics for the next class—and on Unlimited they can generate custom lessons themselves on any topic they care about at their own CEFR level, saved straight into their teacher’s library.',
-        '**Downloadable study PDF:** teachers can download and send a complete study PDF with all the lesson’s vocabulary, definitions, example sentences, word families, synonyms, antonyms, usage notes and activities so the student can revise offline.',
+        '**Printable Vocabulary Review study PDF:** every lesson (including free public lessons with no login) downloads as clean, print-ready HTML to save as a PDF with phonetic pronunciation, 4 examples per word, word families, common collocations, usage notes and 5-part semantic maps. See a real breakdown on our [Student Experience page](/student-experience).',
       ],
     },
     {
@@ -570,9 +571,9 @@ const camblyGuide: MarketingPage = {
 /** Guides, in the order the /guides page lists them. */
 export const guidePages: MarketingPage[] = [planConversationLessonGuide, topicsByLevelGuide, cefrLevelsGuide, personaliseGuide, camblyGuide];
 
-export { icpPages, comparisonPages };
+export { icpPages, comparisonPages, studentExperiencePage };
 
-export const marketingPages: MarketingPage[] = [howItWorks, about, pricing, ...icpPages, ...comparisonPages, compareChatGpt, guidesIndex(guidePages), ...guidePages];
+export const marketingPages: MarketingPage[] = [howItWorks, studentExperiencePage, about, pricing, ...icpPages, ...comparisonPages, compareChatGpt, guidesIndex(guidePages), ...guidePages];
 
 export function marketingPageByPath(pathname: string): MarketingPage | undefined {
   const clean = pathname.replace(/\/+$/, '') || '/';

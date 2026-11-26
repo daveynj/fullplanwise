@@ -551,7 +551,7 @@ export class PDFGeneratorService {
             <div class="brand-line">
               <div class="brand-logo">
                 <a href="https://planwiseesl.com" target="_blank" style="color: inherit; text-decoration: none;">
-                  PlanwiseESL
+                  PlanWise ESL
                 </a>
               </div>
               <div class="brand-url">
@@ -1107,7 +1107,7 @@ export class PDFGeneratorService {
     <body>
       <div class="brand-header">
         <div class="brand-line">
-          <div class="brand-logo">🎯 PlanwiseESL</div>
+          <div class="brand-logo">🎯 PlanWise ESL</div>
           <div class="brand-url">planwiseesl.com</div>
         </div>
         <div class="brand-tagline">AI-Powered ESL Lesson Generator</div>
@@ -1237,7 +1237,7 @@ export class PDFGeneratorService {
         <div class="footer-content">
           <div class="generation-info">Generated on ${new Date().toLocaleDateString()}</div>
           <div class="brand-footer">
-            <div class="powered-by">Powered by <strong>PlanwiseESL.com</strong></div>
+            <div class="powered-by">Powered by <strong>PlanWise ESL</strong> (planwiseesl.com)</div>
             <div class="footer-tagline">Create your own AI lessons at planwiseesl.com</div>
           </div>
         </div>
