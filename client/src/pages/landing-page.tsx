@@ -548,9 +548,22 @@ export default function LandingPage() {
             <p className="text-lg font-nunito font-bold text-brand-navy text-center">
               {problem.conclusion}
             </p>
-            <p className="text-center mt-4">
-              <TextLink href="/compare">Compare PlanWise ESL vs. Twee, ESL Brains, Linguahouse, Off2Class &amp; ChatGPT →</TextLink>
-            </p>
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+              <Link
+                href="/compare"
+                className="inline-flex items-center gap-2 rounded-full border-2 border-brand-navy bg-white px-5 py-2.5 text-sm font-semibold text-brand-navy shadow-sm transition-colors hover:bg-brand-navy hover:text-white"
+              >
+                Compare PlanWise ESL vs. ESL Joy, Twee, Fluentize, ESL Brains &amp; More
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link
+                href="/compare/student-memory-proof"
+                className="inline-flex items-center gap-2 rounded-full border border-brand-yellow bg-amber-50 px-5 py-2.5 text-sm font-semibold text-brand-navy shadow-sm transition-colors hover:bg-brand-yellow"
+              >
+                See Live 4-Lesson Memory Proof (36 words, 0 duplicates)
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
           </div>
         </section>
 

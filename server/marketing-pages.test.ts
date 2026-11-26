@@ -11,6 +11,7 @@ describe("public information pages", () => {
   it("are all real client routes, and so is every navigation link", () => {
     for (const page of marketingPages) expect(isPage(page.path), page.path).toBe(true);
     for (const link of publicNav) expect(isPage(link.href), link.href).toBe(true);
+    expect(publicNav.some((l) => l.href === "/compare")).toBe(true);
   });
 
   for (const page of marketingPages) {
@@ -57,6 +58,10 @@ describe("public information pages", () => {
   });
 
   it("renders answer-first verdicts, workflow proofs, and subtle founder attribution in comparison SSR HTML", () => {
+    const compareHtml = injectMarketingPrerender(template, "/compare")!;
+    const compareDoc = new DOMParser().parseFromString(compareHtml, "text/html");
+    expect(compareDoc.querySelector(".mp-verdict h2")?.textContent?.length).toBeGreaterThan(10);
+
     for (const path of ["/compare/twee", "/compare/esl-joy", "/compare/magicschool-diffit", "/compare/student-memory-proof", "/compare/fluentize", "/compare/esl-brains"]) {
       const html = injectMarketingPrerender(template, path)!;
       const doc = new DOMParser().parseFromString(html, "text/html");

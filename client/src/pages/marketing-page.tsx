@@ -17,44 +17,66 @@ function Inline({ text, as: Tag = 'span', className }: { text: string; as?: 'spa
 }
 
 function Section({ section }: { section: MarketingSection }) {
+  const colCount = section.table?.headers.length ?? 0;
+  const isWide = colCount >= 4;
+
   return (
     <section className="mt-12">
-      {section.heading && <Inline as="h2" text={section.heading} className="text-2xl md:text-3xl font-nunito font-bold tracking-tight mb-4" />}
+      {section.heading && <Inline as="h2" text={section.heading} className="text-2xl md:text-3xl font-nunito font-bold tracking-tight mb-4 max-w-3xl" />}
       {section.paragraphs?.map((p, i) => (
-        <Inline key={i} as="p" text={p} className="text-slate-700 leading-relaxed mb-4 [&_a]:text-brand-navy [&_a]:font-semibold [&_a]:underline [&_a]:decoration-brand-yellow [&_a]:decoration-2 [&_a]:underline-offset-2" />
+        <Inline key={i} as="p" text={p} className="max-w-3xl text-slate-700 leading-relaxed mb-4 [&_a]:text-brand-navy [&_a]:font-semibold [&_a]:underline [&_a]:decoration-brand-yellow [&_a]:decoration-2 [&_a]:underline-offset-2" />
       ))}
       {section.bullets && (
-        <ul className="space-y-2 mb-4 list-disc pl-6 text-slate-700 leading-relaxed [&_a]:text-brand-navy [&_a]:font-semibold [&_a]:underline [&_a]:decoration-brand-yellow [&_a]:decoration-2 [&_a]:underline-offset-2">
+        <ul className="max-w-3xl space-y-2 mb-4 list-disc pl-6 text-slate-700 leading-relaxed [&_a]:text-brand-navy [&_a]:font-semibold [&_a]:underline [&_a]:decoration-brand-yellow [&_a]:decoration-2 [&_a]:underline-offset-2">
           {section.bullets.map((b, i) => (
             <Inline key={i} as="li" text={b} />
           ))}
         </ul>
       )}
       {section.table && (
-        <div className="overflow-x-auto my-6 rounded-2xl ring-1 ring-slate-900/10">
+        <div className="overflow-x-auto my-6 rounded-2xl ring-1 ring-slate-900/10 shadow-sm">
           <table className="w-full text-sm text-left">
             <thead className="bg-brand-navy text-white">
               <tr>
-                {section.table.headers.map((h, i) => (
-                  <Inline
-                    key={i}
-                    as="th"
-                    text={h}
-                    className={`px-4 py-3 font-nunito font-bold align-bottom ${h === 'PlanWise ESL' ? 'text-brand-yellow' : ''}`}
-                  />
-                ))}
+                {section.table.headers.map((h, i) => {
+                  const isPlanwiseCol = h === 'PlanWise ESL';
+                  const widthClass = isWide ? (i === 0 ? 'min-w-[140px] w-44' : isPlanwiseCol ? 'min-w-[210px]' : '') : '';
+                  return (
+                    <Inline
+                      key={i}
+                      as="th"
+                      text={h}
+                      className={`px-4 py-3 font-nunito font-bold align-bottom ${widthClass} ${isPlanwiseCol ? 'text-brand-yellow bg-brand-navy' : ''}`}
+                    />
+                  );
+                })}
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {section.table.rows.map((row, r) => (
                 <tr key={r} className={r % 2 === 1 ? 'bg-slate-50/60' : 'bg-white'}>
-                  {row.map((cell, c) =>
-                    c === 0 ? (
-                      <Inline key={c} as="th" text={cell} className="px-4 py-3 font-semibold text-brand-navy align-top whitespace-nowrap" />
+                  {row.map((cell, c) => {
+                    const isPlanwiseCol = section.table!.headers[c] === 'PlanWise ESL';
+                    return c === 0 ? (
+                      <Inline
+                        key={c}
+                        as="th"
+                        text={cell}
+                        className={`px-4 py-3.5 font-semibold text-brand-navy align-top break-words ${isWide ? 'min-w-[140px]' : ''}`}
+                      />
                     ) : (
-                      <Inline key={c} as="td" text={cell} className="px-4 py-3 text-slate-700 align-top [&_a]:text-brand-navy [&_a]:font-semibold [&_a]:underline [&_a]:decoration-brand-yellow [&_a]:decoration-2 [&_a]:underline-offset-2" />
-                    ),
-                  )}
+                      <Inline
+                        key={c}
+                        as="td"
+                        text={cell}
+                        className={`px-4 py-3.5 align-top break-words [&_a]:text-brand-navy [&_a]:font-semibold [&_a]:underline [&_a]:decoration-brand-yellow [&_a]:decoration-2 [&_a]:underline-offset-2 ${
+                          isPlanwiseCol
+                            ? 'bg-amber-50/50 text-brand-navy font-medium border-l border-amber-200/70'
+                            : 'text-slate-700'
+                        }`}
+                      />
+                    );
+                  })}
                 </tr>
               ))}
             </tbody>
@@ -90,6 +112,10 @@ export default function MarketingPage() {
   const page = marketingPageByPath(location);
   if (!page) return <NotFound />;
 
+  const hasWideTable = page.sections.some((s) => (s.table?.headers.length ?? 0) >= 4);
+  const hasTable = page.sections.some((s) => Boolean(s.table));
+  const containerWidth = hasWideTable ? 'max-w-5xl' : hasTable ? 'max-w-4xl' : 'max-w-3xl';
+
   return (
     <div className="flex flex-col min-h-screen font-open-sans bg-white text-brand-navy antialiased">
       <SEOHead
@@ -102,12 +128,12 @@ export default function MarketingPage() {
 
       <main className="flex-1">
         <div className="bg-gradient-to-b from-amber-50/80 to-white px-6 pt-12 pb-8 md:pt-16">
-          <div className="container mx-auto max-w-3xl">
+          <div className={`container mx-auto ${containerWidth}`}>
             <nav aria-label="Breadcrumb" className="text-sm text-slate-500 mb-6">
               <Link href="/" className="hover:text-brand-navy">Home</Link> <span aria-hidden="true">›</span> {page.navLabel}
             </nav>
             <p className="text-sm font-semibold uppercase tracking-wider text-amber-800 mb-3">{page.eyebrow}</p>
-            <Inline as="h1" text={page.h1} className="text-4xl md:text-5xl font-nunito font-bold leading-tight tracking-tight mb-6" />
+            <Inline as="h1" text={page.h1} className="text-4xl md:text-5xl font-nunito font-bold leading-tight tracking-tight mb-6 max-w-3xl" />
             {page.byline && (
               <p className="text-sm text-slate-500 mb-6">
                 By <Link href="/about" className="font-semibold text-brand-navy hover:underline">{page.byline.author}</Link>
@@ -116,7 +142,7 @@ export default function MarketingPage() {
               </p>
             )}
             {page.intro.map((p, i) => (
-              <Inline key={i} as="p" text={p} className="text-lg md:text-xl text-slate-600 leading-relaxed mb-4" />
+              <Inline key={i} as="p" text={p} className="max-w-3xl text-lg md:text-xl text-slate-600 leading-relaxed mb-4" />
             ))}
             <Link href={page.cta.href}>
               <Button size="lg" variant="brand" className="mt-4 rounded-full px-8 shadow-lg shadow-brand-yellow/40">
@@ -126,7 +152,7 @@ export default function MarketingPage() {
           </div>
         </div>
 
-        <article className="container mx-auto max-w-3xl px-6 pb-16">
+        <article className={`container mx-auto ${containerWidth} px-6 pb-16`}>
           {page.verdict && (
             <section className="mt-8 rounded-2xl border-l-4 border-brand-yellow bg-slate-50 p-6 shadow-sm ring-1 ring-slate-900/5">
               <Inline as="h2" text={page.verdict.heading} className="text-xl font-nunito font-bold text-brand-navy mb-2" />
