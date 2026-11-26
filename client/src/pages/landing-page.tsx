@@ -6,7 +6,7 @@ import { SEOHead } from '@/components/SEOHead';
 import { InteractiveProductPreview } from '@/components/landing/interactive-product-preview';
 import { useFreeTrial } from '@/hooks/use-free-trial';
 import { trackCta } from '@/lib/analytics';
-import { format } from 'date-fns';
+import { formatTrialEndDate } from '@shared/free-trial-date';
 import {
   Clock, Target, MonitorSmartphone, Users, Layers, ShieldCheck,
   CheckCircle2, Sparkles, XCircle, Menu, X, Lock as LockIcon, ArrowRight, Play, Quote,
@@ -86,7 +86,7 @@ const FreeTrialBanner = () => {
     return null;
   }
 
-  const endDate = format(freeTrialEndDate, "MMMM do, yyyy");
+  const endDate = formatTrialEndDate(freeTrialEndDate);
 
   return (
     <div className="bg-brand-yellow text-brand-navy text-center py-3 px-4 font-semibold">
@@ -145,7 +145,7 @@ function TextLink({ href, children }: { href: string; children: React.ReactNode 
 
 export default function LandingPage() {
   const { isFreeTrialActive, freeTrialEndDate } = useFreeTrial();
-  const endDate = freeTrialEndDate ? format(freeTrialEndDate, "MMMM do") : '';
+  const endDate = freeTrialEndDate ? formatTrialEndDate(freeTrialEndDate, { withYear: false }) : '';
   const [, setLocation] = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [parsedLessonContent, setParsedLessonContent] = useState<any>(null);
