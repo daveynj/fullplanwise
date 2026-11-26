@@ -5,6 +5,7 @@ import { tryDecodeLessonContent } from '@shared/lesson-content';
 import { CEFR_LEVEL_NAMES, lessonContentsParts, joinList, levelText, lessonPublicMetadata, publicLessonRemixHref } from '@shared/lesson-public-metadata';
 import { expressionItemsOf, withoutMarks } from '@shared/lesson-expressions';
 import { publicNav } from '@shared/marketing-pages';
+import { founderPerson } from '@shared/site-facts';
 import { lessonStages, lessonTeaches, lessonDesign, lessonDifference, libraryDesign } from '@shared/lesson-pedagogy';
 export { CEFR_LEVEL_NAMES } from '@shared/lesson-public-metadata';
 
@@ -470,11 +471,7 @@ async function prerenderLesson(template: string, id: number, preloaded?: unknown
         educationalFramework: 'Common European Framework of Reference for Languages (CEFR)',
         targetName: lesson.cefrLevel,
       },
-      author: {
-        '@type': 'Person',
-        name: 'Dave Jackson',
-        url: 'https://speakwithdave.co',
-      },
+      author: founderPerson,
       teaches: teaches.length ? teaches : lesson.title,
       ...(minutes ? { timeRequired: `PT${minutes}M` } : {}),
       ...(stages.length

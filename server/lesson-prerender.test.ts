@@ -341,7 +341,8 @@ describe("injectLessonPrerender: lesson pages", () => {
       .find((b) => b["@type"] === "LearningResource");
     expect(resource.educationalAlignment).toMatchObject({ educationalFramework: expect.stringContaining("CEFR"), targetName: baseLesson.cefrLevel });
     expect(resource.teaches).toContain("Vocabulary: itinerary");
-    expect(resource.author).toMatchObject({ "@type": "Person", name: "Dave Jackson", url: "https://speakwithdave.co" });
+    expect(resource.author).toMatchObject({ "@type": "Person", name: "Dave Jackson", url: "https://speakwithdave.com" });
+    expect(resource.author.sameAs).toContain("https://speakwithdave.com");
     expect(resource.inLanguage).toBe("en");
     expect(resource.hasPart.length).toBeGreaterThanOrEqual(3);
     expect(html).not.toContain("PRIVATE");
@@ -422,6 +423,8 @@ describe("injectLessonPrerender: browse pages", () => {
   it("includes all lessons beyond 100 and numberOfItems in ItemList JSON-LD", async () => {
     const many = Array.from({ length: 125 }, (_, i) => ({
       id: i + 1,
+      publicSlug: i === 124 ? "public-lesson-125" : undefined,
+      publicLevel: i === 124 ? "b1" : undefined,
       title: `Public Lesson ${i + 1}`,
       topic: `Topic ${i + 1}`,
       cefrLevel: "B1",
@@ -432,7 +435,8 @@ describe("injectLessonPrerender: browse pages", () => {
     const html = (await injectLessonPrerender(TEMPLATE, "/esl-lessons"))!;
     expect(html).toContain('"numberOfItems":125');
     expect(html).toContain('"position":125');
-    expect(html).toContain('https://planwiseesl.com/lessons/125');
+    expect(html).toContain('https://planwiseesl.com/lessons/101');
+    expect(html).toContain('https://planwiseesl.com/esl-lessons/b1/public-lesson-125');
   });
 
   it("filters to one level on /esl-lessons/b1", async () => {
