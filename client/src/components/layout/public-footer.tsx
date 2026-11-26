@@ -17,6 +17,7 @@ export function PublicFooter() {
             { label: 'For Online Tutors', href: '/for/online-tutors' },
             { label: 'For Freelance Teachers', href: '/for/freelance-esl-teachers' },
             { label: 'For Language Schools', href: '/for/language-schools' },
+            { label: 'Compare ESL Tools', href: '/compare' },
             { label: 'Blog', href: '/blog' },
             { label: 'Start Free Trial', href: '/auth?register=true' },
           ].map((l) => (

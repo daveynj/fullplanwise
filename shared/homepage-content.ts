@@ -469,6 +469,7 @@ export const footer = {
     { label: 'For Freelance Teachers', href: '/for/freelance-esl-teachers' },
     { label: 'For Language Schools', href: '/for/language-schools' },
     { label: 'Pricing', href: '/pricing' },
+    { label: 'Compare ESL Tools', href: '/compare' },
     { label: 'PlanWise vs ChatGPT', href: '/compare/chatgpt' },
     { label: 'ESL Teaching Blog', href: '/blog' },
     { label: 'About', href: '/about' },

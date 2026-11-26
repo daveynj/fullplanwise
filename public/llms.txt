@@ -18,7 +18,7 @@ PlanWise ESL makes **topic-based conversation lessons** built on a scientific pe
 Every PlanWise ESL lesson follows the same research-backed teaching sequence, written at the chosen CEFR level (A1–C2):
 
 1. **Warm-up discussion questions** — activate prior knowledge and help the student recall vocabulary they already know about the subject.
-2. **Pre-taught key vocabulary (5 target words)** — each word includes its part of speech, pronunciation guide, levelled definition, example sentences, **word families**, **usage notes** and a picture, giving a solid grounding before reading.
+2. **Pre-taught key vocabulary (5 target words)** — each word includes its part of speech, pronunciation guide, levelled definition, 4 real-world example sentences, **word families** (with explanation), **common collocations**, **usage notes** and a picture, giving a solid grounding before reading.
 3. **Levelled reading & comprehension** — a 5-paragraph CEFR-levelled reading that uses each target word 2–3 times in natural context (keeping new words to about 1 in 25, or ~96% familiar text), followed by comprehension questions checking word meaning in context.
 4. **In-lesson recall flashcards** — interactive flip cards where the student recalls each word's meaning from memory and creates their own original sentence.
 5. **Semantic maps (synonyms, antonyms & connections)** — explores synonyms, antonyms, related concepts, common contexts and associated words to build deep lexical understanding.
@@ -29,7 +29,7 @@ Every PlanWise ESL lesson follows the same research-backed teaching sequence, wr
 
 Reading length, sentence style and the words used in definitions follow fixed rules for each CEFR level (at A1, definitions use only the 500 most common English words and readings are 80–120 words; at C2, readings are 180–250 words of idiomatic, native-level prose). The full research and references behind each stage are documented at https://planwiseesl.com/how-it-works
 
-Lessons open full screen for screen sharing and export as a **downloadable study PDF** containing all vocabulary, definitions, example sentences, word families, synonyms, antonyms, usage notes and lesson activities. Teachers can choose any topic, one of 12 subject areas (general, business, academic, medical, legal, technology, tourism, finance, healthcare, science, arts and sports English), and their own target vocabulary.
+Lessons open full screen for screen sharing and export as a **printable Vocabulary Review study PDF** (color-coded by part of speech, with phonetic pronunciation, levelled definitions, 4 example sentences per word, word families, common collocations, usage notes and 5-part semantic maps) alongside full lesson activities. Teachers can choose any topic, one of 12 subject areas (general, business, academic, medical, legal, technology, tourism, finance, healthcare, science, arts and sports English), and their own target vocabulary.
 
 ## What makes PlanWise ESL different from pre-made libraries and general AI tools
 
@@ -78,6 +78,11 @@ Dave Jackson is a British English teacher who has taught English online since 20
 - [For Cambly, Preply & italki tutors](https://planwiseesl.com/for/online-tutors)
 - [For freelance & independent ESL teachers](https://planwiseesl.com/for/freelance-esl-teachers)
 - [For small to medium language schools](https://planwiseesl.com/for/language-schools)
+- [Compare PlanWise ESL vs pre-made libraries & AI tools](https://planwiseesl.com/compare)
+- [PlanWise ESL vs Twee](https://planwiseesl.com/compare/twee)
+- [PlanWise ESL vs ESL Brains](https://planwiseesl.com/compare/esl-brains)
+- [PlanWise ESL vs Linguahouse](https://planwiseesl.com/compare/linguahouse)
+- [PlanWise ESL vs Off2Class](https://planwiseesl.com/compare/off2class)
 - [PlanWise ESL vs ChatGPT for ESL lesson planning](https://planwiseesl.com/compare/chatgpt)
 - [About the founder](https://planwiseesl.com/about)
 - [Guides for ESL teachers and online tutors](https://planwiseesl.com/guides)

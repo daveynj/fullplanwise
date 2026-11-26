@@ -13,6 +13,7 @@
 import { siteFacts, trialText, priceText } from './site-facts';
 import { cefrLevelsGuide, planConversationLessonGuide, topicsByLevelGuide, personaliseGuide, guidesIndex } from './guides';
 import { icpPages } from './icp-pages';
+import { comparisonPages } from './comparison-pages';
 
 export interface MarketingTable {
   headers: string[];
@@ -569,9 +570,9 @@ const camblyGuide: MarketingPage = {
 /** Guides, in the order the /guides page lists them. */
 export const guidePages: MarketingPage[] = [planConversationLessonGuide, topicsByLevelGuide, cefrLevelsGuide, personaliseGuide, camblyGuide];
 
-export { icpPages };
+export { icpPages, comparisonPages };
 
-export const marketingPages: MarketingPage[] = [howItWorks, about, pricing, ...icpPages, compareChatGpt, guidesIndex(guidePages), ...guidePages];
+export const marketingPages: MarketingPage[] = [howItWorks, about, pricing, ...icpPages, ...comparisonPages, compareChatGpt, guidesIndex(guidePages), ...guidePages];
 
 export function marketingPageByPath(pathname: string): MarketingPage | undefined {
   const clean = pathname.replace(/\/+$/, '') || '/';
