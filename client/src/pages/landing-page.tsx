@@ -1,8 +1,9 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
-import { Link } from 'wouter';
+import { Link, useLocation } from 'wouter';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { SEOHead } from '@/components/SEOHead';
+import { InteractiveProductPreview } from '@/components/landing/interactive-product-preview';
 import { useFreeTrial } from '@/hooks/use-free-trial';
 import { trackCta } from '@/lib/analytics';
 import { format } from 'date-fns';
@@ -145,10 +146,25 @@ function TextLink({ href, children }: { href: string; children: React.ReactNode 
 export default function LandingPage() {
   const { isFreeTrialActive, freeTrialEndDate } = useFreeTrial();
   const endDate = freeTrialEndDate ? format(freeTrialEndDate, "MMMM do") : '';
+  const [, setLocation] = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [parsedLessonContent, setParsedLessonContent] = useState<any>(null);
   const [showStickyCta, setShowStickyCta] = useState(false);
   const [monthlyLessons, setMonthlyLessons] = useState(20);
+  const [heroTopic, setHeroTopic] = useState('');
+  const [heroLevel, setHeroLevel] = useState<'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2'>('B2');
+
+  const handleHeroLessonStart = (e: React.FormEvent) => {
+    e.preventDefault();
+    const cleaned = heroTopic.trim();
+    trackCta('hero-builder', cleaned ? `Build ${heroLevel} lesson` : hero.primaryCta);
+    if (cleaned) {
+      const target = `/generate?topic=${encodeURIComponent(cleaned)}&level=${encodeURIComponent(heroLevel)}`;
+      setLocation(`/auth?register=true&redirect=${encodeURIComponent(target)}`);
+    } else {
+      setLocation('/auth?register=true');
+    }
+  };
 
   // Fetch live lesson data for the showcase
   const { data: lesson, isLoading: isLessonLoading } = useQuery<any>({
@@ -297,46 +313,84 @@ export default function LandingPage() {
                   ))}
                 </ul>
 
-                <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-4 mb-3">
-                  <TrialButton location="hero" label={hero.primaryCta} className="w-full sm:w-auto" />
-                  <a href="#sample-lesson">
-                    <Button size="lg" variant="outline" className="border-brand-navy/20 text-brand-navy hover:bg-brand-navy/5 px-8 rounded-full w-full sm:w-auto">
-                      {hero.secondaryCta}
+                {/* Interactive Hero Lesson Starter: carries topic + level straight into /generate after 3-field signup */}
+                <form
+                  onSubmit={handleHeroLessonStart}
+                  className="mb-4 rounded-2xl bg-white p-4 sm:p-5 shadow-xl shadow-brand-navy/10 ring-1 ring-amber-200/90 text-left"
+                >
+                  <label htmlFor="hero-topic-input" className="block text-xs font-bold uppercase tracking-wider text-amber-800 mb-2">
+                    Try it on your next student’s topic
+                  </label>
+                  <div className="flex flex-col sm:flex-row gap-2.5">
+                    <input
+                      id="hero-topic-input"
+                      type="text"
+                      value={heroTopic}
+                      onChange={(e) => setHeroTopic(e.target.value)}
+                      placeholder="e.g. Job interviews, Football marketing, Travel..."
+                      className="flex-1 rounded-xl border border-slate-200 bg-slate-50/70 px-3.5 py-2.5 text-sm text-brand-navy placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-yellow focus:bg-white"
+                    />
+                    <Button
+                      type="submit"
+                      size="lg"
+                      variant="brand"
+                      className="font-bold px-6 rounded-xl shadow-md shadow-brand-yellow/40 whitespace-nowrap"
+                    >
+                      {heroTopic.trim() ? `Build ${heroLevel} Lesson` : hero.primaryCta}
+                      <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
-                  </a>
-                </div>
+                  </div>
+                  <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
+                    <div className="flex items-center gap-1" role="group" aria-label="Choose CEFR level">
+                      {(['A1', 'A2', 'B1', 'B2', 'C1', 'C2'] as const).map((lvl) => (
+                        <button
+                          key={lvl}
+                          type="button"
+                          onClick={() => setHeroLevel(lvl)}
+                          className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-colors ${
+                            heroLevel === lvl
+                              ? 'bg-brand-navy text-brand-yellow'
+                              : 'bg-slate-100 text-slate-600 hover:bg-amber-100 hover:text-brand-navy'
+                          }`}
+                        >
+                          {lvl}
+                        </button>
+                      ))}
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {['Job Interviews', 'Work-Life Balance', 'AI at Work'].map((preset) => (
+                        <button
+                          key={preset}
+                          type="button"
+                          onClick={() => setHeroTopic(preset)}
+                          className="text-[11px] font-medium text-slate-500 hover:text-brand-navy bg-amber-50/70 hover:bg-amber-100 px-2 py-0.5 rounded-full border border-amber-200/70 transition-colors"
+                        >
+                          {preset}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </form>
+
                 <p className="flex items-center justify-center lg:justify-start text-slate-500 text-sm">
                   <LockIcon className="h-3 w-3 mr-1.5" />
                   {trialNote} · Keep every lesson you make
                 </p>
                 <div className="mt-5 pt-4 border-t border-amber-200/70 flex flex-wrap items-center justify-center lg:justify-start gap-x-5 gap-y-2 text-xs text-slate-600">
                   <span className="font-semibold text-brand-navy">Built by Dave Jackson · 11 yrs teaching ESL · 2,000+ students</span>
+                  <a href="#sample-lesson" className="underline decoration-brand-yellow decoration-2 underline-offset-2 font-medium text-brand-navy hover:text-brand-navy-light">
+                    Scroll full B2 lesson ↓
+                  </a>
                   <Link href="/esl-lessons" className="underline decoration-brand-yellow decoration-2 underline-offset-2 font-medium text-brand-navy hover:text-brand-navy-light">
-                    Browse free lessons (no login) →
-                  </Link>
-                  <Link href="/student-experience" className="underline decoration-brand-yellow decoration-2 underline-offset-2 font-medium text-brand-navy hover:text-brand-navy-light">
-                    See student dashboard &amp; PDF →
+                    Free lessons (no login) →
                   </Link>
                 </div>
               </div>
 
               <div className="w-full max-w-xl mx-auto">
-                <figure className="rounded-2xl overflow-hidden shadow-2xl shadow-amber-900/15 ring-1 ring-slate-900/5 bg-white">
-                  <img
-                    src={hero.image}
-                    alt={hero.imageAlt}
-                    width={hero.imageWidth}
-                    height={hero.imageHeight}
-                    fetchPriority="high"
-                    className="w-full h-auto"
-                  />
-                  <figcaption className="p-5 border-t border-slate-100">
-                    <p className="text-lg font-nunito font-bold text-brand-navy">{hero.previewTitle}</p>
-                    <p className="text-slate-500 text-sm mt-1">{hero.previewText}</p>
-                  </figcaption>
-                </figure>
+                <InteractiveProductPreview />
 
-                <div className="mt-6 bg-white/70 backdrop-blur rounded-2xl border border-amber-100 p-5">
+                <div className="mt-5 bg-white/80 backdrop-blur rounded-2xl border border-amber-100 p-5">
                   <p className="font-nunito font-bold text-sm uppercase tracking-wide text-amber-800 mb-2">{hero.audienceIntro}</p>
                   <ul className="space-y-1.5 text-slate-600 text-sm">
                     {hero.audience.map((item, i) => (

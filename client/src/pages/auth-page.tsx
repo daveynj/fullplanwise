@@ -38,6 +38,17 @@ export default function AuthPage() {
   // Once signed in (or already signed in), go to the page the teacher was
   // trying to open, e.g. /generate from an email link; otherwise the dashboard.
   const [afterSignIn] = useState(() => afterSignInPath(window.location.search));
+  const [pendingLesson] = useState<{ topic: string; level: string } | null>(() => {
+    try {
+      const target = new URL(afterSignIn, "https://planwiseesl.com");
+      if (target.pathname !== "/generate") return null;
+      const topic = target.searchParams.get("topic")?.trim();
+      const level = target.searchParams.get("level")?.trim();
+      return topic ? { topic, level: level || "B2" } : null;
+    } catch {
+      return null;
+    }
+  });
   useEffect(() => {
     if (user) {
       navigate(afterSignIn);
@@ -227,10 +238,18 @@ export default function AuthPage() {
                     {trialText} · No credit card
                   </div>
                   <CardTitle className="font-nunito text-2xl text-brand-navy">
-                    Make your first lesson in 2 minutes
+                    {pendingLesson
+                      ? `Ready to build your ${pendingLesson.level} lesson`
+                      : "Make your first lesson in 2 minutes"}
                   </CardTitle>
                   <CardDescription>
-                    Unlimited CEFR A1–C2 lessons during your {trialText}. Keep everything you create.
+                    {pendingLesson ? (
+                      <>
+                        Topic: <span className="font-semibold text-brand-navy">“{pendingLesson.topic}”</span>. Create your free account and we’ll open the generator pre-filled.
+                      </>
+                    ) : (
+                      <>Unlimited CEFR A1–C2 lessons during your {trialText}. Keep everything you create.</>
+                    )}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
