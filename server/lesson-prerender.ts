@@ -1,7 +1,7 @@
 import { storage } from './storage';
 import { PUBLIC_LIBRARY_LABELS } from '@shared/schema';
 import { tryDecodeLessonContent } from '@shared/lesson-content';
-import { CEFR_LEVEL_NAMES, lessonContentsParts, joinList, levelText, lessonPublicMetadata } from '@shared/lesson-public-metadata';
+import { CEFR_LEVEL_NAMES, lessonContentsParts, joinList, levelText, lessonPublicMetadata, publicLessonRemixHref } from '@shared/lesson-public-metadata';
 import { expressionItemsOf, withoutMarks } from '@shared/lesson-expressions';
 import { publicNav } from '@shared/marketing-pages';
 import { lessonStages, lessonTeaches, lessonDesign, lessonDifference, libraryDesign } from '@shared/lesson-pedagogy';
@@ -161,6 +161,7 @@ interface LessonForPrerender {
   id: number;
   title: string;
   cefrLevel: string;
+  isPublic?: boolean;
   category: string | null;
   publicCategory: string | null;
   content: unknown;
@@ -409,10 +410,12 @@ export function buildLessonPageHtml(lesson: LessonForPrerender, sections: any[],
         <p class="lp-meta"><span class="lp-tag">CEFR ${e(level)}${levelName ? ` &middot; ${e(levelName)}` : ''}</span>${label ? `<span class="lp-tag">${e(label)}</span>` : ''}</p>
         <p class="lp-about"><strong>About this lesson:</strong> ${e(aboutLesson(lesson, sections))}</p>
       </header>
+      ${lesson.isPublic ? `<aside class="lp-cta lp-remix"><p>Want <strong>${e(lesson.title)}</strong> at a different CEFR level or adapted to a student's job? Start with the title and adjust it in the generator.</p><p><a href="${e(publicLessonRemixHref(lesson.title, level, false))}">Remix this lesson</a></p></aside>` : ''}
       ${lessonDesignHtml(lesson.content)}
       ${sectionsHtml(sections)}
     </article>
     ${relatedLessonsHtml(level, related)}
+    ${lesson.isPublic ? `<aside class="lp-cta lp-vocab"><h2>Help students remember these words beyond today's lesson.</h2><p>Mark lessons complete from a student's page to add their vocabulary to spaced-repetition flashcards and recycle it in future lessons.</p><p><a href="/auth?register=true&amp;source=vocab-cta">Try PlanWise ESL free</a></p></aside>` : ''}
     <aside class="lp-cta">
       <h2>Use this lesson with your students</h2>
       <p>PlanWise ESL creates complete, CEFR-levelled ESL lessons on any topic in minutes. <a href="/auth?register=true">Sign up free</a> to copy this lesson, edit it, or generate your own.</p>
@@ -463,6 +466,11 @@ async function prerenderLesson(template: string, id: number, preloaded?: unknown
         alignmentType: 'educationalLevel',
         educationalFramework: 'Common European Framework of Reference for Languages (CEFR)',
         targetName: lesson.cefrLevel,
+      },
+      author: {
+        '@type': 'Person',
+        name: 'Dave Jackson',
+        url: 'https://speakwithdave.co',
       },
       teaches: teaches.length ? teaches : lesson.title,
       ...(minutes ? { timeRequired: `PT${minutes}M` } : {}),

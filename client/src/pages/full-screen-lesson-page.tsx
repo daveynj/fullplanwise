@@ -10,8 +10,9 @@ import { Lesson } from "@shared/schema";
 import { queryClient } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/use-auth";
 import { SEOHead } from "@/components/SEOHead";
-import { lessonPublicMetadata } from "@shared/lesson-public-metadata";
+import { lessonPublicMetadata, publicLessonRemixHref } from "@shared/lesson-public-metadata";
 import { LessonDesignPanel } from "@/components/lesson/lesson-design-panel";
+import { TopRemixBanner, VocabFlashcardCTA } from "@/components/public-lesson-ctas";
 
 class LessonNotFoundError extends Error {
   constructor() {
@@ -256,6 +257,9 @@ export default function FullScreenLessonPage() {
   }
 
   const metadata = lessonPublicMetadata(lesson);
+  const showPublicLessonPromos = lesson.isPublic && (!user || user.isAdmin);
+  const remixHref = publicLessonRemixHref(lesson.title, lesson.cefrLevel, !!user);
+  const vocabularySignupHref = "/auth?register=true&source=vocab-cta";
   return (
     <>
       {/* SEO meta tags for shared lessons */}
@@ -411,7 +415,15 @@ export default function FullScreenLessonPage() {
                 </span>
               </div>
             )}
-            {parsedContent && <LessonContent content={parsedContent} />}
+            {showPublicLessonPromos && (
+              <TopRemixBanner title={lesson.title} href={remixHref} />
+            )}
+            {parsedContent && (
+              <LessonContent
+                content={parsedContent}
+                vocabularyCta={showPublicLessonPromos ? <VocabFlashcardCTA href={vocabularySignupHref} /> : undefined}
+              />
+            )}
             {parsedContent && lesson.isPublic && (!user || user.isAdmin) && (
               <aside className="mt-10 max-w-4xl mx-auto rounded-2xl bg-brand-navy text-white p-6 md:p-8 flex flex-col gap-6 print:hidden">
                 <div className="grid md:grid-cols-2 gap-6 items-center">

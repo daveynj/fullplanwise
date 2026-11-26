@@ -49,3 +49,11 @@ export function lessonPublicMetadata(lesson: {
     imageAlt: `${lesson.title} — ${lesson.cefrLevel} ESL lesson`,
   };
 }
+
+/** Safe route for remixing a public lesson without exposing its original prompt. */
+export function publicLessonRemixHref(title: string, level: string, signedIn: boolean): string {
+  const generatePath = `/generate?topic=${encodeURIComponent(title)}&level=${encodeURIComponent(level)}`;
+  return signedIn
+    ? generatePath
+    : `/auth?register=true&redirect=${encodeURIComponent(generatePath)}`;
+}
