@@ -72,7 +72,7 @@ export const studentExperiencePage: MarketingPage = {
       bullets: [
         '**No accidental repeats:** PlanWise ESL strictly excludes words the student has already learned or has planned in upcoming lessons from being pre-taught again.',
         '**Relevant, natural reuse only:** The student’s previous vocabulary is passed into lesson generation so earlier words can reappear in future readings and questions—**only when they fit the new subject naturally and relevantly**. Words are never awkwardly shoehorned into an unrelated topic just to tick a box.',
-        '**Long-term recall across channels:** Between classes, the student’s flashcards and Vocabulary Review PDFs keep every word active until it reappears naturally in future classes.',
+        '**Long-term recall across channels:** Between classes, the student’s flashcards and Vocabulary Review PDFs keep every word active until it reappears naturally in future classes. Inspect [our live 4-lesson student memory case study](/compare/student-memory-proof) (36 taught items, 0 duplicates) with zero login.',
       ],
     },
     {

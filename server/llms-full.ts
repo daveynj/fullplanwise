@@ -82,6 +82,15 @@ function renderSectionMarkdown(section: MarketingSection): string {
   if (section.table) {
     blocks.push(renderMarkdownTable(section.table));
   }
+  if (section.workflowProof) {
+    const wp = section.workflowProof;
+    blocks.push(
+      `#### ${absolutizeMarkdownLinks(wp.planwiseTitle)}\n\n${wp.planwiseSteps.map((s, i) => `${i + 1}. ${absolutizeMarkdownLinks(s)}`).join('\n')}`,
+    );
+    blocks.push(
+      `#### ${absolutizeMarkdownLinks(wp.competitorTitle)}\n\n${wp.competitorSteps.map((s, i) => `${i + 1}. ${absolutizeMarkdownLinks(s)}`).join('\n')}`,
+    );
+  }
   return blocks.join('\n\n');
 }
 
@@ -97,6 +106,10 @@ function renderPageMarkdown(page: MarketingPage): string {
 
   for (const p of page.intro) {
     blocks.push(absolutizeMarkdownLinks(p));
+  }
+
+  if (page.verdict) {
+    blocks.push(`### ${absolutizeMarkdownLinks(page.verdict.heading)}\n\n${absolutizeMarkdownLinks(page.verdict.text)}`);
   }
 
   for (const section of page.sections) {

@@ -44,6 +44,7 @@ export const marketingPrerenderCss = `
 #marketing-prerender table { border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.95rem; }
 #marketing-prerender th, #marketing-prerender td { border: 1px solid #e5e5e5; padding: 8px 10px; text-align: left; vertical-align: top; }
 #marketing-prerender th { background: #f8f5ec; }
+#marketing-prerender .mp-verdict { border-left: 4px solid #edc437; background: #f8fafc; padding: 16px 20px; border-radius: 10px; margin: 1.5rem 0; }
 #marketing-prerender .mp-cta { background: #f8f5ec; border-radius: 12px; padding: 20px; margin-top: 2.5rem; }
 #marketing-prerender .mp-btn { display: inline-block; background: #edc437; color: #051d40; font-weight: 600; padding: 12px 24px; border-radius: 8px; text-decoration: none; }
 #marketing-prerender .mp-refs { font-size: 0.9rem; color: #444; }
@@ -74,11 +75,20 @@ function sectionHtml(section: MarketingSection): string {
       .join('');
     parts.push(`<table><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table>`);
   }
+  if (section.workflowProof) {
+    const wp = section.workflowProof;
+    parts.push(
+      `<div><h3>${renderInline(wp.planwiseTitle)}</h3><ol>${wp.planwiseSteps.map((s) => `<li>${renderInline(s)}</li>`).join('')}</ol><h3>${renderInline(wp.competitorTitle)}</h3><ol>${wp.competitorSteps.map((s) => `<li>${renderInline(s)}</li>`).join('')}</ol></div>`,
+    );
+  }
   return `<section>${parts.join('\n')}</section>`;
 }
 
 /** Builds the static, crawler-readable page markup. */
 export function buildMarketingPageHtml(page: MarketingPage): string {
+  const verdictHtml = page.verdict
+    ? `<section class="mp-verdict"><h2>${renderInline(page.verdict.heading)}</h2><p>${renderInline(page.verdict.text)}</p></section>`
+    : '';
   const faqHtml = page.faq?.length
     ? `<section><h2>Frequently asked questions</h2>${page.faq
         .map((f) => `<h3>${renderInline(f.question)}</h3><p>${renderInline(f.answer)}</p>`)
@@ -98,6 +108,7 @@ export function buildMarketingPageHtml(page: MarketingPage): string {
         ${page.byline ? `<p>By ${e(page.byline.author)}${page.byline.author === siteFacts.founder ? `, ${e(siteFacts.founderRole)}` : ''} &bull; <time datetime="${e(page.byline.published)}">${e(page.byline.published)}</time>${page.byline.note ? ` &bull; ${e(page.byline.note)}` : ''}</p>` : ''}
         ${page.intro.map((p) => `<p>${renderInline(p)}</p>`).join('\n        ')}
       </header>
+      ${verdictHtml}
       ${page.sections.map(sectionHtml).join('\n      ')}
       ${faqHtml}
       ${refsHtml}
@@ -107,6 +118,7 @@ export function buildMarketingPageHtml(page: MarketingPage): string {
       <h2>${renderInline(page.cta.heading)}</h2>
       <p>${renderInline(page.cta.text)}</p>
       <p><a class="mp-btn" href="${e(page.cta.href)}">${e(page.cta.label)}</a></p>
+      <p class="mp-refs"><small>Built by British ESL teacher Dave Jackson. Looking for 1-on-1 English lessons? <a href="${e(siteFacts.founderSite)}" rel="noopener noreferrer">SpeakWithDave.com</a></small></p>
     </aside>
   </main>
 </div>`;

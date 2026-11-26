@@ -33,27 +33,52 @@ function Section({ section }: { section: MarketingSection }) {
       {section.table && (
         <div className="overflow-x-auto my-6 rounded-2xl ring-1 ring-slate-900/10">
           <table className="w-full text-sm text-left">
-            <thead className="bg-amber-50 text-brand-navy">
+            <thead className="bg-brand-navy text-white">
               <tr>
                 {section.table.headers.map((h, i) => (
-                  <Inline key={i} as="th" text={h} className="px-4 py-3 font-nunito font-bold align-bottom" />
+                  <Inline
+                    key={i}
+                    as="th"
+                    text={h}
+                    className={`px-4 py-3 font-nunito font-bold align-bottom ${h === 'PlanWise ESL' ? 'text-brand-yellow' : ''}`}
+                  />
                 ))}
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {section.table.rows.map((row, r) => (
-                <tr key={r} className="bg-white">
+                <tr key={r} className={r % 2 === 1 ? 'bg-slate-50/60' : 'bg-white'}>
                   {row.map((cell, c) =>
                     c === 0 ? (
                       <Inline key={c} as="th" text={cell} className="px-4 py-3 font-semibold text-brand-navy align-top whitespace-nowrap" />
                     ) : (
-                      <Inline key={c} as="td" text={cell} className="px-4 py-3 text-slate-700 align-top" />
+                      <Inline key={c} as="td" text={cell} className="px-4 py-3 text-slate-700 align-top [&_a]:text-brand-navy [&_a]:font-semibold [&_a]:underline [&_a]:decoration-brand-yellow [&_a]:decoration-2 [&_a]:underline-offset-2" />
                     ),
                   )}
                 </tr>
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+      {section.workflowProof && (
+        <div className="my-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="rounded-2xl border-2 border-brand-navy bg-white p-6 shadow-sm">
+            <Inline as="h3" text={section.workflowProof.planwiseTitle} className="text-lg font-nunito font-bold text-brand-navy" />
+            <ol className="mt-4 list-decimal space-y-2.5 pl-5 text-sm text-slate-700 leading-relaxed [&_a]:text-brand-navy [&_a]:font-semibold [&_a]:underline [&_a]:decoration-brand-yellow [&_a]:decoration-2 [&_a]:underline-offset-2">
+              {section.workflowProof.planwiseSteps.map((step, i) => (
+                <Inline key={i} as="li" text={step} />
+              ))}
+            </ol>
+          </div>
+          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6">
+            <Inline as="h3" text={section.workflowProof.competitorTitle} className="text-lg font-nunito font-bold text-slate-700" />
+            <ol className="mt-4 list-decimal space-y-2.5 pl-5 text-sm text-slate-600 leading-relaxed">
+              {section.workflowProof.competitorSteps.map((step, i) => (
+                <Inline key={i} as="li" text={step} />
+              ))}
+            </ol>
+          </div>
         </div>
       )}
     </section>
@@ -102,6 +127,13 @@ export default function MarketingPage() {
         </div>
 
         <article className="container mx-auto max-w-3xl px-6 pb-16">
+          {page.verdict && (
+            <section className="mt-8 rounded-2xl border-l-4 border-brand-yellow bg-slate-50 p-6 shadow-sm ring-1 ring-slate-900/5">
+              <Inline as="h2" text={page.verdict.heading} className="text-xl font-nunito font-bold text-brand-navy mb-2" />
+              <Inline as="p" text={page.verdict.text} className="text-slate-700 leading-relaxed [&_a]:text-brand-navy [&_a]:font-semibold [&_a]:underline [&_a]:decoration-brand-yellow [&_a]:decoration-2 [&_a]:underline-offset-2" />
+            </section>
+          )}
+
           {page.sections.map((s, i) => (
             <Section key={i} section={s} />
           ))}
@@ -129,6 +161,17 @@ export default function MarketingPage() {
               </Button>
             </Link>
             <p className="text-sm text-white/60 mt-4">No credit card required</p>
+            <p className="text-xs text-white/70 mt-4 pt-4 border-t border-white/10">
+              Built by British ESL teacher Dave Jackson — still planning every class for his own 1-on-1 students. Looking for 1-on-1 English lessons?{' '}
+              <a
+                href="https://speakwithdave.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-brand-yellow underline hover:text-brand-yellow-light"
+              >
+                SpeakWithDave.com
+              </a>
+            </p>
           </aside>
 
           {page.disclaimer && <Inline as="p" text={page.disclaimer} className="mt-10 text-xs text-slate-400" />}
