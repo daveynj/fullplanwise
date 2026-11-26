@@ -148,8 +148,20 @@ export function AdminBatchPublicGenerator({ onLessonPublished }: { onLessonPubli
             topic: item.topic,
             cefrLevel: item.cefrLevel,
             category,
+            focus: "general",
             lessonLength: 60,
-            includeExpressions: !["A1", "A2"].includes(item.cefrLevel),
+            components: [
+              "warm-up",
+              "vocabulary",
+              "reading",
+              "comprehension",
+              "sentences",
+              "discussion",
+              "quiz",
+              ...(!["A1", "A2"].includes(item.cefrLevel) ? ["expressions"] : []),
+            ],
+            generateImages: true,
+            useStudentHistory: false,
           }),
         });
 
