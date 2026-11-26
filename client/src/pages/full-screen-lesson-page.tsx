@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useLocation, Link } from "wouter";
 import { LessonContent } from "@/components/lesson/lesson-content";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, X, ExpandIcon, MinimizeIcon, Download, FileJson } from "lucide-react";
+import { ArrowLeft, X, ExpandIcon, MinimizeIcon, Download, FileJson, Share2, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Lesson } from "@shared/schema";
@@ -25,6 +25,7 @@ export default function FullScreenLessonPage() {
   const { toast } = useToast();
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [activeTab, setActiveTab] = useState("lesson");
+  const [copiedShareLink, setCopiedShareLink] = useState(false);
   const { user } = useAuth();
   
   // Extract lesson ID from URL
@@ -413,6 +414,63 @@ export default function FullScreenLessonPage() {
                   Make Your First Lesson Free →
                 </a>
               </aside>
+            )}
+            {lesson?.isPublic && (
+              <div className="max-w-5xl mx-auto mt-6 mb-6 rounded-xl border border-slate-200 bg-white px-5 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-sm">
+                <div className="flex items-center gap-2 text-sm font-medium text-brand-navy">
+                  <Share2 className="h-4 w-4 text-amber-600 shrink-0" />
+                  <span>Found this free lesson useful? Share it with a fellow teacher or student:</span>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={async () => {
+                      const shareUrl = `https://planwiseesl.com/lessons/${lesson.id}`;
+                      try {
+                        await navigator.clipboard.writeText(shareUrl);
+                        setCopiedShareLink(true);
+                        toast({ title: "Link copied!", description: shareUrl });
+                        setTimeout(() => setCopiedShareLink(false), 2500);
+                      } catch {
+                        toast({ title: "Share link", description: shareUrl });
+                      }
+                    }}
+                  >
+                    {copiedShareLink ? (
+                      <>
+                        <Check className="h-3.5 w-3.5 mr-1.5 text-emerald-600" />
+                        Copied
+                      </>
+                    ) : (
+                      "Copy link"
+                    )}
+                  </Button>
+                  <a
+                    href={`https://wa.me/?text=${encodeURIComponent(
+                      `Free ${lesson.cefrLevel} ESL lesson (${lesson.title}) — no login required: https://planwiseesl.com/lessons/${lesson.id}`
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Button type="button" size="sm" variant="outline">
+                      WhatsApp
+                    </Button>
+                  </a>
+                  <a
+                    href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
+                      `https://planwiseesl.com/lessons/${lesson.id}`
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Button type="button" size="sm" variant="outline">
+                      LinkedIn
+                    </Button>
+                  </a>
+                </div>
+              </div>
             )}
             {lesson?.isPublic && !user && (
               <p className="max-w-5xl mx-auto mb-10 px-4 text-center text-sm text-slate-500">
