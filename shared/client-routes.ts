@@ -74,6 +74,7 @@ export const clientRoutePaths: string[] = [
   "/compare/off2class",
   "/compare/chatgpt",
   "/compare/cefr-benchmark",
+  "/compare/student-memory-proof",
   "/guides",
   "/guides/how-to-plan-an-esl-conversation-lesson",
   "/guides/esl-conversation-topics-by-level",

@@ -57,7 +57,7 @@ describe("public information pages", () => {
   });
 
   it("renders answer-first verdicts, workflow proofs, and subtle founder attribution in comparison SSR HTML", () => {
-    for (const path of ["/compare/twee", "/compare/esl-joy", "/compare/magicschool-diffit"]) {
+    for (const path of ["/compare/twee", "/compare/esl-joy", "/compare/magicschool-diffit", "/compare/student-memory-proof"]) {
       const html = injectMarketingPrerender(template, path)!;
       const doc = new DOMParser().parseFromString(html, "text/html");
       expect(doc.querySelector(".mp-verdict h2")?.textContent?.length).toBeGreaterThan(10);

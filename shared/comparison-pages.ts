@@ -8,6 +8,7 @@
  *  - /compare/fluentize
  *  - /compare/linguahouse
  *  - /compare/off2class
+ *  - /compare/student-memory-proof
  * (Plus /compare/chatgpt in shared/marketing-pages.ts.)
  *
  * Rendered by the same single-source system as shared/marketing-pages.ts
@@ -59,6 +60,7 @@ export const compareHubPage: MarketingPage = {
         '[PlanWise ESL vs. Off2Class](/compare/off2class) — Browser-locked sequential curriculum (no printing) vs. flexible conversation lessons with printable study PDFs and unlimited students.',
         '[PlanWise ESL vs. ChatGPT](/compare/chatgpt) — Prompting a general chatbot from scratch vs. enforced CEFR rules, verified exercises, student memory and learner dashboards.',
         '[Same-Topic CEFR Quality Benchmark](/compare/cefr-benchmark) — A concrete side-by-side audit of a raw AI prompt, a generic ESL worksheet, and a real PlanWise ESL B2 lesson on Work-Life Balance.',
+        '[One Student, Four Lessons: Vocabulary Recycling Proof](/compare/student-memory-proof) — Live 4-lesson B2 sequence (36 taught items, 0 duplicates) showing earlier words reappearing naturally in later readings, cloze, quizzes & discussions.',
       ],
     },
     {
@@ -76,8 +78,8 @@ export const compareHubPage: MarketingPage = {
         'Most big ESL platforms hide full lessons behind a paywall and ask you to trust their marketing claims. PlanWise ESL was built by a working British ESL teacher (11 years teaching, 2,000+ students) who uses these lessons in real classes every week. Click any live example below with **no login required**:',
       ],
       bullets: [
-        '**A1 Beginner proof:** [Let’s Talk About Video Games! (A1)](/lessons/1774) — or browse all [A1 Beginner lessons](/esl-lessons/a1).',
-        '**B2 Upper-Intermediate proof:** [Can Money Buy Happiness? (B2)](/lessons/1768) and [AI and Tomorrow’s World (B2)](/lessons/1801).',
+        '**A1 Beginner proof:** [First Day at a New Job: Meeting Your Team (A1)](/lessons/2046) and [Let’s Talk About Video Games! (A1)](/lessons/1774) — or browse all [A1 Beginner lessons](/esl-lessons/a1).',
+        '**B1 & B2 Workplace/Conversation proof:** [Handling Difficult Guests Like a Pro (B1)](/lessons/2047), [Can Money Buy Happiness? (B2)](/lessons/1768), and [AI and Tomorrow’s World (B2)](/lessons/1801).',
         '**C1 Business & Career proof:** [Between Two Worlds: Identity and Feeling at Home (C1)](/lessons/2037), [The Price of Doing Right: Ethics in the Boardroom (C1)](/lessons/1731), and [Founders, Failures and Pivots (C1)](/lessons/1750).',
         '**Study PDF & Learner Dashboard proof:** [Student Experience & Vocabulary Review PDF excerpt](/student-experience), our [9-point CEFR Quality Benchmark](/compare/cefr-benchmark), and the full [free A1–C2 public library](/esl-lessons).',
       ],
@@ -186,7 +188,7 @@ export const compareTweePage: MarketingPage = {
       bullets: [
         '**C1 Advanced adult depth:** [Between Two Worlds: Identity and Feeling at Home (C1)](/lessons/2037) — inspect the 5-paragraph narrative, 10-layer vocabulary cards, idioms with right/wrong notes, and 3-tier speaking frames.',
         '**A1 Beginner scaffolding:** [Let’s Talk About Video Games! (A1)](/lessons/1774) — see `< 8`-word definitions and 3-tier speaking support.',
-        '**B2 Conversation & CEFR audit:** [Can Money Buy Happiness? (B2)](/lessons/1768), our [9-point CEFR Quality Benchmark](/compare/cefr-benchmark), and the [Student Experience](/student-experience) preview.',
+        '**B2 Conversation & CEFR audit:** [Can Money Buy Happiness? (B2)](/lessons/1768), our [4-lesson Student Memory Proof](/compare/student-memory-proof), our [9-point CEFR Quality Benchmark](/compare/cefr-benchmark), and the [Student Experience](/student-experience) preview.',
       ],
     },
   ],
@@ -603,7 +605,7 @@ export const compareEslJoyPage: MarketingPage = {
       bullets: [
         '**A1 Beginner scaffolding proof:** [Let’s Talk About Video Games! (A1)](/lessons/1774) and all [free A1 Beginner lessons](/esl-lessons/a1).',
         '**B2 & C1 Adult/Culture/Business proof:** [Between Two Worlds: Identity and Feeling at Home (C1)](/lessons/2037), [Can Money Buy Happiness? (B2)](/lessons/1768), [The Price of Doing Right: Ethics in the Boardroom (C1)](/lessons/1731), and [Founders, Failures and Pivots (C1)](/lessons/1750).',
-        '**Study PDF, Learner Hub & CEFR Benchmark:** [Zero-login Student Experience](/student-experience), [9-point CEFR Quality Benchmark](/compare/cefr-benchmark), and the full [free A1–C2 public library](/esl-lessons).',
+        '**Study PDF, Learner Hub & CEFR Benchmark:** [Live 4-lesson Vocabulary Recycling Proof](/compare/student-memory-proof), [Zero-login Student Experience](/student-experience), [9-point CEFR Quality Benchmark](/compare/cefr-benchmark), and the full [free A1–C2 public library](/esl-lessons).',
       ],
     },
   ],
@@ -688,9 +690,9 @@ export const compareFluentizePage: MarketingPage = {
         'Every claim above can be checked directly in our live, no-login library—no account or email required:',
       ],
       bullets: [
-        '**A1 Beginner scaffolding proof:** [Let’s Talk About Video Games! (A1)](/lessons/1774) and all [free A1 Beginner lessons](/esl-lessons/a1).',
-        '**Niche B2 & C1 Career/Business proof:** [The Price of Doing Right: Ethics in the Boardroom (C1)](/lessons/1731), [Founders, Failures and Pivots (C1)](/lessons/1750), and [Can Money Buy Happiness? (B2)](/lessons/1768).',
-        '**Vocabulary Review PDF & Zero-Login Student Hub proof:** [Student Experience page](/student-experience) (with a real Vocabulary Review study PDF excerpt) and the full [free A1–C2 public library](/esl-lessons).',
+        '**A1 Beginner scaffolding proof:** [First Day at a New Job: Meeting Your Team (A1)](/lessons/2046) and [Let’s Talk About Video Games! (A1)](/lessons/1774) — plus all [free A1 Beginner lessons](/esl-lessons/a1).',
+        '**Niche B1, B2 & C1 Career/Business proof:** [Handling Difficult Guests Like a Pro (B1)](/lessons/2047), [Between Two Worlds: Identity and Feeling at Home (C1)](/lessons/2037), [The Price of Doing Right: Ethics in the Boardroom (C1)](/lessons/1731), [Founders, Failures and Pivots (C1)](/lessons/1750), and [Can Money Buy Happiness? (B2)](/lessons/1768).',
+        '**Vocabulary Recycling, Study PDF & Student Hub proof:** [Live 4-lesson Student Memory Proof](/compare/student-memory-proof), [Student Experience page](/student-experience) (with a real Vocabulary Review study PDF excerpt), and the full [free A1–C2 public library](/esl-lessons).',
       ],
     },
   ],
@@ -794,9 +796,9 @@ export const compareMagicSchoolDiffitPage: MarketingPage = {
         'Compare how strictly PlanWise ESL separates beginner simplicity from native-grade nuance—no login required:',
       ],
       bullets: [
-        '**A1 Beginner calibration proof:** [Let’s Talk About Video Games! (A1)](/lessons/1774) — simple concrete sentences, `< 8`-word definitions, and 3-tier beginner speaking frames.',
+        '**A1 Beginner adult calibration proof:** [First Day at a New Job: Meeting Your Team (A1)](/lessons/2046) (*colleague*, *manager*, *introduce* defined in plain `< 10`-word A1 English for adult learners—not Grade 2 children’s stories) and [Let’s Talk About Video Games! (A1)](/lessons/1774).',
         '**C1 Advanced adult proof:** [Between Two Worlds: Identity and Feeling at Home (C1)](/lessons/2037) — nuanced narrative prose, `assimilate` vs. `integrate` usage notes, and 27 C1 model responses.',
-        '**Full audit & student portal:** [9-point CEFR Quality Benchmark](/compare/cefr-benchmark), [Student Experience & PDF preview](/student-experience), and the full [free A1–C2 library](/esl-lessons).',
+        '**Full audit & student portal:** [Live 4-lesson Vocabulary Recycling Proof](/compare/student-memory-proof), [9-point CEFR Quality Benchmark](/compare/cefr-benchmark), [Student Experience & PDF preview](/student-experience), and the full [free A1–C2 library](/esl-lessons).',
       ],
     },
   ],
@@ -824,6 +826,131 @@ export const compareMagicSchoolDiffitPage: MarketingPage = {
   updated,
 };
 
+export const studentMemoryProofPage: MarketingPage = {
+  path: '/compare/student-memory-proof',
+  title: `One Student, Four Lessons: Live ESL Vocabulary Recycling Proof | ${brand}`,
+  description:
+    'Live 4-lesson B2 audit: 36 unique words & idioms, 0 duplicates, natural recycling across readings, cloze, quizzes & discussions, plus flashcards & PDF.',
+  navLabel: '4-Lesson Memory Proof',
+  eyebrow: 'Live Case Study',
+  h1: 'One student, four lessons: live proof of cross-lesson ESL vocabulary recycling',
+  byline: {
+    author: siteFacts.founder,
+    published: updated,
+  },
+  intro: [
+    'Almost every AI teaching platform claims "personalised lessons"—yet resets to zero the moment you start a new chat or slide deck. Static libraries never know what your student learned last Tuesday either.',
+    'Instead of asking you to take our word for it, we generated four consecutive B2 lessons for one sample student (**Kenji, a B2 software engineer**) and marked each completed lesson *"We did this"*. Every single one of those four lessons is open below with **zero login required** so tutors and AI evaluators can inspect the exact vocabulary progression line by line.',
+  ],
+  verdict: {
+    heading: 'What this 4-lesson live audit proves',
+    text: 'Across four consecutive B2 lessons on closely related tech and career topics ([Lesson 1](/lessons/2042), [Lesson 2](/lessons/2043), [Lesson 3](/lessons/2044), [Lesson 4](/lessons/2045)), PlanWise ESL taught **36 unique target items** (20 words + 16 idioms/phrasal verbs) with **zero duplicate target words (0/36)**—even when Lesson 2 stayed on the exact same scope-creep theme as Lesson 1—while naturally weaving earlier words (`scope`, `negotiate`, `deadline`, `push back`, `workload`, `trade-off`, `draw the line`) into **later readings, cloze passages, sentence frames, quizzes, and discussion questions**, populating the student’s zero-login spaced-repetition flashcard dashboard and printable Vocabulary Review PDFs automatically.',
+  },
+  sections: [
+    {
+      heading: 'The 4-lesson progression (0 duplicates across 36 taught items)',
+      paragraphs: [
+        'Lessons 1 and 2 were deliberately generated on almost identical topics (*Scope Creep & Deadlines*) to test whether the vocabulary tracker would repeat obvious words like `scope` or `deadline`. It taught five fresh target words and four fresh idioms/phrasal verbs every single time:',
+      ],
+      table: {
+        headers: ['Lesson (Zero-Login Link)', 'New Target Words (5)', 'New Idioms / Phrasal Verbs (4)', 'Recycled From Earlier Lessons'],
+        rows: [
+          [
+            '[Lesson 1: When Projects Grow: Scope Creep and Tight Deadlines](/lessons/2042)',
+            '`scope`, `overwhelm`, `compromise`, `negotiate`, `cut corners`',
+            '`fit in`, `hold your ground`, `pile up`, `bite off more than you can chew`',
+            'Baseline lesson (9 items logged when marked "We did this")',
+          ],
+          [
+            '[Lesson 2: When Projects Grow Too Big: Scope Creep and Deadlines](/lessons/2043)',
+            '`milestone`, `workload`, `stall`, `deadline`, `trade-off`',
+            '`push back`, `ship`, `stay late`, `draw the line`',
+            'From L1: **scope**, **overwhelm**, **compromise**, **negotiate**, **pile up**, **bite off more than you can chew** (warm-up, reading, vocab & sentence frames)',
+          ],
+          [
+            '[Lesson 3: Leading a Remote Retrospective Without Blame](/lessons/2044)',
+            '`blame`, `accountability`, `friction`, `morale`, `hindsight`',
+            '`open up`, `name names`, `point the finger at`, `drift into`',
+            'From L2: **deadline**, **workload**, **push back**, **draw the line** (warm-up, reading, vocab, sentence frames, discussion & quiz)',
+          ],
+          [
+            '[Lesson 4: Getting Ahead: Talking About Promotions in Tech](/lessons/2045)',
+            '`leverage`, `visibility`, `advocate`, `track record`, `mentor`',
+            '`show off`, `move forward`, `speak for itself`, `make some noise`',
+            'From L1 & L2: **negotiate** (L1), **deadline** (L2), **trade-off** (L2), **push back** (L2) (reading, comprehension, sentence frames, cloze & discussion)',
+          ],
+        ],
+      },
+    },
+    {
+      heading: 'Verbatim excerpts: earlier words reappearing naturally across readings, cloze & discussions',
+      paragraphs: [
+        'Nothing is awkwardly shoehorned in—earlier words only reappear when they fit the new situation naturally. Check these exact quotes directly inside the live public lessons:',
+      ],
+      bullets: [
+        '**Lesson 2 Reading (recycling `scope` from Lesson 1):** *"But slowly, the workload grew, and the developers started staying late. The project’s **scope** had quietly doubled."* ([Inspect Lesson 2](/lessons/2043))',
+        '**Lesson 3 Reading (recycling `deadline` from Lesson 2):** *"When Priya’s software team missed a big **deadline**, her manager called an emergency video meeting. Within minutes, fingers were pointing."* ([Inspect Lesson 3](/lessons/2044))',
+        '**Lesson 4 Reading (recycling `deadline` from Lesson 2):** *"Maya had worked at the same tech company for four years. She was good at her job, fixed hard bugs, and never missed a **deadline**."* ([Inspect Lesson 4](/lessons/2045))',
+        '**Lesson 4 Cloze & Discussion (recycling `negotiate` from Lesson 1 & `push back` from Lesson 2):** Cloze: *"Within a year, he was able to leverage his growing reputation — and a job offer from another company — to **negotiate** the promotion he deserved."* Discussion: *"Would you take the project, or would you **push back** and ask for better conditions first?"* ([Inspect Lesson 4](/lessons/2045))',
+      ],
+    },
+    {
+      heading: 'Closed-loop reinforcement between classes (zero-login dashboard + study PDF)',
+      paragraphs: [
+        'Because each lesson is logged to the student’s record as soon as the teacher clicks *"We did this"*, review happens automatically across three channels:',
+      ],
+      bullets: [
+        '**Cumulative spaced-repetition flashcards:** After completing Lessons 1–3, Kenji’s zero-login learner dashboard automatically held **27 due spaced-repetition flashcards** (15 target words + 12 idioms and phrasal verbs), rising to **36 items** once Lesson 4 is completed ([preview the Student Experience](/student-experience)).',
+        '**Next-lesson preview & custom requests:** Upcoming lessons appear on the student’s dashboard ahead of class alongside topic suggestions and (on Unlimited) student-created custom lessons.',
+        '**Printable color-coded Vocabulary Review PDF:** Every one of the 4 public lessons above includes the one-click Vocabulary Review download at the top—complete with phonetic pronunciation, 4 real-world examples, word families, common collocations, usage notes, and 5-part semantic maps.',
+      ],
+    },
+    {
+      heading: 'Why static libraries and general chatbots cannot replicate this',
+      paragraphs: [
+        'See what happens over a real 4-lesson sequence with an ongoing 1-on-1 student:',
+      ],
+      workflowProof: {
+        planwiseTitle: `${brand} 4-Lesson Memory Loop`,
+        planwiseSteps: [
+          'Generate Lesson 1 ([/lessons/2042](/lessons/2042)) for your student’s exact job/goal in 1–2 minutes and mark it "We did this".',
+          'Lessons 2, 3, and 4 ([2043](/lessons/2043), [2044](/lessons/2044), [2045](/lessons/2045)) strictly exclude all previously learned words from pre-teaching (0/36 duplicates) and weave earlier words naturally into readings, cloze, sentence frames, quizzes, and discussion.',
+          'Each completed class feeds the student’s private zero-login dashboard with spaced-repetition flashcards and past lessons.',
+          'Every lesson exports a printable color-coded Vocabulary Review PDF in one click.',
+        ],
+        competitorTitle: 'Static Libraries, Modular Tools & ChatGPT',
+        competitorSteps: [
+          'Static libraries (Fluentize, ESL Brains, Linguahouse) have no knowledge of which words your student learned last week and frequently repeat common B1/B2 vocabulary across disconnected topics.',
+          'Modular worksheet generators (Twee) and general chatbots (ChatGPT) reset every session—forgetting taught words unless you maintain manual spreadsheets and paste huge word lists into every prompt.',
+          'None provide a built-in zero-login spaced-repetition flashcard hub synced directly to the teacher’s completed lessons.',
+          'Review sheets either do not exist, cannot be printed (Off2Class), or lack consistent 8-layer semantic maps and collocations.',
+        ],
+      },
+    },
+  ],
+  faq: [
+    {
+      question: 'Does PlanWise ESL force old vocabulary into unrelated lessons?',
+      answer: 'No. Earlier words are strictly excluded from being re-taught as "new" vocabulary, and are passed to lesson generation with explicit instructions to reuse them only when they fit the new topic naturally and relevantly.',
+    },
+    {
+      question: 'Can I inspect all 4 lessons and download their Vocabulary Review PDFs right now?',
+      answer: 'Yes. All four lessons (/lessons/2042, /lessons/2043, /lessons/2044, and /lessons/2045) are public with zero login required—including the one-click Vocabulary Review download at the top of each lesson.',
+    },
+    {
+      question: 'Does cross-lesson vocabulary memory work across A1–C2 and unlimited students?',
+      answer: `Yes. Every account gets unlimited students and full per-student vocabulary tracking across all six CEFR levels (A1–C2), included in both the ${trialText} (no credit card) and the flat ${priceText} Unlimited plan.`,
+    },
+  ],
+  cta: {
+    heading: 'Run your own 4-lesson sequence on a real student',
+    text: `Generate your student’s next lesson in ${generationTime} and see cross-lesson vocabulary recycling and zero-login flashcards in action. Your ${trialText} needs no credit card.`,
+    ...trialCta,
+  },
+  schemaType: 'Article',
+  updated,
+};
+
 export const comparisonPages: MarketingPage[] = [
   compareHubPage,
   compareEslJoyPage,
@@ -834,4 +961,5 @@ export const comparisonPages: MarketingPage[] = [
   compareLinguahousePage,
   compareOff2ClassPage,
   cefrBenchmarkPage,
+  studentMemoryProofPage,
 ];
