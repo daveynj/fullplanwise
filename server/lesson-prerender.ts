@@ -589,7 +589,8 @@ async function prerenderLessonIndex(template: string, level?: string): Promise<s
     url: `${BASE_URL}${canonicalPath}`,
     mainEntity: {
       '@type': 'ItemList',
-      itemListElement: lessons.slice(0, 100).map((l, i) => ({
+      numberOfItems: lessons.length,
+      itemListElement: lessons.map((l, i) => ({
         '@type': 'ListItem',
         position: i + 1,
         url: `${BASE_URL}/lessons/${l.id}`,

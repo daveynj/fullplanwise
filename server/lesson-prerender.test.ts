@@ -353,6 +353,23 @@ describe("injectLessonPrerender: browse pages", () => {
     expect(html).toContain('href="/lessons/2"');
     expect(html).toContain("index, follow");
     expect(html).toContain("ItemList");
+    expect(html).toContain('"numberOfItems":2');
+  });
+
+  it("includes all lessons beyond 100 and numberOfItems in ItemList JSON-LD", async () => {
+    const many = Array.from({ length: 125 }, (_, i) => ({
+      id: i + 1,
+      title: `Public Lesson ${i + 1}`,
+      topic: `Topic ${i + 1}`,
+      cefrLevel: "B1",
+      publicCategory: "general-english",
+      createdAt: new Date("2025-02-01"),
+    }));
+    getPublicLessonSummaries.mockResolvedValue(many);
+    const html = (await injectLessonPrerender(TEMPLATE, "/esl-lessons"))!;
+    expect(html).toContain('"numberOfItems":125');
+    expect(html).toContain('"position":125');
+    expect(html).toContain('https://planwiseesl.com/lessons/125');
   });
 
   it("filters to one level on /esl-lessons/b1", async () => {
