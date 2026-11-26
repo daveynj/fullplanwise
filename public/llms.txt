@@ -57,7 +57,7 @@ PlanWise ESL publishes a public library of free, ready-to-teach ESL conversation
 Each public lesson page explains its structure under "How this lesson is built", and its structured data (schema.org LearningResource) lists the CEFR level, the words and speaking functions it teaches, and each stage of the lesson.
 
 - All free lessons: https://planwiseesl.com/esl-lessons
-- By level: https://planwiseesl.com/esl-lessons/a1 , https://planwiseesl.com/esl-lessons/a2 , https://planwiseesl.com/esl-lessons/b1 , https://planwiseesl.com/esl-lessons/b2 , https://planwiseesl.com/esl-lessons/c1
+- By level: https://planwiseesl.com/esl-lessons/a1 , https://planwiseesl.com/esl-lessons/a2 , https://planwiseesl.com/esl-lessons/b1 , https://planwiseesl.com/esl-lessons/b2 , https://planwiseesl.com/esl-lessons/c1 , https://planwiseesl.com/esl-lessons/c2
 - Example B2 lesson: https://planwiseesl.com/lessons/1768
 
 ## About the founder
