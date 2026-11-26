@@ -98,9 +98,12 @@ function Router() {
       <Route path="/pricing" component={MarketingPage} />
       <Route path="/student-experience" component={MarketingPage} />
       <Route path="/for/online-tutors" component={MarketingPage} />
+      <Route path="/for/preply-tutors" component={MarketingPage} />
+      <Route path="/for/italki-tutors" component={MarketingPage} />
       <Route path="/for/freelance-esl-teachers" component={MarketingPage} />
       <Route path="/for/language-schools" component={MarketingPage} />
       <Route path="/compare" component={MarketingPage} />
+      <Route path="/compare/esl-joy" component={MarketingPage} />
       <Route path="/compare/twee" component={MarketingPage} />
       <Route path="/compare/esl-brains" component={MarketingPage} />
       <Route path="/compare/linguahouse" component={MarketingPage} />
