@@ -103,6 +103,7 @@ function Router() {
       <Route path="/compare" component={MarketingPage} />
       <Route path="/compare/twee" component={MarketingPage} />
       <Route path="/compare/esl-brains" component={MarketingPage} />
+      <Route path="/compare/fluentize" component={MarketingPage} />
       <Route path="/compare/linguahouse" component={MarketingPage} />
       <Route path="/compare/off2class" component={MarketingPage} />
       <Route path="/compare/chatgpt" component={MarketingPage} />

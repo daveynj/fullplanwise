@@ -3,6 +3,7 @@
  *  - /compare (decision hub covering pre-made libraries, AI worksheet tools & chatbots)
  *  - /compare/twee
  *  - /compare/esl-brains
+ *  - /compare/fluentize
  *  - /compare/linguahouse
  *  - /compare/off2class
  * (Plus /compare/chatgpt in shared/marketing-pages.ts.)
@@ -21,13 +22,13 @@ export const compareHubPage: MarketingPage = {
   path: '/compare',
   title: `Compare ${brand} vs ESL Lesson Libraries & AI Tools`,
   description:
-    `Honest comparisons of ${brand} against Twee, ESL Brains, Linguahouse, Off2Class and ChatGPT: pedagogy, CEFR levelling, vocab memory, study PDFs & price.`,
+    `Honest comparisons of ${brand} vs Twee, ESL Brains, Fluentize, Linguahouse, Off2Class & ChatGPT: pedagogy, CEFR, vocab memory, study PDFs & price.`,
   navLabel: 'Compare',
   eyebrow: 'Comparisons',
   h1: 'PlanWise ESL vs. pre-made ESL lesson libraries and AI tools',
   intro: [
-    'Most ESL teaching tools fall into three camps: **static pre-made lesson libraries** (like ESL Brains, Linguahouse, Off2Class, Fluentize and Ellii), **modular AI worksheet generators or US K–12 apps** (like Twee, MagicSchool and Diffit), and **general chatbots** (like ChatGPT).',
-    'Each has genuine strengths—and clear trade-offs for one-to-one tutors and small to medium language schools. Here is an honest, side-by-side decision guide so you can pick the right tool for how you teach.',
+    'Most ESL teaching tools fall into three camps: **static pre-made lesson libraries** (like ESL Brains, Fluentize, Linguahouse, Off2Class and Ellii), **modular AI worksheet generators or US K–12 apps** (like Twee, MagicSchool and Diffit), and **general chatbots** (like ChatGPT).',
+    'Each has genuine strengths—and clear trade-offs for one-to-one tutors and small to medium language schools. Here is an honest, side-by-side decision guide with live zero-login proof links so you can inspect the actual lessons yourself.',
   ],
   sections: [
     {
@@ -35,12 +36,12 @@ export const compareHubPage: MarketingPage = {
       table: {
         headers: ['What you need', 'Pre-made ESL libraries', 'AI worksheet / K–12 tools', 'General chatbots', brand],
         rows: [
-          ['Custom lesson on any niche student topic', 'No — fixed catalogue only', 'Activity by activity, assembled manually', 'Yes, with heavy prompting & editing', `Yes — complete lesson in ${generationTime} (or student-created on Unlimited)`],
-          ['Full scientific pedagogical sequence', 'Varies by publisher', 'Single isolated tasks; US K–12 apps lack ELT flow', 'No — unformatted text unless prompted step by step', 'Yes — warm-up recall, rich vocab, reading, recall flashcards, semantic maps, exercises & deep discussion'],
-          ['CEFR A1–C2 calibration', 'Usually good inside fixed catalogue', 'Mixed (e.g. Diffit uses US grades K2–K11+)', 'Frequently drifts above target level', 'Fixed CEFR A1–C2 rules, verified section by section before saving'],
-          ['Per-student vocabulary tracking & recycling', 'None (or static decks only)', 'None', 'None — resets every chat', 'Tracks learned words and recycles them into future readings & questions'],
-          ['Printable student study PDF', 'Static PDF (Off2Class has no printing)', 'Export varies; often single worksheets', 'Manual copy & format', 'Complete Vocabulary Review study PDF (pronunciation, 4 examples, word families, collocations, usage notes, 5-part semantic maps)'],
-          ['Private learner dashboard', 'Rare, per-seat capped, or expensive add-on', 'Usually none or temporary links', 'None', 'Included per student (no login): past lessons, spaced flashcards, topic ideas & custom lessons'],
+          ['Custom lesson on any niche student topic', 'No — fixed catalogue only', 'Activity by activity, assembled manually', 'Yes, with heavy prompting & editing', `Yes — complete lesson in ${generationTime} (inspect [C1 Business Ethics](/lessons/1731) or [all free lessons](/esl-lessons))`],
+          ['Full scientific pedagogical sequence', 'Varies by publisher', 'Single isolated tasks; US K–12 apps lack ELT flow', 'No — unformatted text unless prompted step by step', 'Yes — 8-stage sequence: warm-up recall, rich vocab, reading, recall flashcards, semantic maps, exercises & deep discussion ([how it works](/how-it-works))'],
+          ['CEFR A1–C2 calibration', 'Usually good inside fixed catalogue (often B1–C1 focused)', 'Mixed (e.g. Diffit uses US grades K2–K11+)', 'Frequently drifts above target level', 'Fixed CEFR A1–C2 rules, verified section by section (see [A1 Beginner](/lessons/1774) vs. [B2](/lessons/1768) & [C1](/lessons/1750))'],
+          ['Per-student vocabulary tracking & recycling', 'None (or static decks only)', 'None', 'None — resets every chat', 'Tracks learned words, avoids duplicates & recycles earlier words naturally into future readings & questions'],
+          ['Printable student study PDF', 'Static PDF (Off2Class has no printing)', 'Export varies; often single worksheets', 'Manual copy & format', 'Color-coded Vocabulary Review study PDF with pronunciation, 4 examples, word families, collocations, usage notes & 5-part semantic maps ([see PDF proof](/student-experience))'],
+          ['Private learner dashboard', 'Rare, per-seat capped, or expensive add-on', 'Usually none or temporary links', 'None', 'Included per student (no login): past lessons, spaced flashcards, topic ideas & custom lessons ([preview dashboard](/student-experience))'],
         ],
       },
     },
@@ -49,6 +50,7 @@ export const compareHubPage: MarketingPage = {
       bullets: [
         '[PlanWise ESL vs. Twee](/compare/twee) — Modular single-task AI tools vs. one cohesive, quality-checked pedagogical lesson with student vocabulary memory.',
         '[PlanWise ESL vs. ESL Brains](/compare/esl-brains) — Fixed adult video-lesson catalogue vs. unlimited custom student topics, vocabulary recycling and learner dashboards.',
+        '[PlanWise ESL vs. Fluentize](/compare/fluentize) — Static 700+ YouTube video lesson library vs. unlimited custom A1–C2 lessons, zero link rot, natural vocabulary recycling and learner dashboards.',
         '[PlanWise ESL vs. Linguahouse](/compare/linguahouse) — Large static worksheet library + static Expemo decks vs. bespoke lessons that dynamically recycle each student’s vocabulary.',
         '[PlanWise ESL vs. Off2Class](/compare/off2class) — Browser-locked sequential curriculum (no printing) vs. flexible conversation lessons with printable study PDFs and unlimited students.',
         '[PlanWise ESL vs. ChatGPT](/compare/chatgpt) — Prompting a general chatbot from scratch vs. enforced CEFR rules, verified exercises, student memory and learner dashboards.',
@@ -67,8 +69,13 @@ export const compareHubPage: MarketingPage = {
     {
       heading: 'Built by a working ESL teacher — verify the quality with zero login',
       paragraphs: [
-        'Most big ESL platforms hide full lessons behind a paywall and ask you to trust their marketing claims. PlanWise ESL was built by a working British ESL teacher (11 years teaching, 2,000+ students) who uses these lessons in real classes every week.',
-        'Open any free lesson in our [public A1–C2 ESL lesson library](/esl-lessons) with **no account required**, download the color-coded Vocabulary Review study PDF at the top of the page, inspect our [9-point CEFR Quality Benchmark](/compare/cefr-benchmark), or preview the zero-login [Student Experience](/student-experience) before starting a trial.',
+        'Most big ESL platforms hide full lessons behind a paywall and ask you to trust their marketing claims. PlanWise ESL was built by a working British ESL teacher (11 years teaching, 2,000+ students) who uses these lessons in real classes every week. Click any live example below with **no login required**:',
+      ],
+      bullets: [
+        '**A1 Beginner proof:** [Let’s Talk About Video Games! (A1)](/lessons/1774) — or browse all [A1 Beginner lessons](/esl-lessons/a1).',
+        '**B2 Upper-Intermediate proof:** [Can Money Buy Happiness? (B2)](/lessons/1768) and [AI and Tomorrow’s World (B2)](/lessons/1801).',
+        '**C1 Business & Career proof:** [The Price of Doing Right: Ethics in the Boardroom (C1)](/lessons/1731) and [Founders, Failures and Pivots (C1)](/lessons/1750).',
+        '**Study PDF & Learner Dashboard proof:** [Student Experience & Vocabulary Review PDF excerpt](/student-experience), our [9-point CEFR Quality Benchmark](/compare/cefr-benchmark), and the full [free A1–C2 public library](/esl-lessons).',
       ],
     },
   ],
@@ -484,10 +491,98 @@ export const cefrBenchmarkPage: MarketingPage = {
   updated,
 };
 
+export const compareFluentizePage: MarketingPage = {
+  path: '/compare/fluentize',
+  title: `${brand} vs Fluentize for ESL Teachers & Online Tutors`,
+  description:
+    `Honest comparison of ${brand} vs Fluentize: 700+ static YouTube video plans vs. custom A1–C2 lessons, vocab recycling, student hub & study PDFs.`,
+  navLabel: 'PlanWise vs Fluentize',
+  eyebrow: 'Comparison',
+  h1: 'PlanWise ESL vs. Fluentize for ESL teachers and online tutors',
+  intro: [
+    'Fluentize (`fluentize.com`) is a well-liked static library of 700+ hand-written ESL lesson plans built around authentic YouTube videos (adding 6–10 new lessons a month) with printable PDFs, fillable PDFs, and Google Slides—at a very affordable annual price for teachers who want ready-made B1–C1 listening lessons.',
+    'PlanWise ESL is not trying to compete with Fluentize on being a low-cost static video catalogue. Instead, it solves everything a fixed YouTube library cannot do for active 1-on-1 tutors: generating a complete 8-stage CEFR A1–C2 lesson on **any niche student topic in 1–2 minutes**, supporting true A1–A2 beginners without fast YouTube audio, eliminating YouTube link rot and paid-call video dead air, tracking and naturally recycling each student’s vocabulary across weeks, and giving every student a zero-login learner dashboard and printable color-coded Vocabulary Review PDF.',
+  ],
+  sections: [
+    {
+      heading: 'Side by side: PlanWise ESL vs. Fluentize',
+      table: {
+        headers: ['', 'Fluentize (verified Nov 2026)', brand],
+        rows: [
+          ['Lesson source & topic range', 'Static library of 700+ hand-written YouTube-video lesson plans (6–10 new/month)', `Custom 8-stage CEFR A1–C2 lesson on any niche student topic in ${generationTime}—never run out of topics ([see C1 Ethics](/lessons/1731) or [all free lessons](/esl-lessons))`],
+          ['CEFR range & beginner support', 'Strongest on authentic video listening for B1–C1 teens & adults; A1–A2 beginners often struggle with fast native YouTube clips', 'Full A1–C2 calibration with ~96%-familiar readings, controlled definitions & 3-tier sentence frames for beginners ([inspect A1 lesson](/lessons/1774))'],
+          ['Live 1-on-1 class flow', 'Depends on external YouTube videos (risk of YouTube link rot, ads, or silent dead air watching clips during paid calls)', '100% self-contained screen-shareable lesson—zero external link rot and maximum student talking time from minute one'],
+          ['Lesson format & exports', 'Printable PDF, fillable PDF & Google Slides per static lesson', 'Full-screen interactive teaching view + color-coded printable Vocabulary Review PDF with pronunciation, 4 examples, word families, collocations, usage notes & 5-part semantic maps ([see PDF proof](/student-experience))'],
+          ['Per-student vocabulary memory', 'None — static lessons do not track what each student already knows', 'Logs learned words per student, strictly avoids duplicates & recycles earlier words into future readings & questions only when natural and relevant'],
+          ['Between-class student portal', 'No persistent student dashboard', 'Zero-login private learner dashboard per student: past lessons, cumulative word list, spaced flashcards, topic ideas & custom lessons on Unlimited ([preview](/student-experience))'],
+          ['Pricing (verified Nov 2026)', '$3.49/credit (5 for $14.99, 10 for $26.49), $49/6 months, or $79/year (~$6.58/mo); school plans $45–$60/teacher/year', `${trialText} (no credit card), then flat ${priceText} Unlimited lessons & students, cancel anytime`],
+        ],
+      },
+    },
+    {
+      heading: 'The honest ROI math: static budget library vs. student retention',
+      paragraphs: [
+        `On sticker price alone, Fluentize’s $79/year plan (~$6.58/month) is cheaper than PlanWise ESL’s **${priceText}** Unlimited plan. For independent Preply, italki, or private tutors, though, the real metric is **student retention and unpaid prep time**: keeping just **one** regular 1-on-1 student for **one extra lesson a month**—because their classes match their exact career or hobbies and come with a zero-login flashcard hub and color-coded study PDF—already pays for PlanWise ESL for the entire month.`,
+      ],
+    },
+    {
+      heading: 'When Fluentize is the better choice',
+      bullets: [
+        'You specifically want authentic YouTube video listening comprehension lessons for B1–C1 teens or adults on a low annual budget ($79/year).',
+        'You prefer browsing a curated static catalogue in Google Slides or fillable PDFs rather than generating custom topics.',
+        'You do not need per-student vocabulary tracking, A1–A2 beginner scaffolding, or a persistent between-class student dashboard.',
+      ],
+    },
+    {
+      heading: 'Why tutors switch from Fluentize to PlanWise ESL',
+      bullets: [
+        '**Never exhaust a 700-lesson catalogue:** Full-time 1-on-1 tutors quickly run out of fresh B1/B2 topics for long-term students—and static libraries cannot cover niche job interviews, tech stand-ups, medical consultations, or specific hobbies on demand.',
+        '**Built for true A1–C2 calibration:** Instead of forcing lower-level learners to decode fast YouTube clips, PlanWise ESL enforces ~96%-familiar readings, controlled definitions, and 3-tier sentence frames (emerging/developing/expanding) across all six CEFR levels.',
+        '**No YouTube link rot or paid-call dead air:** Every lesson is self-contained and designed for live teacher-led speaking from warm-up to deep discussion—no broken embeds, pre-roll ads, or sitting silently watching a 5-minute clip on a paid call.',
+        '**Real student continuity that drives renewals:** Natural cross-lesson vocabulary recycling, a zero-login [student dashboard](/student-experience), and a color-coded Vocabulary Review PDF turn isolated lessons into a visible learning journey.',
+      ],
+    },
+    {
+      heading: 'Verify the difference yourself with zero login',
+      paragraphs: [
+        'Every claim above can be checked directly in our live, no-login library—no account or email required:',
+      ],
+      bullets: [
+        '**A1 Beginner scaffolding proof:** [Let’s Talk About Video Games! (A1)](/lessons/1774) and all [free A1 Beginner lessons](/esl-lessons/a1).',
+        '**Niche B2 & C1 Career/Business proof:** [The Price of Doing Right: Ethics in the Boardroom (C1)](/lessons/1731), [Founders, Failures and Pivots (C1)](/lessons/1750), and [Can Money Buy Happiness? (B2)](/lessons/1768).',
+        '**Vocabulary Review PDF & Zero-Login Student Hub proof:** [Student Experience page](/student-experience) (with a real Vocabulary Review study PDF excerpt) and the full [free A1–C2 public library](/esl-lessons).',
+      ],
+    },
+  ],
+  faq: [
+    {
+      question: 'Why does PlanWise ESL cost more per month than Fluentize’s $79/year plan?',
+      answer: `Fluentize sells access to a static catalogue of 700+ pre-written YouTube lessons ($79/year, ~$6.58/mo). PlanWise ESL (${priceText} Unlimited after a ${trialText}, no credit card) generates unlimited bespoke 8-stage CEFR A1–C2 lessons on any niche topic in ${generationTime}, tracks and naturally recycles every student’s vocabulary across lessons, and includes a zero-login student dashboard and printable color-coded Vocabulary Review PDF. For 1-on-1 tutors, retaining one student for a single extra class a month covers the subscription.`,
+    },
+    {
+      question: 'Can I use PlanWise ESL for A1 and A2 beginners where YouTube video lessons feel too fast?',
+      answer: 'Yes. PlanWise ESL enforces strict A1 and A2 rules—keeping definitions to simple high-frequency words, readings ~96% familiar, and adding 3-tier sentence frames so beginners can speak confidently without struggling through fast native YouTube audio. Inspect a live A1 example free at /lessons/1774.',
+    },
+    {
+      question: 'Can I use Fluentize and PlanWise ESL together?',
+      answer: 'Yes. Some tutors keep a video library for occasional B1–C1 listening lessons and use PlanWise ESL whenever a student needs a custom topic, beginner-friendly A1–A2 scaffolding, longitudinal vocabulary recycling, or a zero-login flashcard dashboard.',
+    },
+  ],
+  disclaimer: 'PlanWise ESL is not affiliated with or endorsed by Fluentize. Fluentize pricing and library size verified as of November 2026 at app.fluentize.com/pricing and subject to change—check fluentize.com for current details.',
+  cta: {
+    heading: 'Go beyond a 700-lesson static video catalogue',
+    text: `Generate a custom 8-stage CEFR A1–C2 lesson on your student’s exact topic in ${generationTime}. Your ${trialText} needs no credit card.`,
+    ...trialCta,
+  },
+  schemaType: 'WebPage',
+  updated,
+};
+
 export const comparisonPages: MarketingPage[] = [
   compareHubPage,
   compareTweePage,
   compareEslBrainsPage,
+  compareFluentizePage,
   compareLinguahousePage,
   compareOff2ClassPage,
   cefrBenchmarkPage,
