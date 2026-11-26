@@ -64,6 +64,13 @@ export const compareHubPage: MarketingPage = {
         `**Choose ${brand}** if you teach regular one-to-one or small-group students ([online platform tutors](/for/online-tutors), [freelance teachers](/for/freelance-esl-teachers) or [small to medium language schools](/for/language-schools)) and want complete, scientifically structured CEFR A1–C2 lessons on any topic, longitudinal vocabulary recycling, printable Vocabulary Review study PDFs, and private learner dashboards.`,
       ],
     },
+    {
+      heading: 'Built by a working ESL teacher — verify the quality with zero login',
+      paragraphs: [
+        'Most big ESL platforms hide full lessons behind a paywall and ask you to trust their marketing claims. PlanWise ESL was built by a working British ESL teacher (11 years teaching, 2,000+ students) who uses these lessons in real classes every week.',
+        'Open any free lesson in our [public A1–C2 ESL lesson library](/esl-lessons) with **no account required**, download the color-coded Vocabulary Review study PDF at the top of the page, inspect our [9-point CEFR Quality Benchmark](/compare/cefr-benchmark), or preview the zero-login [Student Experience](/student-experience) before starting a trial.',
+      ],
+    },
   ],
   faq: [
     {
@@ -132,6 +139,14 @@ export const compareTweePage: MarketingPage = {
         'You teach regular one-to-one or small-group students on [Cambly, Preply or italki](/for/online-tutors), [privately](/for/freelance-esl-teachers), or at a [language school](/for/language-schools) and want each lesson to build on the words the student already learned.',
         'You want every student to leave class with a polished Vocabulary Review study PDF (including common collocations, word families, usage notes and synonyms/antonyms) plus a private learner dashboard with flashcards.',
         'You want students to suggest topics or create their own custom lessons on any subject between classes.',
+      ],
+    },
+    {
+      heading: 'Why tutors switch from Twee to PlanWise ESL',
+      bullets: [
+        '**1 click instead of 6 separate tools:** Twee makes you run a reading generator, vocab generator, gap-fill generator, and discussion generator separately and stitch them together. PlanWise ESL builds all 8 connected stages in one pass.',
+        '**Real student continuity:** Twee forgets your student the moment you close the tab. PlanWise ESL tracks every student’s vocabulary, avoids repeats, recycles earlier words naturally when relevant, and gives each student a zero-login [learner dashboard](/student-experience).',
+        '**See a full lesson with zero signup:** Open any complete A1–C2 lesson in our [free public library](/esl-lessons) (including the downloadable color-coded Vocabulary Review PDF) or read our [CEFR Quality Benchmark](/compare/cefr-benchmark).',
       ],
     },
   ],
@@ -205,6 +220,14 @@ export const compareEslBrainsPage: MarketingPage = {
         'You want a comprehensive Vocabulary Review study PDF (word families, common collocations, usage notes and synonyms/antonyms) ready to send after every class.',
       ],
     },
+    {
+      heading: 'Why high-volume tutors switch from ESL Brains to PlanWise ESL',
+      bullets: [
+        '**Never run out of topics at your student’s level:** Fixed catalogues eventually run dry for long-term 1-on-1 students—or miss niche career, tech, medical and hobby topics altogether. PlanWise ESL generates a full 8-stage CEFR A1–C2 lesson on any topic in 1–2 minutes.',
+        '**Vocabulary that actually sticks across weeks:** ESL Brains lessons are isolated one-offs. PlanWise ESL tracks learned words per student, prevents duplicates, recycles earlier vocabulary naturally when relevant, and gives learners a zero-login [student dashboard](/student-experience).',
+        '**Inspect full lessons free with no login:** Browse our [public A1–C2 ESL lesson library](/esl-lessons) and download any lesson’s color-coded Vocabulary Review PDF before starting a trial.',
+      ],
+    },
   ],
   faq: [
     {
@@ -275,6 +298,14 @@ export const compareLinguahousePage: MarketingPage = {
         'You want a rich, color-coded Vocabulary Review study PDF (with collocations, word families, usage notes and semantic maps) to send straight after class.',
       ],
     },
+    {
+      heading: 'Why 1-on-1 tutors switch from Linguahouse to PlanWise ESL',
+      bullets: [
+        '**Bespoke topics instead of recycled PDFs:** Students on Preply, Cambly and italki often recognise the same static Linguahouse worksheets from previous tutors—and static libraries cannot cover a student’s specific job interview, tech stack or hobby on demand.',
+        '**Dynamic recycling beats isolated decks:** Instead of leaving vocabulary inside a separate Expemo deck, PlanWise ESL avoids duplicate words, weaves earlier vocabulary naturally into future readings when relevant, and gives students a zero-login [learner dashboard](/student-experience).',
+        '**Open full lessons free—no paywall:** Unlike paywalled worksheet libraries, you can open complete A1–C2 lessons and download the color-coded Vocabulary Review PDF right now in our [public ESL lesson library](/esl-lessons).',
+      ],
+    },
   ],
   faq: [
     {
@@ -342,6 +373,14 @@ export const compareOff2ClassPage: MarketingPage = {
         'You teach adult or teen conversation classes on [Cambly, Preply or italki](/for/online-tutors), [privately](/for/freelance-esl-teachers) or at a [small to medium language school](/for/language-schools) and want engaging lessons built around each learner’s real interests.',
         'You teach more than 5 students and want flat, predictable pricing with unlimited lessons and students.',
         'You want every lesson to combine vocabulary depth (word families, collocations, usage notes), recall flashcards, semantic maps, beginner-friendly sentence frames, gap-fill, sentence unscramble and deep discussion.',
+      ],
+    },
+    {
+      heading: 'Why independent tutors switch from Off2Class to PlanWise ESL',
+      bullets: [
+        '**No student caps, no student logins:** Off2Class starter tiers cap active students and require student accounts. PlanWise ESL is a flat $19.99/month for unlimited lessons and unlimited students—with a zero-login [private learner dashboard](/student-experience) for every student.',
+        '**Printable study PDFs instead of browser-locked slides:** Off2Class does not let you print or export lessons. Every PlanWise ESL lesson generates a clean, color-coded Vocabulary Review study PDF students can save or print.',
+        '**Test a full lesson with zero signup:** Open any A1–C2 lesson in our [free public library](/esl-lessons) and download its Vocabulary Review PDF right now, or compare quality side by side on our [CEFR Quality Benchmark](/compare/cefr-benchmark).',
       ],
     },
   ],
