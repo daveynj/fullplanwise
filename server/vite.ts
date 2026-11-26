@@ -8,6 +8,7 @@ import { injectLandingPrerender } from "./landing-prerender";
 import { injectBlogPrerender } from "./blog-prerender";
 import { injectLessonPrerender } from "./lesson-prerender";
 import { injectMarketingPrerender } from "./marketing-prerender";
+import { AUTH_ROBOTS_DIRECTIVE, injectAuthNoindex } from "./auth-prerender";
 import { marketingPages } from "@shared/marketing-pages";
 
 // Development-only Vite middleware lives in ./vite-dev, which index.ts loads
@@ -105,6 +106,17 @@ export function serveStatic(app: Express) {
       res.status(200).set({ "Content-Type": "text/html" }).end(prerendered);
     });
   }
+
+  // Keep /auth out of search indexes for bots that do not run JavaScript.
+  app.get("/auth", (_req, res) => {
+    res
+      .status(200)
+      .set({
+        "Content-Type": "text/html",
+        "X-Robots-Tag": AUTH_ROBOTS_DIRECTIVE,
+      })
+      .end(injectAuthNoindex(readIndexTemplate()));
+  });
 
   app.get("/lessons/:id", servePrerenderedLesson);
   app.get("/esl-lessons", servePrerenderedLesson);

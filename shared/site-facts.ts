@@ -23,7 +23,21 @@ export const siteFacts = {
   /** How long a lesson usually takes to generate. Pictures follow about a minute later, while the lesson is already open. */
   generationTime: '1–2 minutes',
   levels: 'A1–C2',
+  email: 'dave@planwiseesl.com',
 } as const;
+
+/** Real public profiles representing the PlanWise ESL organisation. */
+export const organizationSameAs = [
+  'https://x.com/PlanwiseESL',
+] as const;
+
+/** Real public profiles representing founder Dave Jackson. */
+export const founderSameAs = [
+  siteFacts.founderSite,
+  'https://www.linkedin.com/in/davidjackson113',
+  'https://x.com/DaveTeacher1',
+  'https://www.youtube.com/@EnglishteacherDave',
+] as const;
 
 /**
  * The founder as structured data (schema.org Person), from his own site
@@ -35,11 +49,7 @@ export const founderPerson = {
   name: siteFacts.founder,
   jobTitle: siteFacts.founderRole,
   url: siteFacts.founderSite,
-  sameAs: [
-    siteFacts.founderSite,
-    'https://www.linkedin.com/in/davidjackson113',
-    'https://x.com/DaveTeacher1',
-  ],
+  sameAs: [...founderSameAs],
   nationality: 'British',
   alumniOf: { '@type': 'CollegeOrUniversity', name: 'University of Southampton' },
   hasCredential: [

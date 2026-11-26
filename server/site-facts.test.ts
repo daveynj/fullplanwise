@@ -67,6 +67,7 @@ describe("homepage structured data", () => {
     expect(software).toBeDefined();
     expect(software.name).toBe(siteFacts.brand);
     expect(software.offers.map((o: any) => o.price)).toEqual(["0", siteFacts.priceValue]);
+    expect(software.offers.find((o: any) => o.name === "Unlimited")?.url).toBe(`${siteFacts.url}/pricing`);
     expect(software).not.toHaveProperty("aggregateRating");
   });
 
@@ -77,7 +78,11 @@ describe("homepage structured data", () => {
   });
 
   it("cannot be broken out of by page text", () => {
-    expect(buildLandingStructuredData()).not.toMatch(/<\/script>[\s\S]*<\/script>[\s\S]*<\/script>/);
+    const output = buildLandingStructuredData();
+    const openings = output.match(/<script type="application\/ld\+json">/g) ?? [];
+    const closings = output.match(/<\/script>/g) ?? [];
+    expect(openings).toHaveLength(3);
+    expect(closings).toHaveLength(openings.length);
   });
 });
 

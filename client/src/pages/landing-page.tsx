@@ -50,7 +50,7 @@ const HeroVideo = ({ url }: { url: string }) => {
       type="button"
       onClick={() => setPlaying(true)}
       className="group relative block w-full aspect-video bg-slate-900"
-      aria-label="Play video: how PlanWise ESL works"
+      aria-label={`Play video: ${hero.videoTitle}`}
     >
       <img
         src={`https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`}
