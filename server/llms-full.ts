@@ -1,3 +1,4 @@
+import { lessonPath } from '@shared/lesson-url';
 import {
   siteFacts,
   trialText,
@@ -196,6 +197,8 @@ function renderHomepageMarkdown(): string {
 
 export interface PublicLessonLlmsItem {
   id: number;
+  publicSlug?: string | null;
+  publicLevel?: string | null;
   title: string;
   cefrLevel: string;
   publicCategory?: string | null;
@@ -213,7 +216,7 @@ function renderPublicLessonsMarkdown(publicLessons: PublicLessonLlmsItem[]): str
     if (inLevel.length === 0) continue;
     const lines = inLevel.map((l) => {
       const cat = l.publicCategory ? ` [${l.publicCategory}]` : '';
-      return `- [${l.title}](${BASE_URL}/lessons/${l.id})${cat}`;
+      return `- [${l.title}](${BASE_URL}${lessonPath(l)})${cat}`;
     });
     blocks.push(`### ${level} Lessons (${BASE_URL}/esl-lessons/${level.toLowerCase()})\n${lines.join('\n')}`);
   }

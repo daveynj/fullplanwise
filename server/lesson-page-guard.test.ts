@@ -13,10 +13,14 @@
 // proves the guard called next().
 import { describe, it, expect, vi, beforeAll, afterAll, beforeEach } from "vitest";
 import type { Server } from "http";
+vi.mock("./lesson-url-schema", () => ({ ensureLessonUrlSchema: vi.fn(async () => {}) }));
 
 const mockStorage = vi.hoisted(() => ({
   getUser: vi.fn(),
   getLesson: vi.fn(),
+  getLessonByPublicSlug: vi.fn(),
+  getPublicLessonSummaries: vi.fn(),
+  getAllBlogPosts: vi.fn(async () => ({ posts: [] })),
   updateLesson: vi.fn(),
 }));
 
@@ -87,6 +91,9 @@ beforeAll(async () => {
   app.get("/lessons/:id", (_req, res) => {
     res.status(200).type("html").send(PASSED_THROUGH);
   });
+  app.get("/esl-lessons/:level/:slug", (_req, res) => {
+    res.status(200).type("html").send(PASSED_THROUGH);
+  });
 
   await new Promise<void>((resolve) => server.listen(0, resolve));
   const address = server.address();
@@ -113,6 +120,76 @@ const lesson = (overrides: Record<string, unknown>) => ({
   isPublic: false,
   isShared: false,
   ...overrides,
+});
+
+describe("stable public lesson URLs", () => {
+  const publicLesson = () => lesson({
+    isPublic: true, cefrLevel: "B1", publicSlug: "travel-plans", publicLevel: "b1",
+    topic: "PRIVATE student information", notes: "PRIVATE notes", studentId: 99,
+  });
+
+  it("permanently redirects old links, preserving tracking parameters", async () => {
+    mockStorage.getLesson.mockResolvedValue(publicLesson());
+    const response = await fetch(`${baseUrl}/lessons/42?ref=share`, { redirect: "manual" });
+    expect(response.status).toBe(301);
+    expect(response.headers.get("location")).toBe("/esl-lessons/b1/travel-plans?ref=share");
+  });
+
+  it("serves the stored URL even after a title and level change", async () => {
+    mockStorage.getLessonByPublicSlug.mockResolvedValue({ ...publicLesson(), title: "New title", cefrLevel: "C2" });
+    const response = await fetch(`${baseUrl}/esl-lessons/b1/travel-plans`);
+    expect(response.status).toBe(200);
+    expect(await response.text()).toBe(PASSED_THROUGH);
+  });
+
+  it("redirects alternate levels to the one stored at publication", async () => {
+    mockStorage.getLessonByPublicSlug.mockResolvedValue(publicLesson());
+    const response = await fetch(`${baseUrl}/esl-lessons/b2/travel-plans?ref=share`, { redirect: "manual" });
+    expect(response.status).toBe(301);
+    expect(response.headers.get("location")).toBe("/esl-lessons/b1/travel-plans?ref=share");
+  });
+
+  it("does not reveal private fields through the slug API", async () => {
+    mockStorage.getLessonByPublicSlug.mockResolvedValue(publicLesson());
+    const response = await fetch(`${baseUrl}/api/public-lessons/travel-plans`);
+    expect(response.status).toBe(200);
+    const body = await response.text();
+    expect(body).toContain("Travel Plans");
+    expect(body).not.toContain("PRIVATE");
+    expect(JSON.parse(body).studentId).toBeNull();
+  });
+
+  it("returns 404 for private or missing slugs and their API", async () => {
+    for (const record of [undefined, { ...publicLesson(), isPublic: false }]) {
+      mockStorage.getLessonByPublicSlug.mockResolvedValue(record);
+      await expectRealNotFound("/esl-lessons/b1/travel-plans");
+      expect((await fetch(`${baseUrl}/api/public-lessons/travel-plans`)).status).toBe(404);
+    }
+  });
+
+  it("keeps an unpublished but link-shared URL open and noindex", async () => {
+    mockStorage.getLessonByPublicSlug.mockResolvedValue({ ...publicLesson(), isPublic: false, isShared: true });
+    const response = await fetch(`${baseUrl}/esl-lessons/b1/travel-plans`);
+    expect(response.status).toBe(200);
+    expect(response.headers.get("x-robots-tag")).toContain("noindex");
+  });
+
+  it("returns retryable 503 rather than a soft 404 on lookup failures", async () => {
+    mockStorage.getLessonByPublicSlug.mockRejectedValueOnce(new Error("DB unavailable"));
+    const response = await fetch(`${baseUrl}/esl-lessons/b1/travel-plans`);
+    expect(response.status).toBe(503);
+    expect(response.headers.get("retry-after")).toBe("120");
+  });
+
+  it("uses only public slug URLs in the sitemap", async () => {
+    mockStorage.getPublicLessonSummaries.mockResolvedValue([publicLesson()]);
+    const response = await fetch(`${baseUrl}/sitemap.xml`);
+    expect(response.status).toBe(200);
+    const body = await response.text();
+    expect(body).toContain("https://planwiseesl.com/esl-lessons/b1/travel-plans");
+    expect(body).not.toContain("/lessons/42");
+    expect(body).not.toContain("PRIVATE");
+  });
 });
 
 async function expectRealNotFound(path: string) {

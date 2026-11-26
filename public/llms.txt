@@ -1,6 +1,6 @@
 # PlanWise ESL
 
-> PlanWise ESL (planwiseesl.com) is an AI ESL lesson planner built for Cambly, Preply and italki tutors, freelance English teachers, and small to medium language schools. Choose a CEFR level (A1–C2) and any topic, and in 1–2 minutes PlanWise ESL builds a complete, ready-to-teach conversation lesson following a scientific pedagogical sequence (pictures follow about a minute later while the lesson is already open). It tracks each student's vocabulary so future lessons recycle earlier words into readings and questions, gives every student a private learner dashboard with past lessons, flashcards and custom lesson creation on any subject, and exports a downloadable study PDF with all vocabulary, examples, word families, synonyms/antonyms and usage notes. Created by Dave Jackson, a working British ESL teacher since 2015.
+> PlanWise ESL (planwiseesl.com) is an AI ESL lesson planner built for Preply and italki tutors, freelance English teachers, and small to medium language schools. Choose a CEFR level (A1–C2) and any topic, and in 1–2 minutes PlanWise ESL builds a complete, ready-to-teach conversation lesson following a scientific pedagogical sequence (pictures follow about a minute later while the lesson is already open). It tracks each student's vocabulary so future lessons recycle earlier words into readings and questions, gives every student a private learner dashboard with past lessons, flashcards and custom lesson creation on any subject, and exports a downloadable study PDF with all vocabulary, examples, word families, synonyms/antonyms and usage notes. Created by Dave Jackson, a working British ESL teacher since 2015.
 
 Also written as: PlanwiseESL, Plan Wise ESL.
 
@@ -8,7 +8,7 @@ PlanWise ESL makes **topic-based conversation lessons** built on a scientific pe
 
 ## Who it is for
 
-- Online ESL tutors on Cambly, Preply, italki and other tutoring platforms
+- Online ESL tutors on Preply, italki and other tutoring platforms
 - Freelance and independent private English teachers with regular students
 - Small to medium language schools
 - Teachers of teenagers and adults in one-to-one or small-group classes, online or in person
@@ -57,7 +57,7 @@ PlanWise ESL publishes a public library of free, ready-to-teach ESL conversation
 Each public lesson page explains its structure under "How this lesson is built", and its structured data (schema.org LearningResource) lists the CEFR level, the words and speaking functions it teaches, and each stage of the lesson.
 
 - All free lessons: https://planwiseesl.com/esl-lessons
-- By level: https://planwiseesl.com/esl-lessons/a1 , https://planwiseesl.com/esl-lessons/a2 , https://planwiseesl.com/esl-lessons/b1 , https://planwiseesl.com/esl-lessons/b2 , https://planwiseesl.com/esl-lessons/c1
+- By level: https://planwiseesl.com/esl-lessons/a1 , https://planwiseesl.com/esl-lessons/a2 , https://planwiseesl.com/esl-lessons/b1 , https://planwiseesl.com/esl-lessons/b2 , https://planwiseesl.com/esl-lessons/c1 , https://planwiseesl.com/esl-lessons/c2
 - Example B2 lesson: https://planwiseesl.com/lessons/1768
 
 ## About the founder
@@ -76,10 +76,13 @@ Dave Jackson is a British English teacher who has taught English online since 20
 - [How it works: the research behind every lesson](https://planwiseesl.com/how-it-works)
 - [Student learner dashboard & printable Vocabulary Review study PDF](https://planwiseesl.com/student-experience)
 - [Pricing](https://planwiseesl.com/pricing)
-- [For Cambly, Preply & italki tutors](https://planwiseesl.com/for/online-tutors)
+- [For Preply & italki tutors](https://planwiseesl.com/for/online-tutors)
+- [For Preply tutors](https://planwiseesl.com/for/preply-tutors)
+- [For italki tutors & teachers](https://planwiseesl.com/for/italki-tutors)
 - [For freelance & independent ESL teachers](https://planwiseesl.com/for/freelance-esl-teachers)
 - [For small to medium language schools](https://planwiseesl.com/for/language-schools)
 - [Compare PlanWise ESL vs pre-made libraries & AI tools](https://planwiseesl.com/compare)
+- [PlanWise ESL vs ESL Joy](https://planwiseesl.com/compare/esl-joy)
 - [PlanWise ESL vs Twee](https://planwiseesl.com/compare/twee)
 - [PlanWise ESL vs ESL Brains](https://planwiseesl.com/compare/esl-brains)
 - [PlanWise ESL vs Fluentize](https://planwiseesl.com/compare/fluentize)
@@ -93,7 +96,6 @@ Dave Jackson is a British English teacher who has taught English online since 20
 - [Guide: ESL conversation topics by level (A1–C2)](https://planwiseesl.com/guides/esl-conversation-topics-by-level)
 - [Guide: CEFR levels A1–C2 explained for ESL teachers](https://planwiseesl.com/guides/cefr-levels-explained)
 - [Guide: how to personalise ESL lessons for one-to-one students](https://planwiseesl.com/guides/personalise-esl-lessons)
-- [Guide: how to get a 100% feedback score on Cambly](https://planwiseesl.com/guides/cambly-feedback-score-super-tutor)
 - [Free ESL lessons](https://planwiseesl.com/esl-lessons)
 - [Blog](https://planwiseesl.com/blog)
 - [Start a free trial](https://planwiseesl.com/auth?register=true)

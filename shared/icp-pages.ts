@@ -1,7 +1,7 @@
 /**
  * Ideal Customer Profile (ICP) landing pages for the core groups PlanWise ESL
  * is built for:
- *  1. Online ESL tutors on Cambly, Preply and italki (/for/online-tutors)
+ *  1. Online ESL tutors on Preply and italki (/for/online-tutors)
  *  2. Freelance and independent private ESL teachers (/for/freelance-esl-teachers)
  *  3. Small to medium language schools (/for/language-schools)
  *
@@ -17,15 +17,16 @@ const trialCta = { label: 'Start Your Free Trial', href: '/auth?register=true' }
 
 export const onlineTutorsPage: MarketingPage = {
   path: '/for/online-tutors',
-  title: `AI ESL Lesson Planner for Cambly, Preply & italki Tutors | ${brand}`,
+  title: `AI ESL Lesson Planner for Preply & italki Tutors | ${brand}`,
   description:
-    `Build personalised CEFR A1–C2 ESL lessons in ${generationTime} for Cambly, Preply and italki classes—with vocab memory, flashcards and study PDFs.`,
+    `Build personalised CEFR A1–C2 ESL lessons in ${generationTime} for Preply and italki classes—with vocab memory, flashcards and study PDFs.`,
   navLabel: 'For Online Tutors',
-  eyebrow: 'For Cambly, Preply & italki tutors',
-  h1: 'The AI ESL lesson planner built for Cambly, Preply and italki tutors',
+  eyebrow: 'For Preply & italki tutors',
+  h1: 'The AI ESL lesson planner built for Preply and italki tutors',
   intro: [
-    `Teaching back-to-back online classes on Cambly, Preply or italki leaves almost no margin for unpaid lesson prep. Built-in platform materials can feel stiff or repetitive, pre-made lesson libraries run out of topics that fit a specific student, and pasting raw prompts into ChatGPT takes 20–60 minutes of level-checking and formatting.`,
+    `Teaching back-to-back online classes on Preply or italki leaves almost no margin for unpaid lesson prep. Built-in platform materials can feel stiff or repetitive, pre-made lesson libraries run out of topics that fit a specific student, and pasting raw prompts into ChatGPT takes 20–60 minutes of level-checking and formatting.`,
     `${brand} was built by a working online ESL tutor to solve that exact daily workflow: choose your student, pick a CEFR level (A1–C2) and any topic, and in **${generationTime}** you have a complete, ready-to-screen-share conversation lesson built on a scientific pedagogical sequence—with per-student vocabulary memory, a private learner dashboard, and a downloadable study PDF.`,
+    'See dedicated workflow guides for [Preply tutors](/for/preply-tutors) and [italki tutors & teachers](/for/italki-tutors).',
   ],
   sections: [
     {
@@ -67,8 +68,8 @@ export const onlineTutorsPage: MarketingPage = {
     {
       heading: 'Honest tutor math: when does a subscription pay off?',
       paragraphs: [
-        `On Cambly, Preply or italki, every unpaid hour you spend planning lowers your real hourly rate. ${brand} costs **${priceText}** for unlimited lessons (after a **${trialText}**, no credit card required). If you teach 20 lessons a month, that is about $1 per complete, personalised lesson—and if it saves you even 20 minutes of prep per class, you get nearly seven hours of your week back while giving students a noticeably better experience that drives renewals and 5-star reviews.`,
-        'Want a proven routine for turning first-time platform trials into regular students? Read Dave’s [Cambly first-lesson & feedback score guide](/guides/cambly-feedback-score-super-tutor).',
+        `On Preply or italki, every unpaid hour you spend planning lowers your real hourly rate. ${brand} costs **${priceText}** for unlimited lessons (after a **${trialText}**, no credit card required). If you teach 20 lessons a month, that is about $1 per complete, personalised lesson—and if it saves you even 20 minutes of prep per class, you get nearly seven hours of your week back while giving students a noticeably better experience that drives renewals and 5-star reviews.`,
+        'Want a practical routine for turning new students into long-term regulars? Read our guide on [how to personalise ESL lessons for one-to-one students](/guides/personalise-esl-lessons).',
       ],
     },
     {
@@ -80,19 +81,19 @@ export const onlineTutorsPage: MarketingPage = {
   ],
   faq: [
     {
-      question: 'What is the best AI ESL lesson planner for Cambly, Preply and italki tutors?',
+      question: 'What is the best AI ESL lesson planner for Preply and italki tutors?',
       answer: `For one-to-one online tutors, ${brand} stands out because it builds a complete CEFR-levelled (A1–C2) conversation lesson on any topic in ${generationTime}, remembers each student’s vocabulary across lessons, includes recall flashcards, synonyms/antonyms, sentence frames, fill-in-the-blanks, sentence unscramble and deep discussion, and gives every student a private learner dashboard and downloadable study PDF.`,
     },
     {
       question: 'Can I prepare a Preply or italki trial lesson in 2 minutes?',
-      answer: `Yes. As soon as a new student messages you their level and interests, enter the topic and CEFR level and you have a complete, full-screen lesson ready in ${generationTime}. You can even generate a lesson live at the start of a Cambly call while chatting through introductions.`,
+      answer: `Yes. As soon as a new student messages you their level and interests, enter the topic and CEFR level and you have a complete, full-screen lesson ready in ${generationTime}. You can even generate a lesson live at the start of a class while chatting through introductions.`,
     },
     {
       question: 'What if a student arrives without a topic to talk about?',
       answer: 'Students can suggest topics ahead of class on their private learner dashboard—and on Unlimited they can create custom lessons themselves on any subject they want to discuss. You can also browse the free library at /esl-lessons or pick from 12 subject areas.',
     },
     {
-      question: 'How do I share review materials and homework inside Preply or Cambly?',
+      question: 'How do I share review materials and homework inside Preply or italki?',
       answer: 'Send your student their private learner dashboard link (no login needed) so they can review past lessons and practise flashcards anytime, or download the complete study PDF—containing all vocabulary, definitions, example sentences, word families, synonyms/antonyms and usage notes—and drop it straight into the platform chat.',
     },
     {
@@ -100,7 +101,7 @@ export const onlineTutorsPage: MarketingPage = {
       answer: `Yes. Every new account includes a ${trialText} with unlimited lesson generation and no credit card needed, and you keep every lesson you create.`,
     },
   ],
-  disclaimer: 'PlanWise ESL is not affiliated with or endorsed by Cambly, Preply or italki. Those names belong to their respective owners.',
+  disclaimer: 'PlanWise ESL is not affiliated with or endorsed by Preply or italki. Those names belong to their respective owners.',
   cta: {
     heading: 'Try it before your next online class',
     text: `Generate a real lesson for one of your current students in ${generationTime}. Your ${trialText} needs no credit card.`,
@@ -280,4 +281,177 @@ export const languageSchoolsPage: MarketingPage = {
   updated,
 };
 
-export const icpPages: MarketingPage[] = [onlineTutorsPage, freelanceTeachersPage, languageSchoolsPage];
+export const preplyTutorsPage: MarketingPage = {
+  path: '/for/preply-tutors',
+  title: `AI ESL Lesson Planner for Preply Tutors | ${brand}`,
+  description:
+    `Build CEFR A1–C2 ESL lessons for Preply students in ${generationTime}: 8-stage pedagogy, natural vocab recycling, zero-login student hub & study PDFs.`,
+  navLabel: 'For Preply Tutors',
+  eyebrow: 'For Preply tutors',
+  h1: 'The AI ESL lesson planner built for Preply tutors',
+  intro: [
+    'Teaching weekly 1-on-1 students on Preply means balancing two realities: unpaid trial prep and platform commissions eat into your hourly rate, while keeping regular subscribers renewing month after month depends on giving every student genuinely personalised, structured classes.',
+    `${brand} turns that prep bottleneck into a **${generationTime}** workflow: pick your Preply student, choose their CEFR level (A1–C2) and any topic they care about, and open a complete 8-stage teacher-led lesson ready to screen-share—with automatic per-student vocabulary memory, a zero-login learner dashboard, and a printable color-coded Vocabulary Review PDF you can drop straight into Preply chat.`,
+  ],
+  sections: [
+    {
+      heading: 'Why Preply tutors outgrow platform slides and static PDF libraries',
+      bullets: [
+        '**Unpaid trial prep hurts your real hourly rate:** Spending 30–45 minutes preparing a bespoke trial lesson for a new Preply student before they subscribe cuts deeply into your income.',
+        '**Students recognise recycled library PDFs:** Regular adult learners on Preply have often seen the same generic static worksheets from previous tutors—and static catalogues rarely cover a student’s specific job interview, industry, or hobby.',
+        '**Weekly subscriptions need real continuity:** When a student books 2–3 lessons a week with you, they notice immediately whether you remember what they learned last Tuesday or treat every class like day one.',
+        '**Homework friction kills review:** Sending extra logins or messy raw documents means busy adult students never revise between classes.',
+      ],
+    },
+    {
+      heading: 'Built for weekly Preply schedules and trial-to-subscriber conversions',
+      paragraphs: [
+        'Every PlanWise ESL lesson follows the same [8-stage research-backed sequence](/how-it-works) and is verified section by section before class:',
+      ],
+      bullets: [
+        `**Zero unpaid prep panic:** Enter any topic and CEFR level (A1–C2) and open a full screen-shareable lesson in ${generationTime}—even minutes before a trial call.`,
+        '**Deep 8-stage structure every class:** Warm-up recall → 5 illustrated pre-taught words (phonetic pronunciation, levelled definition, 4 examples, word families, collocations, usage notes) → ~96%-familiar reading & comprehension → recall flashcards & 5-part semantic maps → quiz, 3-tier sentence frames, shuffled gap-fill & sentence unscramble → deep target-vocab discussion.',
+        '**Natural cross-lesson vocabulary memory:** Mark a class "We did this" and PlanWise logs the student’s words, strictly avoids duplicates, and weaves earlier words into future readings and questions only when natural and relevant.',
+        '**Zero-login student dashboard & printable Vocabulary Review PDF:** Share one private link inside Preply chat (no extra student login) for past lessons, spaced flashcards and topic requests—or download the color-coded Vocabulary Review PDF in one click.',
+      ],
+    },
+    {
+      heading: 'Side by side for Preply tutors',
+      table: {
+        headers: ['What matters on Preply', 'Preply library / static PDFs', 'General chatbot (ChatGPT)', brand],
+        rows: [
+          ['Custom trial lesson on student’s niche topic', 'Limited to fixed catalogue', '20–45 min prompting & fixing', `Ready in ${generationTime}`],
+          ['CEFR A1–C2 calibration', 'Varies by worksheet', 'Often drifts above target level', 'Fixed CEFR rules per level, checked automatically'],
+          ['Per-student vocabulary tracking across weeks', 'None', 'Resets every chat', 'Logs learned words, avoids repeats & recycles naturally when relevant'],
+          ['Student review between weekly classes', 'Static PDF or none', 'None unless formatted manually', 'Zero-login private learner dashboard + color-coded printable Vocabulary Review PDF'],
+          ['Student-requested custom lessons', 'None', 'None', 'Students suggest topics or create custom lessons on Unlimited'],
+          ['Cost for full-time tutors', 'Per-library subscriptions', 'Time spent editing raw text', `Flat ${priceText} Unlimited lessons & students (${trialText}, no card)`],
+        ],
+      },
+    },
+    {
+      heading: 'Inspect free teacher-led lessons before signing up',
+      paragraphs: [
+        'Want to see exactly what a Preply student sees on screen? Open any lesson in our [free public A1–C2 ESL lesson library](/esl-lessons) with **no login required**, download its color-coded Vocabulary Review PDF, or preview the [Student Experience](/student-experience) and [tool comparisons](/compare).',
+      ],
+    },
+  ],
+  faq: [
+    {
+      question: 'How fast can I prepare a personalised Preply trial lesson with PlanWise ESL?',
+      answer: `In ${generationTime}. As soon as a prospective Preply student tells you their level and goals, enter the topic and CEFR level (A1–C2) to get a complete 8-stage screen-shareable lesson—plus a color-coded Vocabulary Review PDF to send right after the trial.`,
+    },
+    {
+      question: 'Do my Preply students need to create an account to use the learner dashboard?',
+      answer: 'No. Every student gets a private zero-login dashboard link you can paste straight into Preply messages, giving them access to past lessons, their cumulative word list, spaced flashcards, topic ideas, and (on Unlimited) custom lesson creation.',
+    },
+    {
+      question: 'Does PlanWise ESL limit how many Preply students I can track?',
+      answer: `No. Your ${trialText} (no credit card) and the flat ${priceText} Unlimited plan include unlimited lessons and unlimited students, cancel anytime.`,
+    },
+    {
+      question: 'Can I also use PlanWise ESL if I teach another language on Preply?',
+      answer: `${brand} is built specifically for ESL and EFL tutors, though tutors teaching another language can specify that target language in the topic box to generate structured lessons in that language as well.`,
+    },
+  ],
+  disclaimer: 'PlanWise ESL is not affiliated with or endorsed by Preply. Preply is a trademark of its respective owner.',
+  cta: {
+    heading: 'Eliminate unpaid Preply lesson prep this week',
+    text: `Generate a complete CEFR A1–C2 lesson for your next Preply student in ${generationTime}. Your ${trialText} requires no credit card.`,
+    ...trialCta,
+  },
+  schemaType: 'WebPage',
+  updated,
+};
+
+export const italkiTutorsPage: MarketingPage = {
+  path: '/for/italki-tutors',
+  title: `AI ESL Lesson Planner for italki Tutors & Teachers | ${brand}`,
+  description:
+    `Generate CEFR A1–C2 ESL lessons for italki packages in ${generationTime}: 8-stage pedagogy, natural vocab recycling, zero-login student hub & study PDFs.`,
+  navLabel: 'For italki Tutors',
+  eyebrow: 'For italki tutors & teachers',
+  h1: 'The AI ESL lesson planner built for italki tutors and teachers',
+  intro: [
+    'On italki, both Community Tutors and Professional Teachers win repeat 5-lesson and 10-lesson packages by delivering engaging, structured classes tailored to each learner’s exact goals—without burning hours of unpaid evenings writing materials from scratch.',
+    `${brand} gives independent italki tutors a repeatable **${generationTime}** system: pick your student, enter any topic and CEFR level (A1–C2), and teach from a complete 8-stage screen-shareable lesson backed by per-student vocabulary memory, a zero-login student dashboard, and a printable color-coded Vocabulary Review PDF.`,
+  ],
+  sections: [
+    {
+      heading: 'Built for 5-lesson and 10-lesson italki packages—not one-off worksheets',
+      bullets: [
+        '**Turn single bookings into multi-lesson packages:** Give every learner a visible sense of progression from Lesson 1 to Lesson 10 with tracked vocabulary and a personal online review hub.',
+        '**Zero unpaid prep between back-to-back calls:** Generate a complete, verified CEFR A1–C2 lesson on any niche subject (job interviews, tech stand-ups, IELTS speaking, travel, hobbies) in 1–2 minutes.',
+        '**No awkward student logins:** Paste your student’s private learner dashboard link straight into italki chat so they can revise flashcards, review past lessons, and suggest next week’s topic with one tap.',
+        '**Polished post-lesson PDF takeaway:** Download the color-coded Vocabulary Review study PDF—complete with pronunciation, 4 real-world examples, word families, collocations, usage notes, and 5-part semantic maps—and send it after class.',
+      ],
+    },
+    {
+      heading: 'What is inside every italki lesson you generate',
+      paragraphs: [
+        'Instead of raw chatbot text or disconnected single-task worksheets, every lesson follows PlanWise ESL’s [8-stage pedagogical sequence](/how-it-works):',
+      ],
+      bullets: [
+        '**Warm-up vocabulary recall** to get your italki student talking immediately.',
+        '**5 illustrated pre-taught target words** with phonetic pronunciation, CEFR-levelled definition, 4 real-world examples, word families + explanation, common collocations, and usage notes.',
+        '**5-paragraph CEFR reading (~96% familiar text) & comprehension** calibrated strictly from A1 to C2.',
+        '**In-lesson recall flashcards & 5-part semantic maps** (synonyms, antonyms, related concepts, contexts, associated words).',
+        '**Guided speaking & accuracy practice:** quiz, 3-tier sentence frames (emerging/developing/expanding—ideal for nervous beginners), shuffled fill-in-the-blanks, and sentence unscramble.',
+        '**Deep discussion** built around the target vocabulary, plus optional idioms and phrasal verbs from A2 up.',
+      ],
+    },
+    {
+      heading: 'Side by side for independent italki teachers',
+      table: {
+        headers: ['What keeps italki students rebooking', 'Static ESL PDF libraries', 'DIY / ChatGPT prep', brand],
+        rows: [
+          ['Tailored to any niche student interest', 'Catalogue topics only', '20–60 min prompting & editing', `Any topic in ${generationTime}`],
+          ['Vocabulary memory across a 10-lesson package', 'None', 'Manual notes / spreadsheets', 'Automatic tracking, zero duplicates & natural-only recycling into future lessons'],
+          ['Between-class student self-study', 'None or paid add-on', 'None', 'Zero-login student dashboard (past lessons, flashcards, topic ideas & custom lessons on Unlimited)'],
+          ['Take-home review sheet', 'Static worksheet PDF', 'Manual formatting', 'Color-coded printable Vocabulary Review PDF ready in one click'],
+          ['Pricing for active tutors', 'Per-library subscription', 'Unpaid evening prep hours', `Flat ${priceText} Unlimited lessons & students (${trialText}, no card)`],
+        ],
+      },
+    },
+    {
+      heading: 'Preview real lessons free with zero signup',
+      paragraphs: [
+        'Open any complete A1–C2 lesson in our [public free ESL lesson library](/esl-lessons) right now (zero login required), download the color-coded Vocabulary Review PDF at the top, or see how PlanWise ESL compares against [ESL Joy](/compare/esl-joy), [Fluentize](/compare/fluentize), [Twee](/compare/twee), [ESL Brains](/compare/esl-brains), and [Linguahouse](/compare/linguahouse).',
+      ],
+    },
+  ],
+  faq: [
+    {
+      question: 'Is PlanWise ESL good for both italki Community Tutors and Professional Teachers?',
+      answer: 'Yes. Community Tutors get a structured, research-backed 8-stage conversation flow with teacher notes and tiered speaking frames ready out of the box, while Professional Teachers save hours of weekly prep on niche adult, business, medical, and IELTS topics without sacrificing CEFR rigour.',
+    },
+    {
+      question: 'How does PlanWise ESL help me keep italki students across multi-lesson packages?',
+      answer: 'When you mark a lesson "We did this", PlanWise saves its vocabulary to that student’s profile, avoids repeating words in future lessons, recycles earlier vocabulary naturally when relevant, and updates the student’s zero-login flashcard dashboard automatically.',
+    },
+    {
+      question: 'How do I share homework or review sheets with my italki students?',
+      answer: 'Share their zero-login learner dashboard link directly in italki chat for interactive flashcards and past lessons, or download the color-coded Vocabulary Review PDF in one click and attach it as their post-class takeaway.',
+    },
+    {
+      question: 'Can I test PlanWise ESL with my current italki students before paying?',
+      answer: `Yes. Every new account gets a ${trialText} with unlimited lesson generation and no credit card needed, followed by ${priceText} Unlimited, cancel anytime.`,
+    },
+  ],
+  disclaimer: 'PlanWise ESL is not affiliated with or endorsed by italki. italki is a trademark of its respective owner.',
+  cta: {
+    heading: 'Plan your next italki package in minutes',
+    text: `Build a tailored CEFR A1–C2 lesson in ${generationTime} with zero-login student review included. Your ${trialText} needs no credit card.`,
+    ...trialCta,
+  },
+  schemaType: 'WebPage',
+  updated,
+};
+
+export const icpPages: MarketingPage[] = [
+  onlineTutorsPage,
+  preplyTutorsPage,
+  italkiTutorsPage,
+  freelanceTeachersPage,
+  languageSchoolsPage,
+];

@@ -67,7 +67,6 @@ describe("site facts stay consistent", () => {
       "flashcards",
       "sentence unscramble",
       "study pdf",
-      "cambly",
       "preply",
       "italki",
       "freelance",
@@ -90,6 +89,25 @@ describe("homepage structured data", () => {
     expect(software.offers.map((o: any) => o.price)).toEqual(["0", siteFacts.priceValue]);
     expect(software.offers.find((o: any) => o.name === "Unlimited")?.url).toBe(`${siteFacts.url}/pricing`);
     expect(software).not.toHaveProperty("aggregateRating");
+  });
+
+  it("merges tutor-specific details without duplicating the product or renaming its plan", () => {
+    const products = blocks.filter((b) => b["@type"] === "SoftwareApplication");
+    expect(products).toHaveLength(1);
+    const software = products[0];
+    expect(software.description).toContain(`CEFR ${siteFacts.levels}`);
+    expect(software.description).toContain(siteFacts.generationTime);
+    expect(software.description).toContain("Preply and italki");
+    expect(software.description).toContain("per-student vocabulary memory");
+    expect(software.description).toContain("private student flashcard dashboards");
+    expect(software.author).toEqual({
+      "@type": "Person", name: siteFacts.founder, url: siteFacts.founderSite,
+    });
+    const paid = software.offers.find((o: any) => o.name === "Unlimited");
+    expect(paid.description).toContain(priceText);
+    expect(paid.description).toContain(trialText);
+    expect(paid.priceSpecification.referenceQuantity.unitCode).toBe("MON");
+    expect(software).not.toHaveProperty("sameAs");
   });
 
   it("includes every homepage FAQ as a question and answer", () => {
