@@ -279,20 +279,31 @@ export const pricing = {
   ],
 };
 
-export const testimonials = {
-  heading: 'Loved by Online ESL Teachers',
+export const verifiableProof = {
+  heading: 'Inspect Real Proof — Zero Login Required',
+  subheading:
+    'No paywalled promises or generic blurbs. Open live lessons, audit our 4-lesson student memory test, or compare every ESL tool side by side.',
   items: [
     {
-      quote:
-        'As an online ESL teacher, time is my most valuable asset. This software has been a game-changer! I can now create engaging, ready-to-teach lessons in minutes, freeing up hours that I can spend focusing on my students.',
-      author: 'Sarah K., Online ESL Tutor',
-      initials: 'SK',
+      badge: '36 items · 0 duplicates',
+      title: '4-Lesson Student Memory Audit',
+      text: 'Four consecutive B2 lessons for one sample student proving zero duplicate target words and natural recycling across readings, cloze, quizzes & discussions.',
+      linkLabel: 'Inspect all 4 live lessons',
+      href: '/compare/student-memory-proof',
     },
     {
-      quote:
-        "Finally, a lesson planning tool that truly understands the needs of online ESL teachers! The CEFR level alignment is fantastic, ensuring my students are always learning at the right level. It's incredibly easy to use for my one-on-one classes.",
-      author: 'David L., Independent ESL Teacher',
-      initials: 'DL',
+      badge: '200+ free lessons',
+      title: 'Verified CEFR A1–C2 Calibration',
+      text: 'Compare plain <10-word A1 adult beginner definitions against executive C1 boardroom lessons—with 3-tier speaking frames, collocations & downloadable PDFs.',
+      linkLabel: 'Browse the public library',
+      href: '/esl-lessons',
+    },
+    {
+      badge: '9 side-by-side audits',
+      title: 'Honest Tool Comparisons',
+      text: 'Real prep-time tests and feature breakdowns against ESL Brains, Fluentize, Linguahouse, Off2Class, Twee, ESL Joy, MagicSchool, and ChatGPT.',
+      linkLabel: 'Compare ESL tools',
+      href: '/compare',
     },
   ],
 };

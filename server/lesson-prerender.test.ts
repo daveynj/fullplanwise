@@ -477,6 +477,7 @@ describe("injectLessonPrerender: sentence frames and idioms & phrasal verbs", ()
           {
             languageFunction: "Giving opinions",
             tieredFrames: { emerging: { frame: "I like ___." }, developing: { frame: "I like ___ because ___." }, expanding: { frame: "What I love about ___ is ___." } },
+            modelResponses: { emerging: ["I like trains."] },
           },
           { languageFunction: "Empty frame", tieredFrames: {} },
         ],
@@ -484,7 +485,7 @@ describe("injectLessonPrerender: sentence frames and idioms & phrasal verbs", ()
     );
     const html = (await injectLessonPrerender(TEMPLATE, "/lessons/42"))!;
     expect(html).toContain(
-      "<section><h2>Language Practice: Travel</h2><p>Practice talking about travel.</p><ul><li><strong>Giving opinions</strong><ul><li>I like ___.</li><li>I like ___ because ___.</li><li>What I love about ___ is ___.</li></ul></li></ul></section>",
+      "<section><h2>Language Practice: Travel</h2><p>Practice talking about travel.</p><ul><li><strong>Giving opinions</strong><ul><li><strong>Emerging:</strong> I like ___. &mdash; <em>I like trains.</em></li><li><strong>Developing:</strong> I like ___ because ___.</li><li><strong>Expanding:</strong> What I love about ___ is ___.</li></ul></li></ul></section>",
     );
     expect(html).not.toContain("Empty frame");
   });
@@ -537,13 +538,40 @@ describe("injectLessonPrerender: sentence frames and idioms & phrasal verbs", ()
                 pronunciation: "eye-TIN-er-air-ee",
                 definition: "A detailed plan of a journey.",
                 example: "Our itinerary includes three cities.",
+                additionalExamples: ["She printed the itinerary before boarding.", "We tweaked our itinerary on day two."],
+                collocations: ["packed itinerary", "travel itinerary"],
                 wordFamily: { words: ["itinerant", "itineraries"] },
                 usageNotes: "Often used for business or multi-stop trips.",
                 semanticMap: {
                   synonyms: ["schedule", "route"],
                   antonyms: ["improvisation"],
                   relatedConcepts: ["travel planning"],
+                  contexts: ["holidays", "business travel"],
                 },
+              },
+            ],
+          },
+          {
+            type: "discussion",
+            title: "Discussion Questions",
+            questions: [
+              {
+                paragraphContext: "Some travellers plan every hour; others leave space for luck.",
+                question: "How tightly do you plan a trip?",
+              },
+            ],
+          },
+          {
+            type: "expressions",
+            title: "Idioms & Phrasal Verbs",
+            items: [
+              {
+                expression: "put off",
+                kind: "phrasal verb",
+                meaning: "to delay something",
+                example: "Don't **put off** booking.",
+                yourTurn: "Do you ever put off booking flights?",
+                notes: [{ text: "Separable verb.", right: "put it off", wrong: "put off it" }],
               },
             ],
           },
@@ -562,11 +590,18 @@ describe("injectLessonPrerender: sentence frames and idioms & phrasal verbs", ()
     });
     const html = (await injectLessonPrerender(TEMPLATE, "/lessons/42"))!;
     expect(html).toContain("eye-TIN-er-air-ee");
+    expect(html).toContain("<strong>More examples:</strong> She printed the itinerary before boarding. • We tweaked our itinerary on day two.");
+    expect(html).toContain("<strong>Common collocations:</strong> packed itinerary, travel itinerary");
     expect(html).toContain("<strong>Word family:</strong> itinerant, itineraries");
     expect(html).toContain("<strong>Synonyms:</strong> schedule, route");
     expect(html).toContain("<strong>Antonyms:</strong> improvisation");
     expect(html).toContain("<strong>Related concepts:</strong> travel planning");
+    expect(html).toContain("<strong>Contexts:</strong> holidays, business travel");
     expect(html).toContain("<strong>Usage note:</strong> Often used for business or multi-stop trips.");
+    expect(html).toContain("Some travellers plan every hour; others leave space for luck.");
+    expect(html).toContain("How tightly do you plan a trip?");
+    expect(html).toContain("Separable verb. · Right: put it off · Avoid: put off it");
+    expect(html).toContain('href="/compare/student-memory-proof"');
     expect(html).toContain("<h2>Sentence Unscramble</h2>");
     expect(html).toContain("<li>our / full / itinerary / is</li>");
     // Answer key never leaks into public crawler HTML

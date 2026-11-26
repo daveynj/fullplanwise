@@ -62,7 +62,17 @@ describe("public information pages", () => {
     const compareDoc = new DOMParser().parseFromString(compareHtml, "text/html");
     expect(compareDoc.querySelector(".mp-verdict h2")?.textContent?.length).toBeGreaterThan(10);
 
-    for (const path of ["/compare/twee", "/compare/esl-joy", "/compare/magicschool-diffit", "/compare/student-memory-proof", "/compare/fluentize", "/compare/esl-brains"]) {
+    for (const path of [
+      "/compare/twee",
+      "/compare/esl-joy",
+      "/compare/magicschool-diffit",
+      "/compare/student-memory-proof",
+      "/compare/fluentize",
+      "/compare/esl-brains",
+      "/compare/linguahouse",
+      "/compare/off2class",
+      "/compare/chatgpt",
+    ]) {
       const html = injectMarketingPrerender(template, path)!;
       const doc = new DOMParser().parseFromString(html, "text/html");
       expect(doc.querySelector(".mp-verdict h2")?.textContent?.length).toBeGreaterThan(10);

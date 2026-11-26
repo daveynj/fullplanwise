@@ -385,6 +385,10 @@ const compareChatGpt: MarketingPage = {
   intro: [
     'Many teachers already use ChatGPT (or Claude, or Gemini) to help with lessons, and for plenty of tasks it is excellent. So why use a dedicated ESL lesson planner built around a scientific pedagogical sequence? Here is an honest comparison.',
   ],
+  verdict: {
+    heading: 'PlanWise ESL vs. ChatGPT: When is a dedicated ESL planner worth it?',
+    text: `**Choose ${brand}** (${priceText} Unlimited after a ${trialText}, no card) if you teach ongoing 1-on-1 or small-group students and want a complete, verified 8-stage **CEFR A1–C2 lesson** ready in ${generationTime}—plus automatic **cross-lesson vocabulary recycling** ([live 4-lesson proof](/compare/student-memory-proof)), a zero-login **student flashcard dashboard**, and a one-click **Vocabulary Review PDF**. **Choose ChatGPT** if you only need quick ad-hoc tasks (translating a phrase, drafting an email, or explaining a grammar rule) and do not mind 20–60 minutes of prompting and level-checking.`,
+  },
   sections: [
     {
       heading: 'Side by side',
@@ -403,6 +407,26 @@ const compareChatGpt: MarketingPage = {
       },
     },
     {
+      heading: 'Real-world prep test: 1–2 minute verified lesson vs. prompting a chatbot from scratch',
+      paragraphs: [
+        'Compare building the exact same C1 executive risk-forecasting lesson right before a class starts:',
+      ],
+      workflowProof: {
+        planwiseTitle: `${brand} Workflow (${generationTime})`,
+        planwiseSteps: [
+          'Pick the student, choose C1, and enter the topic—opening a complete lesson ([inspect live C1 Risk & Uncertainty lesson](/esl-lessons/c1/delivering-the-numbers-talking-about-risk-and-uncertainty)) verified section by section. Custom illustrations load while you finish the warm-up.',
+          'Every word includes phonetic pronunciation, collocations, word families, 4 examples, usage notes, and 5-part semantic maps; exercises and 3-tier speaking frames are verified before you see them ([CEFR quality audit](/compare/cefr-benchmark)).',
+          'Mark the class "We did this" to prevent duplicate target words and feed your student’s zero-login flashcard hub and future lessons ([4-lesson memory proof](/compare/student-memory-proof)).',
+        ],
+        competitorTitle: 'ChatGPT / Raw Chatbot Workflow (20–60 Minutes)',
+        competitorSteps: [
+          'Prompt separately for warm-up, 5 words, ~96%-familiar reading, comprehension check, cloze, unscramble, and discussion questions.',
+          'Audit every definition and exercise yourself—raw chatbots routinely let B1/B2 text drift into C1 prose or break cloze numbering.',
+          'Copy-paste into Docs/Slides to create a student handout, then lose the entire word history the moment you open a new chat next week.',
+        ],
+      },
+    },
+    {
       heading: 'When a general chatbot is the better choice',
       bullets: [
         'Quick one-off tasks: explaining a grammar point in the moment, translating a word, writing an email.',
@@ -417,6 +441,13 @@ const compareChatGpt: MarketingPage = {
         'You want every lesson to follow a complete scientific pedagogical sequence—vocab depth, reading, recall flashcards, synonyms/antonyms, guided exercises and deep discussion—without prompting each part by hand.',
         'You want reliable CEFR levelling and verified exercises without checking every line.',
         'You want your students to practise between classes on their own learner dashboard, study from a full vocabulary PDF, and even create custom lessons on subjects they love.',
+      ],
+    },
+    {
+      heading: 'Inspect the difference yourself with zero login',
+      bullets: [
+        '**Live A1, B1 & C1 examples:** [First Day at a New Job (A1)](/esl-lessons/a1/first-day-at-a-new-job-meeting-your-team), [Handling Difficult Guests Like a Pro (B1)](/esl-lessons/b1/handling-difficult-guests-like-a-pro), and [Delivering the Numbers: Talking About Risk and Uncertainty (C1)](/esl-lessons/c1/delivering-the-numbers-talking-about-risk-and-uncertainty).',
+        '**Side-by-side audits:** [9-point CEFR Quality Benchmark (Raw ChatGPT vs. PlanWise ESL)](/compare/cefr-benchmark) and our [4-Lesson Student Memory Proof](/compare/student-memory-proof).',
       ],
     },
   ],
