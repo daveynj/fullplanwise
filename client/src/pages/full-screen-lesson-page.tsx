@@ -416,7 +416,7 @@ export default function FullScreenLessonPage() {
             )}
             {lesson?.isPublic && !user && (
               <p className="max-w-5xl mx-auto mb-10 px-4 text-center text-sm text-slate-500">
-                Created by <span className="font-medium text-brand-navy">Dave Jackson</span> (British ESL teacher). Studying English yourself and want 1-on-1 conversation practice?{" "}
+                Created by <span className="font-medium text-brand-navy">Dave Jackson</span> (British ESL teacher). These lessons are designed to be teacher-led — if you’re an English learner and want to take this lesson 1-on-1 with Dave, visit{" "}
                 <a
                   href="https://speakwithdave.com"
                   target="_blank"
@@ -425,6 +425,7 @@ export default function FullScreenLessonPage() {
                 >
                   SpeakWithDave.com
                 </a>
+                .
               </p>
             )}
           </TabsContent>

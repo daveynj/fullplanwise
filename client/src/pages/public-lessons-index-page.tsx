@@ -313,14 +313,14 @@ export default function PublicLessonsIndexPage() {
           </div>
 
           <p className="mt-6 text-center text-sm text-slate-500">
-            Created by <span className="font-medium text-brand-navy">Dave Jackson</span> (British ESL teacher, 11 years &amp; 2,000+ students). Learning English yourself and want 1-on-1 conversation lessons?{" "}
+            Created by <span className="font-medium text-brand-navy">Dave Jackson</span> (British ESL teacher, 11 years &amp; 2,000+ students). These lessons are designed to be teacher-led — if you’re an English learner who wants to take them 1-on-1 with a teacher, you can book with Dave at{" "}
             <a
               href="https://speakwithdave.com"
               target="_blank"
               rel="noopener noreferrer"
               className="font-medium text-brand-navy underline decoration-brand-yellow decoration-2 underline-offset-2 hover:text-amber-700"
             >
-              Book a class at SpeakWithDave.com
+              SpeakWithDave.com
             </a>
             .
           </p>
