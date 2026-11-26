@@ -412,25 +412,46 @@ export default function FullScreenLessonPage() {
               </div>
             )}
             {parsedContent && <LessonContent content={parsedContent} />}
-            {parsedContent && lesson.isPublic && !user && (
-              <aside className="mt-10 max-w-4xl mx-auto rounded-2xl bg-brand-navy text-white p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 print:hidden">
-                <div>
-                  <p className="text-xs uppercase tracking-wider text-brand-yellow font-semibold mb-1">
-                    5-day free trial · No credit card
-                  </p>
-                  <h2 className="font-nunito text-xl md:text-2xl font-bold">
-                    Want a lesson like this on your student’s exact topic?
-                  </h2>
-                  <p className="text-sm text-white/80 mt-1">
-                    Generate a complete CEFR A1–C2 lesson in 1–2 minutes—complete with learner dashboard, flashcards and printable Vocabulary Review PDF.
-                  </p>
+            {parsedContent && lesson.isPublic && (!user || user.isAdmin) && (
+              <aside className="mt-10 max-w-4xl mx-auto rounded-2xl bg-brand-navy text-white p-6 md:p-8 flex flex-col gap-6 print:hidden">
+                <div className="grid md:grid-cols-2 gap-6 items-center">
+                  <div className="md:border-r md:border-white/15 md:pr-6">
+                    <p className="text-xs uppercase tracking-wider text-brand-yellow font-semibold mb-1">
+                      For English learners · Teacher-led lesson
+                    </p>
+                    <h2 className="font-nunito text-xl font-bold">
+                      Want to take this lesson 1-on-1 with Dave?
+                    </h2>
+                    <p className="text-sm text-white/80 mt-1 mb-4">
+                      Created by Dave Jackson (British ESL teacher, 11 years &amp; 2,000+ students). These lessons are designed to be taught live with a teacher.
+                    </p>
+                    <a
+                      href="https://speakwithdave.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center rounded-full bg-white text-brand-navy font-bold px-5 py-2.5 text-sm hover:bg-amber-50 transition-colors shadow"
+                    >
+                      Book 1-on-1 at SpeakWithDave.com →
+                    </a>
+                  </div>
+                  <div>
+                    <p className="text-xs uppercase tracking-wider text-brand-yellow font-semibold mb-1">
+                      For ESL teachers · 5-day free trial
+                    </p>
+                    <h2 className="font-nunito text-xl font-bold">
+                      Create lessons like this on any topic
+                    </h2>
+                    <p className="text-sm text-white/80 mt-1 mb-4">
+                      Generate a complete CEFR A1–C2 lesson in 1–2 minutes with learner dashboard, flashcards, and printable Vocabulary Review PDF.
+                    </p>
+                    <a
+                      href="/auth?register=true"
+                      className="inline-flex items-center justify-center rounded-full bg-brand-yellow text-brand-navy font-bold px-5 py-2.5 text-sm hover:bg-amber-300 transition-colors shadow-lg"
+                    >
+                      Make Your First Lesson Free →
+                    </a>
+                  </div>
                 </div>
-                <a
-                  href="/auth?register=true"
-                  className="flex-shrink-0 inline-flex items-center justify-center rounded-full bg-brand-yellow text-brand-navy font-bold px-6 py-3 text-sm hover:bg-amber-300 transition-colors shadow-lg"
-                >
-                  Make Your First Lesson Free →
-                </a>
               </aside>
             )}
             {lesson?.isPublic && (
