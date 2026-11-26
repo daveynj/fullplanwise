@@ -158,7 +158,21 @@ export function buildLandingPrerenderHtml(): string {
       <div class="lp-card"><h3>${e(problem.withPlanwise.title)}</h3><ul>${list(problem.withPlanwise.items)}</ul></div>
     </div>
     <p><strong>${e(problem.conclusion)}</strong></p>
-    <p><a href="/compare/chatgpt">Read the full PlanWise vs ChatGPT comparison</a></p>
+    <p><a href="/compare">Compare PlanWise ESL vs. Twee, ESL Brains, Linguahouse, Off2Class &amp; ChatGPT</a></p>
+  </section>
+
+  <section class="lp-section">
+    <h2>Browse Free Teacher-Led ESL Lessons by CEFR Level (No Login Required)</h2>
+    <p>Inspect complete 8-stage lessons before signing up — complete with phonetic pronunciation, word families, collocations, levelled readings, semantic maps, and downloadable Vocabulary Review PDFs.</p>
+    <ul>
+      <li><a href="/esl-lessons">Browse All Free ESL Lessons (A1–C2)</a></li>
+      <li><a href="/esl-lessons/a1">A1 Beginner Free ESL Lessons</a></li>
+      <li><a href="/esl-lessons/a2">A2 Elementary Free ESL Lessons</a></li>
+      <li><a href="/esl-lessons/b1">B1 Intermediate Free ESL Lessons</a></li>
+      <li><a href="/esl-lessons/b2">B2 Upper Intermediate Free ESL Lessons</a></li>
+      <li><a href="/esl-lessons/c1">C1 Advanced Free ESL Lessons</a></li>
+      <li><a href="/esl-lessons/c2">C2 Proficiency Free ESL Lessons</a></li>
+    </ul>
   </section>
 
   <section id="features" class="lp-section">
