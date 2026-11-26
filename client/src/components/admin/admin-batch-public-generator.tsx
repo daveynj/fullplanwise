@@ -55,6 +55,34 @@ export const RECOMMENDED_PUBLIC_LESSONS_BATCH = [
 
 export const ADMIN_BATCH_PRESET_PACKS: BatchPresetPack[] = [
   {
+    id: "english-qa",
+    label: "English Q&A Traffic Magnets (20)",
+    description: "Highest-volume English questions students & teachers ask Google and AI (make vs do, present perfect vs past simple, polite English, phrasal verbs, conditionals).",
+    defaultLessonCategory: "general",
+    lines: [
+      "A2 | grammar-focus | What Is the Difference Between Make and Do in English?",
+      "A2 | grammar-focus | When Do You Use For and Since in English?",
+      "A2 | vocabulary-building | Say, Tell, Speak, and Talk: What Is the Difference?",
+      "A2 | grammar-focus | How to Use A, An, and The Correctly in English",
+      "A2 | vocabulary-building | Borrow vs. Lend and Fun vs. Funny: Common Confusions",
+      "B1 | grammar-focus | Present Perfect vs. Past Simple: When to Use Each Tense",
+      "B1 | grammar-focus | Used To, Be Used To, and Get Used To Explained Simply",
+      "B1 | vocabulary-building | Everyday Phrasal Verbs with Get and How Native Speakers Use Them",
+      "B1 | vocabulary-building | Still, Yet, and Already: How to Use Them Naturally",
+      "B1 | workplace-communication | How to Sound More Polite in English Emails and Requests",
+      "B1 | grammar-focus | Must, Have To, and Should: Talking About Rules and Advice",
+      "B1 | conversation-practice | How to Stop Translating in Your Head When Speaking English",
+      "B2 | grammar-focus | First, Second, and Third Conditionals in Real Conversation",
+      "B2 | vocabulary-building | Essential Phrasal Verbs with Take, Put, and Bring at Work",
+      "B2 | vocabulary-building | Affect vs. Effect, Advice vs. Advise, and Tricky English Pairs",
+      "B2 | workplace-communication | How to Disagree Politely in an English Business Meeting",
+      "B2 | conversation-practice | Small Talk in English: How to Start and Keep a Conversation Going",
+      "B2 | grammar-focus | Passive Voice in English: When You Should and Shouldn't Use It",
+      "C1 | grammar-focus | Mixed Conditionals and Expressing Regret Naturally in English",
+      "C1 | workplace-communication | Hedging and Softening Language: How to Sound Diplomatic in English",
+    ].join("\n"),
+  },
+  {
     id: "core",
     label: "Core A1–C2 (30)",
     description: "Balanced A1–C2 flagship library across everyday, workplace and advanced topics.",
@@ -227,9 +255,9 @@ async function waitForLessonJob(jobId: string, maxMs = 4 * 60 * 1000): Promise<a
 export function AdminBatchPublicGenerator({ onLessonPublished }: { onLessonPublished: () => void }) {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [activePackId, setActivePackId] = useState<string>("career");
+  const [activePackId, setActivePackId] = useState<string>("english-qa");
   const [rawList, setRawList] = useState(
-    ADMIN_BATCH_PRESET_PACKS.find((p) => p.id === "career")?.lines ?? RECOMMENDED_PUBLIC_LESSONS_BATCH
+    ADMIN_BATCH_PRESET_PACKS.find((p) => p.id === "english-qa")?.lines ?? RECOMMENDED_PUBLIC_LESSONS_BATCH
   );
   const [items, setItems] = useState<BatchItem[]>([]);
   const [running, setRunning] = useState(false);
