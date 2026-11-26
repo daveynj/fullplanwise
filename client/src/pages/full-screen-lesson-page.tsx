@@ -414,6 +414,19 @@ export default function FullScreenLessonPage() {
                 </a>
               </aside>
             )}
+            {lesson?.isPublic && !user && (
+              <p className="max-w-5xl mx-auto mb-10 px-4 text-center text-sm text-slate-500">
+                Created by <span className="font-medium text-brand-navy">Dave Jackson</span> (British ESL teacher). Studying English yourself and want 1-on-1 conversation practice?{" "}
+                <a
+                  href="https://speakwithdave.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-medium text-brand-navy underline decoration-brand-yellow decoration-2 underline-offset-2 hover:text-amber-700"
+                >
+                  SpeakWithDave.com
+                </a>
+              </p>
+            )}
           </TabsContent>
           
           <TabsContent value="notes" className="flex-1 overflow-y-auto p-6 m-0">
