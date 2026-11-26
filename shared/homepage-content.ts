@@ -463,6 +463,7 @@ export const footer = {
   quickLinks: [
     { label: 'Start Free Trial', href: '/auth?register=true' },
     { label: 'How It Works', href: '/how-it-works' },
+    { label: 'Student Dashboard & Study PDF', href: '/student-experience' },
     { label: 'Free ESL Lessons', href: '/esl-lessons' },
     { label: 'Guides for ESL Teachers', href: '/guides' },
     { label: 'For Online Tutors', href: '/for/online-tutors' },

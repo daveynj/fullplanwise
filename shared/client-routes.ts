@@ -57,6 +57,7 @@ export const clientRoutePaths: string[] = [
   "/how-it-works",
   "/about",
   "/pricing",
+  "/student-experience",
   "/for/online-tutors",
   "/for/freelance-esl-teachers",
   "/for/language-schools",

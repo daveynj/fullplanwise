@@ -34,7 +34,7 @@ Lessons open full screen for screen sharing and export as a **printable Vocabula
 ## What makes PlanWise ESL different from pre-made libraries and general AI tools
 
 - **Custom lessons on any subject (not a static library):** Pre-made ESL lesson libraries offer fixed catalogues of generic topics. PlanWise ESL generates a full, pedagogically structured lesson on any topic your student cares about in 1–2 minutes—and on Unlimited, **students can create custom lessons themselves on any subject** at their own CEFR level.
-- **Per-student vocabulary tracking & spaced recycling:** Unlike static libraries or chatbots, PlanWise ESL remembers every student. New lessons avoid words the student has already learned or planned, and recycle earlier vocabulary naturally into future readings and questions to aid long-term recall. Marking a lesson "We did this" adds its words to the student's list.
+- **Per-student vocabulary tracking & natural recycling:** Unlike static libraries or chatbots, PlanWise ESL remembers every student. New lessons strictly avoid re-teaching words the student has already learned or planned, and pass earlier vocabulary to generation so previous words reappear in future readings and questions only when they fit the new topic naturally and relevantly (never forced). Marking a lesson "We did this" adds its words to the student's list.
 - **Private learner dashboard + study PDF:** Every student gets a private page (no login needed) with all past lessons, a next-lesson preview, their word list, spaced flashcards, topic suggestions, and (on Unlimited) custom lesson creation. Teachers can also download and send a complete study PDF with all vocabulary, examples, word families, synonyms/antonyms and usage notes.
 - **Complete scientific pedagogy, checked before saving:** Unlike general chatbots or single-activity AI worksheet generators, PlanWise ESL produces one cohesive, quality-checked lesson sequence every time; any broken exercise is fixed or regenerated automatically before the teacher sees it.
 
@@ -74,6 +74,7 @@ Dave Jackson is a British English teacher who has taught English online since 20
 
 - [Home](https://planwiseesl.com/)
 - [How it works: the research behind every lesson](https://planwiseesl.com/how-it-works)
+- [Student learner dashboard & printable Vocabulary Review study PDF](https://planwiseesl.com/student-experience)
 - [Pricing](https://planwiseesl.com/pricing)
 - [For Cambly, Preply & italki tutors](https://planwiseesl.com/for/online-tutors)
 - [For freelance & independent ESL teachers](https://planwiseesl.com/for/freelance-esl-teachers)

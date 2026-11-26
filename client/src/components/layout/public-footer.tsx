@@ -14,6 +14,7 @@ export function PublicFooter() {
         <ul className="space-y-2 text-sm">
           {[
             ...publicNav,
+            { label: 'Student Dashboard & Study PDF', href: '/student-experience' },
             { label: 'For Online Tutors', href: '/for/online-tutors' },
             { label: 'For Freelance Teachers', href: '/for/freelance-esl-teachers' },
             { label: 'For Language Schools', href: '/for/language-schools' },
