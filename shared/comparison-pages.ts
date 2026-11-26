@@ -1,6 +1,7 @@
 /**
  * Fair, structured competitor comparison pages for PlanWise ESL:
  *  - /compare (decision hub covering pre-made libraries, AI worksheet tools & chatbots)
+ *  - /compare/esl-joy
  *  - /compare/twee
  *  - /compare/esl-brains
  *  - /compare/linguahouse
@@ -21,12 +22,12 @@ export const compareHubPage: MarketingPage = {
   path: '/compare',
   title: `Compare ${brand} vs ESL Lesson Libraries & AI Tools`,
   description:
-    `Honest comparisons of ${brand} against Twee, ESL Brains, Linguahouse, Off2Class and ChatGPT: pedagogy, CEFR levelling, vocab memory, study PDFs & price.`,
+    `Honest comparisons of ${brand} against ESL Joy, Twee, ESL Brains, Linguahouse, Off2Class and ChatGPT: pedagogy, CEFR, vocab memory, study PDFs & price.`,
   navLabel: 'Compare',
   eyebrow: 'Comparisons',
   h1: 'PlanWise ESL vs. pre-made ESL lesson libraries and AI tools',
   intro: [
-    'Most ESL teaching tools fall into three camps: **static pre-made lesson libraries** (like ESL Brains, Linguahouse, Off2Class, Fluentize and Ellii), **modular AI worksheet generators or US K–12 apps** (like Twee, MagicSchool and Diffit), and **general chatbots** (like ChatGPT).',
+    'Most ESL teaching tools fall into three camps: **static pre-made lesson libraries** (like ESL Brains, Linguahouse, Off2Class, Fluentize and Ellii), **modular AI worksheet generators or slide tools** (like ESL Joy, Twee, MagicSchool and Diffit), and **general chatbots** (like ChatGPT).',
     'Each has genuine strengths—and clear trade-offs for one-to-one tutors and small to medium language schools. Here is an honest, side-by-side decision guide so you can pick the right tool for how you teach.',
   ],
   sections: [
@@ -47,6 +48,7 @@ export const compareHubPage: MarketingPage = {
     {
       heading: 'Detailed head-to-head comparisons',
       bullets: [
+        '[PlanWise ESL vs. ESL Joy](/compare/esl-joy) — Flexible AI slide decks with student tracking vs. an enforced 8-stage CEFR lesson sequence, natural vocabulary recycling, zero-login student dashboards and color-coded Vocabulary Review PDFs.',
         '[PlanWise ESL vs. Twee](/compare/twee) — Modular single-task AI tools vs. one cohesive, quality-checked pedagogical lesson with student vocabulary memory.',
         '[PlanWise ESL vs. ESL Brains](/compare/esl-brains) — Fixed adult video-lesson catalogue vs. unlimited custom student topics, vocabulary recycling and learner dashboards.',
         '[PlanWise ESL vs. Linguahouse](/compare/linguahouse) — Large static worksheet library + static Expemo decks vs. bespoke lessons that dynamically recycle each student’s vocabulary.',
@@ -484,8 +486,90 @@ export const cefrBenchmarkPage: MarketingPage = {
   updated,
 };
 
+export const compareEslJoyPage: MarketingPage = {
+  path: '/compare/esl-joy',
+  title: `${brand} vs ESL Joy for 1-on-1 ESL Lesson Planning`,
+  description:
+    `Honest comparison of ${brand} vs ESL Joy: editable AI slide decks vs. an 8-stage CEFR lesson, natural vocab recycling, zero-login student hub & study PDFs.`,
+  navLabel: 'PlanWise vs ESL Joy',
+  eyebrow: 'Comparison',
+  h1: 'PlanWise ESL vs. ESL Joy for one-to-one ESL tutors',
+  intro: [
+    'ESL Joy (`esljoy.com`) is one of the closest AI rivals to PlanWise ESL because both platforms are built specifically for independent English teachers who want lessons remembered and tailored per student—not static catalogues or generic K–12 worksheets.',
+    'The real difference comes down to **flexible editable slide decks vs. a complete, enforced 8-stage pedagogical lesson**: ESL Joy focuses on flexible slide decks you can manually edit line by line with lower starter tiers, whereas PlanWise ESL generates a full, verified 8-stage CEFR A1–C2 conversation lesson in 1–2 minutes—complete with deep multi-layer vocabulary cards, ~96%-familiar readings, recall flashcards, 5-part semantic maps, tiered speaking frames, a zero-login student dashboard, and a printable color-coded Vocabulary Review PDF.',
+  ],
+  sections: [
+    {
+      heading: 'Side by side: PlanWise ESL vs. ESL Joy',
+      table: {
+        headers: ['', 'ESL Joy (verified Nov 2026)', brand],
+        rows: [
+          ['Core lesson format', 'Flexible AI slide decks, manually editable line by line', `Complete 8-stage scientific CEFR A1–C2 lesson generated in ${generationTime}, verified section by section before saving`],
+          ['Pedagogical depth inside one lesson', 'Customisable slide sequence', 'Warm-up recall → 5 illustrated pre-taught words (pronunciation, levelled definition, 4 examples, word families, collocations, usage notes) → ~96%-familiar reading & comprehension → recall flashcards & 5-part semantic maps → quiz, 3-tier sentence frames, shuffled gap-fill, sentence unscramble → deep discussion'],
+          ['Per-student memory & recycling', 'Remembers each student across lessons', 'Tracks each student’s learned words, strictly avoids duplicates, and recycles earlier vocabulary into future readings & questions only when natural and relevant'],
+          ['Student review portal', 'Student progress tracked inside the tutor workflow', 'Persistent zero-login private learner dashboard: all past lessons, cumulative word list, spaced flashcards, topic suggestions & student-created custom lessons (Unlimited)'],
+          ['Take-home printable study PDF', 'Slide-based teaching flow', 'Dedicated color-coded printable Vocabulary Review study PDF (pronunciation, levelled definitions, 4 examples/word, word families, collocations, usage notes & 5-part semantic map)'],
+          ['Free tier & trial', 'Free tier (1 student, 5 custom lessons) + 30-day trial (15 AI lessons)', `${trialText} with unlimited lesson generation and no credit card required`],
+          ['Paid plans', 'Plus: $9.99/mo regular ($7.99 founding until Nov 30, 2026; up to 5 students, 300 AI uses/mo). Pro: $15.99/mo regular ($12.99 founding until Nov 30, 2026; unlimited students)', `One simple plan: ${priceText} Unlimited lessons & unlimited students, cancel anytime`],
+        ],
+      },
+    },
+    {
+      heading: 'When ESL Joy is the better choice',
+      bullets: [
+        'You prefer teaching from flexible slide decks and want to manually edit every slide line by line before class.',
+        'You only teach 1–5 regular students and want a lower-priced starter tier (such as ESL Joy Free or Plus) or a 30-day 15-lesson trial window.',
+        'You prefer a lighter slide-deck workflow over a full 8-stage vocabulary, reading, semantic map, and exercise sequence.',
+      ],
+    },
+    {
+      heading: `When ${brand} is the better choice`,
+      bullets: [
+        'You want a complete, research-backed 8-stage CEFR lesson ready in 1–2 minutes without manually editing slides before class—with automated section-by-section quality verification.',
+        'You want deep vocabulary instruction in every lesson: phonetic pronunciation, levelled definitions, 4 real-world examples, word families with explanations, common collocations, usage notes, illustrations, recall flashcards, and 5-part semantic maps.',
+        'You teach beginner or mixed-confidence students who benefit from ~96%-familiar readings, 3-tier sentence frames (emerging/developing/expanding), shuffled fill-in-the-blanks, and sentence unscramble activities.',
+        'You want every student to have a **zero-login private learner dashboard** plus a **printable color-coded Vocabulary Review PDF** you can send straight after class (especially useful for [Preply](/for/preply-tutors), [italki](/for/italki-tutors), and [freelance](/for/freelance-esl-teachers) tutors).',
+      ],
+    },
+    {
+      heading: 'Inspect full PlanWise ESL lessons with zero login',
+      paragraphs: [
+        'You do not have to guess which teaching flow feels stronger in class. Open any complete A1–C2 lesson below with **no login required**, download the color-coded Vocabulary Review PDF at the top of the page, or review the student hub:',
+      ],
+      bullets: [
+        '**A1 Beginner scaffolding proof:** [Let’s Talk About Video Games! (A1)](/lessons/1774) and all [free A1 Beginner lessons](/esl-lessons/a1).',
+        '**B2 & C1 Adult/Business proof:** [Can Money Buy Happiness? (B2)](/lessons/1768), [The Price of Doing Right: Ethics in the Boardroom (C1)](/lessons/1731), and [Founders, Failures and Pivots (C1)](/lessons/1750).',
+        '**Study PDF, Learner Hub & CEFR Benchmark:** [Zero-login Student Experience](/student-experience), [9-point CEFR Quality Benchmark](/compare/cefr-benchmark), and the full [free A1–C2 public library](/esl-lessons).',
+      ],
+    },
+  ],
+  faq: [
+    {
+      question: 'How is PlanWise ESL different from ESL Joy if both remember each student?',
+      answer: 'Both platforms track individual students, but their lesson structure differs sharply. ESL Joy centres on flexible slide decks you edit line by line, while PlanWise ESL enforces a complete 8-stage CEFR A1–C2 pedagogical sequence (deep vocabulary with word families, collocations and usage notes, ~96%-familiar readings, recall flashcards, 5-part semantic maps, 3-tier sentence frames, verified gap-fill and unscramble, and deep discussion) plus natural-only cross-lesson vocabulary recycling, a zero-login student dashboard, and a printable color-coded Vocabulary Review PDF.',
+    },
+    {
+      question: 'How does pricing compare between ESL Joy and PlanWise ESL?',
+      answer: `As of November 2026, ESL Joy offers a free tier (1 student, 5 custom lessons), a 30-day trial (15 AI lessons), Plus at $9.99/mo regular ($7.99 founding until Nov 30, 2026; up to 5 students, 300 AI uses/mo), and Pro at $15.99/mo regular ($12.99 founding until Nov 30, 2026; unlimited students). PlanWise ESL offers a ${trialText} with unlimited lesson generation (no credit card), followed by one flat ${priceText} Unlimited plan with unlimited lessons and students, cancel anytime.`,
+    },
+    {
+      question: 'Can I compare a real PlanWise ESL lesson before signing up?',
+      answer: 'Yes. Browse our free public ESL lesson library at /esl-lessons with zero login required—every lesson includes the full 8-stage teaching view and a one-click printable Vocabulary Review PDF.',
+    },
+  ],
+  disclaimer: 'PlanWise ESL is not affiliated with or endorsed by ESL Joy. Pricing and features verified as of November 2026 and subject to change—check esljoy.com for current details.',
+  cta: {
+    heading: 'Compare a full 8-stage CEFR lesson with your own students',
+    text: `Generate a complete lesson on any topic in ${generationTime}. Your ${trialText} includes unlimited lessons with no credit card.`,
+    ...trialCta,
+  },
+  schemaType: 'WebPage',
+  updated,
+};
+
 export const comparisonPages: MarketingPage[] = [
   compareHubPage,
+  compareEslJoyPage,
   compareTweePage,
   compareEslBrainsPage,
   compareLinguahousePage,
