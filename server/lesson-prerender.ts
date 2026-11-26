@@ -416,6 +416,7 @@ export function buildLessonPageHtml(lesson: LessonForPrerender, sections: any[],
     <aside class="lp-cta">
       <h2>Use this lesson with your students</h2>
       <p>PlanWise ESL creates complete, CEFR-levelled ESL lessons on any topic in minutes. <a href="/auth?register=true">Sign up free</a> to copy this lesson, edit it, or generate your own.</p>
+      <p>Created by Dave Jackson (British ESL teacher). These lessons are designed to be teacher-led — if you are an English learner and want to take this lesson 1-on-1 with Dave, visit <a href="https://speakwithdave.com" rel="noopener noreferrer">SpeakWithDave.com</a>.</p>
     </aside>
   </main>
 </div>`;

@@ -393,6 +393,24 @@ export default function FullScreenLessonPage() {
             {parsedContent && lesson.isPublic && lesson.teacherId !== user?.id && (
               <LessonDesignPanel content={parsedContent} signedIn={!!user} />
             )}
+            {parsedContent && lesson.isPublic && (!user || user.isAdmin) && (
+              <div className="max-w-4xl mx-auto mb-4 rounded-xl border border-amber-200/80 bg-amber-50/60 px-4 py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs sm:text-sm text-slate-700 print:hidden">
+                <span>
+                  Created by <strong className="text-brand-navy">Dave Jackson</strong> (British ESL teacher · 11 yrs) — designed as a teacher-led lesson.
+                </span>
+                <span>
+                  Learning English?{" "}
+                  <a
+                    href="https://speakwithdave.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-semibold text-brand-navy underline decoration-brand-yellow decoration-2 underline-offset-2 hover:text-amber-700"
+                  >
+                    Take this lesson 1-on-1 at SpeakWithDave.com →
+                  </a>
+                </span>
+              </div>
+            )}
             {parsedContent && <LessonContent content={parsedContent} />}
             {parsedContent && lesson.isPublic && !user && (
               <aside className="mt-10 max-w-4xl mx-auto rounded-2xl bg-brand-navy text-white p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 print:hidden">
@@ -416,7 +434,7 @@ export default function FullScreenLessonPage() {
               </aside>
             )}
             {lesson?.isPublic && (
-              <div className="max-w-5xl mx-auto mt-6 mb-6 rounded-xl border border-slate-200 bg-white px-5 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-sm">
+              <div className="max-w-5xl mx-auto mt-6 mb-6 rounded-xl border border-slate-200 bg-white px-5 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-sm print:hidden">
                 <div className="flex items-center gap-2 text-sm font-medium text-brand-navy">
                   <Share2 className="h-4 w-4 text-amber-600 shrink-0" />
                   <span>Found this free lesson useful? Share it with a fellow teacher or student:</span>
@@ -472,8 +490,8 @@ export default function FullScreenLessonPage() {
                 </div>
               </div>
             )}
-            {lesson?.isPublic && !user && (
-              <p className="max-w-5xl mx-auto mb-10 px-4 text-center text-sm text-slate-500">
+            {lesson?.isPublic && (!user || user.isAdmin) && (
+              <p className="max-w-5xl mx-auto mb-10 px-4 text-center text-sm text-slate-500 print:hidden">
                 Created by <span className="font-medium text-brand-navy">Dave Jackson</span> (British ESL teacher). These lessons are designed to be teacher-led — if you’re an English learner and want to take this lesson 1-on-1 with Dave, visit{" "}
                 <a
                   href="https://speakwithdave.com"
