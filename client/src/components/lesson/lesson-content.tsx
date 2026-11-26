@@ -67,10 +67,12 @@ import { cn, extractDiscussionQuestions, extractQuizQuestions, extractComprehens
 import { useLocation } from "wouter";
 import { VocabularySemanticMap } from './vocabulary-semantic-map';
 import { GrammarSpotlight } from './grammar-spotlight';
+import { VocabFlashcardCTA } from '@/components/public-lesson-ctas';
 import type { ParsedLessonContent, LessonSection, LessonQuestionAnswer, LessonVocabularyWord, SentenceFramePattern } from '../../../../types/lessonContentTypes';
 
 interface LessonContentProps {
   content: ParsedLessonContent;
+  vocabularyCta?: React.ReactNode;
 }
 
 type SectionType = 
@@ -103,7 +105,7 @@ interface SectionDetails {
   description: string;
 }
 
-export function LessonContent({ content }: LessonContentProps) {
+export function LessonContent({ content, vocabularyCta }: LessonContentProps) {
   const [parsedContent, setParsedContent] = useState<ParsedLessonContent | null>(null);
   const [activeTab, setActiveTab] = useState<string>(""); 
   const [location, setLocation] = useLocation();
@@ -1630,6 +1632,7 @@ export function LessonContent({ content }: LessonContentProps) {
             <VocabularySemanticMap word={currentWord} />
           </div>
         )}
+        {vocabularyCta}
       </div>
     );
   };

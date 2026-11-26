@@ -138,7 +138,7 @@ export const compareTweePage: MarketingPage = {
       heading: `When ${brand} is the better choice`,
       bullets: [
         'You want a complete, ready-to-screen-share conversation lesson in 1–2 minutes without stitching five separate tool outputs together.',
-        'You teach regular one-to-one or small-group students on [Cambly, Preply or italki](/for/online-tutors), [privately](/for/freelance-esl-teachers), or at a [language school](/for/language-schools) and want each lesson to build on the words the student already learned.',
+        'You teach regular one-to-one or small-group students on [Preply or italki](/for/online-tutors), [privately](/for/freelance-esl-teachers), or at a [language school](/for/language-schools) and want each lesson to build on the words the student already learned.',
         'You want every student to leave class with a polished Vocabulary Review study PDF (including common collocations, word families, usage notes and synonyms/antonyms) plus a private learner dashboard with flashcards.',
         'You want students to suggest topics or create their own custom lessons on any subject between classes.',
       ],
@@ -303,7 +303,7 @@ export const compareLinguahousePage: MarketingPage = {
     {
       heading: 'Why 1-on-1 tutors switch from Linguahouse to PlanWise ESL',
       bullets: [
-        '**Bespoke topics instead of recycled PDFs:** Students on Preply, Cambly and italki often recognise the same static Linguahouse worksheets from previous tutors—and static libraries cannot cover a student’s specific job interview, tech stack or hobby on demand.',
+        '**Bespoke topics instead of recycled PDFs:** Students on Preply and italki often recognise the same static Linguahouse worksheets from previous tutors—and static libraries cannot cover a student’s specific job interview, tech stack or hobby on demand.',
         '**Dynamic recycling beats isolated decks:** Instead of leaving vocabulary inside a separate Expemo deck, PlanWise ESL avoids duplicate words, weaves earlier vocabulary naturally into future readings when relevant, and gives students a zero-login [learner dashboard](/student-experience).',
         '**Open full lessons free—no paywall:** Unlike paywalled worksheet libraries, you can open complete A1–C2 lessons and download the color-coded Vocabulary Review PDF right now in our [public ESL lesson library](/esl-lessons).',
       ],
@@ -372,7 +372,7 @@ export const compareOff2ClassPage: MarketingPage = {
       heading: `When ${brand} is the better choice`,
       bullets: [
         'Your students need printable study PDFs for offline review, in-person classes or low-tech setups.',
-        'You teach adult or teen conversation classes on [Cambly, Preply or italki](/for/online-tutors), [privately](/for/freelance-esl-teachers) or at a [small to medium language school](/for/language-schools) and want engaging lessons built around each learner’s real interests.',
+        'You teach adult or teen conversation classes on [Preply or italki](/for/online-tutors), [privately](/for/freelance-esl-teachers) or at a [small to medium language school](/for/language-schools) and want engaging lessons built around each learner’s real interests.',
         'You teach more than 5 students and want flat, predictable pricing with unlimited lessons and students.',
         'You want every lesson to combine vocabulary depth (word families, collocations, usage notes), recall flashcards, semantic maps, beginner-friendly sentence frames, gap-fill, sentence unscramble and deep discussion.',
       ],
@@ -534,7 +534,12 @@ export const compareEslJoyPage: MarketingPage = {
     {
       heading: 'Inspect full PlanWise ESL lessons with zero login',
       paragraphs: [
-        'You do not have to guess which teaching flow feels stronger in class. Open any complete A1–C2 lesson in our [free public ESL lesson library](/esl-lessons) with **no login required**, download the color-coded Vocabulary Review PDF at the top of the page, preview the [zero-login Student Experience](/student-experience), or review our [9-point CEFR Quality Benchmark](/compare/cefr-benchmark).',
+        'You do not have to guess which teaching flow feels stronger in class. Open any complete A1–C2 lesson below with **no login required**, download the color-coded Vocabulary Review PDF at the top of the page, or review the student hub:',
+      ],
+      bullets: [
+        '**A1 Beginner scaffolding proof:** [Let’s Talk About Video Games! (A1)](/lessons/1774) and all [free A1 Beginner lessons](/esl-lessons/a1).',
+        '**B2 & C1 Adult/Business proof:** [Can Money Buy Happiness? (B2)](/lessons/1768), [The Price of Doing Right: Ethics in the Boardroom (C1)](/lessons/1731), and [Founders, Failures and Pivots (C1)](/lessons/1750).',
+        '**Study PDF, Learner Hub & CEFR Benchmark:** [Zero-login Student Experience](/student-experience), [9-point CEFR Quality Benchmark](/compare/cefr-benchmark), and the full [free A1–C2 public library](/esl-lessons).',
       ],
     },
   ],

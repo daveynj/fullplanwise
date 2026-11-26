@@ -6,6 +6,7 @@
 // "pending" (keep polling), and only an abandoned one reports an error.
 import { describe, it, expect, vi, beforeAll, afterAll, beforeEach } from "vitest";
 import type { Server } from "http";
+vi.mock("./lesson-url-schema", () => ({ ensureLessonUrlSchema: vi.fn(async () => {}) }));
 
 const TEACHER_ID = 3100;
 

@@ -86,7 +86,7 @@ export function serveStatic(app: Express) {
         res.status(200).set({ "Content-Type": "text/html" }).end(prerendered);
         return;
       }
-      if (pathname.startsWith("/lessons/")) {
+      if (pathname.startsWith("/lessons/") || /^\/esl-lessons\/[^/]+\/[^/]+/.test(pathname)) {
         // Never let a transient prerender failure cache the homepage's og:url
         // as the destination for a real lesson link.
         res.status(503).set({ "Content-Type": "text/html", "Retry-After": "120", "Cache-Control": "no-store" })
@@ -119,6 +119,7 @@ export function serveStatic(app: Express) {
   });
 
   app.get("/lessons/:id", servePrerenderedLesson);
+  app.get("/esl-lessons/:level/:slug", servePrerenderedLesson);
   app.get("/esl-lessons", servePrerenderedLesson);
   app.get("/esl-lessons/:level", servePrerenderedLesson);
 

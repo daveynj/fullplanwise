@@ -29,8 +29,10 @@ import { subscriptionCheckoutRoute } from "./subscription-checkout-route";
 import { subscriptionCancelRoute } from "./subscription-cancel-route";
 import { billingHealthMonitor } from "./billing-health";
 import { registerBillingHealthRoute } from "./billing-health-route";
-import { validClientRoutes } from "@shared/client-routes";
+import { validClientRoutes, retiredPageRedirects } from "@shared/client-routes";
 import { notifyIndexNow, submitToIndexNow, getIndexNowKey, lessonIndexNowPaths, blogIndexNowPaths } from "./indexnow";
+import { lessonPath } from "@shared/lesson-url";
+import { ensureLessonUrlSchema } from "./lesson-url-schema";
 import { marketingPages } from "@shared/marketing-pages";
 import { buildLlmsFullTxt, getLlmsFullTxt } from "./llms-full";
 import {
@@ -122,6 +124,18 @@ export function parseQueryInt(
 const MAX_PAGE_SIZE = 100;
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Listen immediately, but never query the expanded lesson schema before the
+  // additive migration and backfill have committed. Retry on a later request.
+  void ensureLessonUrlSchema().catch((error) => console.error("Lesson URL migration failed:", error));
+  app.use(["/api", "/lessons", "/esl-lessons", "/s", "/sitemap.xml", "/llms-full.txt"], async (_req, res, next) => {
+    try {
+      await ensureLessonUrlSchema();
+      next();
+    } catch {
+      res.status(503).set({ "Retry-After": "120", "X-Robots-Tag": "noindex" })
+        .send("Lessons are temporarily unavailable. Please try again shortly.");
+    }
+  });
   // The student page's columns (server/student-page-schema.ts). Started now
   // without delaying start-up; API requests wait for it only while it runs,
   // because student queries select the new columns.
@@ -894,15 +908,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/lessons/:id", async (req, res) => {
+  app.get(["/api/lessons/:id", "/api/public-lessons/:slug"], async (req, res) => {
     try {
-      const lessonId = parseIdParam(req.params.id);
-      if (lessonId === null) {
+      const lessonId = req.params.slug ? null : parseIdParam(req.params.id);
+      if (!req.params.slug && lessonId === null) {
         return res.status(404).json({ message: "Lesson not found" });
       }
       console.log(`Fetching lesson ${lessonId} for public access`);
 
-      const lesson = await storage.getLesson(lessonId);
+      const lesson = req.params.slug
+        ? await storage.getLessonByPublicSlug(req.params.slug)
+        : await storage.getLesson(lessonId!);
 
       if (!lesson) {
         console.log(`Lesson ${lessonId} not found`);
@@ -1394,7 +1410,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!lesson.isShared) {
         await storage.updateLesson(lessonId, { isShared: true });
       }
-      res.json({ shareUrl: `/lessons/${lessonId}` });
+      res.json({ shareUrl: lessonPath(lesson) });
     } catch (error: any) {
       console.error("Error enabling lesson sharing:", error);
       res.status(500).json({ message: "Could not create share link" });
@@ -2014,7 +2030,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         ...marketingPages.map((p) => p.path),
         "/esl-lessons",
         ...["a1", "a2", "b1", "b2", "c1", "c2"].map((level) => `/esl-lessons/${level}`),
-        ...publicLessons.map((l) => `/lessons/${l.id}`),
+        ...publicLessons.map(lessonPath),
         "/blog",
         ...posts.filter((p) => p.isPublished).map((p) => `/blog/${p.slug}`),
       ];
@@ -2561,6 +2577,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     return true;
   };
 
+  // Pages that were taken down send their old address to a live page with a
+  // 301, keeping the query string, so old links and search results still work.
+  for (const [from, to] of Object.entries(retiredPageRedirects)) {
+    app.get([from, `${from}/`], (req, res) => {
+      const queryIndex = req.originalUrl.indexOf("?");
+      const query = queryIndex === -1 ? "" : req.originalUrl.slice(queryIndex);
+      res.redirect(301, to + query);
+    });
+  }
+
   // Canonicalize trailing slashes on known client pages (e.g. /lessons/42/ ->
   // /lessons/42) with a 301, preserving the query string. Links pasted into
   // chat apps or typed by hand sometimes gain a trailing slash; without this
@@ -2628,6 +2654,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return;
       }
 
+      if (lesson.isPublic && lesson.publicSlug) {
+        res.redirect(301, lessonPath(lesson) + (req.originalUrl.includes("?") ? req.originalUrl.slice(req.originalUrl.indexOf("?")) : ""));
+        return;
+      }
+      if (!lesson.isPublic) res.set("X-Robots-Tag", "noindex, nofollow");
       // Pass the lesson along so the prerenderer doesn't query it again.
       res.locals.lesson = lesson;
       next();
@@ -2640,6 +2671,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
         .status(503)
         .set({ "Retry-After": "120", "Content-Type": "text/html" })
         .end('<!DOCTYPE html><html><head><meta name="robots" content="noindex" /><title>Temporarily unavailable | PlanWise ESL</title></head><body><p>This lesson is temporarily unavailable. Please try again in a moment.</p></body></html>');
+    }
+  });
+
+  app.get("/esl-lessons/:level/:slug", async (req, res, next) => {
+    try {
+      const lesson = await storage.getLessonByPublicSlug(req.params.slug);
+      if (!lesson || (!lesson.isPublic && !lesson.isShared)) {
+        await serve404Html(res, app);
+        return;
+      }
+      // The stored path remains valid through title/level changes. Normalize
+      // alternate level spellings without creating duplicate indexable pages.
+      const canonical = lessonPath(lesson);
+      if (req.path !== canonical) {
+        res.redirect(301, canonical + (req.originalUrl.includes("?") ? req.originalUrl.slice(req.originalUrl.indexOf("?")) : ""));
+        return;
+      }
+      if (!lesson.isPublic) res.set("X-Robots-Tag", "noindex, nofollow");
+      res.locals.lesson = lesson;
+      next();
+    } catch (error) {
+      console.error("Error checking public lesson URL:", error);
+      res.status(503).set({ "Retry-After": "120", "X-Robots-Tag": "noindex" })
+        .send("This lesson is temporarily unavailable. Please try again shortly.");
     }
   });
 
@@ -2717,7 +2772,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       for (const lesson of publicLessons) {
-        entries.push({ url: `/lessons/${lesson.id}`, lastmod: toDate(lesson.createdAt) });
+        entries.push({ url: lessonPath(lesson), lastmod: toDate(lesson.createdAt) });
       }
 
       let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';

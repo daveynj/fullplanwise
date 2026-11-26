@@ -53,6 +53,7 @@ export const clientRoutePaths: string[] = [
   "/blog/:slug", // existence check handled by the /blog/:slug server route
   "/esl-lessons",
   "/esl-lessons/:level", // level validity checked by the /esl-lessons/:level server route
+  "/esl-lessons/:level/:slug", // public slug visibility checked by the server
   // Public information pages (shared/marketing-pages.ts)
   "/how-it-works",
   "/about",
@@ -76,7 +77,6 @@ export const clientRoutePaths: string[] = [
   "/guides/esl-conversation-topics-by-level",
   "/guides/cefr-levels-explained",
   "/guides/personalise-esl-lessons",
-  "/guides/cambly-feedback-score-super-tutor",
   "/forgot-password",
   "/reset-password/:token",
   "/twitter-card",
@@ -87,6 +87,15 @@ export const clientRoutePaths: string[] = [
   "/s/:token/lessons/:lessonId",
   "/s/:token/next",
 ];
+
+/**
+ * Pages that were taken down, and where their old address now sends people
+ * (a permanent 301, so links and search results keep working).
+ */
+export const retiredPageRedirects: Record<string, string> = {
+  // Removed 26 Nov 2026: PlanWise no longer mentions Cambly.
+  "/guides/cambly-feedback-score-super-tutor": "/guides",
+};
 
 /** RegExps the server's 404 catch-all uses to recognize valid client pages. */
 export const validClientRoutes: RegExp[] = clientRoutePaths.map(routePathToRegex);

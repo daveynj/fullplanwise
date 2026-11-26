@@ -88,7 +88,7 @@ export async function setupVite(app: Express, server: Server) {
         // Prerender public lesson pages and browse pages (null = private/missing/other)
         const prerendered = await injectLessonPrerender(template, pathname, res.locals.lesson);
         if (prerendered) template = prerendered;
-        else if (pathname.startsWith("/lessons/")) {
+        else if (pathname.startsWith("/lessons/") || /^\/esl-lessons\/[^/]+\/[^/]+/.test(pathname)) {
           res.status(503).set({ "Content-Type": "text/html", "Retry-After": "120", "Cache-Control": "no-store" })
             .end('<html><head><meta name="robots" content="noindex"><title>Lesson temporarily unavailable</title></head><body>Please try this lesson again shortly.</body></html>');
           return;

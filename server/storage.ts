@@ -28,6 +28,8 @@ import {
 } from "@shared/student-page";
 import { lessonWordDetails } from "./lesson-word-details";
 import { ABANDONED_JOB_AGE_MS } from "./lesson-jobs";
+import { ensureLessonUrlSchema, LESSON_URL_LOCK } from "./lesson-url-schema";
+import { availableLessonSlug } from "@shared/lesson-url";
 import { SQL, eq, and, desc, count, or, ilike, gte, sql, inArray, ne, isNull } from "drizzle-orm";
 
 /** Whether a student may start making a lesson now (reserveStudentLessonJob). */
@@ -87,6 +89,7 @@ export interface IStorage {
   getLessons(teacherId: number, page?: number, pageSize?: number, search?: string, cefrLevel?: string, dateFilter?: string): Promise<{ lessons: Lesson[], total: number }>;
   getLessonsByStudent(studentId: number): Promise<Lesson[]>;
   getLesson(id: number): Promise<Lesson | undefined>;
+  getLessonByPublicSlug(slug: string): Promise<Lesson | undefined>;
   createLesson(lesson: InsertLesson): Promise<Lesson>;
   updateLesson(id: number, lessonUpdate: Partial<Lesson>): Promise<Lesson>;
   deleteLesson(id: number): Promise<boolean>;
@@ -95,7 +98,7 @@ export interface IStorage {
 
   // Public library methods
   getPublicLessons(page?: number, pageSize?: number, search?: string, cefrLevel?: string, category?: string): Promise<{ lessons: Lesson[], total: number }>;
-  getPublicLessonSummaries(cefrLevel?: string): Promise<Array<Pick<Lesson, 'id' | 'title' | 'cefrLevel' | 'publicCategory' | 'createdAt'>>>;
+  getPublicLessonSummaries(cefrLevel?: string): Promise<Array<Pick<Lesson, 'id' | 'title' | 'cefrLevel' | 'publicCategory' | 'createdAt' | 'publicSlug' | 'publicLevel'>>>;
   copyLessonToUser(lessonId: number, userId: number): Promise<Lesson>;
 
   // Admin methods
@@ -700,6 +703,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getLesson(id: number): Promise<Lesson | undefined> {
+    await ensureLessonUrlSchema();
     try {
       console.log(`[Storage.getLesson] Fetching lesson ${id}`);
       const [lesson] = await db
@@ -721,6 +725,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createLesson(insertLesson: InsertLesson): Promise<Lesson> {
+    await ensureLessonUrlSchema();
     try {
       const [lesson] = await db
         .insert(lessons)
@@ -734,18 +739,29 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateLesson(id: number, lessonUpdate: Partial<Lesson>): Promise<Lesson> {
+    await ensureLessonUrlSchema();
     try {
-      const [updatedLesson] = await db
-        .update(lessons)
-        .set(lessonUpdate)
-        .where(eq(lessons.id, id))
-        .returning();
-
-      if (!updatedLesson) {
-        throw new Error("Lesson not found");
-      }
-
-      return updatedLesson;
+      return await db.transaction(async (tx) => {
+        await tx.execute(sql`SELECT pg_advisory_xact_lock(${LESSON_URL_LOCK})`);
+        const [current] = await tx.select({
+          title: lessons.title, cefrLevel: lessons.cefrLevel,
+          isPublic: lessons.isPublic, publicSlug: lessons.publicSlug,
+        }).from(lessons).where(eq(lessons.id, id));
+        if (!current) throw new Error("Lesson not found");
+        // URL fields are server-managed and immutable, including after unpublishing.
+        const { publicSlug: _slug, publicLevel: _level, ...rest } = lessonUpdate;
+        const updates: Partial<Lesson> = rest;
+        if ((updates.isPublic ?? current.isPublic) && !current.publicSlug) {
+          const existing = await tx.select({ slug: lessons.publicSlug }).from(lessons);
+          updates.publicSlug = availableLessonSlug(updates.title ?? current.title, id,
+            new Set(existing.flatMap((r) => r.slug ? [r.slug] : [])));
+          const level = (updates.cefrLevel ?? current.cefrLevel).toLowerCase();
+          if (!/^[abc][12]$/.test(level)) throw new Error("Invalid public lesson level");
+          updates.publicLevel = level;
+        }
+        const [updated] = await tx.update(lessons).set(updates).where(eq(lessons.id, id)).returning();
+        return updated;
+      });
     } catch (error) {
       console.error('Error updating lesson:', error);
       throw error;
@@ -1171,6 +1187,7 @@ export class DatabaseStorage implements IStorage {
   // Lightweight list of every public lesson (no content), for the crawlable
   // browse pages and the sitemap. Optionally limited to one CEFR level.
   async getPublicLessonSummaries(cefrLevel?: string) {
+    await ensureLessonUrlSchema();
     const conditions = [eq(lessons.isPublic, true)];
     if (cefrLevel) conditions.push(eq(lessons.cefrLevel, cefrLevel));
 
@@ -1180,15 +1197,23 @@ export class DatabaseStorage implements IStorage {
         title: lessons.title,
         cefrLevel: lessons.cefrLevel,
         publicCategory: lessons.publicCategory,
+        publicSlug: lessons.publicSlug,
+        publicLevel: lessons.publicLevel,
         createdAt: lessons.createdAt,
       })
       .from(lessons)
       .where(and(...conditions))
-      .orderBy(desc(lessons.createdAt))
-      .limit(1000);
+      .orderBy(desc(lessons.createdAt));
+  }
+
+  async getLessonByPublicSlug(slug: string): Promise<Lesson | undefined> {
+    await ensureLessonUrlSchema();
+    const [lesson] = await db.select().from(lessons).where(eq(lessons.publicSlug, slug));
+    return lesson;
   }
 
   async getPublicLessons(page = 1, pageSize = 20, search = '', cefrLevel = 'all', category = 'all') {
+    await ensureLessonUrlSchema();
     try {
       const offset = (page - 1) * pageSize;
 
@@ -1208,6 +1233,8 @@ export class DatabaseStorage implements IStorage {
           cefrLevel: lessons.cefrLevel,
           category: lessons.category,
           publicCategory: lessons.publicCategory,
+          publicSlug: lessons.publicSlug,
+          publicLevel: lessons.publicLevel,
           createdAt: lessons.createdAt,
           contentHead: sql<string | null>`substring(${lessons.content}, 1, ${LESSON_SUMMARY_SOURCE_CHARS})`.as('contentHead')
         })

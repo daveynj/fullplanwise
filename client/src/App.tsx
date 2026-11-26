@@ -90,6 +90,7 @@ function Router() {
       <ProtectedRoute path="/grammar-showcase" component={GrammarShowcasePage} />
       <Route path="/auth" component={AuthPage} />
       <Route path="/esl-lessons" component={PublicLessonsIndexPage} />
+      <Route path="/esl-lessons/:level/:slug" component={FullScreenLessonPage} />
       <Route path="/esl-lessons/:level" component={PublicLessonsIndexPage} />
       <Route path="/blog/:slug" component={BlogPost} />
       <Route path="/blog" component={BlogIndex} />
@@ -115,7 +116,6 @@ function Router() {
       <Route path="/guides/esl-conversation-topics-by-level" component={MarketingPage} />
       <Route path="/guides/cefr-levels-explained" component={MarketingPage} />
       <Route path="/guides/personalise-esl-lessons" component={MarketingPage} />
-      <Route path="/guides/cambly-feedback-score-super-tutor" component={MarketingPage} />
       <Route path="/forgot-password" component={ForgotPasswordPage} />
       <Route path="/reset-password/:token" component={ResetPasswordPage} />
       <Route path="/twitter-card" component={TwitterCardPreview} />

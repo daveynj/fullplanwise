@@ -55,6 +55,38 @@ export const RECOMMENDED_PUBLIC_LESSONS_BATCH = [
 
 export const ADMIN_BATCH_PRESET_PACKS: BatchPresetPack[] = [
   {
+    id: "fill-a1-c2",
+    label: "Fill Thin Levels: A1 & C2 (24)",
+    description: "14 fresh A1 beginner everyday lessons and 10 C2 proficiency debate lessons to deepen thinner CEFR levels without duplicating existing live titles.",
+    defaultLessonCategory: "general",
+    lines: [
+      "A1 | general-english | Talking About the Weather and Seasons",
+      "A1 | general-english | Telling the Time and Making Simple Plans",
+      "A1 | general-english | Describing Your Home and Rooms in Your House",
+      "A1 | general-english | Buying Groceries at the Supermarket",
+      "A1 | general-english | Taking the Bus, Train, and Taxi Around Town",
+      "A1 | conversation-practice | Talking About Your Favourite Food and Drinks",
+      "A1 | conversation-practice | Talking About Hobbies, Music, and Free Time",
+      "A1 | general-english | Describing People: Appearance and Personality",
+      "A1 | general-english | At the Pharmacy: Asking for Simple Medicine",
+      "A1 | general-english | Checking Into a Hotel and Asking About Wi-Fi",
+      "A1 | conversation-practice | Talking About Birthdays, Dates, and Celebrations",
+      "A1 | general-english | Ordering Dinner at a Restaurant and Paying the Bill",
+      "A1 | conversation-practice | Talking About Sports and Keeping Active",
+      "A1 | workplace-communication | Talking About Simple Jobs and Where People Work",
+      "C2 | conversation-practice | Meritocracy: Fair Reward for Talent or Modern Myth?",
+      "C2 | business-english | Sovereign Debt, Inflation, and the Limits of Central Banking",
+      "C2 | conversation-practice | Degrowth vs. Green Capitalism: Can Prosperity Decouple from Carbon?",
+      "C2 | conversation-practice | Cancel Culture, Free Speech, and Public Accountability",
+      "C2 | business-english | Stakeholder Capitalism vs. Shareholder Primacy in Boardrooms",
+      "C2 | conversation-practice | Restorative Justice vs. Retributive Punishment in Modern Law",
+      "C2 | conversation-practice | Urban Gentrification, Heritage Preservation, and the Right to the City",
+      "C2 | vocabulary-building | Rhetoric, Euphemism, and Framing in Political Discourse",
+      "C2 | conversation-practice | Cultural Appropriation vs. Artistic Exchange in a Globalised World",
+      "C2 | business-english | Geoeconomics, Supply-Chain Sovereignty, and the End of Hyper-Globalisation",
+    ].join("\n"),
+  },
+  {
     id: "english-qa",
     label: "English Q&A Traffic Magnets (20)",
     description: "Highest-volume English questions students & teachers ask Google and AI (make vs do, present perfect vs past simple, polite English, phrasal verbs, conditionals).",
@@ -92,7 +124,7 @@ export const ADMIN_BATCH_PRESET_PACKS: BatchPresetPack[] = [
   {
     id: "career",
     label: "Job Interviews & Career (15)",
-    description: "High-intent career & interview lessons adult learners on Preply/Cambly/italki search for.",
+    description: "High-intent career & interview lessons adult learners on Preply and italki search for.",
     defaultLessonCategory: "business",
     lines: [
       "A2 | workplace-communication | Answering Tell Me About Yourself in a Job Interview",
