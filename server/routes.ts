@@ -2713,6 +2713,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.sendFile(filePath);
   });
 
+  app.get("/f4c8b2e7a19d406583e2b7a941d6c0f8.txt", (_req, res) => {
+    const filePath = path.join(process.cwd(), "public", "f4c8b2e7a19d406583e2b7a941d6c0f8.txt");
+    res.header("Content-Type", "text/plain; charset=utf-8");
+    res.sendFile(filePath);
+  });
+
   app.get("/llms-full.txt", async (_req, res) => {
     res.header("Content-Type", "text/plain; charset=utf-8");
     res.header("Cache-Control", "public, max-age=600");
