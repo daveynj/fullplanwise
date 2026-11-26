@@ -12,6 +12,7 @@
  */
 import { siteFacts, trialText, priceText } from './site-facts';
 import { cefrLevelsGuide, planConversationLessonGuide, topicsByLevelGuide, personaliseGuide, guidesIndex } from './guides';
+import { icpPages } from './icp-pages';
 
 export interface MarketingTable {
   headers: string[];
@@ -268,7 +269,7 @@ const about: MarketingPage = {
     {
       heading: 'Who it is for',
       paragraphs: [
-        'PlanWise ESL is built for **Cambly, Preply and italki tutors**, **freelance and independent English teachers**, and **small to medium language schools**. It works for any ESL or EFL teacher with teenage or adult learners who wants structured, high-quality, personalised conversation lessons instead of generic off-the-shelf material.',
+        'PlanWise ESL is built for [Cambly, Preply and italki tutors](/for/online-tutors), [freelance and independent English teachers](/for/freelance-esl-teachers), and [small to medium language schools](/for/language-schools). It works for any ESL or EFL teacher with teenage or adult learners who wants structured, high-quality, personalised conversation lessons instead of generic off-the-shelf material.',
       ],
     },
     {
@@ -568,7 +569,9 @@ const camblyGuide: MarketingPage = {
 /** Guides, in the order the /guides page lists them. */
 export const guidePages: MarketingPage[] = [planConversationLessonGuide, topicsByLevelGuide, cefrLevelsGuide, personaliseGuide, camblyGuide];
 
-export const marketingPages: MarketingPage[] = [howItWorks, about, pricing, compareChatGpt, guidesIndex(guidePages), ...guidePages];
+export { icpPages };
+
+export const marketingPages: MarketingPage[] = [howItWorks, about, pricing, ...icpPages, compareChatGpt, guidesIndex(guidePages), ...guidePages];
 
 export function marketingPageByPath(pathname: string): MarketingPage | undefined {
   const clean = pathname.replace(/\/+$/, '') || '/';

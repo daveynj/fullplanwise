@@ -96,6 +96,9 @@ function Router() {
       <Route path="/how-it-works" component={MarketingPage} />
       <Route path="/about" component={MarketingPage} />
       <Route path="/pricing" component={MarketingPage} />
+      <Route path="/for/online-tutors" component={MarketingPage} />
+      <Route path="/for/freelance-esl-teachers" component={MarketingPage} />
+      <Route path="/for/language-schools" component={MarketingPage} />
       <Route path="/compare/chatgpt" component={MarketingPage} />
       <Route path="/guides" component={MarketingPage} />
       <Route path="/guides/how-to-plan-an-esl-conversation-lesson" component={MarketingPage} />
