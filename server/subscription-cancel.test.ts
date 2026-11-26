@@ -6,6 +6,7 @@
 import { describe, it, expect, beforeAll, afterAll, beforeEach, vi } from "vitest";
 import express from "express";
 import type { Server } from "http";
+vi.mock("./lesson-url-schema", () => ({ ensureLessonUrlSchema: vi.fn(async () => {}) }));
 import type { AddressInfo } from "net";
 
 const TEST_USER_ID = 1;

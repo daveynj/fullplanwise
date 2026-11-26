@@ -1,13 +1,15 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { readFileSync } from "node:fs";
-import { lessonPublicMetadata } from "@shared/lesson-public-metadata";
+import { lessonPublicMetadata, publicLessonRemixHref } from "@shared/lesson-public-metadata";
 
 const getLesson = vi.fn();
+const getLessonByPublicSlug = vi.fn();
 const getPublicLessonSummaries = vi.fn();
 
 vi.mock("./storage", () => ({
   storage: {
     getLesson: (...args: unknown[]) => getLesson(...args),
+    getLessonByPublicSlug: (...args: unknown[]) => getLessonByPublicSlug(...args),
     getPublicLessonSummaries: (...args: unknown[]) => getPublicLessonSummaries(...args),
   },
 }));
@@ -29,6 +31,24 @@ describe("social destinations from the real homepage template", () => {
       }
     });
   }
+});
+
+describe("public lesson remix links", () => {
+  it("sends signed-in teachers to a prefilled lesson generator", () => {
+    expect(publicLessonRemixHref("Travel plans", "B1", true))
+      .toBe("/generate?topic=Travel%20plans&level=B1");
+  });
+
+  it("returns new visitors through signup to a safely encoded generator URL", () => {
+    const href = publicLessonRemixHref("Travel & culture", "B2", false);
+    const auth = new URL(href, "https://planwiseesl.com");
+    const generate = new URL(auth.searchParams.get("redirect")!, "https://planwiseesl.com");
+    expect(auth.pathname).toBe("/auth");
+    expect(auth.searchParams.get("register")).toBe("true");
+    expect(generate.pathname).toBe("/generate");
+    expect(generate.searchParams.get("topic")).toBe("Travel & culture");
+    expect(generate.searchParams.get("level")).toBe("B2");
+  });
 });
 
 const TEMPLATE = `<!DOCTYPE html><html><head>
@@ -71,8 +91,46 @@ const baseLesson = {
 
 beforeEach(() => {
   getLesson.mockReset();
+  getLessonByPublicSlug.mockReset();
   getPublicLessonSummaries.mockReset();
   getPublicLessonSummaries.mockResolvedValue([]);
+});
+
+describe("slug lesson prerendering", () => {
+  const publicLesson = () => ({ ...baseLesson, publicSlug: "travel-plans", publicLevel: "b1" });
+
+  it("uses the same slug for canonical, social metadata, structured data and library links", async () => {
+    const lesson = publicLesson();
+    getLessonByPublicSlug.mockResolvedValue(lesson);
+    getPublicLessonSummaries.mockResolvedValue([lesson]);
+    const path = "/esl-lessons/b1/travel-plans";
+    const html = (await injectLessonPrerender(TEMPLATE, path))!;
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    expect(doc.querySelector('link[rel="canonical"]')?.getAttribute("href")).toBe(`https://planwiseesl.com${path}`);
+    expect(doc.querySelector('meta[property="og:url"]')?.getAttribute("content")).toBe(`https://planwiseesl.com${path}`);
+    expect(html).not.toContain(baseLesson.topic);
+    const data = [...doc.querySelectorAll('script[type="application/ld+json"]')].map((el) => JSON.parse(el.textContent!));
+    expect(data.find((d) => d["@type"] === "LearningResource").url).toBe(`https://planwiseesl.com${path}`);
+    const listing = (await injectLessonPrerender(TEMPLATE, "/esl-lessons"))!;
+    expect(listing).toContain(`href="${path}"`);
+    expect(listing).toContain(`"url":"https://planwiseesl.com${path}"`);
+    expect(listing).not.toContain('href="/lessons/42"');
+  });
+
+  it("keeps a previously public link-only slug noindex with no LearningResource", async () => {
+    getLessonByPublicSlug.mockResolvedValue({ ...publicLesson(), isPublic: false, isShared: true });
+    const html = (await injectLessonPrerender(TEMPLATE, "/esl-lessons/b1/travel-plans"))!;
+    expect(html).toContain("noindex, nofollow");
+    expect(html).not.toContain('"@type":"LearningResource"');
+  });
+
+  it("does not prerender missing, private, or wrong-level URLs", async () => {
+    expect(await injectLessonPrerender(TEMPLATE, "/esl-lessons/b1/missing")).toBeNull();
+    getLessonByPublicSlug.mockResolvedValue({ ...publicLesson(), isPublic: false, isShared: false });
+    expect(await injectLessonPrerender(TEMPLATE, "/esl-lessons/b1/travel-plans")).toBeNull();
+    getLessonByPublicSlug.mockResolvedValue(publicLesson());
+    expect(await injectLessonPrerender(TEMPLATE, "/esl-lessons/c2/travel-plans")).toBeNull();
+  });
 });
 
 describe("injectLessonPrerender: content stored as a JSON string", () => {
@@ -283,8 +341,13 @@ describe("injectLessonPrerender: lesson pages", () => {
       .find((b) => b["@type"] === "LearningResource");
     expect(resource.educationalAlignment).toMatchObject({ educationalFramework: expect.stringContaining("CEFR"), targetName: baseLesson.cefrLevel });
     expect(resource.teaches).toContain("Vocabulary: itinerary");
+    expect(resource.author).toMatchObject({ "@type": "Person", name: "Dave Jackson", url: "https://speakwithdave.co" });
+    expect(resource.inLanguage).toBe("en");
     expect(resource.hasPart.length).toBeGreaterThanOrEqual(3);
     expect(html).not.toContain("PRIVATE");
+    expect(html).toContain("Remix this lesson");
+    expect(html).toContain("/auth?register=true&amp;redirect=");
+    expect(html).toContain("Mark lessons complete from a student's page");
   });
 
   it("does not leak quiz answers or explanations", async () => {

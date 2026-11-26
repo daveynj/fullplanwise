@@ -10,8 +10,10 @@ import { Lesson } from "@shared/schema";
 import { queryClient } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/use-auth";
 import { SEOHead } from "@/components/SEOHead";
-import { lessonPublicMetadata } from "@shared/lesson-public-metadata";
+import { lessonPublicMetadata, publicLessonRemixHref } from "@shared/lesson-public-metadata";
 import { LessonDesignPanel } from "@/components/lesson/lesson-design-panel";
+import { TopRemixBanner, VocabFlashcardCTA } from "@/components/public-lesson-ctas";
+import { lessonPath } from "@shared/lesson-url";
 
 class LessonNotFoundError extends Error {
   constructor() {
@@ -28,17 +30,19 @@ export default function FullScreenLessonPage() {
   const [copiedShareLink, setCopiedShareLink] = useState(false);
   const { user } = useAuth();
   
-  // Extract lesson ID from URL
-  const lessonId = location.split("/")[2];
+  const parts = location.split("/");
+  const lessonApi = parts[1] === "esl-lessons"
+    ? `/api/public-lessons/${encodeURIComponent(parts[3])}`
+    : `/api/lessons/${parts[2]}`;
   
   // Fetch lesson data with optimized caching. Only a real 404 from the API
   // counts as "not found"; any other failure (network error, blocked request,
   // 5xx) keeps showing the loading state so the page never presents an error
   // screen that search engines read as a missing page.
   const { data: lesson, error } = useQuery<Lesson>({
-    queryKey: [`/api/lessons/${lessonId}`],
+    queryKey: [lessonApi],
     queryFn: async () => {
-      const res = await fetch(`/api/lessons/${lessonId}`, { credentials: "include" });
+      const res = await fetch(lessonApi, { credentials: "include" });
       if (res.status === 404) throw new LessonNotFoundError();
       if (!res.ok) throw new Error(`Failed to load lesson (${res.status})`);
       return res.json();
@@ -48,6 +52,16 @@ export default function FullScreenLessonPage() {
     gcTime: 10 * 60 * 1000, // Keep in cache for 10 minutes
   });
   const isNotFound = error instanceof LessonNotFoundError;
+  const lessonId = lesson?.id;
+
+  // Internal numeric links can navigate without a server request. Replace
+  // those too, without losing query parameters or the lesson's scroll position.
+  useEffect(() => {
+    if ((location.startsWith("/lessons/") || location.startsWith("/esl-lessons/")) &&
+        lesson?.isPublic && lesson.publicSlug && location !== lessonPath(lesson)) {
+      window.history.replaceState(null, "", lessonPath(lesson) + window.location.search + window.location.hash);
+    }
+  }, [lesson, location]);
   
   // Parse the content if it's a string (from database)
   const [parsedContent, setParsedContent] = useState<any>(null);
@@ -256,6 +270,9 @@ export default function FullScreenLessonPage() {
   }
 
   const metadata = lessonPublicMetadata(lesson);
+  const showPublicLessonPromos = lesson.isPublic && (!user || user.isAdmin);
+  const remixHref = publicLessonRemixHref(lesson.title, lesson.cefrLevel, !!user);
+  const vocabularySignupHref = "/auth?register=true&source=vocab-cta";
   return (
     <>
       {/* SEO meta tags for shared lessons */}
@@ -411,7 +428,15 @@ export default function FullScreenLessonPage() {
                 </span>
               </div>
             )}
-            {parsedContent && <LessonContent content={parsedContent} />}
+            {showPublicLessonPromos && (
+              <TopRemixBanner title={lesson.title} href={remixHref} />
+            )}
+            {parsedContent && (
+              <LessonContent
+                content={parsedContent}
+                vocabularyCta={showPublicLessonPromos ? <VocabFlashcardCTA href={vocabularySignupHref} /> : undefined}
+              />
+            )}
             {parsedContent && lesson.isPublic && (!user || user.isAdmin) && (
               <aside className="mt-10 max-w-4xl mx-auto rounded-2xl bg-brand-navy text-white p-6 md:p-8 flex flex-col gap-6 print:hidden">
                 <div className="grid md:grid-cols-2 gap-6 items-center">
@@ -466,7 +491,7 @@ export default function FullScreenLessonPage() {
                     size="sm"
                     variant="outline"
                     onClick={async () => {
-                      const shareUrl = `https://planwiseesl.com/lessons/${lesson.id}`;
+                      const shareUrl = `https://planwiseesl.com${lessonPath(lesson)}`;
                       try {
                         await navigator.clipboard.writeText(shareUrl);
                         setCopiedShareLink(true);
@@ -488,7 +513,7 @@ export default function FullScreenLessonPage() {
                   </Button>
                   <a
                     href={`https://wa.me/?text=${encodeURIComponent(
-                      `Free ${lesson.cefrLevel} ESL lesson (${lesson.title}) — no login required: https://planwiseesl.com/lessons/${lesson.id}`
+                      `Free ${lesson.cefrLevel} ESL lesson (${lesson.title}) — no login required: https://planwiseesl.com${lessonPath(lesson)}`
                     )}`}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -499,7 +524,7 @@ export default function FullScreenLessonPage() {
                   </a>
                   <a
                     href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
-                      `https://planwiseesl.com/lessons/${lesson.id}`
+                      `https://planwiseesl.com${lessonPath(lesson)}`
                     )}`}
                     target="_blank"
                     rel="noopener noreferrer"

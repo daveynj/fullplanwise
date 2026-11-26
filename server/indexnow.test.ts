@@ -32,6 +32,10 @@ describe("URL helpers", () => {
   it("builds the lesson, browse and level pages for a lesson", () => {
     expect(lessonIndexNowPaths({ id: 42, cefrLevel: "B2" })).toEqual(["/lessons/42", "/esl-lessons", "/esl-lessons/b2"]);
   });
+  it("submits a persisted public path instead of its numeric redirect", () => {
+    expect(lessonIndexNowPaths({ id: 42, cefrLevel: "B2", publicSlug: "travel-plans", publicLevel: "b1" }))
+      .toEqual(["/esl-lessons/b1/travel-plans", "/esl-lessons", "/esl-lessons/b2"]);
+  });
 
   it("builds the post and blog index pages for a post", () => {
     expect(blogIndexNowPaths({ slug: "hello" })).toEqual(["/blog/hello", "/blog"]);

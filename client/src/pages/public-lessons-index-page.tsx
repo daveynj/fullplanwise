@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { lessonPath } from "@shared/lesson-url";
 import { Link, useRoute } from "wouter";
 import { libraryDesign, lessonDesign } from "@shared/lesson-pedagogy";
 import { useQuery } from "@tanstack/react-query";
@@ -24,6 +25,8 @@ const LEVEL_NAMES: Record<string, string> = {
 
 interface LessonSummary {
   id: number;
+  publicSlug?: string | null;
+  publicLevel?: string | null;
   title: string;
   cefrLevel: string;
   publicCategory: string | null;
@@ -88,7 +91,7 @@ export default function PublicLessonsIndexPage() {
       ? PUBLIC_LIBRARY_LABELS[lesson.publicCategory as keyof typeof PUBLIC_LIBRARY_LABELS]
       : undefined;
     return (
-      <Link key={lesson.id} href={`/lessons/${lesson.id}`} className="block h-full">
+      <Link key={lesson.id} href={lessonPath(lesson)} className="block h-full">
         <Card
           className="h-full p-5 flex flex-col justify-between border-slate-200 hover:border-brand-yellow hover:shadow-md transition-all cursor-pointer group bg-white"
           data-testid={`card-lesson-${lesson.id}`}

@@ -10,6 +10,7 @@
 // Heavy dependencies (auth, storage, db, AI services, Stripe, Mailchimp) are
 // mocked; the real route handlers run over HTTP against an ephemeral server.
 import { describe, it, expect, vi, beforeAll, afterAll, beforeEach } from "vitest";
+vi.mock("./lesson-url-schema", () => ({ ensureLessonUrlSchema: vi.fn(async () => {}) }));
 import type { Server } from "http";
 
 // ---- module mocks (hoisted by vitest) ----

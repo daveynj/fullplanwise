@@ -8,6 +8,7 @@
 // Heavy dependencies are mocked; the real route handler runs over HTTP.
 import { describe, it, expect, vi, beforeAll, afterAll, beforeEach } from "vitest";
 import type { Server } from "http";
+vi.mock("./lesson-url-schema", () => ({ ensureLessonUrlSchema: vi.fn(async () => {}) }));
 
 // ---- module mocks (hoisted by vitest) ----
 
