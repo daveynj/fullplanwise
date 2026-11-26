@@ -12,6 +12,14 @@ import { PUBLIC_LIBRARY_LABELS, type PublicLibraryCategory } from "@shared/schem
 const VALID_LEVELS = new Set(["A1", "A2", "B1", "B2", "C1", "C2"]);
 const VALID_PUBLIC_CATEGORIES = new Set(Object.keys(PUBLIC_LIBRARY_LABELS));
 
+export interface BatchPresetPack {
+  id: string;
+  label: string;
+  description: string;
+  defaultLessonCategory: "general" | "business" | "academic" | "medical" | "technology" | "tourism";
+  lines: string;
+}
+
 export const RECOMMENDED_PUBLIC_LESSONS_BATCH = [
   "A1 | general-english | Ordering Food and Coffee at a Café",
   "A1 | general-english | Introducing Yourself and Talking About Your Family",
@@ -44,6 +52,125 @@ export const RECOMMENDED_PUBLIC_LESSONS_BATCH = [
   "C2 | conversation-practice | Trust, Privacy, and Regulation in the Age of AI",
   "C2 | vocabulary-building | Subtle Irony, Idiom, and Nuance in Modern Media",
 ].join("\n");
+
+export const ADMIN_BATCH_PRESET_PACKS: BatchPresetPack[] = [
+  {
+    id: "core",
+    label: "Core A1–C2 (30)",
+    description: "Balanced A1–C2 flagship library across everyday, workplace and advanced topics.",
+    defaultLessonCategory: "general",
+    lines: RECOMMENDED_PUBLIC_LESSONS_BATCH,
+  },
+  {
+    id: "career",
+    label: "Job Interviews & Career (15)",
+    description: "High-intent career & interview lessons adult learners on Preply/Cambly/italki search for.",
+    defaultLessonCategory: "business",
+    lines: [
+      "A2 | workplace-communication | Answering Tell Me About Yourself in a Job Interview",
+      "B1 | workplace-communication | Talking About Your Strengths and Weaknesses at an Interview",
+      "B1 | workplace-communication | Explaining a Career Change or Employment Gap Clearly",
+      "B1 | workplace-communication | Writing Polite Follow-Up and Thank-You Emails After an Interview",
+      "B1 | workplace-communication | Handling Customer Complaints Calmly in English",
+      "B2 | workplace-communication | Using the STAR Method for Behavioural Interview Questions",
+      "B2 | business-english | Asking Smart Questions at the End of a Job Interview",
+      "B2 | workplace-communication | Preparing for an Annual Performance Review in English",
+      "B2 | business-english | Negotiating Remote Work, Flexible Hours, and Benefits",
+      "B2 | workplace-communication | Giving Constructive Feedback Without Sounding Rude",
+      "B2 | business-english | Networking and Introducing Your Work at International Conferences",
+      "C1 | business-english | Executive Interviews: Pitching Your Leadership Vision in English",
+      "C1 | workplace-communication | Pushing Back on Unrealistic Deadlines Diplomatically",
+      "C1 | business-english | Transitioning From Individual Contributor to People Manager",
+      "C1 | business-english | Explaining Complex Strategy to Non-Expert Stakeholders",
+    ].join("\n"),
+  },
+  {
+    id: "tech-business",
+    label: "Tech & Business (15)",
+    description: "Niche tech, startup, product and SaaS English topics static PDF libraries miss.",
+    defaultLessonCategory: "technology",
+    lines: [
+      "B1 | workplace-communication | Running Clear Daily Stand-Up Meetings in Tech Teams",
+      "B1 | business-english | Describing Software Bugs and Technical Issues Clearly",
+      "B1 | business-english | Explaining How a Digital Product Works to New Customers",
+      "B2 | workplace-communication | Giving and Receiving Code Review Feedback Professionally",
+      "B2 | business-english | Managing Scope Creep and Changing Client Requirements",
+      "B2 | business-english | Presenting Metrics, Charts, and Quarterly Results in English",
+      "B2 | business-english | Customer Onboarding, Retention, and Reducing Churn in SaaS",
+      "B2 | business-english | Cybersecurity, Phishing, and Data Privacy in the Modern Office",
+      "B2 | workplace-communication | Collaborating Across Time Zones in Distributed Remote Teams",
+      "B2 | business-english | Debating Build vs. Buy Decisions in Product Strategy",
+      "C1 | business-english | Pitching a Startup and Handling Tough Investor Q&A",
+      "C1 | business-english | AI Governance, Risk, and Compliance for Enterprise Leaders",
+      "C1 | business-english | Leading Post-Mortem Reviews Without Creating a Blame Culture",
+      "C1 | business-english | Negotiating Enterprise Contracts and Service Level Agreements",
+      "C2 | business-english | Platform Monopolies, Regulation, and Competition in Big Tech",
+    ].join("\n"),
+  },
+  {
+    id: "ielts",
+    label: "IELTS Speaking B2–C2 (15)",
+    description: "High-search IELTS & academic speaking themes with rich vocabulary and collocations.",
+    defaultLessonCategory: "academic",
+    lines: [
+      "B1 | ielts-preparation | IELTS Speaking: Hometowns, Cities, and Changing Neighbourhoods",
+      "B1 | ielts-preparation | IELTS Speaking: Public Transport vs. Private Cars",
+      "B2 | ielts-preparation | IELTS Speaking: University Degrees vs. Vocational Training",
+      "B2 | ielts-preparation | IELTS Speaking: Urbanisation and Housing Affordability",
+      "B2 | ielts-preparation | IELTS Speaking: Tourism, Local Culture, and Overcrowding",
+      "B2 | ielts-preparation | IELTS Speaking: Screen Time, Attention Spans, and Children",
+      "B2 | ielts-preparation | IELTS Speaking: Renewable Energy vs. Economic Growth",
+      "B2 | ielts-preparation | IELTS Speaking: Traditional Libraries in a Digital Age",
+      "C1 | ielts-preparation | IELTS Speaking: Automation, Job Displacement, and Retraining",
+      "C1 | ielts-preparation | IELTS Speaking: Media Literacy, Algorithms, and Misinformation",
+      "C1 | ielts-preparation | IELTS Speaking: Ageing Populations and Healthcare Funding",
+      "C1 | ielts-preparation | IELTS Speaking: Preserving Minority Languages in a Globalised World",
+      "C1 | ielts-preparation | IELTS Speaking: Public Art, Architecture, and Civic Identity",
+      "C2 | ielts-preparation | IELTS Speaking: Scientific Progress vs. Moral Responsibility",
+      "C2 | ielts-preparation | IELTS Speaking: Privacy, Surveillance, and Digital Citizenship",
+    ].join("\n"),
+  },
+  {
+    id: "medical",
+    label: "Medical & Healthcare (12)",
+    description: "High-value clinical, nursing and patient-care English topics for medical professionals.",
+    defaultLessonCategory: "medical",
+    lines: [
+      "A2 | general-english | Describing Pain, Allergies, and Common Symptoms at a Clinic",
+      "B1 | workplace-communication | Taking a Clear Patient Medical History in English",
+      "B1 | workplace-communication | Explaining Prescription Dosages and Side Effects Simply",
+      "B1 | workplace-communication | Reassuring an Anxious Patient Before a Medical Procedure",
+      "B2 | workplace-communication | Delivering Clear Hospital Shift Handover Briefings",
+      "B2 | workplace-communication | Discussing Preventive Care and Lifestyle Changes with Patients",
+      "B2 | workplace-communication | Explaining Diagnostic Test Results Without Medical Jargon",
+      "B2 | conversation-practice | Preventing Burnout and Supporting Mental Health in Healthcare",
+      "C1 | workplace-communication | Breaking Difficult Medical News with Empathy and Clarity",
+      "C1 | workplace-communication | Navigating Informed Consent and Treatment Trade-Offs",
+      "C1 | conversation-practice | Telemedicine, Remote Diagnostics, and Patient Trust",
+      "C1 | conversation-practice | Balancing Clinical Efficiency with Compassionate Patient Care",
+    ].join("\n"),
+  },
+  {
+    id: "expat-travel",
+    label: "Expat & Relocation (12)",
+    description: "Practical A2–C1 survival and integration lessons for expats, travellers and relocating professionals.",
+    defaultLessonCategory: "tourism",
+    lines: [
+      "A1 | general-english | Checking In at the Airport and Going Through Customs",
+      "A2 | general-english | Renting an Apartment and Talking to a Landlord",
+      "A2 | general-english | Opening a Bank Account and Setting Up Utility Bills Abroad",
+      "A2 | general-english | Dealing with Lost Luggage and Flight Delays Calmly",
+      "A2 | general-english | Registering with a Local Doctor and Pharmacy in a New Country",
+      "B1 | conversation-practice | Making Genuine Friends After Moving to a New Country",
+      "B1 | general-english | Understanding Lease Contracts, Deposits, and Tenant Rights",
+      "B1 | conversation-practice | Navigating Unspoken Cultural Rules in a New Workplace",
+      "B1 | conversation-practice | Dealing with Homesickness During Your First Year Abroad",
+      "B2 | conversation-practice | Raising Bilingual Children in an Expat Household",
+      "B2 | conversation-practice | Digital Nomads vs. Long-Term Expats: Community and Belonging",
+      "C1 | conversation-practice | Identity, Assimilation, and Feeling at Home Between Two Cultures",
+    ].join("\n"),
+  },
+];
 
 interface BatchItem {
   cefrLevel: string;
@@ -100,13 +227,25 @@ async function waitForLessonJob(jobId: string, maxMs = 4 * 60 * 1000): Promise<a
 export function AdminBatchPublicGenerator({ onLessonPublished }: { onLessonPublished: () => void }) {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [rawList, setRawList] = useState(RECOMMENDED_PUBLIC_LESSONS_BATCH);
+  const [activePackId, setActivePackId] = useState<string>("career");
+  const [rawList, setRawList] = useState(
+    ADMIN_BATCH_PRESET_PACKS.find((p) => p.id === "career")?.lines ?? RECOMMENDED_PUBLIC_LESSONS_BATCH
+  );
   const [items, setItems] = useState<BatchItem[]>([]);
   const [running, setRunning] = useState(false);
   const stopRef = useRef(false);
 
   // Defense in depth: strictly admin-only UI (route is also requireAdmin + backend checks isAdmin).
   if (!user?.isAdmin) return null;
+
+  const activePack = ADMIN_BATCH_PRESET_PACKS.find((p) => p.id === activePackId);
+
+  const selectPack = (pack: BatchPresetPack) => {
+    if (running) return;
+    setActivePackId(pack.id);
+    setRawList(pack.lines);
+    setItems([]);
+  };
 
   const updateItem = (index: number, patch: Partial<BatchItem>) => {
     setItems((prev) => prev.map((item, i) => (i === index ? { ...item, ...patch } : item)));
@@ -136,9 +275,13 @@ export function AdminBatchPublicGenerator({ onLessonPublished }: { onLessonPubli
 
       try {
         const category =
-          item.publicCategory === "business-english" || item.publicCategory === "workplace-communication"
-            ? "business"
-            : "general";
+          activePack && activePack.defaultLessonCategory !== "general"
+            ? activePack.defaultLessonCategory
+            : item.publicCategory === "ielts-preparation" || item.publicCategory === "exam-preparation"
+              ? "academic"
+              : item.publicCategory === "business-english" || item.publicCategory === "workplace-communication"
+                ? "business"
+                : "general";
 
         const res = await fetch("/api/lessons/generate", {
           method: "POST",
@@ -244,6 +387,35 @@ export function AdminBatchPublicGenerator({ onLessonPublished }: { onLessonPubli
       </CardHeader>
 
       <CardContent className="space-y-4">
+        <div className="space-y-2">
+          <div className="text-xs font-semibold uppercase tracking-wider text-slate-600">
+            Load a high-intent niche pack (click to switch):
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {ADMIN_BATCH_PRESET_PACKS.map((pack) => {
+              const isSelected = pack.id === activePackId;
+              return (
+                <Button
+                  key={pack.id}
+                  type="button"
+                  size="sm"
+                  variant={isSelected ? "brand" : "outline"}
+                  disabled={running}
+                  onClick={() => selectPack(pack)}
+                  className={isSelected ? "" : "bg-white hover:bg-amber-50 border-slate-200 text-slate-700"}
+                >
+                  {pack.label}
+                </Button>
+              );
+            })}
+          </div>
+          {activePack && (
+            <p className="text-xs text-slate-600">
+              {activePack.description}
+            </p>
+          )}
+        </div>
+
         <div>
           <label htmlFor="admin-batch-topics" className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
             One lesson per line: <code>CEFR | public-category | Topic</code> (edit or trim as needed)
