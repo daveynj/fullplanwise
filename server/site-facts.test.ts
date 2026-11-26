@@ -91,6 +91,25 @@ describe("homepage structured data", () => {
     expect(software).not.toHaveProperty("aggregateRating");
   });
 
+  it("merges tutor-specific details without duplicating the product or renaming its plan", () => {
+    const products = blocks.filter((b) => b["@type"] === "SoftwareApplication");
+    expect(products).toHaveLength(1);
+    const software = products[0];
+    expect(software.description).toContain(`CEFR ${siteFacts.levels}`);
+    expect(software.description).toContain(siteFacts.generationTime);
+    expect(software.description).toContain("Preply, Cambly, and italki");
+    expect(software.description).toContain("per-student vocabulary memory");
+    expect(software.description).toContain("private student flashcard dashboards");
+    expect(software.author).toEqual({
+      "@type": "Person", name: siteFacts.founder, url: siteFacts.founderSite,
+    });
+    const paid = software.offers.find((o: any) => o.name === "Unlimited");
+    expect(paid.description).toContain(priceText);
+    expect(paid.description).toContain(trialText);
+    expect(paid.priceSpecification.referenceQuantity.unitCode).toBe("MON");
+    expect(software).not.toHaveProperty("sameAs");
+  });
+
   it("includes every homepage FAQ as a question and answer", () => {
     const faqPage = blocks.find((b) => b["@type"] === "FAQPage");
     expect(faqPage.mainEntity).toHaveLength(faq.items.length);

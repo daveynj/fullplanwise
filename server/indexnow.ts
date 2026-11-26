@@ -7,6 +7,8 @@
  * https://planwiseesl.com/{INDEXNOW_KEY}.txt and checking the body equals the key.
  */
 
+import { lessonPath, type LessonUrlFields } from "@shared/lesson-url";
+
 export const INDEXNOW_HOST = "planwiseesl.com";
 export const INDEXNOW_SITE = `https://${INDEXNOW_HOST}`;
 export const INDEXNOW_ENDPOINT = "https://api.indexnow.org/indexnow";
@@ -42,8 +44,8 @@ export function toIndexNowUrls(pathsOrUrls: string[]): string[] {
 }
 
 /** Pages that change when a lesson becomes public: the lesson and the browse pages that list it. */
-export function lessonIndexNowPaths(lesson: { id: number; cefrLevel?: string | null }): string[] {
-  const paths = [`/lessons/${lesson.id}`, "/esl-lessons"];
+export function lessonIndexNowPaths(lesson: LessonUrlFields & { cefrLevel?: string | null }): string[] {
+  const paths = [lessonPath(lesson), "/esl-lessons"];
   if (lesson.cefrLevel) paths.push(`/esl-lessons/${lesson.cefrLevel.toLowerCase()}`);
   return paths;
 }

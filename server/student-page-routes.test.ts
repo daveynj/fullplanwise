@@ -12,6 +12,7 @@
 //    at their level, never with the teacher's notes, within the waiting limits.
 import { describe, it, expect, vi, beforeAll, afterAll, beforeEach } from "vitest";
 import type { Server } from "http";
+vi.mock("./lesson-url-schema", () => ({ ensureLessonUrlSchema: vi.fn(async () => {}) }));
 
 const OWNER_ID = 4100;
 const OTHER_ID = 4200;

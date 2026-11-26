@@ -302,7 +302,7 @@ export function buildLandingStructuredData(): string {
     name: siteFacts.brand,
     alternateName: [...siteFacts.alternateNames],
     url: siteFacts.url,
-    description: homepageMeta.description,
+    description: `AI-powered CEFR ${siteFacts.levels} lesson planner for 1-on-1 online ESL tutors on Preply, Cambly, and italki. Generates complete conversation lessons in ${siteFacts.generationTime} with per-student vocabulary memory and private student flashcard dashboards.`,
     applicationCategory: 'EducationalApplication',
     applicationSubCategory: 'ESL lesson planning',
     operatingSystem: 'Web browser',
@@ -327,6 +327,7 @@ export function buildLandingStructuredData(): string {
         name: 'Unlimited',
         price: siteFacts.priceValue,
         priceCurrency: siteFacts.currency,
+        description: `Unlimited plan (${siteFacts.price}/${siteFacts.pricePeriod}) with a ${trialText}`,
         url: `${siteFacts.url}/pricing`,
         priceSpecification: {
           '@type': 'UnitPriceSpecification',
@@ -336,6 +337,11 @@ export function buildLandingStructuredData(): string {
         },
       },
     ],
+    author: {
+      '@type': 'Person',
+      name: siteFacts.founder,
+      url: siteFacts.founderSite,
+    },
     creator: { '@id': `${siteFacts.url}/#organization` },
     publisher: { '@id': `${siteFacts.url}/#organization` },
   };

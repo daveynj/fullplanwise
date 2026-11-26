@@ -1,7 +1,8 @@
 import { storage } from './storage';
+import { lessonPath } from '@shared/lesson-url';
 import { PUBLIC_LIBRARY_LABELS } from '@shared/schema';
 import { tryDecodeLessonContent } from '@shared/lesson-content';
-import { CEFR_LEVEL_NAMES, lessonContentsParts, joinList, levelText, lessonPublicMetadata } from '@shared/lesson-public-metadata';
+import { CEFR_LEVEL_NAMES, lessonContentsParts, joinList, levelText, lessonPublicMetadata, publicLessonRemixHref } from '@shared/lesson-public-metadata';
 import { expressionItemsOf, withoutMarks } from '@shared/lesson-expressions';
 import { publicNav } from '@shared/marketing-pages';
 import { lessonStages, lessonTeaches, lessonDesign, lessonDifference, libraryDesign } from '@shared/lesson-pedagogy';
@@ -159,8 +160,11 @@ function injectPage(template: string, head: HeadOptions, bodyHtml: string): stri
 // used anywhere on public pages: it can describe a real student.
 interface LessonForPrerender {
   id: number;
+  publicSlug?: string | null;
+  publicLevel?: string | null;
   title: string;
   cefrLevel: string;
+  isPublic?: boolean;
   category: string | null;
   publicCategory: string | null;
   content: unknown;
@@ -375,7 +379,7 @@ function relatedLessonsHtml(level: string, related: LessonSummary[]): string {
   if (!related.length) return '';
   return `<section class="lp-related">
       <h2>More ${e(level)} lessons</h2>
-      <ul>${related.map((l) => `<li><a href="/lessons/${l.id}">${e(l.title)}</a></li>`).join('')}</ul>
+      <ul>${related.map((l) => `<li><a href="${e(lessonPath(l))}">${e(l.title)}</a></li>`).join('')}</ul>
     </section>`;
 }
 
@@ -409,13 +413,16 @@ export function buildLessonPageHtml(lesson: LessonForPrerender, sections: any[],
         <p class="lp-meta"><span class="lp-tag">CEFR ${e(level)}${levelName ? ` &middot; ${e(levelName)}` : ''}</span>${label ? `<span class="lp-tag">${e(label)}</span>` : ''}</p>
         <p class="lp-about"><strong>About this lesson:</strong> ${e(aboutLesson(lesson, sections))}</p>
       </header>
+      ${lesson.isPublic ? `<aside class="lp-cta lp-remix"><p>Want <strong>${e(lesson.title)}</strong> at a different CEFR level or adapted to a student's job? Start with the title and adjust it in the generator.</p><p><a href="${e(publicLessonRemixHref(lesson.title, level, false))}">Remix this lesson</a></p></aside>` : ''}
       ${lessonDesignHtml(lesson.content)}
       ${sectionsHtml(sections)}
     </article>
     ${relatedLessonsHtml(level, related)}
+    ${lesson.isPublic ? `<aside class="lp-cta lp-vocab"><h2>Help students remember these words beyond today's lesson.</h2><p>Mark lessons complete from a student's page to add their vocabulary to spaced-repetition flashcards and recycle it in future lessons.</p><p><a href="/auth?register=true&amp;source=vocab-cta">Try PlanWise ESL free</a></p></aside>` : ''}
     <aside class="lp-cta">
       <h2>Use this lesson with your students</h2>
       <p>PlanWise ESL creates complete, CEFR-levelled ESL lessons on any topic in minutes. <a href="/auth?register=true">Sign up free</a> to copy this lesson, edit it, or generate your own.</p>
+      <p>Created by Dave Jackson (British ESL teacher). These lessons are designed to be teacher-led — if you are an English learner and want to take this lesson 1-on-1 with Dave, visit <a href="https://speakwithdave.com" rel="noopener noreferrer">SpeakWithDave.com</a>.</p>
     </aside>
   </main>
 </div>`;
@@ -463,6 +470,11 @@ async function prerenderLesson(template: string, id: number, preloaded?: unknown
         educationalFramework: 'Common European Framework of Reference for Languages (CEFR)',
         targetName: lesson.cefrLevel,
       },
+      author: {
+        '@type': 'Person',
+        name: 'Dave Jackson',
+        url: 'https://speakwithdave.co',
+      },
       teaches: teaches.length ? teaches : lesson.title,
       ...(minutes ? { timeRequired: `PT${minutes}M` } : {}),
       ...(stages.length
@@ -509,6 +521,8 @@ async function prerenderLesson(template: string, id: number, preloaded?: unknown
 
 export interface LessonSummary {
   id: number;
+  publicSlug?: string | null;
+  publicLevel?: string | null;
   title: string;
   cefrLevel: string;
   publicCategory: string | null;
@@ -518,7 +532,7 @@ export interface LessonSummary {
 function lessonCardHtml(l: LessonSummary): string {
   const label = categoryLabel(l.publicCategory);
   return `<article class="lp-card">
-        <h3><a href="/lessons/${l.id}">${e(l.title)}</a></h3>
+        <h3><a href="${e(lessonPath(l))}">${e(l.title)}</a></h3>
         <p class="lp-meta"><span class="lp-tag">${e(l.cefrLevel)}</span>${label ? `<span class="lp-tag">${e(label)}</span>` : ''}</p>
       </article>`;
 }
@@ -591,7 +605,7 @@ async function prerenderLessonIndex(template: string, level?: string): Promise<s
       itemListElement: lessons.slice(0, 100).map((l, i) => ({
         '@type': 'ListItem',
         position: i + 1,
-        url: `${BASE_URL}/lessons/${l.id}`,
+        url: `${BASE_URL}${lessonPath(l)}`,
         name: l.title,
       })),
     },
@@ -625,6 +639,13 @@ export async function injectLessonPrerender(
   try {
     const lessonMatch = pathname.match(/^\/lessons\/(\d+)\/?$/);
     if (lessonMatch) return await prerenderLesson(template, parseInt(lessonMatch[1], 10), preloadedLesson);
+
+    const slugMatch = pathname.match(/^\/esl-lessons\/([^/]+)\/([^/]+)\/?$/);
+    if (slugMatch) {
+      const lesson = preloadedLesson ?? await storage.getLessonByPublicSlug(slugMatch[2]);
+      if (!lesson || lessonPath(lesson as LessonSummary) !== pathname.replace(/\/$/, "")) return null;
+      return await prerenderLesson(template, (lesson as LessonSummary).id, lesson);
+    }
 
     if (pathname === '/esl-lessons' || pathname === '/esl-lessons/') {
       return await prerenderLessonIndex(template);

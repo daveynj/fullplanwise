@@ -3,15 +3,17 @@ import { useQuery } from "@tanstack/react-query";
 import { useLocation, Link } from "wouter";
 import { LessonContent } from "@/components/lesson/lesson-content";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, X, ExpandIcon, MinimizeIcon, Download, FileJson } from "lucide-react";
+import { ArrowLeft, X, ExpandIcon, MinimizeIcon, Download, FileJson, Share2, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Lesson } from "@shared/schema";
 import { queryClient } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/use-auth";
 import { SEOHead } from "@/components/SEOHead";
-import { lessonPublicMetadata } from "@shared/lesson-public-metadata";
+import { lessonPublicMetadata, publicLessonRemixHref } from "@shared/lesson-public-metadata";
 import { LessonDesignPanel } from "@/components/lesson/lesson-design-panel";
+import { TopRemixBanner, VocabFlashcardCTA } from "@/components/public-lesson-ctas";
+import { lessonPath } from "@shared/lesson-url";
 
 class LessonNotFoundError extends Error {
   constructor() {
@@ -25,19 +27,22 @@ export default function FullScreenLessonPage() {
   const { toast } = useToast();
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [activeTab, setActiveTab] = useState("lesson");
+  const [copiedShareLink, setCopiedShareLink] = useState(false);
   const { user } = useAuth();
   
-  // Extract lesson ID from URL
-  const lessonId = location.split("/")[2];
+  const parts = location.split("/");
+  const lessonApi = parts[1] === "esl-lessons"
+    ? `/api/public-lessons/${encodeURIComponent(parts[3])}`
+    : `/api/lessons/${parts[2]}`;
   
   // Fetch lesson data with optimized caching. Only a real 404 from the API
   // counts as "not found"; any other failure (network error, blocked request,
   // 5xx) keeps showing the loading state so the page never presents an error
   // screen that search engines read as a missing page.
   const { data: lesson, error } = useQuery<Lesson>({
-    queryKey: [`/api/lessons/${lessonId}`],
+    queryKey: [lessonApi],
     queryFn: async () => {
-      const res = await fetch(`/api/lessons/${lessonId}`, { credentials: "include" });
+      const res = await fetch(lessonApi, { credentials: "include" });
       if (res.status === 404) throw new LessonNotFoundError();
       if (!res.ok) throw new Error(`Failed to load lesson (${res.status})`);
       return res.json();
@@ -47,6 +52,16 @@ export default function FullScreenLessonPage() {
     gcTime: 10 * 60 * 1000, // Keep in cache for 10 minutes
   });
   const isNotFound = error instanceof LessonNotFoundError;
+  const lessonId = lesson?.id;
+
+  // Internal numeric links can navigate without a server request. Replace
+  // those too, without losing query parameters or the lesson's scroll position.
+  useEffect(() => {
+    if ((location.startsWith("/lessons/") || location.startsWith("/esl-lessons/")) &&
+        lesson?.isPublic && lesson.publicSlug && location !== lessonPath(lesson)) {
+      window.history.replaceState(null, "", lessonPath(lesson) + window.location.search + window.location.hash);
+    }
+  }, [lesson, location]);
   
   // Parse the content if it's a string (from database)
   const [parsedContent, setParsedContent] = useState<any>(null);
@@ -255,6 +270,9 @@ export default function FullScreenLessonPage() {
   }
 
   const metadata = lessonPublicMetadata(lesson);
+  const showPublicLessonPromos = lesson.isPublic && (!user || user.isAdmin);
+  const remixHref = publicLessonRemixHref(lesson.title, lesson.cefrLevel, !!user);
+  const vocabularySignupHref = "/auth?register=true&source=vocab-cta";
   return (
     <>
       {/* SEO meta tags for shared lessons */}
@@ -392,30 +410,134 @@ export default function FullScreenLessonPage() {
             {parsedContent && lesson.isPublic && lesson.teacherId !== user?.id && (
               <LessonDesignPanel content={parsedContent} signedIn={!!user} />
             )}
-            {parsedContent && <LessonContent content={parsedContent} />}
-            {parsedContent && lesson.isPublic && !user && (
-              <aside className="mt-10 max-w-4xl mx-auto rounded-2xl bg-brand-navy text-white p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 print:hidden">
-                <div>
-                  <p className="text-xs uppercase tracking-wider text-brand-yellow font-semibold mb-1">
-                    5-day free trial · No credit card
-                  </p>
-                  <h2 className="font-nunito text-xl md:text-2xl font-bold">
-                    Want a lesson like this on your student’s exact topic?
-                  </h2>
-                  <p className="text-sm text-white/80 mt-1">
-                    Generate a complete CEFR A1–C2 lesson in 1–2 minutes—complete with learner dashboard, flashcards and printable Vocabulary Review PDF.
-                  </p>
+            {parsedContent && lesson.isPublic && (!user || user.isAdmin) && (
+              <div className="max-w-4xl mx-auto mb-4 rounded-xl border border-amber-200/80 bg-amber-50/60 px-4 py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs sm:text-sm text-slate-700 print:hidden">
+                <span>
+                  Created by <strong className="text-brand-navy">Dave Jackson</strong> (British ESL teacher · 11 yrs) — designed as a teacher-led lesson.
+                </span>
+                <span>
+                  Learning English?{" "}
+                  <a
+                    href="https://speakwithdave.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-semibold text-brand-navy underline decoration-brand-yellow decoration-2 underline-offset-2 hover:text-amber-700"
+                  >
+                    Take this lesson 1-on-1 at SpeakWithDave.com →
+                  </a>
+                </span>
+              </div>
+            )}
+            {showPublicLessonPromos && (
+              <TopRemixBanner title={lesson.title} href={remixHref} />
+            )}
+            {parsedContent && (
+              <LessonContent
+                content={parsedContent}
+                vocabularyCta={showPublicLessonPromos ? <VocabFlashcardCTA href={vocabularySignupHref} /> : undefined}
+              />
+            )}
+            {parsedContent && lesson.isPublic && (!user || user.isAdmin) && (
+              <aside className="mt-10 max-w-4xl mx-auto rounded-2xl bg-brand-navy text-white p-6 md:p-8 flex flex-col gap-6 print:hidden">
+                <div className="grid md:grid-cols-2 gap-6 items-center">
+                  <div className="md:border-r md:border-white/15 md:pr-6">
+                    <p className="text-xs uppercase tracking-wider text-brand-yellow font-semibold mb-1">
+                      For English learners · Teacher-led lesson
+                    </p>
+                    <h2 className="font-nunito text-xl font-bold">
+                      Want to take this lesson 1-on-1 with Dave?
+                    </h2>
+                    <p className="text-sm text-white/80 mt-1 mb-4">
+                      Created by Dave Jackson (British ESL teacher, 11 years &amp; 2,000+ students). These lessons are designed to be taught live with a teacher.
+                    </p>
+                    <a
+                      href="https://speakwithdave.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center rounded-full bg-white text-brand-navy font-bold px-5 py-2.5 text-sm hover:bg-amber-50 transition-colors shadow"
+                    >
+                      Book 1-on-1 at SpeakWithDave.com →
+                    </a>
+                  </div>
+                  <div>
+                    <p className="text-xs uppercase tracking-wider text-brand-yellow font-semibold mb-1">
+                      For ESL teachers · 5-day free trial
+                    </p>
+                    <h2 className="font-nunito text-xl font-bold">
+                      Create lessons like this on any topic
+                    </h2>
+                    <p className="text-sm text-white/80 mt-1 mb-4">
+                      Generate a complete CEFR A1–C2 lesson in 1–2 minutes with learner dashboard, flashcards, and printable Vocabulary Review PDF.
+                    </p>
+                    <a
+                      href="/auth?register=true"
+                      className="inline-flex items-center justify-center rounded-full bg-brand-yellow text-brand-navy font-bold px-5 py-2.5 text-sm hover:bg-amber-300 transition-colors shadow-lg"
+                    >
+                      Make Your First Lesson Free →
+                    </a>
+                  </div>
                 </div>
-                <a
-                  href="/auth?register=true"
-                  className="flex-shrink-0 inline-flex items-center justify-center rounded-full bg-brand-yellow text-brand-navy font-bold px-6 py-3 text-sm hover:bg-amber-300 transition-colors shadow-lg"
-                >
-                  Make Your First Lesson Free →
-                </a>
               </aside>
             )}
-            {lesson?.isPublic && !user && (
-              <p className="max-w-5xl mx-auto mb-10 px-4 text-center text-sm text-slate-500">
+            {lesson?.isPublic && (
+              <div className="max-w-5xl mx-auto mt-6 mb-6 rounded-xl border border-slate-200 bg-white px-5 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-sm print:hidden">
+                <div className="flex items-center gap-2 text-sm font-medium text-brand-navy">
+                  <Share2 className="h-4 w-4 text-amber-600 shrink-0" />
+                  <span>Found this free lesson useful? Share it with a fellow teacher or student:</span>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={async () => {
+                      const shareUrl = `https://planwiseesl.com${lessonPath(lesson)}`;
+                      try {
+                        await navigator.clipboard.writeText(shareUrl);
+                        setCopiedShareLink(true);
+                        toast({ title: "Link copied!", description: shareUrl });
+                        setTimeout(() => setCopiedShareLink(false), 2500);
+                      } catch {
+                        toast({ title: "Share link", description: shareUrl });
+                      }
+                    }}
+                  >
+                    {copiedShareLink ? (
+                      <>
+                        <Check className="h-3.5 w-3.5 mr-1.5 text-emerald-600" />
+                        Copied
+                      </>
+                    ) : (
+                      "Copy link"
+                    )}
+                  </Button>
+                  <a
+                    href={`https://wa.me/?text=${encodeURIComponent(
+                      `Free ${lesson.cefrLevel} ESL lesson (${lesson.title}) — no login required: https://planwiseesl.com${lessonPath(lesson)}`
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Button type="button" size="sm" variant="outline">
+                      WhatsApp
+                    </Button>
+                  </a>
+                  <a
+                    href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
+                      `https://planwiseesl.com${lessonPath(lesson)}`
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Button type="button" size="sm" variant="outline">
+                      LinkedIn
+                    </Button>
+                  </a>
+                </div>
+              </div>
+            )}
+            {lesson?.isPublic && (!user || user.isAdmin) && (
+              <p className="max-w-5xl mx-auto mb-10 px-4 text-center text-sm text-slate-500 print:hidden">
                 Created by <span className="font-medium text-brand-navy">Dave Jackson</span> (British ESL teacher). These lessons are designed to be teacher-led — if you’re an English learner and want to take this lesson 1-on-1 with Dave, visit{" "}
                 <a
                   href="https://speakwithdave.com"

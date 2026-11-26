@@ -28,11 +28,23 @@ export function LessonDesignPanel({ content, signedIn }: { content: unknown; sig
           <p className="mt-1 text-sm leading-relaxed text-slate-700">{lessonDesign.intro}</p>
         </div>
         {!signedIn && (
-          <Link href="/auth?register=true" onClick={() => trackCta('public-lesson', 'Make lessons like this')}>
-            <Button variant="brand" className="rounded-full">
-              Make lessons like this for your students <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </Link>
+          <div className="flex flex-wrap items-center gap-2.5">
+            <a
+              href="https://speakwithdave.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => trackCta('public-lesson', 'Take lesson 1-on-1 with Dave')}
+            >
+              <Button variant="outline" className="rounded-full border-brand-navy text-brand-navy hover:bg-brand-navy hover:text-white bg-white">
+                Learning English? Take this 1-on-1 with Dave <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </a>
+            <Link href="/auth?register=true" onClick={() => trackCta('public-lesson', 'Make lessons like this')}>
+              <Button variant="brand" className="rounded-full">
+                Teachers: Make lessons like this <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
         )}
       </div>
 

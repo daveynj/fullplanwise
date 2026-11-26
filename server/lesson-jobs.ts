@@ -1,4 +1,5 @@
 import { db } from "./db";
+import { ensureLessonUrlSchema } from "./lesson-url-schema";
 import { sql } from "drizzle-orm";
 import { lessons, type InsertLesson, type Lesson } from "@shared/schema";
 
@@ -221,6 +222,7 @@ export async function releaseJobReservation(jobId: string): Promise<void> {
  * lesson.
  */
 export async function completeJobWithLesson(jobId: string, lessonData: InsertLesson): Promise<Lesson> {
+  await ensureLessonUrlSchema();
   return db.transaction(async (tx) => {
     const [lesson] = await tx.insert(lessons).values(lessonData).returning();
     await tx.execute(sql`

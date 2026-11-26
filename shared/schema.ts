@@ -119,6 +119,8 @@ export const lessons = pgTable("lessons", {
   isPublic: boolean("is_public").default(false).notNull(),
   isShared: boolean("is_shared").default(false).notNull(),
   publicCategory: text("public_category"), // Category for public library organization
+  publicSlug: text("public_slug").unique("lessons_public_slug_unique"),
+  publicLevel: text("public_level"), // Frozen at publication so later CEFR edits don't break shares
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 

@@ -25,6 +25,7 @@ Allow: /api/images/
 # Public lesson data the lesson pages load after the page opens. Private
 # lessons return 404 from this endpoint, so nothing private is exposed.
 Allow: /api/public-lesson-index
+Allow: /api/public-lessons/
 Allow: /api/lessons/
 Disallow: /api/
 Disallow: /dashboard
