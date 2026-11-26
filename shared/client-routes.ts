@@ -73,9 +73,6 @@ export const clientRoutePaths: string[] = [
   "/guides/esl-conversation-topics-by-level",
   "/guides/cefr-levels-explained",
   "/guides/personalise-esl-lessons",
-  // Retired: the server 301s it to /guides (retiredPageRedirects below). The
-  // route stays in App.tsx until the open SEO PR on App.tsx is merged.
-  "/guides/cambly-feedback-score-super-tutor",
   "/forgot-password",
   "/reset-password/:token",
   "/twitter-card",

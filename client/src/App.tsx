@@ -112,7 +112,6 @@ function Router() {
       <Route path="/guides/esl-conversation-topics-by-level" component={MarketingPage} />
       <Route path="/guides/cefr-levels-explained" component={MarketingPage} />
       <Route path="/guides/personalise-esl-lessons" component={MarketingPage} />
-      <Route path="/guides/cambly-feedback-score-super-tutor" component={MarketingPage} />
       <Route path="/forgot-password" component={ForgotPasswordPage} />
       <Route path="/reset-password/:token" component={ResetPasswordPage} />
       <Route path="/twitter-card" component={TwitterCardPreview} />

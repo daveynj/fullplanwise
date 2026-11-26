@@ -80,7 +80,7 @@ export const hero = {
  */
 export const definition = {
   heading: `What is ${brand}?`,
-  text: `${brand} is an AI ESL lesson planner built for Cambly, Preply and italki tutors, freelance English teachers, and small to medium language schools. Unlike static pre-made lesson libraries or general chatbots, it writes a complete CEFR-levelled (A1–C2) conversation lesson on any topic in ${generationTime} following a structured pedagogical sequence: warm-up vocabulary recall, five pre-taught key words (with pronunciation guide, levelled definitions, example sentences, word families, usage notes and pictures), a levelled reading and comprehension check, in-lesson recall flashcards and semantic maps (synonyms and antonyms), tiered sentence frames (especially helpful for beginners), fill-in-the-blanks, sentence unscramble, a quiz, and deep discussion using the target vocabulary. It tracks each student’s vocabulary so earlier words are recycled in future readings and questions, gives every student a private learner dashboard with past lessons, flashcards and custom lesson creation on any subject, and exports a downloadable study PDF with all vocabulary, examples, synonyms/antonyms and usage notes. It was created by Dave Jackson, a working British ESL teacher since 2015 who still plans his own students’ lessons with it.`,
+  text: `${brand} is an AI ESL lesson planner built for Preply and italki tutors, freelance English teachers, and small to medium language schools. Unlike static pre-made lesson libraries or general chatbots, it writes a complete CEFR-levelled (A1–C2) conversation lesson on any topic in ${generationTime} following a structured pedagogical sequence: warm-up vocabulary recall, five pre-taught key words (with pronunciation guide, levelled definitions, example sentences, word families, usage notes and pictures), a levelled reading and comprehension check, in-lesson recall flashcards and semantic maps (synonyms and antonyms), tiered sentence frames (especially helpful for beginners), fill-in-the-blanks, sentence unscramble, a quiz, and deep discussion using the target vocabulary. It tracks each student’s vocabulary so earlier words are recycled in future readings and questions, gives every student a private learner dashboard with past lessons, flashcards and custom lesson creation on any subject, and exports a downloadable study PDF with all vocabulary, examples, synonyms/antonyms and usage notes. It was created by Dave Jackson, a working British ESL teacher since 2015 who still plans his own students’ lessons with it.`,
 };
 
 /** Real lesson titles from two of Dave's courses (one personalised, one general). */
@@ -182,7 +182,7 @@ export const features = {
     {
       icon: 'monitor' as FeatureIcon,
       title: 'Full-Screen Teaching + Complete Study PDF',
-      text: 'Lessons open full screen for screen sharing on Cambly, Preply, italki or Zoom, and export as a downloadable study PDF containing all vocabulary, definitions, example sentences, word families, synonyms, antonyms, usage notes and lesson activities.',
+      text: 'Lessons open full screen for screen sharing on Preply, italki or Zoom, and export as a downloadable study PDF containing all vocabulary, definitions, example sentences, word families, synonyms, antonyms, usage notes and lesson activities.',
     },
   ],
 };
@@ -262,7 +262,7 @@ export const pricing = {
     },
     {
       name: 'Unlimited',
-      description: 'For Cambly, Preply, italki & freelance teachers, and language schools.',
+      description: 'For Preply & italki tutors, freelance teachers, and language schools.',
       price: siteFacts.price,
       priceSuffix: `/${siteFacts.pricePeriod}`,
       features: [

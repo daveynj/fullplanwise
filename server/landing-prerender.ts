@@ -311,7 +311,7 @@ export function buildLandingStructuredData(): string {
     audience: {
       '@type': 'EducationalAudience',
       educationalRole: 'teacher',
-      audienceType: 'Cambly, Preply and italki tutors, freelance ESL and EFL teachers, and small to medium language schools',
+      audienceType: 'Preply and italki tutors, freelance ESL and EFL teachers, and small to medium language schools',
     },
     featureList: features.items.map((f) => f.title),
     offers: [

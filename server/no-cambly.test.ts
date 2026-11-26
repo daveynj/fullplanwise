@@ -13,8 +13,13 @@ const publicCopy = [
   "public/llms-full.txt",
   "shared/homepage-content.ts",
   "shared/marketing-pages.ts",
+  "shared/icp-pages.ts",
+  "shared/comparison-pages.ts",
+  "shared/student-experience-page.ts",
   "shared/guides.ts",
   "shared/site-facts.ts",
+  "server/landing-prerender.ts",
+  "client/src/pages/buy-credits-page.tsx",
   "client/index.html",
 ].filter((file) => existsSync(file));
 

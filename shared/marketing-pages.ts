@@ -170,7 +170,7 @@ const howItWorks: MarketingPage = {
     {
       heading: 'What PlanWise ESL does not do',
       paragraphs: [
-        'It does not replace the teacher. You guide the conversation, listen for natural errors, and build the relationship with your student. PlanWise ESL does the hours of structured pedagogical preparation in 1–2 minutes, whether you teach on Cambly, Preply or italki, run an independent tutoring practice, or manage a small to medium language school.',
+        'It does not replace the teacher. You guide the conversation, listen for natural errors, and build the relationship with your student. PlanWise ESL does the hours of structured pedagogical preparation in 1–2 minutes, whether you teach on Preply or italki, run an independent tutoring practice, or manage a small to medium language school.',
       ],
     },
   ],
@@ -192,8 +192,8 @@ const howItWorks: MarketingPage = {
       answer: 'You choose the level, from A1 to C2, and the reading length, sentence style and the words used in definitions follow fixed rules for that level (see the table on this page). Every lesson is then checked section by section before it is saved.',
     },
     {
-      question: 'Does it work for Cambly, Preply, italki, freelance teachers and language schools?',
-      answer: 'Yes. Lessons are built specifically for online tutors on Cambly, Preply and italki, independent freelance English teachers, and small to medium language schools teaching one-to-one or small-group teenage and adult classes.',
+      question: 'Does it work for Preply and italki tutors, freelance teachers and language schools?',
+      answer: 'Yes. Lessons are built specifically for online tutors on Preply and italki, independent freelance English teachers, and small to medium language schools teaching one-to-one or small-group teenage and adult classes.',
     },
   ],
   references: [
@@ -324,7 +324,7 @@ const pricing: MarketingPage = {
     {
       heading: 'What one lesson costs you',
       paragraphs: [
-        `If you teach 20 one-to-one lessons a month on Cambly, Preply, italki or privately, Unlimited works out at about $1 per lesson for a complete, personalised lesson made in ${generationTime}. If a lesson took you even 30 minutes to prepare by hand, that is ten hours a month back.`,
+        `If you teach 20 one-to-one lessons a month on Preply, italki or privately, Unlimited works out at about $1 per lesson for a complete, personalised lesson made in ${generationTime}. If a lesson took you even 30 minutes to prepare by hand, that is ten hours a month back.`,
       ],
     },
   ],
@@ -398,7 +398,7 @@ const compareChatGpt: MarketingPage = {
     {
       heading: `When ${brand} is the better choice`,
       bullets: [
-        'You teach regular students on Cambly, Preply, italki, privately, or at a small to medium language school and want each lesson to build on the last.',
+        'You teach regular students on Preply, italki, privately, or at a small to medium language school and want each lesson to build on the last.',
         'You want every lesson to follow a complete scientific pedagogical sequence—vocab depth, reading, recall flashcards, synonyms/antonyms, guided exercises and deep discussion—without prompting each part by hand.',
         'You want reliable CEFR levelling and verified exercises without checking every line.',
         'You want your students to practise between classes on their own learner dashboard, study from a full vocabulary PDF, and even create custom lessons on subjects they love.',

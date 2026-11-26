@@ -67,7 +67,6 @@ describe("site facts stay consistent", () => {
       "flashcards",
       "sentence unscramble",
       "study pdf",
-      "cambly",
       "preply",
       "italki",
       "freelance",
