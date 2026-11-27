@@ -8,7 +8,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { PUBLIC_LIBRARY_LABELS, type PublicLibraryCategory } from "@shared/schema";
-import { type PublicLessonTag } from "@shared/public-lesson-tags";
+import { publicTags, type PublicLessonTag } from "@shared/public-lesson-tags";
 
 const VALID_LEVELS = new Set(["A1", "A2", "B1", "B2", "C1", "C2"]);
 const VALID_PUBLIC_CATEGORIES = new Set(Object.keys(PUBLIC_LIBRARY_LABELS));
@@ -80,33 +80,33 @@ export const ADMIN_BATCH_PRESET_PACKS: BatchPresetPack[] = [
   {
     id: "fill-a1-c2",
     label: "Fill Thin Levels: A1 & C2 (24)",
-    description: "14 fresh A1 beginner everyday lessons and 10 C2 proficiency debate lessons to deepen thinner CEFR levels without duplicating existing live titles.",
+    description: "14 fresh A1 beginner everyday lessons and 10 C2 proficiency debate lessons to deepen thinner CEFR levels without duplicating existing live titles. Each line auto-tags into its matching Browse by Theme hub.",
     defaultLessonCategory: "general",
     lines: [
-      "A1 | general-english | Talking About the Weather and Seasons",
-      "A1 | general-english | Telling the Time and Making Simple Plans",
-      "A1 | general-english | Describing Your Home and Rooms in Your House",
-      "A1 | general-english | Buying Groceries at the Supermarket",
-      "A1 | general-english | Taking the Bus, Train, and Taxi Around Town",
-      "A1 | conversation-practice | Talking About Your Favourite Food and Drinks",
-      "A1 | conversation-practice | Talking About Hobbies, Music, and Free Time",
-      "A1 | general-english | Describing People: Appearance and Personality",
-      "A1 | general-english | At the Pharmacy: Asking for Simple Medicine",
-      "A1 | general-english | Checking Into a Hotel and Asking About Wi-Fi",
-      "A1 | conversation-practice | Talking About Birthdays, Dates, and Celebrations",
-      "A1 | general-english | Ordering Dinner at a Restaurant and Paying the Bill",
-      "A1 | conversation-practice | Talking About Sports and Keeping Active",
-      "A1 | workplace-communication | Talking About Simple Jobs and Where People Work",
-      "C2 | conversation-practice | Meritocracy: Fair Reward for Talent or Modern Myth?",
-      "C2 | business-english | Sovereign Debt, Inflation, and the Limits of Central Banking",
-      "C2 | conversation-practice | Degrowth vs. Green Capitalism: Can Prosperity Decouple from Carbon?",
-      "C2 | conversation-practice | Cancel Culture, Free Speech, and Public Accountability",
-      "C2 | business-english | Stakeholder Capitalism vs. Shareholder Primacy in Boardrooms",
-      "C2 | conversation-practice | Restorative Justice vs. Retributive Punishment in Modern Law",
-      "C2 | conversation-practice | Urban Gentrification, Heritage Preservation, and the Right to the City",
-      "C2 | vocabulary-building | Rhetoric, Euphemism, and Framing in Political Discourse",
-      "C2 | conversation-practice | Cultural Appropriation vs. Artistic Exchange in a Globalised World",
-      "C2 | business-english | Geoeconomics, Supply-Chain Sovereignty, and the End of Hyper-Globalisation",
+      "A1 | general-english | Talking About the Weather and Seasons | environment",
+      "A1 | general-english | Telling the Time and Making Simple Plans | work",
+      "A1 | general-english | Describing Your Home and Rooms in Your House | relationships",
+      "A1 | general-english | Buying Groceries at the Supermarket | shopping,food",
+      "A1 | general-english | Taking the Bus, Train, and Taxi Around Town | transport",
+      "A1 | conversation-practice | Talking About Your Favourite Food and Drinks | food",
+      "A1 | conversation-practice | Talking About Hobbies, Music, and Free Time | entertainment",
+      "A1 | general-english | Describing People: Appearance and Personality | relationships",
+      "A1 | general-english | At the Pharmacy: Asking for Simple Medicine | health",
+      "A1 | general-english | Checking Into a Hotel and Asking About Wi-Fi | travel",
+      "A1 | conversation-practice | Talking About Birthdays, Dates, and Celebrations | holidays,culture",
+      "A1 | general-english | Ordering Dinner at a Restaurant and Paying the Bill | food",
+      "A1 | conversation-practice | Talking About Sports and Keeping Active | sport,health",
+      "A1 | workplace-communication | Talking About Simple Jobs and Where People Work | work",
+      "C2 | conversation-practice | Meritocracy: Fair Reward for Talent or Modern Myth? | work,education",
+      "C2 | business-english | Sovereign Debt, Inflation, and the Limits of Central Banking | money",
+      "C2 | conversation-practice | Degrowth vs. Green Capitalism: Can Prosperity Decouple from Carbon? | environment,money",
+      "C2 | conversation-practice | Cancel Culture, Free Speech, and Public Accountability | culture,relationships",
+      "C2 | business-english | Stakeholder Capitalism vs. Shareholder Primacy in Boardrooms | work,money",
+      "C2 | conversation-practice | Restorative Justice vs. Retributive Punishment in Modern Law | culture",
+      "C2 | conversation-practice | Urban Gentrification, Heritage Preservation, and the Right to the City | culture,transport",
+      "C2 | vocabulary-building | Rhetoric, Euphemism, and Framing in Political Discourse | education",
+      "C2 | conversation-practice | Cultural Appropriation vs. Artistic Exchange in a Globalised World | culture",
+      "C2 | business-english | Geoeconomics, Supply-Chain Sovereignty, and the End of Hyper-Globalisation | money,work",
     ].join("\n"),
   },
   {
@@ -114,6 +114,7 @@ export const ADMIN_BATCH_PRESET_PACKS: BatchPresetPack[] = [
     label: "English Q&A Traffic Magnets (20)",
     description: "Highest-volume English questions students & teachers ask Google and AI (make vs do, present perfect vs past simple, polite English, phrasal verbs, conditionals).",
     defaultLessonCategory: "general",
+    defaultTags: ["education"],
     lines: [
       "A2 | grammar-focus | What Is the Difference Between Make and Do in English?",
       "A2 | grammar-focus | When Do You Use For and Since in English?",
@@ -149,6 +150,7 @@ export const ADMIN_BATCH_PRESET_PACKS: BatchPresetPack[] = [
     label: "Job Interviews & Career (15)",
     description: "High-intent career & interview lessons adult learners on Preply and italki search for.",
     defaultLessonCategory: "business",
+    defaultTags: ["work"],
     lines: [
       "A2 | workplace-communication | Answering Tell Me About Yourself in a Job Interview",
       "B1 | workplace-communication | Talking About Your Strengths and Weaknesses at an Interview",
@@ -172,6 +174,7 @@ export const ADMIN_BATCH_PRESET_PACKS: BatchPresetPack[] = [
     label: "Tech & Business (15)",
     description: "Niche tech, startup, product and SaaS English topics static PDF libraries miss.",
     defaultLessonCategory: "technology",
+    defaultTags: ["technology", "work"],
     lines: [
       "B1 | workplace-communication | Running Clear Daily Stand-Up Meetings in Tech Teams",
       "B1 | business-english | Describing Software Bugs and Technical Issues Clearly",
@@ -195,6 +198,7 @@ export const ADMIN_BATCH_PRESET_PACKS: BatchPresetPack[] = [
     label: "IELTS Speaking B2–C2 (15)",
     description: "High-search IELTS & academic speaking themes with rich vocabulary and collocations.",
     defaultLessonCategory: "academic",
+    defaultTags: ["education"],
     lines: [
       "B1 | ielts-preparation | IELTS Speaking: Hometowns, Cities, and Changing Neighbourhoods",
       "B1 | ielts-preparation | IELTS Speaking: Public Transport vs. Private Cars",
@@ -218,6 +222,7 @@ export const ADMIN_BATCH_PRESET_PACKS: BatchPresetPack[] = [
     label: "Medical & Healthcare (12)",
     description: "High-value clinical, nursing and patient-care English topics for medical professionals.",
     defaultLessonCategory: "medical",
+    defaultTags: ["health"],
     lines: [
       "A2 | general-english | Describing Pain, Allergies, and Common Symptoms at a Clinic",
       "B1 | workplace-communication | Taking a Clear Patient Medical History in English",
@@ -238,6 +243,7 @@ export const ADMIN_BATCH_PRESET_PACKS: BatchPresetPack[] = [
     label: "Expat & Relocation (12)",
     description: "Practical A2–C1 survival and integration lessons for expats, travellers and relocating professionals.",
     defaultLessonCategory: "tourism",
+    defaultTags: ["travel", "culture"],
     lines: [
       "A1 | general-english | Checking In at the Airport and Going Through Customs",
       "A2 | general-english | Renting an Apartment and Talking to a Landlord",
@@ -259,6 +265,7 @@ interface BatchItem {
   cefrLevel: string;
   publicCategory: PublicLibraryCategory;
   topic: string;
+  tags?: PublicLessonTag[];
   status: "pending" | "generating" | "publishing" | "done" | "error";
   lessonId?: number;
   error?: string;
@@ -275,14 +282,31 @@ function parseBatchLines(text: string): BatchItem[] {
     if (!VALID_LEVELS.has(level)) continue;
     let publicCategory: PublicLibraryCategory = "general-english";
     let topic = "";
+    let lineTags: PublicLessonTag[] = [];
     if (parts.length >= 3 && VALID_PUBLIC_CATEGORIES.has(parts[1])) {
       publicCategory = parts[1] as PublicLibraryCategory;
-      topic = parts.slice(2).join(" | ").trim();
+      if (parts.length >= 4) {
+        const candidateTags = publicTags(parts[parts.length - 1].split(",").map((t) => t.trim().toLowerCase()));
+        if (candidateTags.length > 0) {
+          lineTags = candidateTags;
+          topic = parts.slice(2, -1).join(" | ").trim();
+        } else {
+          topic = parts.slice(2).join(" | ").trim();
+        }
+      } else {
+        topic = parts.slice(2).join(" | ").trim();
+      }
     } else {
       topic = parts.slice(1).join(" | ").trim();
     }
     if (!topic) continue;
-    items.push({ cefrLevel: level, publicCategory, topic, status: "pending" });
+    items.push({
+      cefrLevel: level,
+      publicCategory,
+      topic,
+      ...(lineTags.length ? { tags: lineTags } : {}),
+      status: "pending",
+    });
   }
   return items;
 }
@@ -413,9 +437,10 @@ export function AdminBatchPublicGenerator({ onLessonPublished }: { onLessonPubli
 
         updateItem(i, { status: "publishing", lessonId: lesson.id });
 
+        const mergedTags = publicTags([...(activePack?.defaultTags ?? []), ...(item.tags ?? [])]);
         await apiRequest("PATCH", `/api/lessons/${lesson.id}/public`, {
           publicCategory: item.publicCategory,
-          ...(activePack?.defaultTags?.length ? { tags: activePack.defaultTags } : {}),
+          ...(mergedTags.length ? { tags: mergedTags } : {}),
         });
 
         publishedCount += 1;

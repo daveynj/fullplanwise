@@ -11,8 +11,163 @@ import { Input } from "@/components/ui/input";
 import { SEOHead } from "@/components/SEOHead";
 import { BlogHeader } from "@/components/layout/blog-header";
 import { PUBLIC_LIBRARY_LABELS } from "@shared/schema";
-import { ArrowRight, BookOpen, CheckCircle2, FileDown, Search, Sparkles, X } from "lucide-react";
+import {
+  ArrowRight,
+  BookOpen,
+  Briefcase,
+  Bus,
+  CheckCircle2,
+  Coins,
+  FileDown,
+  Film,
+  FlaskConical,
+  Gift,
+  Globe,
+  GraduationCap,
+  Heart,
+  Laptop,
+  Leaf,
+  Plane,
+  Search,
+  ShoppingBag,
+  Sparkles,
+  Trophy,
+  Users,
+  Utensils,
+  X,
+  type LucideIcon,
+} from "lucide-react";
 import { filterPublicLessons, PUBLIC_LESSON_TAGS, PUBLIC_LESSON_TAG_DESCRIPTIONS, FEATURED_SEASONAL_TAGS, isPublicLessonTag, publicTags, type PublicLessonTag } from "@shared/public-lesson-tags";
+
+interface ThemeCardStyle {
+  card: string;
+  iconBox: string;
+  accentText: string;
+  icon: LucideIcon;
+  subtitle: string;
+}
+
+const THEME_CARD_STYLES: Record<PublicLessonTag, ThemeCardStyle> = {
+  holidays: {
+    card: "border-2 border-rose-300 bg-gradient-to-br from-rose-50 via-amber-50/70 to-white hover:border-rose-500",
+    iconBox: "bg-rose-600 text-white",
+    accentText: "text-rose-800 group-hover:text-rose-900",
+    icon: Gift,
+    subtitle: "Christmas, New Year & global traditions",
+  },
+  culture: {
+    card: "border-2 border-indigo-200 bg-gradient-to-br from-indigo-50/90 to-white hover:border-indigo-400",
+    iconBox: "bg-indigo-600 text-white",
+    accentText: "text-indigo-800 group-hover:text-indigo-900",
+    icon: Globe,
+    subtitle: "Customs, manners & cultural perspectives",
+  },
+  travel: {
+    card: "border-2 border-sky-200 bg-gradient-to-br from-sky-50/90 to-white hover:border-sky-400",
+    iconBox: "bg-sky-600 text-white",
+    accentText: "text-sky-800 group-hover:text-sky-900",
+    icon: Plane,
+    subtitle: "Trips, airports & life abroad",
+  },
+  work: {
+    card: "border-2 border-slate-300 bg-gradient-to-br from-slate-100/90 to-white hover:border-brand-navy",
+    iconBox: "bg-brand-navy text-white",
+    accentText: "text-brand-navy",
+    icon: Briefcase,
+    subtitle: "Interviews, meetings & workplace English",
+  },
+  technology: {
+    card: "border-2 border-violet-200 bg-gradient-to-br from-violet-50/90 to-white hover:border-violet-400",
+    iconBox: "bg-violet-600 text-white",
+    accentText: "text-violet-800 group-hover:text-violet-900",
+    icon: Laptop,
+    subtitle: "Digital life, apps & innovation",
+  },
+  "artificial-intelligence": {
+    card: "border-2 border-purple-200 bg-gradient-to-br from-purple-50/90 to-white hover:border-purple-400",
+    iconBox: "bg-purple-600 text-white",
+    accentText: "text-purple-800 group-hover:text-purple-900",
+    icon: Sparkles,
+    subtitle: "AI tools, ethics & future work",
+  },
+  environment: {
+    card: "border-2 border-emerald-200 bg-gradient-to-br from-emerald-50/90 to-white hover:border-emerald-400",
+    iconBox: "bg-emerald-600 text-white",
+    accentText: "text-emerald-800 group-hover:text-emerald-900",
+    icon: Leaf,
+    subtitle: "Climate, nature & sustainability",
+  },
+  money: {
+    card: "border-2 border-amber-300 bg-gradient-to-br from-amber-50/90 to-white hover:border-amber-500",
+    iconBox: "bg-amber-600 text-white",
+    accentText: "text-amber-800 group-hover:text-amber-900",
+    icon: Coins,
+    subtitle: "Personal finance, banking & spending",
+  },
+  health: {
+    card: "border-2 border-teal-200 bg-gradient-to-br from-teal-50/90 to-white hover:border-teal-400",
+    iconBox: "bg-teal-600 text-white",
+    accentText: "text-teal-800 group-hover:text-teal-900",
+    icon: Heart,
+    subtitle: "Medical visits, wellness & habits",
+  },
+  food: {
+    card: "border-2 border-orange-200 bg-gradient-to-br from-orange-50/90 to-white hover:border-orange-400",
+    iconBox: "bg-orange-600 text-white",
+    accentText: "text-orange-800 group-hover:text-orange-900",
+    icon: Utensils,
+    subtitle: "Dining, cooking & street food",
+  },
+  relationships: {
+    card: "border-2 border-pink-200 bg-gradient-to-br from-pink-50/90 to-white hover:border-pink-400",
+    iconBox: "bg-pink-600 text-white",
+    accentText: "text-pink-800 group-hover:text-pink-900",
+    icon: Users,
+    subtitle: "Friends, family & social life",
+  },
+  education: {
+    card: "border-2 border-blue-200 bg-gradient-to-br from-blue-50/90 to-white hover:border-blue-400",
+    iconBox: "bg-blue-600 text-white",
+    accentText: "text-blue-800 group-hover:text-blue-900",
+    icon: GraduationCap,
+    subtitle: "Study skills, exams & learning",
+  },
+  sport: {
+    card: "border-2 border-lime-300 bg-gradient-to-br from-lime-50/90 to-white hover:border-lime-500",
+    iconBox: "bg-lime-600 text-white",
+    accentText: "text-lime-800 group-hover:text-lime-900",
+    icon: Trophy,
+    subtitle: "Fitness, teams & sporting events",
+  },
+  science: {
+    card: "border-2 border-cyan-200 bg-gradient-to-br from-cyan-50/90 to-white hover:border-cyan-400",
+    iconBox: "bg-cyan-600 text-white",
+    accentText: "text-cyan-800 group-hover:text-cyan-900",
+    icon: FlaskConical,
+    subtitle: "Discoveries, space & curiosity",
+  },
+  entertainment: {
+    card: "border-2 border-fuchsia-200 bg-gradient-to-br from-fuchsia-50/90 to-white hover:border-fuchsia-400",
+    iconBox: "bg-fuchsia-600 text-white",
+    accentText: "text-fuchsia-800 group-hover:text-fuchsia-900",
+    icon: Film,
+    subtitle: "Movies, music & pop culture",
+  },
+  shopping: {
+    card: "border-2 border-yellow-300 bg-gradient-to-br from-yellow-50/90 to-white hover:border-yellow-500",
+    iconBox: "bg-yellow-600 text-white",
+    accentText: "text-yellow-800 group-hover:text-yellow-900",
+    icon: ShoppingBag,
+    subtitle: "Retail, consumer habits & returns",
+  },
+  transport: {
+    card: "border-2 border-stone-300 bg-gradient-to-br from-stone-100/90 to-white hover:border-stone-500",
+    iconBox: "bg-stone-700 text-white",
+    accentText: "text-stone-800 group-hover:text-stone-900",
+    icon: Bus,
+    subtitle: "Commuting, cities & transit",
+  },
+};
 
 const LEVELS = ["A1", "A2", "B1", "B2", "C1", "C2"] as const;
 
@@ -407,36 +562,46 @@ export default function PublicLessonsIndexPage() {
 
           {!level && !activeTopic && !hasActiveFilters && availableTags.length > 0 && (
             <section className="mb-8" aria-label="Browse free lessons by theme">
-              <div className="flex items-baseline justify-between mb-3">
+              <div className="flex items-baseline justify-between mb-4">
                 <h2 className="text-xl font-bold text-brand-navy">Browse by Theme</h2>
-                <span className="text-xs text-slate-500">Dedicated collections across CEFR A1–C2</span>
+                <span className="text-xs font-medium text-slate-600">Dedicated collections across CEFR A1–C2</span>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {availableTags.map(([tag, count]) => {
                   const isSeasonal = FEATURED_SEASONAL_TAGS.includes(tag);
+                  const themeStyle = THEME_CARD_STYLES[tag];
+                  const Icon = themeStyle.icon;
                   return (
                     <Link
                       key={tag}
                       href={`/esl-lessons/topics/${tag}`}
-                      className={`group rounded-xl border p-3.5 transition-all hover:shadow-sm ${
-                        isSeasonal
-                          ? "border-amber-300 bg-amber-50/70 hover:border-amber-400"
-                          : "border-slate-200 bg-white hover:border-brand-yellow"
-                      }`}
+                      className={`group flex items-start gap-3.5 rounded-2xl p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md ${themeStyle.card}`}
                     >
-                      <div className="flex items-center justify-between gap-2 mb-1">
-                        <span className="font-semibold text-sm text-brand-navy group-hover:text-amber-800 truncate">
-                          {PUBLIC_LESSON_TAGS[tag]}
-                        </span>
-                        {isSeasonal && (
-                          <span className="shrink-0 rounded-full bg-amber-200/80 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-900">
-                            Seasonal
-                          </span>
-                        )}
+                      <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl shadow-sm ${themeStyle.iconBox}`}>
+                        <Icon className="h-5 w-5" aria-hidden="true" />
                       </div>
-                      <span className="text-xs text-slate-500">
-                        {count} {count === 1 ? "lesson" : "lessons"} →
-                      </span>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="text-base font-bold leading-snug text-brand-navy">
+                            {PUBLIC_LESSON_TAGS[tag]}
+                          </span>
+                          {isSeasonal && (
+                            <span className="shrink-0 rounded-full bg-brand-navy px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
+                              Seasonal
+                            </span>
+                          )}
+                        </div>
+                        <p className="mt-1 text-xs text-slate-600 line-clamp-1">
+                          {themeStyle.subtitle}
+                        </p>
+                        <div className={`mt-2.5 flex items-center justify-between border-t border-slate-900/10 pt-2 text-xs font-bold ${themeStyle.accentText}`}>
+                          <span>{count} {count === 1 ? "lesson" : "lessons"}</span>
+                          <span className="inline-flex items-center gap-1">
+                            Explore
+                            <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+                          </span>
+                        </div>
+                      </div>
                     </Link>
                   );
                 })}

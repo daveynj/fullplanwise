@@ -170,7 +170,7 @@ describe("AI discovery cleanup (option 1)", () => {
     }
   });
 
-  it("(f) adds VideoObject schema for the homepage YouTube demo video using existing page facts only", () => {
+  it("(f) adds VideoObject schema for the homepage YouTube demo video using verified video metadata and existing page facts", () => {
     const html = injectLandingPrerender(template);
     const blocks = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)]
       .map((m) => JSON.parse(m[1]));
@@ -182,9 +182,9 @@ describe("AI discovery cleanup (option 1)", () => {
     expect(video.embedUrl).toBe(hero.videoUrl);
     expect(video.contentUrl).toBe("https://www.youtube.com/watch?v=pcLlwL5sNK0");
     expect(video.thumbnailUrl).toBe("https://i.ytimg.com/vi/pcLlwL5sNK0/hqdefault.jpg");
-    // No invented upload dates, durations or view counts
-    expect(video).not.toHaveProperty("uploadDate");
-    expect(video).not.toHaveProperty("duration");
+    expect(video.uploadDate).toBe(hero.videoUploadDate);
+    expect(video.duration).toBe(hero.videoDuration);
+    // No invented view counts
     expect(video).not.toHaveProperty("interactionStatistic");
   });
 
