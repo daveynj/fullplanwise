@@ -105,6 +105,19 @@ export function LessonDesignPanel({ content, signedIn }: { content: unknown; sig
             </Button>
           </div>
           <p className="text-xs text-slate-500 leading-relaxed">{soloLearnerAiGuide.modelTip}</p>
+          <p className="text-xs text-slate-700 leading-relaxed">
+            {soloLearnerAiGuide.liveTeacherPrefix}
+            <a
+              href={soloLearnerAiGuide.liveTeacherHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => trackCta('lesson-self-study-ai', 'Book 1-on-1 with Dave')}
+              className="font-medium text-brand-navy underline decoration-brand-yellow decoration-2 underline-offset-2 hover:text-amber-700"
+            >
+              {soloLearnerAiGuide.liveTeacherLinkLabel}
+            </a>
+            .
+          </p>
         </div>
       </details>
     </section>

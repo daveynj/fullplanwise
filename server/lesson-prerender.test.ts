@@ -664,5 +664,7 @@ describe("CollectionPage free-access and dual-audience metadata", () => {
     expect(html).toContain('id="self-study-with-ai"');
     expect(html).toContain("Studying on your own? Practise any free lesson with AI");
     expect(html).toContain("Model tip:");
+    expect(html).toContain("AI is great for solo practice between classes");
+    expect(html).toContain('href="https://speakwithdave.com"');
   });
 });

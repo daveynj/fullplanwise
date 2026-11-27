@@ -242,4 +242,8 @@ export const soloLearnerAiGuide = {
     "Act as a friendly, patient English conversation teacher. Teach me the attached PlanWise ESL lesson step by step at its CEFR level: (1) start with 2 warm-up questions one at a time, (2) check I understand each of the 5 target words and ask me to make my own sentence with each, (3) discuss the reading and check comprehension, (4) run the practice exercises, and (5) finish with the discussion questions, encouraging me to use today's 5 target words. Ask one question at a time, keep your turns short so I do most of the talking, and gently correct my phrasing after I reply.",
   modelTip:
     'Model tip: This works best with a strong modern model (such as the latest ChatGPT, Claude, or Gemini Pro—ideally in voice mode for speaking practice). Smaller or older free models sometimes talk too much or drift above your CEFR level; if that happens, simply reply: "Shorter answers please, one question at a time, and keep the English at my CEFR level."',
+  liveTeacherPrefix:
+    'AI is great for solo practice between classes—and if you’d ever like to work through these lessons live 1-on-1 with a British teacher (real-time pronunciation coaching, natural conversation, and a tailored plan around your goals), you can book a lesson with me at ',
+  liveTeacherLinkLabel: 'SpeakWithDave.com',
+  liveTeacherHref: 'https://speakwithdave.com',
 };

@@ -318,27 +318,27 @@ function sectionsHtml(sections: any[]): string {
         };
         const tiered = s.version === 'v2_pedagogical'
           ? arr(s.pedagogicalFrames)
-              .map((f) => ({
-                fn: str(f?.languageFunction),
-                frames: FRAME_TIERS.map((tier) => {
-                  const frame = str(f?.tieredFrames?.[tier]?.frame);
-                  if (!frame) return '';
-                  const model = arr(f?.modelResponses?.[tier]).map(str).find(Boolean) || '';
-                  return `<li><strong>${e(tierLabels[tier])}:</strong> ${e(frame)}${model ? ` &mdash; <em>${e(model)}</em>` : ''}</li>`;
-                }).filter(Boolean),
-              }))
-              .filter((f) => f.frames.length)
+            .map((f) => ({
+              fn: str(f?.languageFunction),
+              frames: FRAME_TIERS.map((tier) => {
+                const frame = str(f?.tieredFrames?.[tier]?.frame);
+                if (!frame) return '';
+                const model = arr(f?.modelResponses?.[tier]).map(str).find(Boolean) || '';
+                return `<li><strong>${e(tierLabels[tier])}:</strong> ${e(frame)}${model ? ` &mdash; <em>${e(model)}</em>` : ''}</li>`;
+              }).filter(Boolean),
+            }))
+            .filter((f) => f.frames.length)
           : [];
         const frames = arr(s.frames).filter((f) => f && (str(f.patternTemplate) || str(f.title)));
         if (!tiered.length && !frames.length) break;
         const items = tiered.length
           ? tiered.map((f) => `<li>${f.fn ? `<strong>${e(f.fn)}</strong>` : ''}<ul>${f.frames.join('')}</ul></li>`).join('')
           : frames
-              .map((f) => {
-                const fn = str(f.languageFunction);
-                return `<li><strong>${e(str(f.patternTemplate) || str(f.title))}</strong>${fn ? ` &mdash; ${e(fn)}` : ''}</li>`;
-              })
-              .join('');
+            .map((f) => {
+              const fn = str(f.languageFunction);
+              return `<li><strong>${e(str(f.patternTemplate) || str(f.title))}</strong>${fn ? ` &mdash; ${e(fn)}` : ''}</li>`;
+            })
+            .join('');
         out.push(`<section>${heading('Speaking Patterns')}${s.introduction ? `<p>${e(str(s.introduction))}</p>` : ''}<ul>${items}</ul></section>`);
         break;
       }
@@ -668,6 +668,7 @@ export function buildLessonIndexHtml(
       <ol>${soloLearnerAiGuide.steps.map((s) => `<li>${e(s)}</li>`).join('')}</ol>
       <blockquote><p>${e(soloLearnerAiGuide.prompt)}</p></blockquote>
       <p><small>${e(soloLearnerAiGuide.modelTip)}</small></p>
+      <p><small>${e(soloLearnerAiGuide.liveTeacherPrefix)}<a href="${e(soloLearnerAiGuide.liveTeacherHref)}" rel="noopener noreferrer">${e(soloLearnerAiGuide.liveTeacherLinkLabel)}</a>.</small></p>
     </section>`;
   const faqHtml = `<section id="free-library-faq">
       <h2>Frequently Asked Questions About Free ESL Lessons</h2>
@@ -755,14 +756,14 @@ async function prerenderLessonIndex(template: string, level?: string): Promise<s
     '@type': 'BreadcrumbList',
     itemListElement: level
       ? [
-          { '@type': 'ListItem', position: 1, name: 'Home', item: BASE_URL },
-          { '@type': 'ListItem', position: 2, name: 'ESL Lessons', item: `${BASE_URL}/esl-lessons` },
-          { '@type': 'ListItem', position: 3, name: level, item: `${BASE_URL}${canonicalPath}` },
-        ]
+        { '@type': 'ListItem', position: 1, name: 'Home', item: BASE_URL },
+        { '@type': 'ListItem', position: 2, name: 'ESL Lessons', item: `${BASE_URL}/esl-lessons` },
+        { '@type': 'ListItem', position: 3, name: level, item: `${BASE_URL}${canonicalPath}` },
+      ]
       : [
-          { '@type': 'ListItem', position: 1, name: 'Home', item: BASE_URL },
-          { '@type': 'ListItem', position: 2, name: 'ESL Lessons', item: `${BASE_URL}/esl-lessons` },
-        ],
+        { '@type': 'ListItem', position: 1, name: 'Home', item: BASE_URL },
+        { '@type': 'ListItem', position: 2, name: 'ESL Lessons', item: `${BASE_URL}/esl-lessons` },
+      ],
   };
 
   return injectPage(

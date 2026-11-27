@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { trackPublicLibraryEvent } from "@/lib/public-library-analytics";
-import { trackEvent } from "@/lib/analytics";
+import { trackCta, trackEvent } from "@/lib/analytics";
 import { lessonPath } from "@shared/lesson-url";
 import { Link, useRoute } from "wouter";
 import { libraryDesign, lessonDesign, freeLibraryTeachingGuide, freeLibraryFaq, soloLearnerAiGuide } from "@shared/lesson-pedagogy";
@@ -764,6 +764,19 @@ export default function PublicLessonsIndexPage() {
             </div>
             <p className="mt-3 text-xs text-slate-600 leading-relaxed max-w-3xl">
               {soloLearnerAiGuide.modelTip}
+            </p>
+            <p className="mt-2.5 text-xs text-slate-700 leading-relaxed max-w-3xl">
+              {soloLearnerAiGuide.liveTeacherPrefix}
+              <a
+                href={soloLearnerAiGuide.liveTeacherHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => trackCta("self-study-with-ai", "Book 1-on-1 with Dave")}
+                className="font-medium text-brand-navy underline decoration-brand-yellow decoration-2 underline-offset-2 hover:text-amber-700"
+              >
+                {soloLearnerAiGuide.liveTeacherLinkLabel}
+              </a>
+              .
             </p>
           </section>
 
