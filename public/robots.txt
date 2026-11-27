@@ -27,6 +27,8 @@ Allow: /api/images/
 Allow: /api/public-lesson-index
 Allow: /api/public-lessons/
 Allow: /api/lessons/
+# Public published blog posts loaded when /blog pages hydrate (admin routes live under /api/admin/ and stay blocked).
+Allow: /api/blog/
 Disallow: /api/
 Disallow: /dashboard
 Disallow: /generate

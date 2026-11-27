@@ -6,7 +6,7 @@ import { CEFR_LEVEL_NAMES, lessonContentsParts, joinList, levelText, lessonPubli
 import { expressionItemsOf, withoutMarks } from '@shared/lesson-expressions';
 import { publicNav } from '@shared/marketing-pages';
 import { founderPerson } from '@shared/site-facts';
-import { lessonStages, lessonTeaches, lessonDesign, lessonDifference, libraryDesign } from '@shared/lesson-pedagogy';
+import { lessonStages, lessonTeaches, lessonDesign, lessonDifference, libraryDesign, freeLibraryTeachingGuide, freeLibraryFaq } from '@shared/lesson-pedagogy';
 export { CEFR_LEVEL_NAMES } from '@shared/lesson-public-metadata';
 
 /**
@@ -71,6 +71,9 @@ export const lessonPrerenderCss = `
 #lesson-prerender .lp-card { background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 20px; margin-bottom: 14px; }
 #lesson-prerender .lp-card h3 { margin: 0 0 6px; font-size: 1.15rem; }
 #lesson-prerender .lp-cta { background: #f8f5ec; border-radius: 12px; padding: 20px; margin-top: 2rem; }
+#lesson-prerender table { border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.92rem; }
+#lesson-prerender th, #lesson-prerender td { border: 1px solid #e5e5e5; padding: 8px 10px; text-align: left; vertical-align: top; }
+#lesson-prerender th { background: #051d40; color: #fff; }
 #lesson-prerender a { color: #b8912a; }
 `;
 
@@ -590,6 +593,33 @@ export function buildLessonIndexHtml(lessons: LessonSummary[], level?: string): 
     }).join('\n');
   }
 
+  const guideRows = freeLibraryTeachingGuide.stages
+    .map(
+      (s) => `<tr><td><strong>${e(s.stage)}</strong></td><td>${e(s.min30)}</td><td>${e(s.min60)}</td><td>${e(s.howToTeach)}</td></tr>`,
+    )
+    .join('\n        ');
+  const guideHtml = `<section id="how-to-teach-free-lessons">
+      <h2>${e(freeLibraryTeachingGuide.heading)}</h2>
+      <p>${e(freeLibraryTeachingGuide.intro)}</p>
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Lesson Stage</th>
+            <th scope="col">30-Min Class</th>
+            <th scope="col">50–60 Min Class</th>
+            <th scope="col">How to Teach It</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${guideRows}
+        </tbody>
+      </table>
+    </section>`;
+  const faqHtml = `<section id="free-library-faq">
+      <h2>Frequently Asked Questions About Free ESL Lessons</h2>
+      ${freeLibraryFaq.map((f) => `<h3>${e(f.question)}</h3><p>${e(f.answer)}</p>`).join('\n      ')}
+    </section>`;
+
   return `<div id="lesson-prerender">
   ${headerHtml()}
   <main class="lp-main">
@@ -598,6 +628,8 @@ export function buildLessonIndexHtml(lessons: LessonSummary[], level?: string): 
     <p>${e(intro)} <a href="${e(lessonDesign.href)}">${e(lessonDesign.linkLabel)}</a>.</p>
     ${levelLinksHtml(level)}
     ${listing}
+    ${guideHtml}
+    ${faqHtml}
     <aside class="lp-cta">
       <h2>Need a lesson on a different topic?</h2>
       <p>PlanWise ESL generates a complete lesson on any topic at any CEFR level in minutes. <a href="/auth?register=true">Sign up free</a>.</p>
@@ -639,6 +671,31 @@ async function prerenderLessonIndex(template: string, level?: string): Promise<s
     },
   };
 
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: freeLibraryFaq.map((f) => ({
+      '@type': 'Question',
+      name: f.question,
+      acceptedAnswer: { '@type': 'Answer', text: f.answer },
+    })),
+  };
+
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: level
+      ? [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: BASE_URL },
+          { '@type': 'ListItem', position: 2, name: 'ESL Lessons', item: `${BASE_URL}/esl-lessons` },
+          { '@type': 'ListItem', position: 3, name: level, item: `${BASE_URL}${canonicalPath}` },
+        ]
+      : [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: BASE_URL },
+          { '@type': 'ListItem', position: 2, name: 'ESL Lessons', item: `${BASE_URL}/esl-lessons` },
+        ],
+  };
+
   return injectPage(
     template,
     {
@@ -647,7 +704,7 @@ async function prerenderLessonIndex(template: string, level?: string): Promise<s
       canonicalPath,
       indexable: hasLessons,
       ogType: 'website',
-      structuredData: hasLessons ? [itemList] : [],
+      structuredData: hasLessons ? [itemList, faqSchema, breadcrumbSchema] : [],
     },
     buildLessonIndexHtml(lessons, level),
   );

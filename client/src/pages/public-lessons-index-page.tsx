@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { trackPublicLibraryEvent } from "@/lib/public-library-analytics";
 import { lessonPath } from "@shared/lesson-url";
 import { Link, useRoute } from "wouter";
-import { libraryDesign, lessonDesign } from "@shared/lesson-pedagogy";
+import { libraryDesign, lessonDesign, freeLibraryTeachingGuide, freeLibraryFaq } from "@shared/lesson-pedagogy";
 import { useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -229,7 +229,7 @@ export default function PublicLessonsIndexPage() {
           <h1 className="text-3xl md:text-4xl font-bold text-brand-navy mb-3" data-testid="text-lessons-title">
             {heading}
           </h1>
-          <p className="text-base md:text-lg text-slate-600 mb-6 max-w-3xl">
+          <p className="text-base md:text-lg text-slate-600 mb-3 max-w-3xl">
             {intro}{" "}
             <Link
               href={lessonDesign.href}
@@ -238,6 +238,12 @@ export default function PublicLessonsIndexPage() {
               {lessonDesign.linkLabel}
             </Link>
           </p>
+          <a
+            href="#how-to-teach-free-lessons"
+            className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-navy hover:text-amber-700 mb-6 underline decoration-brand-yellow decoration-2 underline-offset-4"
+          >
+            How to teach any free lesson (30- &amp; 60-min teacher guide) ↓
+          </a>
 
           {/* Search + CEFR Level + Category Controls */}
           <div className="rounded-2xl bg-white border border-slate-200 p-4 md:p-5 shadow-sm mb-8 space-y-4">
@@ -409,6 +415,61 @@ export default function PublicLessonsIndexPage() {
           )}
             </>
           )}
+
+          <section
+            id="how-to-teach-free-lessons"
+            className="mt-14 rounded-2xl bg-white border border-slate-200 p-6 md:p-8 shadow-sm"
+          >
+            <h2 className="text-2xl font-bold text-brand-navy mb-2">
+              {freeLibraryTeachingGuide.heading}
+            </h2>
+            <p className="text-slate-600 mb-6 max-w-3xl">
+              {freeLibraryTeachingGuide.intro}
+            </p>
+            <div className="overflow-x-auto rounded-lg border border-slate-200">
+              <table className="w-full border-collapse text-sm text-left">
+                <thead>
+                  <tr className="bg-brand-navy text-white">
+                    <th scope="col" className="px-4 py-3 font-semibold">Lesson Stage</th>
+                    <th scope="col" className="px-4 py-3 font-semibold whitespace-nowrap">30-Min Class</th>
+                    <th scope="col" className="px-4 py-3 font-semibold whitespace-nowrap">50–60 Min Class</th>
+                    <th scope="col" className="px-4 py-3 font-semibold">How to Teach It</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {freeLibraryTeachingGuide.stages.map((item) => (
+                    <tr key={item.stage} className="border-t border-slate-200">
+                      <td className="px-4 py-3 font-semibold text-brand-navy whitespace-nowrap">{item.stage}</td>
+                      <td className="px-4 py-3 text-slate-700 whitespace-nowrap">{item.min30}</td>
+                      <td className="px-4 py-3 text-slate-700 whitespace-nowrap">{item.min60}</td>
+                      <td className="px-4 py-3 text-slate-600">{item.howToTeach}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section
+            id="free-library-faq"
+            className="mt-8 rounded-2xl bg-white border border-slate-200 p-6 md:p-8 shadow-sm"
+          >
+            <h2 className="text-2xl font-bold text-brand-navy mb-5">
+              Frequently Asked Questions
+            </h2>
+            <div className="space-y-5">
+              {freeLibraryFaq.map((item) => (
+                <div key={item.question} className="border-b border-slate-100 last:border-b-0 pb-4 last:pb-0">
+                  <h3 className="text-base font-semibold text-brand-navy mb-1.5">
+                    {item.question}
+                  </h3>
+                  <p className="text-sm text-slate-600 leading-relaxed">
+                    {item.answer}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </section>
 
           <div className="mt-12 rounded-2xl bg-brand-navy text-white p-6 md:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
             <div>

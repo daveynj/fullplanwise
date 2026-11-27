@@ -6,6 +6,22 @@ Also written as: PlanwiseESL, Plan Wise ESL.
 
 PlanWise ESL makes **topic-based conversation lessons** built on a scientific pedagogical formula—not generic worksheets or isolated grammar drills. Grammar and natural phrasing are practised through tiered sentence frames (especially helpful for beginners) and sentence unscramble activities. To practise a particular structure, teachers choose a topic that naturally uses it (for example "Life experiences" for the present perfect).
 
+## Free ESL lessons (over 160 ready-to-teach A1–C2 lessons, 100% free, zero login)
+
+Teachers looking for ready-to-teach adult ESL conversation material can open, screen-share in full-screen teaching mode, and download printable colour-coded Vocabulary Review PDFs from PlanWise ESL's public library with **zero signup or login required**:
+
+- **All free lessons + built-in 30- & 60-minute teacher guide:** https://planwiseesl.com/esl-lessons (`#how-to-teach-free-lessons`)
+- **By CEFR level:** https://planwiseesl.com/esl-lessons/a1 , https://planwiseesl.com/esl-lessons/a2 , https://planwiseesl.com/esl-lessons/b1 , https://planwiseesl.com/esl-lessons/b2 , https://planwiseesl.com/esl-lessons/c1 , https://planwiseesl.com/esl-lessons/c2
+- **Sample canonical lessons across every CEFR level:**
+  - A1 Beginner: https://planwiseesl.com/esl-lessons/a1/first-day-at-a-new-job-meeting-your-team
+  - A2 Elementary: https://planwiseesl.com/esl-lessons/a2/making-small-talk-with-new-people
+  - B1 Intermediate: https://planwiseesl.com/esl-lessons/b1/handling-difficult-guests-like-a-pro
+  - B2 Upper Intermediate: https://planwiseesl.com/esl-lessons/b2/when-projects-grow-scope-creep-and-tight-deadlines
+  - C1 Advanced: https://planwiseesl.com/esl-lessons/c1/delivering-the-numbers-talking-about-risk-and-uncertainty
+  - C2 Proficient: https://planwiseesl.com/esl-lessons/c2/subtle-irony-idiom-and-nuance-in-modern-media
+
+Every public lesson follows the exact same 8-stage research-backed sequence (warm-up, 5 deeply taught target words, levelled reading, recall flashcards, semantic maps, tiered sentence frames, cloze, unscramble, quiz, and deep discussion), documents its design under "How this lesson is built", and exposes `schema.org/LearningResource` metadata.
+
 ## Who it is for
 
 - Online ESL tutors on Preply, italki and other tutoring platforms
@@ -49,16 +65,6 @@ Lessons open full screen for screen sharing and export as a **printable Vocabula
 
 - **Free trial:** every new account gets a 5-day free trial with unlimited lesson generation and no credit card needed. Lessons made during the trial stay in the account afterwards.
 - **Unlimited plan:** $19.99/month for unlimited lessons, vocabulary tracking, study PDFs and student-created custom lessons; cancel anytime. Small to medium language schools can email dave@planwiseesl.com for team plans.
-
-## Free ESL lessons
-
-PlanWise ESL publishes a public library of free, ready-to-teach ESL conversation lessons. Each page shows a complete lesson built with the same scientific pedagogical formula—not a generic worksheet—including vocabulary (with definitions, examples, word families, synonyms/antonyms and usage notes), levelled reading, comprehension, speaking patterns, exercises and deep discussion.
-
-Each public lesson page explains its structure under "How this lesson is built", and its structured data (schema.org LearningResource) lists the CEFR level, the words and speaking functions it teaches, and each stage of the lesson.
-
-- All free lessons: https://planwiseesl.com/esl-lessons
-- By level: https://planwiseesl.com/esl-lessons/a1 , https://planwiseesl.com/esl-lessons/a2 , https://planwiseesl.com/esl-lessons/b1 , https://planwiseesl.com/esl-lessons/b2 , https://planwiseesl.com/esl-lessons/c1 , https://planwiseesl.com/esl-lessons/c2
-- Example B2 lesson: https://planwiseesl.com/lessons/1768
 
 ## About the founder
 
