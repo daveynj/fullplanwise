@@ -294,8 +294,17 @@ function distractorGuidance(cefrLevel: string): string {
   if (EASY_DISTRACTOR_LEVELS.has(cefrLevel)) {
     return 'The wrong options can be clearly different from the right answer, but each must still be a real, sensible meaning or sentence, never a silly one.';
   }
-  return `Every wrong option must be believable to a ${cefrLevel} student who does not yet know the word well: a near-synonym, a related idea, a meaning the word does not have, or a sentence that uses the word in the wrong sense. Write them in the same style and length as the right answer. Never use absurd options that a student can rule out without knowing the word, like "I ate a boundary for lunch" or "He drank a glass of fulfilment".`;
+  return `Every wrong option must be believable to a ${cefrLevel} student who does not yet know the word well: a near-synonym, a related idea, a meaning the word does not have, or a sentence that uses the word in the wrong sense. Write them in the same style and length as the right answer. Never use absurd options that a student can rule out without knowing the word, like "I ate a boundary for lunch" or "He drank a glass of fulfilment".
+
+${SENTENCE_OPTIONS_RULE}`;
 }
+
+/**
+ * "Which sentence uses [word] correctly?" is where absurd options kept coming
+ * back even after the general rule ("He collaborated his lunch", "He debunked
+ * his keys under a pile of magazines"), so it gets its own rule and example.
+ */
+const SENTENCE_OPTIONS_RULE = `For "Which sentence uses [word] correctly?", each wrong sentence must be a mistake a learner could really make: the word with the opposite or a nearby meaning ("The new study debunked the theory, proving it was right"), the wrong grammar pattern, or the wrong word partner. Never treat the word as if it meant an unrelated everyday action ("He debunked his keys under a pile of magazines", "He collaborated his lunch"): the student can rule that out without knowing the word.`;
 
 function comprehensionStep(cefrLevel: string): string {
   return `Write exactly 5 questions testing vocabulary understanding (one per word). These test whether students know the vocabulary, NOT whether they remember facts from the reading. Keep the questions simple, so the only thing being tested is the target word.
@@ -356,10 +365,13 @@ For each sentence:
 - Do NOT add extra words or omit any words from the sentence
 </requirements>`;
 
-const QUIZ_STEP = `Write 5 quiz questions about the lesson. Mix multiple choice and true/false. Use simple, clear wording: the quiz checks what the student learned, not how well they can read difficult questions.
+function quizStep(cefrLevel: string): string {
+  return `Write 5 quiz questions about the lesson. Mix multiple choice and true/false. Use simple, clear wording: the quiz checks what the student learned, not how well they can read difficult questions.
 Every question must check something this lesson taught: the meaning, use or form of the 5 target words, or the ideas in the reading. Never ask about facts the lesson does not teach, such as where a word comes from, its history or other trivia.
+${distractorGuidance(cefrLevel)}
 <critical>For multiple choice, you MUST randomize the position of the correct answer. Do not use a fixed pattern.</critical>
 <requirements>Include clear explanations for all answers.</requirements>`;
+}
 
 /**
  * JSON template for each section, indented to sit inside the lesson's
@@ -551,7 +563,7 @@ ${UNSCRAMBLE_ACTIVITY}
 </step>
 
 <step number="7" title="CREATE 5 QUIZ QUESTIONS">
-${QUIZ_STEP}
+${quizStep(cefrLevel)}
 </step>
 
 </instructions>
@@ -624,7 +636,7 @@ function sectionInstructions(
     case 'discussion':
       return discussionStep(g);
     case 'quiz':
-      return QUIZ_STEP;
+      return quizStep(cefrLevel);
   }
 }
 
@@ -825,7 +837,7 @@ Each expression needs:
 - meaning: clear and simple (${g.definitionGuidance}), and easier than the expression itself
 - similar: a simpler word or phrase with a similar meaning, or "" when there is none
 - example: a new, natural sentence at the student's level, with the expression marked like **this**
-- notes: 1 or 2 short, useful tips, and every tip must be true of this expression. For a phrasal verb that takes an object, say whether the object can go in the middle ("take it on", "take on the job"); with a pronoun it must go in the middle. For a phrasal verb with no object, or one that is never split, say what the small word adds instead, not that it "cannot be split". For an idiom or fixed expression: the picture behind it, when that helps the student remember it; never give an idiom a splitting tip. Say if it is informal, or mainly British or American. Use "right" and "wrong" only for a mistake learners really make; never invent a wrong form nobody would say (like "do the mathematic"), and leave both out when there is no real mistake to warn about.
+- notes: 1 or 2 short, useful tips, and every tip must be true of this expression. For a two-word phrasal verb whose object can move, like "take on", say so ("take it on", "take on the job"); with a pronoun the object must go in the middle. Phrasal verbs with two small words, like "get on with" or "look forward to", never split: the object always goes at the end. Many two-word ones never split either ("look after", "come across"). For a phrasal verb with no object, or one that is never split, say what the small word adds instead, not that it "cannot be split". For an idiom or fixed expression: the picture behind it, when that helps the student remember it; never give an idiom a splitting tip. Say if it is informal, or mainly British or American. Use "right" and "wrong" only for a mistake learners really make; never invent a wrong form nobody would say (like "do the mathematic"), and leave both out when there is no real mistake to warn about.
 - tone: "informal" or "formal" when it matters, otherwise ""
 - yourTurn: one friendly question that invites the student to use the expression to talk about their own life or opinions
 </requirements>

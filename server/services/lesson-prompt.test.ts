@@ -320,6 +320,19 @@ describe("lesson quality rules", () => {
     }
   });
 
+  it("rules out nonsense sentences in vocabulary checks and quizzes from B1 up", () => {
+    for (const level of ["B1", "B2", "C1", "C2"]) {
+      for (const prompt of [
+        buildLessonPrompt(params(level)),
+        buildLessonSectionPrompt("comprehension", params(level), lesson),
+        buildLessonSectionPrompt("quiz", params(level), lesson),
+      ]) {
+        expect(prompt).toContain("each wrong sentence must be a mistake a learner could really make");
+      }
+    }
+    expect(buildLessonSectionPrompt("quiz", params("A2"), lesson)).toContain("never a silly one");
+  });
+
   it("keeps the quiz to what the lesson taught", () => {
     for (const prompt of [buildLessonPrompt(params("B2")), buildLessonSectionPrompt("quiz", params("B2"), lesson)]) {
       expect(prompt).toContain("Every question must check something this lesson taught");
@@ -338,6 +351,7 @@ describe("lesson quality rules", () => {
     const prompt = buildExpressionsPrompt(withSwitch("C2"), lesson);
     expect(prompt).toContain("never invent a wrong form nobody would say");
     expect(prompt).toContain("never give an idiom a splitting tip");
+    expect(prompt).toContain('Phrasal verbs with two small words, like "get on with" or "look forward to", never split');
     expect(prompt).not.toContain("A short tip about a common mistake:");
     expect(prompt).toContain("Only if learners really make this mistake");
   });
