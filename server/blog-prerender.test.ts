@@ -72,8 +72,10 @@ describe("blog social previews using the real client template", () => {
   });
 
   it("honors custom metadata and external featured images, escaping attribute text", async () => {
-    const custom = { ...post, metaTitle: 'Custom <title> & "$&"', metaDescription: 'Tips <safe> & "helpful"',
-      featuredImageUrl: "https://cdn.example.com/photo.webp?a=1&b=2" };
+    const custom = {
+      ...post, metaTitle: 'Custom <title> & "$&"', metaDescription: 'Tips <safe> & "helpful"',
+      featuredImageUrl: "https://cdn.example.com/photo.webp?a=1&b=2"
+    };
     getBlogPostBySlug.mockResolvedValue(custom);
     assertMetadata((await injectBlogPrerender(template, `/blog/${post.slug}`))!, custom);
   });
@@ -129,7 +131,7 @@ describe("blog social previews using the real client template", () => {
     getBlogPostBySlug.mockResolvedValue(undefined);
     expect(await injectBlogPrerender(template, "/blog/missing")).toBeNull();
     getBlogPostBySlug.mockRejectedValue(new Error("unavailable"));
-    const error = vi.spyOn(console, "error").mockImplementation(() => {});
+    const error = vi.spyOn(console, "error").mockImplementation(() => { });
     try {
       expect(await injectBlogPrerender(template, `/blog/${post.slug}`)).toBeNull();
     } finally { error.mockRestore(); }
@@ -163,5 +165,28 @@ describe("blog social previews using the real client template", () => {
     expect(llmsFull).toContain("## ESL Teaching Blog");
     expect(llmsFull).toContain(`https://planwiseesl.com/blog/${post.slug}`);
     expect(llmsFull).toContain(post.excerpt);
+  });
+
+  it("emits FAQPage JSON-LD only when a post has an FAQ section with 2+ questions", async () => {
+    const faqPost: BlogPost = {
+      ...post,
+      content: '<p>Intro.</p><h2>Frequently Asked Questions</h2><h3>Q1 &amp; details?</h3><p>Answer <strong>one</strong>.</p><h3>Q2?</h3><p>Answer two &mdash; concise.</p><h2>Next</h2><p>Ignored</p>',
+    };
+    getBlogPostBySlug.mockResolvedValue(faqPost);
+    const faqHtml = (await injectBlogPrerender(template, `/blog/${post.slug}`))!;
+    const faqDoc = parse(faqHtml);
+    const faqScript = faqDoc.querySelector('#seo-faq-jsonld');
+    expect(faqScript).not.toBeNull();
+    const faqJson = JSON.parse(faqScript!.textContent!);
+    expect(faqJson["@type"]).toBe("FAQPage");
+    expect(faqJson.mainEntity).toEqual([
+      { "@type": "Question", name: "Q1 & details?", acceptedAnswer: { "@type": "Answer", text: "Answer one." } },
+      { "@type": "Question", name: "Q2?", acceptedAnswer: { "@type": "Answer", text: "Answer two — concise." } },
+    ]);
+
+    getBlogPostBySlug.mockResolvedValue(post);
+    const plainHtml = (await injectBlogPrerender(template, `/blog/${post.slug}`))!;
+    const plainDoc = parse(plainHtml);
+    expect(plainDoc.querySelector('#seo-faq-jsonld')).toBeNull();
   });
 });

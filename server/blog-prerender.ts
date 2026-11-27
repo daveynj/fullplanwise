@@ -111,6 +111,62 @@ export function blogBreadcrumbJsonLd(post: BlogPost): string {
   }, 'seo-breadcrumb-jsonld');
 }
 
+function stripHtmlToText(html: string): string {
+  return html
+    .replace(/<br\s*\/?>/gi, ' ')
+    .replace(/<\/(?:p|div|li|tr|td|th|h[1-6]|blockquote)>/gi, ' ')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&mdash;/g, '—')
+    .replace(/&ndash;/g, '–')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+export function blogFaqJsonLd(post: Pick<BlogPost, 'content'>): string | null {
+  const html = post.content || '';
+  const h2Regex = /<h2\b[^>]*>([\s\S]*?)<\/h2>/gi;
+  let faqStart = -1;
+  let match: RegExpExecArray | null;
+  while ((match = h2Regex.exec(html)) !== null) {
+    const headingText = stripHtmlToText(match[1]);
+    if (/frequently asked questions|^faq\b/i.test(headingText)) {
+      faqStart = match.index + match[0].length;
+      break;
+    }
+  }
+  if (faqStart === -1) return null;
+
+  const tail = html.slice(faqStart);
+  const nextH2 = tail.search(/<h2[\s>]/i);
+  const faqSlice = nextH2 === -1 ? tail : tail.slice(0, nextH2);
+
+  const items: Array<{ name: string; text: string }> = [];
+  const h3Regex = /<h3\b[^>]*>([\s\S]*?)<\/h3>([\s\S]*?)(?=<h3[\s>]|$)/gi;
+  let qa: RegExpExecArray | null;
+  while ((qa = h3Regex.exec(faqSlice)) !== null) {
+    const name = stripHtmlToText(qa[1]);
+    const text = stripHtmlToText(qa[2]);
+    if (name && text) items.push({ name, text });
+  }
+  if (items.length < 2) return null;
+
+  return jsonLd({
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: items.map(({ name, text }) => ({
+      '@type': 'Question',
+      name,
+      acceptedAnswer: { '@type': 'Answer', text },
+    })),
+  }, 'seo-faq-jsonld');
+}
+
 function formatDate(dateStr: string): string {
   const d = new Date(dateStr);
   if (isNaN(d.getTime())) return dateStr;
@@ -262,7 +318,8 @@ export async function injectBlogPrerender(
         ['name', 'twitter:image', metadata.imageUrl],
         ['name', 'twitter:image:alt', metadata.imageAlt],
       ].map(([attribute, key, value]) => `<meta ${attribute}="${key}" content="${e(value)}" />`).join('\n    ');
-      const meta = `${headMeta(metadata.title, metadata.description, metadata.canonicalPath)}\n    ${social}\n    ${blogPostingJsonLd(post)}\n    ${blogBreadcrumbJsonLd(post)}`;
+      const faqLd = blogFaqJsonLd(post);
+      const meta = `${headMeta(metadata.title, metadata.description, metadata.canonicalPath)}\n    ${social}\n    ${blogPostingJsonLd(post)}\n    ${blogBreadcrumbJsonLd(post)}${faqLd ? `\n    ${faqLd}` : ''}`;
       return injectIntoTemplate(template, meta, await buildBlogPostHtml(post), true);
     }
 

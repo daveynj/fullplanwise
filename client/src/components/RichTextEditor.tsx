@@ -39,8 +39,12 @@ import {
   Underline as UnderlineIcon,
   Undo,
   Redo,
+  Code2,
+  Eye,
 } from 'lucide-react';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
+
+const hasHtmlTable = (html: string) => /<table[\s>]/i.test(html);
 
 interface RichTextEditorProps {
   content: string;
@@ -57,6 +61,9 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
   const [imageDialogOpen, setImageDialogOpen] = useState(false);
   const [videoUrl, setVideoUrl] = useState('');
   const [videoDialogOpen, setVideoDialogOpen] = useState(false);
+  const [mode, setMode] = useState<'visual' | 'html'>(() => (hasHtmlTable(content) ? 'html' : 'visual'));
+  const modeRef = useRef<'visual' | 'html'>(mode);
+  modeRef.current = mode;
 
   const editor = useEditor({
     extensions: [
@@ -89,16 +96,39 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
       TextStyle,
       Color,
     ],
-    content,
+    content: hasHtmlTable(content) ? '' : content,
     editorProps: {
       attributes: {
         class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none min-h-[300px] p-4',
       },
     },
     onUpdate: ({ editor }) => {
-      onChange(editor.getHTML());
+      if (modeRef.current === 'visual') {
+        onChange(editor.getHTML());
+      }
     },
   });
+
+  useEffect(() => {
+    if (hasHtmlTable(content) && mode !== 'html') {
+      setMode('html');
+      return;
+    }
+    if (editor && mode === 'visual' && content !== editor.getHTML()) {
+      editor.commands.setContent(content || '', { emitUpdate: false });
+    }
+  }, [content, editor, mode]);
+
+  const toggleMode = useCallback(() => {
+    if (mode === 'visual') {
+      setMode('html');
+      return;
+    }
+    if (editor) {
+      editor.commands.setContent(content || '', { emitUpdate: false });
+    }
+    setMode('visual');
+  }, [content, editor, mode]);
 
   const setLink = useCallback(() => {
     if (!editor) return;
@@ -180,7 +210,9 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
   return (
     <div className="border rounded-lg overflow-hidden" data-testid="rich-text-editor">
       {/* Toolbar */}
-      <div className="flex flex-wrap gap-1 p-2 border-b bg-muted/50">
+      <div className="flex flex-wrap items-center gap-1 p-2 border-b bg-muted/50">
+        {mode === 'visual' ? (
+          <>
         {/* Text formatting */}
         <Button
           type="button"
@@ -493,10 +525,53 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
         >
           <Redo className="h-4 w-4" />
         </Button>
+          </>
+        ) : (
+          <span className="text-xs font-medium text-muted-foreground px-2">
+            HTML Source Mode
+          </span>
+        )}
+
+        <Button
+          type="button"
+          variant={mode === 'html' ? 'secondary' : 'outline'}
+          size="sm"
+          onClick={toggleMode}
+          className="ml-auto gap-1.5 text-xs"
+          data-testid="button-toggle-html"
+        >
+          {mode === 'html' ? (
+            <>
+              <Eye className="h-3.5 w-3.5" />
+              Visual
+            </>
+          ) : (
+            <>
+              <Code2 className="h-3.5 w-3.5" />
+              HTML
+            </>
+          )}
+        </Button>
       </div>
 
       {/* Editor */}
-      <EditorContent editor={editor} />
+      {mode === 'html' ? (
+        <div>
+          <textarea
+            value={content}
+            onChange={(e) => onChange(e.target.value)}
+            placeholder={placeholder || '<p>Write or paste HTML content...</p>'}
+            className="w-full min-h-[340px] p-4 font-mono text-sm bg-background focus:outline-none resize-y"
+            data-testid="textarea-html-source"
+          />
+          <div className="px-4 py-2 border-t bg-muted/30 text-xs text-muted-foreground">
+            HTML source mode preserves semantic <code>&lt;table&gt;</code> markup and exact headings for SEO and AI crawlers.
+            {hasHtmlTable(content) && ' Switching back to Visual mode will strip <table> tags in the rich editor.'}
+          </div>
+        </div>
+      ) : (
+        <EditorContent editor={editor} />
+      )}
     </div>
   );
 }
