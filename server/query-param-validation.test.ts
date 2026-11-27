@@ -19,6 +19,9 @@ const mockStorage = vi.hoisted(() => ({
   getUser: vi.fn(),
   getLessons: vi.fn(),
   getAllBlogPosts: vi.fn(),
+  getLesson: vi.fn(),
+  deleteLesson: vi.fn(),
+  deleteLessonWithStrategy: vi.fn(),
 }));
 
 const mockLessonJobs = vi.hoisted(() => ({
@@ -218,4 +221,55 @@ describe("GET /api/blog/posts query-param handling", () => {
     expect(args[0]).toBe(2);
     expect(args[1]).toBe(100); // clamped to MAX_PAGE_SIZE
   });
+});
+
+describe.each([
+  { method: "DELETE", suffix: "", storeMethod: "deleteLesson", success: 204 },
+  { method: "POST", suffix: "/delete-with-strategy", storeMethod: "deleteLessonWithStrategy", success: 200 },
+] as const)("lesson deletion endpoint $method", ({ method, suffix, storeMethod, success }) => {
+  async function remove(id = "42", strategy = "keep_vocabulary") {
+    return fetch(`${baseUrl}/api/lessons/${id}${suffix}`, {
+      method, headers: { "Content-Type": "application/json" },
+      ...(method === "POST" ? { body: JSON.stringify({ strategy }) } : {}),
+    });
+  }
+
+  beforeEach(() => {
+    mockStorage.getLesson.mockResolvedValue({ id: 42, teacherId: USER_ID, isPublic: true });
+    mockStorage[storeMethod].mockResolvedValue(true);
+  });
+
+  it("returns success only when storage confirms deletion", async () => {
+    expect((await remove()).status).toBe(success);
+    expect(mockStorage[storeMethod]).toHaveBeenCalledWith(
+      ...method === "POST" ? [42, "keep_vocabulary"] : [42],
+    );
+  });
+
+  it.each(["missing", "forbidden", "invalid id", "already deleted", "storage failure"])(
+    "handles %s without claiming success", async (kind) => {
+      let status = 404;
+      if (kind === "missing") mockStorage.getLesson.mockResolvedValue(undefined);
+      if (kind === "forbidden") {
+        mockStorage.getLesson.mockResolvedValue({ id: 42, teacherId: USER_ID + 1 });
+        status = 403;
+      }
+      if (kind === "already deleted") mockStorage[storeMethod].mockResolvedValue(false);
+      if (kind === "storage failure") {
+        mockStorage[storeMethod].mockRejectedValue(new Error("delete failed"));
+        status = 500;
+      }
+      expect((await remove(kind === "invalid id" ? "bad" : "42")).status).toBe(status);
+      if (["missing", "forbidden", "invalid id"].includes(kind)) {
+        expect(mockStorage[storeMethod]).not.toHaveBeenCalled();
+      }
+    },
+  );
+
+  if (method === "POST") {
+    it("rejects an invalid strategy before deletion", async () => {
+      expect((await remove("42", "bad")).status).toBe(400);
+      expect(mockStorage[storeMethod]).not.toHaveBeenCalled();
+    });
+  }
 });

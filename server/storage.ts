@@ -30,6 +30,7 @@ import { lessonWordDetails } from "./lesson-word-details";
 import { ABANDONED_JOB_AGE_MS } from "./lesson-jobs";
 import { ensureLessonUrlSchema, LESSON_URL_LOCK } from "./lesson-url-schema";
 import { availableLessonSlug } from "@shared/lesson-url";
+import { lessonIndexNowPaths, notifyIndexNow } from "./indexnow";
 import { publicTagFingerprint, TagReviewConflict, type PublicTagSource } from "./public-lesson-tags";
 import { publicTags, type PublicLessonTag } from "@shared/public-lesson-tags";
 import { SQL, eq, and, desc, count, or, ilike, gte, sql, inArray, ne, isNull } from "drizzle-orm";
@@ -88,6 +89,16 @@ const publicReadingForTags = sql<string>`coalesce((
 const publicTagSourceColumns = {
   id: lessons.id, title: lessons.title, cefrLevel: lessons.cefrLevel,
   publicReading: publicReadingForTags,
+};
+
+// DELETE RETURNING captures the persisted identity of the row actually removed,
+// without loading lesson content or relying on an earlier, possibly stale read.
+const deletedLessonColumns = {
+  id: lessons.id,
+  isPublic: lessons.isPublic,
+  publicSlug: lessons.publicSlug,
+  publicLevel: lessons.publicLevel,
+  cefrLevel: lessons.cefrLevel,
 };
 
 // modify the interface with any CRUD methods
@@ -806,8 +817,9 @@ export class DatabaseStorage implements IStorage {
       const result = await db
         .delete(lessons)
         .where(eq(lessons.id, id))
-        .returning({ id: lessons.id });
+        .returning(deletedLessonColumns);
 
+      if (result[0]?.isPublic) notifyIndexNow(lessonIndexNowPaths(result[0]));
       return result.length > 0;
     } catch (error) {
       console.error('Error deleting lesson:', error);
@@ -856,7 +868,7 @@ export class DatabaseStorage implements IStorage {
       }
 
       // Use transaction to ensure all operations succeed or fail together
-      await db.transaction(async (tx) => {
+      const deleted = await db.transaction(async (tx) => {
         if (strategy === 'delete_all') {
           // Strategy A: Delete everything (assignments + vocabulary + lesson)
           console.log(`Deleting lesson ${id} with all associated data`);
@@ -868,10 +880,6 @@ export class DatabaseStorage implements IStorage {
           // Delete assignments
           await tx.delete(studentLessons)
             .where(eq(studentLessons.lessonId, id));
-
-          // Delete lesson
-          await tx.delete(lessons)
-            .where(eq(lessons.id, id));
 
         } else {
           // Strategy B: Keep vocabulary as standalone (delete lesson but preserve vocabulary)
@@ -896,14 +904,17 @@ export class DatabaseStorage implements IStorage {
           await tx.delete(studentLessons)
             .where(eq(studentLessons.lessonId, id));
 
-          // Delete lesson
-          await tx.delete(lessons)
-            .where(eq(lessons.id, id));
         }
+        const [lesson] = await tx.delete(lessons)
+          .where(eq(lessons.id, id))
+          .returning(deletedLessonColumns);
+        return lesson;
       });
 
+      // Notify only after the entire transaction has committed successfully.
+      if (deleted?.isPublic) notifyIndexNow(lessonIndexNowPaths(deleted));
       console.log(`Successfully deleted lesson ${id} with strategy: ${strategy}`);
-      return true;
+      return !!deleted;
     } catch (error) {
       console.error(`Error deleting lesson with strategy ${strategy}:`, error);
       throw error;

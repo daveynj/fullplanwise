@@ -1434,7 +1434,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Unauthorized access to lesson" });
       }
 
-      await storage.deleteLesson(lessonId);
+      // Storage notifies IndexNow using the deleted row's persisted public URL.
+      if (!await storage.deleteLesson(lessonId)) {
+        return res.status(404).json({ message: "Lesson not found" });
+      }
       res.status(204).send();
     } catch (error: any) {
       res.status(500).json({ message: error.message });
@@ -1489,7 +1492,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Unauthorized access to lesson" });
       }
 
-      await storage.deleteLessonWithStrategy(lessonId, strategy);
+      // Storage notifies only after the vocabulary strategy transaction commits.
+      if (!await storage.deleteLessonWithStrategy(lessonId, strategy)) {
+        return res.status(404).json({ message: "Lesson not found" });
+      }
 
       // Return strategy in response so frontend can use it for toast message
       const message = strategy === 'keep_vocabulary'
