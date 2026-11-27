@@ -15,6 +15,7 @@ import {
   publicTags,
   type PublicLessonTag,
 } from '@shared/public-lesson-tags';
+import { tutorLinkFor } from '@shared/tutor-link';
 export { CEFR_LEVEL_NAMES } from '@shared/lesson-public-metadata';
 
 /**
@@ -179,6 +180,7 @@ interface LessonForPrerender {
   isPublic?: boolean;
   category: string | null;
   publicCategory: string | null;
+  tags?: string[] | null;
   content: unknown;
   createdAt: Date | string;
 }
@@ -388,6 +390,16 @@ function sectionsHtml(sections: any[]): string {
   return out.join('\n');
 }
 
+/** The learner-facing line that links to the matching page on Dave's tutoring site (shared/tutor-link.ts). */
+function tutorLinkSentenceHtml(lesson: LessonForPrerender): string {
+  const link = tutorLinkFor(lesson);
+  const anchor = `<a href="${e(link.href)}" rel="noopener noreferrer">${e(link.linkText)}</a>`;
+  const intro = 'Created by Dave Jackson (British ESL teacher). These lessons are designed to be teacher-led.';
+  return link.belowTaughtLevels
+    ? `${intro} ${anchor}.`
+    : `${intro} If you are an English learner: ${anchor}.`;
+}
+
 /** "About this lesson" paragraph, built only from the lesson's own data. */
 function aboutLesson(lesson: LessonForPrerender, sections: any[]): string {
   const label = categoryLabel(lesson.publicCategory || lesson.category);
@@ -463,7 +475,7 @@ export function buildLessonPageHtml(lesson: LessonForPrerender, sections: any[],
     <aside class="lp-cta">
       <h2>Use this lesson with your students</h2>
       <p>PlanWise ESL creates complete, CEFR-levelled ESL lessons on any topic in minutes. <a href="/auth?register=true">Sign up free</a> to copy this lesson, edit it, or generate your own.</p>
-      <p>Created by Dave Jackson (British ESL teacher). These lessons are designed to be teacher-led — if you are an English learner and want to take this lesson 1-on-1 with Dave, visit <a href="https://speakwithdave.com" rel="noopener noreferrer">SpeakWithDave.com</a>.</p>
+      <p>${tutorLinkSentenceHtml(lesson)}</p>
     </aside>
   </main>
 </div>`;
