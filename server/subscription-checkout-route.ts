@@ -9,6 +9,7 @@ import { CHECKOUT_PRICES } from "./billing-config";
 import { getLegacyStripeSecretKey, getStripeSecretKey } from "./stripeClient";
 import { isFreeTrialActive } from "./features";
 import { CheckoutGuardError, createGuardedCheckout } from "./subscription-checkout";
+import { publicAppUrl } from "./public-app-url";
 
 export async function subscriptionCheckoutRoute(req: Request, res: Response) {
   if (isFreeTrialActive()) {
@@ -20,6 +21,9 @@ export async function subscriptionCheckoutRoute(req: Request, res: Response) {
     const { planId, priceId } = subscriptionSchema.parse(req.body);
     const actualPriceId = CHECKOUT_PRICES[priceId];
     if (!actualPriceId) return res.status(400).json({ message: "Unknown subscription price." });
+    // Resolve before any billing side effects. Never use the gateway/origin
+    // Host or untrusted X-Forwarded-Host for embedded Stripe return URLs.
+    const baseUrl = publicAppUrl();
     const userId = req.user!.id;
     connection = await pool.connect();
     // Session lock on a dedicated connection: protects every app instance, not
@@ -38,9 +42,8 @@ export async function subscriptionCheckoutRoute(req: Request, res: Response) {
     const options = { apiVersion: "2025-08-27.basil" as any, timeout: 8000, maxNetworkRetries: 1 };
     const accounts = [new Stripe(key, options)];
     if (legacyKey && legacyKey !== key) accounts.push(new Stripe(legacyKey, options));
-    const protocol = req.get("x-forwarded-proto") === "https" ? "https" : req.protocol;
     const data = await createGuardedCheckout(user, accounts, {
-      planId, priceId: actualPriceId, baseUrl: `${protocol}://${req.get("host")}`,
+      planId, priceId: actualPriceId, baseUrl,
     // updateUserStripeInfo also grants access for any non-null subscription
     // link. Opening checkout must only persist the customer, never activate or
     // clear the old subscription (even when that subscription has ended).

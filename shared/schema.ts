@@ -4,6 +4,13 @@ import { z } from "zod";
 import { decodeLessonContent, encodeLessonContent, type LessonContent } from "./lesson-content";
 
 // User table schema
+// Consumed registration attestations must be unique across autoscale instances.
+// Created lazily only after gateway mode is enabled and a signature is valid.
+export const registrationGatewayNonces = pgTable("registration_gateway_nonces", {
+  nonceHash: text("nonce_hash").primaryKey(),
+  expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+});
+
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   username: text("username").notNull().unique(),

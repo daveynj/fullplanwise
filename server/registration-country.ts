@@ -2,6 +2,7 @@ import type { RequestHandler } from "express";
 import { isIP } from "node:net";
 import geoip from "geoip-country";
 import proxyaddr from "proxy-addr";
+import { restrictRegistrationGateway } from "./registration-gateway";
 
 const restrictedCountries = new Set(["IN", "BD"]);
 const isInternalProxy = proxyaddr.compile(["loopback", "linklocal", "uniquelocal"]);
@@ -15,6 +16,16 @@ const isInternalProxy = proxyaddr.compile(["loopback", "linklocal", "uniquelocal
  * Lookup is local: visitor addresses are not sent to a geolocation service.
  */
 export const restrictRegistrationCountry: RequestHandler = (req, res, next) => {
+  const gatewayMode = process.env.REGISTRATION_GATEWAY_MODE || "off";
+  if (gatewayMode === "enforce") {
+    // A verified gateway country replaces local geolocation; never geolocate
+    // the Cloudflare egress address or run both gates in sequence.
+    return restrictRegistrationGateway(req, res, next);
+  }
+  if (gatewayMode !== "off") {
+    res.status(503).json({ message: "Registration is temporarily unavailable. Please try again later." });
+    return;
+  }
   // Opt in only after real external visitor addresses have been verified on
   // the deployed host. Preview traffic may contain internal proxy hops only;
   // enabling a fail-closed check there would block every new signup.

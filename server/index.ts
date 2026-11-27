@@ -10,6 +10,7 @@ import { verifyManagedDatabaseCutover } from './database-cutover';
 import { ensureDatabaseIndexes } from './db-indexes';
 import { scheduleSubscriptionSync } from './subscription-sync';
 import { billingFailureStatus, startBillingHealthChecks } from './billing-health';
+import { captureRegistrationBody } from './registration-gateway';
 
 const app = express();
 
@@ -102,8 +103,8 @@ app.post(
 app.use(compression());
 
 // Increased limit for base64 images in blog posts
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: false, limit: '10mb' }));
+app.use(express.json({ limit: '10mb', verify: captureRegistrationBody }));
+app.use(express.urlencoded({ extended: false, limit: '10mb', verify: captureRegistrationBody }));
 
 // Serve static files from the public directory
 app.use(express.static('public'));

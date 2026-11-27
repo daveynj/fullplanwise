@@ -8,6 +8,7 @@ import {
 import { insertUserSchema, User as SelectUser, InsertUser } from "@shared/schema";
 import { getQueryFn, apiRequest, queryClient } from "../lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { registrationErrorMessage } from "@/lib/registration-error";
 
 type AuthContextType = {
   user: SelectUser | null;
@@ -69,7 +70,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     onError: (error: Error) => {
       toast({
         title: "Registration failed",
-        description: error.message,
+        description: registrationErrorMessage(error),
         variant: "destructive",
       });
     },

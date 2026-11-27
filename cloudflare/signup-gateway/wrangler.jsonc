@@ -1,0 +1,17 @@
+{
+  "name": "planwise-signup-gateway-staging",
+  "main": "worker.ts",
+  "compatibility_date": "2026-11-27",
+  "workers_dev": false,
+  "preview_urls": false,
+  // Deliberately no routes, custom domains or live origin. Configure only
+  // after owner approval; keep the signing key in a Worker secret, not here.
+  "vars": {
+    "ORIGIN_HOSTNAME": "",
+    "PUBLIC_HOSTS": "",
+    "GATEWAY_AUDIENCE": "planwise-staging"
+  },
+  "observability": {
+    "enabled": false
+  }
+}
