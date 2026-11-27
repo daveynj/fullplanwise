@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { trackPublicLibraryEvent } from "@/lib/public-library-analytics";
 import { lessonPath } from "@shared/lesson-url";
 import { Link, useRoute } from "wouter";
 import { libraryDesign, lessonDesign } from "@shared/lesson-pedagogy";
@@ -45,8 +46,9 @@ export default function PublicLessonsIndexPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedTag, setSelectedTag] = useState<string>("all");
+  const pendingFilterAction = useRef<{ level: string | undefined; delay: number } | null>(null);
 
-  const { data, isLoading, isSuccess, isError, error, refetch } = useQuery<{ lessons: LessonSummary[] }>({
+  const { data, isLoading, isFetching, isSuccess, isError, error, refetch } = useQuery<{ lessons: LessonSummary[] }>({
     queryKey: ["public-lesson-index", level ?? "all"],
     queryFn: async () => {
       const res = await fetch(`/api/public-lesson-index${level ? `?level=${level}` : ""}`);
@@ -80,6 +82,58 @@ export default function PublicLessonsIndexPage() {
     return filterPublicLessons(lessons, searchQuery, selectedCategory, selectedTag, PUBLIC_LIBRARY_LABELS);
   }, [lessons, searchQuery, selectedCategory, selectedTag]);
 
+  // Consume only user-initiated actions, never initial loads, rerenders or refetches.
+  // Search changes settle for 500ms so a word isn't counted once per keystroke.
+  useEffect(() => {
+    const pending = pendingFilterAction.current;
+    if (!pending) return;
+    if (pending.level !== level) {
+      pendingFilterAction.current = null;
+      return;
+    }
+    if (!isSuccess || isFetching) return;
+    const timer = window.setTimeout(() => {
+      pendingFilterAction.current = null;
+      if (filteredLessons.length === 0 && (searchQuery.trim() || selectedCategory !== "all" || selectedTag !== "all")) {
+        trackPublicLibraryEvent("public_library_zero_results", {
+          tag: selectedTag, category: selectedCategory, level, resultCount: 0,
+        });
+      }
+    }, pending.delay);
+    return () => window.clearTimeout(timer);
+  }, [searchQuery, selectedCategory, selectedTag, level, filteredLessons, isSuccess, isFetching]);
+
+  function changeFilters(next: { search?: string; category?: string; tag?: string }, reset = false) {
+    const search = next.search ?? searchQuery;
+    const category = next.category ?? selectedCategory;
+    const tag = next.tag ?? selectedTag;
+    if (search === searchQuery && category === selectedCategory && tag === selectedTag) return;
+    const resultCount = filterPublicLessons(lessons, search, category, tag, PUBLIC_LIBRARY_LABELS).length;
+    // Reset payloads describe the filters being cleared; selection payloads
+    // describe the new filters and their resulting lesson count.
+    if (reset) {
+      trackPublicLibraryEvent("public_library_filters_reset", {
+        tag: selectedTag, category: selectedCategory, level, resultCount,
+      });
+    } else if (tag !== selectedTag) {
+      trackPublicLibraryEvent("public_library_tag_selected", { tag, category, level, resultCount });
+    } else if (category !== selectedCategory) {
+      trackPublicLibraryEvent("public_library_category_selected", { tag, category, level, resultCount });
+    }
+    const debouncedSearch = next.search !== undefined && !reset;
+    if (!debouncedSearch && isSuccess && !isFetching) {
+      pendingFilterAction.current = null;
+      if (resultCount === 0 && (search.trim() || category !== "all" || tag !== "all")) {
+        trackPublicLibraryEvent("public_library_zero_results", { tag, category, level, resultCount });
+      }
+    } else {
+      pendingFilterAction.current = { level, delay: debouncedSearch ? 500 : 0 };
+    }
+    setSearchQuery(search);
+    setSelectedCategory(category);
+    setSelectedTag(tag);
+  }
+
   const heading = level ? `${level} (${levelName}) Free ESL Lessons` : "Free ESL Lesson Library (A1–C2)";
   const intro = level
     ? `Ready-to-teach ${level} ${levelName.toLowerCase()} ESL conversation lessons — open any lesson free with zero login. ${libraryDesign}`
@@ -90,7 +144,12 @@ export default function PublicLessonsIndexPage() {
       ? PUBLIC_LIBRARY_LABELS[lesson.publicCategory as keyof typeof PUBLIC_LIBRARY_LABELS]
       : undefined;
     return (
-      <Link key={lesson.id} href={lessonPath(lesson)} className="block h-full">
+      <Link key={lesson.id} href={lessonPath(lesson)} className="block h-full"
+        onClick={() => trackPublicLibraryEvent("public_library_lesson_opened", {
+          tag: selectedTag, category: selectedCategory, level: lesson.cefrLevel,
+          resultCount: filteredLessons.length, lessonId: lesson.id,
+        })}
+      >
         <Card
           className="h-full p-5 flex flex-col justify-between border-slate-200 hover:border-brand-yellow hover:shadow-md transition-all cursor-pointer group bg-white"
           data-testid={`card-lesson-${lesson.id}`}
@@ -187,7 +246,7 @@ export default function PublicLessonsIndexPage() {
               <Input
                 type="search"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => changeFilters({ search: e.target.value })}
                 placeholder="Search free lessons by topic, level, or category (e.g. interview, salary, AI, travel)..."
                 aria-label="Search free ESL lessons"
                 className="pl-10 pr-10 bg-slate-50/70 border-slate-200"
@@ -195,7 +254,7 @@ export default function PublicLessonsIndexPage() {
               {searchQuery && (
                 <button
                   type="button"
-                  onClick={() => setSearchQuery("")}
+                  onClick={() => changeFilters({ search: "" }, true)}
                   aria-label="Clear search"
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700"
                 >
@@ -231,7 +290,7 @@ export default function PublicLessonsIndexPage() {
                   type="button"
                   size="sm"
                   variant={selectedCategory === "all" ? "brand" : "outline"}
-                  onClick={() => setSelectedCategory("all")}
+                  onClick={() => changeFilters({ category: "all" }, true)}
                 >
                   All topics
                 </Button>
@@ -241,7 +300,7 @@ export default function PublicLessonsIndexPage() {
                     type="button"
                     size="sm"
                     variant={selectedCategory === catKey ? "brand" : "outline"}
-                    onClick={() => setSelectedCategory(catKey)}
+                    onClick={() => changeFilters({ category: catKey })}
                   >
                     {PUBLIC_LIBRARY_LABELS[catKey as keyof typeof PUBLIC_LIBRARY_LABELS]} ({count})
                   </Button>
@@ -253,7 +312,7 @@ export default function PublicLessonsIndexPage() {
                 <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 mr-1">
                   Curated tags:
                 </span>
-                <Button type="button" size="sm" variant={selectedTag === "all" ? "brand" : "outline"} onClick={() => setSelectedTag("all")} aria-pressed={selectedTag === "all"}>
+                <Button type="button" size="sm" variant={selectedTag === "all" ? "brand" : "outline"} onClick={() => changeFilters({ tag: "all" }, true)} aria-pressed={selectedTag === "all"}>
                   All tags
                 </Button>
                 {availableTags.map(([tag, count]) => (
@@ -262,7 +321,7 @@ export default function PublicLessonsIndexPage() {
                     type="button"
                     size="sm"
                     variant={selectedTag === tag ? "brand" : "outline"}
-                    onClick={() => setSelectedTag(tag)}
+                    onClick={() => changeFilters({ tag })}
                     aria-pressed={selectedTag === tag}
                   >
                     {PUBLIC_LESSON_TAGS[tag as keyof typeof PUBLIC_LESSON_TAGS]} ({count})
@@ -294,9 +353,7 @@ export default function PublicLessonsIndexPage() {
                   <Button
                     variant="outline"
                     onClick={() => {
-                      setSearchQuery("");
-                      setSelectedCategory("all");
-                      setSelectedTag("all");
+                      changeFilters({ search: "", category: "all", tag: "all" }, true);
                     }}
                   >
                     Reset filters
