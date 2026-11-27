@@ -1550,7 +1550,7 @@ export const comparePrintDiscussPage: MarketingPage = {
     {
       heading: 'What we checked, and when',
       paragraphs: [
-        'On 28 November 2026 we opened printdiscuss.com and its page "Travel conversation questions" (marked B1, last reviewed April 2026). The page has a two-minute warm-up task, 18 numbered discussion questions, teacher notes with one pre-taught phrase ("pack light") and one grammar link, and print and share buttons. The site lists about 110 topic pages across nine themes, plus beginner questions and grammar-focused speaking practice. We found no reading text, no vocabulary section beyond the single pre-taught item, no exercises and nothing recorded per student. It does what it sets out to do well: a clean sheet of questions, free, in seconds.',
+        'On 28 November 2026 we opened printdiscuss.com and its page "Travel conversation questions" (marked B1, last reviewed April 2026). The page has a two-minute warm-up task, 18 numbered discussion questions, teacher notes with one pre-taught phrase ("pack light") and one grammar link, and print and share buttons. The site lists about 110 topic pages across nine themes, plus beginner questions and grammar-focused speaking practice. We found no reading text, no vocabulary section beyond the single pre-taught item, no exercises and nothing recorded per student. It does what it sets out to do well: a clean sheet of questions, free, straight away.',
       ],
     },
     {
