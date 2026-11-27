@@ -371,7 +371,7 @@ describe("injectLessonPrerender: lesson pages", () => {
     expect(resource.inLanguage).toBe("en");
     expect(resource.hasPart.length).toBeGreaterThanOrEqual(3);
     expect(html).not.toContain("PRIVATE");
-    expect(html).toContain("Remix this lesson");
+    expect(html).toContain("Make this lesson for your student");
     expect(html).toContain("/auth?register=true&amp;redirect=");
     expect(html).toContain("Mark lessons complete from a student's page");
   });

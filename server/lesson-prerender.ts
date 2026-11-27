@@ -466,7 +466,7 @@ export function buildLessonPageHtml(lesson: LessonForPrerender, sections: any[],
         <p class="lp-meta"><span class="lp-tag">CEFR ${e(level)}${levelName ? ` &middot; ${e(levelName)}` : ''}</span>${label ? `<span class="lp-tag">${e(label)}</span>` : ''}</p>
         <p class="lp-about"><strong>About this lesson:</strong> ${e(aboutLesson(lesson, sections))}</p>
       </header>
-      ${lesson.isPublic ? `<aside class="lp-cta lp-remix"><p>Want <strong>${e(lesson.title)}</strong> at a different CEFR level or adapted to a student's job? Start with the title and adjust it in the generator.</p><p><a href="${e(publicLessonRemixHref(lesson.title, level, false))}">Remix this lesson</a></p></aside>` : ''}
+      ${lesson.isPublic ? `<aside class="lp-cta lp-remix"><p>Teaching <strong>${e(lesson.title)}</strong> to one student? Start from this title, choose the student in the generator, and PlanWise ESL makes a new version at their level that avoids words they've already learned. You can also change the CEFR level or adapt it to their job.</p><p><a href="${e(publicLessonRemixHref(lesson.title, level, false))}">Make this lesson for your student</a></p></aside>` : ''}
       ${lessonDesignHtml(lesson.content)}
       ${sectionsHtml(sections)}
     </article>
