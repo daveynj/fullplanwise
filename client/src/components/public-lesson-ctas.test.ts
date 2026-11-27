@@ -6,15 +6,15 @@ import { TopRemixBanner, VocabFlashcardCTA } from "./public-lesson-ctas";
 afterEach(cleanup);
 
 describe("public lesson conversion calls to action", () => {
-  it("shows a lesson-title-based remix link at the current level", () => {
+  it("shows a link to make this lesson for one student at the current level", () => {
     render(createElement(TopRemixBanner, {
       title: "Travel Plans",
       href: "/auth?register=true&redirect=%2Fgenerate",
     }));
 
     expect(screen.getByText(/Travel Plans/)).toBeTruthy();
-    expect(screen.getByText(/different CEFR level/)).toBeTruthy();
-    expect(screen.getByRole("link", { name: "Remix this lesson" }).getAttribute("href"))
+    expect(screen.getByText(/choose the student in the generator/)).toBeTruthy();
+    expect(screen.getByRole("link", { name: "Make this lesson for your student" }).getAttribute("href"))
       .toContain("/auth?register=true");
   });
 
