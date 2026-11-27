@@ -205,6 +205,7 @@ export function buildLandingPrerenderHtml(): string {
       <footer>&ndash; ${e(founder.name)}, ${e(founder.role)}</footer>
     </blockquote>
     <p><a href="${e(founder.href)}">${e(founder.linkLabel)}</a></p>
+    <p>${e(founder.learnerText)} <a href="${e(founder.learnerHref)}" rel="noopener noreferrer">${e(founder.learnerLinkLabel)}</a>.</p>
   </section>
 
   <section class="lp-section">

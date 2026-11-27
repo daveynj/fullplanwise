@@ -602,6 +602,7 @@ export function buildLessonIndexHtml(lessons: LessonSummary[], level?: string): 
       <h2>Need a lesson on a different topic?</h2>
       <p>PlanWise ESL generates a complete lesson on any topic at any CEFR level in minutes. <a href="/auth?register=true">Sign up free</a>.</p>
     </aside>
+    <p><small>Created by ${e(founderPerson.name)} (British ESL teacher, 11 years &amp; 2,000+ students). These lessons are designed to be teacher-led. If you're an English learner who wants to take them 1-on-1 with a teacher, you can book with Dave at <a href="${e(founderPerson.url)}" rel="noopener noreferrer">SpeakWithDave.com</a>.</small></p>
   </main>
 </div>`;
 }

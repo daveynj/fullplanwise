@@ -703,6 +703,18 @@ export default function LandingPage() {
             <p className="text-center mt-6">
               <TextLink href={founder.href}>{founder.linkLabel} →</TextLink>
             </p>
+            <p className="text-center mt-3 text-sm text-slate-500">
+              {founder.learnerText}{' '}
+              <a
+                href={founder.learnerHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium text-brand-navy underline decoration-brand-yellow decoration-2 underline-offset-2 hover:text-amber-700"
+              >
+                {founder.learnerLinkLabel}
+              </a>
+              .
+            </p>
           </div>
         </section>
 

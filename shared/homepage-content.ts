@@ -218,6 +218,10 @@ export const founder = {
   initials: 'DJ',
   linkLabel: 'Read why I built it',
   href: '/about',
+  /** For English learners who land here: Dave's own 1-on-1 lessons (separate site). */
+  learnerText: 'Learning English yourself? Take 1-on-1 lessons with Dave at',
+  learnerLinkLabel: 'SpeakWithDave.com',
+  learnerHref: siteFacts.founderSite,
 };
 
 export const steps = {
