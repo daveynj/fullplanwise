@@ -12,6 +12,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { SEOHead } from "@/components/SEOHead";
 import { lessonPublicMetadata, publicLessonRemixHref } from "@shared/lesson-public-metadata";
 import { LessonDesignPanel } from "@/components/lesson/lesson-design-panel";
+import { tutorLinkFor } from "@shared/tutor-link";
 import { TopRemixBanner, VocabFlashcardCTA } from "@/components/public-lesson-ctas";
 import { lessonPath } from "@shared/lesson-url";
 import { trackEvent } from "@/lib/analytics";
@@ -273,6 +274,8 @@ export default function FullScreenLessonPage() {
   const metadata = lessonPublicMetadata(lesson);
   const showPublicLessonPromos = lesson.isPublic && (!user || user.isAdmin);
   const remixHref = publicLessonRemixHref(lesson.title, lesson.cefrLevel, !!user);
+  // Each public lesson links to the matching page on Dave's tutoring site (shared/tutor-link.ts).
+  const tutorLink = tutorLinkFor(lesson);
   const vocabularySignupHref = "/auth?register=true&source=vocab-cta";
   return (
     <>
@@ -410,7 +413,7 @@ export default function FullScreenLessonPage() {
           <TabsContent value="lesson" className="flex-1 overflow-y-auto p-6 m-0">
             {/* Library lessons explain their design to visitors (not to the teacher who owns them). */}
             {parsedContent && lesson.isPublic && lesson.teacherId !== user?.id && (
-              <LessonDesignPanel content={parsedContent} signedIn={!!user} />
+              <LessonDesignPanel content={parsedContent} signedIn={!!user} tutorLink={tutorLink} />
             )}
             {parsedContent && lesson.isPublic && (!user || user.isAdmin) && (
               <div className="max-w-4xl mx-auto mb-4 rounded-xl border border-amber-200/80 bg-amber-50/60 px-4 py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs sm:text-sm text-slate-700 print:hidden">
@@ -420,12 +423,12 @@ export default function FullScreenLessonPage() {
                 <span>
                   Learning English?{" "}
                   <a
-                    href="https://speakwithdave.com"
+                    href={tutorLink.href}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="font-semibold text-brand-navy underline decoration-brand-yellow decoration-2 underline-offset-2 hover:text-amber-700"
                   >
-                    Take this lesson 1-on-1 at SpeakWithDave.com →
+                    {tutorLink.linkText} →
                   </a>
                 </span>
               </div>
@@ -447,18 +450,18 @@ export default function FullScreenLessonPage() {
                       For English learners · Teacher-led lesson
                     </p>
                     <h2 className="font-nunito text-xl font-bold">
-                      Want to take this lesson 1-on-1 with Dave?
+                      {tutorLink.belowTaughtLevels ? "Learning English with a teacher?" : "Want to take this lesson 1-on-1 with Dave?"}
                     </h2>
                     <p className="text-sm text-white/80 mt-1 mb-4">
                       Created by Dave Jackson (British ESL teacher, 11 years &amp; 2,000+ students). These lessons are designed to be taught live with a teacher.
                     </p>
                     <a
-                      href="https://speakwithdave.com"
+                      href={tutorLink.href}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center justify-center rounded-full bg-white text-brand-navy font-bold px-5 py-2.5 text-sm hover:bg-amber-50 transition-colors shadow"
                     >
-                      Book 1-on-1 at SpeakWithDave.com →
+                      {tutorLink.linkText} →
                     </a>
                   </div>
                   <div>
@@ -540,14 +543,14 @@ export default function FullScreenLessonPage() {
             )}
             {lesson?.isPublic && (!user || user.isAdmin) && (
               <p className="max-w-5xl mx-auto mb-10 px-4 text-center text-sm text-slate-500 print:hidden">
-                Created by <span className="font-medium text-brand-navy">Dave Jackson</span> (British ESL teacher). These lessons are designed to be teacher-led — if you’re an English learner and want to take this lesson 1-on-1 with Dave, visit{" "}
+                Created by <span className="font-medium text-brand-navy">Dave Jackson</span> (British ESL teacher). These lessons are designed to be teacher-led.{tutorLink.belowTaughtLevels ? " " : " If you’re an English learner: "}
                 <a
-                  href="https://speakwithdave.com"
+                  href={tutorLink.href}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="font-medium text-brand-navy underline decoration-brand-yellow decoration-2 underline-offset-2 hover:text-amber-700"
                 >
-                  SpeakWithDave.com
+                  {tutorLink.linkText}
                 </a>
                 .
               </p>

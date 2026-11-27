@@ -4,13 +4,14 @@ import { ArrowRight, Check, Copy, Layers } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { trackCta, trackEvent } from '@/lib/analytics';
 import { lessonStages, lessonDesign, lessonDifference, soloLearnerAiGuide } from '@shared/lesson-pedagogy';
+import { tutorLinkFor, type TutorLink } from '@shared/tutor-link';
 
 /**
  * Shown above a public library lesson to visitors (not its owner): what each
  * part of the lesson is for, and an invitation to make lessons like it.
  * Uses the same words as the crawler HTML in server/lesson-prerender.ts.
  */
-export function LessonDesignPanel({ content, signedIn }: { content: unknown; signedIn: boolean }) {
+export function LessonDesignPanel({ content, signedIn, tutorLink = tutorLinkFor({}) }: { content: unknown; signedIn: boolean; tutorLink?: TutorLink }) {
   const [copiedAiPrompt, setCopiedAiPrompt] = useState(false);
   const stages = lessonStages(content);
   if (stages.length < 3) return null;
@@ -43,13 +44,13 @@ export function LessonDesignPanel({ content, signedIn }: { content: unknown; sig
         {!signedIn && (
           <div className="flex flex-wrap items-center gap-2.5">
             <a
-              href="https://speakwithdave.com"
+              href={tutorLink.href}
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => trackCta('public-lesson', 'Take lesson 1-on-1 with Dave')}
             >
               <Button variant="outline" className="rounded-full border-brand-navy text-brand-navy hover:bg-brand-navy hover:text-white bg-white">
-                Learning English? Take this 1-on-1 with Dave <ArrowRight className="ml-2 h-4 w-4" />
+                {tutorLink.belowTaughtLevels ? 'Learning English? Dave teaches B1 and above' : 'Learning English? Take this 1-on-1 with Dave'} <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </a>
             <Link href="/auth?register=true" onClick={() => trackCta('public-lesson', 'Make lessons like this')}>

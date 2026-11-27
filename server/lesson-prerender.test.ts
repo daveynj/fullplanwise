@@ -117,6 +117,31 @@ describe("slug lesson prerendering", () => {
     expect(listing).not.toContain('href="/lessons/42"');
   });
 
+  it("links each lesson to the matching page on Dave's tutoring site", async () => {
+    const render = async (lesson: Record<string, unknown>, path: string) => {
+      getLessonByPublicSlug.mockResolvedValue(lesson);
+      getPublicLessonSummaries.mockResolvedValue([lesson]);
+      return (await injectLessonPrerender(TEMPLATE, path))!;
+    };
+    const b1 = await render(publicLesson(), "/esl-lessons/b1/travel-plans");
+    expect(b1).toContain('href="https://speakwithdave.com/english-conversation-practice"');
+    expect(b1).toContain("Take this lesson 1-on-1 with Dave: English conversation practice");
+
+    const business = await render(
+      { ...baseLesson, cefrLevel: "B2", publicCategory: "business-english", publicSlug: "travel-plans", publicLevel: "b2" },
+      "/esl-lessons/b2/travel-plans",
+    );
+    expect(business).toContain('href="https://speakwithdave.com/business-english-lessons-online"');
+
+    const a1 = await render(
+      { ...baseLesson, cefrLevel: "A1", publicSlug: "travel-plans", publicLevel: "a1" },
+      "/esl-lessons/a1/travel-plans",
+    );
+    expect(a1).toContain('href="https://speakwithdave.com/"');
+    expect(a1).toContain("Dave teaches intermediate (B1) learners and above");
+    expect(a1).not.toContain("Take this lesson 1-on-1 with Dave");
+  });
+
   it("keeps a previously public link-only slug noindex with no LearningResource", async () => {
     getLessonByPublicSlug.mockResolvedValue({ ...publicLesson(), isPublic: false, isShared: true });
     const html = (await injectLessonPrerender(TEMPLATE, "/esl-lessons/b1/travel-plans"))!;
