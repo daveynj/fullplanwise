@@ -7,6 +7,14 @@ import { expressionItemsOf, withoutMarks } from '@shared/lesson-expressions';
 import { publicNav } from '@shared/marketing-pages';
 import { founderPerson } from '@shared/site-facts';
 import { lessonStages, lessonTeaches, lessonDesign, lessonDifference, libraryDesign, freeLibraryTeachingGuide, freeLibraryFaq } from '@shared/lesson-pedagogy';
+import {
+  PUBLIC_LESSON_TAGS,
+  PUBLIC_LESSON_TAG_DESCRIPTIONS,
+  FEATURED_SEASONAL_TAGS,
+  isPublicLessonTag,
+  publicTags,
+  type PublicLessonTag,
+} from '@shared/public-lesson-tags';
 export { CEFR_LEVEL_NAMES } from '@shared/lesson-public-metadata';
 
 /**
@@ -555,6 +563,7 @@ export interface LessonSummary {
   title: string;
   cefrLevel: string;
   publicCategory: string | null;
+  tags?: string[] | null;
   createdAt: Date | string;
 }
 
@@ -575,12 +584,48 @@ function levelLinksHtml(current?: string): string {
   return `<p>${links.join(' &middot; ')}</p>`;
 }
 
-export function buildLessonIndexHtml(lessons: LessonSummary[], level?: string): string {
+function topicLinksHtml(lessons: LessonSummary[], currentTopic?: PublicLessonTag): string {
+  const counts = new Map<PublicLessonTag, number>();
+  for (const l of lessons) {
+    for (const tag of publicTags(l.tags)) {
+      counts.set(tag, (counts.get(tag) ?? 0) + 1);
+    }
+  }
+  const entries = Array.from(counts.entries()).sort((a, b) => {
+    const aPinned = FEATURED_SEASONAL_TAGS.includes(a[0]) ? 0 : 1;
+    const bPinned = FEATURED_SEASONAL_TAGS.includes(b[0]) ? 0 : 1;
+    if (aPinned !== bPinned) return aPinned - bPinned;
+    return b[1] - a[1] || PUBLIC_LESSON_TAGS[a[0]].localeCompare(PUBLIC_LESSON_TAGS[b[0]]);
+  });
+  if (!entries.length) return '';
+  const items = entries
+    .map(([tag, count]) =>
+      tag === currentTopic
+        ? `<strong>${e(PUBLIC_LESSON_TAGS[tag])} (${count})</strong>`
+        : `<a href="/esl-lessons/topics/${e(tag)}">${e(PUBLIC_LESSON_TAGS[tag])} (${count})</a>`,
+    )
+    .join(' &middot; ');
+  return `<section aria-label="Browse by theme"><h2>Browse Free Lessons by Theme</h2><p>${items}</p></section>`;
+}
+
+export function buildLessonIndexHtml(
+  lessons: LessonSummary[],
+  level?: string,
+  topic?: PublicLessonTag,
+  allLessonsForThemes?: LessonSummary[],
+): string {
   const levelName = level ? CEFR_LEVEL_NAMES[level] : '';
-  const heading = level ? `${level} (${levelName}) ESL Lessons` : 'Free ESL Lessons by CEFR Level';
-  const intro = level
-    ? `Ready-to-teach ${level} ${levelName.toLowerCase()} ESL conversation lessons. ${libraryDesign}`
-    : `Browse ready-to-teach ESL conversation lessons for every CEFR level from A1 to C2. ${libraryDesign}`;
+  const topicLabel = topic ? PUBLIC_LESSON_TAGS[topic] : '';
+  const heading = topic
+    ? `Free ${topicLabel} ESL Lessons (A1–C2)`
+    : level
+      ? `${level} (${levelName}) ESL Lessons`
+      : 'Free ESL Lessons by CEFR Level';
+  const intro = topic
+    ? `${PUBLIC_LESSON_TAG_DESCRIPTIONS[topic]} ${libraryDesign}`
+    : level
+      ? `Ready-to-teach ${level} ${levelName.toLowerCase()} ESL conversation lessons. ${libraryDesign}`
+      : `Browse ready-to-teach ESL conversation lessons for every CEFR level from A1 to C2. ${libraryDesign}`;
 
   let listing: string;
   if (level) {
@@ -592,6 +637,8 @@ export function buildLessonIndexHtml(lessons: LessonSummary[], level?: string): 
       return `<section><h2><a href="/esl-lessons/${lv.toLowerCase()}">${lv} ${e(CEFR_LEVEL_NAMES[lv])}</a></h2>${inLevel.map(lessonCardHtml).join('\n')}</section>`;
     }).join('\n');
   }
+
+  const themeSection = !level ? topicLinksHtml(allLessonsForThemes ?? lessons, topic) : '';
 
   const guideRows = freeLibraryTeachingGuide.stages
     .map(
@@ -620,13 +667,20 @@ export function buildLessonIndexHtml(lessons: LessonSummary[], level?: string): 
       ${freeLibraryFaq.map((f) => `<h3>${e(f.question)}</h3><p>${e(f.answer)}</p>`).join('\n      ')}
     </section>`;
 
+  const breadcrumb = topic
+    ? `<a href="/">Home</a> &rsaquo; <a href="/esl-lessons">ESL Lessons</a> &rsaquo; ${e(topicLabel)}`
+    : level
+      ? `<a href="/">Home</a> &rsaquo; <a href="/esl-lessons">ESL Lessons</a> &rsaquo; ${e(level)}`
+      : 'ESL Lessons';
+
   return `<div id="lesson-prerender">
   ${headerHtml()}
   <main class="lp-main">
-    <nav aria-label="Breadcrumb"><a href="/">Home</a> &rsaquo; ${level ? `<a href="/esl-lessons">ESL Lessons</a> &rsaquo; ${e(level)}` : 'ESL Lessons'}</nav>
+    <nav aria-label="Breadcrumb">${breadcrumb}</nav>
     <h1>${e(heading)}</h1>
     <p>${e(intro)} <a href="${e(lessonDesign.href)}">${e(lessonDesign.linkLabel)}</a>.</p>
     ${levelLinksHtml(level)}
+    ${themeSection}
     ${listing}
     ${guideHtml}
     ${faqHtml}
@@ -710,6 +764,66 @@ async function prerenderLessonIndex(template: string, level?: string): Promise<s
   );
 }
 
+async function prerenderTopicIndex(template: string, topic: PublicLessonTag): Promise<string | null> {
+  const allLessons = (await storage.getPublicLessonSummaries()) as LessonSummary[];
+  const lessons = allLessons.filter((l) => publicTags(l.tags).includes(topic));
+  const hasLessons = lessons.length > 0;
+  const label = PUBLIC_LESSON_TAGS[topic];
+  const title = `Free ${label} ESL Lessons (A1–C2) | PlanWise ESL`;
+  const description = PUBLIC_LESSON_TAG_DESCRIPTIONS[topic];
+  const canonicalPath = `/esl-lessons/topics/${topic}`;
+
+  const itemList = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: title,
+    url: `${BASE_URL}${canonicalPath}`,
+    mainEntity: {
+      '@type': 'ItemList',
+      numberOfItems: lessons.length,
+      itemListElement: lessons.map((l, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        url: `${BASE_URL}${lessonPath(l)}`,
+        name: l.title,
+      })),
+    },
+  };
+
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: freeLibraryFaq.map((f) => ({
+      '@type': 'Question',
+      name: f.question,
+      acceptedAnswer: { '@type': 'Answer', text: f.answer },
+    })),
+  };
+
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: BASE_URL },
+      { '@type': 'ListItem', position: 2, name: 'ESL Lessons', item: `${BASE_URL}/esl-lessons` },
+      { '@type': 'ListItem', position: 3, name: label, item: `${BASE_URL}${canonicalPath}` },
+    ],
+  };
+
+  return injectPage(
+    template,
+    {
+      title,
+      description: truncate(description, 160),
+      canonicalPath,
+      indexable: hasLessons,
+      ogType: 'website',
+      structuredData: hasLessons ? [itemList, faqSchema, breadcrumbSchema] : [],
+    },
+    buildLessonIndexHtml(lessons, undefined, topic, allLessons),
+  );
+}
+
 /**
  * Returns the template with prerendered content + meta injected when pathname
  * is a public lesson page or one of the browse pages. Returns null for any
@@ -724,6 +838,13 @@ export async function injectLessonPrerender(
   try {
     const lessonMatch = pathname.match(/^\/lessons\/(\d+)\/?$/);
     if (lessonMatch) return await prerenderLesson(template, parseInt(lessonMatch[1], 10), preloadedLesson);
+
+    const topicMatch = pathname.match(/^\/esl-lessons\/topics\/([^/]+)\/?$/);
+    if (topicMatch) {
+      const tag = topicMatch[1].toLowerCase();
+      if (!isPublicLessonTag(tag)) return null;
+      return await prerenderTopicIndex(template, tag);
+    }
 
     const slugMatch = pathname.match(/^\/esl-lessons\/([^/]+)\/([^/]+)\/?$/);
     if (slugMatch) {

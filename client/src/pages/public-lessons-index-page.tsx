@@ -12,7 +12,7 @@ import { SEOHead } from "@/components/SEOHead";
 import { BlogHeader } from "@/components/layout/blog-header";
 import { PUBLIC_LIBRARY_LABELS } from "@shared/schema";
 import { ArrowRight, BookOpen, CheckCircle2, FileDown, Search, Sparkles, X } from "lucide-react";
-import { filterPublicLessons, PUBLIC_LESSON_TAGS, publicTags } from "@shared/public-lesson-tags";
+import { filterPublicLessons, PUBLIC_LESSON_TAGS, PUBLIC_LESSON_TAG_DESCRIPTIONS, FEATURED_SEASONAL_TAGS, isPublicLessonTag, publicTags, type PublicLessonTag } from "@shared/public-lesson-tags";
 
 const LEVELS = ["A1", "A2", "B1", "B2", "C1", "C2"] as const;
 
@@ -39,14 +39,22 @@ interface LessonSummary {
 // Search engines get server-rendered HTML for these URLs; this component takes
 // over once the app loads.
 export default function PublicLessonsIndexPage() {
+  const [isTopicRoute, topicParams] = useRoute("/esl-lessons/topics/:tag");
   const [, params] = useRoute("/esl-lessons/:level");
-  const requested = params?.level?.toUpperCase();
+  const rawTopic = isTopicRoute ? topicParams?.tag?.toLowerCase() : undefined;
+  const activeTopic: PublicLessonTag | undefined = rawTopic && isPublicLessonTag(rawTopic) ? rawTopic : undefined;
+  const requested = !isTopicRoute ? params?.level?.toUpperCase() : undefined;
   const level = requested && (LEVELS as readonly string[]).includes(requested) ? requested : undefined;
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedTag, setSelectedTag] = useState<string>("all");
+  const [selectedThemeLevel, setSelectedThemeLevel] = useState<string>("all");
   const pendingFilterAction = useRef<{ level: string | undefined; delay: number } | null>(null);
+
+  useEffect(() => {
+    setSelectedThemeLevel("all");
+  }, [activeTopic]);
 
   const { data, isLoading, isFetching, isSuccess, isError, error, refetch } = useQuery<{ lessons: LessonSummary[] }>({
     queryKey: ["public-lesson-index", level ?? "all"],
@@ -57,7 +65,11 @@ export default function PublicLessonsIndexPage() {
     },
   });
 
-  const lessons = data?.lessons ?? [];
+  const allLessons = data?.lessons ?? [];
+  const lessons = useMemo(() => {
+    if (!activeTopic) return allLessons;
+    return allLessons.filter((l) => publicTags(l.tags).includes(activeTopic));
+  }, [allLessons, activeTopic]);
   const levelName = level ? LEVEL_NAMES[level] : "";
 
   const availableCategories = useMemo(() => {
@@ -71,16 +83,23 @@ export default function PublicLessonsIndexPage() {
   }, [lessons]);
 
   const availableTags = useMemo(() => {
-    const counts = new Map<string, number>();
+    const counts = new Map<PublicLessonTag, number>();
     for (const lesson of lessons) {
       for (const tag of publicTags(lesson.tags)) counts.set(tag, (counts.get(tag) ?? 0) + 1);
     }
-    return Array.from(counts.entries()).sort((a, b) => b[1] - a[1] || PUBLIC_LESSON_TAGS[a[0] as keyof typeof PUBLIC_LESSON_TAGS].localeCompare(PUBLIC_LESSON_TAGS[b[0] as keyof typeof PUBLIC_LESSON_TAGS]));
+    return Array.from(counts.entries()).sort((a, b) => {
+      const aPinned = FEATURED_SEASONAL_TAGS.includes(a[0]) ? 0 : 1;
+      const bPinned = FEATURED_SEASONAL_TAGS.includes(b[0]) ? 0 : 1;
+      if (aPinned !== bPinned) return aPinned - bPinned;
+      return b[1] - a[1] || PUBLIC_LESSON_TAGS[a[0]].localeCompare(PUBLIC_LESSON_TAGS[b[0]]);
+    });
   }, [lessons]);
 
   const filteredLessons = useMemo(() => {
-    return filterPublicLessons(lessons, searchQuery, selectedCategory, selectedTag, PUBLIC_LIBRARY_LABELS);
-  }, [lessons, searchQuery, selectedCategory, selectedTag]);
+    const base = filterPublicLessons(lessons, searchQuery, selectedCategory, selectedTag, PUBLIC_LIBRARY_LABELS);
+    if (!activeTopic || selectedThemeLevel === "all") return base;
+    return base.filter((l) => l.cefrLevel === selectedThemeLevel);
+  }, [lessons, searchQuery, selectedCategory, selectedTag, activeTopic, selectedThemeLevel]);
 
   // Consume only user-initiated actions, never initial loads, rerenders or refetches.
   // Search changes settle for 500ms so a word isn't counted once per keystroke.
@@ -134,10 +153,16 @@ export default function PublicLessonsIndexPage() {
     setSelectedTag(tag);
   }
 
-  const heading = level ? `${level} (${levelName}) Free ESL Lessons` : "Free ESL Lesson Library (A1–C2)";
-  const intro = level
-    ? `Ready-to-teach ${level} ${levelName.toLowerCase()} ESL conversation lessons — open any lesson free with zero login. ${libraryDesign}`
-    : `Open, teach, and share complete CEFR A1–C2 ESL conversation lessons with zero login required. ${libraryDesign}`;
+  const heading = activeTopic
+    ? `Free ${PUBLIC_LESSON_TAGS[activeTopic]} ESL Lessons (A1–C2)`
+    : level
+      ? `${level} (${levelName}) Free ESL Lessons`
+      : "Free ESL Lesson Library (A1–C2)";
+  const intro = activeTopic
+    ? `${PUBLIC_LESSON_TAG_DESCRIPTIONS[activeTopic]} ${libraryDesign}`
+    : level
+      ? `Ready-to-teach ${level} ${levelName.toLowerCase()} ESL conversation lessons — open any lesson free with zero login. ${libraryDesign}`
+      : `Open, teach, and share complete CEFR A1–C2 ESL conversation lessons with zero login required. ${libraryDesign}`;
 
   const renderCard = (lesson: LessonSummary) => {
     const label = lesson.publicCategory
@@ -185,22 +210,32 @@ export default function PublicLessonsIndexPage() {
     );
   };
 
-  const hasActiveFilters = searchQuery.trim().length > 0 || selectedCategory !== "all" || selectedTag !== "all";
+  const hasActiveFilters = searchQuery.trim().length > 0 || selectedCategory !== "all" || selectedTag !== "all" || selectedThemeLevel !== "all";
 
   return (
     <>
       <SEOHead
         title={
-          level
-            ? `${level} (${levelName}) ESL Lessons - Free Lesson Plans | PlanWise ESL`
-            : "Free ESL Lessons by CEFR Level (A1-C2) | PlanWise ESL"
+          activeTopic
+            ? `Free ${PUBLIC_LESSON_TAGS[activeTopic]} ESL Lessons (A1–C2) | PlanWise ESL`
+            : level
+              ? `${level} (${levelName}) ESL Lessons - Free Lesson Plans | PlanWise ESL`
+              : "Free ESL Lessons by CEFR Level (A1-C2) | PlanWise ESL"
         }
         description={
-          level
-            ? `Free ${level} (${levelName}) ESL conversation lessons with pre-taught vocabulary, a levelled reading, speaking support and discussion. Ready to teach.`
-            : "Free ESL conversation lessons for every CEFR level (A1–C2) with pre-taught vocabulary, a levelled reading, speaking support and discussion."
+          activeTopic
+            ? PUBLIC_LESSON_TAG_DESCRIPTIONS[activeTopic]
+            : level
+              ? `Free ${level} (${levelName}) ESL conversation lessons with pre-taught vocabulary, a levelled reading, speaking support and discussion. Ready to teach.`
+              : "Free ESL conversation lessons for every CEFR level (A1–C2) with pre-taught vocabulary, a levelled reading, speaking support and discussion."
         }
-        canonicalUrl={level ? `/esl-lessons/${level.toLowerCase()}` : "/esl-lessons"}
+        canonicalUrl={
+          activeTopic
+            ? `/esl-lessons/topics/${activeTopic}`
+            : level
+              ? `/esl-lessons/${level.toLowerCase()}`
+              : "/esl-lessons"
+        }
         // Only when the data really came back empty. A failed or pending request
         // (e.g. a crawler that can't fetch the API) must not noindex the page.
         noindex={isSuccess && lessons.length === 0}
@@ -273,18 +308,51 @@ export default function PublicLessonsIndexPage() {
               <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 mr-1">
                 CEFR Level:
               </span>
-              <Link href="/esl-lessons">
-                <Button variant={level ? "outline" : "default"} size="sm">
-                  {level ? "All levels" : `All levels (${lessons.length})`}
-                </Button>
-              </Link>
-              {LEVELS.map((lv) => (
-                <Link key={lv} href={`/esl-lessons/${lv.toLowerCase()}`}>
-                  <Button variant={lv === level ? "default" : "outline"} size="sm">
-                    {lv} {LEVEL_NAMES[lv]}
+              {activeTopic ? (
+                <>
+                  <Button
+                    type="button"
+                    variant={selectedThemeLevel === "all" ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setSelectedThemeLevel("all")}
+                  >
+                    All levels ({lessons.length})
                   </Button>
-                </Link>
-              ))}
+                  {LEVELS.map((lv) => {
+                    const count = lessons.filter((l) => l.cefrLevel === lv).length;
+                    if (!count) return null;
+                    return (
+                      <Button
+                        key={lv}
+                        type="button"
+                        variant={selectedThemeLevel === lv ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setSelectedThemeLevel(lv)}
+                      >
+                        {lv} {LEVEL_NAMES[lv]} ({count})
+                      </Button>
+                    );
+                  })}
+                  <Link href="/esl-lessons" className="ml-auto text-xs font-semibold text-brand-navy hover:text-amber-700 underline">
+                    ← All free lessons
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link href="/esl-lessons">
+                    <Button variant={level ? "outline" : "default"} size="sm">
+                      {level ? "All levels" : `All levels (${lessons.length})`}
+                    </Button>
+                  </Link>
+                  {LEVELS.map((lv) => (
+                    <Link key={lv} href={`/esl-lessons/${lv.toLowerCase()}`}>
+                      <Button variant={lv === level ? "default" : "outline"} size="sm">
+                        {lv} {LEVEL_NAMES[lv]}
+                      </Button>
+                    </Link>
+                  ))}
+                </>
+              )}
             </nav>
 
             {availableCategories.length > 1 && (
@@ -313,7 +381,7 @@ export default function PublicLessonsIndexPage() {
                 ))}
               </div>
             )}
-            {availableTags.length > 0 && (
+            {availableTags.length > 0 && !activeTopic && (
               <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100" aria-label="Curated topic tags">
                 <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 mr-1">
                   Curated tags:
@@ -336,6 +404,45 @@ export default function PublicLessonsIndexPage() {
               </div>
             )}
           </div>
+
+          {!level && !activeTopic && !hasActiveFilters && availableTags.length > 0 && (
+            <section className="mb-8" aria-label="Browse free lessons by theme">
+              <div className="flex items-baseline justify-between mb-3">
+                <h2 className="text-xl font-bold text-brand-navy">Browse by Theme</h2>
+                <span className="text-xs text-slate-500">Dedicated collections across CEFR A1–C2</span>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                {availableTags.map(([tag, count]) => {
+                  const isSeasonal = FEATURED_SEASONAL_TAGS.includes(tag);
+                  return (
+                    <Link
+                      key={tag}
+                      href={`/esl-lessons/topics/${tag}`}
+                      className={`group rounded-xl border p-3.5 transition-all hover:shadow-sm ${
+                        isSeasonal
+                          ? "border-amber-300 bg-amber-50/70 hover:border-amber-400"
+                          : "border-slate-200 bg-white hover:border-brand-yellow"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between gap-2 mb-1">
+                        <span className="font-semibold text-sm text-brand-navy group-hover:text-amber-800 truncate">
+                          {PUBLIC_LESSON_TAGS[tag]}
+                        </span>
+                        {isSeasonal && (
+                          <span className="shrink-0 rounded-full bg-amber-200/80 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-900">
+                            Seasonal
+                          </span>
+                        )}
+                      </div>
+                      <span className="text-xs text-slate-500">
+                        {count} {count === 1 ? "lesson" : "lessons"} →
+                      </span>
+                    </Link>
+                  );
+                })}
+              </div>
+            </section>
+          )}
 
           {isLoading ? (
             <div role="status" aria-label="Loading lessons" className="grid sm:grid-cols-2 gap-4">

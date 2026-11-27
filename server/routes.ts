@@ -16,7 +16,7 @@ import { validateGrammarSpotlightForStorage } from "../types/lessonContentTypes"
 import { addLessonPictures, lessonModelFor, wordsToAvoid, writeLessonText } from "./lesson-generation";
 import { testImageGeneration } from "./services/image-generation.service";
 import { toPublicLessonView } from "./public-lesson-view";
-import { publicTags } from "@shared/public-lesson-tags";
+import { PUBLIC_LESSON_TAGS, isPublicLessonTag, publicTags } from "@shared/public-lesson-tags";
 import { registerPublicLessonTagRoutes } from "./public-lesson-tag-routes";
 import { serveLessonShareImage } from "./lesson-share-image";
 import { ensureStudentPageSchema } from "./student-page-schema";
@@ -2687,6 +2687,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/esl-lessons/topics/:tag", async (req, res, next) => {
+    if (!isPublicLessonTag(req.params.tag.toLowerCase())) {
+      await serve404Html(res, app);
+      return;
+    }
+    next();
+  });
+
   app.get("/esl-lessons/:level/:slug", async (req, res, next) => {
     try {
       const lesson = await storage.getLessonByPublicSlug(req.params.slug);
@@ -2781,6 +2789,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
             entries.push({
               url: `/esl-lessons/${level.toLowerCase()}`,
               lastmod: latest(inLevel.map((l) => toDate(l.createdAt))),
+            });
+          }
+        }
+        for (const tag of Object.keys(PUBLIC_LESSON_TAGS)) {
+          const inTag = publicLessons.filter((l) => publicTags(l.tags).includes(tag as any));
+          if (inTag.length > 0) {
+            entries.push({
+              url: `/esl-lessons/topics/${tag}`,
+              lastmod: latest(inTag.map((l) => toDate(l.createdAt))),
             });
           }
         }
