@@ -35,6 +35,7 @@ import { validClientRoutes, retiredPageRedirects } from "@shared/client-routes";
 import { notifyIndexNow, submitToIndexNow, getIndexNowKey, lessonIndexNowPaths, blogIndexNowPaths } from "./indexnow";
 import { lessonPath } from "@shared/lesson-url";
 import { ensureLessonUrlSchema } from "./lesson-url-schema";
+import { lessonQuestionsPath, renderLessonQuestionsPage } from "./lesson-prerender";
 import { marketingPages } from "@shared/marketing-pages";
 import { buildLlmsFullTxt, getLlmsFullTxt } from "./llms-full";
 import {
@@ -2693,6 +2694,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return;
     }
     next();
+  });
+
+  // Printable "discussion questions only" view. Public lessons only (link-only
+  // shared lessons and private lessons are 404s); noindex, canonical to the lesson.
+  app.get("/esl-lessons/:level/:slug/questions", async (req, res) => {
+    if (!/^[abc][12]$/i.test(req.params.level)) {
+      await serve404Html(res, app);
+      return;
+    }
+    try {
+      const lesson = await storage.getLessonByPublicSlug(req.params.slug);
+      if (!lesson || !lesson.isPublic || !lesson.publicSlug || !lesson.publicLevel) {
+        await serve404Html(res, app);
+        return;
+      }
+      const canonical = lessonQuestionsPath(lesson);
+      if (req.path.replace(/\/$/, "") !== canonical) {
+        res.redirect(301, canonical);
+        return;
+      }
+      const html = renderLessonQuestionsPage(lesson as any);
+      if (!html) {
+        await serve404Html(res, app);
+        return;
+      }
+      res.status(200).set({ "Content-Type": "text/html; charset=utf-8" }).end(html);
+    } catch (error) {
+      console.error("Error serving lesson questions view:", error);
+      res.status(503).set({ "Retry-After": "120", "X-Robots-Tag": "noindex" })
+        .send("This page is temporarily unavailable. Please try again shortly.");
+    }
   });
 
   app.get("/esl-lessons/:level/:slug", async (req, res, next) => {

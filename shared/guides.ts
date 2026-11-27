@@ -8,7 +8,7 @@
  * from the lesson prompt (server/services/lesson-prompt.ts).
  */
 import type { MarketingPage } from './marketing-pages';
-import { siteFacts, trialText } from './site-facts';
+import { siteFacts, trialText, priceText } from './site-facts';
 
 const { brand, generationTime } = siteFacts;
 const published = '2026-11-25';
@@ -490,6 +490,443 @@ export const personaliseGuide: MarketingPage = {
   },
   schemaType: 'Article',
   updated: '2026-11-27',
+};
+
+const freeGuidesPublished = '2026-11-28';
+const freeGuidesByline = { author: siteFacts.founder, published: freeGuidesPublished };
+
+export const freeAdultLessonsGuide: MarketingPage = {
+  path: '/guides/free-esl-conversation-lessons-for-adults',
+  title: 'Free ESL Conversation Lessons for Adults (No Sign-Up) | PlanWise',
+  description:
+    'Free ESL conversation lessons for adults with no sign-up: 180+ lessons from A1 to C2, what each one contains, and how to teach one in 30 or 60 minutes.',
+  navLabel: 'Free adult conversation lessons',
+  eyebrow: 'Guide for tutors',
+  h1: 'Free ESL conversation lessons for adults (no sign-up): what’s inside and how to teach them',
+  byline: freeGuidesByline,
+  intro: [
+    'I have taught English since 2015, and I built a free library of ready-to-teach conversation lessons because I was tired of rebuilding the same lesson every evening. This guide says what is in it, how I teach from it, and what it does not do.',
+  ],
+  verdict: {
+    heading: 'The short answer',
+    text: `**The free library is at [planwiseesl.com/esl-lessons](/esl-lessons).** It has 180+ complete conversation lessons for teenage and adult students, in six levels from A1 to C2. You do not need an account, a card or an email address: open a lesson and teach from it. Each lesson has five key words, a reading text at the level, comprehension questions, practice exercises, discussion questions and speaking patterns. They suit one-to-one and small-group lessons, online or in person.`,
+  },
+  sections: [
+    {
+      heading: 'What is in each lesson',
+      bullets: [
+        '**Five key words** (plus a few phrases at higher levels), each with pronunciation, a definition in simpler words, examples, word families and a picture.',
+        '**A reading text** pitched at the level, with the five words used in context.',
+        '**Comprehension questions and practice:** a quiz, sentence frames, gap-fill and sentence unscramble.',
+        '**Discussion questions** that move the topic into the student’s own life.',
+        '**A full-screen teaching view** for screen-sharing, and a printable Vocabulary Review PDF to send afterwards.',
+      ],
+    },
+    {
+      heading: 'How to find the right level and theme',
+      paragraphs: [
+        'You can browse by level ([A1](/esl-lessons/a1), [A2](/esl-lessons/a2), [B1](/esl-lessons/b1), [B2](/esl-lessons/b2), [C1](/esl-lessons/c1), [C2](/esl-lessons/c2)) or by theme, such as [work](/esl-lessons/topics/work), [travel](/esl-lessons/topics/travel) and [health](/esl-lessons/topics/health). If you are not sure of a new student’s level, my [guide to CEFR levels](/guides/cefr-levels-explained) shows how to tell in a few minutes.',
+      ],
+    },
+    {
+      heading: 'How to teach one: 30 or 60 minutes',
+      paragraphs: [
+        'Every lesson follows the same six stages, so once you have taught one, you can teach them all without preparing. These are the timings I use:',
+      ],
+      table: {
+        headers: ['Stage', '30-minute class', '60-minute class'],
+        rows: [
+          ['1. Warm-up questions', '3–4 min', '5–7 min'],
+          ['2. Pre-teach the five words', '5–6 min', '8–10 min'],
+          ['3. Reading and comprehension check', '6–7 min', '10–12 min'],
+          ['4. Recall and practice exercises', '5–6 min', '10–12 min'],
+          ['5. Discussion', '8–10 min', '15–20 min'],
+          ['6. Recap and PDF', '1–2 min', '2–3 min'],
+        ],
+      },
+    },
+    {
+      heading: 'Protect the discussion',
+      paragraphs: [
+        'Read the lesson through once before class so you know where the discussion goes. Then protect the discussion: it is the part where the student actually practises speaking, and the part that gets squeezed when a class runs late. For a fuller plan, see [the 30-minute lesson guide](/guides/30-minute-online-esl-conversation-lesson) and [how to plan a conversation lesson](/guides/how-to-plan-an-esl-conversation-lesson).',
+      ],
+    },
+    {
+      heading: 'Lessons I would start with',
+      paragraphs: ['A spread across the levels, all free and all open without logging in:'],
+      bullets: [
+        '[First Day at a New Job (A1)](/esl-lessons/a1/first-day-at-a-new-job-meeting-your-team): for a beginner who has just started work in English.',
+        '[Tell Me About Yourself (A2)](/esl-lessons/a2/tell-me-about-yourself-job-interviews): for a student preparing for job interviews.',
+        '[Remote Work vs. Working in an Office (B1)](/esl-lessons/b1/remote-work-vs-working-in-an-office): for almost any working adult, because everyone has an opinion.',
+        '[Saving Money vs. Enjoying Life Today (B1)](/esl-lessons/b1/saving-money-vs-enjoying-life-today): for a student who likes a friendly debate.',
+        '[Code Review Feedback (B2)](/esl-lessons/b2/code-review-feedback-say-it-well-take-it-well): for software engineers.',
+        '[Presenting Monthly Results (B2)](/esl-lessons/b2/talking-money-presenting-monthly-results): for finance and business students.',
+        '[Leading High-Stakes Client Meetings (C1)](/esl-lessons/c1/leading-high-stakes-client-meetings-in-english): for managers who work with international clients.',
+        '[Balancing Clinical Efficiency with Compassionate Patient Care (C1)](/esl-lessons/c1/balancing-clinical-efficiency-with-compassionate-patient-care): for doctors and nurses.',
+      ],
+    },
+    {
+      heading: 'What the free lessons do not do',
+      bullets: [
+        '**There is no audio.** The reading is text; you read it aloud or let the student read it.',
+        '**Everyone gets the same lesson.** A free lesson is written once for a level and a topic, not for your student. It does not know their job, their goal or the words they already know.',
+        '**They do not replace you.** The lesson gives structure; the conversation, the feedback and the adjustments are yours.',
+        '**The library is finite.** If a student wants a topic that is not there, you adapt the nearest lesson, or make a new one.',
+      ],
+    },
+    {
+      heading: 'A lesson for one student',
+      paragraphs: [
+        `Making a lesson for one student, with their level, interests and known words, is what the paid plan does: ${priceText} after a ${trialText} with no card, and a finished lesson in ${generationTime}. You can see [how it works](/how-it-works), but the free library stays free either way.`,
+      ],
+    },
+  ],
+  faq: [
+    {
+      question: 'Where can I find free ESL conversation lessons for adults with no sign-up?',
+      answer: 'PlanWise ESL has a free library of 180+ complete conversation lessons for adults and teenagers at planwiseesl.com/esl-lessons, from A1 to C2. You can open any lesson, screen-share it and print the Vocabulary Review PDF without making an account.',
+    },
+    {
+      question: 'What is in a free PlanWise ESL conversation lesson?',
+      answer: 'Five key words with pronunciation, simple definitions and examples, a reading text at the level, comprehension questions, practice exercises, discussion questions and speaking patterns, plus a full-screen teaching view and a printable review sheet.',
+    },
+    {
+      question: 'Do the free lessons have audio?',
+      answer: 'No. The reading is text only, so the teacher reads it aloud or the student reads it themselves.',
+    },
+    {
+      question: 'Can I use the free lessons on Preply, italki or Zoom?',
+      answer: 'Yes. Each lesson has a clean full-screen view that works well when you share your screen in a video lesson.',
+    },
+    {
+      question: 'How long does one free lesson take to teach?',
+      answer: 'About 60 minutes at the full timings, or 30 minutes if you shorten each stage: about 3–4 minutes of warm-up, 5–6 on the words, 6–7 on the reading, 5–6 on practice, 8–10 on discussion and 1–2 on the recap.',
+    },
+  ],
+  cta: {
+    heading: 'Start with a free lesson',
+    text: `Browse the whole free library, no login needed. Want a lesson written for one student? The ${trialText} needs no credit card.`,
+    label: 'Browse Free Lessons',
+    href: '/esl-lessons',
+  },
+  schemaType: 'Article',
+  updated: freeGuidesPublished,
+};
+
+export const freeB1LessonsGuide: MarketingPage = {
+  path: '/guides/free-b1-esl-conversation-lessons',
+  title: 'Free B1 ESL Conversation Lessons (Intermediate, No Sign-Up)',
+  description:
+    'Free B1 intermediate ESL conversation lessons for adults, no login: what makes a lesson B1, and 30+ ready-to-teach lessons grouped by theme.',
+  navLabel: 'Free B1 conversation lessons',
+  eyebrow: 'Guide for tutors',
+  h1: 'Free B1 ESL conversation lessons for adults: what makes a lesson B1, and 30+ to teach',
+  byline: freeGuidesByline,
+  intro: [
+    'B1 is the level I teach most. Students can keep a conversation going, so lessons feel rewarding, but they are also easy to get wrong: too hard and the lesson becomes a dictionary exercise, too easy and the student is bored. Here is how I pitch B1, and the free lessons I would use.',
+  ],
+  verdict: {
+    heading: 'The short answer',
+    text: '**There are 30+ free B1 (intermediate) conversation lessons at [planwiseesl.com/esl-lessons/b1](/esl-lessons/b1), with no login.** Each has a reading of 120–180 words, five key words and a few phrases, practice exercises and discussion questions asking for opinions with reasons. They suit adult and teenage students who can talk about familiar topics and are starting to explain why.',
+  },
+  sections: [
+    {
+      heading: 'What makes a lesson B1 on this site',
+      bullets: [
+        '**Reading of 120–180 words.** Long enough to carry an idea, short enough to read and discuss in one lesson.',
+        '**Sentences of about 10–12 words,** with linking words such as *because*, *so* and *although*, so the text models the reasons a B1 student is learning to give.',
+        '**Definitions in simple words.** New words are explained with A2 words plus common B1 words, so the student does not need a second dictionary to understand the first.',
+        '**Opinions with reasons.** Discussion questions ask “what do you think, and why?”, which is the B1 skill: moving from one-word answers to an opinion and a reason.',
+        '**Five key words and a few phrases,** the amount a student can really use in one lesson.',
+      ],
+    },
+    {
+      heading: 'Teaching a B1 lesson',
+      paragraphs: [
+        'For the other levels, see [CEFR levels explained](/guides/cefr-levels-explained). To teach any of these in a 30 or 60 minute class, use [the timings in my free lessons guide](/guides/free-esl-conversation-lessons-for-adults).',
+      ],
+    },
+    {
+      heading: 'Work and careers',
+      bullets: [
+        '[Remote Work vs. Working in an Office](/esl-lessons/b1/remote-work-vs-working-in-an-office): a debate nearly every working adult can join.',
+        '[Managing Stress and Staying Healthy at Work](/esl-lessons/b1/managing-stress-and-staying-healthy-at-work): stress, habits and advice.',
+        '[Daily Stand-Up Meetings in Tech Teams](/esl-lessons/b1/daily-stand-up-meetings-in-tech-teams): for developers and project staff.',
+        '[Handling Customer Complaints Calmly in English](/esl-lessons/b1/handling-customer-complaints-calmly-in-english): for customer service and hospitality.',
+        '[Navigating Unspoken Cultural Rules in a New Workplace](/esl-lessons/b1/navigating-unspoken-cultural-rules-in-a-new-workplace): for students working with international colleagues.',
+      ],
+    },
+    {
+      heading: 'Job interviews',
+      bullets: [
+        '[Getting Ready for an English Job Interview](/esl-lessons/b1/getting-ready-for-an-english-job-interview): where to start.',
+        '[Talking About Your Strengths and Weaknesses at an Interview](/esl-lessons/b1/talking-about-your-strengths-and-weaknesses-at-an-interview): the question every candidate dreads.',
+        '[Explaining a Career Change or Employment Gap Clearly](/esl-lessons/b1/explaining-a-career-change-or-employment-gap-clearly): for a harder interview question.',
+      ],
+    },
+    {
+      heading: 'Everyday life, money and travel',
+      bullets: [
+        '[Saving Money vs. Enjoying Life Today](/esl-lessons/b1/saving-money-vs-enjoying-life-today): opinions and reasons, with plenty to argue about.',
+        '[Travelling Solo vs. Travelling with Friends](/esl-lessons/b1/travelling-solo-vs-travelling-with-friends): comparing two sides.',
+        '[Public Transport vs. Private Cars](/esl-lessons/b1/public-transport-vs-private-cars): a comparison topic that works for any city.',
+        '[Renting a Home: Lease Contracts, Deposits, and Tenant Rights](/esl-lessons/b1/renting-a-home-lease-contracts-deposits-and-tenant-rights): useful for students moving abroad.',
+        '[How Social Media Affects Real-Life Friendships](/esl-lessons/b1/how-social-media-affects-real-life-friendships): a topic most students have views on.',
+      ],
+    },
+    {
+      heading: 'Health and medicine',
+      bullets: [
+        '[Calming Words: Reassuring a Patient Before a Procedure](/esl-lessons/b1/calming-words-reassuring-a-patient-before-a-procedure): for nurses and doctors.',
+        '[Taking a Clear Medical History in English](/esl-lessons/b1/taking-a-clear-medical-history-in-english): for healthcare staff working in English.',
+      ],
+    },
+    {
+      heading: 'Light and learning topics',
+      bullets: [
+        '[Mastering English: Finding Your Best Learning Method](/esl-lessons/b1/mastering-english-finding-your-best-learning-method): a good first lesson with a new student.',
+        '[Rocket League: Soccer with Cars!](/esl-lessons/b1/rocket-league-soccer-with-cars): for students who like games.',
+        '[Born a Genius, or Made One?](/esl-lessons/b1/born-a-genius-or-made-one): a talking point about talent and practice.',
+      ],
+    },
+    {
+      heading: 'More B1 lessons',
+      paragraphs: [
+        'The [full B1 list](/esl-lessons/b1) has more, including seasonal lessons such as [Family Arguments at Christmas](/esl-lessons/b1/family-arguments-at-christmas-keeping-the-peace). A free lesson is the same for every student; if you want one written for a particular student, [here is how that works](/how-it-works).',
+      ],
+    },
+  ],
+  faq: [
+    {
+      question: 'What does B1 mean in English?',
+      answer: 'B1 is the intermediate level of the CEFR. A B1 student can keep a conversation going on familiar topics, describe experiences and plans, and give simple reasons for an opinion.',
+    },
+    {
+      question: 'Are the free B1 lessons really free, with no sign-up?',
+      answer: 'Yes. Every lesson in the PlanWise ESL library opens without an account, a card or an email address.',
+    },
+    {
+      question: 'How long is the reading in a B1 lesson?',
+      answer: 'The B1 readings are 120–180 words, with sentences of about 10–12 words, and linking words such as because, so and although.',
+    },
+    {
+      question: 'How do I know if my student is B1?',
+      answer: 'Listen in a few minutes of small talk. B1 students use connectors such as so and although, talk about experiences and plans, and give an opinion with a simple reason, but still pause to find everyday words.',
+    },
+    {
+      question: 'Can I use the B1 lessons for a group?',
+      answer: 'Yes. They suit one-to-one lessons and small groups, online or in person. Use the discussion questions in pairs or as a whole group.',
+    },
+  ],
+  cta: {
+    heading: 'Browse every free B1 lesson',
+    text: `The whole B1 list is free and needs no login. For a lesson written for one student, the ${trialText} needs no credit card.`,
+    label: 'See Free B1 Lessons',
+    href: '/esl-lessons/b1',
+  },
+  schemaType: 'Article',
+  updated: freeGuidesPublished,
+};
+
+export const christmasNewYearGuide: MarketingPage = {
+  path: '/guides/christmas-and-new-year-esl-lessons-for-adults',
+  title: 'Christmas and New Year ESL Lessons for Adults and Teens (Free)',
+  description:
+    'Free Christmas and New Year ESL conversation lessons for adults and teens, A1 to C2: what each covers, and how to use one for the last class before the break.',
+  navLabel: 'Christmas and New Year lessons',
+  eyebrow: 'Seasonal guide',
+  h1: 'Christmas and New Year ESL lessons for adults and teens, free and ready to teach',
+  byline: freeGuidesByline,
+  intro: [
+    'Most Christmas ESL material is aimed at young children: crafts, colouring, songs. My students are adults and teenagers, and they want to talk about holidays the way adults do: family, travel, work, tradition and money. These are the free lessons I use in December.',
+  ],
+  verdict: {
+    heading: 'The short answer',
+    text: '**All the free holiday lessons are on the [Holidays and Celebrations theme page](/esl-lessons/topics/holidays).** There are 12, two at each level from A1 to C2, with no login. They cover Christmas, New Year, family celebrations and how holidays differ around the world. They are conversation lessons, not craft activities, so they suit one-to-one and small-group adult and teen classes.',
+  },
+  sections: [
+    {
+      heading: 'The holiday lessons, level by level',
+      table: {
+        headers: ['Level', 'Lesson', 'What the conversation is about'],
+        rows: [
+          ['A1', '[Happy New Year Around the World](/esl-lessons/a1/happy-new-year-around-the-world-fireworks-family-visits-and-wishes)', 'Simple questions about New Year: whether you like it, what you eat and who you see.'],
+          ['A1', '[Big Family Celebrations and Special Meals](/esl-lessons/a1/big-family-celebrations-and-special-meals-around-the-world)', 'Big family meals, special days and who cooks.'],
+          ['A2', '[What Is Christmas? Story, Services and Giving](/esl-lessons/a2/what-is-christmas-story-services-and-giving)', 'What December means in the student’s country, and giving presents.'],
+          ['A2', '[Busy Airports, Gifts and Travelling Home](/esl-lessons/a2/busy-airports-gifts-and-travelling-home-for-major-holidays)', 'Travelling to see family for big holidays, and what you take with you.'],
+          ['B1', '[Family Arguments at Christmas: Keeping the Peace](/esl-lessons/b1/family-arguments-at-christmas-keeping-the-peace)', 'Big family meals, and topics that are better not discussed at dinner.'],
+          ['B1', '[New Year’s Resolutions](/esl-lessons/b1/new-year-s-resolutions-why-we-make-them-and-why-most-fade-by-february)', 'Why we make resolutions, and why most fade by February.'],
+          ['B2', '[When December 25 Is a Normal Workday](/esl-lessons/b2/when-december-25-is-a-normal-workday-winter-and-annual-celebrations-around-the-world)', 'What a holiday means to you, and winter celebrations in countries where Christmas is a working day.'],
+          ['B2', '[Commercialisation vs. Tradition](/esl-lessons/b2/commercialisation-vs-tradition-keeping-festivals-meaningful)', 'Whether festivals are now more about shopping than meaning.'],
+          ['C1', '[Navigating Multi-Cultural Workplaces During December](/esl-lessons/c1/navigating-multi-cultural-workplaces-during-december-and-holiday-seasons)', 'Working with colleagues who celebrate different things in December.'],
+          ['C1', '[Carols, Cathedrals and a Noisy World](/esl-lessons/c1/carols-cathedrals-and-a-noisy-world-sacred-music-today)', 'Sacred music, memories of carols and whether Christmas is religious or commercial.'],
+          ['C2', '[Calendars, Ritual and Renewal](/esl-lessons/c2/calendars-ritual-and-renewal-what-global-new-year-traditions-reveal-about-culture)', 'What global New Year traditions say about culture, and strange customs.'],
+          ['C2', '[Faith, Nostalgia and Pluralism](/esl-lessons/c2/faith-nostalgia-and-pluralism-keeping-holidays-authentic-without-excluding-others)', 'Defending a childhood holiday, and keeping holidays authentic without excluding others.'],
+        ],
+      },
+    },
+    {
+      heading: 'What each lesson contains',
+      paragraphs: [
+        'The descriptions above come from the warm-up and discussion questions in each lesson. Each one is a full lesson with five key words, a reading, practice exercises and discussion, about 60 minutes at the full timings.',
+      ],
+    },
+    {
+      heading: 'Using one as a last class before the break',
+      bullets: [
+        '**Pick for the mood.** A light lesson (A1–B1 New Year or family meals) suits a tired end-of-term class; the B2–C2 lessons suit students who enjoy debate.',
+        '**Shorten it.** For a 30-minute class, use the timings in [my 30-minute lesson plan](/guides/30-minute-online-esl-conversation-lesson) and keep the discussion.',
+        '**Ask about the student’s own holidays.** Some of these lessons start with questions such as “what holidays do you have in your country?”, which makes the new words personal.',
+        '**Be careful with religion.** Not every student celebrates Christmas. The lessons that cover it do so as a topic to discuss, and the C1 and C2 lessons are about celebrating together without excluding people. Let the student lead.',
+        '**Finish with resolutions.** The B1 New Year’s Resolutions lesson is a natural way to end the last class of the year, and to plan what the student wants to do in the next one.',
+      ],
+    },
+    {
+      heading: 'More free lessons, and lessons for your own student',
+      paragraphs: [
+        'The free library has 180+ lessons beyond the holiday set: see the [full library](/esl-lessons) and my [guide to free adult conversation lessons](/guides/free-esl-conversation-lessons-for-adults). These lessons are the same for every student. If you want a seasonal lesson written for one student, [see how it works](/how-it-works).',
+      ],
+    },
+  ],
+  faq: [
+    {
+      question: 'Are there free Christmas ESL lessons for adults?',
+      answer: 'Yes. PlanWise ESL has 12 free holiday lessons for adults and teens, two at each level from A1 to C2, on the Holidays and Celebrations theme page at planwiseesl.com/esl-lessons/topics/holidays. No login is needed.',
+    },
+    {
+      question: 'Are these lessons only about Christmas?',
+      answer: 'No. They cover Christmas, New Year, family celebrations, holiday travel and how people celebrate around the world, and some are about working in December rather than the holiday itself.',
+    },
+    {
+      question: 'Are the lessons suitable for children?',
+      answer: 'No. They are written for adults and teenagers, with discussion questions about family, work, money and tradition. There are no crafts or colouring activities.',
+    },
+    {
+      question: 'What if my student does not celebrate Christmas?',
+      answer: 'Choose a New Year, family-celebration or travel lesson instead, or one of the lessons about how people celebrate in different countries. Ask the student what they celebrate and let that guide the choice.',
+    },
+    {
+      question: 'Can I teach one in 30 minutes?',
+      answer: 'Yes. Shorten each stage and keep the discussion: roughly 3–4 minutes of warm-up, 5–6 on the words, 6–7 on the reading, 5–6 on practice, 8–10 on discussion and 1–2 on a recap.',
+    },
+  ],
+  cta: {
+    heading: 'See all the holiday lessons',
+    text: 'All 12 are free, with no login. For a seasonal lesson written for one student, the 5-day free trial needs no credit card.',
+    label: 'See Holiday Lessons',
+    href: '/esl-lessons/topics/holidays',
+  },
+  schemaType: 'Article',
+  updated: freeGuidesPublished,
+};
+
+export const thirtyMinuteLessonGuide: MarketingPage = {
+  path: '/guides/30-minute-online-esl-conversation-lesson',
+  title: 'How to Teach a 30-Minute Online ESL Conversation Lesson',
+  description:
+    'A minute-by-minute plan for a 30-minute online ESL conversation lesson, what to skip when time is short, screen-sharing tips, and six free lessons that fit.',
+  navLabel: '30-minute lesson plan',
+  eyebrow: 'Guide for tutors',
+  h1: 'How to teach a 30-minute online ESL conversation lesson (with free lessons that fit)',
+  byline: freeGuidesByline,
+  intro: [
+    'Thirty-minute lessons are common on Preply, italki and other platforms, and they are hard: if you try to teach a 60-minute lesson in half the time, the student barely speaks. Here is the plan I use, and the free lessons that fit it.',
+  ],
+  verdict: {
+    heading: 'The short answer',
+    text: '**Warm-up 3–4 min, five words 5–6 min, reading and check 6–7 min, one practice exercise 4–5 min, discussion 8–10 min, recap 1–2 min.** Keep the discussion, cut the extra exercises, and the student still speaks for about a third of the lesson. Every free lesson at [planwiseesl.com/esl-lessons](/esl-lessons) follows these stages, with no login.',
+  },
+  sections: [
+    {
+      heading: 'The 30-minute plan, minute by minute',
+      table: {
+        headers: ['Minutes', 'Stage', 'What to do'],
+        rows: [
+          ['0–4', 'Warm-up', 'Ask the opening questions before showing any new words, so the student switches on words they already know.'],
+          ['4–10', 'Five words', 'For each word: say it, give the simple definition, read the example, ask the student to make their own sentence.'],
+          ['10–17', 'Reading and check', 'Read the text together, then ask the comprehension questions. Look for the five words in the text.'],
+          ['17–22', 'One practice exercise', 'Choose the quiz, gap-fill or sentence frames, whichever suits the student. Do one, not all.'],
+          ['22–29', 'Discussion', 'The point of the lesson. Ask the discussion questions, follow up and let the student talk.'],
+          ['29–30', 'Recap', 'Name two phrases the student used well, and send the review PDF in the chat.'],
+        ],
+      },
+    },
+    {
+      heading: 'What to skip when you are short of time',
+      bullets: [
+        '**Extra practice exercises.** One is enough. The others can be homework from the printable review sheet.',
+        '**Reading aloud, if the student is confident.** Let them read silently while you set up the discussion.',
+        '**Word detail.** Pronunciation, a definition and one example are enough. Word families and usage notes can wait.',
+        '**Never skip the discussion.** It is where the student uses the words, and if it keeps being squeezed, they will not remember them.',
+      ],
+    },
+    {
+      heading: 'Screen-sharing tips for Preply, italki and Zoom',
+      bullets: [
+        '**Use the full-screen teaching view** that opens with every free lesson. It is clean and large enough to read on a small laptop.',
+        '**Share the lesson tab, not your whole screen,** so the student does not see your other windows or notifications.',
+        '**Open the lesson before the class starts,** and check you can see the student on the same screen. A 30-minute lesson has no room for loading time.',
+        '**Send the review PDF in the chat** at the end, rather than emailing it afterwards.',
+        '**Ask the student to talk, not just look.** If the screen is busy, close the tab for the discussion and just talk.',
+      ],
+    },
+    {
+      heading: 'Six free lessons that work well in 30 minutes',
+      paragraphs: [
+        'These are everyday topics, so most students have something to say about them from the first question:',
+      ],
+      bullets: [
+        '[Ordering Food and Coffee at a Cafe (A1)](/esl-lessons/a1/ordering-food-and-coffee-at-a-cafe): a practical topic for a beginner.',
+        '[Making Small Talk with New People (A2)](/esl-lessons/a2/making-small-talk-with-new-people): the student can use it the next day.',
+        '[Remote Work vs. Working in an Office (B1)](/esl-lessons/b1/remote-work-vs-working-in-an-office): everyone has an opinion.',
+        '[Public Transport vs. Private Cars (B1)](/esl-lessons/b1/public-transport-vs-private-cars): easy to relate to any city.',
+        '[Small Talk That Goes Somewhere (B2)](/esl-lessons/b2/small-talk-that-goes-somewhere-moving-beyond-how-are-you): for students who want fluency in conversation.',
+        '[Diplomatic English: How to Disagree Politely (B2)](/esl-lessons/b2/diplomatic-english-how-to-disagree-politely): useful, and starts a discussion fast.',
+      ],
+    },
+    {
+      heading: 'More lessons and longer classes',
+      paragraphs: [
+        'For more, browse the [free library by level](/esl-lessons). For 60-minute classes, use [the full timings](/guides/how-to-plan-an-esl-conversation-lesson).',
+      ],
+    },
+    {
+      heading: 'If you want it written for your student',
+      paragraphs: [
+        `The free lessons are the same for every student. If you want a 30-minute lesson written for one student's level and interests, ${brand} does that on the paid plan, which is ${priceText} after a ${trialText} with no card: [how it works](/how-it-works).`,
+      ],
+    },
+  ],
+  faq: [
+    {
+      question: 'How do you plan a 30-minute ESL conversation lesson?',
+      answer: 'Use six stages: a 3–4 minute warm-up, 5–6 minutes on five key words, 6–7 minutes on a reading and check, 4–5 minutes on one practice exercise, 8–10 minutes of discussion and a 1–2 minute recap.',
+    },
+    {
+      question: 'How many new words can you teach in 30 minutes?',
+      answer: 'Five. More than that leaves too little time for the student to use the words in the discussion.',
+    },
+    {
+      question: 'What should I cut from a lesson if time is short?',
+      answer: 'Extra practice exercises first, then word detail such as word families and usage notes. Keep the warm-up and the discussion.',
+    },
+    {
+      question: 'Can I use free lessons on Preply or italki?',
+      answer: 'Yes. The free PlanWise ESL lessons need no login and have a full-screen view for sharing your screen in a video lesson.',
+    },
+    {
+      question: 'How much of a 30-minute lesson should the student speak?',
+      answer: 'As much as you can manage. With this plan, the discussion gives them 8–10 minutes of focused speaking, and the warm-up and practice add more.',
+    },
+  ],
+  cta: {
+    heading: 'Try a free lesson in your next class',
+    text: 'Pick a lesson from the free library and teach it with this plan. No login needed.',
+    label: 'Browse Free Lessons',
+    href: '/esl-lessons',
+  },
+  schemaType: 'Article',
+  updated: freeGuidesPublished,
 };
 
 /** The /guides index. Lists every guide in guidePages (marketing-pages.ts). */

@@ -55,6 +55,7 @@ export const clientRoutePaths: string[] = [
   "/esl-lessons/topics/:tag", // curated theme validity checked by the /esl-lessons/topics/:tag server route
   "/esl-lessons/:level", // level validity checked by the /esl-lessons/:level server route
   "/esl-lessons/:level/:slug", // public slug visibility checked by the server
+  "/esl-lessons/:level/:slug/questions", // printable discussion questions (public lessons only), server-rendered
   // Public information pages (shared/marketing-pages.ts)
   "/how-it-works",
   "/about",
@@ -89,6 +90,10 @@ export const clientRoutePaths: string[] = [
   "/guides/esl-conversation-topics-by-level",
   "/guides/cefr-levels-explained",
   "/guides/personalise-esl-lessons",
+  "/guides/free-esl-conversation-lessons-for-adults",
+  "/guides/free-b1-esl-conversation-lessons",
+  "/guides/christmas-and-new-year-esl-lessons-for-adults",
+  "/guides/30-minute-online-esl-conversation-lesson",
   "/forgot-password",
   "/reset-password/:token",
   "/twitter-card",

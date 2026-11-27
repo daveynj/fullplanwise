@@ -467,6 +467,7 @@ export function buildLessonPageHtml(lesson: LessonForPrerender, sections: any[],
         <p class="lp-about"><strong>About this lesson:</strong> ${e(aboutLesson(lesson, sections))}</p>
       </header>
       ${lesson.isPublic ? `<aside class="lp-cta lp-remix"><p>Teaching <strong>${e(lesson.title)}</strong> to one student? Start from this title, choose the student in the generator, and PlanWise ESL makes a new version at their level that avoids words they've already learned. You can also change the CEFR level or adapt it to their job.</p><p><a href="${e(publicLessonRemixHref(lesson.title, level, false))}">Make this lesson for your student</a></p></aside>` : ''}
+      ${lesson.isPublic && lesson.publicSlug && lesson.publicLevel ? `<p class="lp-print"><a href="${e(lessonQuestionsPath(lesson))}">Print just the discussion questions</a></p>` : ''}
       ${lessonDesignHtml(lesson.content)}
       ${sectionsHtml(sections)}
     </article>
@@ -479,6 +480,126 @@ export function buildLessonPageHtml(lesson: LessonForPrerender, sections: any[],
     </aside>
   </main>
 </div>`;
+}
+
+// ---------------------------------------------------------------------------
+// Discussion questions only: /esl-lessons/:level/:slug/questions (public lessons)
+// ---------------------------------------------------------------------------
+
+/** Path of the printable "discussion questions only" view of a public slug lesson. */
+export function lessonQuestionsPath(lesson: { id: number; publicSlug?: string | null; publicLevel?: string | null }): string {
+  return `${lessonPath(lesson)}/questions`;
+}
+
+const questionsViewCss = `
+body { margin: 0; font-family: Georgia, 'Times New Roman', serif; color: #111; background: #fff; line-height: 1.55; }
+main { max-width: 720px; margin: 0 auto; padding: 24px; }
+header.site { border-bottom: 1px solid #ddd; padding: 12px 24px; font-family: Arial, sans-serif; }
+header.site a, nav.crumbs a, footer.site a { color: #051d40; }
+nav.crumbs { font-family: Arial, sans-serif; font-size: 0.9rem; margin-bottom: 16px; }
+h1 { font-size: 1.8rem; line-height: 1.25; margin: 0 0 8px; }
+h2 { font-size: 1.25rem; margin: 1.8rem 0 0.6rem; break-after: avoid; }
+.meta { color: #444; font-family: Arial, sans-serif; font-size: 0.95rem; }
+li { margin-bottom: 0.9rem; break-inside: avoid; }
+li p { margin: 0 0 0.3rem; }
+ul.words { list-style: none; padding: 0; }
+ul.words li { margin-bottom: 0.4rem; }
+footer.site { border-top: 1px solid #ddd; margin-top: 2rem; padding: 12px 24px; font-family: Arial, sans-serif; font-size: 0.9rem; }
+@media print {
+  header.site, nav.crumbs, footer.site { display: none; }
+  body { color: #000; background: #fff; font-size: 12pt; }
+  main { max-width: none; padding: 0; }
+  a { color: #000; text-decoration: none; }
+  h2 { break-after: avoid; }
+  li { break-inside: avoid; }
+}
+`;
+
+/**
+ * A plain, printable page with just the warm-up questions, the five key words
+ * and the discussion questions of a public lesson. Reads the same section data
+ * as the lesson page; quiz answers and explanations are never touched. Returns
+ * a complete HTML document (it does not use the SPA template).
+ */
+export function buildLessonQuestionsHtml(lesson: LessonForPrerender, sections: any[]): string {
+  const level = lesson.cefrLevel;
+  const lessonUrl = `${BASE_URL}${lessonPath(lesson)}`;
+  const lessonHref = lessonPath(lesson);
+
+  const warmupQuestions = sections
+    .filter((s) => s && (s.type === 'warmup' || s.type === 'warm-up'))
+    .flatMap((s) => arr(s.questions).map(questionText))
+    .filter(Boolean);
+
+  const words = sections
+    .filter((s) => s && s.type === 'vocabulary')
+    .flatMap((s) => arr(s.words))
+    .map((w) => ({
+      label: str(w?.term) || str(w?.word),
+      pos: str(w?.partOfSpeech),
+      def: str(w?.definition) || str(w?.coreDefinition),
+    }))
+    .filter((w) => w.label)
+    .slice(0, 5);
+
+  const discussion = sections
+    .filter((s) => s && (s.type === 'discussion' || s.type === 'speaking'))
+    .flatMap((s) => arr(s.questions))
+    .map((item) => ({
+      q: questionText(item),
+      ctx: item && typeof item === 'object' ? str((item as any).paragraphContext) : '',
+    }))
+    .filter((d) => d.q);
+
+  const count = warmupQuestions.length + discussion.length;
+  const title = `${lesson.title}: discussion questions (CEFR ${level}) | PlanWise ESL`;
+  const description = `Printable discussion questions from the free PlanWise ESL lesson "${lesson.title}" (CEFR ${level}): warm-up questions, key words and ${discussion.length} discussion questions.`;
+
+  const warmupHtml = warmupQuestions.length
+    ? `<section><h2>Warm-up questions</h2>${listHtml(warmupQuestions, true)}</section>`
+    : '';
+  const wordsHtml = words.length
+    ? `<section><h2>Key words</h2><ul class="words">${words
+        .map((w) => `<li>${e(w.label)}${w.pos ? ` (${e(w.pos)})` : ''}${w.def ? `: ${e(w.def)}` : ''}</li>`)
+        .join('')}</ul></section>`
+    : '';
+  const discussionHtml = discussion.length
+    ? `<section><h2>Discussion questions</h2><ol>${discussion
+        .map((d) => `<li>${d.ctx ? `<p>${e(d.ctx)}</p>` : ''}<p><strong>${e(d.q)}</strong></p></li>`)
+        .join('')}</ol></section>`
+    : '';
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>${e(title)}</title>
+<meta name="description" content="${e(description)}" />
+<meta name="robots" content="noindex, follow" />
+<link rel="canonical" href="${e(lessonUrl)}" />
+<style>${questionsViewCss}</style>
+</head>
+<body>
+<header class="site"><strong><a href="/">PlanWise ESL</a></strong></header>
+<main>
+<nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> &rsaquo; <a href="/esl-lessons">ESL Lessons</a> &rsaquo; <a href="/esl-lessons/${e(level.toLowerCase())}">${e(level)}</a> &rsaquo; ${e(lesson.title)}</nav>
+<h1>Discussion questions: ${e(lesson.title)}</h1>
+<p class="meta">CEFR ${e(level)} &middot; ${count} questions &middot; from <a href="${e(lessonHref)}">the free lesson</a></p>
+${warmupHtml}
+${wordsHtml}
+${discussionHtml}
+<p class="meta">Full lesson, with the reading, exercises and quiz: <a href="${e(lessonHref)}">${e(lessonUrl)}</a></p>
+</main>
+<footer class="site"><a href="/">PlanWise ESL</a></footer>
+</body>
+</html>`;
+}
+
+/** Returns the printable questions page, or null when the lesson is not public. */
+export function renderLessonQuestionsPage(lesson: LessonForPrerender | null | undefined): string | null {
+  if (!lesson || !lesson.isPublic) return null;
+  return buildLessonQuestionsHtml(lesson, sectionsOf(lesson.content));
 }
 
 async function prerenderLesson(template: string, id: number, preloaded?: unknown): Promise<string | null> {
