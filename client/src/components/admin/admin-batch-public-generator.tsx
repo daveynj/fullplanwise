@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { PUBLIC_LIBRARY_LABELS, type PublicLibraryCategory } from "@shared/schema";
+import { type PublicLessonTag } from "@shared/public-lesson-tags";
 
 const VALID_LEVELS = new Set(["A1", "A2", "B1", "B2", "C1", "C2"]);
 const VALID_PUBLIC_CATEGORIES = new Set(Object.keys(PUBLIC_LIBRARY_LABELS));
@@ -17,6 +18,7 @@ export interface BatchPresetPack {
   label: string;
   description: string;
   defaultLessonCategory: "general" | "business" | "academic" | "medical" | "technology" | "tourism";
+  defaultTags?: PublicLessonTag[];
   lines: string;
 }
 
@@ -54,6 +56,27 @@ export const RECOMMENDED_PUBLIC_LESSONS_BATCH = [
 ].join("\n");
 
 export const ADMIN_BATCH_PRESET_PACKS: BatchPresetPack[] = [
+  {
+    id: "holidays-celebrations",
+    label: "Global Celebrations, Christmas & New Year (12)",
+    description: "12 A1–C2 cross-cultural lessons covering Christian Christmas traditions, church services, family arguments, commercialisation vs. tradition, New Year's resolutions, and global festivals—welcoming students of every faith or none. Auto-tagged Holidays & Celebrations + Culture.",
+    defaultLessonCategory: "general",
+    defaultTags: ["holidays", "culture"],
+    lines: [
+      "A1 | general-english | Big Family Celebrations and Special Meals Around the World (Christmas and Local Festivals)",
+      "A1 | general-english | Happy New Year Around the World: Fireworks, Family Visits, and Wishes",
+      "A2 | general-english | What Is Christmas? Understanding the Christian Story, Church Services, and Giving",
+      "A2 | general-english | Busy Airports, Gifts, and Travelling Home for Major Holidays",
+      "B1 | conversation-practice | Family Arguments During Christmas and Big Holidays (And How to Keep the Peace)",
+      "B1 | conversation-practice | New Year's Resolutions: Why We Make Them and Why Most Fade by February",
+      "B2 | conversation-practice | Commercialisation vs. Tradition: Keeping Christmas and Cultural Festivals Meaningful",
+      "B2 | conversation-practice | When December 25 Is a Normal Workday: Global Winter and Annual Celebrations",
+      "C1 | conversation-practice | Church Services, Carols, and Sacred Music in a Diverse Modern World",
+      "C1 | workplace-communication | Navigating Multi-Cultural Workplaces During December and Holiday Seasons",
+      "C2 | conversation-practice | Faith, Nostalgia, and Pluralism: Keeping Religious Holidays Authentic Without Excluding Others",
+      "C2 | conversation-practice | Calendars, Ritual, and Renewal: What Global New Year Traditions Reveal About Culture",
+    ].join("\n"),
+  },
   {
     id: "fill-a1-c2",
     label: "Fill Thin Levels: A1 & C2 (24)",
@@ -287,9 +310,9 @@ async function waitForLessonJob(jobId: string, maxMs = 4 * 60 * 1000): Promise<a
 export function AdminBatchPublicGenerator({ onLessonPublished }: { onLessonPublished: () => void }) {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [activePackId, setActivePackId] = useState<string>("english-qa");
+  const [activePackId, setActivePackId] = useState<string>("holidays-celebrations");
   const [rawList, setRawList] = useState(
-    ADMIN_BATCH_PRESET_PACKS.find((p) => p.id === "english-qa")?.lines ?? RECOMMENDED_PUBLIC_LESSONS_BATCH
+    ADMIN_BATCH_PRESET_PACKS.find((p) => p.id === "holidays-celebrations")?.lines ?? RECOMMENDED_PUBLIC_LESSONS_BATCH
   );
   const [items, setItems] = useState<BatchItem[]>([]);
   const [running, setRunning] = useState(false);
@@ -392,6 +415,7 @@ export function AdminBatchPublicGenerator({ onLessonPublished }: { onLessonPubli
 
         await apiRequest("PATCH", `/api/lessons/${lesson.id}/public`, {
           publicCategory: item.publicCategory,
+          ...(activePack?.defaultTags?.length ? { tags: activePack.defaultTags } : {}),
         });
 
         publishedCount += 1;

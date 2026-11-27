@@ -21,6 +21,7 @@ const RULES: Record<PublicLessonTag, string[]> = {
   food: ["food", "cooking", "recipe", "restaurant", "cuisine", "ingredients", "chef"],
   relationships: ["friendship", "relationships", "family", "marriage", "dating", "parents"],
   culture: ["culture", "traditions", "festival", "customs", "heritage"],
+  holidays: ["christmas", "new year", "festive", "celebration", "festival", "nativity", "advent", "carol", "lunar new year", "eid", "diwali", "hanukkah", "thanksgiving"],
   education: ["education", "school", "university", "classroom", "homework", "exam"],
   sport: ["sport", "football", "basketball", "fitness", "athlete", "gym", "olympics"],
   science: ["science", "scientist", "experiment", "biology", "physics", "astronomy"],
