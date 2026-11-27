@@ -262,6 +262,17 @@ export default function BlogPost() {
                 )}
               </header>
 
+              {/* Featured Image */}
+              {post.featuredImageUrl && (
+                <figure className="mb-8 overflow-hidden rounded-xl border bg-muted aspect-video shadow-sm">
+                  <img
+                    src={post.featuredImageUrl}
+                    alt={post.featuredImageAlt || post.title}
+                    className="w-full h-full object-cover"
+                    data-testid="img-post-featured"
+                  />
+                </figure>
+              )}
 
               {/* Table of Contents box - sticky if possible */}
               {tocHeadings.length > 0 && (
@@ -323,9 +334,18 @@ export default function BlogPost() {
                         className="group border rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
                       >
                         <div className="relative aspect-video bg-muted">
-                          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-primary/5">
-                            <span className="text-2xl">📚</span>
-                          </div>
+                          {relatedPost.featuredImageUrl ? (
+                            <img
+                              src={relatedPost.featuredImageUrl}
+                              alt={relatedPost.featuredImageAlt || relatedPost.title}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                              loading="lazy"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-primary/5">
+                              <span className="text-2xl">📚</span>
+                            </div>
+                          )}
                         </div>
                         <div className="p-4">
                           <h3 className="font-semibold mb-2 line-clamp-2 group-hover:text-primary transition-colors">
@@ -390,9 +410,18 @@ export default function BlogPost() {
                         >
                           <div className="flex gap-3">
                             <div className="w-20 h-20 rounded bg-muted flex-shrink-0 overflow-hidden">
-                              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-primary/5">
-                                <span className="text-sm">📚</span>
-                              </div>
+                              {popularPost.featuredImageUrl ? (
+                                <img
+                                  src={popularPost.featuredImageUrl}
+                                  alt={popularPost.featuredImageAlt || popularPost.title}
+                                  className="w-full h-full object-cover"
+                                  loading="lazy"
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-primary/5">
+                                  <span className="text-sm">📚</span>
+                                </div>
+                              )}
                             </div>
                             <div className="flex-1 min-w-0">
                               <h4 className="font-medium text-sm line-clamp-2 group-hover:text-primary transition-colors mb-1">
