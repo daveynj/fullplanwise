@@ -462,6 +462,33 @@ describe("injectLessonPrerender: browse pages", () => {
     expect(await injectLessonPrerender(TEMPLATE, "/esl-lessons/z9")).toBeNull();
     expect(getPublicLessonSummaries).not.toHaveBeenCalled();
   });
+
+  it("renders crawlable theme hub pages (/esl-lessons/topics/:tag) and links them from /esl-lessons", async () => {
+    const tagged = [
+      { ...summaries[0], tags: ["holidays", "culture"] },
+      { ...summaries[1], tags: ["travel"] },
+    ];
+    getPublicLessonSummaries.mockResolvedValue(tagged);
+
+    const indexHtml = (await injectLessonPrerender(TEMPLATE, "/esl-lessons"))!;
+    expect(indexHtml).toContain("Browse Free Lessons by Theme");
+    expect(indexHtml).toContain('href="/esl-lessons/topics/holidays"');
+
+    const topicHtml = (await injectLessonPrerender(TEMPLATE, "/esl-lessons/topics/holidays"))!;
+    expect(topicHtml).toContain("Free Holidays &amp; Celebrations ESL Lessons");
+    expect(topicHtml).toContain("Job Interviews");
+    expect(topicHtml).not.toContain("Ordering Food");
+    expect(topicHtml).toContain('<link rel="canonical" href="https://planwiseesl.com/esl-lessons/topics/holidays" />');
+    expect(topicHtml).toContain('"CollectionPage"');
+    expect(topicHtml).toContain('"FAQPage"');
+    expect(topicHtml).toContain('"BreadcrumbList"');
+
+    expect(await injectLessonPrerender(TEMPLATE, "/esl-lessons/topics/not-a-real-theme")).toBeNull();
+
+    getPublicLessonSummaries.mockResolvedValue([]);
+    const emptyTopic = (await injectLessonPrerender(TEMPLATE, "/esl-lessons/topics/holidays"))!;
+    expect(emptyTopic).toContain("noindex, nofollow");
+  });
 });
 
 describe("injectLessonPrerender: sentence frames and idioms & phrasal verbs", () => {

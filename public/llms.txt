@@ -12,6 +12,7 @@ Teachers looking for ready-to-teach adult ESL conversation material can open, sc
 
 - **All free lessons + built-in 30- & 60-minute teacher guide:** https://planwiseesl.com/esl-lessons (`#how-to-teach-free-lessons`)
 - **By CEFR level:** https://planwiseesl.com/esl-lessons/a1 , https://planwiseesl.com/esl-lessons/a2 , https://planwiseesl.com/esl-lessons/b1 , https://planwiseesl.com/esl-lessons/b2 , https://planwiseesl.com/esl-lessons/c1 , https://planwiseesl.com/esl-lessons/c2
+- **By theme:** https://planwiseesl.com/esl-lessons/topics/holidays (Christmas, New Year & global celebrations), https://planwiseesl.com/esl-lessons/topics/work , https://planwiseesl.com/esl-lessons/topics/travel , https://planwiseesl.com/esl-lessons/topics/culture , https://planwiseesl.com/esl-lessons/topics/health , https://planwiseesl.com/esl-lessons/topics/artificial-intelligence
 - **Sample canonical lessons across every CEFR level:**
   - A1 Beginner: https://planwiseesl.com/esl-lessons/a1/first-day-at-a-new-job-meeting-your-team
   - A2 Elementary: https://planwiseesl.com/esl-lessons/a2/making-small-talk-with-new-people
