@@ -353,8 +353,8 @@ describe("lesson quality rules", () => {
   it("only asks for right and wrong forms when learners really make the mistake", () => {
     const prompt = buildExpressionsPrompt(withSwitch("C2"), lesson);
     expect(prompt).toContain("never invent a wrong form nobody would say");
-    expect(prompt).toContain("never give an idiom a splitting tip");
-    expect(prompt).toContain('Phrasal verbs with two small words, like "get on with" or "look forward to", never split');
+    expect(prompt).toContain("Do not give tips about where the object goes or whether the verb can be split");
+    expect(prompt).not.toContain("whether it can be split, or what the small word adds");
     expect(prompt).not.toContain("A short tip about a common mistake:");
     expect(prompt).toContain("Only if learners really make this mistake");
   });
