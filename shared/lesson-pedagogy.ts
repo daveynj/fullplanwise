@@ -220,7 +220,7 @@ export const freeLibraryFaq = [
   {
     question: 'Can adult English learners use these free lessons for self-study or with a speaking partner?',
     answer:
-      'Yes. Although the lessons are designed to be teacher-led, independent adult learners (A1–C2) can open any lesson with zero login to study the five pre-taught words (pronunciation, levelled definition, word families, collocations and usage notes), read the CEFR-levelled text, test themselves with the recall flashcards, quiz and gap-fill, download the printable Vocabulary Review PDF, and practise the discussion questions aloud or with a tutor.',
+      'Yes. Although the lessons are designed to be teacher-led, independent adult learners (A1–C2) can open any lesson with zero login to study the five pre-taught words (pronunciation, levelled definition, word families, collocations and usage notes), read the CEFR-levelled text, test themselves with the recall flashcards, quiz and gap-fill, download the printable Vocabulary Review PDF, or attach that downloaded study file into ChatGPT, Claude, or Gemini Pro with our free AI tutor prompt on this page for guided speaking practice.',
   },
   {
     question: 'What if my student wants a lesson on a specific job or topic not in the free library?',
@@ -228,3 +228,18 @@ export const freeLibraryFaq = [
       'You can create a student profile in PlanWise ESL (5-day unlimited free trial, no credit card) to generate a complete CEFR A1–C2 lesson on any topic in 1–2 minutes, with automatic per-student vocabulary tracking, cross-lesson recycling, and a password-free learner flashcard dashboard.',
   },
 ];
+
+export const soloLearnerAiGuide = {
+  heading: 'Studying on your own? Practise any free lesson with AI',
+  intro:
+    'If you want extra speaking practice or cannot afford private classes right now, you can turn any free PlanWise ESL lesson into a structured 1-on-1 AI practice session with zero login or subscription:',
+  steps: [
+    'Open any free A1–C2 lesson and click "Download for PDF" at the top (it saves a clean HTML study file—or copy the lesson page link).',
+    'Open a capable AI assistant such as the latest ChatGPT, Claude, or Gemini Pro (text or voice mode) and attach the downloaded file or paste the lesson link.',
+    'Paste the teacher prompt below so the AI follows the lesson’s exact CEFR level and 8-stage flow without drifting above your level.',
+  ],
+  prompt:
+    "Act as a friendly, patient English conversation teacher. Teach me the attached PlanWise ESL lesson step by step at its CEFR level: (1) start with 2 warm-up questions one at a time, (2) check I understand each of the 5 target words and ask me to make my own sentence with each, (3) discuss the reading and check comprehension, (4) run the practice exercises, and (5) finish with the discussion questions, encouraging me to use today's 5 target words. Ask one question at a time, keep your turns short so I do most of the talking, and gently correct my phrasing after I reply.",
+  modelTip:
+    'Model tip: This works best with a strong modern model (such as the latest ChatGPT, Claude, or Gemini Pro—ideally in voice mode for speaking practice). Smaller or older free models sometimes talk too much or drift above your CEFR level; if that happens, simply reply: "Shorter answers please, one question at a time, and keep the English at my CEFR level."',
+};

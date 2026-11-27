@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { trackPublicLibraryEvent } from "@/lib/public-library-analytics";
+import { trackEvent } from "@/lib/analytics";
 import { lessonPath } from "@shared/lesson-url";
 import { Link, useRoute } from "wouter";
-import { libraryDesign, lessonDesign, freeLibraryTeachingGuide, freeLibraryFaq } from "@shared/lesson-pedagogy";
+import { libraryDesign, lessonDesign, freeLibraryTeachingGuide, freeLibraryFaq, soloLearnerAiGuide } from "@shared/lesson-pedagogy";
 import { useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -16,8 +17,10 @@ import {
   BookOpen,
   Briefcase,
   Bus,
+  Check,
   CheckCircle2,
   Coins,
+  Copy,
   FileDown,
   Film,
   FlaskConical,
@@ -205,7 +208,19 @@ export default function PublicLessonsIndexPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedTag, setSelectedTag] = useState<string>("all");
   const [selectedThemeLevel, setSelectedThemeLevel] = useState<string>("all");
+  const [copiedAiPrompt, setCopiedAiPrompt] = useState(false);
   const pendingFilterAction = useRef<{ level: string | undefined; delay: number } | null>(null);
+
+  const copyAiPrompt = async () => {
+    try {
+      await navigator.clipboard?.writeText(soloLearnerAiGuide.prompt);
+      setCopiedAiPrompt(true);
+      trackEvent("public_library_ai_prompt_copied", { location: "library_index" });
+      window.setTimeout(() => setCopiedAiPrompt(false), 2500);
+    } catch {
+      // Clipboard may be unavailable in restricted contexts.
+    }
+  };
 
   useEffect(() => {
     setSelectedThemeLevel("all");
@@ -721,6 +736,35 @@ export default function PublicLessonsIndexPage() {
                 </tbody>
               </table>
             </div>
+          </section>
+
+          <section
+            id="self-study-with-ai"
+            className="mt-8 rounded-2xl bg-amber-50/60 border border-amber-200 p-6 md:p-8 shadow-sm"
+          >
+            <h2 className="text-2xl font-bold text-brand-navy mb-2">
+              {soloLearnerAiGuide.heading}
+            </h2>
+            <p className="text-slate-700 mb-4 max-w-3xl">
+              {soloLearnerAiGuide.intro}
+            </p>
+            <ol className="list-decimal list-inside space-y-1.5 text-sm text-slate-700 mb-4">
+              {soloLearnerAiGuide.steps.map((step) => (
+                <li key={step}>{step}</li>
+              ))}
+            </ol>
+            <div className="rounded-xl border border-amber-200 bg-white p-4 font-mono text-xs leading-relaxed text-slate-800 mb-4">
+              {soloLearnerAiGuide.prompt}
+            </div>
+            <div className="flex flex-wrap items-center gap-3">
+              <Button type="button" variant="outline" onClick={() => void copyAiPrompt()} className="bg-white">
+                {copiedAiPrompt ? <Check className="mr-2 h-4 w-4 text-emerald-600" /> : <Copy className="mr-2 h-4 w-4" />}
+                {copiedAiPrompt ? "Copied AI Tutor Prompt" : "Copy AI Tutor Prompt"}
+              </Button>
+            </div>
+            <p className="mt-3 text-xs text-slate-600 leading-relaxed max-w-3xl">
+              {soloLearnerAiGuide.modelTip}
+            </p>
           </section>
 
           <section

@@ -6,7 +6,7 @@ import { CEFR_LEVEL_NAMES, lessonContentsParts, joinList, levelText, lessonPubli
 import { expressionItemsOf, withoutMarks } from '@shared/lesson-expressions';
 import { publicNav } from '@shared/marketing-pages';
 import { founderPerson } from '@shared/site-facts';
-import { lessonStages, lessonTeaches, lessonDesign, lessonDifference, libraryDesign, freeLibraryTeachingGuide, freeLibraryFaq } from '@shared/lesson-pedagogy';
+import { lessonStages, lessonTeaches, lessonDesign, lessonDifference, libraryDesign, freeLibraryTeachingGuide, freeLibraryFaq, soloLearnerAiGuide } from '@shared/lesson-pedagogy';
 import {
   PUBLIC_LESSON_TAGS,
   PUBLIC_LESSON_TAG_DESCRIPTIONS,
@@ -662,6 +662,13 @@ export function buildLessonIndexHtml(
         </tbody>
       </table>
     </section>`;
+  const soloAiHtml = `<section id="self-study-with-ai">
+      <h2>${e(soloLearnerAiGuide.heading)}</h2>
+      <p>${e(soloLearnerAiGuide.intro)}</p>
+      <ol>${soloLearnerAiGuide.steps.map((s) => `<li>${e(s)}</li>`).join('')}</ol>
+      <blockquote><p>${e(soloLearnerAiGuide.prompt)}</p></blockquote>
+      <p><small>${e(soloLearnerAiGuide.modelTip)}</small></p>
+    </section>`;
   const faqHtml = `<section id="free-library-faq">
       <h2>Frequently Asked Questions About Free ESL Lessons</h2>
       ${freeLibraryFaq.map((f) => `<h3>${e(f.question)}</h3><p>${e(f.answer)}</p>`).join('\n      ')}
@@ -683,6 +690,7 @@ export function buildLessonIndexHtml(
     ${themeSection}
     ${listing}
     ${guideHtml}
+    ${soloAiHtml}
     ${faqHtml}
     <aside class="lp-cta">
       <h2>Need a lesson on a different topic?</h2>

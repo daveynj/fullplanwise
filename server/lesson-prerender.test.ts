@@ -657,4 +657,12 @@ describe("CollectionPage free-access and dual-audience metadata", () => {
       expect(collection?.audience?.map((a: any) => a.educationalRole)).toEqual(["teacher", "student"]);
     }
   });
+
+  it("renders the solo-learner AI tutor prompt guide and model tip on /esl-lessons", async () => {
+    getPublicLessonSummaries.mockResolvedValue([{ ...baseLesson, publicSlug: "travel-plans", publicLevel: "b1", tags: ["travel"] }]);
+    const html = await injectLessonPrerender(TEMPLATE, "/esl-lessons");
+    expect(html).toContain('id="self-study-with-ai"');
+    expect(html).toContain("Studying on your own? Practise any free lesson with AI");
+    expect(html).toContain("Model tip:");
+  });
 });
