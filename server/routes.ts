@@ -1898,7 +1898,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const level = typeof req.query.level === 'string' ? req.query.level.toUpperCase() : undefined;
       const validLevel = level && ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'].includes(level) ? level : undefined;
       const lessons = await storage.getPublicLessonSummaries(validLevel);
-      res.set('Cache-Control', 'public, max-age=300');
+      // Revalidate on refresh so reviewed tag edits reach browse filters.
+      res.set('Cache-Control', 'public, no-cache');
       res.json({ lessons });
     } catch (error: any) {
       console.error('Error fetching public lesson index:', error);

@@ -130,7 +130,7 @@ export function AdminPublicTagBackfill() {
       <CardContent className="space-y-4">
         <div className="rounded-lg border border-amber-200 bg-white/80 p-3 text-sm text-amber-950">
           <p className="font-semibold">Approved tags become public.</p>
-          <p className="mt-1">Use only the public title and reading shown here. Private student requests are not used. Existing tags are never replaced.</p>
+          <p className="mt-1">Use only the public title and reading shown here. Private student requests are not used. This backfill never replaces existing tags; use “Correct existing public tags” below for reviewed corrections or removal.</p>
         </div>
         {error && (
           <div role="alert" className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-900">

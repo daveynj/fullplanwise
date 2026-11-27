@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { PgDialect } from "drizzle-orm/pg-core";
-import { publicTagFingerprint } from "./public-lesson-tags";
+import { publicTagFingerprint, publicTagEditFingerprint } from "./public-lesson-tags";
 
 const mocks = vi.hoisted(() => ({ transaction: vi.fn(), select: vi.fn() }));
 vi.mock("./db", () => ({ db: mocks, pool: {} }));
@@ -9,6 +9,7 @@ vi.mock("./session-store", () => ({ createSessionStore: () => ({}) }));
 vi.mock("./lesson-url-schema", () => ({ ensureLessonUrlSchema: vi.fn(), LESSON_URL_LOCK: 420003 }));
 import { storage } from "./storage";
 import { lessons } from "@shared/schema";
+import type { PublicLessonTag } from "@shared/public-lesson-tags";
 
 const source = { id: 7, title: "Travel", cefrLevel: "B1", publicReading: "At the airport" };
 const approval = { id: 7, fingerprint: publicTagFingerprint(source), tags: ["travel" as const] };
@@ -25,6 +26,61 @@ function setup(rows: object[]) {
 beforeEach(() => vi.resetAllMocks());
 
 describe("guarded public tag persistence", () => {
+  it.each([{ tags: ["culture"] }, { tags: [] }])("replaces or clears approved tags under a row lock: %j", async ({ tags }) => {
+    const row = { ...source, tags: ["travel"], isPublic: true };
+    const tx = setup([row]);
+    await storage.editReviewedPublicTags({ id: 7, fingerprint: publicTagEditFingerprint(row), tags: tags as PublicLessonTag[] });
+    expect(tx.write).toHaveBeenCalledWith({ tags });
+    expect(Object.keys(tx.select.mock.calls[0][0])).toEqual(["id", "title", "cefrLevel", "publicReading", "tags", "isPublic"]);
+  });
+
+  it.each([
+    undefined,
+    { tags: ["food"] },
+    { tags: [] },
+    { tags: ["travel", "hidden legacy label"] },
+    { title: "Changed" },
+    { cefrLevel: "C2" },
+    { publicReading: "Changed" },
+    { isPublic: false },
+  ])("prevents overwriting a concurrently edited or unavailable lesson: %j", async (change) => {
+    const row = { ...source, tags: ["travel"], isPublic: true };
+    const tx = setup(change ? [{ ...row, ...change }] : []);
+    await expect(storage.editReviewedPublicTags({
+      id: 7, tags: [], fingerprint: publicTagEditFingerprint(row),
+    })).rejects.toThrow("nothing was saved");
+    expect(tx.update).not.toHaveBeenCalled();
+  });
+
+  it("searches public title/ID only and selects no private source or full content", async () => {
+    let selection: any;
+    let condition: any;
+    const limit = vi.fn(async () => []);
+    mocks.select.mockImplementation((columns) => {
+      selection = columns;
+      return { from: () => ({ where: (sql: any) => {
+        condition = sql;
+        return { orderBy: () => ({ limit }) };
+      } }) };
+    });
+    await storage.findPublicTagLessons("7", 2, 11);
+    expect(Object.keys(selection)).toEqual(["id", "title", "cefrLevel", "tags"]);
+    const filters = new PgDialect().sqlToQuery(condition);
+    expect(filters.sql).toContain('"lessons"."is_public"');
+    expect(filters.sql).toContain('"lessons"."title"');
+    expect(filters.sql).toContain('"lessons"."id"::text');
+    expect(filters.sql).not.toMatch(/topic|notes|student|teacher|content/i);
+    expect(filters.params).toEqual([true, 2, "7", "%7%"]);
+    expect(limit).toHaveBeenCalledWith(11);
+  });
+
+  it("loads an edit preview through a public-only allowlisted projection", async () => {
+    const select = vi.fn((_columns: unknown) => ({ from: () => ({ where: async () => [{ ...source, tags: ["travel"] }] }) }));
+    mocks.select.mockImplementation(select);
+    expect(await storage.getPublicTagEditSource(7)).toMatchObject({ id: 7, tags: ["travel"] });
+    expect(Object.keys(select.mock.calls[0][0])).toEqual(["id", "title", "cefrLevel", "publicReading", "tags"]);
+  });
+
   it("locks and checks the reviewed public source before writing tags only", async () => {
     const tx = setup([{ ...source, tags: [], isPublic: true }]);
     expect(await storage.applyReviewedPublicTags([approval])).toBe(1);

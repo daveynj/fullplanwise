@@ -56,6 +56,18 @@ describe("public tag filtering", () => {
   it("deduplicates known tags and does not display arbitrary/private labels", () => {
     expect(publicTags(["travel", "travel", "private student note", "toString"])).toEqual(["travel"]);
   });
+  it("moves corrected lessons between topic filters and clears tag searches without hiding the lesson", () => {
+    const row = { title: "A new tool", cefrLevel: "B1", publicCategory: "business", tags: ["travel"] };
+    expect(filterPublicLessons([row], "", "all", "travel", {})).toHaveLength(1);
+    const corrected = { ...row, tags: ["technology"] };
+    expect(filterPublicLessons([corrected], "", "all", "travel", {})).toEqual([]);
+    expect(filterPublicLessons([corrected], "Technology", "business", "technology", {})).toEqual([corrected]);
+    const cleared = { ...row, tags: [] };
+    expect(filterPublicLessons([cleared], "", "all", "travel", {})).toEqual([]);
+    expect(filterPublicLessons([cleared], "Travel", "all", "all", {})).toEqual([]);
+    expect(filterPublicLessons([cleared], "", "business", "all", {})).toEqual([cleared]);
+    expect(filterPublicLessons([cleared], "A new tool", "all", "all", {})).toEqual([cleared]);
+  });
 });
 
 describe("review validation", () => {

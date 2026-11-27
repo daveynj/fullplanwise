@@ -22,8 +22,37 @@ export const PUBLIC_LESSON_TAGS = {
 
 export type PublicLessonTag = keyof typeof PUBLIC_LESSON_TAGS;
 export const publicLessonTagSchema = z.enum(Object.keys(PUBLIC_LESSON_TAGS) as [PublicLessonTag, ...PublicLessonTag[]]);
+const reviewTokenSchema = z.string().regex(/^[a-f0-9]{48}$/);
+export const publicTagSearchSchema = z.object({
+  search: z.string().trim().max(120),
+  afterId: z.number().int().nonnegative().default(0),
+}).strict();
+export const publicTagEditPreviewSchema = z.object({ id: z.number().int().positive() }).strict();
+export const reviewedTagEditSchema = z.object({
+  id: z.number().int().positive(),
+  reviewToken: reviewTokenSchema,
+  reviewed: z.literal(true),
+  tags: z.array(publicLessonTagSchema).max(4).refine((tags) => new Set(tags).size === tags.length, "Duplicate tags"),
+}).strict();
+
+export interface PublicTagSearchResult {
+  lessons: Array<{ id: number; title: string; cefrLevel: string; tags: PublicLessonTag[] }>;
+  nextAfterId: number | null;
+}
+
+export interface PublicTagEditPreview {
+  id: number;
+  title: string;
+  cefrLevel: string;
+  publicExcerpt: string;
+  tags: PublicLessonTag[];
+  hasOtherTags: boolean;
+  reviewToken: string;
+  expiresAt: number;
+}
+
 export const reviewedTagBatchSchema = z.object({
-  reviewToken: z.string().regex(/^[a-f0-9]{48}$/),
+  reviewToken: reviewTokenSchema,
   approvals: z.array(z.object({
     id: z.number().int().positive(),
     reviewed: z.literal(true),

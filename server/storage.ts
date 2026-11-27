@@ -31,7 +31,7 @@ import { ABANDONED_JOB_AGE_MS } from "./lesson-jobs";
 import { ensureLessonUrlSchema, LESSON_URL_LOCK } from "./lesson-url-schema";
 import { availableLessonSlug } from "@shared/lesson-url";
 import { lessonIndexNowPaths, notifyIndexNow } from "./indexnow";
-import { publicTagFingerprint, TagReviewConflict, type PublicTagSource } from "./public-lesson-tags";
+import { publicTagFingerprint, publicTagEditFingerprint, TagReviewConflict, type PublicTagSource } from "./public-lesson-tags";
 import { publicTags, type PublicLessonTag } from "@shared/public-lesson-tags";
 import { SQL, eq, and, desc, count, or, ilike, gte, sql, inArray, ne, isNull } from "drizzle-orm";
 
@@ -143,6 +143,9 @@ export interface IStorage {
   getPublicLessonSummaries(cefrLevel?: string): Promise<Array<Pick<Lesson, 'id' | 'title' | 'cefrLevel' | 'publicCategory' | 'createdAt' | 'publicSlug' | 'publicLevel' | 'tags'>>>;
   getPublicTagCandidates(afterId: number, limit: number): Promise<PublicTagSource[]>;
   applyReviewedPublicTags(approvals: Array<{ id: number; fingerprint: string; tags: PublicLessonTag[] }>): Promise<number>;
+  findPublicTagLessons(search: string, afterId: number, limit: number): Promise<Array<{ id: number; title: string; cefrLevel: string; tags: string[] | null }>>;
+  getPublicTagEditSource(id: number): Promise<(PublicTagSource & { tags: string[] | null }) | undefined>;
+  editReviewedPublicTags(approval: { id: number; fingerprint: string; tags: PublicLessonTag[] }): Promise<void>;
   copyLessonToUser(lessonId: number, userId: number): Promise<Lesson>;
 
   // Admin methods
@@ -1262,6 +1265,34 @@ export class DatabaseStorage implements IStorage {
       .where(and(eq(lessons.isPublic, true), sql`${lessons.id} > ${afterId}`,
         sql`coalesce(cardinality(${lessons.tags}), 0) = 0`))
       .orderBy(lessons.id).limit(limit);
+  }
+
+  async findPublicTagLessons(search: string, afterId: number, limit: number) {
+    // Literal public-title search; never match a teacher's original request.
+    const escaped = search.replace(/[\\%_]/g, "\\$&");
+    const match = /^\d+$/.test(search)
+      ? or(sql`${lessons.id}::text = ${search}`, ilike(lessons.title, `%${escaped}%`))
+      : ilike(lessons.title, `%${escaped}%`);
+    return db.select({ id: lessons.id, title: lessons.title, cefrLevel: lessons.cefrLevel, tags: lessons.tags })
+      .from(lessons).where(and(eq(lessons.isPublic, true), sql`${lessons.id} > ${afterId}`, match))
+      .orderBy(lessons.id).limit(limit);
+  }
+
+  async getPublicTagEditSource(id: number) {
+    const [row] = await db.select({ ...publicTagSourceColumns, tags: lessons.tags }).from(lessons)
+      .where(and(eq(lessons.id, id), eq(lessons.isPublic, true)));
+    return row;
+  }
+
+  async editReviewedPublicTags(approval: { id: number; fingerprint: string; tags: PublicLessonTag[] }): Promise<void> {
+    await db.transaction(async (tx) => {
+      const [row] = await tx.select({ ...publicTagSourceColumns, tags: lessons.tags, isPublic: lessons.isPublic })
+        .from(lessons).where(eq(lessons.id, approval.id)).orderBy(lessons.id).for("update");
+      if (!row || !row.isPublic || publicTagEditFingerprint(row) !== approval.fingerprint) {
+        throw new TagReviewConflict("This lesson or its tags changed, or it is no longer public. Review it again; nothing was saved.");
+      }
+      await tx.update(lessons).set({ tags: approval.tags }).where(eq(lessons.id, approval.id));
+    });
   }
 
   async applyReviewedPublicTags(approvals: Array<{ id: number; fingerprint: string; tags: PublicLessonTag[] }>): Promise<number> {

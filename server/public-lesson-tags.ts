@@ -50,4 +50,10 @@ export function publicTagFingerprint(source: PublicTagSource): string {
   return createHash("sha256").update(JSON.stringify([source.id, source.title, source.cefrLevel, source.publicReading])).digest("hex");
 }
 
+// Include the exact stored labels (even legacy ones) so hidden/parallel edits
+// invalidate a review. Only the digest goes into the server-side session.
+export function publicTagEditFingerprint(source: PublicTagSource & { tags: string[] | null }): string {
+  return createHash("sha256").update(JSON.stringify([publicTagFingerprint(source), source.tags])).digest("hex");
+}
+
 export class TagReviewConflict extends Error {}

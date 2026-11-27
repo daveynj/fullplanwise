@@ -19,7 +19,7 @@ const lessons = [
 
 function show() {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
-  return render(createElement(QueryClientProvider, { client }, createElement(PublicLessonsIndexPage)));
+  return { ...render(createElement(QueryClientProvider, { client }, createElement(PublicLessonsIndexPage))), client };
 }
 
 beforeEach(() => {
@@ -28,6 +28,31 @@ beforeEach(() => {
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); });
 
 describe("public lesson topic tags", () => {
+  it("updates topic counts and matches after reviewed corrections and clearing are refreshed", async () => {
+    const { client } = show();
+    await screen.findByRole("button", { name: "Travel (1)" });
+    // The admin save invalidates this same query family, fetching fresh summaries.
+    vi.mocked(fetch).mockResolvedValueOnce({
+      ok: true, json: async () => ({ lessons: lessons.map((lesson) => lesson.id === 1 ? { ...lesson, tags: ["technology"] } : lesson) }),
+    } as Response);
+    await client.invalidateQueries({ queryKey: ["public-lesson-index"] });
+    await screen.findByRole("button", { name: "Technology (2)" });
+    expect(screen.queryByRole("button", { name: "Travel (1)" })).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "Technology (2)" }));
+    expect(screen.getByText(lessons[0].title)).toBeTruthy();
+    expect(screen.getByText(lessons[1].title)).toBeTruthy();
+
+    vi.mocked(fetch).mockResolvedValueOnce({
+      ok: true, json: async () => ({ lessons: lessons.map((lesson) => lesson.id === 1 ? { ...lesson, tags: [] } : lesson) }),
+    } as Response);
+    await client.invalidateQueries({ queryKey: ["public-lesson-index"] });
+    await screen.findByRole("button", { name: "Technology (1)" });
+    expect(screen.queryByText(lessons[0].title)).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "All tags" }));
+    expect(screen.getByText(lessons[0].title)).toBeTruthy();
+    expect(screen.getByText(lessons[2].title)).toBeTruthy();
+  });
+
   it("shows curated tags, counts them, and combines selected topic tag with search labels", async () => {
     show();
     await screen.findByText("Planning a trip with artificial intelligence");
