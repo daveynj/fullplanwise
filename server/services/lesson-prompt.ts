@@ -154,6 +154,13 @@ const TEACHER_NOTES_GUIDANCE =
   'The request may include notes about the student, such as their age, job, interests or things to avoid. Use these notes to shape the lesson (for example, choose situations and examples that suit the student), but do not repeat the notes themselves in the lesson. The student sees the lesson, so titles and text should talk about the topic, not describe the student.';
 
 /**
+ * One spelling standard per lesson. Lessons used to mix British and American
+ * forms ("humour" next to "satirize"), which a teacher notices at once.
+ */
+export const SPELLING_GUIDANCE =
+  'Use British English spelling and vocabulary everywhere in the lesson, for example colour, humour, centre, organise, recognise, satirise, travelled, practise (verb). Mention an American form only in a usage note, when the difference is useful to the student.';
+
+/**
  * The sections of a lesson, in the order the prompt asks for them and the
  * lesson stores them.
  */
@@ -213,6 +220,8 @@ A ${cefrLevel} student ${g.canUnderstand}
 The five target words are the new language in this lesson. Everything else the student reads (the reading text, warm-up, questions, activity instructions, sentence frames, exercises and quiz) should be pitched at a ${cefrLevel} student's level, so their attention goes to speaking and to the new words. Teacher notes are for the teacher and can be written normally.
 
 ${g.languageNote}
+
+${SPELLING_GUIDANCE}
 </language_level>
 
 <conversation_style>
@@ -255,11 +264,11 @@ Each word needs:
 - definition (clear and simple, ${g.definitionGuidance})
 - example (natural usage sentence; apart from the target word, at the student's level)
 - collocations (2-3 common phrases)
-- wordFamily (related word forms with description)
-- usageNotes (when and how to use it)
+- wordFamily (related word forms with description: real forms built from the word, like fulfil, fulfilled, fulfilling for "fulfilment"; not the separate parts of a compound word. Fewer forms, or none, is fine when the word has few)
+- usageNotes (when and how to use it; every grammar tip must be true of this word. Only phrasal verbs can be "split", so never describe a one-word verb like "downplay" as separable)
 - pronunciation with syllables array, stressIndex number, and phoneticGuide using English letters only (like "eg-ZAM-pul"), no IPA symbols
 - imagePrompt (40-80 words describing a scene that illustrates the word, ending with "No text visible")
-- semanticMap with synonyms, antonyms, relatedConcepts, contexts, and associatedWords
+- semanticMap with synonyms, antonyms, relatedConcepts, contexts, and associatedWords. Antonyms must be real opposites; give fewer, or an empty list, when the word has no clear opposite
 </requirements>`;
 }
 
@@ -273,7 +282,25 @@ Include all 5 vocabulary words naturally, each appearing 2-3 times with context 
 </requirements>`;
 }
 
-const COMPREHENSION_STEP = `Write exactly 5 questions testing vocabulary understanding (one per word). These test whether students know the vocabulary, NOT whether they remember facts from the reading. Keep the questions and answer options simple, so the only thing being tested is the target word.
+/** Levels where the vocabulary check can use clearly different wrong answers. */
+const EASY_DISTRACTOR_LEVELS = new Set(['A1', 'A2']);
+
+/**
+ * How believable the wrong answers in the vocabulary check must be. At B1 and
+ * above, absurd options ("I ate a boundary for lunch") can be ruled out
+ * without knowing the word, so the check tests nothing.
+ */
+function distractorGuidance(cefrLevel: string): string {
+  if (EASY_DISTRACTOR_LEVELS.has(cefrLevel)) {
+    return 'The wrong options can be clearly different from the right answer, but each must still be a real, sensible meaning or sentence, never a silly one.';
+  }
+  return `Every wrong option must be believable to a ${cefrLevel} student who does not yet know the word well: a near-synonym, a related idea, a meaning the word does not have, or a sentence that uses the word in the wrong sense. Write them in the same style and length as the right answer. Never use absurd options that a student can rule out without knowing the word, like "I ate a boundary for lunch" or "He drank a glass of fulfilment".`;
+}
+
+function comprehensionStep(cefrLevel: string): string {
+  return `Write exactly 5 questions testing vocabulary understanding (one per word). These test whether students know the vocabulary, NOT whether they remember facts from the reading. Keep the questions simple, so the only thing being tested is the target word.
+
+${distractorGuidance(cefrLevel)}
 
 <good_formats>
 - "What does [word] mean?"
@@ -286,6 +313,7 @@ const COMPREHENSION_STEP = `Write exactly 5 questions testing vocabulary underst
 </avoid>
 
 <critical>You MUST randomize the position of the correct answer for each question. Do not always place it in the same position (e.g., always B). Distribute correct answers randomly across A, B, C, and D.</critical>`;
+}
 
 function sentenceFramesStep(cefrLevel: string, g: LevelGuidance): string {
   return `Create 3 sentence frames that help the student say the things they will want to say in this lesson's discussions. Each needs three tiers:
@@ -329,6 +357,7 @@ For each sentence:
 </requirements>`;
 
 const QUIZ_STEP = `Write 5 quiz questions about the lesson. Mix multiple choice and true/false. Use simple, clear wording: the quiz checks what the student learned, not how well they can read difficult questions.
+Every question must check something this lesson taught: the meaning, use or form of the 5 target words, or the ideas in the reading. Never ask about facts the lesson does not teach, such as where a word comes from, its history or other trivia.
 <critical>For multiple choice, you MUST randomize the position of the correct answer. Do not use a fixed pattern.</critical>
 <requirements>Include clear explanations for all answers.</requirements>`;
 
@@ -500,7 +529,7 @@ ${readingStep(g, expressionsReadingNote(params))}
 </step>
 
 <step number="3" title="CREATE 5 VOCABULARY CHECK QUESTIONS">
-${COMPREHENSION_STEP}
+${comprehensionStep(cefrLevel)}
 </step>
 
 <step number="4" title="DESIGN 3 SENTENCE FRAMES">
@@ -585,7 +614,7 @@ function sectionInstructions(
       if (!lesson.targetWords.length) return `${vocabularyChoice(cefrLevel, g)}\n\n${vocabularyRequirements(g)}`;
       return `Write the vocabulary entries for exactly these 5 words, in this order: ${words}.${lesson.readingParagraphs.length ? ' Explain each word in the sense it has in the reading text.' : ''}\n\n${vocabularyRequirements(g)}`;
     case 'comprehension':
-      return COMPREHENSION_STEP;
+      return comprehensionStep(cefrLevel);
     case 'sentenceFrames':
       return sentenceFramesStep(cefrLevel, g);
     case 'cloze':
@@ -722,8 +751,8 @@ function expressionTemplate(kind: ExpressionKind, detailed: boolean): string {
       "similar": "simpler word or phrase",
       "example": "A new, natural example sentence with the **expression** marked.",
       "notes": [
-        {"text": "A short tip about a common mistake:", "right": "correct form", "wrong": "common mistake"},
-        {"text": "Another short, useful tip."}
+        {"text": "A short, useful tip."},
+        {"text": "Only if learners really make this mistake, a short tip about it (otherwise leave this note out):", "right": "correct form", "wrong": "the real mistake"}
       ],
       "tone": "",
       "yourTurn": "A friendly question that invites the student to use the expression about their own life?"
@@ -796,7 +825,7 @@ Each expression needs:
 - meaning: clear and simple (${g.definitionGuidance}), and easier than the expression itself
 - similar: a simpler word or phrase with a similar meaning, or "" when there is none
 - example: a new, natural sentence at the student's level, with the expression marked like **this**
-- notes: 1 or 2 short, useful tips. For a phrasal verb: whether it can be split, or what the small word adds. For an idiom: the picture behind it, when that helps the student remember it. Say if it is informal, or mainly British or American. When a tip is about a common mistake, put the correct form in "right" and the mistake in "wrong".
+- notes: 1 or 2 short, useful tips, and every tip must be true of this expression. For a phrasal verb that takes an object, say whether the object can go in the middle ("take it on", "take on the job"); with a pronoun it must go in the middle. For a phrasal verb with no object, or one that is never split, say what the small word adds instead, not that it "cannot be split". For an idiom or fixed expression: the picture behind it, when that helps the student remember it; never give an idiom a splitting tip. Say if it is informal, or mainly British or American. Use "right" and "wrong" only for a mistake learners really make; never invent a wrong form nobody would say (like "do the mathematic"), and leave both out when there is no real mistake to warn about.
 - tone: "informal" or "formal" when it matters, otherwise ""
 - yourTurn: one friendly question that invites the student to use the expression to talk about their own life or opinions
 </requirements>
@@ -839,7 +868,7 @@ ${TEACHER_NOTES_GUIDANCE}
 
 Pick ONE grammar point that a ${cefrLevel} student is ready for and that is useful for talking about this topic.
 
-Write the description, examples and explanations in plain, natural English that a ${cefrLevel} student can follow. Example sentences should sound like things people really say in conversation.
+Write the description, examples and explanations in plain, natural English that a ${cefrLevel} student can follow. Example sentences should sound like things people really say in conversation. ${SPELLING_GUIDANCE}
 
 Return ONLY a JSON object (no markdown, no commentary) with this exact structure:
 {

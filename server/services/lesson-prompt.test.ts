@@ -9,6 +9,7 @@ import {
   getLevelGuidance,
   LESSON_SECTION_NAMES,
   LESSON_SECTION_TYPES,
+  SPELLING_GUIDANCE,
   type LessonSectionContext,
 } from "./lesson-prompt";
 import { OpenRouterService } from "./openRouter";
@@ -286,5 +287,58 @@ describe("idioms and phrasal verbs prompt", () => {
 
   it("is not offered for A1", () => {
     expect(() => buildExpressionsPrompt(withSwitch("A1"), lesson)).toThrow("not offered for A1 lessons");
+  });
+});
+
+// Faults found reading live lessons on 28 Nov 2026: silly wrong answers at B2,
+// quiz trivia the lesson never taught, invented phrasal-verb "mistakes",
+// mixed British and American spelling, and forced word families and opposites.
+describe("lesson quality rules", () => {
+  const lesson: LessonSectionContext = {
+    title: "Getting to Work",
+    targetWords: ["commute", "deadline", "flexible", "balance", "routine"],
+    readingParagraphs: ["Sam puts off small jobs until the evening."],
+    discussionQuestions: ["How do you relax after work?"],
+  };
+  const withSwitch = (level: string) =>
+    ({ ...params(level), components: ["warm-up", "reading", "expressions"] }) as LessonGenerateParams;
+
+  it.each(LEVELS)("%s lessons and their sections use one spelling standard", (level) => {
+    expect(buildLessonPrompt(params(level))).toContain(SPELLING_GUIDANCE);
+    expect(buildLessonSectionPrompt("quiz", params(level), lesson)).toContain(SPELLING_GUIDANCE);
+    expect(buildGrammarSpotlightPrompt("Daily routines", level)).toContain(SPELLING_GUIDANCE);
+  });
+
+  it("asks for believable wrong answers in the vocabulary check from B1 up", () => {
+    for (const level of ["B1", "B2", "C1", "C2"]) {
+      expect(buildLessonPrompt(params(level))).toContain("Every wrong option must be believable");
+      expect(buildLessonSectionPrompt("comprehension", params(level), lesson)).toContain("Every wrong option must be believable");
+    }
+    for (const level of ["A1", "A2"]) {
+      expect(buildLessonPrompt(params(level))).toContain("never a silly one");
+      expect(buildLessonPrompt(params(level))).not.toContain("Every wrong option must be believable");
+    }
+  });
+
+  it("keeps the quiz to what the lesson taught", () => {
+    for (const prompt of [buildLessonPrompt(params("B2")), buildLessonSectionPrompt("quiz", params("B2"), lesson)]) {
+      expect(prompt).toContain("Every question must check something this lesson taught");
+      expect(prompt).toContain("where a word comes from");
+    }
+  });
+
+  it("does not force word families, opposites or splitting tips", () => {
+    const prompt = buildLessonPrompt(params("C1"));
+    expect(prompt).toContain("not the separate parts of a compound word");
+    expect(prompt).toContain("Antonyms must be real opposites");
+    expect(prompt).toContain("Only phrasal verbs can be \"split\"");
+  });
+
+  it("only asks for right and wrong forms when learners really make the mistake", () => {
+    const prompt = buildExpressionsPrompt(withSwitch("C2"), lesson);
+    expect(prompt).toContain("never invent a wrong form nobody would say");
+    expect(prompt).toContain("never give an idiom a splitting tip");
+    expect(prompt).not.toContain("A short tip about a common mistake:");
+    expect(prompt).toContain("Only if learners really make this mistake");
   });
 });
