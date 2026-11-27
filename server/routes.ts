@@ -16,6 +16,7 @@ import { validateGrammarSpotlightForStorage } from "../types/lessonContentTypes"
 import { addLessonPictures, lessonModelFor, wordsToAvoid, writeLessonText } from "./lesson-generation";
 import { testImageGeneration } from "./services/image-generation.service";
 import { toPublicLessonView } from "./public-lesson-view";
+import { publicTags } from "@shared/public-lesson-tags";
 import { registerPublicLessonTagRoutes } from "./public-lesson-tag-routes";
 import { serveLessonShareImage } from "./lesson-share-image";
 import { ensureStudentPageSchema } from "./student-page-schema";
@@ -1973,13 +1974,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Not found" });
 
       }
-      const { publicCategory } = req.body;
+      const { publicCategory, tags } = req.body;
+      const safeTags = Array.isArray(tags) ? publicTags(tags) : [];
 
-      console.log('Making lesson public:', { lessonId, publicCategory });
+      console.log('Making lesson public:', { lessonId, publicCategory, tags: safeTags });
 
       const updatedLesson = await storage.updateLesson(lessonId, {
         isPublic: true,
-        publicCategory: publicCategory || 'general-english'
+        publicCategory: publicCategory || 'general-english',
+        ...(safeTags.length > 0 ? { tags: safeTags } : {}),
       });
 
       console.log('Lesson updated successfully:', updatedLesson.id);

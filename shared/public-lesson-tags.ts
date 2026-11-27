@@ -12,6 +12,7 @@ export const PUBLIC_LESSON_TAGS = {
   food: "Food & cooking",
   relationships: "Relationships",
   culture: "Culture",
+  holidays: "Holidays & Celebrations",
   education: "Education",
   sport: "Sport & fitness",
   science: "Science",

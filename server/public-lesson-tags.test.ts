@@ -55,6 +55,8 @@ describe("public tag filtering", () => {
   });
   it("deduplicates known tags and does not display arbitrary/private labels", () => {
     expect(publicTags(["travel", "travel", "private student note", "toString"])).toEqual(["travel"]);
+    expect(publicTags(["holidays", "culture"])).toEqual(["holidays", "culture"]);
+    expect(suggestPublicTags({ title: "Christmas and New Year Celebrations", publicReading: "" }).suggestedTags).toContain("holidays");
   });
   it("moves corrected lessons between topic filters and clears tag searches without hiding the lesson", () => {
     const row = { title: "A new tool", cefrLevel: "B1", publicCategory: "business", tags: ["travel"] };
