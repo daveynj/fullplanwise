@@ -961,7 +961,7 @@ export const compareMagicSchoolDiffitPage: MarketingPage = {
           ['Levelling framework', 'US school grade levels (e.g. Grade 2–Grade 11+) rather than adult ESL progression', 'Strict CEFR A1–C2 rules per level (e.g. A1 definitions capped to the 500 most common words, <8 words; C1–C2 rich magazine nuance)'],
           ['Speaking scaffolding', 'General reading comprehension & classroom prompts; no adult ESL speaking frames', '3-tier v2_pedagogical speaking frames (Emerging, Developing, Expanding) + idioms/phrasal verbs with explicit right vs. wrong usage pairs'],
           ['Vocabulary instruction depth', 'Basic glossary or vocabulary list per passage', '5 pre-taught illustrated words: phonetic guide, levelled definition, 4 real-world examples, word family, collocations, usage notes & 5-part semantic map'],
-          ['Per-student memory & recycling', 'None — each generated resource starts fresh with no student word history', 'Tracks every word taught per student, avoids duplicates & recycles earlier words naturally into future readings, quizzes & practice sections'],
+          ['Memory between lessons', 'None: each generated resource starts fresh', 'After "We did this", the lesson\'s words join the student\'s list; later lessons avoid words they already know and reuse familiar ones where they fit'],
           ['Between-class student review', 'Google Docs / Classroom exports for K–12 classes', 'Zero-login student dashboard (past lessons + spaced-repetition flashcards + custom lessons on Unlimited) & printable color-coded Vocabulary Review PDF'],
           ['Pricing & trial', 'Free tiers with paid individual/school plans', `${trialText} (no credit card), then flat ${priceText} Unlimited lessons & students, cancel anytime`],
         ],
@@ -988,6 +988,12 @@ export const compareMagicSchoolDiffitPage: MarketingPage = {
           'Maintain your own external spreadsheet for student vocabulary—there is no automatic cross-lesson ESL recycling or spaced-repetition flashcard portal.',
         ],
       },
+    },
+    {
+      heading: 'What we checked, and when',
+      paragraphs: [
+        'On 28 November 2026 Diffit\'s homepage described "quality, print-ready resources for any instructional need", cited a survey of 2,517 elementary and secondary teachers, and said it is "trusted by thousands of schools & districts". Its levelling is by US school grade, not CEFR, and its public pages mention neither adult learners nor conversation lessons. Its pricing page did not load its plan details for us, so check web.diffit.me/pricing for current prices. MagicSchool AI\'s public pages describe a set of classroom tools for school teachers.',
+      ],
     },
     {
       heading: 'When MagicSchool AI or Diffit is the better choice',
@@ -1168,9 +1174,9 @@ export const studentMemoryProofPage: MarketingPage = {
 
 export const compareEngooPage: MarketingPage = {
   path: '/compare/engoo',
-  title: `${brand} vs Engoo Daily News: Free Lessons & Full Planner`,
+  title: `${brand} vs Engoo Daily News: Free Lessons, Made for Each Student`,
   description:
-    `Fair comparison of ${brand} vs Engoo Daily News: 180+ free zero-login A1–C2 lessons, printable study PDFs, custom topics & per-student vocab memory.`,
+    `Engoo Daily News vs ${brand}, checked 28 Nov 2026: what each lesson contains, who it suits, and when a tutor should use which. Both free to open.`,
   navLabel: 'PlanWise vs Engoo',
   eyebrow: 'Comparison',
   h1: 'PlanWise ESL vs. Engoo Daily News for ESL tutors',
@@ -1180,7 +1186,7 @@ export const compareEngooPage: MarketingPage = {
   ],
   verdict: {
     heading: 'PlanWise ESL vs. Engoo Daily News: Which should tutors use?',
-    text: `**Choose ${brand}** if you want both **180+ free zero-login A1–C2 conversation lessons** with downloadable 8-layer study PDFs *and* the ability to generate bespoke lessons on any topic in ${generationTime} that track each student’s vocabulary ([inspect our live 4-lesson, 0-duplicate proof](/compare/student-memory-proof)) and give them a private spaced-repetition flashcard dashboard (${trialText}, no card, then ${priceText} Unlimited). **Choose Engoo Daily News** if you specifically want a brand-new breaking news headline every morning and prefer a quick article-plus-discussion read.`,
+    text: `**Use Engoo Daily News** when you want today's news story with audio, free, in two minutes: it is excellent for that, and it covers Engoo levels 4–9 (roughly B1–C2). **Use ${brand}** when the lesson needs to be about your student rather than the news: any topic, any level from A1 to C2, five words taught in depth, speaking support at three levels, and a word list that carries into the next lesson. The [free library](/esl-lessons) (180+ lessons, no login) is the way to compare the two side by side; the per-student generator is the paid plan (${trialText}, no card, then ${priceText}).`,
   },
   sections: [
     {
@@ -1188,13 +1194,15 @@ export const compareEngooPage: MarketingPage = {
       table: {
         headers: ['', 'Engoo Daily News', brand],
         rows: [
-          ['Free zero-login access', 'Yes — free news articles & conversation materials with no login', 'Yes — 180+ free A1–C2 lessons in our [public library](/esl-lessons) with zero login & one-click PDF export'],
-          ['Lesson variety beyond daily news', 'Focused mainly on news articles + fixed conversation sheets', `Unlimited custom topics on your student’s job, hobbies, exams or seasonal themes in ${generationTime} (plus curated [Holidays & Celebrations](/esl-lessons/topics/holidays) & [Culture](/esl-lessons/topics/culture) packs)`],
-          ['Pedagogical depth per word', 'Word + short definition + pronunciation + 1–2 sentences before reading', '5 pre-taught illustrated words with pronunciation, levelled definition, 4 real-world examples, word family, collocations, usage notes & 5-part semantic map ([how it works](/how-it-works))'],
-          ['Scaffolding for beginners & shy speakers', 'Basic questions after reading', '3-tier speaking frames (Emerging, Developing, Expanding with model answers), recall flashcards, cloze, sentence unscramble, quiz & illustrated discussion'],
-          ['Student overlap risk', 'Students who study with multiple online tutors often see the same popular daily articles twice', 'Every generated lesson can be tailored uniquely to the student’s life, role and CEFR level (A1–C2)'],
-          ['Per-student vocabulary tracking & recycling', 'None — no record of words covered across classes', 'Remembers learned words, excludes accidental repeats, and weaves earlier words naturally into future readings & questions'],
-          ['Post-class study sheet & student portal', 'Web page only; no custom student flashcard hub or colour-coded PDF', 'Printable color-coded Vocabulary Review PDF + zero-login student dashboard with past lessons & spaced flashcards ([preview](/student-experience))'],
+          ['Free to open, no login', 'Yes: new articles every day, free', 'Yes: [180+ finished lessons](/esl-lessons), free, plus the paid per-student generator'],
+          ['Levels', 'Engoo levels 4–9, labelled Intermediate to Proficient (roughly B1–C2). No beginner lessons', 'CEFR A1 to C2, with fixed rules per level for reading length, sentence length and the words used in definitions'],
+          ['Topics', 'The news: business, science, health, culture, travel. The same lesson for every learner', `Any topic, including the student's own job and interests; [17 themes](/esl-lessons) in the free library. On the paid plan a lesson is made for one student in ${generationTime}`],
+          ['Vocabulary', '6 words: part of speech, IPA pronunciation, one definition, one example sentence', '5 words: pronunciation respelling, levelled definition, 4 examples, collocations, word family, usage note, picture, synonyms and antonyms, then met again in the reading, gap-fill and quiz ([how it works](/how-it-works))'],
+          ['Reading', 'A news article of about 300 words with AI-generated audio at adjustable speed (a real strength)', 'A story or situation of 80–250 words by level, using each new word 2–3 times, read aloud by the teacher (no audio)'],
+          ['Speaking and practice', '3 comprehension questions, 5 discussion questions and 5 further-discussion questions. No exercises', '5 warm-up questions, 3 sentence frames each at three levels of support with model answers, gap-fill, sentence unscramble, quiz, 5 discussion questions each with a short set-up and a picture'],
+          ['Students with more than one tutor', 'Popular articles get taught twice: every tutor sees the same list', 'A lesson made for one student is theirs alone'],
+          ['Memory between lessons', 'None: each article stands alone', 'After "We did this", the lesson\'s words join the student\'s list; later lessons avoid words they already know and reuse familiar ones where they fit'],
+          ['After class', 'The article page stays online; nothing is kept per student', 'A printable study sheet, and a private student page (no login) with their lessons, word list and flashcards that return after 1, 3, 7, 14 and 30 days ([preview](/student-experience))'],
         ],
       },
     },
@@ -1207,8 +1215,8 @@ export const compareEngooPage: MarketingPage = {
         planwiseTitle: `${brand} Workflow (${generationTime})`,
         planwiseSteps: [
           'Pick the student and choose B2 Upper Intermediate with a custom topic (e.g. supplier negotiations or hospitality leadership) in 1–2 minutes—or open a ready-made lesson free at /esl-lessons.',
-          'Teach in clean full-screen mode through warm-up, 5 illustrated 8-layer vocab cards, ~96%-familiar reading, recall flashcards, semantic maps, 3-tier speaking frames, cloze, unscramble, quiz, and deep discussion.',
-          'Mark "We did this" after class so the vocabulary joins the student’s profile with zero accidental repeats next week and natural recycling in later lessons.',
+          'Teach it full screen: warm-up, the five words with pictures, the reading, flashcards, sentence frames, gap-fill, unscramble, quiz and discussion.',
+          'Mark "We did this" after class, so next week\'s lesson avoids the words they already know and reuses familiar ones where they fit.',
           'Click Download for PDF for a clean print-to-PDF Vocabulary Review sheet and send the student their zero-login flashcard dashboard link.',
         ],
         competitorTitle: 'Engoo Daily News Workflow',
@@ -1221,9 +1229,16 @@ export const compareEngooPage: MarketingPage = {
       },
     },
     {
+      heading: 'What we checked, and when',
+      paragraphs: [
+        'On 28 November 2026 we opened the Engoo Daily News index and the lesson "Scientists Grow Potatoes in Moon Soil" (level 6, Intermediate, published that day). That lesson has six vocabulary items with IPA pronunciation, one definition and one example each; a 300-word article with AI-generated audio; three comprehension questions; five discussion questions; and five further-discussion questions. The index showed new articles daily at levels 4 to 9 across five categories, all free and open without a login. We found no beginner (A1–A2) material, no exercises beyond the questions, and nothing that records what a learner has studied. Engoo Daily News is made for Engoo\'s own tutors and learners, but anyone can read it.',
+        'For the PlanWise side we used the free library lessons linked below, which anyone can open and check against this table.',
+      ],
+    },
+    {
       heading: 'When Engoo Daily News is the better choice',
       bullets: [
-        'You specifically want fresh daily current-event news stories published every morning with zero preparation.',
+        'You want today\'s news story, with audio, for a B1–C2 student, and you want it free with no preparation.',
         'Your student prefers short news-reading and quick opinion prompts rather than structured vocabulary recycling or post-class flashcards.',
         'You do not need custom niche topics, printable Vocabulary Review PDFs, or per-student progress tracking.',
       ],
@@ -1256,21 +1271,21 @@ export const compareEngooPage: MarketingPage = {
     },
     {
       question: 'How is a PlanWise ESL lesson structured differently from an Engoo Daily News article?',
-      answer: 'PlanWise ESL follows an 8-stage second-language acquisition sequence every time: warm-up recall, 5 illustrated target words (pronunciation, levelled definition, 4 examples, word family, collocations, usage notes), a ~96%-familiar 5-paragraph reading, recall flashcards, 5-part semantic maps, quiz, 3-tier speaking frames, cloze, unscramble, deep discussion, and reading-sourced idioms (A2+).',
+      answer: 'An Engoo Daily News lesson is a news article with six glossed words and ten discussion questions, the same for everyone. A PlanWise ESL lesson follows one published teaching sequence every time: warm-up, five words taught in depth, a levelled reading, recall exercises, sentence frames at three levels of support, a quiz and discussion, and on the paid plan it is written for one student and remembers what they have learned.',
     },
     {
       question: 'What if I want custom lessons on my student’s exact topic without vocabulary repeats?',
-      answer: `On a free 5-day Unlimited trial (no credit card) or the ${priceText} Unlimited plan, you can build custom CEFR A1–C2 lessons on any topic in ${generationTime}. When you mark a lesson "We did this", future lessons exclude already-learned target words and recycle earlier words naturally.`,
+      answer: `On the ${trialText} (no card) or the ${priceText} Unlimited plan, you choose the student, the level and any topic, and the lesson is ready in ${generationTime}. When you mark it "We did this", later lessons avoid the words that student already knows and reuse familiar ones where they fit.`,
     },
   ],
-  disclaimer: 'PlanWise ESL is not affiliated with or endorsed by Engoo. Product comparisons reflect publicly available free library features and are subject to change.',
+  disclaimer: 'PlanWise ESL is not affiliated with or endorsed by Engoo. Engoo Daily News facts were checked on its public pages on 28 November 2026 and can change; check engoo.com for current details. PlanWise ESL is built by the author of this page.',
   cta: {
     heading: 'Try 180+ free lessons now—or build your student’s next custom lesson in 1–2 minutes',
     text: `Explore our zero-login A1–C2 library or start a ${trialText} (no credit card required) to unlock per-student vocabulary memory and custom topics.`,
     ...trialCta,
   },
   schemaType: 'WebPage',
-  updated: '2026-11-27',
+  updated: '2026-11-28',
 };
 
 export const compareEslPalsPage: MarketingPage = {
@@ -1373,7 +1388,7 @@ export const compareEslPalsPage: MarketingPage = {
     ...trialCta,
   },
   schemaType: 'WebPage',
-  updated: '2026-11-27',
+  updated: '2026-11-28',
 };
 
 export const compareBreakingNewsEnglishPage: MarketingPage = {
@@ -1505,7 +1520,7 @@ export const comparePrintDiscussPage: MarketingPage = {
           ['CEFR-calibrated reading & input', 'None — questions only', '~96%-familiar 5-paragraph passage tailored to strict A1–C2 lexical rules, using every target word 2–3 times in natural context'],
           ['Support for shy or A1–A2 speakers', 'Bare questions can cause awkward silence for beginners', 'Warm-up + 3-tier speaking frames (Emerging, Developing, Expanding with model answers) so every learner can start speaking smoothly'],
           ['Controlled retrieval & recall practice', 'None', 'Interactive recall flashcards, shuffled cloze gap-fill, sentence unscramble & quiz—all verified automatically'],
-          ['Per-student memory & learner portal', 'None — standalone static prompt pages', 'Tracks taught vocabulary per student, avoids accidental repeats, recycles earlier words naturally & includes a zero-login flashcard dashboard ([preview](/student-experience))'],
+          ['Memory between lessons', 'None: each question page stands alone', 'After "We did this", the lesson\'s words join the student\'s list; later lessons avoid words they already know and reuse familiar ones where they fit. Each student has a private page with flashcards ([preview](/student-experience))'],
           ['Printable takeaway sheet', 'Printable question sheet', 'Printable colour-coded Vocabulary Review PDF alongside full classroom activities'],
         ],
       },
@@ -1531,6 +1546,12 @@ export const comparePrintDiscussPage: MarketingPage = {
           'Leave the student with conversation notes in chat—with no structured flashcards, semantic maps, or cross-lesson vocabulary tracking.',
         ],
       },
+    },
+    {
+      heading: 'What we checked, and when',
+      paragraphs: [
+        'On 28 November 2026 we opened printdiscuss.com and its page "Travel conversation questions" (marked B1, last reviewed April 2026). The page has a two-minute warm-up task, 18 numbered discussion questions, teacher notes with one pre-taught phrase ("pack light") and one grammar link, and print and share buttons. The site lists about 110 topic pages across nine themes, plus beginner questions and grammar-focused speaking practice. We found no reading text, no vocabulary section beyond the single pre-taught item, no exercises and nothing recorded per student. It does what it sets out to do well: a clean sheet of questions, free, in seconds.',
+      ],
     },
     {
       heading: 'When PrintDiscuss is the better choice',
@@ -1577,7 +1598,7 @@ export const comparePrintDiscussPage: MarketingPage = {
     ...trialCta,
   },
   schemaType: 'WebPage',
-  updated: '2026-11-27',
+  updated: '2026-11-28',
 };
 
 export const compareEdioPage: MarketingPage = {
