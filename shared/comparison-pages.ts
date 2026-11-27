@@ -25,7 +25,7 @@ export const compareHubPage: MarketingPage = {
   path: '/compare',
   title: `Compare ${brand} vs ESL Lesson Libraries & AI Tools`,
   description:
-    `Honest comparisons of ${brand} vs ESL Joy, Fluentize, Twee, ESL Brains, Linguahouse, Off2Class & ChatGPT: CEFR, vocab memory, study PDFs & price.`,
+    `Honest comparisons of ${brand} vs Engoo, ESL Pals, Fluentize, Twee, ESL Brains, Linguahouse, Off2Class & ChatGPT: CEFR, vocab memory & PDFs.`,
   navLabel: 'Compare',
   eyebrow: 'Comparisons',
   h1: 'PlanWise ESL vs. pre-made ESL lesson libraries and AI tools',
@@ -55,6 +55,9 @@ export const compareHubPage: MarketingPage = {
     {
       heading: 'Detailed head-to-head comparisons',
       bullets: [
+        '[PlanWise ESL vs. Engoo Daily News](/compare/engoo) — Free fixed daily news articles vs. 180+ free structured A1–C2 conversation lessons, custom student topics in 1–2 minutes, vocabulary memory, learner dashboards and printable study PDFs.',
+        '[PlanWise ESL vs. ESL Pals](/compare/esl-pals) — Pre-made PDF curriculum library vs. unlimited custom adult/teen CEFR A1–C2 lessons, cross-lesson vocabulary recycling and zero-login student flashcard dashboards.',
+        '[PlanWise ESL vs. Breaking News English](/compare/breaking-news-english) — Classic text-heavy multi-level news archive vs. clean full-screen teaching mode, 8-stage lexical depth, custom non-news topics and printable study PDFs.',
         '[PlanWise ESL vs. ESL Joy](/compare/esl-joy) — Flexible AI slide decks with student tracking vs. an enforced 8-stage CEFR lesson sequence, natural vocabulary recycling, zero-login student dashboards and color-coded Vocabulary Review PDFs.',
         '[PlanWise ESL vs. Twee](/compare/twee) — Modular single-task AI tools vs. one cohesive, quality-checked pedagogical lesson with student vocabulary memory.',
         '[PlanWise ESL vs. MagicSchool AI & Diffit](/compare/magicschool-diffit) — US K–12 school tools (US grade levels & isolated worksheets) vs. true CEFR A1–C2 adult 1-on-1 conversation lessons, vocabulary recycling and zero-login student dashboards.',
@@ -1066,8 +1069,323 @@ export const studentMemoryProofPage: MarketingPage = {
   updated,
 };
 
+export const compareEngooPage: MarketingPage = {
+  path: '/compare/engoo',
+  title: `${brand} vs Engoo Daily News: Free Lessons & Full Planner`,
+  description:
+    `Fair comparison of ${brand} vs Engoo Daily News: 180+ free zero-login A1–C2 lessons, printable study PDFs, custom topics & per-student vocab memory.`,
+  navLabel: 'PlanWise vs Engoo',
+  eyebrow: 'Comparison',
+  h1: 'PlanWise ESL vs. Engoo Daily News for ESL tutors',
+  intro: [
+    'Engoo Daily News is rightly popular among online tutors because it offers free, zero-login news articles every day at graded levels. For a quick current-events warm-up, it has served teachers and students well for years.',
+    `Teachers start looking beyond Engoo when a student has already seen today’s trending article with another tutor, wants topics outside daily news, or needs deeper vocabulary instruction than a quick article glossary. **${brand}** keeps the **zero-login free access**—with [over 180 ready-to-teach A1–C2 free lessons](/esl-lessons) you can open and export as a printable study PDF right now—while adding ${generationTime} custom topic generation, an 8-stage pedagogical sequence, cross-lesson vocabulary memory, and private student flashcard dashboards.`,
+  ],
+  verdict: {
+    heading: 'PlanWise ESL vs. Engoo Daily News: Which should tutors use?',
+    text: `**Choose ${brand}** if you want both **180+ free zero-login A1–C2 conversation lessons** with downloadable 8-layer study PDFs *and* the ability to generate bespoke lessons on any topic in ${generationTime} that track each student’s vocabulary ([inspect our live 4-lesson, 0-duplicate proof](/compare/student-memory-proof)) and give them a private spaced-repetition flashcard dashboard (${trialText}, no card, then ${priceText} Unlimited). **Choose Engoo Daily News** if you specifically want a brand-new breaking news headline every morning and prefer a quick article-plus-discussion read.`,
+  },
+  sections: [
+    {
+      heading: 'Side by side: PlanWise ESL vs. Engoo Daily News',
+      table: {
+        headers: ['', 'Engoo Daily News', brand],
+        rows: [
+          ['Free zero-login access', 'Yes — free news articles & conversation materials with no login', 'Yes — 180+ free A1–C2 lessons in our [public library](/esl-lessons) with zero login & one-click PDF export'],
+          ['Lesson variety beyond daily news', 'Focused mainly on news articles + fixed conversation sheets', `Unlimited custom topics on your student’s job, hobbies, exams or seasonal themes in ${generationTime} (plus curated [Holidays & Celebrations](/esl-lessons/topics/holidays) & [Culture](/esl-lessons/topics/culture) packs)`],
+          ['Pedagogical depth per word', 'Word + short definition + pronunciation + 1–2 sentences before reading', '5 pre-taught illustrated words with pronunciation, levelled definition, 4 real-world examples, word family, collocations, usage notes & 5-part semantic map ([how it works](/how-it-works))'],
+          ['Scaffolding for beginners & shy speakers', 'Basic questions after reading', '3-tier speaking frames (Emerging, Developing, Expanding with model answers), recall flashcards, cloze, sentence unscramble, quiz & illustrated discussion'],
+          ['Student overlap risk', 'Students who study with multiple online tutors often see the same popular daily articles twice', 'Every generated lesson can be tailored uniquely to the student’s life, role and CEFR level (A1–C2)'],
+          ['Per-student vocabulary tracking & recycling', 'None — no record of words covered across classes', 'Remembers learned words, excludes accidental repeats, and weaves earlier words naturally into future readings & questions'],
+          ['Post-class study sheet & student portal', 'Web page only; no custom student flashcard hub or colour-coded PDF', 'Printable color-coded Vocabulary Review PDF + zero-login student dashboard with past lessons & spaced flashcards ([preview](/student-experience))'],
+        ],
+      },
+    },
+    {
+      heading: 'Real-World Prep Test: Turning a niche topic into a 60-minute class',
+      paragraphs: [
+        'Compare what happens when a returning B2 learner asks to prepare for a supplier negotiation—or wants a full structured lesson with take-home study material:',
+      ],
+      workflowProof: {
+        planwiseTitle: `${brand} Workflow (${generationTime})`,
+        planwiseSteps: [
+          'Pick the student and choose B2 Upper Intermediate with a custom topic (e.g. supplier negotiations or hospitality leadership) in 1–2 minutes—or open a ready-made lesson free at /esl-lessons.',
+          'Teach in clean full-screen mode through warm-up, 5 illustrated 8-layer vocab cards, ~96%-familiar reading, recall flashcards, semantic maps, 3-tier speaking frames, cloze, unscramble, quiz, and deep discussion.',
+          'Mark "We did this" after class so the vocabulary joins the student’s profile with zero accidental repeats next week and natural recycling in later lessons.',
+          'Click Download for PDF for a clean print-to-PDF Vocabulary Review sheet and send the student their zero-login flashcard dashboard link.',
+        ],
+        competitorTitle: 'Engoo Daily News Workflow',
+        competitorSteps: [
+          'Search the daily news archive for an article vaguely related to business or negotiation.',
+          'Check whether the student has already read that popular article elsewhere, and whether its length/scaffolding works for a full 60-minute 1-on-1 class.',
+          'Supplement missing word families, collocations, beginner sentence frames, and controlled practice exercises yourself.',
+          'Track previously taught words manually outside the site—there is no student dashboard or spaced flashcard history.',
+        ],
+      },
+    },
+    {
+      heading: 'When Engoo Daily News is the better choice',
+      bullets: [
+        'You specifically want fresh daily current-event news stories published every morning with zero preparation.',
+        'Your student prefers short news-reading and quick opinion prompts rather than structured vocabulary recycling or post-class flashcards.',
+        'You do not need custom niche topics, printable Vocabulary Review PDFs, or per-student progress tracking.',
+      ],
+    },
+    {
+      heading: `When ${brand} is the better choice`,
+      bullets: [
+        'You want **180+ free zero-login A1–C2 conversation lessons** right now—each following a full 8-stage research sequence with a built-in 30/60-minute [teacher pacing guide](/esl-lessons#how-to-teach-free-lessons) and one-click printable PDF.',
+        'You teach regular one-to-one students who pay for personalised lessons tailored to their exact job, hobbies and CEFR level ([live recycling proof](/compare/student-memory-proof)).',
+        'You want every student to have a **zero-login learner dashboard** with spaced-repetition flashcards and colour-coded **Vocabulary Review PDFs** you can save/print straight after class.',
+      ],
+    },
+    {
+      heading: 'Inspect free PlanWise ESL lessons & study PDFs with zero login',
+      paragraphs: [
+        'Every public lesson below opens immediately with zero signup—click **Download for PDF** at the top of any lesson to compare the print-ready study sheet directly:',
+      ],
+      bullets: [
+        '**A1 & A2 Beginner/Elementary proof:** [First Day at a New Job: Meeting Your Team (A1)](/esl-lessons/a1/first-day-at-a-new-job-meeting-your-team) and [Making Small Talk with New People (A2)](/esl-lessons/a2/making-small-talk-with-new-people).',
+        '**B1 & B2 Conversation proof:** [Handling Difficult Guests Like a Pro (B1)](/esl-lessons/b1/handling-difficult-guests-like-a-pro) and [Can Money Buy Happiness? (B2)](/esl-lessons/b2/can-money-buy-happiness).',
+        '**C1 & C2 Advanced proof:** [Delivering the Numbers: Talking About Risk and Uncertainty (C1)](/esl-lessons/c1/delivering-the-numbers-talking-about-risk-and-uncertainty) and [Subtle Irony, Idiom and Nuance in Modern Media (C2)](/esl-lessons/c2/subtle-irony-idiom-and-nuance-in-modern-media).',
+        '**Seasonal & Culture theme hubs:** Browse [Holidays & Celebrations](/esl-lessons/topics/holidays), [Culture](/esl-lessons/topics/culture), or the entire [180+ free lesson library](/esl-lessons).',
+      ],
+    },
+  ],
+  faq: [
+    {
+      question: 'Does PlanWise ESL have a completely free zero-login lesson library like Engoo?',
+      answer: 'Yes. Over 180 complete CEFR A1–C2 conversation lessons at /esl-lessons open with zero login required, include full-screen teaching mode plus a 30/60-minute teacher guide, and export a printable Vocabulary Review study sheet in one click.',
+    },
+    {
+      question: 'How is a PlanWise ESL lesson structured differently from an Engoo Daily News article?',
+      answer: 'PlanWise ESL follows an 8-stage second-language acquisition sequence every time: warm-up recall, 5 illustrated target words (pronunciation, levelled definition, 4 examples, word family, collocations, usage notes), a ~96%-familiar 5-paragraph reading, recall flashcards, 5-part semantic maps, quiz, 3-tier speaking frames, cloze, unscramble, deep discussion, and reading-sourced idioms (A2+).',
+    },
+    {
+      question: 'What if I want custom lessons on my student’s exact topic without vocabulary repeats?',
+      answer: `On a free 5-day Unlimited trial (no credit card) or the ${priceText} Unlimited plan, you can build custom CEFR A1–C2 lessons on any topic in ${generationTime}. When you mark a lesson "We did this", future lessons exclude already-learned target words and recycle earlier words naturally.`,
+    },
+  ],
+  disclaimer: 'PlanWise ESL is not affiliated with or endorsed by Engoo. Product comparisons reflect publicly available free library features and are subject to change.',
+  cta: {
+    heading: 'Try 180+ free lessons now—or build your student’s next custom lesson in 1–2 minutes',
+    text: `Explore our zero-login A1–C2 library or start a ${trialText} (no credit card required) to unlock per-student vocabulary memory and custom topics.`,
+    ...trialCta,
+  },
+  schemaType: 'WebPage',
+  updated: '2026-11-27',
+};
+
+export const compareEslPalsPage: MarketingPage = {
+  path: '/compare/esl-pals',
+  title: `${brand} vs ESL Pals: Static PDF Curriculum vs Custom AI`,
+  description:
+    `Fair comparison of ${brand} vs ESL Pals: fixed pre-made PDF library vs. custom CEFR A1–C2 lessons in 1–2 minutes, vocab memory & student hubs.`,
+  navLabel: 'PlanWise vs ESL Pals',
+  eyebrow: 'Comparison',
+  h1: 'PlanWise ESL vs. ESL Pals for adult & teen ESL teachers',
+  intro: [
+    'ESL Pals is a well-regarded subscription library known for clean, modern downloadable PDF worksheets across general English, business English, grammar, and young-learner curricula. Many independent tutors like having ready-made PDFs they can download and teach quickly.',
+    `The challenge with any pre-made PDF library is personalisation over months of classes: fixed catalogues cannot invent a lesson tailored to an adult learner’s exact industry, avoid repeating vocabulary from another course, or update a student’s flashcard portal automatically. **${brand}** generates a complete, CEFR-calibrated A1–C2 conversation lesson on any topic in **${generationTime}**, remembers each student’s vocabulary across lessons, and includes both a printable study PDF and a zero-login student dashboard.`,
+  ],
+  verdict: {
+    heading: 'PlanWise ESL vs. ESL Pals: Which should ESL tutors choose?',
+    text: `**Choose ${brand}** (${priceText} Unlimited after a ${trialText}, no card) if you teach teen or adult one-to-one or small-group conversation students and want custom A1–C2 lessons on any niche topic in ${generationTime}, longitudinal vocabulary tracking and recycling, zero-login spaced-repetition flashcards, and colour-coded Vocabulary Review PDFs—plus [over 180 free zero-login lessons](/esl-lessons) to test before subscribing. **Choose ESL Pals** if you primarily teach young learners/kids or want a fixed, downloadable PDF curriculum with explicit grammar worksheets ready without generating anything.`,
+  },
+  sections: [
+    {
+      heading: 'Side by side: PlanWise ESL vs. ESL Pals',
+      table: {
+        headers: ['', 'ESL Pals', brand],
+        rows: [
+          ['Core model', 'Fixed library of pre-designed downloadable PDF lesson plans', `On-demand ${generationTime} custom A1–C2 lesson builder + [180+ free zero-login lessons](/esl-lessons)`],
+          ['Niche & student-specific topics', 'Limited to topics in the existing library catalogue', 'Unlimited — generate any topic from luxury retail in Shanghai to nurse handovers in Dublin'],
+          ['Young learners vs. adults/teens', 'Includes dedicated Kids curriculum levels alongside General & Business English', 'Built specifically for teenage and adult conversation learners (A1–C2)'],
+          ['Pedagogical consistency & lexical depth', 'Activity-based PDF worksheets varied by lesson unit', 'Enforced 8-stage SLA sequence in every lesson: 5 illustrated 8-layer vocab words, ~96%-familiar reading, 5-part semantic maps, 3-tier speaking frames, cloze, unscramble, quiz & deep discussion'],
+          ['Per-student vocabulary tracking & recycling', 'None — static PDFs cannot track what individual students have learned', 'Tracks every taught word per student, excludes duplicates & recycles earlier words naturally ([live proof](/compare/student-memory-proof))'],
+          ['Post-class student portal', 'None — teachers send PDFs manually', 'Zero-login student dashboard with past lessons, spaced flashcards, next-lesson preview & custom lesson creation on Unlimited ([preview](/student-experience))'],
+          ['Free preview library & trial', 'Selection of free sample lessons + paid tiers', `180+ full A1–C2 free lessons with no login + ${trialText} (no credit card), then flat ${priceText} Unlimited`],
+        ],
+      },
+    },
+    {
+      heading: 'Real-World Prep Test: Preparing 4 consecutive classes for one student',
+      paragraphs: [
+        'See what happens over a four-lesson package with a returning B2 business student:',
+      ],
+      workflowProof: {
+        planwiseTitle: `${brand} Workflow (${generationTime})`,
+        planwiseSteps: [
+          'Open your student profile (their CEFR level and learned vocabulary are already stored) and enter their exact next real-world goal—or pick from their own topic suggestions.',
+          'Generate the full lesson in 1–2 minutes; PlanWise excludes previously taught target words so every new lesson delivers 5 genuinely fresh words and weaves earlier vocabulary back into the reading and questions naturally.',
+          'Screen-share in full-screen teaching mode and click "We did this" after class to update their permanent word history.',
+          'Student reviews anytime via their private zero-login flashcard dashboard and printable colour-coded Vocabulary Review PDF.',
+        ],
+        competitorTitle: 'Static PDF Library Workflow',
+        competitorSteps: [
+          'Browse the fixed Business or General catalogue hoping to find a worksheet close to what the student works on.',
+          'Download and inspect the PDF manually to check whether the target words overlap with words you taught from another unit last week.',
+          'Keep your own notes on which words the student still struggles with—earlier worksheets never adapt future lessons.',
+          'Email static worksheet PDFs without an interactive spaced-repetition flashcard portal linked to the student’s personal history.',
+        ],
+      },
+    },
+    {
+      heading: 'When ESL Pals is the better choice',
+      bullets: [
+        'You teach young children and want a ready-made kids curriculum with static printable PDFs.',
+        'You prefer picking from pre-authored downloadable worksheets and never want to type a topic to generate a tailored lesson.',
+        'You want standalone traditional grammar drill PDFs rather than conversation-led fluency lessons.',
+      ],
+    },
+    {
+      heading: `When ${brand} is the better choice`,
+      bullets: [
+        'You teach regular adult or teen one-to-one students and want lessons custom-built around their work, hobbies and CEFR level (A1–C2) in **1–2 minutes**.',
+        'You want to stop repeating words across disconnected topics—PlanWise checks each student’s history automatically ([4-lesson, 0-duplicate audit](/compare/student-memory-proof)).',
+        'You want every student to have a **zero-login learner dashboard** with spaced-repetition flashcards plus one-click colour-coded **Vocabulary Review PDFs**.',
+      ],
+    },
+    {
+      heading: 'Test the material yourself (zero login required)',
+      bullets: [
+        '**Beginner to Advanced live lessons:** [First Day at a New Job (A1)](/esl-lessons/a1/first-day-at-a-new-job-meeting-your-team), [Handling Difficult Guests Like a Pro (B1)](/esl-lessons/b1/handling-difficult-guests-like-a-pro), [Delivering the Numbers: Risk & Uncertainty (C1)](/esl-lessons/c1/delivering-the-numbers-talking-about-risk-and-uncertainty).',
+        '**Curated theme collections:** [Holidays & Celebrations](/esl-lessons/topics/holidays) and [Culture](/esl-lessons/topics/culture), inside our [180+ free lesson library](/esl-lessons).',
+        '**Research & student portal proof:** [How PlanWise ESL works](/how-it-works) and [Student Dashboard & Vocabulary Review PDF preview](/student-experience).',
+      ],
+    },
+  ],
+  faq: [
+    {
+      question: 'Can I also get a printable PDF in PlanWise ESL like ESL Pals?',
+      answer: 'Yes. Every lesson—including all 180+ free public lessons at /esl-lessons—has a one-click download button at the top that saves a clean, print-ready HTML study document you can Print -> Save as PDF, featuring colour-coded parts of speech, phonetic guides, 4 examples per word, word families, collocations, usage notes and 5-part semantic maps.',
+    },
+    {
+      question: 'Is PlanWise ESL good for beginners (A1–A2) if it does not have a kids programme?',
+      answer: 'Yes—for teen and adult beginners. At A1, definitions use only the 500 most common English words (<8 words), readings stay within 80–120 clear sentences, and every lesson includes 3-tier speaking frames (Emerging, Developing, Expanding) with model answers so beginners never freeze.',
+    },
+    {
+      question: 'Does PlanWise ESL cost more than static PDF subscriptions?',
+      answer: `PlanWise ESL starts with a ${trialText} (unlimited lessons, no credit card) and costs a flat ${priceText} for unlimited custom lessons, unlimited students, vocabulary tracking, learner dashboards and study PDFs.`,
+    },
+  ],
+  disclaimer: 'PlanWise ESL is not affiliated with or endorsed by ESL Pals. Features and catalogue scope are based on public information and subject to change.',
+  cta: {
+    heading: 'Go beyond fixed PDF catalogues in 1–2 minutes',
+    text: `Start your ${trialText} (no credit card required) or test any of our 180+ free zero-login A1–C2 lessons at /esl-lessons.`,
+    ...trialCta,
+  },
+  schemaType: 'WebPage',
+  updated: '2026-11-27',
+};
+
+export const compareBreakingNewsEnglishPage: MarketingPage = {
+  path: '/compare/breaking-news-english',
+  title: `${brand} vs Breaking News English: Modern Free & Custom ESL`,
+  description:
+    `Fair comparison of ${brand} vs Breaking News English: 180+ free modern A1–C2 lessons, clean screen-sharing, custom non-news topics & PDFs.`,
+  navLabel: 'PlanWise vs Breaking News English',
+  eyebrow: 'Comparison',
+  h1: 'PlanWise ESL vs. Breaking News English for conversation tutors',
+  intro: [
+    'Breaking News English has been a staple free resource for ESL teachers for decades, famous for its huge archive of current-events articles graded across seven levels with multi-speed listening recordings and classic printable handouts.',
+    `When teaching live online 1-on-1 classes, however, many tutors find dense multi-page web handouts awkward to screen-share, and students often want to practise topics beyond breaking news (careers, culture, hobbies, interviews, travel). **${brand}** pairs **over 180 free zero-login A1–C2 conversation lessons** built cleanly for modern screen-sharing with a ${generationTime} custom lesson builder that remembers and recycles every student’s vocabulary.`,
+  ],
+  verdict: {
+    heading: 'PlanWise ESL vs. Breaking News English: Which fits your classes?',
+    text: `**Choose ${brand}** if you want modern full-screen screen-share UX and printable colour-coded study PDFs across [180+ free A1–C2 conversation lessons](/esl-lessons) (zero login), *or* want to build custom non-news lessons in ${generationTime} with per-student vocabulary recycling and private learner flashcard dashboards (${trialText}, no card, then ${priceText} Unlimited). **Choose Breaking News English** if your class revolves around graded multi-speed listening audio on current world news stories and traditional printable news drills.`,
+  },
+  sections: [
+    {
+      heading: 'Side by side: PlanWise ESL vs. Breaking News English',
+      table: {
+        headers: ['', 'Breaking News English', brand],
+        rows: [
+          ['Free zero-login library', 'Yes — massive free archive of 3,000+ news-based handouts & audio', 'Yes — [180+ free zero-login A1–C2 conversation lessons](/esl-lessons) built on a structured 8-stage SLA flow'],
+          ['Screen-sharing & student UX', 'Dense multi-exercise web pages designed largely as text handouts', 'Clean interactive full-screen lesson view with tabs/sections, illustrations, flip flashcards & mobile-friendly learner portal'],
+          ['Topics beyond news', 'Almost exclusively news stories', `Both ready-made themes ([Holidays](/esl-lessons/topics/holidays), [Culture](/esl-lessons/topics/culture), work, travel, health, AI) *and* unlimited custom topics in ${generationTime}`],
+          ['Vocabulary instruction depth', 'Synonym matching & phrase work inside text sheets', '5 illustrated pre-taught words: phonetic guide, levelled definition, 4 examples, word family, collocations, usage notes & 5-part semantic map'],
+          ['Speaking scaffolding', 'Discussion lists & role-play prompts', 'Warm-up activation + 3-tier speaking frames (Emerging, Developing, Expanding with model answers) + illustrated deep discussion'],
+          ['Listening speed drills', 'Yes — multiple audio recording speeds per article (strong strength)', 'Focused on conversation, vocabulary acquisition, reading & interactive flashcards rather than speed-graded audio'],
+          ['Per-student vocabulary memory & study portal', 'None — static pages per article', 'Tracks each student’s words, avoids repeats, recycles earlier words naturally & includes zero-login spaced flashcards + study PDF'],
+        ],
+      },
+    },
+    {
+      heading: 'Real-World Prep Test: Teaching a 60-minute online conversation class',
+      paragraphs: [
+        'Compare preparing an online class when your goal is natural speaking, deep word retention, and a polished student takeaway:',
+      ],
+      workflowProof: {
+        planwiseTitle: `${brand} Workflow (${generationTime})`,
+        planwiseSteps: [
+          'Open one of 180+ free lessons immediately at /esl-lessons—or generate a tailored CEFR A1–C2 lesson on any non-news topic for your specific student in 1–2 minutes.',
+          'Screen-share in full-screen mode: students move cleanly from warm-up recall to illustrated vocabulary cards, ~96%-familiar reading, interactive flip flashcards, 3-tier speaking frames, cloze, unscramble, quiz and deep discussion.',
+          'Avoid teaching the same high-frequency words twice across weeks—PlanWise checks the student’s learned list automatically.',
+          'Export the printable colour-coded Vocabulary Review PDF in one click and share their private zero-login flashcard dashboard link.',
+        ],
+        competitorTitle: 'Breaking News English Workflow',
+        competitorSteps: [
+          'Browse the news archive to find a level-matched article—hoping a recent headline fits your student’s interests.',
+          'Download or open the dense multi-page handout and scroll past sections you are not using while screen-sharing on Zoom or Preply.',
+          'Create your own phonetic pronunciation aids, 3-tier beginner speaking scaffolds, and post-class spaced flashcards separately.',
+          'Track student vocabulary history manually—no student portal or cross-lesson word recycling exists.',
+        ],
+      },
+    },
+    {
+      heading: 'When Breaking News English is the better choice',
+      bullets: [
+        'Your priority is multi-speed recorded news audio (e.g., slower-to-native dictation & listening drills) across thousands of older and current news events.',
+        'You want free classic news worksheets with zero account tools or student tracking.',
+      ],
+    },
+    {
+      heading: `When ${brand} is the better choice`,
+      bullets: [
+        'You teach online over video and want **clean full-screen lessons** your students can read comfortably without zooming into crowded text handouts.',
+        'You want **180+ free zero-login A1–C2 lessons** covering real life, work, culture and holidays—each with a structured 30/60-minute [teacher pacing guide](/esl-lessons#how-to-teach-free-lessons) and a printable colour-coded Vocabulary Review PDF.',
+        'You teach ongoing students and want **per-student vocabulary tracking**, natural recycling across lessons ([see live 4-lesson proof](/compare/student-memory-proof)), and zero-login **spaced-repetition flashcards** ([see student experience](/student-experience)).',
+      ],
+    },
+    {
+      heading: 'Compare live lessons right now (no login needed)',
+      bullets: [
+        '**Full free lesson library (180+ lessons, CEFR A1–C2):** [/esl-lessons](/esl-lessons) and the [30/60-minute Teacher Guide](/esl-lessons#how-to-teach-free-lessons).',
+        '**Sample A1, B2 & C1 lessons:** [First Day at a New Job (A1)](/esl-lessons/a1/first-day-at-a-new-job-meeting-your-team), [AI and Tomorrow’s World (B2)](/esl-lessons/b2/ai-and-tomorrow-s-world-what-comes-next), and [Ethics in the Modern Boardroom (C1)](/esl-lessons/c1/the-price-of-doing-right-ethics-in-the-modern-boardroom).',
+        '**Quality & pedagogy benchmarks:** [How PlanWise ESL works](/how-it-works) and [9-point CEFR Quality Benchmark](/compare/cefr-benchmark).',
+      ],
+    },
+  ],
+  faq: [
+    {
+      question: 'Are PlanWise ESL’s public lessons also free without an account like Breaking News English?',
+      answer: 'Yes. Every lesson in /esl-lessons (over 180 complete CEFR A1–C2 lessons) opens with zero signup or login required, works cleanly in full-screen teaching mode, and includes a one-click Vocabulary Review download you can print or save as PDF.',
+    },
+    {
+      question: 'Does PlanWise ESL only cover news, or any conversation topic?',
+      answer: 'Any topic. The free library covers career, travel, technology, AI, culture, holidays and everyday conversation, and registered teachers (free 5-day trial or $19.99/month Unlimited) can generate bespoke lessons on any niche student interest in 1–2 minutes.',
+    },
+    {
+      question: 'Why does PlanWise ESL use 5 target words and an 8-stage sequence instead of dozens of drills?',
+      answer: 'Second-language research (Nation, Webb, Krashen, Roediger & Karpicke) shows learners retain vocabulary far better when 5 key words are pre-taught deeply (pronunciation, levelled definition, word families, collocations, usage notes, semantic maps), encountered multiple times in ~96%-familiar context, retrieved via flashcards, and practised through speaking frames and discussion.',
+    },
+  ],
+  disclaimer: 'PlanWise ESL is not affiliated with or endorsed by Breaking News English. Product summaries are based on publicly accessible pages and subject to change.',
+  cta: {
+    heading: 'Modern screen-ready ESL lessons—free to inspect, personalised in 1–2 minutes',
+    text: `Explore 180+ free A1–C2 lessons with no login, or start a ${trialText} (no credit card required) for custom student profiles and vocabulary recycling.`,
+    ...trialCta,
+  },
+  schemaType: 'WebPage',
+  updated: '2026-11-27',
+};
+
 export const comparisonPages: MarketingPage[] = [
   compareHubPage,
+  compareEngooPage,
+  compareEslPalsPage,
+  compareBreakingNewsEnglishPage,
   compareEslJoyPage,
   compareTweePage,
   compareMagicSchoolDiffitPage,

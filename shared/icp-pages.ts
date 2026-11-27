@@ -448,10 +448,143 @@ export const italkiTutorsPage: MarketingPage = {
   updated,
 };
 
+export const newEslTeachersPage: MarketingPage = {
+  path: '/for/new-esl-teachers',
+  title: `Best ESL Lesson Planner for New Teachers & First-Time Tutors | ${brand}`,
+  description:
+    `New ESL teacher guide: start with 180+ free CEFR A1–C2 lessons, built-in teacher notes, beginner speaking frames & 1–2 min custom prep.`,
+  navLabel: 'For New ESL Teachers',
+  eyebrow: 'For new ESL teachers & newly certified tutors',
+  h1: 'The ESL lesson planner built to give new teachers confidence from lesson one',
+  intro: [
+    'Your first months teaching ESL—whether you have just earned your TEFL or CELTA certificate or taken on your first online tutoring students—bring two big hurdles: figuring out how to pace a 45–60 minute conversation class without awkward silence, and creating material at the right CEFR level without spending two hours preparing for every one-hour class.',
+    `${brand} removes both hurdles. Every lesson follows the same **8-stage second-language pedagogy** ([see the research](/how-it-works)), comes with **teacher notes**, **3-tier beginner-safe speaking frames** so A1–A2 learners never freeze, and a **30- and 60-minute pacing guide**—starting with [over 180 complete zero-login lessons](/esl-lessons) you can teach today before ever starting a paid plan.`,
+  ],
+  verdict: {
+    heading: 'Why new ESL teachers choose PlanWise ESL',
+    text: `New teachers don’t just need a pile of worksheets—they need a repeatable, research-backed lesson structure that keeps students talking cleanly for 30 or 60 minutes. **${brand}** gives new tutors [180+ free zero-login A1–C2 lessons](/esl-lessons), step-by-step teaching flow, beginner scaffolding (A1 definitions restricted to the 500 most common words + 3-tier speaking frames), one-click printable study PDFs, and **${generationTime} custom lesson creation** (${trialText}, no card, then ${priceText} Unlimited).`,
+  },
+  sections: [
+    {
+      heading: 'How PlanWise ESL solves first-year teaching challenges',
+      bullets: [
+        '**No guesswork on lesson structure:** Every class moves naturally from warm-up recall → 5 deeply pre-taught illustrated words → a ~96%-familiar levelled reading → recall flashcards → semantic maps → quiz, tiered sentence frames, cloze & unscramble → deep discussion.',
+        '**Built-in 30- & 60-minute pacing:** Our [Teacher Guide on /esl-lessons](/esl-lessons#how-to-teach-free-lessons) shows exact minute-by-minute timing so you never run out of material after 20 minutes or rush through the discussion.',
+        '**True beginner scaffolding (A1–A2):** Every lesson includes 3-tier speaking frames (Emerging, Developing, Expanding with model answers) so nervous beginners always have natural phrasing to build on instead of silent stares.',
+        '**Strict CEFR levelling checked before saving:** You choose A1–C2 and PlanWise enforces reading length, vocabulary ceiling, and definition simplicity automatically—no accidentally handing a B2 text to an A2 student.',
+        '**Look polished to every new student:** Send students a clean colour-coded Vocabulary Review PDF after class and their own zero-login learner dashboard—turning one-off trial lessons into long-term packages.',
+      ],
+    },
+    {
+      heading: 'What a new teacher gets out of the box vs. winging it with raw AI',
+      table: {
+        headers: ['First-year challenge', 'Prompting ChatGPT or generic sites', `${brand}`],
+        rows: [
+          ['Lesson structure & timing', 'Must prompt every stage yourself and invent transitions', 'Complete 8-stage SLA lesson sequence + [30/60-min pacing guide](/esl-lessons#how-to-teach-free-lessons) every time'],
+          ['CEFR accuracy for beginners', 'Often writes definitions harder than the target word', 'A1 definitions capped to the 500 most common words (<8 words), checked automatically'],
+          ['Student freezing in conversation', 'Open questions alone can stall shy learners', '3-tier sentence frames with model answers support speaking step by step'],
+          ['Free material to practise right now', 'Must write prompts before seeing any lesson', '[180+ complete A1–C2 lessons free with zero login](/esl-lessons) + printable PDFs'],
+          ['Tracking regular students', 'No student profiles or word history', 'Free student profiles remember taught words & sync with a zero-login student flashcard dashboard'],
+        ],
+      },
+    },
+    {
+      heading: 'Start teaching today with zero login: free lessons & guides for new teachers',
+      bullets: [
+        '**Open & teach free A1–C2 lessons:** Browse [180+ ready-to-teach lessons](/esl-lessons), seasonal [Holidays & Celebrations](/esl-lessons/topics/holidays), or [Culture](/esl-lessons/topics/culture)—including [First Day at a New Job (A1)](/esl-lessons/a1/first-day-at-a-new-job-meeting-your-team) and [Making Small Talk with New People (A2)](/esl-lessons/a2/making-small-talk-with-new-people).',
+        '**Learn the method in 5 minutes:** Read [How to plan an ESL conversation lesson](/guides/how-to-plan-an-esl-conversation-lesson), [CEFR levels A1–C2 explained](/guides/cefr-levels-explained), and [How PlanWise ESL works](/how-it-works).',
+        '**Try custom lessons free:** When you’re ready to build bespoke lessons for a specific student, start a ${trialText} (unlimited lessons, no credit card required).',
+      ],
+    },
+  ],
+  faq: [
+    {
+      question: 'Can a brand-new TEFL teacher use PlanWise ESL without paying first?',
+      answer: `Yes. Over 180 complete A1–C2 conversation lessons at /esl-lessons—plus full-screen teaching mode, the built-in 30/60-minute pacing guide, and printable Vocabulary Review PDFs—are 100% free with zero signup required. When you want custom lessons and student profiles, every new account gets a ${trialText} with no credit card.`,
+    },
+    {
+      question: 'What stops a beginner lesson from being too difficult?',
+      answer: 'At A1 Beginner, readings are kept to 80–120 clear sentences, target-word definitions use only the 500 most common English words in under 8 words, ~96% of reading vocabulary stays familiar, and 3-tier speaking frames give nervous students scaffolded starting phrases with model answers.',
+    },
+    {
+      question: 'How much does PlanWise ESL cost after the trial?',
+      answer: `${priceText} Unlimited—including unlimited custom lessons across A1–C2, unlimited student profiles, cross-lesson vocabulary tracking, zero-login student flashcard dashboards and printable study PDFs, cancel anytime.`,
+    },
+  ],
+  cta: {
+    heading: 'Teach your next class with complete confidence',
+    text: `Explore 180+ free A1–C2 lessons right now—or build your first custom lesson in ${generationTime} on a ${trialText} (no credit card required).`,
+    ...trialCta,
+  },
+  schemaType: 'WebPage',
+  updated: '2026-11-27',
+};
+
+export const experiencedEslTeachersPage: MarketingPage = {
+  path: '/for/experienced-esl-teachers',
+  title: `Best ESL Lesson Planner for Experienced Teachers & Tutors | ${brand}`,
+  description:
+    `Built by a 10+ year ESL teacher for veteran tutors: replace Drive PDF chaos with 1–2 min custom A1–C2 lessons & cross-lesson vocab memory.`,
+  navLabel: 'For Experienced ESL Teachers',
+  eyebrow: 'For experienced ESL teachers & veteran tutors',
+  h1: 'Built by a working 11-year ESL teacher for experienced tutors who refuse to hand out generic worksheets',
+  intro: [
+    'Once you have taught for several years, your bottleneck is rarely "how do I run a class?"—it is **time and continuity across dozens of regular students**. Digging through years of Google Drive PDFs, finding static library articles your B2–C2 professionals have outgrown, or spending 30–60 minutes adapting ChatGPT prompts so the reading stays at the right CEFR band quietly eats your evenings.',
+    `${brand} was built by [Dave Jackson](/about)—a working British ESL teacher since 2015 with over 2,000 students taught who still plans his own students’ lessons with it. It gives experienced teachers a repeatable, research-grounded architecture ([Nation’s Four Strands](/how-it-works)) that creates bespoke lessons in **${generationTime}**, tracks every student’s vocabulary across months without accidental repeats, and gives learners a private zero-login dashboard that keeps them rebooking.`,
+  ],
+  verdict: {
+    heading: 'Why experienced ESL teachers upgrade to PlanWise ESL',
+    text: `Veteran teachers stay with **${brand}** because it protects teaching quality while slashing prep time from 30–60 minutes to **${generationTime}**: true **B2–C2 & niche industry customization** (supply chain, SaaS, medical, finance, leadership), **per-student vocabulary memory** with 0 duplicate target words and natural recycling ([inspect our live 4-lesson proof](/compare/student-memory-proof)), **verified CEFR rules** ([9-point CEFR audit](/compare/cefr-benchmark)), zero-login student flashcard dashboards, and printable 8-layer study PDFs (${trialText}, then ${priceText} Unlimited).`,
+  },
+  sections: [
+    {
+      heading: 'Why veteran tutors outgrow static libraries and manual prompting',
+      bullets: [
+        '**Stop hunting through 500 unsorted Drive PDFs:** Generate the exact lesson your C1 product manager or B2 hospitality director needs today in 1–2 minutes—or bring in your own 5 target words for the class.',
+        '**True cross-lesson memory (not one-off worksheets):** When you click *"We did this"*, PlanWise records taught vocabulary on that student’s profile, strictly excludes learned words from being re-taught as new, and passes earlier words back so they resurface naturally in future readings and quizzes.',
+        '**Depth worthy of advanced learners (B2, C1, C2):** Words include phonetic pronunciation, 4 nuanced examples, word families, collocations, register/usage notes, 5-part semantic maps, and reading-sourced idioms with right-vs.-wrong comparisons.',
+        '**Automated quality gate before you open the tab:** Every lesson checks that the cloze, comprehension, quiz, flashcards, semantic maps and 3-tier speaking frames are valid before saving—no mid-class broken gap-fills.',
+        '**Stronger student retention & perceived value:** Giving every regular student their own zero-login dashboard (past lessons, next-lesson preview, spaced flashcards, topic ideas & custom lesson creation on Unlimited) plus colour-coded Vocabulary Review PDFs makes private packages feel like a tailored executive course.',
+      ],
+    },
+    {
+      heading: 'Real courses built for working professionals (from Dave’s own teaching)',
+      bullets: [
+        '**Tailored C1 Business & Industry track:** *The Rise of Luxury Chinese Fashion Brands*; *Swipe, Stream, Sell: Live Commerce vs Traditional Retail*; *The Evolution of Chinese Workplace Culture: "Quiet Quitting" vs. Extreme Ambition*.',
+        '**Inspect live public C1–C2 examples right now (zero login):** [Delivering the Numbers: Talking About Risk and Uncertainty (C1)](/esl-lessons/c1/delivering-the-numbers-talking-about-risk-and-uncertainty), [The Price of Doing Right: Ethics in the Boardroom (C1)](/esl-lessons/c1/the-price-of-doing-right-ethics-in-the-modern-boardroom), [Founders, Failures and Pivots (C1)](/esl-lessons/c1/founders-failures-and-pivots-the-new-face-of-entrepreneurship), and [Subtle Irony, Idiom and Nuance in Modern Media (C2)](/esl-lessons/c2/subtle-irony-idiom-and-nuance-in-modern-media).',
+        '**Verify the pedagogy & recycling data yourself:** [One Student, Four Lessons: 36 taught items, 0 duplicates](/compare/student-memory-proof), [CEFR Benchmark: PlanWise vs. raw AI](/compare/cefr-benchmark), and [Student Experience & Vocabulary Review PDF excerpt](/student-experience).',
+      ],
+    },
+  ],
+  faq: [
+    {
+      question: 'As an experienced teacher with custom vocab lists, can I supply my own target words?',
+      answer: 'Yes. You can either let PlanWise select 5 CEFR-appropriate target words around your topic (excluding words the student already knows) or type your own specific target words so the reading, exercises, flashcards and study PDF are built directly around them.',
+    },
+    {
+      question: 'Does it actually hold up for advanced B2, C1 and C2 professionals?',
+      answer: 'Yes. At C1–C2, readings run 180–250 words of natural magazine-grade prose with implied meaning and nuance, usage notes distinguish close synonyms (for example assimilate vs. integrate), and idioms are extracted straight from the reading with explicit right-vs.-wrong comparisons. Judge our live C1 and C2 lessons at /esl-lessons with zero login.',
+    },
+    {
+      question: 'How does per-student vocabulary recycling work over months of 1-on-1 classes?',
+      answer: 'Marking a lesson "We did this" stores its words on that student’s profile. Future lessons strictly skip already-taught target words so you never repeat words accidentally, while passing earlier vocabulary to lesson generation so past words reappear in readings and questions only when they fit naturally.',
+    },
+  ],
+  cta: {
+    heading: 'Keep your teaching craft—reclaim 10+ hours of prep a month',
+    text: `Test PlanWise ESL on your toughest returning B2 or C1 student with a ${trialText} (unlimited lessons, no credit card), then ${priceText} Unlimited.`,
+    ...trialCta,
+  },
+  schemaType: 'WebPage',
+  updated: '2026-11-27',
+};
+
 export const icpPages: MarketingPage[] = [
   onlineTutorsPage,
   preplyTutorsPage,
   italkiTutorsPage,
   freelanceTeachersPage,
   languageSchoolsPage,
+  newEslTeachersPage,
+  experiencedEslTeachersPage,
 ];

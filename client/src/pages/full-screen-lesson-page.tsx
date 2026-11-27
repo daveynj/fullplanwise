@@ -14,6 +14,7 @@ import { lessonPublicMetadata, publicLessonRemixHref } from "@shared/lesson-publ
 import { LessonDesignPanel } from "@/components/lesson/lesson-design-panel";
 import { TopRemixBanner, VocabFlashcardCTA } from "@/components/public-lesson-ctas";
 import { lessonPath } from "@shared/lesson-url";
+import { trackEvent } from "@/lib/analytics";
 
 class LessonNotFoundError extends Error {
   constructor() {
@@ -355,6 +356,7 @@ export default function FullScreenLessonPage() {
                 href={`/api/lessons/${lessonId}/pdf?format=html`}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => trackEvent("public_library_pdf_downloaded", { lesson_id: lesson?.id, cefr_level: lesson?.cefrLevel })}
                 className="inline-flex items-center"
               >
                 <Download className="h-4 w-4 mr-2" />
