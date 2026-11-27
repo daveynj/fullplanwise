@@ -8,6 +8,7 @@ const { getBlogPostBySlug, getAllBlogPosts } = vi.hoisted(() => ({
 }));
 vi.mock("./storage", () => ({ storage: { getBlogPostBySlug, getAllBlogPosts } }));
 import { injectBlogPrerender } from "./blog-prerender";
+import { buildLlmsFullTxt } from "./llms-full";
 
 const template = readFileSync("client/index.html", "utf8");
 const post: BlogPost = {
@@ -141,5 +142,26 @@ describe("blog social previews using the real client template", () => {
     expect(getAllBlogPosts).toHaveBeenCalledWith(1, 100, undefined, undefined, true);
     expect(await injectBlogPrerender(template, "/blog/nested/path")).toBeNull();
     expect(await injectBlogPrerender(template, "/auth")).toBeNull();
+  });
+
+  it("preserves AI-readable HTML tables, emits BreadcrumbList JSON-LD, and includes posts in /llms-full.txt", async () => {
+    const tablePost: BlogPost = {
+      ...post,
+      content: '<table><thead><tr><th scope="col">Level</th><th scope="col">Words</th></tr></thead><tbody><tr><td>A1</td><td>80-120</td></tr></tbody></table>',
+    };
+    getBlogPostBySlug.mockResolvedValue(tablePost);
+    const html = (await injectBlogPrerender(template, `/blog/${post.slug}`))!;
+    const doc = parse(html);
+    expect(doc.querySelector("#root table thead th")?.getAttribute("scope")).toBe("col");
+    const tds = [...doc.querySelectorAll("#root table tbody td")].map((td) => td.textContent);
+    expect(tds).toEqual(["A1", "80-120"]);
+    const ldBlocks = [...doc.querySelectorAll('script[type="application/ld+json"]')].map((s) => JSON.parse(s.textContent!));
+    expect(ldBlocks.some((b) => b["@type"] === "BlogPosting")).toBe(true);
+    expect(ldBlocks.some((b) => b["@type"] === "BreadcrumbList")).toBe(true);
+
+    const llmsFull = buildLlmsFullTxt([], [post]);
+    expect(llmsFull).toContain("## ESL Teaching Blog");
+    expect(llmsFull).toContain(`https://planwiseesl.com/blog/${post.slug}`);
+    expect(llmsFull).toContain(post.excerpt);
   });
 });

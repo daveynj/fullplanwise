@@ -2723,8 +2723,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.header("Content-Type", "text/plain; charset=utf-8");
     res.header("Cache-Control", "public, max-age=600");
     try {
-      const publicLessons = await storage.getPublicLessonSummaries();
-      res.send(buildLlmsFullTxt(publicLessons));
+      const [publicLessons, blogResult] = await Promise.all([
+        storage.getPublicLessonSummaries(),
+        storage.getAllBlogPosts(1, 100, undefined, undefined, true).catch(() => ({ posts: [] })),
+      ]);
+      res.send(buildLlmsFullTxt(publicLessons, blogResult.posts));
     } catch {
       res.send(getLlmsFullTxt());
     }

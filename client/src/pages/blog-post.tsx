@@ -25,8 +25,8 @@ import { blogPublicMetadata } from "@shared/blog-public-metadata";
 // Sanitize HTML content to prevent XSS attacks
 const sanitizeHtml = (html: string): string => {
   return DOMPurify.sanitize(html, {
-    ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 's', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'a', 'img', 'blockquote', 'code', 'pre', 'iframe', 'div'],
-    ALLOWED_ATTR: ['href', 'target', 'rel', 'src', 'alt', 'class', 'style', 'width', 'height', 'allow', 'allowfullscreen', 'frameborder'],
+    ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 's', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'a', 'img', 'blockquote', 'code', 'pre', 'iframe', 'div', 'table', 'thead', 'tbody', 'tr', 'th', 'td'],
+    ALLOWED_ATTR: ['href', 'target', 'rel', 'src', 'alt', 'class', 'style', 'width', 'height', 'allow', 'allowfullscreen', 'frameborder', 'scope', 'colspan', 'rowspan'],
     ADD_TAGS: ['iframe'],
     ADD_ATTR: ['allow', 'allowfullscreen', 'frameborder', 'scrolling'],
   });
@@ -304,7 +304,10 @@ export default function BlogPost() {
                   prose-li:text-muted-foreground
                   prose-strong:text-foreground prose-strong:font-semibold
                   prose-code:text-primary prose-code:bg-muted prose-code:px-1 prose-code:py-0.5 prose-code:rounded
-                  prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:pl-4 prose-blockquote:italic"
+                  prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:pl-4 prose-blockquote:italic
+                  [&_table]:w-full [&_table]:border-collapse [&_table]:my-6 [&_table]:text-sm
+                  [&_th]:bg-brand-navy [&_th]:text-white [&_th]:px-4 [&_th]:py-2.5 [&_th]:text-left [&_th]:font-semibold
+                  [&_td]:border-b [&_td]:border-slate-200 [&_td]:px-4 [&_td]:py-2.5 [&_td]:align-top"
                 dangerouslySetInnerHTML={{ __html: contentWithIds?.content || '' }}
                 data-testid="content-post-body"
               />

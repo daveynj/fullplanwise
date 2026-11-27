@@ -236,8 +236,29 @@ function renderPublicLessonsMarkdown(publicLessons: PublicLessonLlmsItem[]): str
   return blocks.join('\n\n');
 }
 
-/** Builds the complete /llms-full.txt Markdown document from shared site data + live public lessons. */
-export function buildLlmsFullTxt(publicLessons: PublicLessonLlmsItem[] = []): string {
+export interface PublicBlogLlmsItem {
+  slug: string;
+  title: string;
+  excerpt?: string | null;
+  category?: string | null;
+  publishDate?: string | null;
+}
+
+function renderBlogPostsMarkdown(blogPosts: PublicBlogLlmsItem[]): string {
+  if (blogPosts.length === 0) return '';
+  const lines = blogPosts.map((p) => {
+    const cat = p.category ? ` [${p.category}]` : '';
+    const excerpt = p.excerpt ? ` — ${p.excerpt.trim()}` : '';
+    return `- [${p.title}](${BASE_URL}/blog/${p.slug})${cat}${excerpt}`;
+  });
+  return `## ESL Teaching Blog\nURL: ${BASE_URL}/blog\n\n${lines.join('\n')}`;
+}
+
+/** Builds the complete /llms-full.txt Markdown document from shared site data + live public lessons & blog posts. */
+export function buildLlmsFullTxt(
+  publicLessons: PublicLessonLlmsItem[] = [],
+  blogPosts: PublicBlogLlmsItem[] = [],
+): string {
   // Collect all unique pages across marketingPages, guidePages, and shared/guides.ts.
   const allPages = new Map<string, MarketingPage>();
   for (const page of [
@@ -271,11 +292,13 @@ export function buildLlmsFullTxt(publicLessons: PublicLessonLlmsItem[] = []): st
   ].join('\n\n');
 
   const publicLessonsSection = renderPublicLessonsMarkdown(publicLessons);
+  const blogPostsSection = renderBlogPostsMarkdown(blogPosts);
 
   const sections = [
     header,
     renderHomepageMarkdown(),
     ...(publicLessonsSection ? [publicLessonsSection] : []),
+    ...(blogPostsSection ? [blogPostsSection] : []),
     ...[...allPages.values()].map(renderPageMarkdown),
   ];
 
