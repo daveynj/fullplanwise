@@ -2696,6 +2696,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   app.get("/esl-lessons/:level/:slug", async (req, res, next) => {
+    // Only CEFR levels are lesson URLs. Other two-segment paths, such as the
+    // theme hubs at /esl-lessons/topics/:tag (validated above), pass through
+    // to the page renderer instead of being looked up as a lesson slug.
+    if (!/^[abc][12]$/i.test(req.params.level)) {
+      next();
+      return;
+    }
     try {
       const lesson = await storage.getLessonByPublicSlug(req.params.slug);
       if (!lesson || (!lesson.isPublic && !lesson.isShared)) {
