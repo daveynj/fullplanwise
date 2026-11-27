@@ -55,7 +55,6 @@ export const clientRoutePaths: string[] = [
   "/esl-lessons/topics/:tag", // curated theme validity checked by the /esl-lessons/topics/:tag server route
   "/esl-lessons/:level", // level validity checked by the /esl-lessons/:level server route
   "/esl-lessons/:level/:slug", // public slug visibility checked by the server
-  "/esl-lessons/:level/:slug/questions", // printable discussion questions (public lessons only), server-rendered
   // Public information pages (shared/marketing-pages.ts)
   "/how-it-works",
   "/about",
