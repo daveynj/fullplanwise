@@ -11,6 +11,7 @@ import { SEOHead } from "@/components/SEOHead";
 import { BlogHeader } from "@/components/layout/blog-header";
 import { PUBLIC_LIBRARY_LABELS } from "@shared/schema";
 import { ArrowRight, BookOpen, CheckCircle2, FileDown, Search, Sparkles, X } from "lucide-react";
+import { filterPublicLessons, PUBLIC_LESSON_TAGS, publicTags } from "@shared/public-lesson-tags";
 
 const LEVELS = ["A1", "A2", "B1", "B2", "C1", "C2"] as const;
 
@@ -30,6 +31,7 @@ interface LessonSummary {
   title: string;
   cefrLevel: string;
   publicCategory: string | null;
+  tags: string[] | null;
 }
 
 // Public (no login) browse pages: /esl-lessons and /esl-lessons/:level.
@@ -42,8 +44,9 @@ export default function PublicLessonsIndexPage() {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [selectedTag, setSelectedTag] = useState<string>("all");
 
-  const { data, isLoading, isSuccess } = useQuery<{ lessons: LessonSummary[] }>({
+  const { data, isLoading, isSuccess, isError, error, refetch } = useQuery<{ lessons: LessonSummary[] }>({
     queryKey: ["public-lesson-index", level ?? "all"],
     queryFn: async () => {
       const res = await fetch(`/api/public-lesson-index${level ? `?level=${level}` : ""}`);
@@ -65,21 +68,17 @@ export default function PublicLessonsIndexPage() {
     return Array.from(counts.entries()).sort((a, b) => b[1] - a[1]);
   }, [lessons]);
 
+  const availableTags = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const lesson of lessons) {
+      for (const tag of publicTags(lesson.tags)) counts.set(tag, (counts.get(tag) ?? 0) + 1);
+    }
+    return Array.from(counts.entries()).sort((a, b) => b[1] - a[1] || PUBLIC_LESSON_TAGS[a[0] as keyof typeof PUBLIC_LESSON_TAGS].localeCompare(PUBLIC_LESSON_TAGS[b[0] as keyof typeof PUBLIC_LESSON_TAGS]));
+  }, [lessons]);
+
   const filteredLessons = useMemo(() => {
-    const q = searchQuery.trim().toLowerCase();
-    return lessons.filter((l) => {
-      if (selectedCategory !== "all" && l.publicCategory !== selectedCategory) return false;
-      if (!q) return true;
-      const catLabel = l.publicCategory
-        ? PUBLIC_LIBRARY_LABELS[l.publicCategory as keyof typeof PUBLIC_LIBRARY_LABELS] ?? ""
-        : "";
-      return (
-        l.title.toLowerCase().includes(q) ||
-        l.cefrLevel.toLowerCase().includes(q) ||
-        catLabel.toLowerCase().includes(q)
-      );
-    });
-  }, [lessons, searchQuery, selectedCategory]);
+    return filterPublicLessons(lessons, searchQuery, selectedCategory, selectedTag, PUBLIC_LIBRARY_LABELS);
+  }, [lessons, searchQuery, selectedCategory, selectedTag]);
 
   const heading = level ? `${level} (${levelName}) Free ESL Lessons` : "Free ESL Lesson Library (A1–C2)";
   const intro = level
@@ -106,6 +105,11 @@ export default function PublicLessonsIndexPage() {
                   {label}
                 </Badge>
               )}
+              {publicTags(lesson.tags).map((tag) => (
+                <Badge key={tag} variant="outline" className="border-slate-200 bg-slate-50 text-slate-700">
+                  {PUBLIC_LESSON_TAGS[tag]}
+                </Badge>
+              ))}
             </div>
             <h3 className="text-lg font-semibold text-brand-navy group-hover:text-amber-700 transition-colors leading-snug mb-3">
               {lesson.title}
@@ -122,7 +126,7 @@ export default function PublicLessonsIndexPage() {
     );
   };
 
-  const hasActiveFilters = searchQuery.trim().length > 0 || selectedCategory !== "all";
+  const hasActiveFilters = searchQuery.trim().length > 0 || selectedCategory !== "all" || selectedTag !== "all";
 
   return (
     <>
@@ -244,10 +248,40 @@ export default function PublicLessonsIndexPage() {
                 ))}
               </div>
             )}
+            {availableTags.length > 0 && (
+              <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100" aria-label="Curated topic tags">
+                <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 mr-1">
+                  Curated tags:
+                </span>
+                <Button type="button" size="sm" variant={selectedTag === "all" ? "brand" : "outline"} onClick={() => setSelectedTag("all")} aria-pressed={selectedTag === "all"}>
+                  All tags
+                </Button>
+                {availableTags.map(([tag, count]) => (
+                  <Button
+                    key={tag}
+                    type="button"
+                    size="sm"
+                    variant={selectedTag === tag ? "brand" : "outline"}
+                    onClick={() => setSelectedTag(tag)}
+                    aria-pressed={selectedTag === tag}
+                  >
+                    {PUBLIC_LESSON_TAGS[tag as keyof typeof PUBLIC_LESSON_TAGS]} ({count})
+                  </Button>
+                ))}
+              </div>
+            )}
           </div>
 
           {isLoading ? (
-            <p className="text-muted-foreground">Loading lessons…</p>
+            <div role="status" aria-label="Loading lessons" className="grid sm:grid-cols-2 gap-4">
+              {Array.from({ length: 4 }).map((_, index) => <div key={index} className="h-36 rounded-xl bg-slate-200/70 animate-pulse" />)}
+            </div>
+          ) : isError ? (
+            <div role="alert" className="rounded-xl border border-red-200 bg-red-50 p-6 text-center">
+              <p className="text-red-900 font-semibold">Lessons could not be loaded.</p>
+              <p className="mt-1 text-sm text-red-800">{error instanceof Error ? error.message : "Please try again."}</p>
+              <Button className="mt-4" variant="outline" onClick={() => void refetch()}>Try again</Button>
+            </div>
           ) : filteredLessons.length === 0 ? (
             <div className="rounded-xl border border-slate-200 bg-white p-8 text-center">
               <p className="text-slate-600 mb-4">
@@ -262,6 +296,7 @@ export default function PublicLessonsIndexPage() {
                     onClick={() => {
                       setSearchQuery("");
                       setSelectedCategory("all");
+                      setSelectedTag("all");
                     }}
                   >
                     Reset filters
@@ -287,7 +322,12 @@ export default function PublicLessonsIndexPage() {
                 })()}
               </div>
             </div>
-          ) : level || hasActiveFilters ? (
+          ) : (
+            <>
+              <p className="mb-4 text-sm text-slate-500" aria-live="polite">
+                Showing {filteredLessons.length} of {lessons.length} {lessons.length === 1 ? "lesson" : "lessons"}
+              </p>
+              {level || hasActiveFilters ? (
             <div className="grid sm:grid-cols-2 gap-4">{filteredLessons.map(renderCard)}</div>
           ) : (
             LEVELS.map((lv) => {
@@ -309,6 +349,8 @@ export default function PublicLessonsIndexPage() {
                 </section>
               );
             })
+          )}
+            </>
           )}
 
           <div className="mt-12 rounded-2xl bg-brand-navy text-white p-6 md:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6">

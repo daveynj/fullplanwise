@@ -115,6 +115,8 @@ export const lessons = pgTable("lessons", {
   notes: text("notes"),
   grammarSpotlight: text("grammar_spotlight"), // Grammar visualization data as JSON
   category: text("category").default("general"),
+  // Public discovery uses curated labels (shared/public-lesson-tags.ts).
+  // Backfill writes only after admin review, and never overwrites existing tags.
   tags: text("tags").array().default([]),
   isPublic: boolean("is_public").default(false).notNull(),
   isShared: boolean("is_shared").default(false).notNull(),

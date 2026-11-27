@@ -16,6 +16,7 @@ import { validateGrammarSpotlightForStorage } from "../types/lessonContentTypes"
 import { addLessonPictures, lessonModelFor, wordsToAvoid, writeLessonText } from "./lesson-generation";
 import { testImageGeneration } from "./services/image-generation.service";
 import { toPublicLessonView } from "./public-lesson-view";
+import { registerPublicLessonTagRoutes } from "./public-lesson-tag-routes";
 import { serveLessonShareImage } from "./lesson-share-image";
 import { ensureStudentPageSchema } from "./student-page-schema";
 import { registerStudentPageRoutes } from "./student-page-routes";
@@ -1753,6 +1754,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: error.message });
     }
   });
+
+  registerPublicLessonTagRoutes(app, storage, ensureAuthenticated);
 
   // Admin lessons browser endpoint
   app.get("/api/admin/lessons", ensureAuthenticated, async (req, res) => {

@@ -12,6 +12,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { PUBLIC_LIBRARY_LABELS } from "@shared/schema";
 import { Sidebar } from "@/components/layout/sidebar";
 import { AdminBatchPublicGenerator } from "@/components/admin/admin-batch-public-generator";
+import { AdminPublicTagBackfill } from "@/components/admin/admin-public-tag-backfill";
 
 interface Lesson {
   id: number;
@@ -121,6 +122,7 @@ export default function AdminLessonManagementPage() {
 
           {/* Admin-only batch generator for public library */}
           <AdminBatchPublicGenerator onLessonPublished={() => void refetch()} />
+          <AdminPublicTagBackfill />
 
           {/* Lesson Grid */}
           {isLoading ? (

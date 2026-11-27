@@ -30,6 +30,8 @@ import { lessonWordDetails } from "./lesson-word-details";
 import { ABANDONED_JOB_AGE_MS } from "./lesson-jobs";
 import { ensureLessonUrlSchema, LESSON_URL_LOCK } from "./lesson-url-schema";
 import { availableLessonSlug } from "@shared/lesson-url";
+import { publicTagFingerprint, TagReviewConflict, type PublicTagSource } from "./public-lesson-tags";
+import { publicTags, type PublicLessonTag } from "@shared/public-lesson-tags";
 import { SQL, eq, and, desc, count, or, ilike, gte, sql, inArray, ne, isNull } from "drizzle-orm";
 
 /** Whether a student may start making a lesson now (reserveStudentLessonJob). */
@@ -58,6 +60,35 @@ export interface StudentLessonJobRow {
  * Lesson generation for teachers uses 42_0001 (server/lesson-jobs.ts).
  */
 const STUDENT_REQUEST_LOCK_NAMESPACE = 42_0002;
+
+// Project only the rendered reading paragraphs. Never select topic, notes,
+// students, image prompts or arbitrary content metadata for tag suggestions.
+// Handle canonical and legacy double-encoded lesson JSON in the database so
+// multi-megabyte embedded images don't travel over the connection.
+const publicReadingForTags = sql<string>`coalesce((
+  SELECT string_agg(p.value #>> '{}', ' ' ORDER BY s.position, p.position)
+  FROM jsonb_array_elements(
+    CASE WHEN jsonb_typeof(
+      (CASE jsonb_typeof(${lessons.content}::jsonb)
+        WHEN 'string' THEN (${lessons.content}::jsonb #>> '{}')::jsonb
+        ELSE ${lessons.content}::jsonb END)->'sections'
+    ) = 'array' THEN
+      (CASE jsonb_typeof(${lessons.content}::jsonb)
+        WHEN 'string' THEN (${lessons.content}::jsonb #>> '{}')::jsonb
+        ELSE ${lessons.content}::jsonb END)->'sections'
+    ELSE '[]'::jsonb END
+  ) WITH ORDINALITY s(value, position)
+  CROSS JOIN LATERAL jsonb_array_elements(
+    CASE WHEN jsonb_typeof(s.value->'paragraphs') = 'array'
+      THEN s.value->'paragraphs' ELSE '[]'::jsonb END
+  ) WITH ORDINALITY p(value, position)
+  WHERE s.value->>'type' = 'reading' AND jsonb_typeof(p.value) = 'string'
+), '')`;
+
+const publicTagSourceColumns = {
+  id: lessons.id, title: lessons.title, cefrLevel: lessons.cefrLevel,
+  publicReading: publicReadingForTags,
+};
 
 // modify the interface with any CRUD methods
 // you might need
@@ -98,7 +129,9 @@ export interface IStorage {
 
   // Public library methods
   getPublicLessons(page?: number, pageSize?: number, search?: string, cefrLevel?: string, category?: string): Promise<{ lessons: Lesson[], total: number }>;
-  getPublicLessonSummaries(cefrLevel?: string): Promise<Array<Pick<Lesson, 'id' | 'title' | 'cefrLevel' | 'publicCategory' | 'createdAt' | 'publicSlug' | 'publicLevel'>>>;
+  getPublicLessonSummaries(cefrLevel?: string): Promise<Array<Pick<Lesson, 'id' | 'title' | 'cefrLevel' | 'publicCategory' | 'createdAt' | 'publicSlug' | 'publicLevel' | 'tags'>>>;
+  getPublicTagCandidates(afterId: number, limit: number): Promise<PublicTagSource[]>;
+  applyReviewedPublicTags(approvals: Array<{ id: number; fingerprint: string; tags: PublicLessonTag[] }>): Promise<number>;
   copyLessonToUser(lessonId: number, userId: number): Promise<Lesson>;
 
   // Admin methods
@@ -1132,6 +1165,9 @@ export class DatabaseStorage implements IStorage {
           category: lessons.category,
           createdAt: lessons.createdAt,
           teacherName: users.username,
+          isPublic: lessons.isPublic,
+          publicCategory: lessons.publicCategory,
+          tags: lessons.tags,
           contentHead: sql<string | null>`substring(${lessons.content}, 1, ${LESSON_SUMMARY_SOURCE_CHARS})`.as('contentHead')
         })
         .from(lessons)
@@ -1191,12 +1227,13 @@ export class DatabaseStorage implements IStorage {
     const conditions = [eq(lessons.isPublic, true)];
     if (cefrLevel) conditions.push(eq(lessons.cefrLevel, cefrLevel));
 
-    return db
+    const rows = await db
       .select({
         id: lessons.id,
         title: lessons.title,
         cefrLevel: lessons.cefrLevel,
         publicCategory: lessons.publicCategory,
+        tags: lessons.tags,
         publicSlug: lessons.publicSlug,
         publicLevel: lessons.publicLevel,
         createdAt: lessons.createdAt,
@@ -1204,6 +1241,35 @@ export class DatabaseStorage implements IStorage {
       .from(lessons)
       .where(and(...conditions))
       .orderBy(desc(lessons.createdAt));
+    // Legacy teacher-entered labels are not automatically public discovery
+    // tags; expose only the curated vocabulary on this new public surface.
+    return rows.map((row) => ({ ...row, tags: publicTags(row.tags) }));
+  }
+
+  async getPublicTagCandidates(afterId: number, limit: number): Promise<PublicTagSource[]> {
+    return db.select(publicTagSourceColumns).from(lessons)
+      .where(and(eq(lessons.isPublic, true), sql`${lessons.id} > ${afterId}`,
+        sql`coalesce(cardinality(${lessons.tags}), 0) = 0`))
+      .orderBy(lessons.id).limit(limit);
+  }
+
+  async applyReviewedPublicTags(approvals: Array<{ id: number; fingerprint: string; tags: PublicLessonTag[] }>): Promise<number> {
+    return db.transaction(async (tx) => {
+      // Consistent lock order avoids deadlocks across concurrent review batches.
+      const rows = await tx.select({ ...publicTagSourceColumns, tags: lessons.tags, isPublic: lessons.isPublic })
+        .from(lessons).where(inArray(lessons.id, approvals.map((a) => a.id)))
+        .orderBy(lessons.id).for("update");
+      for (const approval of approvals) {
+        const row = rows.find((r) => r.id === approval.id);
+        if (!row || !row.isPublic || row.tags?.length || publicTagFingerprint(row) !== approval.fingerprint) {
+          throw new TagReviewConflict("A reviewed lesson changed, was removed, or already has tags. Preview again; nothing was saved.");
+        }
+      }
+      for (const approval of approvals) {
+        await tx.update(lessons).set({ tags: approval.tags }).where(eq(lessons.id, approval.id));
+      }
+      return approvals.length;
+    });
   }
 
   async getLessonByPublicSlug(slug: string): Promise<Lesson | undefined> {
@@ -1234,6 +1300,7 @@ export class DatabaseStorage implements IStorage {
           category: lessons.category,
           publicCategory: lessons.publicCategory,
           publicSlug: lessons.publicSlug,
+          tags: lessons.tags,
           publicLevel: lessons.publicLevel,
           createdAt: lessons.createdAt,
           contentHead: sql<string | null>`substring(${lessons.content}, 1, ${LESSON_SUMMARY_SOURCE_CHARS})`.as('contentHead')
@@ -1277,7 +1344,7 @@ export class DatabaseStorage implements IStorage {
         .offset(offset);
 
       return {
-        lessons: withContentPreview(lessonsResult) as unknown as Lesson[],
+        lessons: withContentPreview(lessonsResult).map((row) => ({ ...row, tags: publicTags(row.tags) })) as unknown as Lesson[],
         total
       };
     } catch (error) {
