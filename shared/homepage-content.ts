@@ -72,6 +72,8 @@ export const hero = {
   imageHeight: 1040,
   videoUrl: 'https://www.youtube.com/embed/pcLlwL5sNK0',
   videoTitle: 'How PlanWise ESL works',
+  videoUploadDate: '2025-04-06T23:21:45-07:00',
+  videoDuration: 'PT14M27S',
 };
 
 /**

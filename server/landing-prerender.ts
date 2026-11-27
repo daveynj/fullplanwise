@@ -370,6 +370,8 @@ export function buildLandingStructuredData(): string {
         name: hero.videoTitle,
         description: homepageMeta.description,
         thumbnailUrl: `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`,
+        uploadDate: hero.videoUploadDate,
+        duration: hero.videoDuration,
         embedUrl: hero.videoUrl,
         contentUrl: `https://www.youtube.com/watch?v=${videoId}`,
         inLanguage: 'en',
