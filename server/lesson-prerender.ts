@@ -713,6 +713,13 @@ async function prerenderLessonIndex(template: string, level?: string): Promise<s
     '@type': 'CollectionPage',
     name: title,
     url: `${BASE_URL}${canonicalPath}`,
+    isAccessibleForFree: true,
+    inLanguage: 'en',
+    educationalLevel: level ? `CEFR ${level}` : 'CEFR A1-C2',
+    audience: [
+      { '@type': 'EducationalAudience', educationalRole: 'teacher', audienceType: 'ESL Teachers and Online English Tutors' },
+      { '@type': 'EducationalAudience', educationalRole: 'student', audienceType: 'Adult and Teen English Learners (CEFR A1-C2)' },
+    ],
     mainEntity: {
       '@type': 'ItemList',
       numberOfItems: lessons.length,
@@ -778,6 +785,13 @@ async function prerenderTopicIndex(template: string, topic: PublicLessonTag): Pr
     '@type': 'CollectionPage',
     name: title,
     url: `${BASE_URL}${canonicalPath}`,
+    isAccessibleForFree: true,
+    inLanguage: 'en',
+    educationalLevel: 'CEFR A1-C2',
+    audience: [
+      { '@type': 'EducationalAudience', educationalRole: 'teacher', audienceType: 'ESL Teachers and Online English Tutors' },
+      { '@type': 'EducationalAudience', educationalRole: 'student', audienceType: 'Adult and Teen English Learners (CEFR A1-C2)' },
+    ],
     mainEntity: {
       '@type': 'ItemList',
       numberOfItems: lessons.length,

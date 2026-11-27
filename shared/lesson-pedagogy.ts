@@ -200,7 +200,7 @@ export const freeLibraryFaq = [
   {
     question: 'Are these ESL conversation lessons completely free with no login?',
     answer:
-      'Yes. Over 160 complete CEFR A1–C2 adult conversation lessons at planwiseesl.com/esl-lessons are 100% free to open, screen-share in full-screen mode, and download as printable Vocabulary Review PDFs with zero account or signup required.',
+      'Yes. Over 180 complete CEFR A1–C2 adult conversation lessons across 17 curated themes at planwiseesl.com/esl-lessons are 100% free to open, screen-share in full-screen mode, and download as printable Vocabulary Review PDFs with zero account or signup required.',
   },
   {
     question: 'How do I teach a free PlanWise ESL lesson in a 30-minute or 60-minute class?',
@@ -216,6 +216,11 @@ export const freeLibraryFaq = [
     question: 'What CEFR levels and adult topics are included in the free library?',
     answer:
       'Lessons cover every CEFR band from A1 Beginner to C2 Proficiency across practical adult topics—including workplace communication, tech, healthcare, hospitality, finance, travel, expat life, and everyday conversation—without childish worksheets.',
+  },
+  {
+    question: 'Can adult English learners use these free lessons for self-study or with a speaking partner?',
+    answer:
+      'Yes. Although the lessons are designed to be teacher-led, independent adult learners (A1–C2) can open any lesson with zero login to study the five pre-taught words (pronunciation, levelled definition, word families, collocations and usage notes), read the CEFR-levelled text, test themselves with the recall flashcards, quiz and gap-fill, download the printable Vocabulary Review PDF, and practise the discussion questions aloud or with a tutor.',
   },
   {
     question: 'What if my student wants a lesson on a specific job or topic not in the free library?',
