@@ -313,3 +313,25 @@ describe("GET /lessons/:id when the database fails", () => {
     expect(body).toContain("noindex");
   });
 });
+
+describe("GET /esl-lessons/topics/:tag (theme hubs)", () => {
+  it("passes a real theme through to the renderer instead of treating it as a lesson slug", async () => {
+    const res = await fetch(`${baseUrl}/esl-lessons/topics/holidays`);
+    expect(res.status).toBe(200);
+    expect(await res.text()).toBe(PASSED_THROUGH);
+    expect(mockStorage.getLessonByPublicSlug).not.toHaveBeenCalled();
+  });
+
+  it("returns a real 404 for an unknown theme", async () => {
+    const res = await fetch(`${baseUrl}/esl-lessons/topics/not-a-real-theme`);
+    expect(res.status).toBe(404);
+    expect(await res.text()).not.toContain(PASSED_THROUGH);
+  });
+
+  it("still looks up lesson slugs under real CEFR levels, in either case", async () => {
+    mockStorage.getLessonByPublicSlug.mockResolvedValue(null);
+    const res = await fetch(`${baseUrl}/esl-lessons/B2/missing-lesson`);
+    expect(res.status).toBe(404);
+    expect(mockStorage.getLessonByPublicSlug).toHaveBeenCalledWith("missing-lesson");
+  });
+});
