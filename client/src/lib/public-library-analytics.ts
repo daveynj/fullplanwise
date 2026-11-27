@@ -1,5 +1,6 @@
 import { PUBLIC_LESSON_TAGS } from "@shared/public-lesson-tags";
 import { PUBLIC_LIBRARY_LABELS } from "@shared/schema";
+import { trackEvent } from "./analytics";
 import { trackProjectEvent } from "./project-analytics";
 
 type LibraryEvent =
@@ -7,7 +8,9 @@ type LibraryEvent =
   | "public_library_category_selected"
   | "public_library_zero_results"
   | "public_library_filters_reset"
-  | "public_library_lesson_opened";
+  | "public_library_lesson_opened"
+  | "public_library_theme_clicked"
+  | "public_library_pdf_downloaded";
 
 interface LibraryContext {
   tag: string;
@@ -26,4 +29,5 @@ export function trackPublicLibraryEvent(name: LibraryEvent, context: LibraryCont
   if (Number.isSafeInteger(context.resultCount) && context.resultCount >= 0) data.result_count = context.resultCount;
   if (Number.isSafeInteger(context.lessonId) && context.lessonId! > 0) data.lesson_id = context.lessonId!;
   trackProjectEvent(name, data);
+  trackEvent(name, data);
 }

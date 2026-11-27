@@ -63,6 +63,9 @@ describe("public information pages", () => {
     expect(compareDoc.querySelector(".mp-verdict h2")?.textContent?.length).toBeGreaterThan(10);
 
     for (const path of [
+      "/compare/engoo",
+      "/compare/esl-pals",
+      "/compare/breaking-news-english",
       "/compare/twee",
       "/compare/esl-joy",
       "/compare/magicschool-diffit",
@@ -78,6 +81,18 @@ describe("public information pages", () => {
       expect(doc.querySelector(".mp-verdict h2")?.textContent?.length).toBeGreaterThan(10);
       expect(doc.querySelectorAll("ol").length).toBeGreaterThanOrEqual(2);
       expect(html).toContain('href="https://speakwithdave.com"');
+    }
+  });
+
+  it("prerenders experience-level ICP hubs (/for/new-esl-teachers and /for/experienced-esl-teachers) with verdicts and valid JSON-LD", () => {
+    for (const path of ["/for/new-esl-teachers", "/for/experienced-esl-teachers"]) {
+      const html = injectMarketingPrerender(template, path);
+      expect(html, path).toBeTruthy();
+      const doc = new DOMParser().parseFromString(html!, "text/html");
+      expect(doc.querySelector(".mp-verdict h2")?.textContent?.length).toBeGreaterThan(10);
+      expect(html).toContain('href="https://speakwithdave.com"');
+      const blocks = [...doc.querySelectorAll('script[type="application/ld+json"]')].map((s) => JSON.parse(s.textContent!));
+      expect(blocks.length).toBeGreaterThanOrEqual(1);
     }
   });
 

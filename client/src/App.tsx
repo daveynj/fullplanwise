@@ -104,7 +104,12 @@ function Router() {
       <Route path="/for/italki-tutors" component={MarketingPage} />
       <Route path="/for/freelance-esl-teachers" component={MarketingPage} />
       <Route path="/for/language-schools" component={MarketingPage} />
+      <Route path="/for/new-esl-teachers" component={MarketingPage} />
+      <Route path="/for/experienced-esl-teachers" component={MarketingPage} />
       <Route path="/compare" component={MarketingPage} />
+      <Route path="/compare/engoo" component={MarketingPage} />
+      <Route path="/compare/esl-pals" component={MarketingPage} />
+      <Route path="/compare/breaking-news-english" component={MarketingPage} />
       <Route path="/compare/esl-joy" component={MarketingPage} />
       <Route path="/compare/twee" component={MarketingPage} />
       <Route path="/compare/magicschool-diffit" component={MarketingPage} />

@@ -38,6 +38,7 @@ afterEach(() => {
   cleanup();
   vi.useRealTimers();
   delete window.umami;
+  delete (window as { gtag?: unknown }).gtag;
   window.history.replaceState(null, "", "/");
 });
 
@@ -213,6 +214,27 @@ describe("public library analytics", () => {
       tag: "constructor", category: "unknown", level: "B1-extra", resultCount: NaN, lessonId: -1,
     });
     expect(track).toHaveBeenLastCalledWith("public_library_zero_results", {});
+  });
+
+  it("forwards allowlisted library and theme events to Google Analytics (gtag) safely", () => {
+    const gtag = vi.fn();
+    (window as { gtag?: typeof gtag }).gtag = gtag;
+
+    trackPublicLibraryEvent("public_library_lesson_opened", {
+      tag: "", category: "", resultCount: 2, lessonId: 41, title: "DO NOT SEND",
+    } as any);
+    trackPublicLibraryEvent("public_library_theme_clicked", {
+      tag: "travel", category: "", resultCount: 3,
+    });
+
+    expect(gtag).toHaveBeenNthCalledWith(1, "event", "public_library_lesson_opened", { result_count: 2, lesson_id: 41 });
+    expect(gtag).toHaveBeenNthCalledWith(2, "event", "public_library_theme_clicked", { tag: "travel", result_count: 3 });
+
+    gtag.mockImplementation(() => { throw new Error("ga blocked"); });
+    expect(() => trackPublicLibraryEvent("public_library_theme_clicked", { tag: "work", category: "", resultCount: 1 })).not.toThrow();
+
+    delete (window as { gtag?: unknown }).gtag;
+    expect(() => trackPublicLibraryEvent("public_library_pdf_downloaded", { tag: "", category: "", resultCount: 0, lessonId: 41 })).not.toThrow();
   });
 });
 

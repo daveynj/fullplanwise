@@ -575,6 +575,7 @@ export default function PublicLessonsIndexPage() {
                     <Link
                       key={tag}
                       href={`/esl-lessons/topics/${tag}`}
+                      onClick={() => trackPublicLibraryEvent("public_library_theme_clicked", { tag, category: "", resultCount: count })}
                       className={`group flex items-start gap-3.5 rounded-2xl p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md ${themeStyle.card}`}
                     >
                       <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl shadow-sm ${themeStyle.iconBox}`}>
@@ -641,8 +642,8 @@ export default function PublicLessonsIndexPage() {
                   const trimmedQuery = searchQuery.trim();
                   const generateHref = trimmedQuery
                     ? `/auth?register=true&redirect=${encodeURIComponent(
-                        `/generate?topic=${encodeURIComponent(trimmedQuery)}${level ? `&level=${encodeURIComponent(level)}` : ""}`
-                      )}`
+                      `/generate?topic=${encodeURIComponent(trimmedQuery)}${level ? `&level=${encodeURIComponent(level)}` : ""}`
+                    )}`
                     : "/auth?register=true";
                   return (
                     <Link href={generateHref}>
@@ -663,28 +664,28 @@ export default function PublicLessonsIndexPage() {
                 Showing {filteredLessons.length} of {lessons.length} {lessons.length === 1 ? "lesson" : "lessons"}
               </p>
               {level || hasActiveFilters ? (
-            <div className="grid sm:grid-cols-2 gap-4">{filteredLessons.map(renderCard)}</div>
-          ) : (
-            LEVELS.map((lv) => {
-              const inLevel = filteredLessons.filter((l) => l.cefrLevel === lv);
-              if (inLevel.length === 0) return null;
-              return (
-                <section key={lv} className="mb-10">
-                  <div className="flex items-baseline justify-between mb-4">
-                    <h2 className="text-2xl font-bold text-brand-navy">
-                      <Link href={`/esl-lessons/${lv.toLowerCase()}`} className="hover:underline">
-                        {lv} {LEVEL_NAMES[lv]}
-                      </Link>
-                    </h2>
-                    <span className="text-sm text-slate-500">
-                      {inLevel.length} {inLevel.length === 1 ? "lesson" : "lessons"}
-                    </span>
-                  </div>
-                  <div className="grid sm:grid-cols-2 gap-4">{inLevel.map(renderCard)}</div>
-                </section>
-              );
-            })
-          )}
+                <div className="grid sm:grid-cols-2 gap-4">{filteredLessons.map(renderCard)}</div>
+              ) : (
+                LEVELS.map((lv) => {
+                  const inLevel = filteredLessons.filter((l) => l.cefrLevel === lv);
+                  if (inLevel.length === 0) return null;
+                  return (
+                    <section key={lv} className="mb-10">
+                      <div className="flex items-baseline justify-between mb-4">
+                        <h2 className="text-2xl font-bold text-brand-navy">
+                          <Link href={`/esl-lessons/${lv.toLowerCase()}`} className="hover:underline">
+                            {lv} {LEVEL_NAMES[lv]}
+                          </Link>
+                        </h2>
+                        <span className="text-sm text-slate-500">
+                          {inLevel.length} {inLevel.length === 1 ? "lesson" : "lessons"}
+                        </span>
+                      </div>
+                      <div className="grid sm:grid-cols-2 gap-4">{inLevel.map(renderCard)}</div>
+                    </section>
+                  );
+                })
+              )}
             </>
           )}
 
