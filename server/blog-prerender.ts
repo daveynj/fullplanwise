@@ -39,8 +39,8 @@ function loadDomPurify() {
 async function sanitizeContentHtml(html: string): Promise<string> {
   const DOMPurify = await loadDomPurify();
   return DOMPurify.sanitize(html, {
-    ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 's', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'a', 'img', 'blockquote', 'code', 'pre', 'iframe', 'div'],
-    ALLOWED_ATTR: ['href', 'target', 'rel', 'src', 'alt', 'class', 'style', 'width', 'height', 'allow', 'allowfullscreen', 'frameborder'],
+    ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 's', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'a', 'img', 'blockquote', 'code', 'pre', 'iframe', 'div', 'table', 'thead', 'tbody', 'tr', 'th', 'td'],
+    ALLOWED_ATTR: ['href', 'target', 'rel', 'src', 'alt', 'class', 'style', 'width', 'height', 'allow', 'allowfullscreen', 'frameborder', 'scope', 'colspan', 'rowspan'],
     ADD_TAGS: ['iframe'],
     ADD_ATTR: ['allow', 'allowfullscreen', 'frameborder', 'scrolling'],
   });
@@ -98,6 +98,19 @@ export function blogPostingJsonLd(post: BlogPost): string {
   }, 'seo-article-jsonld');
 }
 
+export function blogBreadcrumbJsonLd(post: BlogPost): string {
+  const url = `${BASE_URL}${blogPublicMetadata(post).canonicalPath}`;
+  return jsonLd({
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${BASE_URL}/` },
+      { '@type': 'ListItem', position: 2, name: 'Blog', item: `${BASE_URL}/blog` },
+      { '@type': 'ListItem', position: 3, name: post.title, item: url },
+    ],
+  }, 'seo-breadcrumb-jsonld');
+}
+
 function formatDate(dateStr: string): string {
   const d = new Date(dateStr);
   if (isNaN(d.getTime())) return dateStr;
@@ -122,6 +135,9 @@ export const blogPrerenderCss = `
 #blog-prerender .bp-card { background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 24px; margin-bottom: 16px; }
 #blog-prerender .bp-card h2 { margin: 0 0 8px; font-size: 1.3rem; }
 #blog-prerender .bp-tag { display: inline-block; background: #f4f4f4; border-radius: 6px; padding: 2px 10px; font-size: 0.8rem; margin-right: 6px; }
+#blog-prerender table { border-collapse: collapse; width: 100%; margin: 1.2rem 0; font-size: 0.95rem; }
+#blog-prerender th, #blog-prerender td { border: 1px solid #e5e5e5; padding: 8px 10px; text-align: left; vertical-align: top; }
+#blog-prerender th { background: #051d40; color: #fff; }
 #blog-prerender a { color: #b8912a; }
 #blog-prerender img { max-width: 100%; height: auto; border-radius: 8px; }
 `;
@@ -246,7 +262,7 @@ export async function injectBlogPrerender(
         ['name', 'twitter:image', metadata.imageUrl],
         ['name', 'twitter:image:alt', metadata.imageAlt],
       ].map(([attribute, key, value]) => `<meta ${attribute}="${key}" content="${e(value)}" />`).join('\n    ');
-      const meta = `${headMeta(metadata.title, metadata.description, metadata.canonicalPath)}\n    ${social}\n    ${blogPostingJsonLd(post)}`;
+      const meta = `${headMeta(metadata.title, metadata.description, metadata.canonicalPath)}\n    ${social}\n    ${blogPostingJsonLd(post)}\n    ${blogBreadcrumbJsonLd(post)}`;
       return injectIntoTemplate(template, meta, await buildBlogPostHtml(post), true);
     }
 
