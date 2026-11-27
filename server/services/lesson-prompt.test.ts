@@ -327,10 +327,13 @@ describe("lesson quality rules", () => {
         buildLessonSectionPrompt("comprehension", params(level), lesson),
         buildLessonSectionPrompt("quiz", params(level), lesson),
       ]) {
-        expect(prompt).toContain("each wrong sentence must be a mistake a learner could really make");
+        expect(prompt).toContain('Do not write "Which sentence uses [word] correctly?" questions');
       }
     }
     expect(buildLessonSectionPrompt("quiz", params("A2"), lesson)).toContain("never a silly one");
+    expect(buildLessonPrompt(params("A2"))).toContain('- "Which sentence uses [word] correctly?"');
+    expect(buildLessonPrompt(params("B2"))).not.toContain('- "Which sentence uses [word] correctly?"');
+    expect(buildLessonPrompt(params("B2"))).toContain('- "Which word best completes the sentence?');
   });
 
   it("keeps the quiz to what the lesson taught", () => {

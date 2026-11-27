@@ -300,11 +300,26 @@ ${SENTENCE_OPTIONS_RULE}`;
 }
 
 /**
- * "Which sentence uses [word] correctly?" is where absurd options kept coming
- * back even after the general rule ("He collaborated his lunch", "He debunked
- * his keys under a pile of magazines"), so it gets its own rule and example.
+ * "Which sentence uses [word] correctly?" kept producing nonsense options at
+ * B1 and above even with an explicit rule against them ("He collaborated his
+ * lunch", "She prospects her coffee every morning", "He corroborated her
+ * suitcase"), in test lessons on 28 Nov 2026. From B1 up the prompts ask for
+ * formats whose wrong options are real words or real meanings instead.
  */
-const SENTENCE_OPTIONS_RULE = `For "Which sentence uses [word] correctly?", each wrong sentence must be a mistake a learner could really make: the word with the opposite or a nearby meaning ("The new study debunked the theory, proving it was right"), the wrong grammar pattern, or the wrong word partner. Never treat the word as if it meant an unrelated everyday action ("He debunked his keys under a pile of magazines", "He collaborated his lunch"): the student can rule that out without knowing the word.`;
+const SENTENCE_OPTIONS_RULE = `Do not write "Which sentence uses [word] correctly?" questions: they tend to produce nonsense options ("He collaborated his lunch", "She prospects her coffee every morning") that a student can rule out without knowing the word. For "Which word best completes the sentence?", the wrong options must be real words that nearly fit, such as near-synonyms or other words from this lesson.`;
+
+/** Question formats for the vocabulary check: the sentence-choice format only at A1 and A2. */
+function vocabularyCheckFormats(cefrLevel: string): string {
+  if (EASY_DISTRACTOR_LEVELS.has(cefrLevel)) {
+    return `- "What does [word] mean?"
+- "Which sentence uses [word] correctly?"
+- "In which situation would you use [word]?"`;
+  }
+  return `- "What does [word] mean?"
+- "Which word best completes the sentence? '...'"
+- "What does [word] mean in this sentence: '...'?"
+- "In which situation would you use [word]?"`;
+}
 
 function comprehensionStep(cefrLevel: string): string {
   return `Write exactly 5 questions testing vocabulary understanding (one per word). These test whether students know the vocabulary, NOT whether they remember facts from the reading. Keep the questions simple, so the only thing being tested is the target word.
@@ -312,9 +327,7 @@ function comprehensionStep(cefrLevel: string): string {
 ${distractorGuidance(cefrLevel)}
 
 <good_formats>
-- "What does [word] mean?"
-- "Which sentence uses [word] correctly?"
-- "In which situation would you use [word]?"
+${vocabularyCheckFormats(cefrLevel)}
 </good_formats>
 
 <avoid>
