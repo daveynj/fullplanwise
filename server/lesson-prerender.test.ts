@@ -418,6 +418,11 @@ describe("injectLessonPrerender: browse pages", () => {
     expect(html).toContain("index, follow");
     expect(html).toContain("ItemList");
     expect(html).toContain('"numberOfItems":2');
+    expect(html).toContain("How to Teach Any Free PlanWise ESL Lesson");
+    expect(html).toContain("<table");
+    expect(html).toContain('"CollectionPage"');
+    expect(html).toContain('"FAQPage"');
+    expect(html).toContain('"BreadcrumbList"');
   });
 
   it("includes all lessons beyond 100 and numberOfItems in ItemList JSON-LD", async () => {

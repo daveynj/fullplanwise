@@ -145,3 +145,81 @@ export function lessonDifference(stages: LessonStage[], content: unknown): strin
   const list = points.length === 1 ? points[0] : `${points.slice(0, -1).join(', ')} and ${points.at(-1)}`;
   return `Unlike a generic worksheet, ${list}.`;
 }
+
+export const freeLibraryTeachingGuide = {
+  heading: 'How to Teach Any Free PlanWise ESL Lesson (30-Min & 60-Min Guide)',
+  intro:
+    'Every free lesson on PlanWise ESL opens with zero login in full-screen teaching mode for Preply, italki, Zoom, or in-person whiteboards, and includes a one-click printable Vocabulary Review PDF. Follow this six-stage timing plan to keep your student speaking for most of the class.',
+  stages: [
+    {
+      stage: '1. Warm-up recall',
+      min30: '3–4 mins',
+      min60: '5–7 mins',
+      howToTeach:
+        'Ask the opening questions before showing new vocabulary so the student switches on words and ideas they already know.',
+    },
+    {
+      stage: '2. Pre-teach 5 key words',
+      min30: '5–6 mins',
+      min60: '8–10 mins',
+      howToTeach:
+        'Walk through pronunciation, the levelled definition, example sentences, word families, collocations, usage notes, and the visual card for each of the five words.',
+    },
+    {
+      stage: '3. Levelled reading + check',
+      min30: '6–7 mins',
+      min60: '10–12 mins',
+      howToTeach:
+        'Read the short CEFR-calibrated passage aloud or together—where each target word appears two or three times in context—then run the comprehension questions.',
+    },
+    {
+      stage: '4. Recall & guided practice',
+      min30: '5–6 mins',
+      min60: '10–12 mins',
+      howToTeach:
+        'Use recall flashcards (say the meaning and an original sentence before flipping), synonyms/antonyms, tiered sentence frames (emerging, developing, expanding), gap-fill, unscramble, and the quiz.',
+    },
+    {
+      stage: '5. Deep target-vocab discussion',
+      min30: '8–10 mins',
+      min60: '15–20 mins',
+      howToTeach:
+        'Spend the largest share of class on the open discussion prompts and real-world scenarios, nudging the student gently to use today’s five words.',
+    },
+    {
+      stage: '6. Recap & printable PDF',
+      min30: '1–2 mins',
+      min60: '2–3 mins',
+      howToTeach:
+        'Highlight two phrases the student used well and click the download button at the top of the lesson to send the colour-coded Vocabulary Review PDF in chat.',
+    },
+  ],
+};
+
+export const freeLibraryFaq = [
+  {
+    question: 'Are these ESL conversation lessons completely free with no login?',
+    answer:
+      'Yes. Over 160 complete CEFR A1–C2 adult conversation lessons at planwiseesl.com/esl-lessons are 100% free to open, screen-share in full-screen mode, and download as printable Vocabulary Review PDFs with zero account or signup required.',
+  },
+  {
+    question: 'How do I teach a free PlanWise ESL lesson in a 30-minute or 60-minute class?',
+    answer:
+      'Follow the built-in six-stage sequence: spend 3–7 minutes on warm-up recall, 5–10 minutes pre-teaching the five target words, 6–12 minutes on the levelled reading and comprehension check, 5–12 minutes on recall flashcards, tiered sentence frames and practice exercises, 8–20 minutes in deep discussion, and 1–3 minutes sending the Vocabulary Review PDF.',
+  },
+  {
+    question: 'Can I screen-share these lessons on Preply, italki, or Zoom and print handouts?',
+    answer:
+      'Yes. Every lesson includes a clean full-screen teaching view built for video classrooms and interactive whiteboards, plus a one-click print-ready Vocabulary Review sheet formatted to save as PDF or print cleanly to paper.',
+  },
+  {
+    question: 'What CEFR levels and adult topics are included in the free library?',
+    answer:
+      'Lessons cover every CEFR band from A1 Beginner to C2 Proficiency across practical adult topics—including workplace communication, tech, healthcare, hospitality, finance, travel, expat life, and everyday conversation—without childish worksheets.',
+  },
+  {
+    question: 'What if my student wants a lesson on a specific job or topic not in the free library?',
+    answer:
+      'You can create a student profile in PlanWise ESL (5-day unlimited free trial, no credit card) to generate a complete CEFR A1–C2 lesson on any topic in 1–2 minutes, with automatic per-student vocabulary tracking, cross-lesson recycling, and a password-free learner flashcard dashboard.',
+  },
+];

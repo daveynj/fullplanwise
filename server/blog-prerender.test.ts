@@ -189,4 +189,13 @@ describe("blog social previews using the real client template", () => {
     const plainDoc = parse(plainHtml);
     expect(plainDoc.querySelector('#seo-faq-jsonld')).toBeNull();
   });
+
+  it("allows public /api/blog/ in robots.txt before Disallow: /api/ while keeping /admin blocked", () => {
+    const robots = readFileSync("public/robots.txt", "utf8");
+    const allowBlogIdx = robots.indexOf("Allow: /api/blog/");
+    const disallowApiIdx = robots.indexOf("Disallow: /api/");
+    expect(allowBlogIdx).toBeGreaterThan(-1);
+    expect(disallowApiIdx).toBeGreaterThan(allowBlogIdx);
+    expect(robots).toContain("Disallow: /admin");
+  });
 });
