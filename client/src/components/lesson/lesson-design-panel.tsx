@@ -1,8 +1,9 @@
+import { useState } from 'react';
 import { Link } from 'wouter';
-import { ArrowRight, Layers } from 'lucide-react';
+import { ArrowRight, Check, Copy, Layers } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { trackCta } from '@/lib/analytics';
-import { lessonStages, lessonDesign, lessonDifference } from '@shared/lesson-pedagogy';
+import { trackCta, trackEvent } from '@/lib/analytics';
+import { lessonStages, lessonDesign, lessonDifference, soloLearnerAiGuide } from '@shared/lesson-pedagogy';
 
 /**
  * Shown above a public library lesson to visitors (not its owner): what each
@@ -10,9 +11,21 @@ import { lessonStages, lessonDesign, lessonDifference } from '@shared/lesson-ped
  * Uses the same words as the crawler HTML in server/lesson-prerender.ts.
  */
 export function LessonDesignPanel({ content, signedIn }: { content: unknown; signedIn: boolean }) {
+  const [copiedAiPrompt, setCopiedAiPrompt] = useState(false);
   const stages = lessonStages(content);
   if (stages.length < 3) return null;
   const difference = lessonDifference(stages, content);
+
+  const copyAiPrompt = async () => {
+    try {
+      await navigator.clipboard?.writeText(soloLearnerAiGuide.prompt);
+      setCopiedAiPrompt(true);
+      trackEvent('public_library_ai_prompt_copied', { location: 'lesson_page' });
+      window.setTimeout(() => setCopiedAiPrompt(false), 2500);
+    } catch {
+      // Clipboard may be unavailable in restricted contexts.
+    }
+  };
 
   return (
     <section
@@ -69,6 +82,30 @@ export function LessonDesignPanel({ content, signedIn }: { content: unknown; sig
             {lessonDesign.linkLabel} →
           </Link>
         </p>
+      </details>
+
+      <details className="mt-2 group">
+        <summary className="cursor-pointer text-sm font-semibold text-brand-navy underline decoration-brand-yellow decoration-2 underline-offset-2">
+          Studying on your own? Copy a free AI tutor prompt for this lesson
+        </summary>
+        <div className="mt-3 rounded-xl border border-amber-200 bg-white/90 p-4 text-sm text-slate-700 space-y-3">
+          <p>{soloLearnerAiGuide.intro}</p>
+          <ol className="list-decimal list-inside space-y-1 text-slate-700">
+            {soloLearnerAiGuide.steps.map((step) => (
+              <li key={step}>{step}</li>
+            ))}
+          </ol>
+          <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 font-mono text-xs leading-relaxed text-slate-800">
+            {soloLearnerAiGuide.prompt}
+          </div>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <Button type="button" size="sm" variant="outline" onClick={() => void copyAiPrompt()}>
+              {copiedAiPrompt ? <Check className="mr-1.5 h-3.5 w-3.5 text-emerald-600" /> : <Copy className="mr-1.5 h-3.5 w-3.5" />}
+              {copiedAiPrompt ? 'Copied AI Tutor Prompt' : 'Copy AI Tutor Prompt'}
+            </Button>
+          </div>
+          <p className="text-xs text-slate-500 leading-relaxed">{soloLearnerAiGuide.modelTip}</p>
+        </div>
       </details>
     </section>
   );

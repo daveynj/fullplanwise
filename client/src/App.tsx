@@ -110,6 +110,9 @@ function Router() {
       <Route path="/compare/engoo" component={MarketingPage} />
       <Route path="/compare/esl-pals" component={MarketingPage} />
       <Route path="/compare/breaking-news-english" component={MarketingPage} />
+      <Route path="/compare/printdiscuss" component={MarketingPage} />
+      <Route path="/compare/edio" component={MarketingPage} />
+      <Route path="/compare/immerly" component={MarketingPage} />
       <Route path="/compare/esl-joy" component={MarketingPage} />
       <Route path="/compare/twee" component={MarketingPage} />
       <Route path="/compare/magicschool-diffit" component={MarketingPage} />

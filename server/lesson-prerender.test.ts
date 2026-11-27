@@ -640,3 +640,29 @@ describe("injectLessonPrerender: sentence frames and idioms & phrasal verbs", ()
     expect(html).not.toContain("Our itinerary is full.");
   });
 });
+
+describe("CollectionPage free-access and dual-audience metadata", () => {
+  it("marks /esl-lessons and /esl-lessons/topics/work as free with both teacher and learner audiences", async () => {
+    const workLesson = { ...baseLesson, publicSlug: "work-chat", publicLevel: "b1", tags: ["work"] };
+    getPublicLessonSummaries.mockResolvedValue([workLesson]);
+
+    for (const path of ["/esl-lessons", "/esl-lessons/topics/work"]) {
+      const html = await injectLessonPrerender(TEMPLATE, path);
+      expect(html, path).toBeTruthy();
+      const doc = new DOMParser().parseFromString(html!, "text/html");
+      const schemas = [...doc.querySelectorAll('script[type="application/ld+json"]')].map((s) => JSON.parse(s.textContent!));
+      const collection = schemas.find((s) => s["@type"] === "CollectionPage");
+      expect(collection?.isAccessibleForFree).toBe(true);
+      expect(collection?.inLanguage).toBe("en");
+      expect(collection?.audience?.map((a: any) => a.educationalRole)).toEqual(["teacher", "student"]);
+    }
+  });
+
+  it("renders the solo-learner AI tutor prompt guide and model tip on /esl-lessons", async () => {
+    getPublicLessonSummaries.mockResolvedValue([{ ...baseLesson, publicSlug: "travel-plans", publicLevel: "b1", tags: ["travel"] }]);
+    const html = await injectLessonPrerender(TEMPLATE, "/esl-lessons");
+    expect(html).toContain('id="self-study-with-ai"');
+    expect(html).toContain("Studying on your own? Practise any free lesson with AI");
+    expect(html).toContain("Model tip:");
+  });
+});

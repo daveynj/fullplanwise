@@ -58,6 +58,9 @@ export const compareHubPage: MarketingPage = {
         '[PlanWise ESL vs. Engoo Daily News](/compare/engoo) — Free fixed daily news articles vs. 180+ free structured A1–C2 conversation lessons, custom student topics in 1–2 minutes, vocabulary memory, learner dashboards and printable study PDFs.',
         '[PlanWise ESL vs. ESL Pals](/compare/esl-pals) — Pre-made PDF curriculum library vs. unlimited custom adult/teen CEFR A1–C2 lessons, cross-lesson vocabulary recycling and zero-login student flashcard dashboards.',
         '[PlanWise ESL vs. Breaking News English](/compare/breaking-news-english) — Classic text-heavy multi-level news archive vs. clean full-screen teaching mode, 8-stage lexical depth, custom non-news topics and printable study PDFs.',
+        '[PlanWise ESL vs. PrintDiscuss & Question Lists](/compare/printdiscuss) — Plain conversation question lists vs. complete 8-stage A1–C2 lessons with pre-taught vocabulary, ~96%-familiar readings, tiered speaking frames, flashcards and study PDFs.',
+        '[PlanWise ESL vs. edio.ai](/compare/edio) — Live interactive classroom/LMS tools vs. research-backed SLA vocabulary acquisition, 180+ free zero-login A1–C2 lessons, cross-lesson memory and flat unlimited pricing.',
+        '[PlanWise ESL vs. Immerly](/compare/immerly) — Zero-signup A1–C1 lessons vs. 180+ free A1–C2 lessons across 17 themes, printable 8-layer study PDFs, 1–2 minute custom topics and student vocabulary recycling.',
         '[PlanWise ESL vs. ESL Joy](/compare/esl-joy) — Flexible AI slide decks with student tracking vs. an enforced 8-stage CEFR lesson sequence, natural vocabulary recycling, zero-login student dashboards and color-coded Vocabulary Review PDFs.',
         '[PlanWise ESL vs. Twee](/compare/twee) — Modular single-task AI tools vs. one cohesive, quality-checked pedagogical lesson with student vocabulary memory.',
         '[PlanWise ESL vs. MagicSchool AI & Diffit](/compare/magicschool-diffit) — US K–12 school tools (US grade levels & isolated worksheets) vs. true CEFR A1–C2 adult 1-on-1 conversation lessons, vocabulary recycling and zero-login student dashboards.',
@@ -1381,11 +1384,319 @@ export const compareBreakingNewsEnglishPage: MarketingPage = {
   updated: '2026-11-27',
 };
 
+export const comparePrintDiscussPage: MarketingPage = {
+  path: '/compare/printdiscuss',
+  title: `${brand} vs PrintDiscuss & Question Lists: Full ESL Lessons`,
+  description:
+    `Fair comparison of ${brand} vs PrintDiscuss: plain question sheets vs. 180+ free A1–C2 lessons with vocab, reading, speaking frames & PDFs.`,
+  navLabel: 'PlanWise vs PrintDiscuss',
+  eyebrow: 'Comparison',
+  h1: 'PlanWise ESL vs. PrintDiscuss and conversation question lists',
+  intro: [
+    'Sites like PrintDiscuss are helpful when a tutor already has fluent intermediate or advanced speakers and just wants a clean, fast list of conversation questions to spark free talk. There is nothing wrong with a simple prompt sheet for five minutes of warm-up.',
+    `Where plain question lists fall short is actual language growth—especially with shy A1–A2 learners who freeze when handed open questions alone, or paying students who expect to leave class with new vocabulary they can actually remember and reuse. **${brand}** keeps the **zero-login free access** ([over 180 ready-to-teach A1–C2 lessons across 17 curated themes](/esl-lessons)), while replacing bare question lists with an **8-stage research-backed lesson**: five deeply pre-taught illustrated words, a ~96%-familiar levelled reading, recall flashcards, 5-part semantic maps, 3-tier speaking frames, cloze, unscramble, quiz, deep discussion, and a one-click printable colour-coded Vocabulary Review PDF.`,
+  ],
+  verdict: {
+    heading: 'PlanWise ESL vs. PrintDiscuss: Which gives students real progress?',
+    text: `**Choose ${brand}** if you want **180+ free zero-login A1–C2 lessons** with built-in vocabulary instruction, levelled readings, beginner-safe speaking frames and printable colour-coded study PDFs—plus the option to build custom student-specific lessons in ${generationTime} with cross-lesson vocabulary tracking (${trialText}, no card, then ${priceText} Unlimited). **Choose PrintDiscuss** if you strictly want bare printable conversation-question lists for pure free-talk icebreakers.`,
+  },
+  sections: [
+    {
+      heading: 'Side by side: PlanWise ESL vs. PrintDiscuss & question lists',
+      table: {
+        headers: ['', 'PrintDiscuss & question lists', brand],
+        rows: [
+          ['Free zero-login access', 'Yes — printable question topics with zero login', 'Yes — 180+ full A1–C2 lessons across [17 curated themes](/esl-lessons) with zero login & one-click PDF export'],
+          ['Pre-taught vocabulary & lexical depth', 'None — relies solely on words the student already knows', '5 illustrated target words: pronunciation, levelled definition, 4 real-world examples, word family, collocations, usage notes & 5-part semantic map ([how it works](/how-it-works))'],
+          ['CEFR-calibrated reading & input', 'None — questions only', '~96%-familiar 5-paragraph passage tailored to strict A1–C2 lexical rules, using every target word 2–3 times in natural context'],
+          ['Support for shy or A1–A2 speakers', 'Bare questions can cause awkward silence for beginners', 'Warm-up + 3-tier speaking frames (Emerging, Developing, Expanding with model answers) so every learner can start speaking smoothly'],
+          ['Controlled retrieval & recall practice', 'None', 'Interactive recall flashcards, shuffled cloze gap-fill, sentence unscramble & quiz—all verified automatically'],
+          ['Per-student memory & learner portal', 'None — standalone static prompt pages', 'Tracks taught vocabulary per student, avoids accidental repeats, recycles earlier words naturally & includes a zero-login flashcard dashboard ([preview](/student-experience))'],
+          ['Printable takeaway sheet', 'Printable question sheet', 'Printable colour-coded Vocabulary Review PDF alongside full classroom activities'],
+        ],
+      },
+    },
+    {
+      heading: 'Real-World Class Test: Preparing a 60-minute class for an A2–B1 student',
+      paragraphs: [
+        'Compare what a tutor gets before a class on workplace communication, travel, or seasonal celebrations:',
+      ],
+      workflowProof: {
+        planwiseTitle: `${brand} Workflow (Free Library or ${generationTime} Custom)`,
+        planwiseSteps: [
+          'Open a free lesson from 17 curated themes (for example Holidays & Celebrations or Work & Careers) with zero login—or generate a student-specific A1–C2 lesson in 1–2 minutes.',
+          'Move naturally through warm-up questions, 5 illustrated vocabulary cards, a levelled reading passage, recall flashcards, 5-part semantic maps, and 3-tier speaking frames.',
+          'Follow the built-in 30- and 60-minute pacing guide so the discussion stage uses the target vocabulary meaningfully without awkward silence.',
+          'Click Download for PDF for a print-ready Vocabulary Review sheet and send returning students their zero-login flashcard dashboard link.',
+        ],
+        competitorTitle: 'Plain Question-List Workflow (PrintDiscuss)',
+        competitorSteps: [
+          'Pick or print a sheet containing discussion questions on the general topic.',
+          'Write your own pre-taught vocabulary definitions, pronunciation guides, and sample sentences on the whiteboard or chat before asking questions.',
+          'Find or write a reading passage elsewhere if the student needs context and comprehensible input first.',
+          'Leave the student with conversation notes in chat—with no structured flashcards, semantic maps, or cross-lesson vocabulary tracking.',
+        ],
+      },
+    },
+    {
+      heading: 'When PrintDiscuss is the better choice',
+      bullets: [
+        'You teach fluent C1–C2 speakers who specifically ask for pure spontaneous debate and zero vocabulary or reading stages.',
+        'You only need five extra icebreaker questions on paper at the start or end of another lesson.',
+      ],
+    },
+    {
+      heading: `When ${brand} is the better choice`,
+      bullets: [
+        'You want **180+ free zero-login A1–C2 lessons** that go far beyond a list of questions—giving students real words, real reading context, and structured speaking confidence.',
+        'You teach beginners or returning intermediate adults who need pronunciation guides, collocations, usage notes, and **3-tier speaking frames** so they never get stuck mid-sentence.',
+        'You want regular students to retain vocabulary week after week with **automatic recycling** ([live 4-lesson proof](/compare/student-memory-proof)) and a **zero-login spaced-repetition dashboard** ([student experience](/student-experience)).',
+      ],
+    },
+    {
+      heading: 'Open live lessons free across our 17 themed collections',
+      bullets: [
+        '**Beginner & Elementary proof (with 3-tier speaking frames):** [First Day at a New Job: Meeting Your Team (A1)](/esl-lessons/a1/first-day-at-a-new-job-meeting-your-team) and [Making Small Talk with New People (A2)](/esl-lessons/a2/making-small-talk-with-new-people).',
+        '**Popular theme hubs:** [Holidays & Celebrations](/esl-lessons/topics/holidays), [Work & Careers](/esl-lessons/topics/work), [Culture](/esl-lessons/topics/culture), and the full [180+ free lesson library](/esl-lessons).',
+        '**Self-study friendly:** Adult learners can open any free lesson for independent vocabulary, reading, flashcard and speaking practice without creating an account.',
+      ],
+    },
+  ],
+  faq: [
+    {
+      question: 'Does PlanWise ESL also include open discussion questions like PrintDiscuss?',
+      answer: 'Yes. Every PlanWise lesson opens with warm-up discussion questions and finishes with five illustrated deep-discussion questions designed around the target vocabulary—while adding the vocabulary cards, levelled reading, recall flashcards, semantic maps, tiered speaking frames, cloze, unscramble and quiz in between.',
+    },
+    {
+      question: 'Do I have to pay or register to open PlanWise ESL’s lessons like PrintDiscuss?',
+      answer: 'No. Over 180 complete CEFR A1–C2 lessons across 17 themes at /esl-lessons open with zero login or registration, and include a one-click printable Vocabulary Review download.',
+    },
+    {
+      question: 'Can adult English learners also use the free lessons by themselves?',
+      answer: 'Yes. While built for teachers to screen-share, independent adult learners (A1–C2) can study the five vocabulary cards, read the levelled text, flip the recall flashcards, complete the quiz and gap-fill, download the study PDF, and practise the discussion prompts aloud.',
+    },
+  ],
+  disclaimer: 'PlanWise ESL is not affiliated with or endorsed by PrintDiscuss. Comparisons reflect publicly available features and are subject to change.',
+  cta: {
+    heading: 'Replace bare question sheets with complete 8-stage lessons—free to try now',
+    text: `Browse 180+ free A1–C2 lessons across 17 themes with zero login, or start a ${trialText} (no credit card required) for custom student memory.`,
+    ...trialCta,
+  },
+  schemaType: 'WebPage',
+  updated: '2026-11-27',
+};
+
+export const compareEdioPage: MarketingPage = {
+  path: '/compare/edio',
+  title: `${brand} vs edio.ai: Live Classroom LMS vs SLA Conversation`,
+  description:
+    `Honest comparison of ${brand} vs edio.ai: interactive LMS whiteboards vs. 180+ free A1–C2 lessons, SLA vocab recycling & flat $19.99/mo pricing.`,
+  navLabel: 'PlanWise vs edio.ai',
+  eyebrow: 'Comparison',
+  h1: 'PlanWise ESL vs. edio.ai for online tutors & schools',
+  intro: [
+    'edio.ai combines AI lesson creation with an interactive live digital classroom and school-management layer, where students type into live exercises on screen while teachers watch in real time. For tutors or small academies looking for an all-in-one LMS and scheduling shell, that workflow has clear appeal.',
+    `Where teachers compare **${brand}** with edio.ai is **pedagogical vocabulary depth, transparent flat pricing, and zero-login student continuity**. Built by [Dave Jackson](/about)—a working British ESL teacher since 2015—PlanWise ESL pairs [over 180 free zero-login A1–C2 lessons](/esl-lessons) with an 8-stage SLA sequence ([how it works](/how-it-works)), cross-lesson vocabulary tracking with zero duplicates, a password-free spaced-repetition student dashboard, and printable colour-coded Vocabulary Review PDFs at a flat ${priceText} with unlimited students.`,
+  ],
+  verdict: {
+    heading: 'PlanWise ESL vs. edio.ai: Which fits your teaching workflow?',
+    text: `**Choose ${brand}** (${priceText} Unlimited after a ${trialText}, no card, unlimited students) if you already teach over Zoom, Preply, italki, or Teams and want deep 8-stage CEFR A1–C2 conversation lessons, automatic cross-lesson vocabulary memory ([live 4-lesson audit](/compare/student-memory-proof)), zero-login spaced flashcards, printable colour-coded study PDFs, and 180+ free public lessons to inspect right away. **Choose edio.ai** if you specifically want an integrated virtual LMS with student scheduling and real-time collaborative exercise typing inside the platform itself.`,
+  },
+  sections: [
+    {
+      heading: 'Side by side: PlanWise ESL vs. edio.ai',
+      table: {
+        headers: ['', 'edio.ai', brand],
+        rows: [
+          ['Primary strength', 'Interactive digital lessons + live LMS & school scheduling tools', `Deep SLA conversation lessons in ${generationTime} + longitudinal per-student vocabulary memory`],
+          ['Teaching environment', 'Built around students joining its own interactive classroom interface', 'Screen-share cleanly anywhere (Preply, italki, Zoom, Google Meet, Teams or in person) + one-click full-screen mode'],
+          ['Free public preview library', 'Account/platform-oriented onboarding', '[180+ complete CEFR A1–C2 lessons](/esl-lessons) across 17 curated themes free with zero login'],
+          ['Vocabulary acquisition depth', 'Interactive lesson vocabulary & self-checking exercises', '5 illustrated 8-layer words: pronunciation, levelled definition, 4 examples, word family, collocations, usage notes & 5-part semantic map'],
+          ['Per-student vocabulary recycling', 'Student tracking inside course/LMS environment', 'Excludes previously taught words automatically and recycles earlier words naturally into future readings, cloze & quizzes ([proof](/compare/student-memory-proof))'],
+          ['Take-home PDF & zero-login dashboard', 'Interactive platform access', 'Printable colour-coded Vocabulary Review PDF + zero-login spaced flashcard dashboard (no student passwords needed)'],
+          ['Pricing model', 'Tiered/seat-oriented plans depending on academy scale', `Flat ${priceText} Unlimited lessons & unlimited students after a ${trialText} (no credit card); email dave@planwiseesl.com for school teams`],
+        ],
+      },
+    },
+    {
+      heading: 'Real-World Workflow: Teaching regular 1-on-1 students across platforms',
+      paragraphs: [
+        'Compare daily preparation and student retention for an independent tutor teaching students on existing video platforms:',
+      ],
+      workflowProof: {
+        planwiseTitle: `${brand} Workflow (${generationTime})`,
+        planwiseSteps: [
+          'Pick your student and CEFR level (A1–C2) with any custom topic—or open one of 180+ free zero-login lessons across 17 themes.',
+          'Screen-share the verified 8-stage lesson inside your existing classroom window (Preply, italki, Zoom, or Meet) in clean full-screen mode—no asking students to switch apps or create accounts.',
+          'Click "We did this" after class so PlanWise updates the student’s learned word bank, avoids repeats next lesson, and schedules natural vocabulary recycling.',
+          'Send the student’s single private flashcard dashboard link and printable colour-coded Vocabulary Review PDF in one click.',
+        ],
+        competitorTitle: 'Integrated LMS Classroom Workflow (edio.ai)',
+        competitorSteps: [
+          'Set up classes, scheduling, and student seats inside the integrated LMS platform.',
+          'Build or adapt digital interactive lessons for students to complete inside the LMS interface.',
+          'Ask learners on external tutoring marketplaces or video calls to log into an extra classroom environment rather than keeping everything inside screen-share + a single password-free link.',
+          'Manage classroom software features when your main bottleneck is actually level-accurate lesson content and cross-lesson vocabulary retention.',
+        ],
+      },
+    },
+    {
+      heading: 'When edio.ai is the better choice',
+      bullets: [
+        'You want an all-in-one interactive digital classroom and school-management system with live collaborative exercise typing built in.',
+        'You are replacing both scheduling software and interactive homework boards under one roof.',
+      ],
+    },
+    {
+      heading: `When ${brand} is the better choice`,
+      bullets: [
+        'You already teach on Preply, italki, Zoom, or in person and want **zero friction for students**—no student logins, no extra app installs, just clean screen-share plus a single private dashboard link and printable PDF.',
+        'You care deeply about **second-language vocabulary depth and retention**: 96%-familiar readings, 5-part semantic maps, reading-sourced idioms with right/wrong notes, and 0-duplicate cross-lesson recycling.',
+        'You want to **test real lessons with zero signup first** inside our [180+ free library](/esl-lessons) before starting a ${trialText}.',
+      ],
+    },
+    {
+      heading: 'Inspect the quality live (no account required)',
+      bullets: [
+        '**Live cross-lesson recycling audit:** [One Student, Four Lessons (36 items, 0 duplicates)](/compare/student-memory-proof).',
+        '**CEFR benchmark & student portal:** [9-point CEFR Benchmark](/compare/cefr-benchmark) and [Student Experience & Vocabulary Review PDF excerpt](/student-experience).',
+        '**Sample free A1–C1 lessons:** [A1 Workplace](/esl-lessons/a1/first-day-at-a-new-job-meeting-your-team), [B1 Hospitality](/esl-lessons/b1/handling-difficult-guests-like-a-pro), [C1 Business Risk](/esl-lessons/c1/delivering-the-numbers-talking-about-risk-and-uncertainty).',
+      ],
+    },
+  ],
+  faq: [
+    {
+      question: 'Do students need to create an account or pay for seats in PlanWise ESL?',
+      answer: `No. Students never need a password or account—every student gets one private zero-login dashboard link included in your flat ${priceText} Unlimited plan (with unlimited students), and teachers can start with a ${trialText} without a credit card.`,
+    },
+    {
+      question: 'Can small language schools use PlanWise ESL without changing their Zoom or Meet setup?',
+      answer: 'Yes. Lessons open in one click inside full-screen teaching mode for any video tool or classroom screen, and schools can email dave@planwiseesl.com for straightforward multi-teacher setups.',
+    },
+    {
+      question: 'How does PlanWise verify lesson quality before saving?',
+      answer: 'Every generated lesson automatically checks that vocabulary cards, 3-tier speaking frames, comprehension, quiz, cloze answers, and discussion prompts are structurally valid before the teacher sees it—and automatically repairs or regenerates any broken section.',
+    },
+  ],
+  disclaimer: 'PlanWise ESL is not affiliated with or endorsed by edio.ai. Product details are based on publicly available information and subject to change.',
+  cta: {
+    heading: 'Keep your classroom simple—upgrade your lesson pedagogy and memory',
+    text: `Inspect 180+ free A1–C2 lessons at /esl-lessons, or test custom lessons and per-student vocabulary recycling with a ${trialText} (no credit card).`,
+    ...trialCta,
+  },
+  schemaType: 'WebPage',
+  updated: '2026-11-27',
+};
+
+export const compareImmerlyPage: MarketingPage = {
+  path: '/compare/immerly',
+  title: `${brand} vs Immerly: Free ESL Lessons & Custom Vocab Memory`,
+  description:
+    `Fair comparison of ${brand} vs Immerly: interactive free adult lessons vs. 180+ A1–C2 lessons, 17 themes, printable PDFs & custom vocab memory.`,
+  navLabel: 'PlanWise vs Immerly',
+  eyebrow: 'Comparison',
+  h1: 'PlanWise ESL vs. Immerly for free & personalised adult ESL lessons',
+  intro: [
+    'Immerly has earned a good reputation among tutors because it gives teachers 100+ interactive ESL lessons across A1–C1 with no signup required, making it easy to screen-share speaking tasks and role-plays quickly.',
+    `Teachers and self-study adult learners comparing **${brand}** with Immerly quickly notice three differences: PlanWise ESL offers **over 180 complete zero-login lessons spanning all six CEFR levels including C2 Proficient** (organised across [17 searchable themes](/esl-lessons)), adds a **one-click printable colour-coded 8-layer Vocabulary Review study PDF** at the top of every lesson, and lets teachers go beyond any static library by generating custom lessons in **${generationTime}** with **per-student vocabulary memory** and private learner dashboards.`,
+  ],
+  verdict: {
+    heading: 'PlanWise ESL vs. Immerly: Which should ESL tutors choose?',
+    text: `**Choose ${brand}** if you want **180+ free zero-login lessons covering A1 through C2** across 17 curated themes, printable colour-coded Vocabulary Review PDFs, explicit 8-stage vocabulary depth (word families, collocations, usage notes, 5-part semantic maps & reading-sourced idioms), *plus* the ability to build unlimited custom student lessons in ${generationTime} with cross-lesson vocabulary recycling (${trialText}, no card, then ${priceText} Unlimited). **Choose Immerly** if you specifically want an interactive role-play format from its existing A1–C1 catalogue.`,
+  },
+  sections: [
+    {
+      heading: 'Side by side: PlanWise ESL vs. Immerly',
+      table: {
+        headers: ['', 'Immerly', brand],
+        rows: [
+          ['Free zero-login library size & levels', '100+ interactive lessons (A1–C1)', '**180+ complete lessons across all six CEFR levels (A1–C2)** including C2 Proficient, with zero login'],
+          ['Theme discovery & filtering', 'Topic browsing across static library', '**17 curated theme collections** (Work, Tech, AI, Health, Money, Culture, Holidays & Celebrations, Travel, etc.) + level & search filters'],
+          ['Printable student takeaway PDF', 'Browser-centric interactive lessons', 'One-click **Vocabulary Review download** (print-ready colour-coded study sheet with phonetic guide, 4 examples, word family, collocations, usage notes & 5-part semantic map)'],
+          ['Pedagogical structure per lesson', 'Speaking games, discussion & role-play flow', 'Fixed 8-stage SLA sequence + built-in 30/60-min teacher pacing guide ([see how it works](/how-it-works))'],
+          ['Custom topic generation', 'Fixed lesson collection only', `Unlimited bespoke lessons on any student goal or niche industry in ${generationTime}`],
+          ['Per-student vocabulary tracking & recycling', 'None — static collection', 'Remembers every student’s words, avoids repeats, and recycles earlier vocabulary naturally ([4-lesson proof](/compare/student-memory-proof))'],
+          ['Zero-login student dashboard', 'None', 'Private student link with lesson history, next-lesson preview, word list & spaced-repetition flashcards'],
+        ],
+      },
+    },
+    {
+      heading: 'Real-World Teaching Test: From free library into ongoing 1-on-1 retention',
+      paragraphs: [
+        'See how teachers use the free library on day one and expand into tailored student courses:',
+      ],
+      workflowProof: {
+        planwiseTitle: `${brand} Workflow (Free Library + Optional Custom Tracking)`,
+        planwiseSteps: [
+          'Open any of 180+ free A1–C2 lessons across 17 themes with zero signup—complete with full-screen teaching mode and a 30/60-minute pacing guide.',
+          'Pre-teach 5 illustrated words in depth (phonetics, levelled definition, 4 examples, word family, collocations, usage notes, semantic map), read a ~96%-familiar text, run flashcards/tiered frames/exercises, and spend the core of class talking.',
+          'Click Download for PDF at the top of any free lesson to save/print the colour-coded study sheet for your student.',
+          'When you add regular students on a free 5-day trial or Unlimited ($19.99/mo), build custom topics in 1–2 minutes without ever repeating previously learned vocabulary.',
+        ],
+        competitorTitle: 'Static No-Signup Library Workflow (Immerly)',
+        competitorSteps: [
+          'Pick a ready-made lesson from the existing A1–C1 interactive catalogue.',
+          'Screen-share the lesson activities during class.',
+          'Build your own separate word-family, collocation, or C2 material when an advanced student or niche professional asks for something specific.',
+          'Track student vocabulary and send study summaries separately—no cross-lesson memory or student dashboard exists.',
+        ],
+      },
+    },
+    {
+      heading: 'When Immerly is the better choice',
+      bullets: [
+        'You want a quick game/role-play style lesson from a fixed A1–C1 collection and never need C2 lessons, printable study PDFs, or custom topic creation.',
+      ],
+    },
+    {
+      heading: `When ${brand} is the better choice`,
+      bullets: [
+        'You want a larger free zero-login library (**180+ complete lessons**) that includes **C2 Proficient**, **17 clear theme collections**, and a built-in **30/60-minute teaching guide**.',
+        'You want students to leave every free or custom class with a clean, printable **colour-coded Vocabulary Review PDF**.',
+        'You teach regular students and want custom topics in 1–2 minutes, **zero accidental vocabulary repeats**, natural recycling across lessons, and **private zero-login learner dashboards**.',
+      ],
+    },
+    {
+      heading: 'Browse our free A1–C2 library & themes right now (zero login)',
+      bullets: [
+        '**Explore all 17 themes:** [Browse the full 180+ free library](/esl-lessons) or jump straight into [Holidays & Celebrations](/esl-lessons/topics/holidays), [Work & Careers](/esl-lessons/topics/work), or [Artificial Intelligence](/esl-lessons/topics/artificial-intelligence).',
+        '**Inspect C2 Proficient & A1 Beginner side by side:** [Subtle Irony, Idiom and Nuance in Modern Media (C2)](/esl-lessons/c2/subtle-irony-idiom-and-nuance-in-modern-media) vs. [First Day at a New Job (A1)](/esl-lessons/a1/first-day-at-a-new-job-meeting-your-team).',
+        '**See the study PDF & dashboard proof:** [Student Experience & PDF preview](/student-experience) and [Live 4-lesson Vocabulary Recycling Proof](/compare/student-memory-proof).',
+      ],
+    },
+  ],
+  faq: [
+    {
+      question: 'Are PlanWise ESL’s 180+ public lessons completely free without logging in like Immerly?',
+      answer: 'Yes. Every lesson in /esl-lessons (over 180 lessons spanning A1 through C2 across 17 curated themes) opens immediately with zero login, includes full-screen teaching mode, and exports a printable Vocabulary Review PDF in one click.',
+    },
+    {
+      question: 'Does PlanWise ESL cover C2 Proficient as well as A1–C1?',
+      answer: 'Yes. Every CEFR band from A1 Beginner to C2 Proficient is supported in both the free public library and custom lesson generation—with C2 readings written at 180–250 words of native-grade, idiomatic prose and synonym-nuance usage notes.',
+    },
+    {
+      question: 'Can adult English learners also study the free lessons independently?',
+      answer: 'Yes. Learners can open any public lesson without an account to pre-learn the 5 target words, read the levelled passage, practise recall flashcards, quiz and cloze, download the study PDF, and use the discussion questions for speaking practice.',
+    },
+  ],
+  disclaimer: 'PlanWise ESL is not affiliated with or endorsed by Immerly. Comparisons reflect publicly accessible product features and are subject to change.',
+  cta: {
+    heading: 'Explore 180+ free A1–C2 lessons—or personalise your next class in 1–2 minutes',
+    text: `Browse all 17 curated themes with zero login at /esl-lessons, or start a ${trialText} (no credit card needed) for custom student memory.`,
+    ...trialCta,
+  },
+  schemaType: 'WebPage',
+  updated: '2026-11-27',
+};
+
 export const comparisonPages: MarketingPage[] = [
   compareHubPage,
   compareEngooPage,
   compareEslPalsPage,
   compareBreakingNewsEnglishPage,
+  comparePrintDiscussPage,
+  compareEdioPage,
+  compareImmerlyPage,
   compareEslJoyPage,
   compareTweePage,
   compareMagicSchoolDiffitPage,
