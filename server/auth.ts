@@ -8,6 +8,7 @@ import { storage } from "./storage";
 import { User as SelectUser } from "@shared/schema";
 import { v4 as uuidv4 } from "uuid";
 import { mailchimpService } from "./services/mailchimp.service";
+import { restrictRegistrationCountry } from "./registration-country";
 
 declare global {
   namespace Express {
@@ -136,7 +137,9 @@ export function setupAuth(app: Express) {
     }
   });
 
-  app.post("/api/register", async (req, res, next) => {
+  // Creating an account also starts its free trial. Check the country before
+  // any database writes, password hashing, login or marketing-list enrollment.
+  app.post("/api/register", restrictRegistrationCountry, async (req, res, next) => {
     try {
       const rawEmail = typeof req.body.email === "string" ? req.body.email.trim().toLowerCase() : "";
       let username = typeof req.body.username === "string" ? req.body.username.trim() : "";

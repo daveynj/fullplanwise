@@ -1,3 +1,4 @@
+- [Registration region policy](registration-region-policy.md) — block new signups and trials in India and Bangladesh; leave public browsing and existing accounts accessible.
 - [Production DB connection](production-db-connection.md) — Replit overrides DATABASE_URL with "helium" in prod; use NEON_DATABASE_URL + standard pg driver instead.
 - [Stripe secrets naming](stripe-secrets-naming.md) — STRIPE_SECRET_KEY and VITE_STRIPE_PUBLIC_KEY are Replit-integration-owned names; user-set secrets with those names are silently ignored in prod. Use PLANWISE_STRIPE_SECRET and PLANWISE_STRIPE_PUBLIC instead.
 - [Stripe webhook dev/prod conflict](stripe-webhook-dev-prod.md) — only production may register the managed webhook; dev registration deletes prod’s endpoint.
