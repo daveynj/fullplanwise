@@ -119,6 +119,9 @@ describe("AI discovery cleanup (option 1)", () => {
   it("(d) unifies Organization/Person sameAs across site-facts, index.html and SEOHead without GitHub repo or Facebook profiles", () => {
     expect([...organizationSameAs]).toEqual([
       "https://x.com/PlanwiseESL",
+      "https://www.g2.com/products/planwise-esl/reviews",
+      "https://www.capterra.com/p/10296345/PlanWise-ESL/",
+      "https://www.trustpilot.com/review/planwiseesl.com",
     ]);
     expect([...founderSameAs]).toEqual([
       "https://speakwithdave.com",
