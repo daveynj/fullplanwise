@@ -373,6 +373,9 @@ export const lessonGenerateSchema = z.object({
   textInput: z.string().optional(),
   additionalNotes: z.string().optional(), // Additional instructions for the AI
   targetVocabulary: z.string().optional(), // Custom vocabulary words to include in the lesson
+  // What the teacher saved about the student (students.notes). Set by the
+  // server from the database when a student is chosen; a client value is ignored.
+  studentContext: z.string().max(600).optional(),
   components: z.array(z.string()),
   generateImages: z.boolean().default(true),
   useStudentHistory: z.boolean().default(true),

@@ -117,10 +117,10 @@ export function StudentForm({
           name="notes"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Notes (Optional)</FormLabel>
+              <FormLabel>About this student (optional)</FormLabel>
               <FormControl>
                 <Textarea 
-                  placeholder="Additional information, learning goals, etc." 
+                  placeholder="Anything that helps fit lessons to them: age, where they are from, job, interests, goals. PlanWise uses this when it writes their lessons." 
                   className="resize-none" 
                   rows={3} 
                   {...field} 
