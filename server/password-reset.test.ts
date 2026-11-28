@@ -46,9 +46,14 @@ beforeAll(async () => {
   });
   base = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
 });
-afterAll(() => new Promise<void>((resolve) => server.close(() => resolve())));
+afterAll(() => {
+  vi.unstubAllEnvs();
+  return new Promise<void>((resolve) => server.close(() => resolve()));
+});
 beforeEach(() => {
   vi.clearAllMocks();
+  // Links use the public address (a Replit workspace would otherwise use its own).
+  vi.stubEnv("PUBLIC_APP_URL", "https://planwiseesl.com");
   mocks.configured = true;
   mocks.sendMail.mockResolvedValue(undefined);
   mocks.getUsersByEmail.mockResolvedValue([]);
