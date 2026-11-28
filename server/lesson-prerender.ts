@@ -222,7 +222,7 @@ function listHtml(items: string[], ordered = false): string {
 }
 
 /** Turns lesson sections into crawlable HTML. Skips anything it does not recognise. */
-function sectionsHtml(sections: any[]): string {
+export function sectionsHtml(sections: any[]): string {
   const out: string[] = [];
 
   for (const s of sections) {

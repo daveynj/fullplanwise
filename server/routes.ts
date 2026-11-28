@@ -18,6 +18,7 @@ import { testImageGeneration } from "./services/image-generation.service";
 import { toPublicLessonView } from "./public-lesson-view";
 import { PUBLIC_LESSON_TAGS, isPublicLessonTag, publicTags } from "@shared/public-lesson-tags";
 import { registerPublicLessonTagRoutes } from "./public-lesson-tag-routes";
+import { registerMcpRoutes } from "./mcp-server";
 import { serveLessonShareImage } from "./lesson-share-image";
 import { ensureStudentPageSchema } from "./student-page-schema";
 import { registerStudentPageRoutes } from "./student-page-routes";
@@ -1764,6 +1765,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   registerPublicLessonTagRoutes(app, storage, ensureAuthenticated);
+  // Connector for AI assistants: search and open the free lesson library.
+  registerMcpRoutes(app, storage);
 
   // Admin lessons browser endpoint
   app.get("/api/admin/lessons", ensureAuthenticated, async (req, res) => {

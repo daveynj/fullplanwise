@@ -25,7 +25,8 @@ describe("site facts stay consistent", () => {
   it("llms.txt only links to pages that exist", () => {
     const paths = [...llms.matchAll(/https:\/\/planwiseesl\.com(\/[^\s),]*)?/g)]
       .map((m) => (m[1] || "/").replace(/\?.*$/, ""))
-      .filter((p) => p !== "/sitemap.xml");
+      // /sitemap.xml and /mcp (the connector for AI assistants) are served by the server, not the app.
+      .filter((p) => p !== "/sitemap.xml" && p !== "/mcp");
     expect(paths.length).toBeGreaterThan(3);
     for (const path of paths) {
       expect(validClientRoutes.some((re) => re.test(path)), path).toBe(true);
