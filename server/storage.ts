@@ -1237,8 +1237,6 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
-  // Lightweight list of every public lesson (no content), for the crawlable
-  // browse pages and the sitemap. Optionally limited to one CEFR level.
   /** Public lessons with their content, for the "conversation questions" pages. Public-safe columns only (never topic, notes or teacher data). */
   async getPublicLessonsWithContent() {
     await ensureLessonUrlSchema();
@@ -1261,6 +1259,8 @@ export class DatabaseStorage implements IStorage {
     return rows.map((row) => ({ ...row, tags: publicTags(row.tags) }));
   }
 
+  // Lightweight list of every public lesson (no content), for the crawlable
+  // browse pages and the sitemap. Optionally limited to one CEFR level.
   async getPublicLessonSummaries(cefrLevel?: string) {
     await ensureLessonUrlSchema();
     const conditions = [eq(lessons.isPublic, true)];
