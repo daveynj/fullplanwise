@@ -17,6 +17,7 @@ import { addLessonPictures, lessonModelFor, wordsToAvoid, writeLessonText } from
 import { testImageGeneration } from "./services/image-generation.service";
 import { toPublicLessonView } from "./public-lesson-view";
 import { PUBLIC_LESSON_TAGS, isPublicLessonTag, publicTags } from "@shared/public-lesson-tags";
+import { hasLevelTopicPage, levelTopicCounts, levelTopicPages, parseLevelTopicPath } from "@shared/library-browse";
 import { registerPublicLessonTagRoutes } from "./public-lesson-tag-routes";
 import { serveLessonShareImage } from "./lesson-share-image";
 import { ensureStudentPageSchema } from "./student-page-schema";
@@ -2696,6 +2697,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
     next();
   });
 
+  // Level-by-theme pages (/esl-lessons/b1/topics/work) exist only where the
+  // level and theme have enough public lessons (shared/library-browse.ts);
+  // anything else is a real 404, so the library never serves thin pages.
+  app.get("/esl-lessons/:level/topics/:tag", async (req, res, next) => {
+    const page = parseLevelTopicPath(req.path);
+    if (!page) {
+      await serve404Html(res, app);
+      return;
+    }
+    try {
+      const lessons = await storage.getPublicLessonSummaries(page.level);
+      if (!hasLevelTopicPage(levelTopicCounts(lessons), page.level, page.tag)) {
+        await serve404Html(res, app);
+        return;
+      }
+      next();
+    } catch (error) {
+      console.error("Error checking level-by-theme page:", error);
+      res.status(503).set({ "Retry-After": "120", "X-Robots-Tag": "noindex" })
+        .send("This page is temporarily unavailable. Please try again shortly.");
+    }
+  });
+
   // Printable "discussion questions only" view. Public lessons only (link-only
   // shared lessons and private lessons are 404s); noindex, canonical to the lesson.
   app.get("/esl-lessons/:level/:slug/questions", async (req, res) => {
@@ -2839,6 +2863,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
               lastmod: latest(inTag.map((l) => toDate(l.createdAt))),
             });
           }
+        }
+        for (const page of levelTopicPages(publicLessons)) {
+          const inPage = publicLessons.filter((l) => l.cefrLevel === page.level && publicTags(l.tags).includes(page.tag));
+          entries.push({ url: page.path, lastmod: latest(inPage.map((l) => toDate(l.createdAt))) });
         }
       }
 

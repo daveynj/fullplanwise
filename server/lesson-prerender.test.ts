@@ -241,7 +241,8 @@ describe("injectLessonPrerender: More lessons at this level", () => {
     getPublicLessonSummaries.mockResolvedValue([42, 1, 2, 3, 4, 5, 6, 7].map(sameLevel));
     const html = (await injectLessonPrerender(TEMPLATE, "/lessons/42"))!;
 
-    expect(getPublicLessonSummaries).toHaveBeenCalledWith("B1");
+    expect(getPublicLessonSummaries).toHaveBeenCalled();
+    expect(html).toContain("More like this");
     expect(html).toContain("More B1 lessons");
     const block = html.match(/<section class="lp-related">([\s\S]*?)<\/section>/)?.[1] ?? "";
     const links = block.match(/<a href="\/lessons\/\d+">/g) || [];
@@ -268,6 +269,33 @@ describe("injectLessonPrerender: More lessons at this level", () => {
     expect(html).toContain("Maria booked a flight to Lisbon.");
     expect(html).not.toContain('<section class="lp-related">');
     warn.mockRestore();
+  });
+
+  it("groups by theme: same theme at this level first, the theme at other levels, and where to browse", async () => {
+    const tagged = (id: number, cefrLevel: string, tags: string[], title: string) => ({
+      id, title, topic: "x", cefrLevel, tags, publicCategory: null, createdAt: new Date("2025-01-01"),
+      publicSlug: `l-${id}`, publicLevel: cefrLevel.toLowerCase(),
+    });
+    getLesson.mockResolvedValue({ ...baseLesson, tags: ["travel"] });
+    getPublicLessonSummaries.mockResolvedValue([
+      tagged(42, "B1", ["travel"], "Travel Plans"),
+      tagged(1, "B1", ["work"], "Office Talk"),
+      tagged(2, "B1", ["travel"], "Lost Luggage"),
+      tagged(3, "B1", ["travel"], "Hotel Check-in"),
+      tagged(4, "A2", ["travel"], "At the Airport"),
+      tagged(5, "C1", ["travel"], "Overtourism"),
+      tagged(6, "B2", ["work"], "Appraisals"),
+    ]);
+    const html = (await injectLessonPrerender(TEMPLATE, "/lessons/42"))!;
+    const block = html.match(/<section class="lp-related">([\s\S]*?)<\/section>/)?.[1] ?? "";
+    expect(block.indexOf("Lost Luggage")).toBeLessThan(block.indexOf("Office Talk"));
+    expect(block).toContain("Travel at other levels");
+    expect(block).toContain('<a href="/esl-lessons/a2/l-4">At the Airport</a> (A2)');
+    expect(block).toContain('<a href="/esl-lessons/c1/l-5">Overtourism</a> (C1)');
+    expect(block).not.toContain("Appraisals");
+    // Three B1 travel lessons: the level-by-theme page exists.
+    expect(block).toContain('<a href="/esl-lessons/b1/topics/travel">B1 Travel lessons</a>');
+    expect(block).toContain('<a href="/esl-lessons/b1">All B1 lessons</a>');
   });
 });
 
@@ -513,6 +541,74 @@ describe("injectLessonPrerender: browse pages", () => {
     getPublicLessonSummaries.mockResolvedValue([]);
     const emptyTopic = (await injectLessonPrerender(TEMPLATE, "/esl-lessons/topics/holidays"))!;
     expect(emptyTopic).toContain("noindex, nofollow");
+  });
+});
+
+describe("injectLessonPrerender: level-by-theme pages (/esl-lessons/:level/topics/:tag)", () => {
+  const tagged = (id: number, cefrLevel: string, tags: string[], title: string) => ({
+    id, title, topic: "x", cefrLevel, tags, publicCategory: "general-english", createdAt: new Date("2025-01-01"),
+    publicSlug: `l-${id}`, publicLevel: cefrLevel.toLowerCase(),
+  });
+  const library = [
+    tagged(1, "B1", ["work"], "Office Talk"),
+    tagged(2, "B1", ["work", "money"], "Payday"),
+    tagged(3, "B1", ["work"], "Job Interviews"),
+    tagged(4, "B1", ["travel"], "Lost Luggage"),
+    tagged(5, "A2", ["work"], "First Day"),
+    tagged(6, "B2", ["work"], "Appraisals"),
+    tagged(7, "B2", ["work"], "Meetings"),
+    tagged(8, "B2", ["work"], "Negotiating"),
+  ];
+  beforeEach(() => getPublicLessonSummaries.mockResolvedValue(library));
+
+  it("renders an indexable page with only that level's lessons on the theme, and its own metadata", async () => {
+    const html = (await injectLessonPrerender(TEMPLATE, "/esl-lessons/b1/topics/work"))!;
+    expect(html).toContain("<h1>Free B1 Work &amp; careers ESL Lessons (Intermediate)</h1>");
+    expect(html).toContain("Office Talk");
+    expect(html).toContain("Payday");
+    expect(html).not.toContain("Lost Luggage");
+    expect(html).not.toContain("First Day");
+    expect(html).toContain("3 free B1 (intermediate) ESL conversation lessons about work &amp; careers");
+    expect(html).toContain("B1 lessons ask for opinions and reasons");
+    expect(html).toContain('<link rel="canonical" href="https://planwiseesl.com/esl-lessons/b1/topics/work" />');
+    expect(html).not.toContain("noindex");
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    const schemas = [...doc.querySelectorAll('script[type="application/ld+json"]')].map((s) => JSON.parse(s.textContent!));
+    const collection = schemas.find((s) => s["@type"] === "CollectionPage");
+    expect(collection?.educationalLevel).toBe("CEFR B1");
+    expect(collection?.isAccessibleForFree).toBe(true);
+    expect(collection?.mainEntity?.numberOfItems).toBe(3);
+    const crumbs = schemas.find((s) => s["@type"] === "BreadcrumbList");
+    expect(crumbs?.itemListElement?.map((c: any) => c.name)).toEqual(["Home", "ESL Lessons", "B1", "Work & careers"]);
+  });
+
+  it("links the same theme at other levels only where that page exists, and the other themes at this level", async () => {
+    const html = (await injectLessonPrerender(TEMPLATE, "/esl-lessons/b1/topics/work"))!;
+    expect(html).toContain('<a href="/esl-lessons/b2/topics/work">B2 Upper Intermediate (3)</a>');
+    expect(html).toContain('<span class="lp-muted">A2 Elementary</span>');
+    expect(html).toContain('<a href="/esl-lessons/topics/work">All levels</a>');
+    expect(html).toContain("Other B1 themes");
+    // One B1 travel lesson: too few for its own page, so the hub.
+    expect(html).toContain('<a href="/esl-lessons/topics/travel">Travel (1)</a>');
+    expect(html).toContain('<a href="/esl-lessons/topics/money">Money (1)</a>');
+  });
+
+  it("is a real null (404 upstream) below the minimum, for unknown themes and levels", async () => {
+    expect(await injectLessonPrerender(TEMPLATE, "/esl-lessons/a2/topics/work")).toBeNull();
+    expect(await injectLessonPrerender(TEMPLATE, "/esl-lessons/b1/topics/travel")).toBeNull();
+    expect(await injectLessonPrerender(TEMPLATE, "/esl-lessons/b1/topics/not-a-theme")).toBeNull();
+    expect(await injectLessonPrerender(TEMPLATE, "/esl-lessons/b9/topics/work")).toBeNull();
+  });
+
+  it("is linked from the level page and from the theme hub's level headings", async () => {
+    const levelHtml = (await injectLessonPrerender(TEMPLATE, "/esl-lessons/b1"))!;
+    expect(levelHtml).toContain("Browse B1 Lessons by Theme");
+    expect(levelHtml).toContain('<a href="/esl-lessons/b1/topics/work">Work &amp; careers (3)</a>');
+    expect(levelHtml).toContain('<a href="/esl-lessons/topics/travel">Travel (1)</a>');
+
+    const hubHtml = (await injectLessonPrerender(TEMPLATE, "/esl-lessons/topics/work"))!;
+    expect(hubHtml).toContain('<h2><a href="/esl-lessons/b1/topics/work">B1 Work &amp; careers lessons (3)</a></h2>');
+    expect(hubHtml).toContain('<h2><a href="/esl-lessons/a2">A2 Elementary</a></h2>');
   });
 });
 

@@ -91,6 +91,7 @@ function Router() {
       <Route path="/auth" component={AuthPage} />
       <Route path="/esl-lessons" component={PublicLessonsIndexPage} />
       <Route path="/esl-lessons/topics/:tag" component={PublicLessonsIndexPage} />
+      <Route path="/esl-lessons/:level/topics/:tag" component={PublicLessonsIndexPage} />
       <Route path="/esl-lessons/:level/:slug" component={FullScreenLessonPage} />
       <Route path="/esl-lessons/:level" component={PublicLessonsIndexPage} />
       <Route path="/blog/:slug" component={BlogPost} />

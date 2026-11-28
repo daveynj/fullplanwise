@@ -41,6 +41,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { filterPublicLessons, PUBLIC_LESSON_TAGS, PUBLIC_LESSON_TAG_DESCRIPTIONS, FEATURED_SEASONAL_TAGS, isPublicLessonTag, publicTags, type PublicLessonTag } from "@shared/public-lesson-tags";
+import { LEVEL_TEACHING_NOTES, levelTopicDescription, levelTopicPath, levelTopicTitle, type CefrLevel } from "@shared/library-browse";
 
 interface ThemeCardStyle {
   card: string;
@@ -198,10 +199,11 @@ interface LessonSummary {
 // over once the app loads.
 export default function PublicLessonsIndexPage() {
   const [isTopicRoute, topicParams] = useRoute("/esl-lessons/topics/:tag");
+  const [isLevelTopicRoute, levelTopicParams] = useRoute("/esl-lessons/:level/topics/:tag");
   const [, params] = useRoute("/esl-lessons/:level");
-  const rawTopic = isTopicRoute ? topicParams?.tag?.toLowerCase() : undefined;
+  const rawTopic = isTopicRoute ? topicParams?.tag?.toLowerCase() : isLevelTopicRoute ? levelTopicParams?.tag?.toLowerCase() : undefined;
   const activeTopic: PublicLessonTag | undefined = rawTopic && isPublicLessonTag(rawTopic) ? rawTopic : undefined;
-  const requested = !isTopicRoute ? params?.level?.toUpperCase() : undefined;
+  const requested = isLevelTopicRoute ? levelTopicParams?.level?.toUpperCase() : !isTopicRoute ? params?.level?.toUpperCase() : undefined;
   const level = requested && (LEVELS as readonly string[]).includes(requested) ? requested : undefined;
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -323,16 +325,20 @@ export default function PublicLessonsIndexPage() {
     setSelectedTag(tag);
   }
 
-  const heading = activeTopic
-    ? `Free ${PUBLIC_LESSON_TAGS[activeTopic]} ESL Lessons (A1–C2)`
-    : level
-      ? `${level} (${levelName}) Free ESL Lessons`
-      : "Free ESL Lesson Library (A1–C2)";
-  const intro = activeTopic
-    ? `${PUBLIC_LESSON_TAG_DESCRIPTIONS[activeTopic]} ${libraryDesign}`
-    : level
-      ? `Ready-to-teach ${level} ${levelName.toLowerCase()} ESL conversation lessons — open any lesson free with zero login. ${libraryDesign}`
-      : `Open, teach, and share complete CEFR A1–C2 ESL conversation lessons with zero login required. ${libraryDesign}`;
+  const heading = level && activeTopic
+    ? levelTopicTitle(level, activeTopic)
+    : activeTopic
+      ? `Free ${PUBLIC_LESSON_TAGS[activeTopic]} ESL Lessons (A1–C2)`
+      : level
+        ? `${level} (${levelName}) Free ESL Lessons`
+        : "Free ESL Lesson Library (A1–C2)";
+  const intro = level && activeTopic
+    ? `${lessons.length} free ${level} (${levelName.toLowerCase()}) ESL conversation lessons about ${PUBLIC_LESSON_TAGS[activeTopic].toLowerCase()}, ready to teach with no login. ${LEVEL_TEACHING_NOTES[level as CefrLevel] ?? ""} ${libraryDesign}`
+    : activeTopic
+      ? `${PUBLIC_LESSON_TAG_DESCRIPTIONS[activeTopic]} ${libraryDesign}`
+      : level
+        ? `Ready-to-teach ${level} ${levelName.toLowerCase()} ESL conversation lessons — open any lesson free with zero login. ${libraryDesign}`
+        : `Open, teach, and share complete CEFR A1–C2 ESL conversation lessons with zero login required. ${libraryDesign}`;
 
   const renderCard = (lesson: LessonSummary) => {
     const label = lesson.publicCategory
@@ -386,25 +392,31 @@ export default function PublicLessonsIndexPage() {
     <>
       <SEOHead
         title={
-          activeTopic
-            ? `Free ${PUBLIC_LESSON_TAGS[activeTopic]} ESL Lessons (A1–C2) | PlanWise ESL`
-            : level
-              ? `${level} (${levelName}) ESL Lessons - Free Lesson Plans | PlanWise ESL`
-              : "Free ESL Lessons by CEFR Level (A1-C2) | PlanWise ESL"
+          level && activeTopic
+            ? `${levelTopicTitle(level, activeTopic)} | PlanWise ESL`
+            : activeTopic
+              ? `Free ${PUBLIC_LESSON_TAGS[activeTopic]} ESL Lessons (A1–C2) | PlanWise ESL`
+              : level
+                ? `${level} (${levelName}) ESL Lessons - Free Lesson Plans | PlanWise ESL`
+                : "Free ESL Lessons by CEFR Level (A1-C2) | PlanWise ESL"
         }
         description={
-          activeTopic
-            ? PUBLIC_LESSON_TAG_DESCRIPTIONS[activeTopic]
-            : level
-              ? `Free ${level} (${levelName}) ESL conversation lessons with pre-taught vocabulary, a levelled reading, speaking support and discussion. Ready to teach.`
-              : "Free ESL conversation lessons for every CEFR level (A1–C2) with pre-taught vocabulary, a levelled reading, speaking support and discussion."
+          level && activeTopic
+            ? levelTopicDescription(level, activeTopic, lessons.length)
+            : activeTopic
+              ? PUBLIC_LESSON_TAG_DESCRIPTIONS[activeTopic]
+              : level
+                ? `Free ${level} (${levelName}) ESL conversation lessons with pre-taught vocabulary, a levelled reading, speaking support and discussion. Ready to teach.`
+                : "Free ESL conversation lessons for every CEFR level (A1–C2) with pre-taught vocabulary, a levelled reading, speaking support and discussion."
         }
         canonicalUrl={
-          activeTopic
-            ? `/esl-lessons/topics/${activeTopic}`
-            : level
-              ? `/esl-lessons/${level.toLowerCase()}`
-              : "/esl-lessons"
+          level && activeTopic
+            ? levelTopicPath(level, activeTopic)
+            : activeTopic
+              ? `/esl-lessons/topics/${activeTopic}`
+              : level
+                ? `/esl-lessons/${level.toLowerCase()}`
+                : "/esl-lessons"
         }
         // Only when the data really came back empty. A failed or pending request
         // (e.g. a crawler that can't fetch the API) must not noindex the page.
