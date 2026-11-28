@@ -6,7 +6,6 @@ import {
   showcase,
   problem,
   features,
-  science,
   steps,
   founder,
   pricing,
@@ -54,9 +53,6 @@ export function buildLandingPrerenderHtml(): string {
   const list = (items: string[]) => items.map((i) => `<li>${e(i)}</li>`).join('');
   const featuresHtml = features.items
     .map((f) => `<div class="lp-card"><h3>${e(f.title)}</h3><p>${e(f.text)}</p></div>`)
-    .join('');
-  const sciencePointsHtml = science.points
-    .map((p) => `<li><strong>${e(p.title)}:</strong> ${e(p.text)}</li>`)
     .join('');
   const stepsHtml = steps.items
     .map(
@@ -137,19 +133,25 @@ export function buildLandingPrerenderHtml(): string {
     <div class="lp-stats">${statsHtml}</div>
   </section>
 
+  <section id="sample-lesson" class="lp-section">
+    <h2>${e(showcase.heading)}</h2>
+    <p>${e(showcase.subheading)}</p>
+    <p><a href="/lessons/${showcase.lessonId}">${e(showcase.viewFullLabel)}</a></p>
+    <p><a class="lp-btn" href="/auth?register=true">${e(showcase.cta)}</a></p>
+  </section>
+
+  <section class="lp-section">
+    <h2>${e(verifiableProof.heading)}</h2>
+    <p>${e(verifiableProof.subheading)}</p>
+    <div class="lp-grid-3">${proofHtml}</div>
+  </section>
+
   <section class="lp-section">
     <h2>${e(personalisation.heading)}</h2>
     <p>${e(personalisation.intro)}</p>
     <div class="lp-grid-2">${courseHtml(personalisation.personal)}${courseHtml(personalisation.general)}</div>
     <p>${e(personalisation.note)}</p>
     <p><a href="${e(personalisation.href)}">${e(personalisation.cta)}</a></p>
-  </section>
-
-  <section id="sample-lesson" class="lp-section">
-    <h2>${e(showcase.heading)}</h2>
-    <p>${e(showcase.subheading)}</p>
-    <p><a href="/lessons/${showcase.lessonId}">${e(showcase.viewFullLabel)}</a></p>
-    <p><a class="lp-btn" href="/auth?register=true">${e(showcase.cta)}</a></p>
   </section>
 
   <section class="lp-section">
@@ -164,38 +166,13 @@ export function buildLandingPrerenderHtml(): string {
   </section>
 
   <section class="lp-section">
-    <h2>Browse Free Teacher-Led ESL Lessons by CEFR Level (No Login Required)</h2>
-    <p>Inspect complete 8-stage lessons before signing up — complete with phonetic pronunciation, word families, collocations, levelled readings, semantic maps, and downloadable Vocabulary Review PDFs.</p>
-    <ul>
-      <li><a href="/esl-lessons">Browse All Free ESL Lessons (A1–C2)</a></li>
-      <li><a href="/esl-lessons/a1">A1 Beginner Free ESL Lessons</a></li>
-      <li><a href="/esl-lessons/a2">A2 Elementary Free ESL Lessons</a></li>
-      <li><a href="/esl-lessons/b1">B1 Intermediate Free ESL Lessons</a></li>
-      <li><a href="/esl-lessons/b2">B2 Upper Intermediate Free ESL Lessons</a></li>
-      <li><a href="/esl-lessons/c1">C1 Advanced Free ESL Lessons</a></li>
-      <li><a href="/esl-lessons/c2">C2 Proficiency Free ESL Lessons</a></li>
-    </ul>
+    <h2>${e(steps.heading)}</h2>
+    <div class="lp-grid-3">${stepsHtml}</div>
   </section>
 
   <section id="features" class="lp-section">
     <h2>${e(features.heading)}</h2>
     <div class="lp-grid-3">${featuresHtml}</div>
-  </section>
-
-  <section class="lp-section">
-    <h2>${e(science.heading)}</h2>
-    <p>${e(science.intro)}</p>
-    <ol>${sciencePointsHtml}</ol>
-    <figure>
-      <img src="${e(science.image)}" alt="${e(science.imageAlt)}" width="1650" height="900" loading="lazy" />
-      <figcaption>${e(science.imageCaption)}</figcaption>
-    </figure>
-    <p><a href="${e(science.href)}">${e(science.cta)}</a></p>
-  </section>
-
-  <section class="lp-section">
-    <h2>${e(steps.heading)}</h2>
-    <div class="lp-grid-3">${stepsHtml}</div>
   </section>
 
   <section class="lp-section">
@@ -209,9 +186,17 @@ export function buildLandingPrerenderHtml(): string {
   </section>
 
   <section class="lp-section">
-    <h2>${e(verifiableProof.heading)}</h2>
-    <p>${e(verifiableProof.subheading)}</p>
-    <div class="lp-grid-3">${proofHtml}</div>
+    <h2>Free ESL lessons at every level (no login needed)</h2>
+    <p>Open any lesson and teach it today: key words with pictures and pronunciation, a reading at the right level, practice, discussion and a Vocabulary Review PDF.</p>
+    <ul>
+      <li><a href="/esl-lessons">Browse All Free ESL Lessons (A1–C2)</a></li>
+      <li><a href="/esl-lessons/a1">A1 Beginner Free ESL Lessons</a></li>
+      <li><a href="/esl-lessons/a2">A2 Elementary Free ESL Lessons</a></li>
+      <li><a href="/esl-lessons/b1">B1 Intermediate Free ESL Lessons</a></li>
+      <li><a href="/esl-lessons/b2">B2 Upper Intermediate Free ESL Lessons</a></li>
+      <li><a href="/esl-lessons/c1">C1 Advanced Free ESL Lessons</a></li>
+      <li><a href="/esl-lessons/c2">C2 Proficiency Free ESL Lessons</a></li>
+    </ul>
   </section>
 
   <section id="pricing" class="lp-section">
