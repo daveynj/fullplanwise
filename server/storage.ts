@@ -33,6 +33,7 @@ import { availableLessonSlug } from "@shared/lesson-url";
 import { lessonIndexNowPaths, notifyIndexNow } from "./indexnow";
 import { publicTagFingerprint, publicTagEditFingerprint, TagReviewConflict, type PublicTagSource } from "./public-lesson-tags";
 import { publicTags, type PublicLessonTag } from "@shared/public-lesson-tags";
+import { siteFacts } from "@shared/site-facts";
 import { SQL, eq, and, desc, count, or, ilike, gte, sql, inArray, ne, isNull } from "drizzle-orm";
 
 /** Whether a student may start making a lesson now (reserveStudentLessonJob). */
@@ -260,10 +261,11 @@ export class DatabaseStorage implements IStorage {
 
   async createUser(insertUser: InsertUser): Promise<User> {
     try {
-      // Calculate trial expiry date (5 days from now) — new accounts get
-      // unlimited lesson generation until this date.
+      // New accounts get unlimited lesson generation for siteFacts.trialDays
+      // (14 days from 28 Nov 2026: long enough to teach a weekly student twice
+      // and see the next lesson build on their word list).
       const trialExpiresAt = new Date();
-      trialExpiresAt.setDate(trialExpiresAt.getDate() + 5);
+      trialExpiresAt.setDate(trialExpiresAt.getDate() + siteFacts.trialDays);
 
       // Ensure default values are set
       const userToInsert = {
@@ -272,7 +274,7 @@ export class DatabaseStorage implements IStorage {
         isAdmin: false,
         subscriptionTier: "free",
         freeCreditsRemaining: 0,  // hard paywall after the trial — applies to new accounts only
-        trialExpiresAt  // 5-day unlimited trial for new signups
+        trialExpiresAt  // unlimited trial for new signups (siteFacts.trialDays)
       };
 
       const [user] = await db.insert(users).values(userToInsert).returning();

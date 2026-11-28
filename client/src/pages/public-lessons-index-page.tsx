@@ -678,8 +678,8 @@ export default function PublicLessonsIndexPage() {
                       <Button variant="brand">
                         <Sparkles className="h-4 w-4 mr-1.5" />
                         {trimmedQuery
-                          ? `Generate “${trimmedQuery}” free (5-day trial)`
-                          : "Generate this topic free (5-day trial)"}
+                          ? `Generate “${trimmedQuery}” free (14-day trial)`
+                          : "Generate this topic free (14-day trial)"}
                       </Button>
                     </Link>
                   );
@@ -833,7 +833,7 @@ export default function PublicLessonsIndexPage() {
             </div>
             <Link href="/auth?register=true" className="shrink-0">
               <Button variant="brand" size="lg">
-                Start 5-Day Free Trial
+                Start 14-Day Free Trial
               </Button>
             </Link>
           </div>

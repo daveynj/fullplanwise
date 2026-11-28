@@ -812,7 +812,7 @@ export const christmasNewYearGuide: MarketingPage = {
   ],
   cta: {
     heading: 'See all the holiday lessons',
-    text: 'All 12 are free, with no login. For a seasonal lesson written for one student, the 5-day free trial needs no credit card.',
+    text: 'All 12 are free, with no login. For a seasonal lesson written for one student, the 14-day free trial needs no credit card.',
     label: 'See Holiday Lessons',
     href: '/esl-lessons/topics/holidays',
   },

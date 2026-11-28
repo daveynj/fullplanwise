@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ActivationFunnelCard } from "@/components/admin/activation-funnel-card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -381,6 +382,8 @@ export function AdminDashboardPage() {
                         color="bg-orange-100 text-orange-800"
                       />
                     </div>
+
+                    <ActivationFunnelCard />
 
                     {/* Lesson activity over last 30 days */}
                     {analytics.userGrowthData.length > 0 && (

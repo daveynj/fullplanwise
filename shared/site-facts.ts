@@ -19,7 +19,7 @@ export const siteFacts = {
   currency: 'USD',
   pricePeriod: 'month',
   /** Length of the free trial new accounts get (server/storage.ts createUser). */
-  trialDays: 5,
+  trialDays: 14,
   /** How long a lesson usually takes to generate. Pictures follow about a minute later, while the lesson is already open. */
   generationTime: '1–2 minutes',
   levels: 'A1–C2',
