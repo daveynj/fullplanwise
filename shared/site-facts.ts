@@ -7,7 +7,7 @@
 export const siteFacts = {
   brand: 'PlanWise ESL',
   /** Older or informal spellings, listed in structured data so they are recognised as the same product. */
-  alternateNames: ['PlanwiseESL', 'Plan Wise ESL', 'Planwise ESL'],
+  alternateNames: ['PlanWise', 'PlanwiseESL', 'Plan Wise ESL', 'Planwise ESL'],
   url: 'https://planwiseesl.com',
   founder: 'Dave Jackson',
   founderRole: 'ESL teacher and founder of PlanWise ESL',
@@ -49,6 +49,11 @@ export const freeLessonLicence = {
 /** Real public profiles representing the PlanWise ESL organisation. */
 export const organizationSameAs = [
   'https://x.com/PlanwiseESL',
+  // Independent review listings: they tell search engines and AI that this
+  // "PlanWise" is the ESL product (many other products share the name).
+  'https://www.g2.com/products/planwise-esl/reviews',
+  'https://www.capterra.com/p/10296345/PlanWise-ESL/',
+  'https://www.trustpilot.com/review/planwiseesl.com',
 ] as const;
 
 /** Real public profiles representing founder Dave Jackson. */
