@@ -119,6 +119,7 @@ export function serveStatic(app: Express) {
   });
 
   app.get("/lessons/:id", servePrerenderedLesson);
+  app.get("/esl-lessons/:level/topics/:tag", servePrerenderedLesson);
   app.get("/esl-lessons/:level/:slug", servePrerenderedLesson);
   app.get("/esl-lessons", servePrerenderedLesson);
   app.get("/esl-lessons/:level", servePrerenderedLesson);
