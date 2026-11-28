@@ -63,6 +63,8 @@ import { syncMailchimpPlanTagsForUsers } from "./mailchimp-plan-tags";
 import fs from 'fs/promises';
 import path from 'path';
 import multer from 'multer';
+import { sendGaEvent } from './ga-measurement';
+import { siteFacts } from '@shared/site-facts';
 
 // In-memory job store for async lesson generation
 type LessonJobStatus = 'pending' | 'complete' | 'error';
@@ -1728,6 +1730,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Tag them "Unlimited" in Mailchimp so the trial emails stop (never throws).
       void syncMailchimpPlanTagsForUsers([userId]);
+
+      // Report the purchase to Google Analytics from the server as well. GA
+      // de-duplicates purchases by transaction_id, so the browser's copy of the
+      // same purchase (or a page reload) is not counted twice.
+      void sendGaEvent(req.headers.cookie, "purchase", {
+        transaction_id: session.id,
+        currency: (session.currency || siteFacts.currency).toUpperCase(),
+        value: typeof session.amount_total === "number" ? session.amount_total / 100 : Number(siteFacts.priceValue),
+      });
 
       // Return the updated user info
       const { password, ...userWithoutPassword } = updatedUser;
