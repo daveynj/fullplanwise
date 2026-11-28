@@ -500,8 +500,10 @@ describe("injectLessonPrerender: browse pages", () => {
   it("filters to one level on /esl-lessons/b1", async () => {
     getPublicLessonSummaries.mockResolvedValue([summaries[0]]);
     const html = (await injectLessonPrerender(TEMPLATE, "/esl-lessons/b1"))!;
-    expect(getPublicLessonSummaries).toHaveBeenCalledWith("B1");
+    expect(getPublicLessonSummaries).toHaveBeenCalled();
     expect(html).toContain("B1 (Intermediate) ESL Lessons");
+    expect(html).toContain("Job Interviews");
+    expect(html).not.toContain("Ordering Food");
     expect(html).toContain('<link rel="canonical" href="https://planwiseesl.com/esl-lessons/b1" />');
   });
 

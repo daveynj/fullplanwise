@@ -94,6 +94,9 @@ beforeAll(async () => {
   app.get("/esl-lessons/:level/:slug", (_req, res) => {
     res.status(200).type("html").send(PASSED_THROUGH);
   });
+  app.get("/esl-lessons/:level/topics/:tag", (_req, res) => {
+    res.status(200).type("html").send(PASSED_THROUGH);
+  });
 
   await new Promise<void>((resolve) => server.listen(0, resolve));
   const address = server.address();
