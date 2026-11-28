@@ -10,6 +10,8 @@ type LibraryEvent =
   | "public_library_filters_reset"
   | "public_library_lesson_opened"
   | "public_library_theme_clicked"
+  | "public_library_preview_opened"
+  | "public_library_start_here_clicked"
   | "public_library_pdf_downloaded";
 
 interface LibraryContext {

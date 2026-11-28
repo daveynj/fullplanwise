@@ -57,6 +57,7 @@ import Stripe from "stripe";
 
 import { db } from "./db";
 import { sql } from "drizzle-orm";
+import { lessonPreviewOf } from "@shared/lesson-preview";
 import { syncMailchimpPlanTagsForUsers } from "./mailchimp-plan-tags";
 // Dynamic import for PDF service - loaded only when needed
 // import { pdfGeneratorService } from "./services/pdf-generator.service";
@@ -1910,6 +1911,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error: any) {
       console.error('Error fetching public lesson index:', error);
       res.status(500).json({ message: 'Failed to load lessons' });
+    }
+  });
+
+  // Public (no login) quick preview for a library card: target words, the
+  // reading and one discussion question. Published lessons only.
+  app.get("/api/public-lesson-preview/:id", async (req, res) => {
+    try {
+      const lessonId = parseIdParam(req.params.id);
+      const lesson = lessonId === null ? undefined : await storage.getLesson(lessonId);
+      if (!lesson || !lesson.isPublic) {
+        return res.status(404).json({ message: "Lesson not found" });
+      }
+      res.set('Cache-Control', 'public, max-age=300');
+      res.json(lessonPreviewOf(lesson.content));
+    } catch (error: any) {
+      console.error('Error fetching public lesson preview:', error);
+      res.status(500).json({ message: 'Failed to load preview' });
     }
   });
 

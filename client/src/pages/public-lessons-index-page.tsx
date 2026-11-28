@@ -19,6 +19,8 @@ import {
   Bus,
   Check,
   CheckCircle2,
+  ChevronDown,
+  Clock,
   Coins,
   Copy,
   FileDown,
@@ -30,6 +32,7 @@ import {
   Heart,
   Laptop,
   Leaf,
+  MessageCircle,
   Plane,
   Search,
   ShoppingBag,
@@ -41,6 +44,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { filterPublicLessons, PUBLIC_LESSON_TAGS, PUBLIC_LESSON_TAG_DESCRIPTIONS, FEATURED_SEASONAL_TAGS, isPublicLessonTag, publicTags, type PublicLessonTag } from "@shared/public-lesson-tags";
+import type { LessonPreview } from "@shared/lesson-preview";
 import { LEVEL_TEACHING_NOTES, levelTopicDescription, levelTopicPath, levelTopicTitle, type CefrLevel } from "@shared/library-browse";
 
 interface ThemeCardStyle {
@@ -194,6 +198,160 @@ interface LessonSummary {
   tags: string[] | null;
 }
 
+// One colour per CEFR band, so a level is recognisable at a glance.
+const LEVEL_BADGE_STYLES: Record<string, string> = {
+  A1: "bg-emerald-700 hover:bg-emerald-700",
+  A2: "bg-emerald-700 hover:bg-emerald-700",
+  B1: "bg-sky-700 hover:bg-sky-700",
+  B2: "bg-sky-700 hover:bg-sky-700",
+  C1: "bg-violet-700 hover:bg-violet-700",
+  C2: "bg-violet-700 hover:bg-violet-700",
+};
+
+const THEMES_SHOWN_FIRST = 6;
+const NEWEST_SHOWN = 3;
+
+interface LessonCardProps {
+  lesson: LessonSummary;
+  onOpen: (lesson: LessonSummary) => void;
+  onPreview: (lesson: LessonSummary) => void;
+}
+
+// A library card with a "Quick preview" drawer. The preview (target words,
+// reading and one discussion question) loads only when the drawer is opened.
+function LessonCard({ lesson, onOpen, onPreview }: LessonCardProps) {
+  const [open, setOpen] = useState(false);
+  const href = lessonPath(lesson);
+  const drawerId = `lesson-preview-${lesson.id}`;
+  const label = lesson.publicCategory
+    ? PUBLIC_LIBRARY_LABELS[lesson.publicCategory as keyof typeof PUBLIC_LIBRARY_LABELS]
+    : undefined;
+
+  const preview = useQuery<LessonPreview>({
+    queryKey: ["public-lesson-preview", lesson.id],
+    enabled: open,
+    staleTime: Infinity,
+    queryFn: async () => {
+      const res = await fetch(`/api/public-lesson-preview/${lesson.id}`);
+      if (!res.ok) throw new Error("Failed to load preview");
+      return res.json();
+    },
+  });
+
+  return (
+    <Card
+      className="h-full p-5 flex flex-col border-slate-200 hover:border-brand-yellow hover:shadow-md transition-all group bg-white"
+      data-testid={`card-lesson-${lesson.id}`}
+    >
+      <div className="flex-1">
+        <div className="flex flex-wrap items-center gap-2 mb-3">
+          <Badge className={`text-white font-semibold ${LEVEL_BADGE_STYLES[lesson.cefrLevel] ?? "bg-brand-navy hover:bg-brand-navy"}`}>
+            {lesson.cefrLevel}
+          </Badge>
+          {label && (
+            <Badge variant="outline" className="border-amber-300 bg-amber-50 text-amber-900">
+              {label}
+            </Badge>
+          )}
+          {publicTags(lesson.tags).map((tag) => (
+            <Badge key={tag} variant="outline" className="border-slate-200 bg-slate-50 text-slate-600 font-normal">
+              {PUBLIC_LESSON_TAGS[tag]}
+            </Badge>
+          ))}
+        </div>
+        <h3 className="text-lg font-bold text-brand-navy leading-snug mb-3">
+          <Link href={href} onClick={() => onOpen(lesson)} className="hover:text-amber-700 hover:underline decoration-brand-yellow decoration-2 underline-offset-4 transition-colors">
+            {lesson.title}
+          </Link>
+        </h3>
+      </div>
+
+      {open && (
+        <div id={drawerId} className="mb-3 rounded-xl border border-slate-200 bg-slate-50/80 p-4 text-sm">
+          {preview.isLoading ? (
+            <p role="status" className="text-slate-500">Loading preview…</p>
+          ) : preview.isError || !preview.data ? (
+            <p className="text-slate-600">The preview could not be loaded. You can still open the full lesson below.</p>
+          ) : (
+            <>
+              {preview.data.words.length > 0 && (
+                <>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">
+                    {preview.data.words.length} target words
+                  </p>
+                  <dl className="space-y-1.5 mb-3">
+                    {preview.data.words.map((w) => (
+                      <div key={w.term}>
+                        <dt className="inline font-semibold text-brand-navy">{w.term}</dt>
+                        {w.definition && <dd className="inline text-slate-600">: {w.definition}</dd>}
+                      </div>
+                    ))}
+                  </dl>
+                </>
+              )}
+              {(preview.data.readingTitle || preview.data.readingIntro) && (
+                <p className="flex gap-2 text-sm leading-relaxed text-slate-700 mb-2">
+                  <BookOpen className="h-4 w-4 shrink-0 mt-0.5 text-slate-400" aria-hidden="true" />
+                  <span>
+                    <span className="font-semibold text-brand-navy">Reading: </span>
+                    {preview.data.readingTitle}
+                    {preview.data.readingTitle && preview.data.readingIntro ? ". " : ""}
+                    {preview.data.readingIntro}
+                  </span>
+                </p>
+              )}
+              {preview.data.discussionQuestion && (
+                <p className="flex gap-2 text-sm leading-relaxed text-slate-700 mb-2">
+                  <MessageCircle className="h-4 w-4 shrink-0 mt-0.5 text-slate-400" aria-hidden="true" />
+                  <span>
+                    <span className="font-semibold text-brand-navy">Discussion: </span>
+                    {preview.data.discussionQuestion}
+                  </span>
+                </p>
+              )}
+              {preview.data.minutes && (
+                <p className="flex gap-2 text-slate-500 text-xs">
+                  <Clock className="h-3.5 w-3.5 shrink-0 mt-0.5" aria-hidden="true" />
+                  About {preview.data.minutes} minutes
+                </p>
+              )}
+            </>
+          )}
+          <Link href={href} onClick={() => onOpen(lesson)} className="inline-block mt-3">
+            <Button variant="brand" size="sm">
+              Try this lesson <ArrowRight className="h-3.5 w-3.5 ml-1" aria-hidden="true" />
+            </Button>
+          </Link>
+        </div>
+      )}
+
+      <div className="flex items-center justify-between gap-3 pt-3 border-t border-slate-100 text-xs font-medium">
+        <button
+          type="button"
+          aria-expanded={open}
+          aria-controls={drawerId}
+          onClick={() => {
+            if (!open) onPreview(lesson);
+            setOpen(!open);
+          }}
+          className="inline-flex items-center gap-1 rounded-md px-2 py-1.5 -ml-2 text-slate-600 font-semibold hover:bg-slate-100 hover:text-brand-navy transition-colors"
+        >
+          <ChevronDown className={`h-3.5 w-3.5 transition-transform ${open ? "rotate-180" : ""}`} aria-hidden="true" />
+          {open ? "Hide preview" : "Quick preview"}
+        </button>
+        <Link
+          href={href}
+          onClick={() => onOpen(lesson)}
+          aria-label={`Open free: ${lesson.title}`}
+          className="inline-flex items-center gap-1 text-brand-navy font-semibold hover:text-amber-700"
+        >
+          Open free <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform" aria-hidden="true" />
+        </Link>
+      </div>
+    </Card>
+  );
+}
+
 // Public (no login) browse pages: /esl-lessons and /esl-lessons/:level.
 // Search engines get server-rendered HTML for these URLs; this component takes
 // over once the app loads.
@@ -211,6 +369,7 @@ export default function PublicLessonsIndexPage() {
   const [selectedTag, setSelectedTag] = useState<string>("all");
   const [selectedThemeLevel, setSelectedThemeLevel] = useState<string>("all");
   const [copiedAiPrompt, setCopiedAiPrompt] = useState(false);
+  const [showAllThemes, setShowAllThemes] = useState(false);
   const pendingFilterAction = useRef<{ level: string | undefined; delay: number } | null>(null);
 
   const copyAiPrompt = async () => {
@@ -325,6 +484,22 @@ export default function PublicLessonsIndexPage() {
     setSelectedTag(tag);
   }
 
+  // "Start here" paths: each one is a real route or filter, with its true count.
+  const startHere = useMemo(() => {
+    const countTag = (tag: PublicLessonTag) => lessons.filter((l) => publicTags(l.tags).includes(tag)).length;
+    const countCategory = (category: string) => lessons.filter((l) => l.publicCategory === category).length;
+    const countLevel = (lv: string) => lessons.filter((l) => l.cefrLevel === lv).length;
+    const paths: { title: string; note: string; count: number; href?: string; category?: string; tag?: string; level?: string }[] = [
+      { title: "Work & meetings", note: "Interviews, meetings and workplace English", count: countTag("work"), href: "/esl-lessons/topics/work", tag: "work" },
+      { title: "Business English", note: "Lessons for professional situations", count: countCategory("business-english"), category: "business-english" },
+      { title: "Conversation practice", note: "Speaking-first lessons with open questions", count: countCategory("conversation-practice"), category: "conversation-practice" },
+      { title: "Advanced discussion (C1)", note: "Harder readings and deeper questions", count: countLevel("C1"), href: "/esl-lessons/c1", level: "C1" },
+    ];
+    return paths.filter((p) => p.count > 0);
+  }, [lessons]);
+  // The index arrives newest first.
+  const newestLessons = useMemo(() => lessons.slice(0, NEWEST_SHOWN), [lessons]);
+
   const heading = level && activeTopic
     ? levelTopicTitle(level, activeTopic)
     : activeTopic
@@ -340,51 +515,20 @@ export default function PublicLessonsIndexPage() {
         ? `Ready-to-teach ${level} ${levelName.toLowerCase()} ESL conversation lessons — open any lesson free with zero login. ${libraryDesign}`
         : `Open, teach, and share complete CEFR A1–C2 ESL conversation lessons with zero login required. ${libraryDesign}`;
 
-  const renderCard = (lesson: LessonSummary) => {
-    const label = lesson.publicCategory
-      ? PUBLIC_LIBRARY_LABELS[lesson.publicCategory as keyof typeof PUBLIC_LIBRARY_LABELS]
-      : undefined;
-    return (
-      <Link key={lesson.id} href={lessonPath(lesson)} className="block h-full"
-        onClick={() => trackPublicLibraryEvent("public_library_lesson_opened", {
-          tag: selectedTag, category: selectedCategory, level: lesson.cefrLevel,
-          resultCount: filteredLessons.length, lessonId: lesson.id,
-        })}
-      >
-        <Card
-          className="h-full p-5 flex flex-col justify-between border-slate-200 hover:border-brand-yellow hover:shadow-md transition-all cursor-pointer group bg-white"
-          data-testid={`card-lesson-${lesson.id}`}
-        >
-          <div>
-            <div className="flex flex-wrap items-center gap-2 mb-3">
-              <Badge className="bg-brand-navy text-white hover:bg-brand-navy font-semibold">
-                {lesson.cefrLevel}
-              </Badge>
-              {label && (
-                <Badge variant="outline" className="border-amber-200 bg-amber-50/70 text-amber-900">
-                  {label}
-                </Badge>
-              )}
-              {publicTags(lesson.tags).map((tag) => (
-                <Badge key={tag} variant="outline" className="border-slate-200 bg-slate-50 text-slate-700">
-                  {PUBLIC_LESSON_TAGS[tag]}
-                </Badge>
-              ))}
-            </div>
-            <h3 className="text-lg font-semibold text-brand-navy group-hover:text-amber-700 transition-colors leading-snug mb-3">
-              {lesson.title}
-            </h3>
-          </div>
-          <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-xs font-medium text-slate-500">
-            <span>Full 8-stage lesson + Vocab PDF</span>
-            <span className="inline-flex items-center gap-1 text-brand-navy font-semibold group-hover:translate-x-0.5 transition-transform">
-              Open free <ArrowRight className="h-3.5 w-3.5" />
-            </span>
-          </div>
-        </Card>
-      </Link>
-    );
-  };
+  const renderCard = (lesson: LessonSummary) => (
+    <LessonCard
+      key={lesson.id}
+      lesson={lesson}
+      onOpen={(l) => trackPublicLibraryEvent("public_library_lesson_opened", {
+        tag: selectedTag, category: selectedCategory, level: l.cefrLevel,
+        resultCount: filteredLessons.length, lessonId: l.id,
+      })}
+      onPreview={(l) => trackPublicLibraryEvent("public_library_preview_opened", {
+        tag: selectedTag, category: selectedCategory, level: l.cefrLevel,
+        resultCount: filteredLessons.length, lessonId: l.id,
+      })}
+    />
+  );
 
   const hasActiveFilters = searchQuery.trim().length > 0 || selectedCategory !== "all" || selectedTag !== "all" || selectedThemeLevel !== "all";
 
@@ -463,7 +607,7 @@ export default function PublicLessonsIndexPage() {
           </a>
 
           {/* Search + CEFR Level + Category Controls */}
-          <div className="rounded-2xl bg-white border border-slate-200 p-4 md:p-5 shadow-sm mb-8 space-y-4">
+          <div className="rounded-2xl bg-white border border-slate-200 p-4 md:p-5 shadow-sm mb-3 space-y-4 lg:sticky lg:top-[6.75rem] lg:z-30">
             <div className="relative">
               <Search className="h-4 w-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
               <Input
@@ -536,9 +680,11 @@ export default function PublicLessonsIndexPage() {
                 </>
               )}
             </nav>
+          </div>
 
+          <div className="rounded-2xl bg-white border border-slate-200 p-4 md:p-5 shadow-sm mb-8 space-y-4 empty:hidden">
             {availableCategories.length > 1 && (
-              <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100">
+              <div className="flex flex-wrap items-center gap-2">
                 <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 mr-1">
                   Topic Area:
                 </span>
@@ -564,7 +710,7 @@ export default function PublicLessonsIndexPage() {
               </div>
             )}
             {availableTags.length > 0 && !activeTopic && (
-              <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100" aria-label="Curated topic tags">
+              <div className="flex flex-wrap items-center gap-2" aria-label="Curated topic tags">
                 <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 mr-1">
                   Curated tags:
                 </span>
@@ -587,14 +733,59 @@ export default function PublicLessonsIndexPage() {
             )}
           </div>
 
+          {!level && !activeTopic && !hasActiveFilters && startHere.length > 0 && (
+            <section className="mb-10" aria-labelledby="start-here-heading">
+              <h2 id="start-here-heading" className="text-xl font-bold text-brand-navy mb-4">New here? Start with one of these</h2>
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+                {startHere.map((path) => {
+                  const body = (
+                    <>
+                      <span className="block text-sm font-bold text-brand-navy leading-snug">{path.title}</span>
+                      <span className="block mt-1 text-xs text-slate-600">{path.note}</span>
+                      <span className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-amber-800">
+                        {path.count} {path.count === 1 ? "lesson" : "lessons"}
+                        <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+                      </span>
+                    </>
+                  );
+                  const className = "group flex h-full w-full flex-col items-start justify-start rounded-2xl border-2 border-brand-yellow/60 bg-amber-50/60 p-4 text-left shadow-sm transition-all hover:-translate-y-0.5 hover:border-brand-yellow hover:shadow-md";
+                  const onClick = () => trackPublicLibraryEvent("public_library_start_here_clicked", {
+                    tag: path.tag ?? "", category: path.category ?? "", level: path.level, resultCount: path.count,
+                  });
+                  return path.href ? (
+                    <Link key={path.title} href={path.href} onClick={onClick} className={className}>{body}</Link>
+                  ) : (
+                    <button key={path.title} type="button" className={className}
+                      onClick={() => { onClick(); changeFilters({ category: path.category }); }}>
+                      {body}
+                    </button>
+                  );
+                })}
+              </div>
+              {newestLessons.length > 0 && (
+                <>
+                  <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-500 mb-3">Newest lessons</h3>
+                  <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {newestLessons.map((lesson) => (
+                      <LessonCard key={`new-${lesson.id}`} lesson={lesson}
+                        onOpen={(l) => trackPublicLibraryEvent("public_library_lesson_opened", { tag: "", category: "", level: l.cefrLevel, resultCount: newestLessons.length, lessonId: l.id })}
+                        onPreview={(l) => trackPublicLibraryEvent("public_library_preview_opened", { tag: "", category: "", level: l.cefrLevel, resultCount: newestLessons.length, lessonId: l.id })}
+                      />
+                    ))}
+                  </div>
+                </>
+              )}
+            </section>
+          )}
+
           {!level && !activeTopic && !hasActiveFilters && availableTags.length > 0 && (
-            <section className="mb-8" aria-label="Browse free lessons by theme">
+            <section className="mb-10" aria-label="Browse free lessons by theme">
               <div className="flex items-baseline justify-between mb-4">
                 <h2 className="text-xl font-bold text-brand-navy">Browse by Theme</h2>
                 <span className="text-xs font-medium text-slate-600">Dedicated collections across CEFR A1–C2</span>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {availableTags.map(([tag, count]) => {
+                {(showAllThemes ? availableTags : availableTags.slice(0, THEMES_SHOWN_FIRST)).map(([tag, count]) => {
                   const isSeasonal = FEATURED_SEASONAL_TAGS.includes(tag);
                   const themeStyle = THEME_CARD_STYLES[tag];
                   const Icon = themeStyle.icon;
@@ -634,6 +825,14 @@ export default function PublicLessonsIndexPage() {
                   );
                 })}
               </div>
+              {availableTags.length > THEMES_SHOWN_FIRST && (
+                <div className="mt-4 text-center">
+                  <Button type="button" variant="outline" size="sm" aria-expanded={showAllThemes} onClick={() => setShowAllThemes(!showAllThemes)}>
+                    <ChevronDown className={`h-4 w-4 mr-1 transition-transform ${showAllThemes ? "rotate-180" : ""}`} aria-hidden="true" />
+                    {showAllThemes ? "Show fewer themes" : `Show all ${availableTags.length} themes`}
+                  </Button>
+                </div>
+              )}
             </section>
           )}
 
@@ -687,8 +886,8 @@ export default function PublicLessonsIndexPage() {
             </div>
           ) : (
             <>
-              <p className="mb-4 text-sm text-slate-500" aria-live="polite">
-                Showing {filteredLessons.length} of {lessons.length} {lessons.length === 1 ? "lesson" : "lessons"}
+              <p className="mb-5 text-sm text-slate-600" aria-live="polite">
+                Showing <strong className="text-brand-navy">{filteredLessons.length}</strong> of {lessons.length} {lessons.length === 1 ? "lesson" : "lessons"}
               </p>
               {level || hasActiveFilters ? (
                 <div className="grid sm:grid-cols-2 gap-4">{filteredLessons.map(renderCard)}</div>
@@ -697,11 +896,12 @@ export default function PublicLessonsIndexPage() {
                   const inLevel = filteredLessons.filter((l) => l.cefrLevel === lv);
                   if (inLevel.length === 0) return null;
                   return (
-                    <section key={lv} className="mb-10">
-                      <div className="flex items-baseline justify-between mb-4">
+                    <section key={lv} className="mb-12">
+                      <div className="flex items-center justify-between mb-4 pb-3 border-b-2 border-slate-200">
                         <h2 className="text-2xl font-bold text-brand-navy">
-                          <Link href={`/esl-lessons/${lv.toLowerCase()}`} className="hover:underline">
-                            {lv} {LEVEL_NAMES[lv]}
+                          <Link href={`/esl-lessons/${lv.toLowerCase()}`} className="inline-flex items-center gap-3 hover:underline">
+                            <span className={`inline-flex h-9 min-w-[2.75rem] items-center justify-center rounded-lg px-2 text-base text-white ${LEVEL_BADGE_STYLES[lv]}`}>{lv}</span>
+                            {LEVEL_NAMES[lv]}
                           </Link>
                         </h2>
                         <span className="text-sm text-slate-500">
