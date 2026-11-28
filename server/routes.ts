@@ -42,6 +42,7 @@ import { marketingPages } from "@shared/marketing-pages";
 import { buildLlmsFullTxt, getLlmsFullTxt } from "./llms-full";
 import { getConversationQuestionsPage, getConversationQuestionSitemapEntries } from "./conversation-questions";
 import { getKeepSummary } from "./keep-summary";
+import { dailyGenerationLimitFor, dailyLimitMessage, hoursUntilNextLesson } from "./daily-generation-limit";
 import {
   reserveGenerationJob,
   spendCreditForJob,
@@ -51,6 +52,7 @@ import {
   getPersistedJob,
   startJobRecovery,
   pruneOldJobs,
+  generationsInLastDay,
 } from "./lesson-jobs";
 import Stripe from "stripe";
 // Dynamic imports for AI services - loaded only when needed
@@ -1176,6 +1178,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
         message: `You've reached the limit of ${effectiveRateLimit} lesson generations per hour. Please try again in about ${retryMinutes} minute${retryMinutes === 1 ? '' : 's'}.`,
         retryAfterMinutes: retryMinutes
       });
+    }
+
+    // Daily ceiling for accounts that don't pay (server/daily-generation-limit.ts).
+    // Checked after the reservation, so the count includes this lesson. If the
+    // count itself fails, the lesson goes ahead: a counting problem must never
+    // stop teachers making lessons.
+    const dailyLimit = dailyGenerationLimitFor(req.user);
+    if (dailyLimit !== null) {
+      try {
+        const day = await generationsInLastDay(teacherId);
+        if (day.count > dailyLimit) {
+          await releaseJobReservation(jobId).catch((releaseError) =>
+            console.error(`[Job ${jobId}] Failed to release reservation:`, releaseError)
+          );
+          const hours = hoursUntilNextLesson(day.oldestMs);
+          console.log(`User ${teacherId} hit the free daily lesson limit (${dailyLimit}/day)`);
+          return res.status(429).json({
+            message: dailyLimitMessage(dailyLimit, hours),
+            dailyLimit,
+            retryAfterMinutes: hours * 60,
+          });
+        }
+      } catch (dailyError) {
+        console.error(`[Job ${jobId}] Could not check the daily lesson limit; continuing:`, dailyError);
+      }
     }
 
     lessonJobs.set(jobId, { status: 'pending', createdAt: Date.now() });
