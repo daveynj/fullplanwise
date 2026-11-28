@@ -44,24 +44,23 @@ export const homepageMeta = {
 };
 
 export const hero = {
-  badge: 'For Preply & italki tutors, freelance teachers & language schools',
+  badge: 'For online tutors, freelance teachers and small language schools',
   heading: `Finished ESL lessons in ${generationTime}, made for each student`,
   subheading:
-    `Complete, CEFR-levelled conversation lessons on any topic in ${generationTime}, built on a scientific pedagogical sequence around each student's level, interests and vocabulary.`,
+    `Type your student's topic and level. In ${generationTime} you have a complete lesson to screen-share or print: key words with pictures, a reading at their level, practice and discussion. ${brand} remembers each student's words, so the next lesson builds on this one.`,
   benefits: [
-    'Complete 8-stage pedagogical lesson in 1–2 minutes (vocab depth, reading, recall flashcards, semantic maps, exercises & deep discussion).',
-    'Remembers each student’s vocabulary — no duplicate words, with natural recycling in future lessons.',
-    'Zero-login learner dashboard with flashcards, plus students can create custom lessons on any subject.',
-    'One-click printable Vocabulary Review study PDF (collocations, word families, synonyms/antonyms & usage notes).',
+    'Get your evenings back: no more unpaid prep, even when a student arrives with a new topic.',
+    "Lessons your student cares about: their job, their hobby, this morning's news, at their CEFR level (A1–C2).",
+    'Students who keep booking: each lesson builds on the words they already know, and they get a private page with their lessons and flashcards.',
   ],
   audienceIntro: "Who it's for:",
   audience: [
-    'Online ESL tutors on Preply, italki and other platforms.',
-    'Freelance and independent private English teachers.',
-    'Small to medium language schools.',
+    'Online English tutors on Preply, italki and other platforms.',
+    'Freelance teachers with their own private students.',
+    'Small language schools that want the same quality from every teacher.',
   ],
-  primaryCta: `Try It Free for ${siteFacts.trialDays} Days`,
-  secondaryCta: "See What's in a Lesson",
+  primaryCta: 'Make your first lesson free',
+  secondaryCta: 'See a real lesson',
   noCardNote: 'No credit card required',
   freeLessonsNote: trialText,
   previewTitle: 'A real PlanWise ESL lesson',
@@ -82,12 +81,12 @@ export const hero = {
  */
 export const definition = {
   heading: `What is ${brand}?`,
-  text: `${brand} makes finished, ready-to-teach ESL lessons for Preply and italki tutors, freelance English teachers, and small to medium language schools. Unlike static pre-made lesson libraries or general chatbots, it writes a complete CEFR-levelled (A1–C2) conversation lesson on any topic in ${generationTime} following a structured pedagogical sequence: warm-up vocabulary recall, five pre-taught key words (with pronunciation guide, levelled definitions, example sentences, word families, usage notes and pictures), a levelled reading and comprehension check, in-lesson recall flashcards and semantic maps (synonyms and antonyms), tiered sentence frames (especially helpful for beginners), fill-in-the-blanks, sentence unscramble, a quiz, and deep discussion using the target vocabulary. It tracks each student’s vocabulary so earlier words are recycled in future readings and questions, gives every student a private learner dashboard with past lessons, flashcards and custom lesson creation on any subject, and exports a downloadable study PDF with all vocabulary, examples, synonyms/antonyms and usage notes. It was created by Dave Jackson, a working British ESL teacher since 2015 who still plans his own students’ lessons with it.`,
+  text: `${brand} makes finished, ready-to-teach English lessons in ${generationTime}, made for each of your students. Choose a student, a CEFR level (A1–C2) and any topic, and it writes a complete conversation lesson: five key words with pictures and pronunciation, a reading at the student's level, practice exercises, discussion questions and a study PDF. It remembers the words each student has learned, so their next lesson teaches new words and reuses familiar ones where they fit, and each student gets a private page with their lessons and flashcards. It was built by Dave Jackson, a British ESL teacher since 2015, who uses it with his own students.`,
 };
 
 /** Real lesson titles from two of Dave's courses (one personalised, one general). */
 export const personalisation = {
-  heading: 'One Student, One Course',
+  heading: 'One student, one course',
   intro:
     'Generic lesson libraries give every student the same fixed catalogue. PlanWise builds every lesson around the student in front of you. These are real lesson titles from two courses made with it:',
   personal: {
@@ -110,25 +109,25 @@ export const personalisation = {
       'Financial Independence, Retire Early: The F.I.R.E. Movement Explained',
     ],
   },
-  note: 'In both, each lesson avoids words the student already knows and recycles earlier vocabulary into new readings and questions, and students can suggest topics or create custom lessons on any subject from their learner dashboard.',
+  note: 'In both, each new lesson teaches words the student doesn’t know yet and reuses familiar ones where they fit. Students can also suggest topics, or make their own lessons, from their private page.',
   cta: 'Browse free lessons at every level',
   href: '/esl-lessons',
 };
 
 export const showcase = {
-  heading: 'See a Real Lesson, Exactly as PlanWise Made It',
+  heading: 'See a real lesson, exactly as PlanWise made it',
   subheading:
-    'Every lesson follows the same scientific pedagogical formula: warm-up recall, pre-taught vocabulary with word families and usage notes, levelled reading, recall flashcards, synonyms and antonyms, targeted practice, then deep discussion. Scroll through this B2 lesson to see each part.',
+    'This is a B2 lesson exactly as PlanWise made it: warm-up questions, five key words, a reading, practice and discussion. Scroll through it, or open it full screen as your student would see it.',
   sampleLabel: 'Sample Lesson',
   viewFullLabel: 'View Full Lesson',
-  cta: 'Make Your First Lesson Free',
+  cta: 'Make your first lesson free',
   lessonId: 1768,
 };
 
 export const problem = {
-  heading: 'Why Not Just Ask ChatGPT?',
+  heading: 'Why not just ask ChatGPT?',
   intro:
-    'A general chatbot can write a reading text. A lesson your student actually learns from requires a structured pedagogical sequence—and a chatbot forgets your student the moment you close the chat.',
+    'A chatbot can write a reading text. A lesson your student learns from needs the right level, the right words and a clear structure, and a chatbot forgets your student when the chat ends.',
   traditional: {
     title: 'Prompting a general chatbot',
     items: [
@@ -142,9 +141,9 @@ export const problem = {
     title: `With ${brand}`,
     items: [
       'Pick the student, the level and any topic—or let the student create a custom lesson on their own subject',
-      'A complete pedagogical lesson: vocab cards, reading, recall flashcards, semantic maps, exercises, deep discussion and a downloadable study PDF',
+      'A complete lesson, ready to screen-share: key words with pictures, a reading, practice, discussion and a study PDF',
       'Written for the CEFR level you choose and checked section by section before you see it',
-      "Each student's vocabulary tracked and recycled into future lessons, with a private learner dashboard and flashcards",
+      "Each student's words remembered, so the next lesson builds on them, plus a private page with flashcards",
     ],
   },
   conclusion:
@@ -154,37 +153,37 @@ export const problem = {
 export type FeatureIcon = 'clock' | 'target' | 'monitor' | 'users' | 'layers' | 'shield';
 
 export const features = {
-  heading: 'Built for How Tutors and Schools Really Teach',
+  heading: 'What you get with every lesson',
   items: [
     {
       icon: 'clock' as FeatureIcon,
-      title: 'A Complete Pedagogical Lesson in 1–2 Minutes',
-      text: 'Choose A1 to C2 and any topic. PlanWise builds the full teaching sequence: warm-up recall, five pre-taught words (pronunciation, levelled definition, examples, word families, usage notes and pictures), levelled reading, recall flashcards, synonyms and antonyms, exercises and deep discussion.',
+      title: `A complete lesson in ${generationTime}`,
+      text: 'Any topic, A1 to C2: warm-up questions, five key words with pictures and pronunciation, a reading at the right level, practice exercises and discussion questions.',
     },
     {
       icon: 'users' as FeatureIcon,
-      title: 'Vocabulary Memory & Spaced Recycling',
-      text: 'Choose the student and PlanWise avoids words they have already learned or planned, and weaves previous vocabulary back into future readings and questions to aid long-term recall. Press "We did this" and the lesson’s words join their list.',
-    },
-    {
-      icon: 'layers' as FeatureIcon,
-      title: 'Scaffolded Practice for Every Level',
-      text: 'Tiered sentence frames (emerging, developing and expanding) give extra speaking support—especially helpful for beginners—alongside interactive fill-in-the-blanks, sentence unscramble, quizzes and optional idioms and phrasal verbs from A2 up.',
+      title: 'It remembers each student',
+      text: 'Press "We did this" after class and the lesson’s words join the student’s list. Their next lesson teaches new words and reuses familiar ones where they fit.',
     },
     {
       icon: 'target' as FeatureIcon,
-      title: 'Learner Dashboard & Student-Created Custom Lessons',
-      text: 'Every student gets a private dashboard (no login needed) with all past lessons, a next-lesson preview, word lists and flashcards. Students suggest topics—and on Unlimited they can create custom lessons on any subject at their level, saved straight to your library.',
+      title: 'A private page for every student',
+      text: 'No login needed: past lessons, word lists and flashcards between classes. Students can suggest topics, and on Unlimited they can make their own lessons.',
+    },
+    {
+      icon: 'layers' as FeatureIcon,
+      title: 'Support for nervous speakers',
+      text: 'Sentence starters at three levels of support help quieter students speak, alongside fill-in-the-blanks, word-order practice and a quiz.',
     },
     {
       icon: 'shield' as FeatureIcon,
-      title: 'Checked Section by Section Before You Teach',
-      text: 'Every new lesson is verified automatically before it is saved. A broken exercise is fixed or regenerated on its own, so you never discover a bad question in the middle of a class.',
+      title: 'Checked before you teach',
+      text: 'Every new lesson is checked automatically before it is saved, and a broken exercise is fixed or remade, so you don’t find a bad question mid-class.',
     },
     {
       icon: 'monitor' as FeatureIcon,
-      title: 'Full-Screen Teaching + Complete Study PDF',
-      text: 'Lessons open full screen for screen sharing on Preply, italki or Zoom, and export as a downloadable study PDF containing all vocabulary, definitions, example sentences, word families, synonyms, antonyms, usage notes and lesson activities.',
+      title: 'Screen-share or print',
+      text: 'Lessons open full screen for Zoom, Preply or italki, and download as a study PDF with every word, example and activity.',
     },
   ],
 };
@@ -201,7 +200,7 @@ export const science = {
     { title: 'Synonyms & semantic maps', text: 'Exploring synonyms, antonyms, related concepts and contexts deepens lexical understanding beyond a single definition.' },
     { title: 'Guided practice', text: 'A quiz, tiered sentence frames (especially supportive for beginners), fill-in-the-blanks and sentence unscramble lock in accuracy and word order.' },
     { title: 'Deep discussion', text: 'Closing discussion questions challenge the student to talk deeply about the topic while actively using the target vocabulary.' },
-    { title: 'Recycle, dashboard & PDF', text: 'Future lessons naturally recycle earlier words when relevant; students review on their learner dashboard with flashcards and a printable Vocabulary Review PDF.' },
+    { title: 'Remember, review & PDF', text: 'Future lessons teach new words and reuse familiar ones where they fit; students review on their private page with flashcards and a printable Vocabulary Review PDF.' },
   ],
   cta: 'See the research behind each step',
   href: '/how-it-works',
@@ -212,7 +211,7 @@ export const science = {
 
 /** Founder story, in Dave's words (full version: /about). */
 export const founder = {
-  heading: 'Built by a Teacher Who Hated Making Materials',
+  heading: 'Built by a teacher who hated making materials',
   quote:
     "I love teaching. I never loved the hours before it: finding a text at the right level, writing the questions, making vocabulary cards, then doing it all again for the next student, because every student is different. So I built PlanWise to do the preparation the way I'd do it myself.",
   name: 'Dave Jackson',
@@ -227,28 +226,28 @@ export const founder = {
 };
 
 export const steps = {
-  heading: 'Your Next Lesson in 3 Steps',
+  heading: 'Your next lesson in 3 steps',
   items: [
     {
       number: 1,
-      title: 'Choose Student and Level',
-      text: 'Pick one of your students (or none) and a CEFR level from A1 to C2.',
+      title: 'Choose the student and level',
+      text: 'Pick one of your students and their CEFR level, from A1 to C2.',
     },
     {
       number: 2,
-      title: 'Give It a Topic',
+      title: 'Give it a topic',
       text: 'Anything your student cares about: job interviews, football, their favourite series. Add target words if you like, or let them create a custom lesson from their dashboard.',
     },
     {
       number: 3,
-      title: 'Teach & Share',
+      title: 'Teach and share',
       text: `In ${generationTime} you have a complete lesson to screen-share, export as a full study PDF, or send straight to your student's learner dashboard.`,
     },
   ],
 };
 
 export const pricing = {
-  heading: 'Simple, Transparent Pricing',
+  heading: 'Simple pricing',
   plans: [
     {
       name: 'Free',
@@ -262,7 +261,7 @@ export const pricing = {
         'Downloadable lesson & vocabulary study PDFs',
         'Browse the free ESL lesson library',
       ],
-      cta: 'Start Free',
+      cta: 'Make your first lesson free',
       ctaHref: '/auth?register=true',
       highlighted: false,
     },
@@ -273,12 +272,12 @@ export const pricing = {
       priceSuffix: `/${siteFacts.pricePeriod}`,
       features: [
         'Unlimited AI lesson generations on any topic',
-        'Per-student vocabulary tracking & natural recycling',
+        'Remembers each student’s words, so lessons build on each other',
         'Students can create custom lessons on any subject',
         'Complete study PDFs with vocab, collocations, synonyms/antonyms & usage notes',
         'Cancel anytime',
       ],
-      cta: `Start ${siteFacts.trialDays}-Day Free Trial`,
+      cta: 'Make your first lesson free',
       ctaHref: '/auth?register=true',
       highlighted: true,
     },
@@ -286,28 +285,28 @@ export const pricing = {
 };
 
 export const verifiableProof = {
-  heading: 'Inspect Real Proof — Zero Login Required',
+  heading: 'See it working before you sign up',
   subheading:
-    'No paywalled promises or generic blurbs. Open live lessons, audit our 4-lesson student memory test, or compare every ESL tool side by side.',
+    'No sign-up needed: open real lessons, follow one student through four lessons, or compare PlanWise with other ESL tools.',
   items: [
     {
       badge: '36 items · 0 duplicates',
-      title: '4-Lesson Student Memory Audit',
-      text: 'Four consecutive B2 lessons for one sample student proving zero duplicate target words and natural recycling across readings, cloze, quizzes & discussions.',
+      title: 'One student, four lessons',
+      text: 'Four B2 lessons in a row for one sample student: 36 key words with none repeated, and familiar words coming back in later readings and questions.',
       linkLabel: 'Inspect all 4 live lessons',
       href: '/compare/student-memory-proof',
     },
     {
       badge: `${freeLessonsText} free lessons`,
-      title: 'Verified CEFR A1–C2 Calibration',
-      text: 'Compare plain <10-word A1 adult beginner definitions against executive C1 boardroom lessons—with 3-tier speaking frames, collocations & downloadable PDFs.',
+      title: 'Free lessons at every level',
+      text: 'Compare a simple A1 lesson with a demanding C1 one. Every lesson is complete, free to teach and comes with a PDF.',
       linkLabel: 'Browse the public library',
       href: '/esl-lessons',
     },
     {
-      badge: '9 side-by-side audits',
-      title: 'Honest Tool Comparisons',
-      text: 'Real prep-time tests and feature breakdowns against ESL Brains, Fluentize, Linguahouse, Off2Class, Twee, ESL Joy, MagicSchool, and ChatGPT.',
+      badge: 'Side by side',
+      title: 'Fair tool comparisons',
+      text: 'What PlanWise does differently from ESL Brains, Twee, ESL Joy, Linguahouse, Off2Class, MagicSchool and ChatGPT, and what each of them does well.',
       linkLabel: 'Compare ESL tools',
       href: '/compare',
     },
@@ -315,7 +314,7 @@ export const verifiableProof = {
 };
 
 export const finalCta = {
-  heading: 'Plan Less. Teach Better Lessons.',
+  heading: 'Your next lesson, ready in 2 minutes',
   stats: [
     { value: '1–2 min', label: 'To a complete lesson' },
     { value: 'A1–C2', label: 'Every CEFR level' },
@@ -324,12 +323,12 @@ export const finalCta = {
   ],
   lead: `Try ${brand} free for ${siteFacts.trialDays} days and make as many lessons as you like.`,
   leadEmphasis: `free for ${siteFacts.trialDays} days`,
-  cta: 'Start My Free Trial',
+  cta: 'Make your first lesson free',
   freeLessonsNote: `${trialText} included`,
 };
 
 export const faq = {
-  heading: 'Frequently Asked Questions',
+  heading: 'Questions teachers ask',
   subheading: `Everything you need to know about ${brand}`,
   items: [
     {
@@ -350,7 +349,7 @@ export const faq = {
       answer: [
         {
           type: 'text',
-          text: `Pre-made ESL libraries give every student the same fixed catalogue of generic lessons and do not track what an individual learner has already studied. ${brand} generates a fresh, CEFR-levelled lesson on any subject in ${generationTime} following a complete pedagogical sequence (warm-up recall, vocabulary with word families and usage notes, levelled reading, recall flashcards, synonyms and antonyms, targeted exercises, and deep discussion), recycles each student’s previous vocabulary into future readings and questions, lets students create custom lessons on any subject, and includes a learner dashboard and downloadable study PDF. `,
+          text: `Pre-made ESL libraries give every student the same fixed catalogue of generic lessons and do not track what an individual learner has already studied. ${brand} generates a fresh, CEFR-levelled lesson on any subject in ${generationTime} following a complete pedagogical sequence (warm-up recall, vocabulary with word families and usage notes, levelled reading, recall flashcards, synonyms and antonyms, targeted exercises, and deep discussion), remembers each student’s words so the next lesson builds on them, lets students create custom lessons on any subject, and includes a learner dashboard and downloadable study PDF. `,
         },
         { type: 'link', href: '/how-it-works', text: 'See the pedagogy behind every lesson' },
         { type: 'text', text: '.' },
@@ -361,7 +360,7 @@ export const faq = {
       answer: [
         {
           type: 'text',
-          text: `A general chatbot starts from nothing every time and returns an unformatted block of text. ${brand} follows a full scientific pedagogical sequence, keeps CEFR levelling strict, tracks and recycles each student’s vocabulary across lessons, verifies every section before saving, exports a complete study PDF, and gives every student a private learner dashboard with flashcards. `,
+          text: `A general chatbot starts from nothing every time and returns an unformatted block of text. ${brand} follows the same tested lesson structure every time, keeps to the CEFR level you chose, remembers each student’s words across lessons, verifies every section before saving, exports a complete study PDF, and gives every student a private learner dashboard with flashcards. `,
         },
         { type: 'link', href: '/compare/chatgpt', text: 'Compare PlanWise ESL vs ChatGPT' },
         { type: 'text', text: '.' },
@@ -398,7 +397,7 @@ export const faq = {
       answer: [
         {
           type: 'text',
-          text: 'Yes. When you make a lesson for a student, PlanWise avoids words they already know and words planned in their upcoming lessons, and recycles earlier vocabulary naturally in future readings and questions to aid long-term recall. When you press "We did this" after class, that lesson’s words join the student’s list.',
+          text: 'Yes. When you make a lesson for a student, PlanWise avoids words they already know and words planned in their upcoming lessons, and reuses familiar words in new readings and questions where they fit. When you press "We did this" after class, that lesson’s words join the student’s list.',
         },
       ] as FaqAnswerPart[],
     },

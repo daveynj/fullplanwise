@@ -12,7 +12,7 @@ import {
   CheckCircle2, Sparkles, XCircle, Menu, X, Lock as LockIcon, ArrowRight, Play, Quote,
 } from 'lucide-react';
 import {
-  homepageMeta, hero, definition, personalisation, showcase, problem, features, science, steps,
+  homepageMeta, hero, definition, personalisation, showcase, problem, features, steps,
   founder, pricing, verifiableProof, finalCta, faq, footer, FeatureIcon, FaqAnswerPart,
 } from '@shared/homepage-content';
 import { publicNav } from '@shared/marketing-pages';
@@ -424,32 +424,6 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Personalisation: real course titles */}
-        <section className="py-16 md:py-20 px-6 bg-gradient-to-b from-white to-amber-50/50">
-          <div className="container mx-auto max-w-5xl">
-            <SectionHeading sub={personalisation.intro}>{personalisation.heading}</SectionHeading>
-            <div className="grid md:grid-cols-2 gap-6">
-              {[personalisation.personal, personalisation.general].map((course, i) => (
-                <div key={i} className={`rounded-2xl p-7 bg-white ring-1 shadow-lg ${i === 0 ? 'ring-brand-yellow/60 shadow-brand-yellow/10' : 'ring-slate-900/5 shadow-slate-900/5'}`}>
-                  <h3 className="font-nunito font-bold text-sm uppercase tracking-wide text-amber-800 mb-4">{course.label}</h3>
-                  <ol className="space-y-3">
-                    {course.titles.map((title, j) => (
-                      <li key={j} className="flex items-start gap-3 text-slate-700">
-                        <span className="flex-shrink-0 w-6 h-6 rounded-full bg-brand-navy text-brand-yellow text-xs font-bold flex items-center justify-center mt-0.5">{j + 1}</span>
-                        <span>{title}</span>
-                      </li>
-                    ))}
-                  </ol>
-                </div>
-              ))}
-            </div>
-            <p className="text-center text-slate-600 mt-8">{personalisation.note}</p>
-            <p className="text-center mt-4">
-              <TextLink href={personalisation.href}>{personalisation.cta} →</TextLink>
-            </p>
-          </div>
-        </section>
-
         {/* Live sample lesson */}
         <section id="sample-lesson" className="py-16 md:py-20 px-6 bg-white scroll-mt-24">
           <div className="container mx-auto max-w-6xl">
@@ -506,6 +480,61 @@ export default function LandingPage() {
             <div className="mt-12 text-center">
               <TrialButton location="sample-lesson" label={showcase.cta} className="px-10" />
             </div>
+          </div>
+        </section>
+
+        {/* Inspect Real Proof (Zero Login) */}
+        <section className="py-16 md:py-20 px-6 bg-white">
+          <div className="container mx-auto max-w-5xl">
+            <SectionHeading sub={verifiableProof.subheading}>{verifiableProof.heading}</SectionHeading>
+            <div className="grid md:grid-cols-3 gap-6">
+              {verifiableProof.items.map((item) => (
+                <div
+                  key={item.href}
+                  className="flex flex-col justify-between bg-slate-50/70 rounded-2xl p-7 ring-1 ring-slate-900/5 shadow-sm"
+                >
+                  <div>
+                    <span className="inline-block rounded-full bg-brand-yellow/25 text-brand-navy text-xs font-bold uppercase tracking-wider px-3 py-1 mb-4">
+                      {item.badge}
+                    </span>
+                    <h3 className="text-xl font-nunito font-bold text-brand-navy mb-2">{item.title}</h3>
+                    <p className="text-slate-600 text-sm leading-relaxed mb-5">{item.text}</p>
+                  </div>
+                  <Link
+                    href={item.href}
+                    className="inline-flex items-center gap-1.5 font-semibold text-sm text-brand-navy underline decoration-brand-yellow decoration-2 underline-offset-4 hover:text-brand-navy-light"
+                  >
+                    {item.linkLabel} <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Personalisation: real course titles */}
+        <section className="py-16 md:py-20 px-6 bg-gradient-to-b from-white to-amber-50/50">
+          <div className="container mx-auto max-w-5xl">
+            <SectionHeading sub={personalisation.intro}>{personalisation.heading}</SectionHeading>
+            <div className="grid md:grid-cols-2 gap-6">
+              {[personalisation.personal, personalisation.general].map((course, i) => (
+                <div key={i} className={`rounded-2xl p-7 bg-white ring-1 shadow-lg ${i === 0 ? 'ring-brand-yellow/60 shadow-brand-yellow/10' : 'ring-slate-900/5 shadow-slate-900/5'}`}>
+                  <h3 className="font-nunito font-bold text-sm uppercase tracking-wide text-amber-800 mb-4">{course.label}</h3>
+                  <ol className="space-y-3">
+                    {course.titles.map((title, j) => (
+                      <li key={j} className="flex items-start gap-3 text-slate-700">
+                        <span className="flex-shrink-0 w-6 h-6 rounded-full bg-brand-navy text-brand-yellow text-xs font-bold flex items-center justify-center mt-0.5">{j + 1}</span>
+                        <span>{title}</span>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              ))}
+            </div>
+            <p className="text-center text-slate-600 mt-8">{personalisation.note}</p>
+            <p className="text-center mt-4">
+              <TextLink href={personalisation.href}>{personalisation.cta} →</TextLink>
+            </p>
           </div>
         </section>
 
@@ -567,45 +596,24 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Free Public ESL Lesson Library (A1-C2) — No Login Required */}
-        <section className="py-12 md:py-14 px-6 bg-brand-navy text-white">
+        {/* How it works: 3 steps */}
+        <section className="py-16 md:py-20 px-6 bg-white">
           <div className="container mx-auto max-w-5xl text-center">
-            <span className="inline-block rounded-full bg-brand-yellow/20 border border-brand-yellow/40 text-brand-yellow text-xs font-bold uppercase tracking-wider px-3.5 py-1 mb-3">
-              100% Free • No Login Required
-            </span>
-            <h2 className="text-2xl md:text-3xl font-nunito font-bold mb-3">
-              Browse Free Teacher-Led ESL Lessons by CEFR Level
-            </h2>
-            <p className="text-slate-200 max-w-2xl mx-auto mb-6 text-sm md:text-base">
-              Inspect complete 8-stage lessons before signing up — complete with phonetic pronunciation, word families, collocations, levelled readings, semantic maps, and downloadable Vocabulary Review PDFs.
-            </p>
-            <div className="flex flex-wrap justify-center gap-2.5 mb-6">
-              {(
-                [
-                  ["A1", "Beginner"],
-                  ["A2", "Elementary"],
-                  ["B1", "Intermediate"],
-                  ["B2", "Upper Int."],
-                  ["C1", "Advanced"],
-                  ["C2", "Proficiency"],
-                ] as const
-              ).map(([lv, label]) => (
-                <Link key={lv} href={`/esl-lessons/${lv.toLowerCase()}`}>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="rounded-full border-white/25 bg-white/10 text-white hover:bg-brand-yellow hover:text-brand-navy hover:border-brand-yellow font-semibold"
-                  >
-                    {lv} {label}
-                  </Button>
-                </Link>
+            <SectionHeading>{steps.heading}</SectionHeading>
+            <div className="grid md:grid-cols-3 gap-10">
+              {steps.items.map((step) => (
+                <div key={step.number} className="flex flex-col items-center">
+                  <div className="w-16 h-16 rounded-full bg-brand-navy text-brand-yellow flex items-center justify-center text-2xl font-nunito font-bold mb-5 shadow-lg shadow-brand-navy/20">
+                    {step.number}
+                  </div>
+                  <h3 className="text-xl font-nunito font-bold mb-2">{step.title}</h3>
+                  <p className="text-slate-600">{step.text}</p>
+                </div>
               ))}
             </div>
-            <Link href="/esl-lessons">
-              <Button variant="brand" size="lg" className="rounded-full px-8 shadow-lg shadow-brand-yellow/20">
-                Browse All Free ESL Lessons →
-              </Button>
-            </Link>
+            <div className="max-w-2xl mx-auto mt-12 rounded-2xl overflow-hidden shadow-xl shadow-amber-900/10 ring-1 ring-slate-900/5">
+              <HeroVideo url={hero.videoUrl} />
+            </div>
           </div>
         </section>
 
@@ -626,61 +634,6 @@ export default function LandingPage() {
                   </div>
                 );
               })}
-            </div>
-          </div>
-        </section>
-
-        {/* The research-based lesson sequence */}
-        <section className="py-16 md:py-20 px-6 bg-gradient-to-b from-amber-50/60 to-white">
-          <div className="container mx-auto max-w-6xl">
-            <SectionHeading sub={science.intro}>{science.heading}</SectionHeading>
-            <div className="grid lg:grid-cols-2 gap-10 items-center">
-              <ol className="grid sm:grid-cols-2 gap-4">
-                {science.points.map((point, i) => (
-                  <li key={i} className="bg-white rounded-2xl p-5 ring-1 ring-slate-900/5 shadow-sm">
-                    <p className="flex items-center gap-2 font-nunito font-bold text-brand-navy">
-                      <span className="w-7 h-7 rounded-full bg-brand-yellow text-brand-navy text-sm flex items-center justify-center flex-shrink-0">{i + 1}</span>
-                      {point.title}
-                    </p>
-                    <p className="text-slate-600 text-sm leading-relaxed mt-2">{point.text}</p>
-                  </li>
-                ))}
-              </ol>
-              <figure className="rounded-2xl overflow-hidden shadow-2xl shadow-slate-900/10 ring-1 ring-slate-900/5 bg-white">
-                <img
-                  src={science.image}
-                  alt={science.imageAlt}
-                  width={1650}
-                  height={900}
-                  loading="lazy"
-                  className="w-full h-auto"
-                />
-                <figcaption className="p-4 text-sm text-slate-500 border-t border-slate-100">{science.imageCaption}</figcaption>
-              </figure>
-            </div>
-            <p className="text-center mt-10">
-              <TextLink href={science.href}>{science.cta} →</TextLink>
-            </p>
-          </div>
-        </section>
-
-        {/* How it works: 3 steps */}
-        <section className="py-16 md:py-20 px-6 bg-white">
-          <div className="container mx-auto max-w-5xl text-center">
-            <SectionHeading>{steps.heading}</SectionHeading>
-            <div className="grid md:grid-cols-3 gap-10">
-              {steps.items.map((step) => (
-                <div key={step.number} className="flex flex-col items-center">
-                  <div className="w-16 h-16 rounded-full bg-brand-navy text-brand-yellow flex items-center justify-center text-2xl font-nunito font-bold mb-5 shadow-lg shadow-brand-navy/20">
-                    {step.number}
-                  </div>
-                  <h3 className="text-xl font-nunito font-bold mb-2">{step.title}</h3>
-                  <p className="text-slate-600">{step.text}</p>
-                </div>
-              ))}
-            </div>
-            <div className="max-w-2xl mx-auto mt-12 rounded-2xl overflow-hidden shadow-xl shadow-amber-900/10 ring-1 ring-slate-900/5">
-              <HeroVideo url={hero.videoUrl} />
             </div>
           </div>
         </section>
@@ -718,32 +671,45 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Inspect Real Proof (Zero Login) */}
-        <section className="py-16 md:py-20 px-6 bg-white">
-          <div className="container mx-auto max-w-5xl">
-            <SectionHeading sub={verifiableProof.subheading}>{verifiableProof.heading}</SectionHeading>
-            <div className="grid md:grid-cols-3 gap-6">
-              {verifiableProof.items.map((item) => (
-                <div
-                  key={item.href}
-                  className="flex flex-col justify-between bg-slate-50/70 rounded-2xl p-7 ring-1 ring-slate-900/5 shadow-sm"
-                >
-                  <div>
-                    <span className="inline-block rounded-full bg-brand-yellow/25 text-brand-navy text-xs font-bold uppercase tracking-wider px-3 py-1 mb-4">
-                      {item.badge}
-                    </span>
-                    <h3 className="text-xl font-nunito font-bold text-brand-navy mb-2">{item.title}</h3>
-                    <p className="text-slate-600 text-sm leading-relaxed mb-5">{item.text}</p>
-                  </div>
-                  <Link
-                    href={item.href}
-                    className="inline-flex items-center gap-1.5 font-semibold text-sm text-brand-navy underline decoration-brand-yellow decoration-2 underline-offset-4 hover:text-brand-navy-light"
+        {/* Free Public ESL Lesson Library (A1-C2) — No Login Required */}
+        <section className="py-12 md:py-14 px-6 bg-brand-navy text-white">
+          <div className="container mx-auto max-w-5xl text-center">
+            <span className="inline-block rounded-full bg-brand-yellow/20 border border-brand-yellow/40 text-brand-yellow text-xs font-bold uppercase tracking-wider px-3.5 py-1 mb-3">
+              100% Free • No Login Required
+            </span>
+            <h2 className="text-2xl md:text-3xl font-nunito font-bold mb-3">
+              Free ESL lessons at every level
+            </h2>
+            <p className="text-slate-200 max-w-2xl mx-auto mb-6 text-sm md:text-base">
+              Open any lesson and teach it today: key words with pictures and pronunciation, a reading at the right level, practice, discussion and a Vocabulary Review PDF.
+            </p>
+            <div className="flex flex-wrap justify-center gap-2.5 mb-6">
+              {(
+                [
+                  ["A1", "Beginner"],
+                  ["A2", "Elementary"],
+                  ["B1", "Intermediate"],
+                  ["B2", "Upper Int."],
+                  ["C1", "Advanced"],
+                  ["C2", "Proficiency"],
+                ] as const
+              ).map(([lv, label]) => (
+                <Link key={lv} href={`/esl-lessons/${lv.toLowerCase()}`}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="rounded-full border-white/25 bg-white/10 text-white hover:bg-brand-yellow hover:text-brand-navy hover:border-brand-yellow font-semibold"
                   >
-                    {item.linkLabel} <ArrowRight className="h-4 w-4" />
-                  </Link>
-                </div>
+                    {lv} {label}
+                  </Button>
+                </Link>
               ))}
             </div>
+            <Link href="/esl-lessons">
+              <Button variant="brand" size="lg" className="rounded-full px-8 shadow-lg shadow-brand-yellow/20">
+                Browse All Free ESL Lessons →
+              </Button>
+            </Link>
           </div>
         </section>
 
