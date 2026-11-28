@@ -395,6 +395,25 @@ export function startJobRecovery(intervalMs: number = 5 * 60 * 1000): void {
 }
 
 /** Drop finished job rows older than 24 hours; the lessons they point to live in the lessons table. */
+/**
+ * How many lessons a teacher started in the last 24 hours that are finished or
+ * still being made (failed ones don't count), and when the oldest of them
+ * started. Job rows are kept for 24 hours (pruneOldJobs), which is exactly
+ * this window.
+ */
+export async function generationsInLastDay(teacherId: number): Promise<{ count: number; oldestMs: number | null }> {
+  const result = await db.execute(sql`
+    SELECT count(*)::int AS n, extract(epoch FROM min(created_at)) * 1000 AS oldest_ms
+    FROM lesson_generation_jobs
+    WHERE teacher_id = ${teacherId}
+      AND status IN ('pending', 'complete')
+      AND created_at > now() - interval '24 hours'
+  `);
+  const row = result.rows[0] as { n?: number | string; oldest_ms?: number | string | null } | undefined;
+  const oldest = row?.oldest_ms === null || row?.oldest_ms === undefined ? null : Number(row.oldest_ms);
+  return { count: Number(row?.n ?? 0), oldestMs: oldest !== null && Number.isFinite(oldest) ? oldest : null };
+}
+
 export async function pruneOldJobs(): Promise<void> {
   await db.execute(sql`
     DELETE FROM lesson_generation_jobs
