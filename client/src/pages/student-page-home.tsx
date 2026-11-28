@@ -245,7 +245,7 @@ export default function StudentPageHomePage() {
             >
               PlanWise ESL
             </a>{" "}
-            · AI lesson planner for English teachers
+            · ready-to-teach lessons for English teachers
           </span>
         </p>
       </main>

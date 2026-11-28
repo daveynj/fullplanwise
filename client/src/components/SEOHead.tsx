@@ -193,7 +193,7 @@ export function SEOHead({
           "@type": "Organization",
           "@id": `${siteFacts.url}/#organization`,
           "name": siteFacts.brand,
-          "description": "AI lesson planner for ESL teachers and online English tutors",
+          "description": "Ready-to-teach ESL lessons for teachers and online English tutors",
           "url": siteFacts.url,
           "email": siteFacts.email,
           "logo": {

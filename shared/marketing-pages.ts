@@ -383,7 +383,7 @@ const compareChatGpt: MarketingPage = {
   eyebrow: 'Comparison',
   h1: 'PlanWise ESL vs ChatGPT for ESL lesson planning',
   intro: [
-    'Many teachers already use ChatGPT (or Claude, or Gemini) to help with lessons, and for plenty of tasks it is excellent. So why use a dedicated ESL lesson planner built around a scientific pedagogical sequence? Here is an honest comparison.',
+    'Many teachers already use ChatGPT (or Claude, or Gemini) to help with lessons, and for plenty of tasks it is excellent. So why use a dedicated ESL lesson tool built around a scientific pedagogical sequence? Here is an honest comparison.',
   ],
   verdict: {
     heading: 'PlanWise ESL vs. ChatGPT: When is a dedicated ESL planner worth it?',

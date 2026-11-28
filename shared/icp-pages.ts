@@ -17,12 +17,12 @@ const trialCta = { label: 'Start Your Free Trial', href: '/auth?register=true' }
 
 export const onlineTutorsPage: MarketingPage = {
   path: '/for/online-tutors',
-  title: `AI ESL Lesson Planner for Preply & italki Tutors | ${brand}`,
+  title: `Ready-to-Teach ESL Lessons for Preply & italki Tutors | ${brand}`,
   description:
     `Build personalised CEFR A1–C2 ESL lessons in ${generationTime} for Preply and italki classes—with vocab memory, flashcards and study PDFs.`,
   navLabel: 'For Online Tutors',
   eyebrow: 'For Preply & italki tutors',
-  h1: 'The AI ESL lesson planner built for Preply and italki tutors',
+  h1: 'Ready-to-teach ESL lessons for Preply and italki tutors, made for each student',
   intro: [
     `Teaching back-to-back online classes on Preply or italki leaves almost no margin for unpaid lesson prep. Built-in platform materials can feel stiff or repetitive, pre-made lesson libraries run out of topics that fit a specific student, and pasting raw prompts into ChatGPT takes 20–60 minutes of level-checking and formatting.`,
     `${brand} was built by a working online ESL tutor to solve that exact daily workflow: choose your student, pick a CEFR level (A1–C2) and any topic, and in **${generationTime}** you have a complete, ready-to-screen-share conversation lesson built on a scientific pedagogical sequence—with per-student vocabulary memory, a private learner dashboard, and a downloadable study PDF.`,
@@ -81,7 +81,7 @@ export const onlineTutorsPage: MarketingPage = {
   ],
   faq: [
     {
-      question: 'What is the best AI ESL lesson planner for Preply and italki tutors?',
+      question: 'What is the best AI tool for ESL lessons on Preply and italki?',
       answer: `For one-to-one online tutors, ${brand} stands out because it builds a complete CEFR-levelled (A1–C2) conversation lesson on any topic in ${generationTime}, remembers each student’s vocabulary across lessons, includes recall flashcards, synonyms/antonyms, sentence frames, fill-in-the-blanks, sentence unscramble and deep discussion, and gives every student a private learner dashboard and downloadable study PDF.`,
     },
     {
@@ -113,7 +113,7 @@ export const onlineTutorsPage: MarketingPage = {
 
 export const freelanceTeachersPage: MarketingPage = {
   path: '/for/freelance-esl-teachers',
-  title: `AI ESL Lesson Planner for Freelance & Private Teachers | ${brand}`,
+  title: `Ready-to-Teach ESL Lessons for Freelance & Private Teachers | ${brand}`,
   description:
     `Turn niche student goals into structured CEFR A1–C2 courses: scientific pedagogy, per-student vocab recycling, learner dashboards & study PDFs.`,
   navLabel: 'For Freelance Teachers',
@@ -203,7 +203,7 @@ export const freelanceTeachersPage: MarketingPage = {
 
 export const languageSchoolsPage: MarketingPage = {
   path: '/for/language-schools',
-  title: `AI ESL Lesson Planner for Small to Medium Language Schools | ${brand}`,
+  title: `Ready-to-Teach ESL Lessons for Small to Medium Language Schools | ${brand}`,
   description:
     `Consistent CEFR A1–C2 conversation pedagogy across every teacher, printable study PDFs, vocab tracking & student dashboards—without enterprise pricing.`,
   navLabel: 'For Language Schools',
@@ -283,12 +283,12 @@ export const languageSchoolsPage: MarketingPage = {
 
 export const preplyTutorsPage: MarketingPage = {
   path: '/for/preply-tutors',
-  title: `AI ESL Lesson Planner for Preply Tutors | ${brand}`,
+  title: `Ready-to-Teach ESL Lessons for Preply Tutors | ${brand}`,
   description:
     `Build CEFR A1–C2 ESL lessons for Preply students in ${generationTime}: 8-stage pedagogy, natural vocab recycling, zero-login student hub & study PDFs.`,
   navLabel: 'For Preply Tutors',
   eyebrow: 'For Preply tutors',
-  h1: 'The AI ESL lesson planner built for Preply tutors',
+  h1: 'Ready-to-teach ESL lessons for Preply tutors, made for each student',
   intro: [
     'Teaching weekly 1-on-1 students on Preply means balancing two realities: unpaid trial prep and platform commissions eat into your hourly rate, while keeping regular subscribers renewing month after month depends on giving every student genuinely personalised, structured classes.',
     `${brand} turns that prep bottleneck into a **${generationTime}** workflow: pick your Preply student, choose their CEFR level (A1–C2) and any topic they care about, and open a complete 8-stage teacher-led lesson ready to screen-share—with automatic per-student vocabulary memory, a zero-login learner dashboard, and a printable color-coded Vocabulary Review PDF you can drop straight into Preply chat.`,
@@ -370,12 +370,12 @@ export const preplyTutorsPage: MarketingPage = {
 
 export const italkiTutorsPage: MarketingPage = {
   path: '/for/italki-tutors',
-  title: `AI ESL Lesson Planner for italki Tutors & Teachers | ${brand}`,
+  title: `Ready-to-Teach ESL Lessons for italki Tutors & Teachers | ${brand}`,
   description:
     `Generate CEFR A1–C2 ESL lessons for italki packages in ${generationTime}: 8-stage pedagogy, natural vocab recycling, zero-login student hub & study PDFs.`,
   navLabel: 'For italki Tutors',
   eyebrow: 'For italki tutors & teachers',
-  h1: 'The AI ESL lesson planner built for italki tutors and teachers',
+  h1: 'Ready-to-teach ESL lessons for italki tutors and teachers, made for each student',
   intro: [
     'On italki, both Community Tutors and Professional Teachers win repeat 5-lesson and 10-lesson packages by delivering engaging, structured classes tailored to each learner’s exact goals—without burning hours of unpaid evenings writing materials from scratch.',
     `${brand} gives independent italki tutors a repeatable **${generationTime}** system: pick your student, enter any topic and CEFR level (A1–C2), and teach from a complete 8-stage screen-shareable lesson backed by per-student vocabulary memory, a zero-login student dashboard, and a printable color-coded Vocabulary Review PDF.`,
@@ -458,12 +458,12 @@ export const italkiTutorsPage: MarketingPage = {
 
 export const newEslTeachersPage: MarketingPage = {
   path: '/for/new-esl-teachers',
-  title: `Best ESL Lesson Planner for New Teachers & First-Time Tutors | ${brand}`,
+  title: `Ready-to-Teach ESL Lessons for New Teachers & First-Time Tutors | ${brand}`,
   description:
     `New ESL teacher guide: start with 180+ free CEFR A1–C2 lessons, built-in teacher notes, beginner speaking frames & 1–2 min custom prep.`,
   navLabel: 'For New ESL Teachers',
   eyebrow: 'For new ESL teachers & newly certified tutors',
-  h1: 'The ESL lesson planner built to give new teachers confidence from lesson one',
+  h1: 'Ready-to-teach ESL lessons that give new teachers confidence from lesson one',
   intro: [
     'Your first months teaching ESL—whether you have just earned your TEFL or CELTA certificate or taken on your first online tutoring students—bring two big hurdles: figuring out how to pace a 45–60 minute conversation class without awkward silence, and creating material at the right CEFR level without spending two hours preparing for every one-hour class.',
     `${brand} removes both hurdles. Every lesson follows the same **8-stage second-language pedagogy** ([see the research](/how-it-works)), comes with **teacher notes**, **3-tier beginner-safe speaking frames** so A1–A2 learners never freeze, and a **30- and 60-minute pacing guide**—starting with [over 180 complete zero-login lessons](/esl-lessons) you can teach today before ever starting a paid plan.`,
@@ -530,7 +530,7 @@ export const newEslTeachersPage: MarketingPage = {
 
 export const experiencedEslTeachersPage: MarketingPage = {
   path: '/for/experienced-esl-teachers',
-  title: `Best ESL Lesson Planner for Experienced Teachers & Tutors | ${brand}`,
+  title: `Ready-to-Teach ESL Lessons for Experienced Teachers & Tutors | ${brand}`,
   description:
     `Built by a 10+ year ESL teacher for veteran tutors: replace Drive PDF chaos with 1–2 min custom A1–C2 lessons & cross-lesson vocab memory.`,
   navLabel: 'For Experienced ESL Teachers',
