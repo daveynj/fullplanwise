@@ -50,7 +50,7 @@ export default function BuyCreditsPage() {
   const submitting = useRef(false);
   const [redirecting, setRedirecting] = useState(false);
   const isSubscriber = user?.subscriptionTier === "unlimited";
-  const { isGlobalTrial, isPersonalTrial, freeEndsAt } = useTrialStatus();
+  const { isGlobalTrial, isPersonalTrial, freeEndsAt, trialDaysRemaining } = useTrialStatus();
   const { data: keepSummary } = useKeepSummary(!!user && !isSubscriber);
   // Still free: subscribing now opens a Stripe trial to the end of the free
   // time, so nothing is charged before then (server/subscription-checkout.ts).
@@ -124,7 +124,7 @@ export default function BuyCreditsPage() {
                   : noChargeUntil
                     ? `You're free until ${freeEndsText}. Subscribe now and nothing is charged until then: your students' lessons keep coming without a break, and student-made lessons unlock today.`
                     : isFree
-                      ? `Your free time ends on ${freeEndsText}. Subscribe now so your students' lessons keep coming.`
+                      ? `${freeEndsText ? `Your free time ends on ${freeEndsText}.` : `You have ${trialDaysRemaining} day${trialDaysRemaining !== 1 ? "s" : ""} of free time left.`} Subscribe now so your students' lessons keep coming.`
                       : "One flat monthly plan: a finished lesson for any student in 1–2 minutes, built on the words they already know."}
               </p>
             </div>
