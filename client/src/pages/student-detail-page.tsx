@@ -61,6 +61,9 @@ export default function StudentDetailPage() {
   const studentId = parseInt(id);
   const { toast } = useToast();
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  // After "We did this": nudge straight to the student's next lesson, the
+  // one that builds on the words just added.
+  const [nextLessonNudge, setNextLessonNudge] = useState(false);
   const [activeTab, setActiveTab] = useState("info");
   const [isUnassignDialogOpen, setIsUnassignDialogOpen] = useState(false);
   const [unassignTarget, setUnassignTarget] = useState<{ assignmentId: number; lesson: Lesson } | null>(null);
@@ -160,6 +163,7 @@ export default function StudentDetailPage() {
       const name = student?.name ?? "the student";
       if (status === LESSON_STATUS_DONE) {
         trackEvent("lesson_marked_done", { words_added: result.wordsAdded });
+        setNextLessonNudge(true);
         toast({
           title: "Marked as done",
           description: result.wordsAdded > 0
@@ -437,11 +441,27 @@ export default function StudentDetailPage() {
                       <CardTitle className="font-nunito">Lesson History</CardTitle>
                       <Link href={`/generate?studentId=${student.id}`}>
                         <Button size="sm" className="bg-primary hover:bg-primary/90">
-                          <Plus className="mr-2 h-4 w-4" /> New Lesson
+                          <Plus className="mr-2 h-4 w-4" />
+                          {studentLessons.some((sl) => isLessonDone(sl.status)) ? `Make ${possessive(student.name)} next lesson` : "New Lesson"}
                         </Button>
                       </Link>
                     </CardHeader>
                     <CardContent>
+                      {nextLessonNudge && (
+                        <div className="mb-4 flex flex-col gap-3 rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900 sm:flex-row sm:items-center sm:justify-between">
+                          <p>
+                            <strong>{possessive(student.name)} next lesson can build on this.</strong>{" "}
+                            {vocabulary.length > 0
+                              ? `It won’t re-teach the ${vocabulary.length} words now on ${possessive(student.name)} list, and can reuse them where they fit.`
+                              : "It won’t re-teach the words from this lesson."}
+                          </p>
+                          <Link href={`/generate?studentId=${student.id}`}>
+                            <Button size="sm" className="shrink-0 bg-primary hover:bg-primary/90">
+                              Make {possessive(student.name)} next lesson
+                            </Button>
+                          </Link>
+                        </div>
+                      )}
                       {isLessonsLoading ? (
                         <div className="flex justify-center py-8">
                           <Loader2 className="h-8 w-8 animate-spin text-primary" />

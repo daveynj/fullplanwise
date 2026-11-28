@@ -6,14 +6,16 @@ import { Card, CardContent } from '@/components/ui/card';
 import { trackEvent } from '@/lib/analytics';
 
 /**
- * The three steps that make PlanWise click for a teacher: a real student,
- * a lesson built around them, and their own page. Teachers who do all three
+ * The steps that make PlanWise click for a teacher: a real student, a
+ * lesson built around them, their second lesson (where the word memory
+ * shows), and their own page. Teachers who do all three
  * have the words tracked and a student practising between classes, which is
  * what makes them stay. Each step ticks itself off from the teacher's data.
  */
 export interface ChecklistState {
   hasStudent: boolean;
   hasLessonForStudent: boolean;
+  hasSecondLessonForStudent: boolean;
   hasStudentPage: boolean;
 }
 
@@ -31,6 +33,13 @@ export const checklistSteps = [
     text: 'Choose the student, then a conversation topic from their world, not a grammar point. It is ready in 1–2 minutes.',
     href: '/generate',
     cta: 'Make a lesson',
+  },
+  {
+    key: 'hasSecondLessonForStudent' as const,
+    title: 'Make their second lesson',
+    text: 'After you teach the first one, press “We did this” on their page and make their next lesson. It won’t re-teach the words they met, and a note at the top shows what it built on.',
+    href: '/students',
+    cta: 'Open my students',
   },
   {
     key: 'hasStudentPage' as const,
@@ -64,7 +73,7 @@ export function GettingStartedChecklist({ userId, state }: { userId: number; sta
   const complete = done === checklistSteps.length;
   const [dismissed, setDismissed] = useState(() => readFlag(storageKey(userId, 'dismissed')));
 
-  // Record the moment a teacher finishes all three steps, once.
+  // Record the moment a teacher finishes every step, once.
   useEffect(() => {
     const key = storageKey(userId, 'completed');
     if (complete && !readFlag(key)) {
@@ -82,7 +91,7 @@ export function GettingStartedChecklist({ userId, state }: { userId: number; sta
         <div className="flex items-start justify-between gap-4">
           <div>
             <h2 className="text-xl font-nunito font-bold">Get the most out of PlanWise ESL</h2>
-            <p className="text-gray-600 mt-1">Three steps, about five minutes. {done} of {checklistSteps.length} done.</p>
+            <p className="text-gray-600 mt-1">{checklistSteps.length} steps; the second lesson comes after your first class. {done} of {checklistSteps.length} done.</p>
           </div>
           <button
             type="button"
