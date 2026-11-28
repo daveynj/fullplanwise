@@ -48,7 +48,7 @@ const BASE_URL = 'https://planwiseesl.com';
 
 export const CEFR_LEVELS = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'] as const;
 
-function escapeHtml(str: string): string {
+export function escapeHtml(str: string): string {
   return str
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
@@ -224,7 +224,7 @@ function estimatedMinutesOf(content: unknown): number | null {
   return null;
 }
 
-function questionText(q: unknown): string {
+export function questionText(q: unknown): string {
   if (typeof q === 'string') return q.trim();
   if (q && typeof q === 'object') return str((q as any).question);
   return '';
@@ -814,6 +814,15 @@ function topicLinksHtml(lessons: LessonSummary[], currentTopic?: PublicLessonTag
   return `<section aria-label="Browse by theme"><h2>Browse Free Lessons by Theme</h2><p>${items}</p></section>`;
 }
 
+/** Link from the topic hub (and the main library page) to the "conversation questions" pages. */
+function conversationQuestionsLinkHtml(level: string | undefined, topic: PublicLessonTag | undefined, topicLabel: string): string {
+  if (level) return '';
+  if (topic) {
+    return `<p><a href="/conversation-questions/${e(topic)}">Conversation questions about ${e(topicLabel.toLowerCase())} &rarr;</a></p>`;
+  }
+  return '<p><a href="/conversation-questions">Conversation questions by topic &rarr;</a></p>';
+}
+
 export function buildLessonIndexHtml(
   lessons: LessonSummary[],
   level?: string,
@@ -908,6 +917,7 @@ export function buildLessonIndexHtml(
     <h1>${e(heading)}</h1>
     <p>${e(intro)} <a href="${e(lessonDesign.href)}">${e(lessonDesign.linkLabel)}</a>.</p>
     ${levelLinksHtml(level, level ? topic : undefined, counts)}
+    ${conversationQuestionsLinkHtml(level, topic, topicLabel)}
     ${themeSection}
     ${listing}
     ${guideHtml}

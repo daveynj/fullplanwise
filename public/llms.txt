@@ -25,6 +25,13 @@ Teachers looking for ready-to-teach adult ESL conversation material can open, sc
 
 Every public lesson follows the exact same 8-stage research-backed sequence (warm-up, 5 deeply taught target words, levelled reading, recall flashcards, semantic maps, tiered sentence frames, cloze, unscramble, quiz, and deep discussion), documents its design under "How this lesson is built", and exposes `schema.org/LearningResource` metadata.
 
+## Conversation questions by topic
+
+Free ESL conversation questions, grouped by topic and CEFR level (A1–C2), taken from the free lessons. Each page lists the warm-up and discussion questions of every free lesson on that topic, with links to the full lesson and a printable questions page. No login needed.
+
+- **All topics:** https://planwiseesl.com/conversation-questions
+- **By topic:** https://planwiseesl.com/conversation-questions/travel , https://planwiseesl.com/conversation-questions/work , https://planwiseesl.com/conversation-questions/money , https://planwiseesl.com/conversation-questions/health , https://planwiseesl.com/conversation-questions/food , https://planwiseesl.com/conversation-questions/technology , https://planwiseesl.com/conversation-questions/artificial-intelligence , https://planwiseesl.com/conversation-questions/environment , https://planwiseesl.com/conversation-questions/relationships , https://planwiseesl.com/conversation-questions/culture , https://planwiseesl.com/conversation-questions/holidays , https://planwiseesl.com/conversation-questions/education , https://planwiseesl.com/conversation-questions/sport , https://planwiseesl.com/conversation-questions/science , https://planwiseesl.com/conversation-questions/entertainment , https://planwiseesl.com/conversation-questions/shopping , https://planwiseesl.com/conversation-questions/transport
+
 ## Use PlanWise ESL inside an AI assistant (MCP connector)
 
 AI assistants that support the Model Context Protocol (Claude, ChatGPT and others) can search and open the free lesson library directly. Add this address as a custom connector: https://planwiseesl.com/mcp (read-only, no login or key). It offers three tools: `search_free_esl_lessons` (by topic, CEFR level or theme), `get_free_esl_lesson` (the full lesson text with its link) and `list_esl_lesson_levels_and_themes`.
