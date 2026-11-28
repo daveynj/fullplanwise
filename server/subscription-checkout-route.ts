@@ -7,14 +7,25 @@ import { storage } from "./storage";
 import { subscriptionSchema } from "@shared/schema";
 import { CHECKOUT_PRICES } from "./billing-config";
 import { getLegacyStripeSecretKey, getStripeSecretKey } from "./stripeClient";
-import { isFreeTrialActive } from "./features";
+import { isFreeTrialActive, getFreeTrialEndDate } from "./features";
 import { CheckoutGuardError, createGuardedCheckout } from "./subscription-checkout";
 import { publicAppUrl } from "./public-app-url";
 
+/**
+ * When the teacher's free time ends: the free period for everyone, or their
+ * own trial, whichever is later. Subscribing before then costs nothing until
+ * that moment (see checkoutTrialEnd).
+ */
+export function freeTimeEndsAt(user: { trialExpiresAt?: Date | string | null }, now: Date = new Date()): Date | null {
+  const candidates: Date[] = [];
+  const globalEnd = isFreeTrialActive() ? getFreeTrialEndDate() : null;
+  if (globalEnd && globalEnd > now) candidates.push(globalEnd);
+  const personal = user.trialExpiresAt ? new Date(user.trialExpiresAt) : null;
+  if (personal && !isNaN(personal.getTime()) && personal > now) candidates.push(personal);
+  return candidates.length ? new Date(Math.max(...candidates.map((d) => d.getTime()))) : null;
+}
+
 export async function subscriptionCheckoutRoute(req: Request, res: Response) {
-  if (isFreeTrialActive()) {
-    return res.status(403).json({ message: "Subscriptions are disabled during the free trial period." });
-  }
   let connection: PoolClient | undefined;
   let locked = false;
   try {
@@ -43,7 +54,7 @@ export async function subscriptionCheckoutRoute(req: Request, res: Response) {
     const accounts = [new Stripe(key, options)];
     if (legacyKey && legacyKey !== key) accounts.push(new Stripe(legacyKey, options));
     const data = await createGuardedCheckout(user, accounts, {
-      planId, priceId: actualPriceId, baseUrl,
+      planId, priceId: actualPriceId, baseUrl, freeUntil: freeTimeEndsAt(user),
     // updateUserStripeInfo also grants access for any non-null subscription
     // link. Opening checkout must only persist the customer, never activate or
     // clear the old subscription (even when that subscription has ended).

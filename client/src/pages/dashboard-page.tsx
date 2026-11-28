@@ -13,6 +13,7 @@ import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Lesson, Student } from "@shared/schema";
 import { useTrialStatus } from "@/hooks/use-trial-status";
+import { KeepBuildingCard, FounderOfferNote, useKeepSummary } from "@/components/keep-building-card";
 import { format } from 'date-fns';
 
 // Define interface for paginated lessons
@@ -21,19 +22,49 @@ interface PaginatedLessons {
   total: number;
 }
 
+/** Free time over: what the teacher has built, and how to keep building it. */
+const FreeTimeEndedCard = () => {
+  const { data } = useKeepSummary(true);
+  return (
+    <div className="mb-6">
+      <KeepBuildingCard summary={data} mode="ended" location="dashboard" />
+    </div>
+  );
+};
+
 const TrialStatusBanner = () => {
   const {
     isSubscriber,
     isInTrial,
     isPersonalTrial,
+    isGlobalTrial,
     trialDaysRemaining,
     freeCreditsRemaining,
-    canGenerateLessons
+    canGenerateLessons,
+    isLoading,
   } = useTrialStatus();
 
   // Subscribers don't need to see this
   if (isSubscriber) {
     return null;
+  }
+
+  // Free for everyone (until 10 Dec 2026): subscribing now costs nothing until then.
+  if (isGlobalTrial && !isPersonalTrial) {
+    return (
+      <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50/70 p-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="text-sm text-amber-950">
+          <p className="font-bold text-base">PlanWise ESL is free for everyone for {trialDaysRemaining} more day{trialDaysRemaining !== 1 ? 's' : ''}.</p>
+          <p>Want your students' lessons to keep coming after that? Subscribe now and nothing is charged until the free period ends.</p>
+          <FounderOfferNote className="mt-2 bg-white/70" />
+        </div>
+        <Link href="/buy-credits">
+          <Button variant="brand" size="sm" className="font-bold shrink-0">
+            Lock in Unlimited
+          </Button>
+        </Link>
+      </div>
+    );
   }
 
   // Show trial banner if user is in personal trial
@@ -88,30 +119,9 @@ const TrialStatusBanner = () => {
     );
   }
 
-  // Show subscribe prompt if user has no trial and no credits
-  if (!canGenerateLessons) {
-    return (
-      <div className="bg-gradient-to-r from-red-500 to-pink-600 text-white rounded-lg mb-6 p-4 shadow-lg">
-        <div className="flex items-center justify-between flex-wrap gap-4">
-          <div className="flex items-center gap-3">
-            <div className="bg-white/20 p-2 rounded-full">
-              <Zap className="h-6 w-6" />
-            </div>
-            <div>
-              <p className="font-bold text-lg">🔒 Free Trial Ended</p>
-              <p className="text-white/90">
-                Subscribe to continue generating unlimited ESL lessons
-              </p>
-            </div>
-          </div>
-          <Link href="/buy-credits">
-            <Button variant="secondary" size="sm" className="font-bold">
-              Subscribe Now
-            </Button>
-          </Link>
-        </div>
-      </div>
-    );
+  // Free time over: show what they've built instead of a red "ended" banner.
+  if (!canGenerateLessons && !isLoading) {
+    return <FreeTimeEndedCard />;
   }
 
   return null;

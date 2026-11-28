@@ -25,6 +25,8 @@ import {
   Clock
 } from "lucide-react";
 import { useTrialStatus } from "@/hooks/use-trial-status";
+import { KeepBuildingCard, FounderOfferNote, useKeepSummary } from "@/components/keep-building-card";
+import { formatTrialEndDate } from "@shared/free-trial-date";
 
 const unlimitedPlan = {
   id: "unlimited_monthly",
@@ -48,7 +50,14 @@ export default function BuyCreditsPage() {
   const submitting = useRef(false);
   const [redirecting, setRedirecting] = useState(false);
   const isSubscriber = user?.subscriptionTier === "unlimited";
-  const { isGlobalTrial, isPersonalTrial, trialDaysRemaining } = useTrialStatus();
+  const { isGlobalTrial, isPersonalTrial, freeEndsAt } = useTrialStatus();
+  const { data: keepSummary } = useKeepSummary(!!user && !isSubscriber);
+  // Still free: subscribing now opens a Stripe trial to the end of the free
+  // time, so nothing is charged before then (server/subscription-checkout.ts).
+  // Stripe needs at least 48 hours of trial; with less, checkout charges at once.
+  const isFree = !isSubscriber && (isGlobalTrial || isPersonalTrial);
+  const noChargeUntil = isFree && freeEndsAt && freeEndsAt.getTime() - Date.now() > 49 * 60 * 60 * 1000 ? freeEndsAt : null;
+  const freeEndsText = freeEndsAt ? formatTrialEndDate(freeEndsAt) : "";
 
   // Create subscription mutation
   const createSubscriptionMutation = useMutation({
@@ -105,18 +114,18 @@ export default function BuyCreditsPage() {
               <h1 className="text-3xl md:text-4xl font-nunito font-bold text-brand-navy">
                 {isSubscriber
                   ? "Your Unlimited Subscription"
-                  : isGlobalTrial
-                    ? "Free Trial Active"
-                    : "Upgrade to PlanWise ESL Unlimited"}
+                  : isFree
+                    ? "Lock in Unlimited now"
+                    : "Keep building with PlanWise ESL Unlimited"}
               </h1>
               <p className="text-slate-600 mt-2 max-w-2xl mx-auto text-base md:text-lg">
                 {isSubscriber
                   ? "You already have Unlimited access. Manage your subscription anytime from account settings."
-                  : isGlobalTrial
-                    ? `Everyone has unlimited lesson generation for ${trialDaysRemaining} more day${trialDaysRemaining !== 1 ? "s" : ""}.`
-                    : isPersonalTrial
-                      ? `You have ${trialDaysRemaining} day${trialDaysRemaining !== 1 ? "s" : ""} left in your free trial. Lock in Unlimited now—and unlock student-created custom lessons immediately.`
-                      : "One flat monthly plan for unlimited bespoke lessons, student dashboards, flashcards and Vocabulary Review study PDFs."}
+                  : noChargeUntil
+                    ? `You're free until ${freeEndsText}. Subscribe now and nothing is charged until then: your students' lessons keep coming without a break, and student-made lessons unlock today.`
+                    : isFree
+                      ? `Your free time ends on ${freeEndsText}. Subscribe now so your students' lessons keep coming.`
+                      : "One flat monthly plan: a finished lesson for any student in 1–2 minutes, built on the words they already know."}
               </p>
             </div>
 
@@ -132,29 +141,14 @@ export default function BuyCreditsPage() {
                   </Button>
                 </CardContent>
               </Card>
-            ) : isGlobalTrial ? (
-              <Card className="max-w-2xl mx-auto text-center py-10">
-                <CardHeader>
-                  <CardTitle className="text-2xl font-nunito text-brand-navy">Free Trial Active</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-lg text-slate-700">
-                    You have unlimited lesson generation for {trialDaysRemaining} more day{trialDaysRemaining !== 1 ? "s" : ""}. Subscriptions open as soon as the promotional period ends.
-                  </p>
-                </CardContent>
-              </Card>
             ) : (
               <div className="space-y-6">
-                {isPersonalTrial && (
-                  <div className="max-w-xl mx-auto rounded-2xl bg-amber-50 border border-amber-200 px-5 py-4 flex items-start gap-3">
-                    <Clock className="h-5 w-5 text-amber-700 mt-0.5 flex-shrink-0" />
-                    <div className="text-sm text-amber-950">
-                      <span className="font-bold">
-                        {trialDaysRemaining} day{trialDaysRemaining !== 1 ? "s" : ""} left in your free trial.
-                      </span>{" "}
-                      Upgrade today to unlock student-created custom lessons right away and keep generating without interruption.
-                    </div>
+                {keepSummary && keepSummary.lessons > 0 ? (
+                  <div className="max-w-xl mx-auto">
+                    <KeepBuildingCard summary={keepSummary} mode={isFree ? "free" : "ended"} location="payment_page" showActions={false} />
                   </div>
+                ) : (
+                  <FounderOfferNote className="max-w-xl mx-auto" />
                 )}
 
                 <Card className="max-w-xl mx-auto border-2 border-brand-yellow shadow-xl overflow-hidden">
@@ -213,13 +207,16 @@ export default function BuyCreditsPage() {
                       ) : (
                         <>
                           <CreditCardIcon className="mr-2 h-5 w-5" />
-                          Subscribe Now — {priceText}
+                          {noChargeUntil
+                            ? `Subscribe now: no charge until ${formatTrialEndDate(noChargeUntil, { withYear: false })}`
+                            : `Subscribe Now — ${priceText}`}
                         </>
                       )}
                     </Button>
                     <p className="flex items-center justify-center gap-1.5 text-xs text-slate-500 text-center">
                       <ShieldCheck className="h-4 w-4 text-emerald-600 flex-shrink-0" />
                       Secure Stripe checkout · Cancel anytime in 1 click · Keep every lesson you create
+                      {noChargeUntil ? ` · Then ${priceText}` : ""}
                     </p>
                   </CardFooter>
                 </Card>

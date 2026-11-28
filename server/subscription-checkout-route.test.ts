@@ -7,13 +7,14 @@ const mocks = vi.hoisted(() => ({
   getUser: vi.fn(), save: vi.fn(), secret: vi.fn(), checkout: vi.fn(),
   connect: vi.fn(), release: vi.fn(), query: vi.fn(),
   trial: false,
+  trialEnd: null as Date | null,
 }));
 vi.mock("./db", () => ({ pool: { connect: mocks.connect } }));
 vi.mock("./storage", () => ({ storage: { getUser: mocks.getUser, updateUser: mocks.save } }));
 vi.mock("./stripeClient", () => ({
   getStripeSecretKey: mocks.secret, getLegacyStripeSecretKey: () => undefined,
 }));
-vi.mock("./features", () => ({ isFreeTrialActive: () => mocks.trial }));
+vi.mock("./features", () => ({ isFreeTrialActive: () => mocks.trial, getFreeTrialEndDate: () => mocks.trialEnd }));
 vi.mock("stripe", () => ({ default: vi.fn(function () { return {}; }) }));
 vi.mock("./subscription-checkout", async (original) => ({
   ...await original<typeof import("./subscription-checkout")>(),
@@ -24,6 +25,7 @@ import { subscriptionCheckoutRoute } from "./subscription-checkout-route";
 beforeEach(() => {
   vi.clearAllMocks();
   mocks.trial = false;
+  mocks.trialEnd = null;
   mocks.getUser.mockResolvedValue({ id: 7 });
   mocks.secret.mockResolvedValue("sk_mock_only");
   mocks.checkout.mockResolvedValue({ sessionId: "cs_mock", url: "https://checkout.example/mock" });
@@ -119,11 +121,36 @@ describe("checkout request serialization", () => {
     });
   });
 
-  it("preserves the trial checkout restriction", async () => {
+  it("lets teachers subscribe during the free period, passing when their free time ends", async () => {
+    const end = new Date(Date.now() + 10 * 24 * 60 * 60 * 1000);
     mocks.trial = true;
+    mocks.trialEnd = end;
     await withServer(async (post) => {
-      expect((await post()).status).toBe(403);
-      expect(mocks.connect).not.toHaveBeenCalled();
+      expect((await post()).status).toBe(200);
+      expect(mocks.checkout).toHaveBeenCalledWith(
+        expect.anything(), expect.anything(),
+        expect.objectContaining({ freeUntil: end }), expect.any(Function),
+      );
+    });
+  });
+
+  it("uses the teacher's own trial when it ends after the free period", async () => {
+    const globalEnd = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
+    const personal = new Date(Date.now() + 12 * 24 * 60 * 60 * 1000);
+    mocks.trial = true;
+    mocks.trialEnd = globalEnd;
+    mocks.getUser.mockResolvedValue({ id: 7, trialExpiresAt: personal });
+    await withServer(async (post) => {
+      expect((await post()).status).toBe(200);
+      expect(mocks.checkout.mock.calls[0][2].freeUntil.getTime()).toBe(personal.getTime());
+    });
+  });
+
+  it("passes no free time once the free period and the teacher's trial are over", async () => {
+    mocks.getUser.mockResolvedValue({ id: 7, trialExpiresAt: new Date(Date.now() - 1000) });
+    await withServer(async (post) => {
+      expect((await post()).status).toBe(200);
+      expect(mocks.checkout.mock.calls[0][2].freeUntil).toBeNull();
     });
   });
 });
