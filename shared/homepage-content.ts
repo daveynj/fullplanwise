@@ -25,7 +25,7 @@ export type FaqAnswerPart = FaqTextPart | FaqLinkPart;
 const { brand, generationTime } = siteFacts;
 
 export const homepageMeta = {
-  title: `${brand} – AI Lesson Planner for ESL Teachers & Tutors`,
+  title: `${brand} – Ready-to-teach ESL lessons in ${generationTime}`,
   description:
     `Complete, CEFR-levelled ESL lessons on any topic in ${generationTime}, built around each student's level and vocabulary. ${trialText}, no card needed.`,
   keywords: [
