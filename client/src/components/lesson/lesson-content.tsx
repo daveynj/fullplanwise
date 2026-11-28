@@ -118,6 +118,19 @@ interface SectionDetails {
   description: string;
 }
 
+/**
+ * Reports the open section once each time it changes. A separate component so
+ * the effect runs only after the lesson has loaded (LessonContent returns early
+ * while it parses, and hooks may not follow an early return).
+ */
+function SectionReporter({ section, onSectionChange }: { section: LessonSectionInfo; onSectionChange: (section: LessonSectionInfo) => void }) {
+  useEffect(() => {
+    onSectionChange(section);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [section.id, section.index, section.total]);
+  return null;
+}
+
 export function LessonContent({ content, vocabularyCta, intro, endOfLesson, onSectionChange }: LessonContentProps) {
   const [parsedContent, setParsedContent] = useState<ParsedLessonContent | null>(null);
   const [activeTab, setActiveTab] = useState<string>(""); 
@@ -2327,14 +2340,6 @@ export function LessonContent({ content, vocabularyCta, intro, endOfLesson, onSe
   const currentLabel = currentIndex >= 0 ? availableRenderTree[currentIndex].label : '';
   const nextLabel = currentIndex >= 0 && currentIndex < total - 1 ? availableRenderTree[currentIndex + 1].label : '';
   const isLastSection = total > 0 && currentIndex === total - 1;
-
-  // Report each section a reader opens, once per change.
-  useEffect(() => {
-    if (onSectionChange && activeTab && currentIndex >= 0) {
-      onSectionChange({ id: activeTab, label: currentLabel, index: currentIndex, total });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeTab, currentIndex, total]);
   
   return (
     <div className="lesson-content w-[95%] max-w-[1800px] mx-auto"> {/* Increased width for better screen space utilization */}
@@ -2355,6 +2360,12 @@ export function LessonContent({ content, vocabularyCta, intro, endOfLesson, onSe
       </div>
       
       {intro}
+      {onSectionChange && activeTab && currentIndex >= 0 && (
+        <SectionReporter
+          section={{ id: activeTab, label: currentLabel, index: currentIndex, total }}
+          onSectionChange={onSectionChange}
+        />
+      )}
 
       {/* Tabbed interface - styled based on template images */}
       <Tabs id="lesson-sections" value={activeTab} onValueChange={setActiveTab} className="mt-4 relative scroll-mt-4">

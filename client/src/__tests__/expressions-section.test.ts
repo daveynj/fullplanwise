@@ -150,4 +150,21 @@ describe("lesson tabs", () => {
     ]);
     expect(screen.getByText("Section 1 of 11")).toBeTruthy();
   });
+
+  it("names the next section, reports each section opened and shows the end-of-lesson panel last", () => {
+    const seen: Array<{ id: string; index: number; total: number }> = [];
+    render(h(LessonContent, {
+      content: lesson(),
+      intro: h("p", null, "Intro panel"),
+      endOfLesson: h("p", null, "End panel"),
+      onSectionChange: (s: { id: string; index: number; total: number }) => seen.push({ id: s.id, index: s.index, total: s.total }),
+    } as any));
+    expect(screen.getByText("Intro panel")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Next Section" }).textContent).toContain("Next: Vocab Intro");
+    expect(seen[seen.length - 1]).toMatchObject({ index: 0, total: 10 });
+    for (let i = 0; i < 9; i++) fireEvent.click(screen.getByRole("button", { name: "Next Section" }));
+    expect(screen.getByText("Section 10 of 10")).toBeTruthy();
+    expect(seen[seen.length - 1]).toMatchObject({ index: 9, total: 10 });
+    expect(screen.getByText("End panel")).toBeTruthy();
+  });
 });
