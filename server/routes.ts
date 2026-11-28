@@ -57,6 +57,7 @@ import Stripe from "stripe";
 
 import { db } from "./db";
 import { studentMemoryNoteFor } from "./student-memory-note";
+import { studentContextFor } from "./student-context";
 import { sql } from "drizzle-orm";
 import { syncMailchimpPlanTagsForUsers } from "./mailchimp-plan-tags";
 // Dynamic import for PDF service - loaded only when needed
@@ -1252,7 +1253,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
           const openRouter = await getOpenRouterService();
           const { content: generatedContent, grammarSpotlight: grammarVisualization } =
-            await writeLessonText(openRouter, validatedData, studentVocabulary, generationModel, jobId);
+            await writeLessonText(openRouter, { ...validatedData, studentContext: await studentContextFor(validatedData.studentId, teacherId) }, studentVocabulary, generationModel, jobId);
 
           const textTimeTaken = (Date.now() - startTime) / 1000;
           console.log(`[Job ${jobId}] Lesson text ready in ${textTimeTaken.toFixed(1)}s — saving lesson now`);

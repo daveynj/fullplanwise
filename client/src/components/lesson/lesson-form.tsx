@@ -290,13 +290,13 @@ export function LessonForm({ students, onSubmit, initialStudentId, initialTopic,
                   />
                   <Input
                     aria-label="About the student (optional)"
-                    placeholder="Optional: their job or interests, e.g. nurse, loves football"
+                    placeholder="Optional: anything about them, e.g. 13-year-old boy from China, loves gaming; or: first lesson, don’t know her yet"
                     value={newStudentAbout}
                     onChange={(e) => setNewStudentAbout(e.target.value)}
                     className="bg-white"
                     maxLength={200}
                   />
-                  <p className="text-xs text-gray-500">Their level is the CEFR level you choose below. You can change any of this later.</p>
+                  <p className="text-xs text-gray-500">Write as much or as little as you like: PlanWise uses it to fit every lesson to them. Their level is the CEFR level below, and you can change any of this later.</p>
                   {askedForName && !newStudentName.trim() && (
                     <p className="text-sm text-amber-800" role="status">
                       Add their first name so PlanWise can remember their words, or press Generate again to make this lesson without a student.

@@ -28,7 +28,8 @@ async function makeStudentLesson(jobId: string, student: Student, teacher: User,
   const logPrefix = `[Job ${jobId}]`;
   try {
     console.log(`${logPrefix} Student ${student.id} is making a lesson, level: ${student.cefrLevel}`);
-    const request = studentLessonRequest(student, topic);
+    // The teacher's saved notes about the student shape their own lessons too.
+    const request = { ...studentLessonRequest(student, topic), studentContext: (student.notes ?? "").trim().slice(0, 600) || undefined };
     const avoidWords = await wordsToAvoid(student.id, logPrefix);
     const openRouter = await getLessonAi();
     const { content, grammarSpotlight } = await writeLessonText(openRouter, request, avoidWords, lessonModelFor(teacher), jobId);

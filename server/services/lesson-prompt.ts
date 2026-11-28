@@ -192,6 +192,20 @@ export const LESSON_SECTION_NAMES: Record<LessonSectionType, string> = {
 };
 
 /** Opening shared by the lesson and section prompts: the role, the class, the student and the level. */
+/**
+ * What the teacher saved about this student ("13-year-old boy from China",
+ * "first lesson, don't know her yet"). Used to fit the lesson to them under
+ * the same rule as notes in the request: shape the lesson, never repeat them.
+ */
+export function studentContextNote(context: string | undefined): string {
+  const text = (context ?? '').replace(/\s+/g, ' ').trim().slice(0, 600);
+  if (!text) return '';
+  return `
+
+What the teacher has saved about this student: "${text.replace(/"/g, "'")}"
+Use it to choose situations, examples, names and questions that suit this student (their age, background, job and interests). Do not repeat or describe these notes in the lesson, because the student sees it. If it says this is a first lesson or the teacher doesn't know the student yet, keep questions open and friendly, so the student can say who they are.`;
+}
+
 function promptIntro(params: LessonGenerateParams, g: LevelGuidance): string {
   const { cefrLevel, topic, focus, lessonLength } = params;
 
@@ -213,7 +227,7 @@ ${TEACHER_NOTES_GUIDANCE}
 </the_class>
 
 <the_student>
-A ${cefrLevel} student ${g.canUnderstand}
+A ${cefrLevel} student ${g.canUnderstand}${studentContextNote(params.studentContext)}
 </the_student>
 
 <language_level>

@@ -3,6 +3,7 @@ import type { LessonGenerateParams } from "@shared/schema";
 import { expressionsRulesFor } from "@shared/lesson-expressions";
 import {
   buildLessonPrompt,
+  studentContextNote,
   buildGrammarSpotlightPrompt,
   buildLessonSectionPrompt,
   buildExpressionsPrompt,
@@ -369,5 +370,25 @@ describe("lesson quality rules", () => {
     expect(prompt).not.toContain("whether it can be split, or what the small word adds");
     expect(prompt).not.toContain("A short tip about a common mistake:");
     expect(prompt).toContain("Only if learners really make this mistake");
+  });
+});
+
+describe("what the teacher saved about the student", () => {
+  it("is given to the AI to fit the lesson, with the rule not to repeat it", () => {
+    const prompt = buildLessonPrompt({ ...params("A2"), studentContext: "13-year-old boy from China, loves gaming" });
+    expect(prompt).toContain('What the teacher has saved about this student: "13-year-old boy from China, loves gaming"');
+    expect(prompt).toContain("Do not repeat or describe these notes in the lesson");
+  });
+
+  it("is left out when nothing is saved", () => {
+    expect(buildLessonPrompt(params("B1"))).not.toContain("What the teacher has saved about this student");
+    expect(studentContextNote("   ")).toBe("");
+  });
+
+  it("keeps the notes on one line, short, and without double quotes", () => {
+    const note = studentContextNote('First lesson,\n"don\'t know her yet"  ' + "x".repeat(700));
+    expect(note).toContain("First lesson, 'don't know her yet'");
+    expect(note).not.toContain("\n\"");
+    expect(note.length).toBeLessThan(1100);
   });
 });
