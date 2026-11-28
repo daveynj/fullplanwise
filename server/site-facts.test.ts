@@ -132,3 +132,34 @@ describe("blog post headings", () => {
     expect(demoteH1("<h10>not a heading</h10><header>keep</header>")).toBe("<h10>not a heading</h10><header>keep</header>");
   });
 });
+
+// The free library's size appeared as both "180+" and "200+" on different
+// pages. Every page now quotes the same floor from site-facts.
+describe("free lesson count", () => {
+  const files = [
+    "shared/homepage-content.ts",
+    "shared/comparison-pages.ts",
+    "shared/icp-pages.ts",
+    "shared/guides.ts",
+    "shared/lesson-pedagogy.ts",
+    "shared/marketing-pages.ts",
+    "public/llms.txt",
+  ];
+  // "180+ free lessons", "all 180+ in our library", "over 180 ready-to-teach lessons", "180 complete A1–C2 lessons".
+  const countPhrase = /\b(?:all |over )?(\d{3})\+?(?= (?:free|full|complete|finished|zero-login|ready-to-teach|in our)\b)/g;
+
+  it("is the same on every page", () => {
+    for (const file of files) {
+      const text = readFileSync(file, "utf8");
+      for (const match of text.matchAll(countPhrase)) {
+        expect(Number(match[1]), `${file}: "${match[0]}"`).toBe(siteFacts.freeLessonCount);
+      }
+    }
+  });
+
+  it("is used for the homepage library badge", () => {
+    expect(JSON.stringify({ hero, faq, features })).not.toContain("200+");
+    expect(readFileSync("shared/homepage-content.ts", "utf8")).toContain("${freeLessonsText} free lessons");
+    expect(llms).toContain(`over ${siteFacts.freeLessonCount}`);
+  });
+});

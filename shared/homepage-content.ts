@@ -9,7 +9,7 @@
  * leave PlanWise out. Shared facts (price, trial, generation time) come from
  * shared/site-facts.ts.
  */
-import { siteFacts, trialText, priceText } from './site-facts';
+import { siteFacts, trialText, priceText, freeLessonsText } from './site-facts';
 
 export interface FaqLinkPart {
   type: 'link';
@@ -298,7 +298,7 @@ export const verifiableProof = {
       href: '/compare/student-memory-proof',
     },
     {
-      badge: '200+ free lessons',
+      badge: `${freeLessonsText} free lessons`,
       title: 'Verified CEFR A1–C2 Calibration',
       text: 'Compare plain <10-word A1 adult beginner definitions against executive C1 boardroom lessons—with 3-tier speaking frames, collocations & downloadable PDFs.',
       linkLabel: 'Browse the public library',

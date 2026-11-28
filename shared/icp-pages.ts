@@ -68,7 +68,7 @@ export const onlineTutorsPage: MarketingPage = {
     {
       heading: 'Honest tutor math: when does a subscription pay off?',
       paragraphs: [
-        `On Preply or italki, every unpaid hour you spend planning lowers your real hourly rate. ${brand} costs **${priceText}** for unlimited lessons (after a **${trialText}**, no credit card required). If you teach 20 lessons a month, that is about $1 per complete, personalised lesson—and if it saves you even 20 minutes of prep per class, you get nearly seven hours of your week back while giving students a noticeably better experience that drives renewals and 5-star reviews.`,
+        `On Preply or italki, every unpaid hour you spend planning lowers your real hourly rate. ${brand} costs **${priceText}** for unlimited lessons (after a **${trialText}**, no credit card required). If you teach 20 lessons a month, that is about $1 per complete, personalised lesson—and if it saves you even 20 minutes of prep per class, you get nearly seven hours a month back while giving students a noticeably better experience that drives renewals and 5-star reviews.`,
         'Want a practical routine for turning new students into long-term regulars? Read our guide on [how to personalise ESL lessons for one-to-one students](/guides/personalise-esl-lessons).',
       ],
     },

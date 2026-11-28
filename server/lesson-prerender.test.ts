@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { readFileSync } from "node:fs";
-import { lessonPublicMetadata, publicLessonRemixHref } from "@shared/lesson-public-metadata";
+import { lessonPublicMetadata, publicLessonRemixHref, lessonDescription } from "@shared/lesson-public-metadata";
+import { freeLessonLicence } from "@shared/site-facts";
 
 const getLesson = vi.fn();
 const getLessonByPublicSlug = vi.fn();
@@ -789,5 +790,97 @@ describe("CollectionPage free-access and dual-audience metadata", () => {
     expect(html).toContain("Model tip:");
     expect(html).toContain("AI is great for solo practice between classes");
     expect(html).toContain('href="https://speakwithdave.com"');
+  });
+});
+
+describe("lesson meta descriptions", () => {
+  const longParts = ["5 vocabulary words", "a reading text", "comprehension questions", "discussion questions", "speaking patterns"];
+
+  it("fits 160 characters in whole sentences, without a cut-off ellipsis", () => {
+    for (const title of [
+      "Fast Food Everywhere: Good or Bad?",
+      "Explaining the Brain: Talking About Your Work in Medicine",
+      "When Projects Grow Too Big: Scope Creep and Deadlines",
+      "Delivering the Numbers: Talking About Risk and Uncertainty in a Boardroom Presentation to Senior Leaders",
+    ]) {
+      const d = lessonDescription(title, "B2", longParts);
+      expect(d.length, d).toBeLessThanOrEqual(160);
+      expect(d, d).not.toContain("…");
+      expect(d, d).toMatch(/[.!?]$/);
+      expect(d).toContain("Free B2 (Upper Intermediate) ESL lesson:");
+    }
+  });
+
+  it("keeps everything when it fits, and lists fewer contents before cutting the title", () => {
+    expect(lessonDescription("Travel Plans", "B1", ["5 vocabulary words", "a reading text"]))
+      .toBe("Free B1 (Intermediate) ESL lesson: Travel Plans. Includes 5 vocabulary words and a reading text. Ready to use with your students.");
+    const d = lessonDescription("Explaining the Brain: Talking About Your Work in Medicine", "B1", longParts);
+    expect(d).toContain("Explaining the Brain: Talking About Your Work in Medicine.");
+    expect(d).toContain("Includes 5 vocabulary words");
+  });
+
+  it("does not add a full stop after a title that ends in a question or exclamation mark", () => {
+    expect(lessonDescription("Let's Talk About Video Games!", "A1", [])).toBe(
+      "Free A1 (Beginner) ESL lesson: Let's Talk About Video Games! Ready to use with your students.",
+    );
+  });
+});
+
+describe("public lesson pages: vocabulary pictures and licence", () => {
+  const withImages = {
+    ...baseLesson,
+    content: {
+      sections: [
+        ...baseLesson.content.sections.filter((s) => s.type !== "vocabulary"),
+        {
+          type: "vocabulary",
+          title: "Key Vocabulary",
+          words: [
+            { term: "itinerary", definition: "A plan of a journey.", imageUrl: "/api/images/lesson-images/42/abc123.png" },
+            { term: "luggage", definition: "Bags for travel.", imageUrl: "/api/images/lesson-images/99/other.png" },
+            { term: "passport", definition: "A travel document.", imageUrl: "https://evil.example/x.png" },
+            { term: "visa", definition: "Permission to enter.", imageBase64: "iVBORw0KGgoAAAA" },
+          ],
+        },
+      ],
+    },
+  };
+
+  it("shows this lesson's stored pictures as images with alt text, and nothing else", async () => {
+    getLesson.mockResolvedValue(withImages);
+    const html = await injectLessonPrerender(TEMPLATE, "/lessons/42");
+    const doc = new DOMParser().parseFromString(html!, "text/html");
+    const imgs = [...doc.querySelectorAll("#lesson-prerender img.lp-word-img")];
+    expect(imgs.map((i) => i.getAttribute("src"))).toEqual(["/api/images/lesson-images/42/abc123.png"]);
+    expect(imgs[0].getAttribute("alt")).toBe("Picture for the word “itinerary”");
+    expect(imgs[0].getAttribute("loading")).toBe("lazy");
+    expect(html).not.toContain("evil.example");
+    expect(html).not.toContain("iVBORw0KGgo");
+  });
+
+  it("shows no pictures on a shared (not public) lesson", async () => {
+    getLesson.mockResolvedValue({ ...withImages, isPublic: false, isShared: true });
+    const html = await injectLessonPrerender(TEMPLATE, "/lessons/42");
+    expect(html).not.toContain('<img class="lp-word-img"');
+  });
+
+  it("says what teachers may do with a public lesson and links it from structured data", async () => {
+    getLesson.mockResolvedValue(baseLesson);
+    const html = await injectLessonPrerender(TEMPLATE, "/lessons/42");
+    expect(html).toContain(freeLessonLicence.short);
+    expect(html).toContain(`href="${freeLessonLicence.path}"`);
+    const doc = new DOMParser().parseFromString(html!, "text/html");
+    const resource = [...doc.querySelectorAll('script[type="application/ld+json"]')]
+      .map((s) => JSON.parse(s.textContent || "null"))
+      .find((d) => d?.["@type"] === "LearningResource");
+    expect(resource.license).toBe(`https://planwiseesl.com${freeLessonLicence.path}`);
+  });
+
+  it("explains the licence on the library hub", async () => {
+    getPublicLessonSummaries.mockResolvedValue([baseLesson]);
+    const html = await injectLessonPrerender(TEMPLATE, "/esl-lessons");
+    const doc = new DOMParser().parseFromString(html!, "text/html");
+    const section = doc.getElementById(freeLessonLicence.id);
+    expect(section?.textContent).toContain(freeLessonLicence.text);
   });
 });

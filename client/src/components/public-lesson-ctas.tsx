@@ -1,4 +1,5 @@
 import { BookOpen } from "lucide-react";
+import { freeLessonLicence } from "@shared/site-facts";
 
 interface TopRemixBannerProps {
   title: string;
@@ -44,5 +45,18 @@ export function VocabFlashcardCTA({ href }: VocabFlashcardCTAProps) {
         Try PlanWise ESL free
       </a>
     </div>
+  );
+}
+
+/** What teachers may do with a free public lesson (same wording as the server-rendered page). */
+export function FreeLessonLicenceNote() {
+  return (
+    <p className="my-6 max-w-4xl mx-auto text-sm text-slate-600">
+      <strong className="text-[#051d40]">{freeLessonLicence.heading}:</strong> {freeLessonLicence.short}{" "}
+      <a href={freeLessonLicence.path} className="underline underline-offset-2 hover:text-[#051d40]">
+        What you can do with free lessons
+      </a>
+      .
+    </p>
   );
 }

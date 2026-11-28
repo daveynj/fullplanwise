@@ -13,7 +13,7 @@ import { SEOHead } from "@/components/SEOHead";
 import { lessonPublicMetadata, publicLessonRemixHref } from "@shared/lesson-public-metadata";
 import { LessonDesignPanel } from "@/components/lesson/lesson-design-panel";
 import { tutorLinkFor } from "@shared/tutor-link";
-import { TopRemixBanner, VocabFlashcardCTA } from "@/components/public-lesson-ctas";
+import { TopRemixBanner, VocabFlashcardCTA, FreeLessonLicenceNote } from "@/components/public-lesson-ctas";
 import { RelatedPublicLessons } from "@/components/related-public-lessons";
 import { lessonPath } from "@shared/lesson-url";
 import { trackEvent } from "@/lib/analytics";
@@ -443,6 +443,7 @@ export default function FullScreenLessonPage() {
                 vocabularyCta={showPublicLessonPromos ? <VocabFlashcardCTA href={vocabularySignupHref} /> : undefined}
               />
             )}
+            {parsedContent && lesson.isPublic && <FreeLessonLicenceNote />}
             {lesson.isPublic && (
               <RelatedPublicLessons lesson={{ id: lesson.id, title: lesson.title, cefrLevel: lesson.cefrLevel, tags: lesson.tags }} />
             )}

@@ -15,7 +15,7 @@
  * (React page + crawler-readable SSR HTML + JSON-LD + /sitemap.xml + /llms-full.txt).
  */
 import type { MarketingPage } from './marketing-pages';
-import { siteFacts, trialText, priceText } from './site-facts';
+import { siteFacts, trialText, priceText, freeLessonsText } from './site-facts';
 
 const { brand, generationTime } = siteFacts;
 const updated = '2026-11-26';
@@ -23,12 +23,12 @@ const trialCta = { label: 'Start Your Free Trial', href: '/auth?register=true' }
 
 export const compareHubPage: MarketingPage = {
   path: '/compare',
-  title: `Best ESL Lesson Tools Compared (2026): ${brand} vs 15 Alternatives`,
+  title: `ESL Lesson Tools Compared (2026): 16 Options by Teaching Need`,
   description:
     `Fair 2026 comparison of 16 ESL lesson tools—Engoo, ESL Brains, Fluentize, Twee, ESL Joy, Off2Class, ChatGPT & more—by CEFR, price, vocab memory & PDFs.`,
   navLabel: 'Compare',
   eyebrow: 'Comparisons',
-  h1: 'The best ESL lesson tools compared: PlanWise ESL vs. 15 libraries, AI tools and chatbots',
+  h1: 'ESL lesson tools compared by teaching need: PlanWise ESL and 15 libraries, AI tools and chatbots',
   intro: [
     'Most ESL teaching tools fall into three camps: **pre-made lesson libraries** (Engoo, Breaking News English, ESL Brains, Fluentize, Linguahouse, ESL Pals, Off2Class, Immerly, PrintDiscuss), **AI worksheet, slide or classroom tools** (Twee, ESL Joy, edio.ai, MagicSchool, Diffit) and **general chatbots** (ChatGPT, Gemini, Claude).',
     'This page is written by a working ESL teacher for tutors, language schools and self-study learners who want a straight answer. Every tool below is genuinely useful for someone. We say who each one suits, where each one falls short, what it costs, and link to a detailed head-to-head page and live lessons you can inspect with **no login**.',
@@ -48,7 +48,7 @@ export const compareHubPage: MarketingPage = {
         `**Best for business English and niche careers:** ${brand}, because lessons are built around the student’s actual job (see [C1 Delivering the Numbers](/esl-lessons/c1/delivering-the-numbers-talking-about-risk-and-uncertainty) or [the Work theme](/esl-lessons/topics/work)). Linguahouse is strong if you want a large pre-written business worksheet archive.`,
         `**Best for true beginners (A1–A2):** ${brand} — controlled definitions, readings where about 96% of words are already familiar, and 3-tier sentence frames so beginners can start speaking ([A1 example](/esl-lessons/a1/first-day-at-a-new-job-meeting-your-team)). Plain question lists and native-speed YouTube clips are usually too hard at this level.`,
         '**Best for placement testing and a fixed grammar track:** Off2Class (adaptive placement test plus 1,000+ browser slide lessons; lessons cannot be printed).',
-        '**Best for editing AI slides line by line on a small budget:** ESL Joy (free tier for 1 student; paid plans from $9.99/month).',
+        '**Best for editing AI slides line by line on a small budget:** ESL Joy (free tier for 1 student; paid plans from $7.99/month in November 2026).',
         '**Best for one-off AI worksheets and YouTube transcript tasks:** Twee.',
         '**Best for an all-in-one live classroom and school LMS:** edio.ai.',
         '**Best for US K–12 school teachers:** MagicSchool AI or Diffit (US grade levels, IEP helpers, Google Classroom).',
@@ -75,7 +75,7 @@ export const compareHubPage: MarketingPage = {
           ['[Linguahouse](/compare/linguahouse)', 'Pre-made worksheet library + Expemo', 'No', 'Fixed flashcard decks only', 'Some free lessons', 'See provider (teacher tiers in PLN)', 'Large printable worksheet archive'],
           ['[ESL Pals](/compare/esl-pals)', 'Pre-made PDF curriculum', 'No', 'No', 'Sample lessons', 'See provider', 'Fixed PDF curricula, incl. kids'],
           ['[Off2Class](/compare/off2class)', 'Slide curriculum + placement test', 'No', 'Tracks curriculum progress, not vocabulary', 'Trial', 'About $24/month (annual, up to 5 students)', 'Placement & grammar track'],
-          ['[ESL Joy](/compare/esl-joy)', 'AI slide decks', 'Yes, slide by slide', 'Remembers students; no vocabulary recycling into new readings', 'Free tier (1 student)', '$9.99/month (up to 5 students)', 'Editable AI slides, small budget'],
+          ['[ESL Joy](/compare/esl-joy)', 'AI slide decks', 'Yes, slide by slide', 'Remembers students; no vocabulary recycling into new readings', 'Free tier (1 student)', 'From $7.99/month or $59/year (up to 5 students)', 'Editable AI slides, small budget'],
           ['[Twee](/compare/twee)', 'Modular AI worksheet tools', 'One activity at a time', 'No', '5 free runs', 'See provider', 'One-off worksheets & video tasks'],
           ['[edio.ai](/compare/edio)', 'AI lessons + live classroom LMS', 'Yes', 'Tracked inside its LMS', 'See provider', 'See provider', 'All-in-one classroom & scheduling'],
           ['[MagicSchool AI & Diffit](/compare/magicschool-diffit)', 'US K–12 AI tools', 'Yes (US grade levels)', 'No', 'Free tiers', 'See provider', 'US school subjects'],
@@ -510,7 +510,7 @@ export const compareLinguahousePage: MarketingPage = {
       bullets: [
         '**Bespoke topics instead of recycled PDFs:** Students on Preply and italki often recognise the same static Linguahouse worksheets from previous tutors—and static libraries cannot cover a student’s specific job interview, tech stack or hobby on demand.',
         '**Dynamic recycling beats isolated decks:** Instead of leaving vocabulary inside a separate Expemo deck, PlanWise ESL avoids duplicate words, weaves earlier vocabulary naturally into future readings when relevant ([live 4-lesson memory proof](/compare/student-memory-proof)), and gives students a zero-login [learner dashboard](/student-experience).',
-        '**Open full lessons free—no paywall:** Unlike paywalled worksheet libraries, inspect complete A1–C2 lessons with zero login right now—[First Day at a New Job (A1)](/esl-lessons/a1/first-day-at-a-new-job-meeting-your-team), [Handling Difficult Guests Like a Pro (B1)](/esl-lessons/b1/handling-difficult-guests-like-a-pro), and [Delivering the Numbers: Talking About Risk and Uncertainty (C1)](/esl-lessons/c1/delivering-the-numbers-talking-about-risk-and-uncertainty)—or browse all 200+ in our [public ESL lesson library](/esl-lessons).',
+        `**Open full lessons free—no paywall:** Unlike paywalled worksheet libraries, inspect complete A1–C2 lessons with zero login right now—[First Day at a New Job (A1)](/esl-lessons/a1/first-day-at-a-new-job-meeting-your-team), [Handling Difficult Guests Like a Pro (B1)](/esl-lessons/b1/handling-difficult-guests-like-a-pro), and [Delivering the Numbers: Talking About Risk and Uncertainty (C1)](/esl-lessons/c1/delivering-the-numbers-talking-about-risk-and-uncertainty)—or browse all ${freeLessonsText} in our [public ESL lesson library](/esl-lessons).`,
       ],
     },
   ],
@@ -743,7 +743,7 @@ export const compareEslJoyPage: MarketingPage = {
           ['Student review portal', 'Student progress tracked inside the tutor workflow', 'Persistent zero-login private learner dashboard: all past lessons, cumulative word list, spaced-repetition flashcards, topic suggestions & student-created custom lessons (Unlimited)'],
           ['Take-home printable study PDF', 'Slide-based teaching flow', 'Dedicated color-coded printable Vocabulary Review study PDF (pronunciation, levelled definitions, 4 examples/word, word families, collocations, usage notes & 5-part semantic map)'],
           ['Free tier & trial', 'Free tier (1 student, 5 custom lessons) + 30-day trial (15 AI lessons)', `${trialText} with unlimited lesson generation and no credit card required`],
-          ['Paid plans', 'Plus: $9.99/mo regular ($7.99 founding until Nov 30, 2026; up to 5 students, 300 AI uses/mo). Pro: $15.99/mo regular ($12.99 founding until Nov 30, 2026; unlimited students)', `One simple plan: ${priceText} Unlimited lessons & unlimited students, cancel anytime`],
+          ['Paid plans', 'Plus: $7.99/month or $59/year (up to 5 students, 300 AI uses a month). Pro: $12.99/month or $99/year (unlimited students). Prices from esljoy.com/pricing, 28 November 2026', `One simple plan: ${priceText} Unlimited lessons & unlimited students, cancel anytime`],
         ],
       },
     },
@@ -805,7 +805,7 @@ export const compareEslJoyPage: MarketingPage = {
     },
     {
       question: 'How does pricing compare between ESL Joy and PlanWise ESL?',
-      answer: `As of November 2026, ESL Joy offers a free tier (1 student, 5 custom lessons), a 30-day trial (15 AI lessons), Plus at $9.99/mo regular ($7.99 founding until Nov 30, 2026; up to 5 students, 300 AI uses/mo), and Pro at $15.99/mo regular ($12.99 founding until Nov 30, 2026; unlimited students). PlanWise ESL offers a ${trialText} with unlimited lesson generation (no credit card), followed by one flat ${priceText} Unlimited plan with unlimited lessons and students, cancel anytime.`,
+      answer: `As of November 2026, ESL Joy offers a free tier (1 student, 5 custom lessons), a 30-day trial (15 AI lessons), Plus at $7.99/month or $59/year (up to 5 students, 300 AI uses a month), and Pro at $12.99/month or $99/year (unlimited students), as shown on esljoy.com/pricing on 28 November 2026. PlanWise ESL offers a ${trialText} with unlimited lesson generation (no credit card), followed by one flat ${priceText} Unlimited plan with unlimited lessons and students, cancel anytime.`,
     },
     {
       question: 'Can I compare a real PlanWise ESL lesson before signing up?',

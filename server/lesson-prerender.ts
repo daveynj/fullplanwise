@@ -5,7 +5,7 @@ import { tryDecodeLessonContent } from '@shared/lesson-content';
 import { CEFR_LEVEL_NAMES, lessonContentsParts, joinList, levelText, lessonPublicMetadata, publicLessonRemixHref } from '@shared/lesson-public-metadata';
 import { expressionItemsOf, withoutMarks } from '@shared/lesson-expressions';
 import { publicNav } from '@shared/marketing-pages';
-import { founderPerson } from '@shared/site-facts';
+import { founderPerson, freeLessonLicence } from '@shared/site-facts';
 import { lessonStages, lessonTeaches, lessonDesign, lessonDifference, libraryDesign, freeLibraryTeachingGuide, freeLibraryFaq, soloLearnerAiGuide } from '@shared/lesson-pedagogy';
 import {
   PUBLIC_LESSON_TAGS,
@@ -92,6 +92,7 @@ export const lessonPrerenderCss = `
 #lesson-prerender .lp-tag { display: inline-block; background: #f4f4f4; border-radius: 6px; padding: 2px 10px; font-size: 0.8rem; margin-right: 6px; }
 #lesson-prerender .lp-card { background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 20px; margin-bottom: 14px; }
 #lesson-prerender .lp-card h3 { margin: 0 0 6px; font-size: 1.15rem; }
+#lesson-prerender .lp-word-img { display: block; max-width: 100%; width: 320px; height: auto; border-radius: 8px; margin: 8px 0; }
 #lesson-prerender .lp-muted { color: #888; }
 #lesson-prerender .lp-related h3 { font-size: 1.05rem; margin: 16px 0 6px; }
 #lesson-prerender .lp-cta { background: #f8f5ec; border-radius: 12px; padding: 20px; margin-top: 2rem; }
@@ -237,7 +238,19 @@ function listHtml(items: string[], ordered = false): string {
 }
 
 /** Turns lesson sections into crawlable HTML. Skips anything it does not recognise. */
-export function sectionsHtml(sections: any[]): string {
+/** A picture the app stored for this lesson; the image route serves it to anyone while the lesson is public. */
+function storedLessonImageUrl(url: unknown, lessonId: number): string | null {
+  if (typeof url !== 'string') return null;
+  const match = url.match(/^\/api\/images\/lesson-images\/(\d+)\/[a-zA-Z0-9_-]+\.(?:png|jpg)$/);
+  return match && Number(match[1]) === lessonId ? url : null;
+}
+
+export interface SectionsHtmlOptions {
+  /** Show the vocabulary pictures stored for this public lesson as real <img> tags. */
+  imagesForLessonId?: number;
+}
+
+export function sectionsHtml(sections: any[], options: SectionsHtmlOptions = {}): string {
   const out: string[] = [];
 
   for (const s of sections) {
@@ -288,7 +301,11 @@ export function sectionsHtml(sections: any[]): string {
             const antonyms = listOf(w.semanticMap?.antonyms);
             const related = listOf(w.semanticMap?.relatedConcepts);
             const contexts = listOf(w.semanticMap?.contexts);
-            return `<div class="lp-card"><h3>${e(label)}${pos ? ` <span class="lp-meta">(${e(pos)})</span>` : ''}${pron ? ` <span class="lp-meta">${e(pron)}</span>` : ''}</h3>${def ? `<p>${e(def)}</p>` : ''}${example ? `<p><em>${e(example)}</em></p>` : ''}${moreExamples.length ? `<p><strong>More examples:</strong> ${e(moreExamples.join(' • '))}</p>` : ''}${collocations.length ? `<p><strong>Common collocations:</strong> ${e(collocations.join(', '))}</p>` : ''}${family.length ? `<p><strong>Word family:</strong> ${e(family.join(', '))}</p>` : ''}${synonyms.length ? `<p><strong>Synonyms:</strong> ${e(synonyms.join(', '))}</p>` : ''}${antonyms.length ? `<p><strong>Antonyms:</strong> ${e(antonyms.join(', '))}</p>` : ''}${related.length ? `<p><strong>Related concepts:</strong> ${e(related.join(', '))}</p>` : ''}${contexts.length ? `<p><strong>Contexts:</strong> ${e(contexts.join(', '))}</p>` : ''}${usage ? `<p><strong>Usage note:</strong> ${e(usage)}</p>` : ''}</div>`;
+            const image = options.imagesForLessonId ? storedLessonImageUrl(w.imageUrl, options.imagesForLessonId) : null;
+            const imageHtml = image
+              ? `<img class="lp-word-img" src="${e(image)}" alt="${e(`Picture for the word “${label}”`)}" loading="lazy" decoding="async" />`
+              : '';
+            return `<div class="lp-card"><h3>${e(label)}${pos ? ` <span class="lp-meta">(${e(pos)})</span>` : ''}${pron ? ` <span class="lp-meta">${e(pron)}</span>` : ''}</h3>${imageHtml}${def ? `<p>${e(def)}</p>` : ''}${example ? `<p><em>${e(example)}</em></p>` : ''}${moreExamples.length ? `<p><strong>More examples:</strong> ${e(moreExamples.join(' • '))}</p>` : ''}${collocations.length ? `<p><strong>Common collocations:</strong> ${e(collocations.join(', '))}</p>` : ''}${family.length ? `<p><strong>Word family:</strong> ${e(family.join(', '))}</p>` : ''}${synonyms.length ? `<p><strong>Synonyms:</strong> ${e(synonyms.join(', '))}</p>` : ''}${antonyms.length ? `<p><strong>Antonyms:</strong> ${e(antonyms.join(', '))}</p>` : ''}${related.length ? `<p><strong>Related concepts:</strong> ${e(related.join(', '))}</p>` : ''}${contexts.length ? `<p><strong>Contexts:</strong> ${e(contexts.join(', '))}</p>` : ''}${usage ? `<p><strong>Usage note:</strong> ${e(usage)}</p>` : ''}</div>`;
           })
           .join('');
         out.push(`<section>${heading('Key Vocabulary')}${items}</section>`);
@@ -497,7 +514,8 @@ export function buildLessonPageHtml(lesson: LessonForPrerender, sections: any[],
       ${lesson.isPublic ? `<aside class="lp-cta lp-remix"><p>Teaching <strong>${e(lesson.title)}</strong> to one student? Start from this title, choose the student in the generator, and PlanWise ESL makes a new version at their level that avoids words they've already learned. You can also change the CEFR level or adapt it to their job.</p><p><a href="${e(publicLessonRemixHref(lesson.title, level, false))}">Make this lesson for your student</a></p></aside>` : ''}
       ${lesson.isPublic && lesson.publicSlug && lesson.publicLevel ? `<p class="lp-print"><a href="${e(lessonQuestionsPath(lesson))}">Print just the discussion questions</a></p>` : ''}
       ${lessonDesignHtml(lesson.content)}
-      ${sectionsHtml(sections)}
+      ${sectionsHtml(sections, lesson.isPublic ? { imagesForLessonId: lesson.id } : {})}
+      ${lesson.isPublic ? `<p class="lp-licence"><strong>${e(freeLessonLicence.heading)}:</strong> ${e(freeLessonLicence.short)} <a href="${e(freeLessonLicence.path)}">What you can do with free lessons</a>.</p>` : ''}
     </article>
     ${relatedLessonsHtml(level, related, publicTags(lesson.tags)[0])}
     ${lesson.isPublic ? `<aside class="lp-cta lp-vocab"><h2>Help students remember these words beyond today's lesson.</h2><p>Mark lessons complete from a student's page to add their vocabulary to spaced-repetition flashcards and recycle it in future lessons (<a href="/compare/student-memory-proof">see our live 4-lesson, 0-duplicate recycling proof</a>).</p><p><a href="/auth?register=true&amp;source=vocab-cta">Try PlanWise ESL free</a></p></aside>` : ''}
@@ -682,6 +700,8 @@ async function prerenderLesson(template: string, id: number, preloaded?: unknown
       ...(label ? { about: label } : {}),
       audience: { '@type': 'EducationalAudience', educationalRole: 'teacher' },
       isAccessibleForFree: true,
+      license: `${BASE_URL}${freeLessonLicence.path}`,
+      usageInfo: `${BASE_URL}${freeLessonLicence.path}`,
       ...(published ? { datePublished: published } : {}),
       publisher: { '@type': 'Organization', name: 'PlanWise ESL', url: BASE_URL },
     });
@@ -891,6 +911,10 @@ export function buildLessonIndexHtml(
     ${themeSection}
     ${listing}
     ${guideHtml}
+    <section id="${e(freeLessonLicence.id)}">
+      <h2>${e(freeLessonLicence.heading)}</h2>
+      <p>${e(freeLessonLicence.text)}</p>
+    </section>
     ${soloAiHtml}
     ${faqHtml}
     <aside class="lp-cta">
