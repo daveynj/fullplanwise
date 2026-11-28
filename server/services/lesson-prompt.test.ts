@@ -320,6 +320,18 @@ describe("lesson quality rules", () => {
     }
   });
 
+  it("gives the quiz an explicit list of formats, without sentence-choice questions from B1 up", () => {
+    for (const level of ["B1", "B2", "C1", "C2"]) {
+      const quiz = buildLessonSectionPrompt("quiz", params(level), lesson);
+      expect(quiz).toContain("Use only these question formats:");
+      expect(quiz).toContain('- "Which word best completes the sentence?');
+      expect(quiz).not.toContain('- "Which sentence uses [word] correctly?"');
+    }
+    for (const level of ["A1", "A2"]) {
+      expect(buildLessonSectionPrompt("quiz", params(level), lesson)).toContain('- "Which sentence uses [word] correctly?"');
+    }
+  });
+
   it("rules out nonsense sentences in vocabulary checks and quizzes from B1 up", () => {
     for (const level of ["B1", "B2", "C1", "C2"]) {
       for (const prompt of [

@@ -311,7 +311,7 @@ export const preplyTutorsPage: MarketingPage = {
       bullets: [
         `**Zero unpaid prep panic:** Enter any topic and CEFR level (A1–C2) and open a full screen-shareable lesson in ${generationTime}—even minutes before a trial call.`,
         '**Deep 8-stage structure every class:** Warm-up recall → 5 illustrated pre-taught words (phonetic pronunciation, levelled definition, 4 examples, word families, collocations, usage notes) → ~96%-familiar reading & comprehension → recall flashcards & 5-part semantic maps → quiz, 3-tier sentence frames, shuffled gap-fill & sentence unscramble → deep target-vocab discussion.',
-        '**Natural cross-lesson vocabulary memory:** Mark a class "We did this" and PlanWise logs the student’s words, strictly avoids duplicates, and weaves earlier words into future readings and questions only when natural and relevant.',
+        '**Memory between lessons:** Mark a class "We did this" and its words join the student’s list. Later lessons avoid words the student already knows and reuse familiar ones where they fit.',
         '**Zero-login student dashboard & printable Vocabulary Review PDF:** Share one private link inside Preply chat (no extra student login) for past lessons, spaced flashcards and topic requests—or download the color-coded Vocabulary Review PDF in one click.',
       ],
     },
@@ -322,7 +322,7 @@ export const preplyTutorsPage: MarketingPage = {
         rows: [
           ['Custom trial lesson on student’s niche topic', 'Limited to fixed catalogue', '20–45 min prompting & fixing', `Ready in ${generationTime}`],
           ['CEFR A1–C2 calibration', 'Varies by worksheet', 'Often drifts above target level', 'Fixed CEFR rules per level, checked automatically'],
-          ['Per-student vocabulary tracking across weeks', 'None', 'Resets every chat', 'Logs learned words, avoids repeats & recycles naturally when relevant'],
+          ['Per-student vocabulary tracking across weeks', 'None', 'Resets every chat', 'Keeps each student’s word list, avoids words they already know and reuses familiar ones where they fit'],
           ['Student review between weekly classes', 'Static PDF or none', 'None unless formatted manually', 'Zero-login private learner dashboard + color-coded printable Vocabulary Review PDF'],
           ['Student-requested custom lessons', 'None', 'None', 'Students suggest topics or create custom lessons on Unlimited'],
           ['Cost for full-time tutors', 'Per-library subscriptions', 'Time spent editing raw text', `Flat ${priceText} Unlimited lessons & students (${trialText}, no card)`],
@@ -352,6 +352,10 @@ export const preplyTutorsPage: MarketingPage = {
     {
       question: 'Can I also use PlanWise ESL if I teach another language on Preply?',
       answer: `${brand} is built specifically for ESL and EFL tutors, though tutors teaching another language can specify that target language in the topic box to generate structured lessons in that language as well.`,
+    },
+    {
+      question: 'My Preply student just wants to chat. Is a full lesson too much?',
+      answer: 'No, if you let the conversation lead. Many adults on Preply learn English as a hobby: for travel, films, books or talking to people. Use the warm-up and the five words as a starting point, skip the extra exercises, and give most of the lesson to the discussion questions, which move the topic into the student’s own life. The free library has lessons on cooking, sport, films, music, travel and the outdoors, and the paid plan writes one on the student’s own hobby: see the guide to [teaching adults who learn English as a hobby](/guides/esl-lessons-for-adults-learning-english-as-a-hobby).',
     },
   ],
   disclaimer: 'PlanWise ESL is not affiliated with or endorsed by Preply. Preply is a trademark of its respective owner.',
@@ -406,7 +410,7 @@ export const italkiTutorsPage: MarketingPage = {
         headers: ['What keeps italki students rebooking', 'Static ESL PDF libraries', 'DIY / ChatGPT prep', brand],
         rows: [
           ['Tailored to any niche student interest', 'Catalogue topics only', '20–60 min prompting & editing', `Any topic in ${generationTime}`],
-          ['Vocabulary memory across a 10-lesson package', 'None', 'Manual notes / spreadsheets', 'Automatic tracking, zero duplicates & natural-only recycling into future lessons'],
+          ['Vocabulary memory across a 10-lesson package', 'None', 'Manual notes / spreadsheets', 'Keeps the student’s word list automatically, avoids words they already know and reuses familiar ones where they fit'],
           ['Between-class student self-study', 'None or paid add-on', 'None', 'Zero-login student dashboard (past lessons, flashcards, topic ideas & custom lessons on Unlimited)'],
           ['Take-home review sheet', 'Static worksheet PDF', 'Manual formatting', 'Color-coded printable Vocabulary Review PDF ready in one click'],
           ['Pricing for active tutors', 'Per-library subscription', 'Unpaid evening prep hours', `Flat ${priceText} Unlimited lessons & students (${trialText}, no card)`],
@@ -427,7 +431,7 @@ export const italkiTutorsPage: MarketingPage = {
     },
     {
       question: 'How does PlanWise ESL help me keep italki students across multi-lesson packages?',
-      answer: 'When you mark a lesson "We did this", PlanWise saves its vocabulary to that student’s profile, avoids repeating words in future lessons, recycles earlier vocabulary naturally when relevant, and updates the student’s zero-login flashcard dashboard automatically.',
+      answer: 'When you mark a lesson "We did this", its words join that student’s list. Later lessons avoid words the student already knows and reuse familiar ones where they fit, and the student’s zero-login flashcard dashboard updates automatically.',
     },
     {
       question: 'How do I share homework or review sheets with my italki students?',
@@ -436,6 +440,10 @@ export const italkiTutorsPage: MarketingPage = {
     {
       question: 'Can I test PlanWise ESL with my current italki students before paying?',
       answer: `Yes. Every new account gets a ${trialText} with unlimited lesson generation and no credit card needed, followed by ${priceText} Unlimited, cancel anytime.`,
+    },
+    {
+      question: 'My italki student just wants to talk, not study. Does PlanWise still help?',
+      answer: 'Yes. Students who learn English for pleasure still want new words and something to react to; what they do not want is an exam. Pick a lesson on their interest, teach the five words quickly, skip the extra exercises and let the discussion run. On the paid plan you can make the lesson about their actual hobby, such as their allotment or their football team. There is a guide to [teaching adults who learn English as a hobby](/guides/esl-lessons-for-adults-learning-english-as-a-hobby).',
     },
   ],
   disclaimer: 'PlanWise ESL is not affiliated with or endorsed by italki. italki is a trademark of its respective owner.',
