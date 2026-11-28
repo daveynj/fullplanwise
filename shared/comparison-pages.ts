@@ -175,7 +175,7 @@ export const compareHubPage: MarketingPage = {
   ],
   faq: [
     {
-      question: 'What is the best AI lesson planner for ESL teachers?',
+      question: 'What is the best AI tool for making ESL lessons?',
       answer: `It depends on how you teach. For regular one-to-one or small-group conversation students, ${brand} generates a complete CEFR A1–C2 lesson on any topic in ${generationTime} and remembers each student’s vocabulary across lessons. For one-off worksheets, Twee or ChatGPT work well. For editable AI slides, ESL Joy. For US K–12 school subjects, MagicSchool or Diffit.`,
     },
     {
@@ -191,7 +191,7 @@ export const compareHubPage: MarketingPage = {
       answer: `Fluentize is one of the lowest-priced paid libraries (about $79/year in November 2026) and Breaking News English and Engoo are free. ${brand} costs ${priceText} but includes unlimited custom lessons and unlimited students, and its 180+ library lessons are free to use with no account.`,
     },
     {
-      question: 'Can ChatGPT replace an ESL lesson planning tool?',
+      question: 'Can ChatGPT replace a dedicated ESL lesson tool?',
       answer: 'ChatGPT can draft materials, but you have to write the prompts, check that the level has not drifted, fix answer keys and format everything, and it forgets the student when the chat ends. Teachers usually spend 20–60 minutes per lesson doing this. Dedicated tools save that time and keep a consistent structure.',
     },
     {

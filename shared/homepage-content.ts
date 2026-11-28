@@ -25,16 +25,16 @@ export type FaqAnswerPart = FaqTextPart | FaqLinkPart;
 const { brand, generationTime } = siteFacts;
 
 export const homepageMeta = {
-  title: `${brand} – AI Lesson Planner for ESL Teachers & Tutors`,
+  title: `${brand} – Ready-to-teach ESL lessons in ${generationTime}`,
   description:
     `Complete, CEFR-levelled ESL lessons on any topic in ${generationTime}, built around each student's level and vocabulary. ${trialText}, no card needed.`,
   keywords: [
-    'AI ESL lesson planner',
-    'ESL lesson plan generator',
-    'AI lesson planner for ESL teachers',
+    'ready-to-teach ESL lessons',
+    'AI ESL lesson generator',
+    'ESL lessons made for each student',
     'CEFR lesson plans',
     'lesson plans for online English tutors',
-    'Preply italki lesson planning',
+    'Preply italki lessons',
     'ESL vocabulary tracking',
     'AI for English teachers',
   ],
@@ -45,7 +45,7 @@ export const homepageMeta = {
 
 export const hero = {
   badge: 'For Preply & italki tutors, freelance teachers & language schools',
-  heading: 'The AI ESL lesson planner that remembers every student',
+  heading: `Finished ESL lessons in ${generationTime}, made for each student`,
   subheading:
     `Complete, CEFR-levelled conversation lessons on any topic in ${generationTime}, built on a scientific pedagogical sequence around each student's level, interests and vocabulary.`,
   benefits: [
@@ -82,7 +82,7 @@ export const hero = {
  */
 export const definition = {
   heading: `What is ${brand}?`,
-  text: `${brand} is an AI ESL lesson planner built for Preply and italki tutors, freelance English teachers, and small to medium language schools. Unlike static pre-made lesson libraries or general chatbots, it writes a complete CEFR-levelled (A1–C2) conversation lesson on any topic in ${generationTime} following a structured pedagogical sequence: warm-up vocabulary recall, five pre-taught key words (with pronunciation guide, levelled definitions, example sentences, word families, usage notes and pictures), a levelled reading and comprehension check, in-lesson recall flashcards and semantic maps (synonyms and antonyms), tiered sentence frames (especially helpful for beginners), fill-in-the-blanks, sentence unscramble, a quiz, and deep discussion using the target vocabulary. It tracks each student’s vocabulary so earlier words are recycled in future readings and questions, gives every student a private learner dashboard with past lessons, flashcards and custom lesson creation on any subject, and exports a downloadable study PDF with all vocabulary, examples, synonyms/antonyms and usage notes. It was created by Dave Jackson, a working British ESL teacher since 2015 who still plans his own students’ lessons with it.`,
+  text: `${brand} makes finished, ready-to-teach ESL lessons for Preply and italki tutors, freelance English teachers, and small to medium language schools. Unlike static pre-made lesson libraries or general chatbots, it writes a complete CEFR-levelled (A1–C2) conversation lesson on any topic in ${generationTime} following a structured pedagogical sequence: warm-up vocabulary recall, five pre-taught key words (with pronunciation guide, levelled definitions, example sentences, word families, usage notes and pictures), a levelled reading and comprehension check, in-lesson recall flashcards and semantic maps (synonyms and antonyms), tiered sentence frames (especially helpful for beginners), fill-in-the-blanks, sentence unscramble, a quiz, and deep discussion using the target vocabulary. It tracks each student’s vocabulary so earlier words are recycled in future readings and questions, gives every student a private learner dashboard with past lessons, flashcards and custom lesson creation on any subject, and exports a downloadable study PDF with all vocabulary, examples, synonyms/antonyms and usage notes. It was created by Dave Jackson, a working British ESL teacher since 2015 who still plans his own students’ lessons with it.`,
 };
 
 /** Real lesson titles from two of Dave's courses (one personalised, one general). */
@@ -476,7 +476,7 @@ export const faq = {
 
 export const footer = {
   brandLine:
-    `${brand} is an AI lesson planner for ESL teachers, created by ESL teacher Dave Jackson. Complete CEFR-levelled lessons that build on what each student already knows.`,
+    `${brand}, created by ESL teacher Dave Jackson, makes ready-to-teach ESL lessons for teachers and tutors. Complete CEFR-levelled lessons that build on what each student already knows.`,
   quickLinks: [
     { label: 'Start Free Trial', href: '/auth?register=true' },
     { label: 'How It Works', href: '/how-it-works' },

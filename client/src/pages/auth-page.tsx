@@ -102,11 +102,11 @@ export default function AuthPage() {
         description={`Log in to ${siteFacts.brand}, or create a free account: complete CEFR-levelled ESL lessons in ${siteFacts.generationTime}. ${trialText}, no credit card needed.`}
         keywords={[
           "ESL teacher login",
-          "AI lesson planning account",
+          "AI ESL lessons account",
           "ESL teacher registration",
           "PlanWise ESL sign up",
           "ESL lesson generator login",
-          "CEFR lesson planning tool",
+          "CEFR ESL lessons",
           "AI ESL teaching platform"
         ]}
         canonicalUrl={`${siteFacts.url}/auth`}

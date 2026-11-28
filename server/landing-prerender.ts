@@ -306,7 +306,7 @@ export function buildLandingStructuredData(): string {
     name: siteFacts.brand,
     alternateName: [...siteFacts.alternateNames],
     url: siteFacts.url,
-    description: `AI-powered CEFR ${siteFacts.levels} lesson planner for 1-on-1 online ESL tutors on Preply and italki. Generates complete conversation lessons in ${siteFacts.generationTime} with per-student vocabulary memory and private student flashcard dashboards.`,
+    description: `Finished, ready-to-teach CEFR ${siteFacts.levels} ESL lessons for 1-on-1 online tutors on Preply and italki, made for each student in ${siteFacts.generationTime}, with per-student vocabulary memory and private student flashcard dashboards.`,
     applicationCategory: 'EducationalApplication',
     applicationSubCategory: 'ESL lesson planning',
     operatingSystem: 'Web browser',

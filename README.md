@@ -1,6 +1,6 @@
 # PlanWise ESL
 
-**PlanWise ESL** ([planwiseesl.com](https://planwiseesl.com)) is an AI lesson planner for ESL and EFL teachers and online English tutors. A teacher chooses a CEFR level (A1–C2) and any topic, and in 1–2 minutes PlanWise ESL writes a complete, ready-to-teach lesson. It remembers the vocabulary each student has learned, so lessons build on each other, and it gives every student a private page for practice between classes.
+**PlanWise ESL** ([planwiseesl.com](https://planwiseesl.com)) makes finished, ready-to-teach English lessons for ESL and EFL teachers and online English tutors. A teacher chooses a CEFR level (A1–C2) and any topic, and in 1–2 minutes PlanWise ESL writes a complete, ready-to-teach lesson. It remembers the vocabulary each student has learned, so lessons build on each other, and it gives every student a private page for practice between classes.
 
 PlanWise ESL was created by [Dave Jackson](https://www.linkedin.com/in/davidjackson113), a working ESL teacher. New accounts get a 14-day free trial with unlimited lessons (no credit card); the Unlimited plan is $19.99/month.
 

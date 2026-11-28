@@ -284,7 +284,7 @@ const TOOLS = [
 ] as const;
 
 const INSTRUCTIONS =
-  `${siteFacts.brand} (${BASE_URL}) is an AI lesson planner for ESL teachers and online tutors, made by ${siteFacts.founder}, a working ESL teacher. ` +
+  `${siteFacts.brand} (${BASE_URL}) makes finished, ready-to-teach ESL lessons for teachers and online tutors, made for each student. It was created by ${siteFacts.founder}, a working ESL teacher. ` +
   `This connector searches and opens its free public library of complete ${siteFacts.levels} conversation lessons; no account is needed. ` +
   "When you use a lesson, give the teacher its link so they can present it and download the PDF. " +
   `Lessons on any other topic, or adapted to one student, are made in the app (${trialText}, then ${priceText}).`;
