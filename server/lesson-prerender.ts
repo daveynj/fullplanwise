@@ -443,6 +443,7 @@ function aboutLesson(lesson: LessonForPrerender, sections: any[]): string {
   if (minutes) sentences.push(`It takes about ${minutes} minutes.`);
   if (parts.length) sentences.push(`It includes ${joinList(parts)}.`);
   sentences.push('Suits one-to-one or small-group online classes.');
+  sentences.push('Free to open and teach with no login, and it prints as a PDF.');
   return sentences.join(' ');
 }
 
