@@ -31,6 +31,8 @@ const pickLevel = (level: string) => fireEvent.click(screen.getByRole("button", 
 
 async function submit(onSubmit: ReturnType<typeof vi.fn>) {
   fireEvent.change(screen.getByPlaceholderText(/^e\.g\., /), { target: { value: "Working from home" } });
+  // No students: skip the "Who is this lesson for?" question.
+  fireEvent.click(screen.getByRole("button", { name: "Just exploring" }));
   fireEvent.click(screen.getByRole("button", { name: /Generate Lesson/ }));
   await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
   return onSubmit.mock.calls[0][0] as { cefrLevel: string; components: string[] };
