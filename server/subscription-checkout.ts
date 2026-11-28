@@ -25,6 +25,23 @@ const alreadySubscribed = () => new CheckoutGuardError(409, "ALREADY_SUBSCRIBED"
   "You already have a subscription. Manage it from your account instead of subscribing again.");
 const missing = (error: any) => error?.code === "resource_missing" || error?.statusCode === 404;
 
+// Stripe Checkout only accepts a trial that ends at least 48 hours ahead; an
+// hour's margin covers the time a teacher spends on the checkout page.
+const MIN_TRIAL_MS = 49 * 60 * 60 * 1000;
+
+/**
+ * When a teacher subscribes while they still have free time (the free period
+ * for everyone, or their own trial), the subscription starts as a Stripe trial
+ * that ends when their free time ends: no charge until then. Returns the trial
+ * end in Unix seconds, or undefined when there is no free time left (or too
+ * little for Stripe), in which case checkout charges straight away as before.
+ */
+export function checkoutTrialEnd(freeUntil: Date | null | undefined, now: Date = new Date()): number | undefined {
+  if (!freeUntil || isNaN(freeUntil.getTime())) return undefined;
+  if (freeUntil.getTime() - now.getTime() < MIN_TRIAL_MS) return undefined;
+  return Math.floor(freeUntil.getTime() / 1000);
+}
+
 // Read every page: an old canceled subscription must not hide a newer active one.
 async function allPages<T extends { id: string }>(
   list: (params: any) => Promise<{ data: T[]; has_more: boolean }>,
@@ -49,7 +66,7 @@ async function allPages<T extends { id: string }>(
 export async function createGuardedCheckout(
   user: CheckoutUser,
   accounts: Stripe[],
-  input: { planId: string; priceId: string; baseUrl: string },
+  input: { planId: string; priceId: string; baseUrl: string; freeUntil?: Date | null },
   saveCustomer: (customerId: string) => Promise<unknown>,
 ) {
   const primary = accounts[0];
@@ -148,6 +165,7 @@ export async function createGuardedCheckout(
     // Keep the old subscription reference: "missing in primary" isn't canceled.
     await saveCustomer(primaryCustomer);
   }
+  const trialEnd = checkoutTrialEnd(input.freeUntil);
   const session = await primary.checkout.sessions.create({
     customer: primaryCustomer,
     payment_method_types: ["card"],
@@ -160,11 +178,16 @@ export async function createGuardedCheckout(
     success_url: `${input.baseUrl}/subscription-success?session_id={CHECKOUT_SESSION_ID}&plan=${input.planId}`,
     cancel_url: `${input.baseUrl}/buy-credits`,
     metadata: { userId: String(user.id), planId: input.planId },
-    subscription_data: { metadata: { userId: String(user.id), planId: input.planId } },
+    subscription_data: {
+      metadata: { userId: String(user.id), planId: input.planId },
+      // Free time left: the subscription is "trialing" (Unlimited at once) and
+      // the first payment is taken when the free time ends.
+      ...(trialEnd ? { trial_end: trialEnd } : {}),
+    },
   }, {
     // Stable across retries/restarts if Stripe accepted a request but its
     // response was lost. A terminal session permits a fresh purchase attempt.
-    idempotencyKey: `subscription-checkout-${user.id}-${primaryCustomer}-${lastSession?.id ?? "first"}`,
+    idempotencyKey: `subscription-checkout-${user.id}-${primaryCustomer}-${lastSession?.id ?? "first"}${trialEnd ? `-trial-${trialEnd}` : ""}`,
   });
   if (!session.url) throw unavailable();
   return { sessionId: session.id, url: session.url };

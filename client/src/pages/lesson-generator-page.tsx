@@ -12,6 +12,8 @@ import { LessonGenerateParams, Student } from "@shared/schema";
 import { decodeLessonContent } from "@shared/lesson-content";
 import { useLocation } from "wouter";
 import { useTrialStatus } from "@/hooks/use-trial-status";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { KeepBuildingCard, useKeepSummary } from "@/components/keep-building-card";
 
 export default function LessonGeneratorPage() {
   const { user } = useAuth();
@@ -20,7 +22,11 @@ export default function LessonGeneratorPage() {
   const [generatingLesson, setGeneratingLesson] = useState(false);
   const [pollingJobId, setPollingJobId] = useState<string | null>(null);
   const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const { canGenerateLessons } = useTrialStatus();
+  const { canGenerateLessons, refetch: refetchTrialStatus } = useTrialStatus();
+  // When a teacher's free time is over, the lesson maker shows what they've
+  // built and how to keep building, instead of an error.
+  const [upgradeOpen, setUpgradeOpen] = useState(false);
+  const { data: keepSummary } = useKeepSummary(upgradeOpen);
 
   const urlParams = new URLSearchParams(window.location.search);
   const studentIdFromUrl = urlParams.get('studentId');
@@ -157,7 +163,7 @@ export default function LessonGeneratorPage() {
         try {
           message = JSON.parse(text).message || text;
         } catch {}
-        throw new Error(message);
+        throw Object.assign(new Error(message), { status: res.status });
       }
       return await res.json();
     },
@@ -180,8 +186,14 @@ export default function LessonGeneratorPage() {
         queryClient.invalidateQueries({ queryKey: ["/api/lessons"] });
       }
     },
-    onError: (error: Error) => {
+    onError: (error: Error & { status?: number }) => {
       setGeneratingLesson(false);
+      if (error.status === 402) {
+        // Free time ended while the form was open.
+        setUpgradeOpen(true);
+        void refetchTrialStatus?.();
+        return;
+      }
       toast({
         title: "Failed to generate lesson",
         description: error.message,
@@ -204,11 +216,7 @@ export default function LessonGeneratorPage() {
     }
 
     if (!canGenerateLessons && !user.isAdmin) {
-      toast({
-        title: "No Credits Remaining",
-        description: "Your free trial has ended and you've used all your free lessons. Subscribe for unlimited access!",
-        variant: "destructive",
-      });
+      setUpgradeOpen(true);
       return;
     }
 
@@ -243,6 +251,13 @@ export default function LessonGeneratorPage() {
           </div>
         </main>
       </div>
+
+      <Dialog open={upgradeOpen} onOpenChange={setUpgradeOpen}>
+        <DialogContent className="max-w-lg p-0 border-0 bg-transparent shadow-none">
+          <DialogTitle className="sr-only">Keep building your students' lessons</DialogTitle>
+          {upgradeOpen && <KeepBuildingCard summary={keepSummary} mode="ended" location="lesson_maker" />}
+        </DialogContent>
+      </Dialog>
 
       <LoadingOverlay
         isLoading={generatingLesson}

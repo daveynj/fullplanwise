@@ -1,4 +1,4 @@
-import { ArrowRight, Play, Printer, Sparkles } from 'lucide-react';
+import { ArrowRight, MessageCircle, Play, Printer, Sparkles } from 'lucide-react';
 import { trackEvent } from '@/lib/analytics';
 import { lessonStages, lessonDesign } from '@shared/lesson-pedagogy';
 import { tryDecodeLessonContent } from '@shared/lesson-content';
@@ -30,6 +30,25 @@ interface PublicLessonStartProps {
   questionsHref?: string | null;
   tutorLink: TutorLink;
   onStart: () => void;
+  /** The lesson's main theme on the "conversation questions" pages, e.g. /conversation-questions/travel. */
+  topicQuestions?: TopicQuestionsLink | null;
+}
+
+export interface TopicQuestionsLink {
+  href: string;
+  label: string;
+}
+
+function TopicQuestionsAnchor({ link, params, location, light = false }: { link: TopicQuestionsLink; params: Record<string, unknown>; location: string; light?: boolean }) {
+  return (
+    <a
+      href={link.href}
+      onClick={() => trackEvent('public_lesson_topic_questions_clicked', { ...params, location })}
+      className={`inline-flex items-center gap-1.5 text-sm font-semibold underline decoration-brand-yellow decoration-2 underline-offset-2 ${light ? 'text-white' : 'text-brand-navy'}`}
+    >
+      <MessageCircle className="h-4 w-4" aria-hidden="true" /> Conversation questions about {link.label.toLowerCase()}
+    </a>
+  );
 }
 
 /**
@@ -38,7 +57,7 @@ interface PublicLessonStartProps {
  * and the two next steps (make it for a student, print the questions).
  * Replaces three stacked banners, so the lesson itself starts higher up.
  */
-export function PublicLessonStart({ lessonId, level, content, remixHref, questionsHref, tutorLink, onStart }: PublicLessonStartProps) {
+export function PublicLessonStart({ lessonId, level, content, remixHref, questionsHref, tutorLink, onStart, topicQuestions }: PublicLessonStartProps) {
   const facts = publicLessonFacts(content);
   const stages = lessonStages(content);
   const params = { lesson_id: lessonId, cefr_level: level };
@@ -94,6 +113,7 @@ export function PublicLessonStart({ lessonId, level, content, remixHref, questio
             <Printer className="h-4 w-4" aria-hidden="true" /> Print the questions
           </a>
         )}
+        {topicQuestions && <TopicQuestionsAnchor link={topicQuestions} params={params} location="start" />}
       </div>
 
       <p className="mt-3 hidden text-sm text-slate-600 sm:block">
@@ -138,10 +158,11 @@ interface PublicLessonFinishProps {
   level: string;
   remixHref: string;
   questionsHref?: string | null;
+  topicQuestions?: TopicQuestionsLink | null;
 }
 
 /** Shown under the last section: the natural next step once a visitor has seen the whole lesson. */
-export function PublicLessonFinish({ lessonId, level, remixHref, questionsHref }: PublicLessonFinishProps) {
+export function PublicLessonFinish({ lessonId, level, remixHref, questionsHref, topicQuestions }: PublicLessonFinishProps) {
   const params = { lesson_id: lessonId, cefr_level: level };
   return (
     <section
@@ -179,6 +200,7 @@ export function PublicLessonFinish({ lessonId, level, remixHref, questionsHref }
             <Printer className="h-4 w-4" aria-hidden="true" /> Print the questions
           </a>
         )}
+        {topicQuestions && <TopicQuestionsAnchor link={topicQuestions} params={params} location="finish" light />}
       </div>
     </section>
   );

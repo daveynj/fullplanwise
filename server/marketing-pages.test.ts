@@ -10,7 +10,10 @@ const isPage = (href: string) => validClientRoutes.some((re) => re.test(href.rep
 describe("public information pages", () => {
   it("are all real client routes, and so is every navigation link", () => {
     for (const page of marketingPages) expect(isPage(page.path), page.path).toBe(true);
-    for (const link of publicNav) expect(isPage(link.href), link.href).toBe(true);
+    for (const link of publicNav.filter((l) => !l.serverPage)) expect(isPage(link.href), link.href).toBe(true);
+    // Server-rendered pages are not app routes, so the headers must not route to them in the app.
+    for (const link of publicNav.filter((l) => l.serverPage)) expect(isPage(link.href), link.href).toBe(false);
+    expect(publicNav.some((l) => l.href === "/conversation-questions" && l.serverPage)).toBe(true);
     expect(publicNav.some((l) => l.href === "/compare")).toBe(true);
   });
 

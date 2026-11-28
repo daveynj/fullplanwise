@@ -19,11 +19,19 @@ export function BlogHeader() {
         
         <div className="hidden lg:flex items-center gap-1 xl:gap-2">
           {publicNav.map((item) => (
-            <Link key={item.href} href={item.href}>
-              <Button variant="ghost" className="text-brand-navy hover:bg-brand-navy/10 px-3">
-                {item.label}
-              </Button>
-            </Link>
+            item.serverPage ? (
+              <a key={item.href} href={item.href}>
+                <Button variant="ghost" className="text-brand-navy hover:bg-brand-navy/10 px-3">
+                  {item.label}
+                </Button>
+              </a>
+            ) : (
+              <Link key={item.href} href={item.href}>
+                <Button variant="ghost" className="text-brand-navy hover:bg-brand-navy/10 px-3">
+                  {item.label}
+                </Button>
+              </Link>
+            )
           ))}
           <Link href="/auth">
             <Button variant="outline" className="mr-2 border-brand-navy text-brand-navy hover:bg-brand-navy/10">Login</Button>
@@ -46,11 +54,19 @@ export function BlogHeader() {
         mobileMenuOpen ? 'max-h-[32rem] opacity-100' : 'max-h-0 opacity-0 py-0'
       }`}>
         {publicNav.map((item) => (
-          <Link key={item.href} href={item.href} onClick={() => setMobileMenuOpen(false)}>
-            <Button variant="ghost" className="w-full justify-start text-brand-navy hover:bg-brand-navy/10">
-              {item.label}
-            </Button>
-          </Link>
+          item.serverPage ? (
+            <a key={item.href} href={item.href} className="block">
+              <Button variant="ghost" className="w-full justify-start text-brand-navy hover:bg-brand-navy/10">
+                {item.label}
+              </Button>
+            </a>
+          ) : (
+            <Link key={item.href} href={item.href} onClick={() => setMobileMenuOpen(false)}>
+              <Button variant="ghost" className="w-full justify-start text-brand-navy hover:bg-brand-navy/10">
+                {item.label}
+              </Button>
+            </Link>
+          )
         ))}
         <Link href="/auth" onClick={() => setMobileMenuOpen(false)}>
           <Button variant="outline" className="w-full border-brand-navy text-brand-navy hover:bg-brand-navy/10">

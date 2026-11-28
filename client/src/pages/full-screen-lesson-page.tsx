@@ -12,6 +12,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { SEOHead } from "@/components/SEOHead";
 import { lessonPublicMetadata, publicLessonRemixHref } from "@shared/lesson-public-metadata";
 import { PublicLessonStart, PublicLessonFinish } from "@/components/lesson/public-lesson-start";
+import { PUBLIC_LESSON_TAGS, publicTags } from "@shared/public-lesson-tags";
 import { tutorLinkFor } from "@shared/tutor-link";
 import { VocabFlashcardCTA, FreeLessonLicenceNote } from "@/components/public-lesson-ctas";
 import { StudentMemoryNoteBanner } from "@/components/lesson/student-memory-note";
@@ -283,6 +284,9 @@ export default function FullScreenLessonPage() {
   const isLibraryVisit = !!parsedContent && lesson.isPublic && lesson.teacherId !== user?.id;
   const questionsHref = lesson.isPublic && lesson.publicSlug && lesson.publicLevel ? `${lessonPath(lesson)}/questions` : null;
   const lessonEventParams = { lesson_id: lesson.id, cefr_level: lesson.cefrLevel };
+  // The lesson's main theme, for "Conversation questions about travel" (/conversation-questions/travel).
+  const mainTag = lesson.isPublic ? publicTags(lesson.tags)[0] : undefined;
+  const topicQuestions = mainTag ? { href: `/conversation-questions/${mainTag}`, label: PUBLIC_LESSON_TAGS[mainTag] } : null;
   return (
     <>
       {/* SEO meta tags for shared lessons */}
@@ -432,11 +436,12 @@ export default function FullScreenLessonPage() {
                     remixHref={remixHref}
                     questionsHref={questionsHref}
                     tutorLink={tutorLink}
+                    topicQuestions={topicQuestions}
                     onStart={() => document.getElementById("lesson-sections")?.scrollIntoView({ behavior: "smooth", block: "start" })}
                   />
                 ) : undefined}
                 endOfLesson={isLibraryVisit ? (
-                  <PublicLessonFinish lessonId={lesson.id} level={lesson.cefrLevel} remixHref={remixHref} questionsHref={questionsHref} />
+                  <PublicLessonFinish lessonId={lesson.id} level={lesson.cefrLevel} remixHref={remixHref} questionsHref={questionsHref} topicQuestions={topicQuestions} />
                 ) : undefined}
                 onSectionChange={isLibraryVisit ? (section) => {
                   trackEvent("public_lesson_section_viewed", {

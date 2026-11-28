@@ -7,6 +7,8 @@ interface TrialStatus {
     isGlobalTrial: boolean;
     trialDaysRemaining: number;
     trialExpiresAt: string | null;
+    /** When the teacher's free time ends (own trial or the free period, whichever is later). */
+    freeEndsAt: string | null;
     freeCreditsRemaining: number;
     canGenerateLessons: boolean;
 }
@@ -49,6 +51,7 @@ export function useTrialStatus() {
         // Trial info
         trialDaysRemaining: data?.trialDaysRemaining ?? 0,
         trialExpiresAt: data?.trialExpiresAt ? new Date(data.trialExpiresAt) : null,
+        freeEndsAt: data?.freeEndsAt ? new Date(data.freeEndsAt) : null,
 
         // Credits
         freeCreditsRemaining: data?.freeCreditsRemaining ?? 0,

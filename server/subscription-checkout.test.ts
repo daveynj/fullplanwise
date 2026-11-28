@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { createGuardedCheckout, type CheckoutUser } from "./subscription-checkout";
+import { checkoutTrialEnd, createGuardedCheckout, type CheckoutUser } from "./subscription-checkout";
 
 const notFound = { code: "resource_missing", statusCode: 404 };
 const page = (data: any[] = [], has_more = false) => ({
@@ -95,6 +95,23 @@ describe("duplicate subscription guard (all Stripe operations mocked)", () => {
     expect(primary.checkout.sessions.create).toHaveBeenCalledWith(
       expect.objectContaining({ allow_promotion_codes: true, mode: "subscription" }), expect.anything(),
     );
+  });
+
+  it("starts a Stripe trial that ends with the teacher's free time, so nothing is charged before then", async () => {
+    const freeUntil = new Date(Date.now() + 10 * 24 * 60 * 60 * 1000);
+    await expect(createGuardedCheckout(user, [primary, legacy] as any, { ...input, freeUntil }, save))
+      .resolves.toMatchObject({ sessionId: "cs_new" });
+    const [params, options] = primary.checkout.sessions.create.mock.calls[0];
+    expect(params.subscription_data).toMatchObject({ trial_end: Math.floor(freeUntil.getTime() / 1000), metadata: { userId: "7" } });
+    expect(params.allow_promotion_codes).toBe(true);
+    expect(options.idempotencyKey).toContain(`-trial-${Math.floor(freeUntil.getTime() / 1000)}`);
+  });
+
+  it("charges straight away, exactly as before, when there is no free time left", async () => {
+    await run();
+    const [params, options] = primary.checkout.sessions.create.mock.calls[0];
+    expect(params.subscription_data).not.toHaveProperty("trial_end");
+    expect(options.idempotencyKey).toBe("subscription-checkout-7-cus_new-first");
   });
 
   it("does not select an untagged shared-email customer for a new purchase", async () => {
@@ -219,5 +236,19 @@ describe("duplicate subscription guard (all Stripe operations mocked)", () => {
     const calls = primary.checkout.sessions.create.mock.calls;
     expect(calls[0][1]).toEqual(calls[1][1]);
     expect(calls[0][1]).toEqual({ idempotencyKey: "subscription-checkout-7-cus_old-first" });
+  });
+});
+
+describe("checkoutTrialEnd", () => {
+  const now = new Date("2026-12-01T12:00:00Z");
+  it("returns the free-time end in Unix seconds", () => {
+    const end = new Date("2026-12-10T23:59:59Z");
+    expect(checkoutTrialEnd(end, now)).toBe(Math.floor(end.getTime() / 1000));
+  });
+  it("gives no trial when there is no free time, or less than Stripe's 48-hour minimum", () => {
+    expect(checkoutTrialEnd(null, now)).toBeUndefined();
+    expect(checkoutTrialEnd(new Date("2026-12-03T11:00:00Z"), now)).toBeUndefined();
+    expect(checkoutTrialEnd(new Date("2026-11-30T00:00:00Z"), now)).toBeUndefined();
+    expect(checkoutTrialEnd(new Date("invalid"), now)).toBeUndefined();
   });
 });

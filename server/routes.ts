@@ -29,7 +29,7 @@ import { downloadStoredImage, LESSON_IMAGE_PREFIX, LESSON_IMAGE_ROUTE } from "./
 import { isFreeTrialActive, getFreeTrialEndDate } from "./features";
 import { SELECTABLE_MODELS, DEFAULT_MODEL_ID, isSelectableModel } from "@shared/aiModels";
 import { getUncachableStripeClient } from "./stripeClient";
-import { subscriptionCheckoutRoute } from "./subscription-checkout-route";
+import { subscriptionCheckoutRoute, freeTimeEndsAt } from "./subscription-checkout-route";
 import { subscriptionCancelRoute } from "./subscription-cancel-route";
 import { billingHealthMonitor } from "./billing-health";
 import { registerBillingHealthRoute } from "./billing-health-route";
@@ -41,6 +41,7 @@ import { lessonQuestionsPath, renderLessonQuestionsPage } from "./lesson-prerend
 import { marketingPages } from "@shared/marketing-pages";
 import { buildLlmsFullTxt, getLlmsFullTxt } from "./llms-full";
 import { getConversationQuestionsPage, getConversationQuestionSitemapEntries } from "./conversation-questions";
+import { getKeepSummary } from "./keep-summary";
 import {
   reserveGenerationJob,
   spendCreditForJob,
@@ -331,13 +332,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const isInPersonalTrial = user.trialExpiresAt && now < new Date(user.trialExpiresAt);
       const globalTrialActive = isFreeTrialActive();
 
-      // Calculate days remaining in personal trial
-      let trialDaysRemaining = 0;
-      if (isInPersonalTrial && user.trialExpiresAt) {
-        trialDaysRemaining = Math.ceil(
-          (new Date(user.trialExpiresAt).getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
-        );
-      }
+      // When the teacher's free time ends: their own trial or the free period
+      // for everyone, whichever is later. Days remaining count to that moment
+      // (they read 0 for everyone in the free period before).
+      const freeEndsAt = freeTimeEndsAt(user, now);
+      const trialDaysRemaining = freeEndsAt
+        ? Math.ceil((freeEndsAt.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
+        : 0;
 
       res.json({
         isSubscriber,
@@ -346,12 +347,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
         isGlobalTrial: globalTrialActive,
         trialDaysRemaining,
         trialExpiresAt: user.trialExpiresAt,
+        freeEndsAt: freeEndsAt ? freeEndsAt.toISOString() : null,
         freeCreditsRemaining: user.freeCreditsRemaining ?? 0,
         canGenerateLessons: isSubscriber || globalTrialActive || !!isInPersonalTrial || (user.freeCreditsRemaining ?? 0) > 0
       });
     } catch (error: any) {
       console.error('Error fetching trial status:', error);
       res.status(500).json({ message: "Error fetching trial status" });
+    }
+  });
+
+  // What the teacher has built (lessons, and words per student), for the
+  // upgrade screen when their free time ends. Their own data only.
+  app.get("/api/user/keep-summary", ensureAuthenticated, async (req, res) => {
+    try {
+      res.json(await getKeepSummary(req.user!.id));
+    } catch (error) {
+      console.error("Error building keep summary:", error);
+      res.status(500).json({ message: "Could not load your summary" });
     }
   });
 
@@ -2144,6 +2157,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         "/esl-lessons",
         ...["a1", "a2", "b1", "b2", "c1", "c2"].map((level) => `/esl-lessons/${level}`),
         ...publicLessons.map(lessonPath),
+        // Theme hubs, level + theme pages and the conversation-question pages
+        // (the same pages the sitemap lists).
+        ...Object.keys(PUBLIC_LESSON_TAGS)
+          .filter((tag) => publicLessons.some((l) => publicTags(l.tags).includes(tag as any)))
+          .map((tag) => `/esl-lessons/topics/${tag}`),
+        ...levelTopicPages(publicLessons).map((page) => page.path),
+        ...(await getConversationQuestionSitemapEntries()).map((entry) => entry.url),
         "/blog",
         ...posts.filter((p) => p.isPublished).map((p) => `/blog/${p.slug}`),
       ];

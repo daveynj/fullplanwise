@@ -14,6 +14,11 @@ vi.mock("@/hooks/use-trial-status", () => ({
 }));
 vi.mock("@/components/layout/sidebar", () => ({ Sidebar: () => null }));
 vi.mock("@/components/layout/header", () => ({ Header: () => null }));
+// The teacher's summary has its own tests; here only checkout requests are counted.
+vi.mock("@/components/keep-building-card", async (original) => ({
+  ...await original<typeof import("@/components/keep-building-card")>(),
+  useKeepSummary: () => ({ data: undefined }),
+}));
 import BuyCreditsPage from "./buy-credits-page";
 
 function show() {
@@ -36,11 +41,13 @@ describe("subscription action", () => {
     expect(screen.getByRole("link", { name: /Manage subscription/i }).getAttribute("href")).toBe("/settings");
   });
 
-  it("allows users in a personal 5-day trial to subscribe immediately without Fair use or Credits copy", () => {
-    mocks.trial = { isInTrial: true, isPersonalTrial: true, isGlobalTrial: false, trialDaysRemaining: 3, freeCreditsRemaining: 0 };
+  it("lets teachers with free time left subscribe now, with no charge until it ends, without Fair use or Credits copy", () => {
+    const freeEndsAt = new Date(Date.now() + 5 * 24 * 60 * 60 * 1000);
+    mocks.trial = { isInTrial: true, isPersonalTrial: true, isGlobalTrial: false, trialDaysRemaining: 5, freeCreditsRemaining: 0, freeEndsAt } as any;
     show();
-    expect(screen.getByRole("button", { name: /Subscribe Now/i })).toBeTruthy();
-    expect(document.body.textContent).toContain("3 days left in your free trial");
+    expect(screen.getByRole("button", { name: /Subscribe now: no charge until/i })).toBeTruthy();
+    expect(document.body.textContent).toContain("Lock in Unlimited now");
+    expect(document.body.textContent).toContain("nothing is charged until then");
     expect(document.body.textContent).not.toMatch(/fair use/i);
     expect(document.body.textContent).not.toMatch(/credits/i);
   });
@@ -68,5 +75,13 @@ describe("subscription action", () => {
       description: "You already have a subscription.",
     })));
     expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("says how many days are left when the end date isn't known, and charges at once with under two days left", () => {
+    mocks.trial = { isInTrial: true, isPersonalTrial: false, isGlobalTrial: true, trialDaysRemaining: 2, freeCreditsRemaining: 0, freeEndsAt: null } as any;
+    show();
+    expect(document.body.textContent).toContain("You have 2 days of free time left.");
+    expect(screen.getByRole("button", { name: /Subscribe Now/i })).toBeTruthy();
+    expect(document.body.textContent).not.toContain("no charge until");
   });
 });
