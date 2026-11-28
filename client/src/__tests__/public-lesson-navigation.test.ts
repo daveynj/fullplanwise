@@ -157,7 +157,7 @@ describe("hydrated public lesson navigation", () => {
     "opens stored slug links from the real %s browse page without a document reload",
     async (indexPath) => {
       show(indexPath);
-      const link = await screen.findByRole("link", { name: /Travel plans, updated/ });
+      const [link] = await screen.findAllByRole("link", { name: /Travel plans, updated/ });
       expect(link.getAttribute("href")).toBe(travelPath);
       fireEvent.click(link);
       await expectLesson(travel, travelPath);

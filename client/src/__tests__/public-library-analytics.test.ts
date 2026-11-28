@@ -137,7 +137,7 @@ describe("public library analytics", () => {
   it("tracks one lesson open with selected context and the lesson CEFR, without card text", () => {
     show();
     click("Travel (1)");
-    fireEvent.click(screen.getByRole("link", { name: /Public travel title/ }));
+    fireEvent.click(screen.getAllByRole("link", { name: /Public travel title/ })[0]);
     expect(events("public_library_lesson_opened")).toEqual([
       ["public_library_lesson_opened", { tag: "travel", cefr_level: "B1", result_count: 1, lesson_id: 41 }],
     ]);
@@ -185,7 +185,7 @@ describe("public library analytics", () => {
     view.rerender(createElement(StrictMode, null, createElement(PublicLessonsIndexPage)));
     advance();
     expect(track).not.toHaveBeenCalled();
-    expect(screen.getByTestId("card-lesson-41")).toBeTruthy();
+    expect(screen.getAllByTestId("card-lesson-41")[0]).toBeTruthy();
   });
 
   it.each(["absent", "throwing", "rejecting"])("keeps filtering, resetting and opening lessons working with %s analytics", async (mode) => {
@@ -198,8 +198,8 @@ describe("public library analytics", () => {
     search("missing");
     advance();
     click("Reset filters");
-    expect(screen.getByTestId("card-lesson-42")).toBeTruthy();
-    fireEvent.click(screen.getByRole("link", { name: /Public travel title/ }));
+    expect(screen.getAllByTestId("card-lesson-42")[0]).toBeTruthy();
+    fireEvent.click(screen.getAllByRole("link", { name: /Public travel title/ })[0]);
     expect(window.location.pathname).toBe("/esl-lessons/b1/travel");
     await act(async () => { await Promise.resolve(); });
   });

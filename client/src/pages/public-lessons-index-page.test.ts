@@ -49,13 +49,14 @@ describe("public lesson topic tags", () => {
     await screen.findByRole("button", { name: "Technology (1)" });
     expect(screen.queryByText(lessons[0].title)).toBeNull();
     fireEvent.click(screen.getByRole("button", { name: "All tags" }));
-    expect(screen.getByText(lessons[0].title)).toBeTruthy();
-    expect(screen.getByText(lessons[2].title)).toBeTruthy();
+    // Unfiltered, the newest lessons show in "Start here" and in the full list.
+    expect(screen.getAllByText(lessons[0].title).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(lessons[2].title).length).toBeGreaterThan(0);
   });
 
   it("shows curated tags, counts them, and combines selected topic tag with search labels", async () => {
     show();
-    await screen.findByText("Planning a trip with artificial intelligence");
+    await screen.findAllByText("Planning a trip with artificial intelligence");
     expect(screen.getAllByText("Travel").length).toBeGreaterThan(0);
     expect(screen.getByRole("button", { name: "Technology (1)" })).toBeTruthy();
 
@@ -69,7 +70,30 @@ describe("public lesson topic tags", () => {
     expect(screen.getByText(/No public lessons match/)).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "Reset filters" }));
     await waitFor(() => expect(screen.getByRole("button", { name: "All tags" }).getAttribute("aria-pressed")).toBe("true"));
-    expect(screen.getByText("Technology at work")).toBeTruthy();
+    expect(screen.getAllByText("Technology at work").length).toBeGreaterThan(0);
+  });
+
+  it("opens a quick preview with the target words and a link to the lesson", async () => {
+    vi.stubGlobal("fetch", vi.fn(async (url: string) => String(url).includes("/api/public-lesson-preview/2")
+      ? { ok: true, json: async () => ({ words: [{ term: "deadline", partOfSpeech: "noun", definition: "the time by which work must be finished" }], readingTitle: "A new tool", readingIntro: "", discussionQuestion: "Which tool do you use most at work?", minutes: 45 }) }
+      : { ok: true, json: async () => ({ lessons }) }));
+    show();
+    fireEvent.click(await screen.findByRole("button", { name: "Business English (1)" }));
+    const toggle = screen.getByRole("button", { name: "Quick preview" });
+    expect(toggle.getAttribute("aria-expanded")).toBe("false");
+    fireEvent.click(toggle);
+    expect(await screen.findByText("deadline")).toBeTruthy();
+    expect(screen.getByText("Which tool do you use most at work?")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Hide preview" }).getAttribute("aria-expanded")).toBe("true");
+    expect(screen.getByRole("button", { name: /Try this lesson/ })).toBeTruthy();
+  });
+
+  it("offers start-here paths with true counts and hides them once a filter is on", async () => {
+    show();
+    const path = await screen.findByRole("link", { name: /Work & meetings.*1 lesson/ });
+    expect(path.getAttribute("href")).toBe("/esl-lessons/topics/work");
+    fireEvent.click(screen.getByRole("button", { name: "Technology (1)" }));
+    expect(screen.queryByText("New here? Start with one of these")).toBeNull();
   });
 
   it("shows request failures with a retry action", async () => {
