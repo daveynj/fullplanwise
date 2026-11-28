@@ -124,6 +124,7 @@ function Router() {
       <Route path="/compare/chatgpt" component={MarketingPage} />
       <Route path="/compare/cefr-benchmark" component={MarketingPage} />
       <Route path="/compare/student-memory-proof" component={MarketingPage} />
+      <Route path="/compare/same-lesson-three-tools" component={MarketingPage} />
       <Route path="/guides" component={MarketingPage} />
       <Route path="/guides/how-to-plan-an-esl-conversation-lesson" component={MarketingPage} />
       <Route path="/guides/esl-conversation-topics-by-level" component={MarketingPage} />
