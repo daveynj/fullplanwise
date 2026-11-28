@@ -43,7 +43,8 @@ describe("KeepBuildingCard", () => {
     vi.setSystemTime(new Date("2026-12-11T12:00:00Z"));
     render(h(KeepBuildingCard, { summary, mode: "ended", location: "lesson_maker" }));
     expect(screen.getByText("Keep building your students' lessons")).toBeTruthy();
-    expect(screen.getByText("9 lessons for 5 students")).toBeTruthy();
+    // Not every lesson was made for a student, so the totals sit side by side.
+    expect(screen.getByText("9 lessons and 5 students")).toBeTruthy();
     expect(screen.getByText("Maria · B1 · 18 words · 3 lessons")).toBeTruthy();
     expect(screen.getByText("and 3 more students")).toBeTruthy();
     const keep = screen.getByText(/Keep building with Unlimited/).closest("a")!;

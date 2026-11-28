@@ -84,7 +84,7 @@ export function KeepBuildingCard({ summary, mode, location, showActions = true }
     ? (students.length ? "Keep building your students' lessons" : "Your free time has ended")
     : "What you've built so far";
   const made = [lessons ? plural(lessons, "lesson") : null, summary?.studentCount ? plural(summary.studentCount, "student") : null]
-    .filter(Boolean).join(" for ");
+    .filter(Boolean).join(" and ");
 
   return (
     <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm" data-testid="keep-building-card" aria-label={heading}>
