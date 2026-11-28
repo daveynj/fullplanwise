@@ -460,17 +460,17 @@ export const newEslTeachersPage: MarketingPage = {
   path: '/for/new-esl-teachers',
   title: `Ready-to-Teach ESL Lessons for New Teachers & First-Time Tutors | ${brand}`,
   description:
-    `New ESL teacher guide: start with 180+ free CEFR A1–C2 lessons, built-in teacher notes, beginner speaking frames & 1–2 min custom prep.`,
+    `New ESL teacher guide: start with 200+ free CEFR A1–C2 lessons, built-in teacher notes, beginner speaking frames & 1–2 min custom prep.`,
   navLabel: 'For New ESL Teachers',
   eyebrow: 'For new ESL teachers & newly certified tutors',
   h1: 'Ready-to-teach ESL lessons that give new teachers confidence from lesson one',
   intro: [
     'Your first months teaching ESL—whether you have just earned your TEFL or CELTA certificate or taken on your first online tutoring students—bring two big hurdles: figuring out how to pace a 45–60 minute conversation class without awkward silence, and creating material at the right CEFR level without spending two hours preparing for every one-hour class.',
-    `${brand} removes both hurdles. Every lesson follows the same **8-stage second-language pedagogy** ([see the research](/how-it-works)), comes with **teacher notes**, **3-tier beginner-safe speaking frames** so A1–A2 learners never freeze, and a **30- and 60-minute pacing guide**—starting with [over 180 complete zero-login lessons](/esl-lessons) you can teach today before ever starting a paid plan.`,
+    `${brand} removes both hurdles. Every lesson follows the same **8-stage second-language pedagogy** ([see the research](/how-it-works)), comes with **teacher notes**, **3-tier beginner-safe speaking frames** so A1–A2 learners never freeze, and a **30- and 60-minute pacing guide**—starting with [over 200 complete zero-login lessons](/esl-lessons) you can teach today before ever starting a paid plan.`,
   ],
   verdict: {
     heading: 'Why new ESL teachers choose PlanWise ESL',
-    text: `New teachers don’t just need a pile of worksheets—they need a repeatable, research-backed lesson structure that keeps students talking cleanly for 30 or 60 minutes. **${brand}** gives new tutors [180+ free zero-login A1–C2 lessons](/esl-lessons), step-by-step teaching flow, beginner scaffolding (A1 definitions restricted to the 500 most common words + 3-tier speaking frames), one-click printable study PDFs, and **${generationTime} custom lesson creation** (${trialText}, no card, then ${priceText} Unlimited).`,
+    text: `New teachers don’t just need a pile of worksheets—they need a repeatable, research-backed lesson structure that keeps students talking cleanly for 30 or 60 minutes. **${brand}** gives new tutors [200+ free zero-login A1–C2 lessons](/esl-lessons), step-by-step teaching flow, beginner scaffolding (A1 definitions restricted to the 500 most common words + 3-tier speaking frames), one-click printable study PDFs, and **${generationTime} custom lesson creation** (${trialText}, no card, then ${priceText} Unlimited).`,
   },
   sections: [
     {
@@ -491,7 +491,7 @@ export const newEslTeachersPage: MarketingPage = {
           ['Lesson structure & timing', 'Must prompt every stage yourself and invent transitions', 'Complete 8-stage SLA lesson sequence + [30/60-min pacing guide](/esl-lessons#how-to-teach-free-lessons) every time'],
           ['CEFR accuracy for beginners', 'Often writes definitions harder than the target word', 'A1 definitions capped to the 500 most common words (<8 words), checked automatically'],
           ['Student freezing in conversation', 'Open questions alone can stall shy learners', '3-tier sentence frames with model answers support speaking step by step'],
-          ['Free material to practise right now', 'Must write prompts before seeing any lesson', '[180+ complete A1–C2 lessons free with zero login](/esl-lessons) + printable PDFs'],
+          ['Free material to practise right now', 'Must write prompts before seeing any lesson', '[200+ complete A1–C2 lessons free with zero login](/esl-lessons) + printable PDFs'],
           ['Tracking regular students', 'No student profiles or word history', 'Free student profiles remember taught words & sync with a zero-login student flashcard dashboard'],
         ],
       },
@@ -499,7 +499,7 @@ export const newEslTeachersPage: MarketingPage = {
     {
       heading: 'Start teaching today with zero login: free lessons & guides for new teachers',
       bullets: [
-        '**Open & teach free A1–C2 lessons:** Browse [180+ ready-to-teach lessons](/esl-lessons), seasonal [Holidays & Celebrations](/esl-lessons/topics/holidays), or [Culture](/esl-lessons/topics/culture)—including [First Day at a New Job (A1)](/esl-lessons/a1/first-day-at-a-new-job-meeting-your-team) and [Making Small Talk with New People (A2)](/esl-lessons/a2/making-small-talk-with-new-people).',
+        '**Open & teach free A1–C2 lessons:** Browse [200+ ready-to-teach lessons](/esl-lessons), seasonal [Holidays & Celebrations](/esl-lessons/topics/holidays), or [Culture](/esl-lessons/topics/culture)—including [First Day at a New Job (A1)](/esl-lessons/a1/first-day-at-a-new-job-meeting-your-team) and [Making Small Talk with New People (A2)](/esl-lessons/a2/making-small-talk-with-new-people).',
         '**Learn the method in 5 minutes:** Read [How to plan an ESL conversation lesson](/guides/how-to-plan-an-esl-conversation-lesson), [CEFR levels A1–C2 explained](/guides/cefr-levels-explained), and [How PlanWise ESL works](/how-it-works).',
         '**Try custom lessons free:** When you’re ready to build bespoke lessons for a specific student, start a ${trialText} (unlimited lessons, no credit card required).',
       ],
@@ -508,7 +508,7 @@ export const newEslTeachersPage: MarketingPage = {
   faq: [
     {
       question: 'Can a brand-new TEFL teacher use PlanWise ESL without paying first?',
-      answer: `Yes. Over 180 complete A1–C2 conversation lessons at /esl-lessons—plus full-screen teaching mode, the built-in 30/60-minute pacing guide, and printable Vocabulary Review PDFs—are 100% free with zero signup required. When you want custom lessons and student profiles, every new account gets a ${trialText} with no credit card.`,
+      answer: `Yes. Over 200 complete A1–C2 conversation lessons at /esl-lessons—plus full-screen teaching mode, the built-in 30/60-minute pacing guide, and printable Vocabulary Review PDFs—are 100% free with zero signup required. When you want custom lessons and student profiles, every new account gets a ${trialText} with no credit card.`,
     },
     {
       question: 'What stops a beginner lesson from being too difficult?',
@@ -521,7 +521,7 @@ export const newEslTeachersPage: MarketingPage = {
   ],
   cta: {
     heading: 'Teach your next class with complete confidence',
-    text: `Explore 180+ free A1–C2 lessons right now—or build your first custom lesson in ${generationTime} on a ${trialText} (no credit card required).`,
+    text: `Explore 200+ free A1–C2 lessons right now—or build your first custom lesson in ${generationTime} on a ${trialText} (no credit card required).`,
     ...trialCta,
   },
   schemaType: 'WebPage',

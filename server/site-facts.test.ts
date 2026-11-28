@@ -158,7 +158,11 @@ describe("free lesson count", () => {
   });
 
   it("is used for the homepage library badge", () => {
-    expect(JSON.stringify({ hero, faq, features })).not.toContain("200+");
+    // No page may hard-code a different floor: every number in the homepage
+    // copy that sits before "free lessons" is the one from site-facts.
+    for (const match of JSON.stringify({ hero, faq, features }).matchAll(/(\d{3})\+ free lessons/g)) {
+      expect(Number(match[1])).toBe(siteFacts.freeLessonCount);
+    }
     expect(readFileSync("shared/homepage-content.ts", "utf8")).toContain("${freeLessonsText} free lessons");
     expect(llms).toContain(`over ${siteFacts.freeLessonCount}`);
   });

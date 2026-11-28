@@ -480,7 +480,7 @@ export const personaliseGuide: MarketingPage = {
     },
     {
       question: 'Can I personalise ESL lessons for free?',
-      answer: 'Yes. Keep student profiles in a spreadsheet, start from a free lesson on a nearby topic (the PlanWise ESL library has 180+ free A1–C2 lessons with no login), and adapt it with a chatbot. Check the level and the answers before class, and keep the word list yourself, because chatbots do not remember the student.',
+      answer: 'Yes. Keep student profiles in a spreadsheet, start from a free lesson on a nearby topic (the PlanWise ESL library has 200+ free A1–C2 lessons with no login), and adapt it with a chatbot. Check the level and the answers before class, and keep the word list yourself, because chatbots do not remember the student.',
     },
   ],
   cta: {
@@ -499,7 +499,7 @@ export const freeAdultLessonsGuide: MarketingPage = {
   path: '/guides/free-esl-conversation-lessons-for-adults',
   title: 'Free ESL Conversation Lessons for Adults (No Sign-Up) | PlanWise',
   description:
-    'Free ESL conversation lessons for adults with no sign-up: 180+ lessons from A1 to C2, what each one contains, and how to teach one in 30 or 60 minutes.',
+    'Free ESL conversation lessons for adults with no sign-up: 200+ lessons from A1 to C2, what each one contains, and how to teach one in 30 or 60 minutes.',
   navLabel: 'Free adult conversation lessons',
   eyebrow: 'Guide for tutors',
   h1: 'Free ESL conversation lessons for adults (no sign-up): what’s inside and how to teach them',
@@ -509,7 +509,7 @@ export const freeAdultLessonsGuide: MarketingPage = {
   ],
   verdict: {
     heading: 'The short answer',
-    text: `**The free library is at [planwiseesl.com/esl-lessons](/esl-lessons).** It has 180+ complete conversation lessons for teenage and adult students, in six levels from A1 to C2. You do not need an account, a card or an email address: open a lesson and teach from it. Each lesson has five key words, a reading text at the level, comprehension questions, practice exercises, discussion questions and speaking patterns. They suit one-to-one and small-group lessons, online or in person.`,
+    text: `**The free library is at [planwiseesl.com/esl-lessons](/esl-lessons).** It has 200+ complete conversation lessons for teenage and adult students, in six levels from A1 to C2. You do not need an account, a card or an email address: open a lesson and teach from it. Each lesson has five key words, a reading text at the level, comprehension questions, practice exercises, discussion questions and speaking patterns. They suit one-to-one and small-group lessons, online or in person.`,
   },
   sections: [
     {
@@ -584,7 +584,7 @@ export const freeAdultLessonsGuide: MarketingPage = {
   faq: [
     {
       question: 'Where can I find free ESL conversation lessons for adults with no sign-up?',
-      answer: 'PlanWise ESL has a free library of 180+ complete conversation lessons for adults and teenagers at planwiseesl.com/esl-lessons, from A1 to C2. You can open any lesson, screen-share it and print the Vocabulary Review PDF without making an account.',
+      answer: 'PlanWise ESL has a free library of 200+ complete conversation lessons for adults and teenagers at planwiseesl.com/esl-lessons, from A1 to C2. You can open any lesson, screen-share it and print the Vocabulary Review PDF without making an account.',
     },
     {
       question: 'What is in a free PlanWise ESL conversation lesson?',
@@ -784,7 +784,7 @@ export const christmasNewYearGuide: MarketingPage = {
     {
       heading: 'More free lessons, and lessons for your own student',
       paragraphs: [
-        'The free library has 180+ lessons beyond the holiday set: see the [full library](/esl-lessons) and my [guide to free adult conversation lessons](/guides/free-esl-conversation-lessons-for-adults). These lessons are the same for every student. If you want a seasonal lesson written for one student, [see how it works](/how-it-works).',
+        'The free library has 200+ lessons beyond the holiday set: see the [full library](/esl-lessons) and my [guide to free adult conversation lessons](/guides/free-esl-conversation-lessons-for-adults). These lessons are the same for every student. If you want a seasonal lesson written for one student, [see how it works](/how-it-works).',
       ],
     },
   ],
