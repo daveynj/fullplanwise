@@ -1219,7 +1219,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ jobId });
 
       // Activation steps for Google Analytics (server-side, never blocks the
-      // job): a lesson for a particular student, and whether it is that
+      // job). Every lesson a teacher starts, and their very first one, so the
+      // "made a lesson" step shows even when an ad blocker stops the browser's
+      // lesson_generated event.
+      if (!user.isAdmin) {
+        const cookie = req.headers.cookie;
+        const forStudent = !!validatedData.studentId;
+        void (async () => {
+          try {
+            const earlier = await db.execute(sql`
+              SELECT count(*)::int AS n FROM lessons WHERE teacher_id = ${user.id}
+            `);
+            const n = Number((earlier.rows[0] as { n?: number } | undefined)?.n ?? 0);
+            await sendGaEvent(cookie, "lesson_started", { for_student: forStudent, earlier_lessons: n });
+            if (n === 0) await sendGaEvent(cookie, "first_lesson_started", { for_student: forStudent });
+          } catch (error) {
+            console.warn("[GA] Could not record the lesson step:", error);
+          }
+        })();
+      }
+
+      // Then a lesson for a particular student, and whether it is that
       // student's second or later lesson, where their word list starts to show.
       if (validatedData.studentId && !user.isAdmin) {
         const cookie = req.headers.cookie;
