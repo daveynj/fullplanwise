@@ -70,9 +70,22 @@ import { GrammarSpotlight } from './grammar-spotlight';
 import { VocabFlashcardCTA } from '@/components/public-lesson-ctas';
 import type { ParsedLessonContent, LessonSection, LessonQuestionAnswer, LessonVocabularyWord, SentenceFramePattern } from '../../../../types/lessonContentTypes';
 
+export interface LessonSectionInfo {
+  id: string;
+  label: string;
+  index: number;
+  total: number;
+}
+
 interface LessonContentProps {
   content: ParsedLessonContent;
   vocabularyCta?: React.ReactNode;
+  /** Shown between the lesson's title and its sections (free library lessons: what's inside and how to start). */
+  intro?: React.ReactNode;
+  /** Shown under the navigation once the last section is open. */
+  endOfLesson?: React.ReactNode;
+  /** Called whenever a section opens (for analytics: how far visitors get). */
+  onSectionChange?: (section: LessonSectionInfo) => void;
 }
 
 type SectionType = 
@@ -105,7 +118,20 @@ interface SectionDetails {
   description: string;
 }
 
-export function LessonContent({ content, vocabularyCta }: LessonContentProps) {
+/**
+ * Reports the open section once each time it changes. A separate component so
+ * the effect runs only after the lesson has loaded (LessonContent returns early
+ * while it parses, and hooks may not follow an early return).
+ */
+function SectionReporter({ section, onSectionChange }: { section: LessonSectionInfo; onSectionChange: (section: LessonSectionInfo) => void }) {
+  useEffect(() => {
+    onSectionChange(section);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [section.id, section.index, section.total]);
+  return null;
+}
+
+export function LessonContent({ content, vocabularyCta, intro, endOfLesson, onSectionChange }: LessonContentProps) {
   const [parsedContent, setParsedContent] = useState<ParsedLessonContent | null>(null);
   const [activeTab, setActiveTab] = useState<string>(""); 
   const [location, setLocation] = useLocation();
@@ -2309,6 +2335,11 @@ export function LessonContent({ content, vocabularyCta }: LessonContentProps) {
       setActiveTab(availableRenderTree[currentIndex + 1].id);
     }
   };
+
+  const total = availableRenderTree.length;
+  const currentLabel = currentIndex >= 0 ? availableRenderTree[currentIndex].label : '';
+  const nextLabel = currentIndex >= 0 && currentIndex < total - 1 ? availableRenderTree[currentIndex + 1].label : '';
+  const isLastSection = total > 0 && currentIndex === total - 1;
   
   return (
     <div className="lesson-content w-[95%] max-w-[1800px] mx-auto"> {/* Increased width for better screen space utilization */}
@@ -2328,8 +2359,16 @@ export function LessonContent({ content, vocabularyCta }: LessonContentProps) {
         </div>
       </div>
       
+      {intro}
+      {onSectionChange && activeTab && currentIndex >= 0 && (
+        <SectionReporter
+          section={{ id: activeTab, label: currentLabel, index: currentIndex, total }}
+          onSectionChange={onSectionChange}
+        />
+      )}
+
       {/* Tabbed interface - styled based on template images */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-4 relative">
+      <Tabs id="lesson-sections" value={activeTab} onValueChange={setActiveTab} className="mt-4 relative scroll-mt-4">
         <TabsList className="flex overflow-x-auto whitespace-nowrap justify-start p-1 h-auto rounded-lg bg-gray-100 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           {availableRenderTree.map((item) => {
               return (
@@ -2359,8 +2398,18 @@ export function LessonContent({ content, vocabularyCta }: LessonContentProps) {
         </div>
       </Tabs>
       
+      {/* Progress through the lesson */}
+      {total > 1 && currentIndex >= 0 && (
+        <div className="mt-8 h-1.5 w-full rounded-full bg-gray-100" aria-hidden="true">
+          <div
+            className="h-1.5 rounded-full bg-green-500 transition-all"
+            style={{ width: `${Math.round(((currentIndex + 1) / total) * 100)}%` }}
+          />
+        </div>
+      )}
+
       {/* Navigation Buttons */}
-      <div className="flex justify-between items-center mt-8">
+      <div className="flex justify-between items-center mt-4">
         <Button 
           variant="outline" 
           onClick={handlePrev} 
@@ -2375,16 +2424,17 @@ export function LessonContent({ content, vocabularyCta }: LessonContentProps) {
           Section {currentIndex + 1} of {availableRenderTree.length}
         </span>
         <Button 
-          variant="outline" 
+          variant={isLastSection ? "outline" : "default"}
           onClick={handleNext} 
           disabled={currentIndex === availableRenderTree.length - 1}
           aria-label="Next Section"
           className="flex items-center"
         >
-          Next
+          {nextLabel ? <>Next: {nextLabel}</> : 'Next'}
           <ChevronRight className="h-5 w-5 ml-2" />
         </Button>
       </div>
+      {isLastSection && endOfLesson}
     </div>
   );
 }
