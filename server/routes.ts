@@ -56,6 +56,7 @@ import Stripe from "stripe";
 // import { geminiService } from "./services/gemini";
 
 import { db } from "./db";
+import { studentMemoryNoteFor } from "./student-memory-note";
 import { sql } from "drizzle-orm";
 import { syncMailchimpPlanTagsForUsers } from "./mailchimp-plan-tags";
 // Dynamic import for PDF service - loaded only when needed
@@ -736,6 +737,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   registerStudentPageRoutes(app);
+
+  // Teacher-only: how a student's lesson builds on the words from their
+  // earlier lessons (shown at the top of the lesson). Never stored.
+  app.get("/api/lessons/:id/student-memory", ensureAuthenticated, async (req, res) => {
+    try {
+      const id = parseIdParam(req.params.id);
+      if (id === null) return res.status(404).json({ message: "Not found" });
+      const note = await studentMemoryNoteFor(id, req.user!.id);
+      if (!note) return res.status(404).json({ message: "Not a student lesson" });
+      res.set("Cache-Control", "private, no-store").json(note);
+    } catch (error) {
+      console.error("Error building the student memory note:", error);
+      res.status(500).json({ message: "Could not load the student's word history" });
+    }
+  });
 
   // Lesson Routes
   app.get("/api/lessons", ensureAuthenticated, async (req, res) => {

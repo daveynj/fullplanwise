@@ -24,6 +24,7 @@ import { grammarTopicHint } from "@shared/topic-hints";
 import { useTrialStatus } from "@/hooks/use-trial-status";
 import { useAuth } from "@/hooks/use-auth";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { TaughtPrompt } from "@/components/lesson/taught-prompt";
 
 // Define CEFR levels
 const cefrLevels = [
@@ -102,6 +103,26 @@ export function LessonForm({ students, onSubmit, initialStudentId, initialTopic,
     },
   });
 
+  // Start from the student the teacher made a lesson for last time, so the
+  // next lesson builds on that student's words instead of "No specific
+  // student". A student chosen in the link (?studentId=) always wins.
+  const lastStudentKey = user ? `planwise.lastStudent.${user.id}` : null;
+  useEffect(() => {
+    if (!lastStudentKey || initialStudentId) return;
+    if (form.getValues("studentId") !== "none" || form.formState.dirtyFields.studentId) return;
+    let saved: string | null = null;
+    try {
+      saved = window.localStorage.getItem(lastStudentKey);
+    } catch {
+      saved = null;
+    }
+    if (saved && students.some((s) => String(s.id) === saved)) {
+      form.setValue("studentId", saved);
+    }
+  }, [students, lastStudentKey, initialStudentId, form]);
+  const selectedStudentId = form.watch("studentId");
+  const selectedStudent = students.find((s) => String(s.id) === selectedStudentId);
+
   // The idioms & phrasal verbs switch follows the level's default until the
   // teacher changes it; it is never offered for A1.
   const [expressionsChoice, setExpressionsChoice] = useState<boolean | null>(null);
@@ -133,6 +154,13 @@ export function LessonForm({ students, onSubmit, initialStudentId, initialTopic,
       useStudentHistory: true
     };
     
+    if (lastStudentKey) {
+      try {
+        if (parsedValues.studentId) window.localStorage.setItem(lastStudentKey, String(parsedValues.studentId));
+      } catch {
+        // Private windows can refuse storage; the form then starts from "No specific student".
+      }
+    }
     onSubmit(parsedValues);
   };
 
@@ -171,6 +199,7 @@ export function LessonForm({ students, onSubmit, initialStudentId, initialTopic,
                 </FormItem>
               )}
             />
+            {selectedStudent && <TaughtPrompt studentId={selectedStudent.id} studentName={selectedStudent.name} />}
             
             {/* Category */}
             <FormField

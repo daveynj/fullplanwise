@@ -14,6 +14,7 @@ import { lessonPublicMetadata, publicLessonRemixHref } from "@shared/lesson-publ
 import { LessonDesignPanel } from "@/components/lesson/lesson-design-panel";
 import { tutorLinkFor } from "@shared/tutor-link";
 import { TopRemixBanner, VocabFlashcardCTA, FreeLessonLicenceNote } from "@/components/public-lesson-ctas";
+import { StudentMemoryNoteBanner } from "@/components/lesson/student-memory-note";
 import { RelatedPublicLessons } from "@/components/related-public-lessons";
 import { lessonPath } from "@shared/lesson-url";
 import { trackEvent } from "@/lib/analytics";
@@ -433,6 +434,9 @@ export default function FullScreenLessonPage() {
                   </a>
                 </span>
               </div>
+            )}
+            {user && lesson.teacherId === user.id && lesson.studentId && (
+              <StudentMemoryNoteBanner lessonId={lesson.id} studentId={lesson.studentId} />
             )}
             {showPublicLessonPromos && (
               <TopRemixBanner title={lesson.title} href={remixHref} />

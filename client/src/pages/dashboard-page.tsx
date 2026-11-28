@@ -190,6 +190,7 @@ export default function DashboardPage() {
                 state={{
                   hasStudent: students.length > 0,
                   hasLessonForStudent: lessons.some((l) => !!l.studentId),
+                  hasSecondLessonForStudent: lessons.some((l, i) => !!l.studentId && lessons.some((m, j) => j !== i && m.studentId === l.studentId)),
                   hasStudentPage: students.some((st) => !!st.pageEnabled),
                 }}
               />
