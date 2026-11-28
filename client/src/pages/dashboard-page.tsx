@@ -1,4 +1,5 @@
 import { GettingStartedChecklist } from "@/components/getting-started-checklist";
+import { ReviewRequestCard } from "@/components/review-request-card";
 import { useAuth } from "@/hooks/use-auth";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
@@ -193,6 +194,9 @@ export default function DashboardPage() {
                 }}
               />
             )}
+
+            {/* Once a teacher has made enough lessons to judge, ask for an honest public review. */}
+            {user && <ReviewRequestCard userId={user.id} totalLessons={totalLessons} />}
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
