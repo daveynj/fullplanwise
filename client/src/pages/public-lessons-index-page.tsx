@@ -210,6 +210,7 @@ const LEVEL_BADGE_STYLES: Record<string, string> = {
 
 const THEMES_SHOWN_FIRST = 6;
 const NEWEST_SHOWN = 3;
+const NEWEST_MIN_LIBRARY = 12;
 
 interface LessonCardProps {
   lesson: LessonSummary;
@@ -497,8 +498,8 @@ export default function PublicLessonsIndexPage() {
     ];
     return paths.filter((p) => p.count > 0);
   }, [lessons]);
-  // The index arrives newest first.
-  const newestLessons = useMemo(() => lessons.slice(0, NEWEST_SHOWN), [lessons]);
+  // The index arrives newest first. In a small library this row would only repeat the list.
+  const newestLessons = useMemo(() => (lessons.length > NEWEST_MIN_LIBRARY ? lessons.slice(0, NEWEST_SHOWN) : []), [lessons]);
 
   const heading = level && activeTopic
     ? levelTopicTitle(level, activeTopic)
