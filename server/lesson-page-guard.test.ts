@@ -94,6 +94,9 @@ beforeAll(async () => {
   app.get("/esl-lessons/:level/:slug", (_req, res) => {
     res.status(200).type("html").send(PASSED_THROUGH);
   });
+  app.get("/esl-lessons/:level/topics/:tag", (_req, res) => {
+    res.status(200).type("html").send(PASSED_THROUGH);
+  });
 
   await new Promise<void>((resolve) => server.listen(0, resolve));
   const address = server.address();
@@ -326,6 +329,30 @@ describe("GET /esl-lessons/topics/:tag (theme hubs)", () => {
     const res = await fetch(`${baseUrl}/esl-lessons/topics/not-a-real-theme`);
     expect(res.status).toBe(404);
     expect(await res.text()).not.toContain(PASSED_THROUGH);
+  });
+
+  it("serves a level-by-theme page only where the level and theme have enough lessons", async () => {
+    const work = (id: number) => lesson({ id, isPublic: true, cefrLevel: "B1", publicSlug: `work-${id}`, publicLevel: "b1", tags: ["work"] });
+    mockStorage.getPublicLessonSummaries.mockResolvedValue([work(1), work(2), work(3)]);
+    const ok = await fetch(`${baseUrl}/esl-lessons/b1/topics/work`);
+    expect(ok.status).toBe(200);
+    expect(await ok.text()).toBe(PASSED_THROUGH);
+    expect(mockStorage.getPublicLessonSummaries).toHaveBeenCalledWith("B1");
+    expect(mockStorage.getLessonByPublicSlug).not.toHaveBeenCalled();
+
+    mockStorage.getPublicLessonSummaries.mockResolvedValue([work(1), work(2)]);
+    await expectRealNotFound("/esl-lessons/b1/topics/work");
+    await expectRealNotFound("/esl-lessons/b1/topics/not-a-theme");
+    await expectRealNotFound("/esl-lessons/b9/topics/work");
+  });
+
+  it("lists level-by-theme pages in the sitemap", async () => {
+    const work = (id: number) => lesson({ id, isPublic: true, cefrLevel: "B1", publicSlug: `work-${id}`, publicLevel: "b1", tags: ["work"] });
+    mockStorage.getPublicLessonSummaries.mockResolvedValue([work(1), work(2), work(3), lesson({ id: 9, isPublic: true, cefrLevel: "B1", publicSlug: "solo", publicLevel: "b1", tags: ["travel"] })]);
+    const body = await (await fetch(`${baseUrl}/sitemap.xml`)).text();
+    expect(body).toContain("https://planwiseesl.com/esl-lessons/b1/topics/work");
+    expect(body).toContain("https://planwiseesl.com/esl-lessons/topics/travel");
+    expect(body).not.toContain("/esl-lessons/b1/topics/travel");
   });
 
   it("still looks up lesson slugs under real CEFR levels, in either case", async () => {

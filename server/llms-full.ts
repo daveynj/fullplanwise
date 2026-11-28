@@ -1,4 +1,6 @@
 import { lessonPath } from '@shared/lesson-url';
+import { PUBLIC_LESSON_TAGS } from '@shared/public-lesson-tags';
+import { levelTopicPages } from '@shared/library-browse';
 import {
   siteFacts,
   trialText,
@@ -215,6 +217,7 @@ export interface PublicLessonLlmsItem {
   title: string;
   cefrLevel: string;
   publicCategory?: string | null;
+  tags?: string[] | null;
 }
 
 const CEFR_ORDER = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'] as const;
@@ -231,7 +234,11 @@ function renderPublicLessonsMarkdown(publicLessons: PublicLessonLlmsItem[]): str
       const cat = l.publicCategory ? ` [${l.publicCategory}]` : '';
       return `- [${l.title}](${BASE_URL}${lessonPath(l)})${cat}`;
     });
-    blocks.push(`### ${level} Lessons (${BASE_URL}/esl-lessons/${level.toLowerCase()})\n${lines.join('\n')}`);
+    const themePages = levelTopicPages(publicLessons).filter((p) => p.level === level);
+    const themes = themePages.length
+      ? `${level} lessons by theme: ${themePages.map((p) => `[${PUBLIC_LESSON_TAGS[p.tag]} (${p.count})](${BASE_URL}${p.path})`).join(' · ')}\n\n`
+      : '';
+    blocks.push(`### ${level} Lessons (${BASE_URL}/esl-lessons/${level.toLowerCase()})\n${themes}${lines.join('\n')}`);
   }
   return blocks.join('\n\n');
 }

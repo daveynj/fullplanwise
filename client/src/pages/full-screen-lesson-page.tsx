@@ -14,6 +14,7 @@ import { lessonPublicMetadata, publicLessonRemixHref } from "@shared/lesson-publ
 import { LessonDesignPanel } from "@/components/lesson/lesson-design-panel";
 import { tutorLinkFor } from "@shared/tutor-link";
 import { TopRemixBanner, VocabFlashcardCTA } from "@/components/public-lesson-ctas";
+import { RelatedPublicLessons } from "@/components/related-public-lessons";
 import { lessonPath } from "@shared/lesson-url";
 import { trackEvent } from "@/lib/analytics";
 
@@ -441,6 +442,9 @@ export default function FullScreenLessonPage() {
                 content={parsedContent}
                 vocabularyCta={showPublicLessonPromos ? <VocabFlashcardCTA href={vocabularySignupHref} /> : undefined}
               />
+            )}
+            {lesson.isPublic && (
+              <RelatedPublicLessons lesson={{ id: lesson.id, title: lesson.title, cefrLevel: lesson.cefrLevel, tags: lesson.tags }} />
             )}
             {parsedContent && lesson.isPublic && (!user || user.isAdmin) && (
               <aside className="mt-10 max-w-4xl mx-auto rounded-2xl bg-brand-navy text-white p-6 md:p-8 flex flex-col gap-6 print:hidden">
