@@ -1,4 +1,4 @@
-import { trackEvent } from "@/lib/analytics";
+import { trackEventThen } from "@/lib/analytics";
 import { siteFacts, priceText } from "@shared/site-facts";
 import { useRef, useState } from "react";
 import { Sidebar } from "@/components/layout/sidebar";
@@ -72,8 +72,10 @@ export default function BuyCreditsPage() {
     retry: false,
     onSuccess: (data) => {
       setRedirecting(true);
-      trackEvent("begin_checkout", { currency: siteFacts.currency, value: Number(siteFacts.priceValue) });
-      window.location.href = data.url;
+      // Leaving for Stripe straight away can drop the event; wait until GA has sent it (at most 0.8s).
+      trackEventThen("begin_checkout", { currency: siteFacts.currency, value: Number(siteFacts.priceValue) }, () => {
+        window.location.href = data.url;
+      });
     },
     onError: (error: any) => {
       submitting.current = false;

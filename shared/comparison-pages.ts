@@ -225,19 +225,19 @@ export const compareHubPage: MarketingPage = {
 
 export const compareTweePage: MarketingPage = {
   path: '/compare/twee',
-  title: `${brand} vs Twee for ESL Lesson Planning`,
+  title: `${brand} vs Twee (2026): Complete Lessons vs Activity Generators`,
   description:
     `Honest comparison of ${brand} and Twee: isolated AI tools assembled by hand vs. one complete pedagogical lesson, student vocab memory & study PDFs.`,
   navLabel: 'PlanWise vs Twee',
   eyebrow: 'Comparison',
-  h1: 'PlanWise ESL vs. Twee for ESL lesson planning',
+  h1: 'PlanWise ESL vs. Twee: one complete lesson for your student, or activities you combine yourself',
   intro: [
     'Twee is one of the best-known AI toolkits built specifically for English teachers. Both Twee and PlanWise ESL are CEFR-aware and designed for ELT—not US K–12 classrooms—but they solve the job in two very different ways.',
-    'Twee gives you **individual modular AI tools** (reading generator, question generator, YouTube transcript tools, CEFR checker) that you stitch together yourself. PlanWise ESL builds **one complete, quality-checked pedagogical lesson** in 1–2 minutes—and remembers every student’s vocabulary across weeks.',
+    'Twee gives you **about 45 individual AI tools** (text and dialogue generators, question and gap-fill makers, audio and video tools, a CEFR checker) that you run one at a time and combine into a lesson yourself. It also has a public library of about 760 lesson plans, classes and assignments for students, and AI checking of student answers on Pro. PlanWise ESL builds **one complete, quality-checked pedagogical lesson** in 1–2 minutes—and remembers every student’s vocabulary across weeks.',
   ],
   verdict: {
     heading: 'PlanWise ESL vs. Twee: Which is better for 1-on-1 online ESL tutors?',
-    text: `**Choose ${brand}** (${priceText} Unlimited after a ${trialText}, no card) if you teach regular 1-on-1 students on [Preply, italki](/for/online-tutors), or privately and want a complete, verified CEFR A1–C2 conversation lesson ready in ${generationTime}—where words learned in earlier lessons reappear naturally in future readings, quizzes, and discussion/practice sections, backed by a zero-login student dashboard with **spaced-repetition flashcards** and a printable color-coded Vocabulary Review PDF. **Choose Twee** if you primarily want standalone, modular activity generators (like YouTube transcript questions or single-task worksheets) that you assemble into Google Docs yourself and do not need per-student memory.`,
+    text: `**Choose ${brand}** (${priceText} Unlimited after a ${trialText}, no card) if you teach regular 1-on-1 students on [Preply, italki](/for/online-tutors), or privately and want a complete, verified CEFR A1–C2 conversation lesson ready in ${generationTime}—which avoids re-teaching words the student already knows and reuses familiar ones where they fit, backed by a zero-login student dashboard with **spaced-repetition flashcards** and a printable color-coded Vocabulary Review PDF. **Choose Twee** if you primarily want standalone, modular activity generators (like YouTube transcript questions or single-task worksheets) that you combine into a lesson yourself, interactive class assignments with AI answer-checking, or the lowest monthly price, and do not need per-student memory.`,
   },
   sections: [
     {
@@ -247,12 +247,14 @@ export const compareTweePage: MarketingPage = {
         rows: [
           ['Core approach', 'Modular single-task AI tools that you run separately and assemble into a lesson', 'One cohesive 8-stage scientific pedagogical lesson generated in a single pass'],
           ['What is inside one lesson', 'Depends on which tools you combine (readings, questions, media transcripts, vocab tasks)', 'Warm-up recall, 5 pre-taught words (pronunciation, word families, collocations, usage notes, pictures), levelled reading, comprehension, recall flashcards, 5-part semantic maps, quiz, tiered sentence frames, fill-in-the-blanks, sentence unscramble & deep discussion'],
-          ['Per-student vocabulary memory', 'None — does not track what each learner has already studied across classes', 'Tracks learned words per student, avoids repeats, and recycles earlier vocabulary naturally into future readings, quizzes & practice sections'],
-          ['Student-facing portal', 'Shareable interactive activity links per task', 'Persistent private learner dashboard (no login): all past lessons, cumulative word list, spaced-repetition flashcards, topic suggestions & student-created custom lessons (Unlimited)'],
+          ['Per-student vocabulary memory', 'None — does not keep a record of the words each learner has already studied', 'Keeps a word list for each student: new lessons avoid re-teaching known words and reuse familiar ones where they fit'],
+          ['Student-facing features', 'Classes and assignments (with Google Classroom import), shareable interactive tasks, and AI checking of student answers on Pro', 'Persistent private learner dashboard (no login): all past lessons, cumulative word list, spaced-repetition flashcards, topic suggestions & student-created custom lessons (Unlimited)'],
           ['Printable student review', 'Export to PDF/Docs/Forms on paid plans', 'Complete printable Vocabulary Review study PDF (color-coded by part of speech, 4 examples per word, word families, common collocations, usage notes & semantic map)'],
           ['Quality checking', 'Teacher reviews each generated module manually', 'Automated section-by-section verification and repair before saving'],
-          ['Free trial', 'Restricted free trial (5 runs)', `${trialText} with unlimited lesson generations, no credit card`],
-          ['Individual paid pricing', 'Tiered paid plans (check twee.com/price for current rates)', `${priceText} Unlimited, cancel anytime`],
+          ['Free trial', 'Trial: 5 runs in total (Pro tools not included); Pro has a 3-day free trial', `${trialText} with unlimited lesson generations, no credit card`],
+          ['Individual paid pricing', 'Basic $9/month or $6.50/month billed annually (100 runs a month); Pro $15/month or $10.50/month billed annually (unlimited* runs of basic tools, fair use). Source: twee.com/price, 28 November 2026', `${priceText} Unlimited, cancel anytime`],
+          ['Free public lessons', 'About 760 lesson plans; on lessons not marked Free, visitors see the warm-up questions and the rest needs Pro', `${freeLessonsText} complete A1–C2 lessons, every section visible, no login ([open the library](/esl-lessons))`],
+          ['Lesson format', 'Many library lessons are written for groups (pair and partner tasks)', 'Written for one-to-one and small-group conversation'],
         ],
       },
     },
@@ -271,10 +273,10 @@ export const compareTweePage: MarketingPage = {
         ],
         competitorTitle: 'Twee Workflow (Manual Module Assembly)',
         competitorSteps: [
-          'Generate a reading passage in one Twee activity tool.',
-          'Open a second tool for comprehension questions, a third for vocabulary tasks, and a fourth for discussion prompts.',
-          'Copy, paste, and manually format the separate outputs into a document or slide deck for screen sharing.',
-          'Track what the student learned manually in notes—there is no automatic cross-lesson vocabulary recycling or persistent spaced-repetition flashcard hub.',
+          'Generate a text or dialogue in one Twee tool.',
+          'Run a second tool for comprehension questions, a third for vocabulary tasks and a fourth for discussion prompts. Each run counts towards the 5-run trial or Basic’s 100 runs a month.',
+          'Combine the outputs into a Twee lesson (or export them), then check that the level and vocabulary line up across the parts.',
+          'Keep track of what the student has already learned yourself: Twee has no per-student word list or student flashcard page.',
         ],
       },
     },
@@ -283,7 +285,8 @@ export const compareTweePage: MarketingPage = {
       bullets: [
         'You specifically want to extract transcripts and build standalone comprehension tasks directly from a YouTube video or audio clip.',
         'You enjoy mixing and matching individual worksheet generators to assemble your own custom handouts from scratch.',
-        'You teach one-off classroom exercises and do not need longitudinal per-student vocabulary tracking.',
+        'You teach classes and want interactive assignments with AI answer-checking, or the lowest monthly price (Twee Pro is $15/month, or $10.50 billed annually).',
+        'You teach one-off classroom exercises and do not need per-student vocabulary tracking.',
       ],
     },
     {
@@ -310,11 +313,15 @@ export const compareTweePage: MarketingPage = {
   faq: [
     {
       question: 'Is PlanWise ESL a good alternative to Twee?',
-      answer: `Yes—especially if you want full, structured conversation lessons instead of assembling isolated worksheet modules by hand. ${brand} adds per-student vocabulary tracking and recycling, private learner dashboards with flashcards, student-created custom lessons, and a complete printable Vocabulary Review study PDF.`,
+      answer: `Yes—especially if you want one complete conversation lesson for a particular student instead of combining separate activities. ${brand} adds a word list for each student, a private learner page with flashcards, student topic suggestions and student-created lessons, and a printable Vocabulary Review study PDF. Twee is cheaper per month and stronger for audio and video activities and class assignments.`,
     },
     {
       question: 'Does Twee track each student’s vocabulary across lessons?',
-      answer: 'Twee focuses on generating individual teaching activities and interactive task links rather than maintaining a longitudinal per-student vocabulary record that recycles earlier words into future readings. PlanWise ESL tracks learned words per student automatically.',
+      answer: 'No. Twee has classes and assignments, but it does not keep a list of the words each student has already learned. PlanWise ESL keeps one for every student automatically, so new lessons avoid re-teaching known words.',
+    },
+    {
+      question: 'What can I do when my Twee trial runs are used up?',
+      answer: `Twee’s trial includes 5 runs in total, and a full lesson usually needs several tools (a text, vocabulary, questions, discussion). You can upgrade Twee, or try ${brand}: open any of the ${freeLessonsText} [free lessons](/esl-lessons) with no account, or start the ${trialText} (no card) and make complete lessons for your students in ${generationTime} each.`,
     },
     {
       question: 'Can I test PlanWise ESL without a 5-run cap?',
@@ -328,7 +335,7 @@ export const compareTweePage: MarketingPage = {
     ...trialCta,
   },
   schemaType: 'WebPage',
-  updated,
+  updated: '2026-11-28',
 };
 
 export const compareEslBrainsPage: MarketingPage = {
@@ -345,7 +352,7 @@ export const compareEslBrainsPage: MarketingPage = {
   ],
   verdict: {
     heading: 'PlanWise ESL vs. ESL Brains: Which should adult ESL tutors choose?',
-    text: `**Choose ${brand}** (${priceText} Unlimited after a ${trialText}, no card) if you teach ongoing 1-on-1 or small-group adults who want unlimited custom career, industry, or hobby topics without hitting a catalogue ceiling—plus strict CEFR A1–C2 calibration, cross-lesson vocabulary recycling into future readings, quizzes and discussions ([see our 4-lesson live proof](/compare/student-memory-proof)), a zero-login student flashcard portal, and a printable color-coded Vocabulary Review PDF. **Choose ESL Brains** if you specifically want human-curated YouTube and podcast video lessons from a pre-made adult catalogue and do not need bespoke student topics or per-student vocabulary memory.`,
+    text: `**Choose ${brand}** (${priceText} Unlimited after a ${trialText}, no card) if you teach ongoing 1-on-1 or small-group adults who want unlimited custom career, industry, or hobby topics without hitting a catalogue ceiling—plus strict CEFR A1–C2 calibration, a word list for every student so new lessons avoid re-teaching known words ([see our 4-lesson live proof](/compare/student-memory-proof)), a zero-login student flashcard portal, and a printable color-coded Vocabulary Review PDF. **Choose ESL Brains** if you specifically want human-written lessons built around videos, podcasts and articles from a large pre-made adult catalogue, at a lower monthly price, and do not need bespoke student topics or per-student vocabulary memory.`,
   },
   sections: [
     {
@@ -353,14 +360,17 @@ export const compareEslBrainsPage: MarketingPage = {
       table: {
         headers: ['', 'ESL Brains', brand],
         rows: [
-          ['Lesson source', 'Pre-made catalogue of 1,000+ video, podcast and article lessons', `Custom AI-generated lessons on any topic in ${generationTime}—plus a growing free public library`],
+          ['Lesson source', 'Pre-made catalogue of about 1,240 human-written lessons built around videos, podcasts and articles, with new lessons every month', `Custom AI-generated lessons on any topic in ${generationTime}—plus a growing free public library`],
           ['Niche student topics', 'Only what exists in the catalogue', 'Anything your student cares about: fashion retail, football marketing, software interviews, medicine, hobbies'],
           ['Pedagogical structure', 'Curated video-led speaking and vocabulary activities (PDF & e-lesson)', 'Consistent 8-stage scientific sequence: warm-up recall, rich vocab (pronunciation, word families, collocations, usage notes, pictures), levelled reading, comprehension, recall flashcards, 5-part semantic maps, quiz, tiered sentence frames, fill-in-the-blanks, sentence unscramble & deep discussion'],
-          ['Per-student vocabulary memory', 'None', 'Tracks each student’s learned words and recycles them into future readings & questions'],
+          ['Per-student vocabulary memory', 'None', 'Keeps a word list for each student: new lessons avoid re-teaching known words and reuse familiar ones where they fit'],
           ['Student-created custom lessons', 'None', 'Students can create custom lessons on any subject at their level (Unlimited)'],
           ['Between-class learner portal', 'Screen-shareable e-lessons; no cumulative student flashcard dashboard', 'Private learner dashboard (no login): all past lessons, word list, spaced flashcards & next-lesson preview'],
           ['Take-home vocabulary study PDF', 'Lesson worksheet PDF', 'Dedicated Vocabulary Review study PDF (color-coded by part of speech, 4 examples/word, word families, collocations, usage notes & 5-part semantic map)'],
-          ['Other languages', 'English only', 'Built for ESL/EFL; tutors can also specify another target language in the topic box'],
+          ['Lesson format', 'Mostly pair work and role-plays around a video; some lessons cover two levels (for example A1/A2)', 'Written for one-to-one and small-group conversation, at one CEFR level from A1 to C2'],
+          ['AI features', 'Revision Tasks Generator (Unlimited plan only) and an assistant that suggests catalogue lessons for a student’s level and interests', `Makes a complete new lesson for the student in ${generationTime}`],
+          ['Free to open', 'Free Basic plan with 38 lessons; public lesson pages describe the lesson, and the worksheets need an account or a paid plan', `${freeLessonsText} complete lessons, every section visible, no login ([open the library](/esl-lessons))`],
+          ['Price', 'Basic free; Premium $7/month or $74/year; Unlimited $15/month or $153/year. Source: eslbrains.com/pricing, 28 November 2026', `${priceText} Unlimited after a ${trialText} (no card)`],
         ],
       },
     },
@@ -374,7 +384,7 @@ export const compareEslBrainsPage: MarketingPage = {
         planwiseSteps: [
           'Pick your student, select C1, and enter "Presenting Quarterly Risks and Uncertain Forecasts to Executives".',
           'Open a complete, verified 9-section lesson ([inspect live Lesson 2048](/esl-lessons/c1/delivering-the-numbers-talking-about-risk-and-uncertainty)): warm-up, boardroom reading (*The Quarterly Meeting Maya Dreaded*), 5 C1 words (`caveat`, `hedge`, `contingency`, `downplay`, `scrutiny`) with collocations & semantic maps, 4 idioms (`warts and all`, `blow up`, `walk someone through`, `push back`), 3-tier qualifying/conceding speaking frames, cloze, unscramble, discussion, and quiz. Custom illustrations finish loading about a minute later—usually ready by the time you finish the warm-up.',
-          'Mark the lesson "We did this" so all 9 items log to the student’s memory and resurface naturally in future lessons with zero duplicate target teaching ([4-lesson proof](/compare/student-memory-proof)).',
+          'Mark the lesson "We did this" so all 9 items go on the student’s word list: later lessons don’t re-teach them as new words and can reuse them where they fit ([4-lesson proof](/compare/student-memory-proof)).',
           'Share the student’s zero-login spaced-repetition flashcard link and one-click printable Vocabulary Review PDF.',
         ],
         competitorTitle: 'ESL Brains Workflow (Fixed Video Catalogue)',
@@ -382,7 +392,7 @@ export const compareEslBrainsPage: MarketingPage = {
           'Search the fixed ESL Brains catalogue for a C1 risk-forecasting video lesson—or pick the closest general business video if that exact scenario is not in the library.',
           'Double-check that your regular student has not already completed that catalogue lesson and that the embedded YouTube video still loads cleanly.',
           'Teach the curated video worksheet; if you want explicit 3-tier boardroom speaking frames (qualifying, adding caveats, conceding under questioning), build them yourself.',
-          'Track learned vocabulary manually outside ESL Brains—there is no automatic cross-lesson vocabulary recycling or cumulative spaced-repetition flashcard dashboard.',
+          'Keep track of learned vocabulary yourself: ESL Brains has no per-student word list or student flashcard page.',
         ],
       },
     },
@@ -392,22 +402,23 @@ export const compareEslBrainsPage: MarketingPage = {
         'You specifically want lessons built around curated YouTube videos and authentic listening clips.',
         'You prefer browsing a fixed, human-edited catalogue rather than generating custom topics.',
         'You teach mostly general-interest adult classes where pre-made topics cover what you need.',
+        'You want the lower price: ESL Brains Premium is $7/month and Unlimited $15/month.',
       ],
     },
     {
       heading: `When ${brand} is the better choice`,
       bullets: [
         'You teach regular one-to-one students with specific jobs, industries or hobbies that no fixed library covers—or you teach high volume and run out of fresh catalogue lessons.',
-        'You want longitudinal vocabulary tracking so earlier words return naturally in future readings and questions.',
+        'You want each student’s learned words tracked automatically, so new lessons build on them instead of repeating them.',
         'You want every student to have a private learner dashboard with flashcards and the option to suggest topics or create custom lessons themselves.',
         'You want a comprehensive Vocabulary Review study PDF (word families, common collocations, usage notes and synonyms/antonyms) ready to send after every class.',
       ],
     },
     {
-      heading: 'Why high-volume tutors switch from ESL Brains to PlanWise ESL',
+      heading: 'What PlanWise ESL adds for high-volume one-to-one tutors',
       bullets: [
         '**Never run out of topics at your student’s level:** Fixed catalogues eventually run dry for long-term 1-on-1 students—or miss niche career, tech, medical and hobby topics altogether. PlanWise ESL generates a full 8-stage CEFR A1–C2 lesson on any topic in 1–2 minutes.',
-        '**Vocabulary that actually sticks across weeks:** ESL Brains lessons are isolated one-offs. PlanWise ESL tracks learned words per student, prevents duplicates, recycles earlier vocabulary naturally when relevant ([live 4-lesson memory proof](/compare/student-memory-proof)), and gives learners a zero-login [student dashboard](/student-experience).',
+        '**Vocabulary that builds across weeks:** each ESL Brains lesson stands on its own. PlanWise ESL keeps a word list for each student, avoids re-teaching known words, reuses familiar ones where they fit ([live 4-lesson memory proof](/compare/student-memory-proof)), and gives learners a zero-login [student dashboard](/student-experience).',
         '**Inspect full lessons free with no login:** Compare live public lessons across levels—[First Day at a New Job (A1)](/esl-lessons/a1/first-day-at-a-new-job-meeting-your-team), [Handling Difficult Guests Like a Pro (B1)](/esl-lessons/b1/handling-difficult-guests-like-a-pro), [Delivering the Numbers: Talking About Risk and Uncertainty (C1)](/esl-lessons/c1/delivering-the-numbers-talking-about-risk-and-uncertainty), and [Between Two Worlds (C1)](/esl-lessons/c1/between-two-worlds-identity-and-feeling-at-home)—or browse the full [public A1–C2 ESL lesson library](/esl-lessons) and download any Vocabulary Review PDF before starting a trial.',
       ],
     },
@@ -415,7 +426,15 @@ export const compareEslBrainsPage: MarketingPage = {
   faq: [
     {
       question: 'What is the best alternative to ESL Brains for custom student topics?',
-      answer: `${brand} is built specifically for tutors who love structured adult conversation lessons but need unlimited custom topics tailored to each student. It builds a complete CEFR A1–C2 lesson in ${generationTime}, tracks and recycles every student’s vocabulary across lessons, and includes a private learner dashboard and Vocabulary Review study PDF.`,
+      answer: `${brand} is built specifically for tutors who love structured adult conversation lessons but need unlimited custom topics tailored to each student. It builds a complete CEFR A1–C2 lesson in ${generationTime}, keeps a word list for every student, and includes a private learner dashboard and Vocabulary Review study PDF.`,
+    },
+    {
+      question: 'Is there a free alternative to ESL Brains with complete lessons?',
+      answer: `Yes. ${brand} publishes ${freeLessonsText} complete A1–C2 conversation lessons at /esl-lessons with every section visible and no login: warm-up, five key words, a levelled reading, comprehension, speaking frames and discussion, plus a printable study PDF. ESL Brains’ free Basic plan includes 38 lessons.`,
+    },
+    {
+      question: 'What is a good ESL Brains alternative for A1–A2 adults?',
+      answer: `${brand} writes separate A1 and A2 lessons for adults, with short definitions, a simple reading and speaking frames at three levels of support. You can open free A1 and A2 lessons at /esl-lessons/a1 and /esl-lessons/a2, or make one on your student’s own topic in ${generationTime}.`,
     },
     {
       question: 'Can I use PlanWise ESL alongside ESL Brains?',
@@ -433,7 +452,7 @@ export const compareEslBrainsPage: MarketingPage = {
     ...trialCta,
   },
   schemaType: 'WebPage',
-  updated,
+  updated: '2026-11-28',
 };
 
 export const compareLinguahousePage: MarketingPage = {

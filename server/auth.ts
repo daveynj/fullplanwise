@@ -9,6 +9,7 @@ import { User as SelectUser } from "@shared/schema";
 import { v4 as uuidv4 } from "uuid";
 import { mailchimpService } from "./services/mailchimp.service";
 import { restrictRegistrationCountry } from "./registration-country";
+import { sendGaEvent, SERVER_TRACKED_HEADER } from "./ga-measurement";
 
 declare global {
   namespace Express {
@@ -221,6 +222,12 @@ export function setupAuth(app: Express) {
           // Log but don't fail registration if marketing list addition fails
           console.error('Error adding user to marketing list:', emailError);
         }
+      }
+
+      // Report the sign-up to Google Analytics from the server, so ad blockers
+      // can't lose it; the browser only sends it when this didn't work.
+      if (await sendGaEvent(req.headers.cookie, "sign_up", { method: "email" }, { timeoutMs: 1500 })) {
+        res.setHeader(SERVER_TRACKED_HEADER, "sign_up");
       }
 
       req.login(user, (err) => {

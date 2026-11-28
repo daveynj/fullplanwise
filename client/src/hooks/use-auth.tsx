@@ -57,11 +57,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const registerMutation = useMutation({
     mutationFn: async (credentials: InsertUser) => {
       const res = await apiRequest("POST", "/api/register", credentials);
-      return await res.json();
+      const user = await res.json();
+      // The server reports sign-ups to GA itself (ad blockers can't lose
+      // those); send it from the browser only when the server couldn't.
+      if (res.headers.get("X-Analytics-Tracked") !== "sign_up") {
+        trackEvent("sign_up", { method: "email" });
+      }
+      return user;
     },
     onSuccess: (user: Omit<SelectUser, 'password'>) => {
       queryClient.setQueryData(["/api/user"], user);
-      trackEvent("sign_up", { method: "email" });
       toast({
         title: "Registration successful",
         description: `Welcome, ${user.fullName}!`,
