@@ -2,8 +2,10 @@ import { storage } from "./storage";
 
 /**
  * What the teacher saved about a student (students.notes), for the lesson
- * prompt. Only the teacher's own student; never throws (a lesson is still
- * made without it).
+ * prompt of a lesson the TEACHER makes. Only the teacher's own student;
+ * never throws (a lesson is still made without it). Lessons students make
+ * themselves never use these notes (shared/student-page.ts: the student never
+ * sees the teacher's private notes).
  */
 export async function studentContextFor(studentId: number | undefined, teacherId: number): Promise<string | undefined> {
   if (!studentId) return undefined;
