@@ -200,7 +200,7 @@ export const freeLibraryFaq = [
   {
     question: 'Are these ESL conversation lessons completely free with no login?',
     answer:
-      'Yes. Over 180 complete CEFR A1–C2 adult conversation lessons across 17 curated themes at planwiseesl.com/esl-lessons are 100% free to open, screen-share in full-screen mode, and download as printable Vocabulary Review PDFs with zero account or signup required.',
+      'Yes. Over 200 complete CEFR A1–C2 adult conversation lessons across 17 curated themes at planwiseesl.com/esl-lessons are 100% free to open, screen-share in full-screen mode, and download as printable Vocabulary Review PDFs with zero account or signup required.',
   },
   {
     question: 'How do I teach a free PlanWise ESL lesson in a 30-minute or 60-minute class?',

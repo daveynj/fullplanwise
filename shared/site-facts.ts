@@ -25,11 +25,11 @@ export const siteFacts = {
   levels: 'A1–C2',
   email: 'dave@planwiseesl.com',
   /**
-   * A floor for the number of free public lessons, used in copy as "180+" or
-   * "over 180". The library pages show the live count. Raise this when the
+   * A floor for the number of free public lessons, used in copy as "200+" or
+   * "over 200". The library pages show the live count. Raise this when the
    * library passes the next round number; a test checks every page agrees.
    */
-  freeLessonCount: 180,
+  freeLessonCount: 200,
 } as const;
 
 export const freeLessonsText = `${siteFacts.freeLessonCount}+`;
