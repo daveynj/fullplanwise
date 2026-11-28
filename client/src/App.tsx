@@ -128,6 +128,10 @@ function Router() {
       <Route path="/guides/esl-conversation-topics-by-level" component={MarketingPage} />
       <Route path="/guides/cefr-levels-explained" component={MarketingPage} />
       <Route path="/guides/personalise-esl-lessons" component={MarketingPage} />
+      <Route path="/guides/free-esl-conversation-lessons-for-adults" component={MarketingPage} />
+      <Route path="/guides/free-b1-esl-conversation-lessons" component={MarketingPage} />
+      <Route path="/guides/christmas-and-new-year-esl-lessons-for-adults" component={MarketingPage} />
+      <Route path="/guides/30-minute-online-esl-conversation-lesson" component={MarketingPage} />
       <Route path="/forgot-password" component={ForgotPasswordPage} />
       <Route path="/reset-password/:token" component={ResetPasswordPage} />
       <Route path="/twitter-card" component={TwitterCardPreview} />
