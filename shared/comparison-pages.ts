@@ -66,7 +66,7 @@ export const compareHubPage: MarketingPage = {
       table: {
         headers: ['Tool', 'Type', 'Custom topics for your student', 'Remembers each student’s vocabulary', 'Free option', 'Paid from', 'Best for'],
         rows: [
-          [`**${brand}**`, 'AI lesson builder + free library', `Yes — full lesson in ${generationTime}`, 'Yes — tracks, avoids repeats & recycles words', '180+ free lessons, no login + 5-day trial', `${priceText}, unlimited lessons & students`, '1-on-1 & small-group conversation, A1–C2'],
+          [`**${brand}**`, 'AI lesson builder + free library', `Yes — full lesson in ${generationTime}`, 'Yes — tracks, avoids repeats & recycles words', '180+ free lessons, no login + 14-day trial', `${priceText}, unlimited lessons & students`, '1-on-1 & small-group conversation, A1–C2'],
           ['[Engoo Daily News](/compare/engoo)', 'Free news library', 'No', 'No', 'Yes', 'Free', 'Daily news discussion'],
           ['[Breaking News English](/compare/breaking-news-english)', 'Free news library', 'No', 'No', 'Yes (3,000+ handouts)', 'Free', 'News reading & graded listening'],
           ['[PrintDiscuss](/compare/printdiscuss)', 'Question lists', 'No', 'No', 'Yes', 'Free', 'Free-talk with fluent students'],
@@ -446,7 +446,7 @@ export const compareEslBrainsPage: MarketingPage = {
     },
     {
       question: 'Does PlanWise ESL have sample lessons I can inspect first?',
-      answer: 'Yes. You can inspect complete, ready-to-teach lessons at every level in our public library at /esl-lessons, or test unlimited custom lessons during your 5-day free trial (no credit card required).',
+      answer: 'Yes. You can inspect complete, ready-to-teach lessons at every level in our public library at /esl-lessons, or test unlimited custom lessons during your 14-day free trial (no credit card required).',
     },
   ],
   disclaimer: 'PlanWise ESL is not affiliated with or endorsed by ESL Brains. Product features and pricing can change—check eslbrains.com for current details.',
@@ -1499,7 +1499,7 @@ export const compareBreakingNewsEnglishPage: MarketingPage = {
     },
     {
       question: 'Does PlanWise ESL only cover news, or any conversation topic?',
-      answer: 'Any topic. The free library covers career, travel, technology, AI, culture, holidays and everyday conversation, and registered teachers (free 5-day trial or $19.99/month Unlimited) can generate bespoke lessons on any niche student interest in 1–2 minutes.',
+      answer: 'Any topic. The free library covers career, travel, technology, AI, culture, holidays and everyday conversation, and registered teachers (free 14-day trial or $19.99/month Unlimited) can generate bespoke lessons on any niche student interest in 1–2 minutes.',
     },
     {
       question: 'Why does PlanWise ESL use 5 target words and an 8-stage sequence instead of dozens of drills?',
@@ -1769,7 +1769,7 @@ export const compareImmerlyPage: MarketingPage = {
           'Open any of 180+ free A1–C2 lessons across 17 themes with zero signup—complete with full-screen teaching mode and a 30/60-minute pacing guide.',
           'Pre-teach 5 illustrated words in depth (phonetics, levelled definition, 4 examples, word family, collocations, usage notes, semantic map), read a ~96%-familiar text, run flashcards/tiered frames/exercises, and spend the core of class talking.',
           'Click Download for PDF at the top of any free lesson to save/print the colour-coded study sheet for your student.',
-          'When you add regular students on a free 5-day trial or Unlimited ($19.99/mo), build custom topics in 1–2 minutes without ever repeating previously learned vocabulary.',
+          'When you add regular students on a free 14-day trial or Unlimited ($19.99/mo), build custom topics in 1–2 minutes without ever repeating previously learned vocabulary.',
         ],
         competitorTitle: 'Static No-Signup Library Workflow (Immerly)',
         competitorSteps: [

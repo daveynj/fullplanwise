@@ -8,7 +8,7 @@ paid subscription, or production restriction has been created or activated.
 External staging remains **unverified** until the owner supplies account access
 through supported secure flows and approves the steps below.
 
-Policy: block **new teacher accounts and their automatically started five-day
+Policy: block **new teacher accounts and their automatically started 14-day
 trials** for India (`IN`) and Bangladesh (`BD`). Do not revoke existing accounts,
 existing trials, or paid subscriptions. Public lessons and their images, the
 library, private student pages, existing-member login, subscription management,
@@ -164,7 +164,7 @@ staging isolation, pricing/limits, and rollback ownership are agreed.
 5. Verify exactly once through the completed staged setup:
    - IN and BD registration attempts get the regional message and create no user,
      trial, session or Mailchimp enrollment.
-   - Eligible-country signup gets the existing five-day trial and a functioning
+   - Eligible-country signup gets the existing 14-day trial and a functioning
      session. Existing users can sign in from IN/BD without any gateway signature
      on their login request.
    - Direct `.replit.app` signup, forged headers, changed bodies/queries,

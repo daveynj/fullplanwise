@@ -64,6 +64,8 @@ import fs from 'fs/promises';
 import path from 'path';
 import multer from 'multer';
 import { sendGaEvent } from './ga-measurement';
+import { ensureUserSignupDate } from './user-signup-date-schema';
+import { getActivationReport } from './activation-funnel';
 import { siteFacts } from '@shared/site-facts';
 
 // In-memory job store for async lesson generation
@@ -147,6 +149,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // without delaying start-up; API requests wait for it only while it runs,
   // because student queries select the new columns.
   void ensureStudentPageSchema();
+  // users.created_at (sign-up date) for the admin activation report. Not in
+  // the drizzle users schema, so nothing else waits for it.
+  void ensureUserSignupDate().catch(() => {});
   app.use("/api", async (_req, _res, next) => {
     await ensureStudentPageSchema();
     next();
@@ -404,6 +409,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
       const student = await storage.createStudent(validatedData);
       res.status(201).json(student);
+      if (!(req.user as { isAdmin?: boolean } | undefined)?.isAdmin) {
+        void sendGaEvent(req.headers.cookie, "student_added", { cefr_level: student.cefrLevel || "" });
+      }
     } catch (error: any) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ message: "Invalid student data", errors: error.errors });
@@ -723,7 +731,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       const { status } = req.body ?? {};
       if (status === LESSON_STATUS_DONE) {
-        return res.json(await storage.markStudentLessonDone(assignment.id));
+        const done = await storage.markStudentLessonDone(assignment.id);
+        if (!(req.user as { isAdmin?: boolean } | undefined)?.isAdmin) {
+          void sendGaEvent(req.headers.cookie, "lesson_marked_taught", {});
+        }
+        return res.json(done);
       }
       if (status === LESSON_STATUS_PLANNED) {
         return res.json({ assignment: await storage.markStudentLessonPlanned(assignment.id), wordsAdded: 0 });
@@ -1188,6 +1200,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Respond immediately — generation happens in background
       console.log(`Created lesson generation job ${jobId} for user ${user.id}, topic: ${validatedData.topic}`);
       res.json({ jobId });
+
+      // Activation steps for Google Analytics (server-side, never blocks the
+      // job): a lesson for a particular student, and whether it is that
+      // student's second or later lesson, where their word list starts to show.
+      if (validatedData.studentId && !user.isAdmin) {
+        const cookie = req.headers.cookie;
+        const studentId = Number(validatedData.studentId);
+        void (async () => {
+          try {
+            const earlier = await db.execute(sql`
+              SELECT count(*)::int AS n FROM lessons WHERE teacher_id = ${user.id} AND student_id = ${studentId}
+            `);
+            const n = Number((earlier.rows[0] as { n?: number } | undefined)?.n ?? 0);
+            await sendGaEvent(cookie, "student_lesson_started", { earlier_lessons: n });
+            if (n === 1) await sendGaEvent(cookie, "second_lesson_same_student", {});
+          } catch (error) {
+            console.warn("[GA] Could not record the student lesson step:", error);
+          }
+        })();
+      }
 
       // Run generation entirely in background
       (async () => {
@@ -1758,6 +1790,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/subscriptions/create", ensureAuthenticated, subscriptionCheckoutRoute);
   app.post("/api/subscriptions/cancel", ensureAuthenticated, subscriptionCancelRoute);
+
+  // Admin: how far teachers get towards a second lesson for the same student.
+  app.get("/api/admin/activation", ensureAuthenticated, async (req, res) => {
+    try {
+      const currentUser = await storage.getUser(req.user!.id);
+      if (!currentUser?.isAdmin) {
+        return res.status(403).json({ message: "Unauthorized. Admin privileges required." });
+      }
+      res.json(await getActivationReport());
+    } catch (error) {
+      console.error("Error building activation report:", error);
+      res.status(500).json({ message: "Could not build the activation report" });
+    }
+  });
 
   // Admin analytics endpoint  
   app.get("/api/admin/analytics", ensureAuthenticated, async (req, res) => {

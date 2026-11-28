@@ -789,7 +789,7 @@ export default function LandingPage() {
                   <p className="text-2xl md:text-3xl font-nunito font-bold text-emerald-700">
                     $0
                   </p>
-                  <p className="text-xs text-slate-600 mt-1">To try free for 5 days</p>
+                  <p className="text-xs text-slate-600 mt-1">To try free for 14 days</p>
                 </div>
               </div>
             </div>

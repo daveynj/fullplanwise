@@ -471,7 +471,7 @@ export default function FullScreenLessonPage() {
                   </div>
                   <div>
                     <p className="text-xs uppercase tracking-wider text-brand-yellow font-semibold mb-1">
-                      For ESL teachers · 5-day free trial
+                      For ESL teachers · 14-day free trial
                     </p>
                     <h2 className="font-nunito text-xl font-bold">
                       Create lessons like this on any topic

@@ -102,7 +102,7 @@ export const studentExperiencePage: MarketingPage = {
   ],
   cta: {
     heading: 'Inspect a real public lesson and download the study sheet',
-    text: 'Open any free lesson in our public library at [/esl-lessons](/esl-lessons) to test the Vocabulary Review download with zero login—or start your 5-day free trial to make one for your own student.',
+    text: 'Open any free lesson in our public library at [/esl-lessons](/esl-lessons) to test the Vocabulary Review download with zero login—or start your 14-day free trial to make one for your own student.',
     ...trialCta,
   },
   schemaType: 'WebPage',

@@ -221,7 +221,7 @@ export default function AuthPage() {
                           onClick={() => setActiveTab("register")}
                           className="font-semibold text-brand-navy underline decoration-brand-yellow decoration-2 underline-offset-2"
                         >
-                          New here? Try free for 5 days →
+                          New here? Try free for 14 days →
                         </button>
                       </div>
                     </form>
@@ -331,7 +331,7 @@ export default function AuthPage() {
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                             Setting up your account...
                           </>
-                        ) : "Start My 5-Day Free Trial"}
+                        ) : "Start My 14-Day Free Trial"}
                       </Button>
 
                       <p className="flex items-center justify-center gap-1.5 text-xs text-slate-500 pt-1 text-center">

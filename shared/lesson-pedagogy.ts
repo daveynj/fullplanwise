@@ -225,7 +225,7 @@ export const freeLibraryFaq = [
   {
     question: 'What if my student wants a lesson on a specific job or topic not in the free library?',
     answer:
-      'You can create a student profile in PlanWise ESL (5-day unlimited free trial, no credit card) to generate a complete CEFR A1–C2 lesson on any topic in 1–2 minutes, with automatic per-student vocabulary tracking, cross-lesson recycling, and a password-free learner flashcard dashboard.',
+      'You can create a student profile in PlanWise ESL (14-day unlimited free trial, no credit card) to generate a complete CEFR A1–C2 lesson on any topic in 1–2 minutes, with automatic per-student vocabulary tracking, cross-lesson recycling, and a password-free learner flashcard dashboard.',
   },
 ];
 
