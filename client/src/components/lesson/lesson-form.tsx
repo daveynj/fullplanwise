@@ -25,6 +25,8 @@ import { useTrialStatus } from "@/hooks/use-trial-status";
 import { useAuth } from "@/hooks/use-auth";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { TaughtPrompt } from "@/components/lesson/taught-prompt";
+import { apiRequest, queryClient } from "@/lib/queryClient";
+import { initialStudentMode, type StudentMode } from "@/components/lesson/student-mode";
 
 // Define CEFR levels
 const cefrLevels = [
@@ -123,6 +125,21 @@ export function LessonForm({ students, onSubmit, initialStudentId, initialTopic,
   const selectedStudentId = form.watch("studentId");
   const selectedStudent = students.find((s) => String(s.id) === selectedStudentId);
 
+  // "Who is this lesson for?" Teachers with students pick one; teachers
+  // without any type a first name, which creates the student on the spot.
+  // A lesson for a named student is what makes PlanWise remember their words.
+  const [studentMode, setStudentMode] = useState<StudentMode>(() => initialStudentMode(students.length, initialStudentId));
+  const [newStudentName, setNewStudentName] = useState("");
+  const [newStudentAbout, setNewStudentAbout] = useState("");
+  const [askedForName, setAskedForName] = useState(false);
+  const [creatingStudent, setCreatingStudent] = useState(false);
+  const [studentError, setStudentError] = useState<string | null>(null);
+  useEffect(() => {
+    // Students load after the form: switch to picking one once they arrive,
+    // unless the teacher already started typing a new name.
+    if (students.length > 0 && studentMode === "new" && !newStudentName.trim()) setStudentMode("existing");
+  }, [students.length]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // The idioms & phrasal verbs switch follows the level's default until the
   // teacher changes it; it is never offered for A1.
   const [expressionsChoice, setExpressionsChoice] = useState<boolean | null>(null);
@@ -134,7 +151,44 @@ export function LessonForm({ students, onSubmit, initialStudentId, initialTopic,
   const expressionsRules = expressionsRulesFor(cefrLevel);
   const expressionsOn = includesExpressions(cefrLevel);
 
-  const handleSubmit = (values: FormValues) => {
+  const handleSubmit = async (values: FormValues) => {
+    setStudentError(null);
+    if (studentMode === "new") {
+      const name = newStudentName.trim();
+      if (!name && !askedForName) {
+        // Ask once; pressing Generate again makes the lesson without a student.
+        setAskedForName(true);
+        return;
+      }
+      if (name) {
+        setCreatingStudent(true);
+        try {
+          const res = await apiRequest("POST", "/api/students", {
+            name,
+            cefrLevel: values.cefrLevel,
+            ...(newStudentAbout.trim() ? { notes: newStudentAbout.trim() } : {}),
+          });
+          const created = (await res.json()) as { id: number };
+          // Counted in Analytics by the server (student_added), not here.
+          await queryClient.invalidateQueries({ queryKey: ["/api/students"] });
+          values = { ...values, studentId: String(created.id) };
+          form.setValue("studentId", String(created.id));
+          setStudentMode("existing");
+          setNewStudentName("");
+          setNewStudentAbout("");
+        } catch {
+          setStudentError("We couldn’t save the student. Try again, or choose “Just exploring”.");
+          setCreatingStudent(false);
+          return;
+        }
+        setCreatingStudent(false);
+      } else {
+        values = { ...values, studentId: "none" };
+      }
+    } else if (studentMode === "none") {
+      values = { ...values, studentId: "none" };
+    }
+
     // Convert studentId to number if it exists and isn't 'none'
     const parsedValues = {
       ...values,
@@ -173,33 +227,122 @@ export function LessonForm({ students, onSubmit, initialStudentId, initialTopic,
         
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-5">
-            {/* Student selection */}
-            <FormField
-              control={form.control}
-              name="studentId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="font-semibold">Student</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="w-full bg-white">
-                        <SelectValue placeholder="Select a student" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="none">No specific student</SelectItem>
-                      {students.map((student) => (
-                        <SelectItem key={student.id} value={student.id.toString()}>
-                          {student.name} ({student.cefrLevel})
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
+            {/* Who is this lesson for? */}
+            <div className="rounded-lg border-2 border-primary/30 bg-primary/5 p-4 space-y-3" data-testid="who-is-this-for">
+              <div>
+                <p className="font-semibold text-gray-900">Who is this lesson for?</p>
+                <p className="text-sm text-gray-600">
+                  PlanWise remembers each student’s words, so their next lesson builds on this one instead of starting again.
+                </p>
+              </div>
+
+              {studentMode === "existing" && students.length > 0 && (
+                <FormField
+                  control={form.control}
+                  name="studentId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="sr-only">Student</FormLabel>
+                      <Select
+                        onValueChange={(value) => {
+                          if (value === "__new") {
+                            setStudentMode("new");
+                            field.onChange("none");
+                          } else {
+                            field.onChange(value);
+                          }
+                        }}
+                        value={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="w-full bg-white">
+                            <SelectValue placeholder="Choose a student" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {students.map((student) => (
+                            <SelectItem key={student.id} value={student.id.toString()}>
+                              {student.name} ({student.cefrLevel})
+                            </SelectItem>
+                          ))}
+                          <SelectItem value="__new">+ A new student</SelectItem>
+                          <SelectItem value="none">No specific student (just exploring)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               )}
-            />
-            {selectedStudent && <TaughtPrompt studentId={selectedStudent.id} studentName={selectedStudent.name} />}
+
+              {studentMode === "new" && (
+                <div className="space-y-2">
+                  <Input
+                    aria-label="Student’s first name"
+                    placeholder="Their first name, e.g. Maria"
+                    value={newStudentName}
+                    onChange={(e) => {
+                      setNewStudentName(e.target.value);
+                      setAskedForName(false);
+                    }}
+                    className="bg-white"
+                    maxLength={60}
+                  />
+                  <Input
+                    aria-label="About the student (optional)"
+                    placeholder="Optional: their job or interests, e.g. nurse, loves football"
+                    value={newStudentAbout}
+                    onChange={(e) => setNewStudentAbout(e.target.value)}
+                    className="bg-white"
+                    maxLength={200}
+                  />
+                  <p className="text-xs text-gray-500">Their level is the CEFR level you choose below. You can change any of this later.</p>
+                  {askedForName && !newStudentName.trim() && (
+                    <p className="text-sm text-amber-800" role="status">
+                      Add their first name so PlanWise can remember their words, or press Generate again to make this lesson without a student.
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {studentMode === "none" && (
+                <p className="text-sm text-gray-700">This lesson won’t be saved to a student.</p>
+              )}
+
+              <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
+                {studentMode !== "existing" && students.length > 0 && (
+                  <button type="button" className="text-primary underline underline-offset-2" onClick={() => setStudentMode("existing")}>
+                    Choose one of my students
+                  </button>
+                )}
+                {studentMode !== "new" && (
+                  <button
+                    type="button"
+                    className="text-primary underline underline-offset-2"
+                    onClick={() => {
+                      setStudentMode("new");
+                      form.setValue("studentId", "none");
+                    }}
+                  >
+                    {students.length > 0 ? "Add a new student" : "Add a student"}
+                  </button>
+                )}
+                {studentMode !== "none" && (
+                  <button
+                    type="button"
+                    className="text-gray-500 underline underline-offset-2"
+                    onClick={() => {
+                      setStudentMode("none");
+                      form.setValue("studentId", "none");
+                    }}
+                  >
+                    Just exploring
+                  </button>
+                )}
+              </div>
+              {studentError && <p className="text-sm text-red-700" role="alert">{studentError}</p>}
+            </div>
+            {studentMode === "existing" && selectedStudent && <TaughtPrompt studentId={selectedStudent.id} studentName={selectedStudent.name} />}
             
             {/* Category */}
             <FormField
@@ -368,7 +511,7 @@ export function LessonForm({ students, onSubmit, initialStudentId, initialTopic,
               <Button 
                 type="submit" 
                 className="bg-primary hover:bg-primary-light text-white font-semibold px-6 py-3 rounded-lg flex items-center transition w-full justify-center"
-                disabled={!canGenerate || form.formState.isSubmitting}
+                disabled={!canGenerate || form.formState.isSubmitting || creatingStudent}
               >
                 <Wand2 className="mr-2 text-xl" /> Generate Lesson
                 {(isInTrial || isSubscriber) && (
