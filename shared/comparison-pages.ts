@@ -9,6 +9,7 @@
  *  - /compare/linguahouse
  *  - /compare/off2class
  *  - /compare/student-memory-proof
+ *  - /compare/same-lesson-three-tools
  * (Plus /compare/chatgpt in shared/marketing-pages.ts.)
  *
  * Rendered by the same single-source system as shared/marketing-pages.ts
@@ -137,6 +138,7 @@ export const compareHubPage: MarketingPage = {
         '[PlanWise ESL vs. Immerly](/compare/immerly) — 100+ zero-signup A1–C1 lessons vs. 180+ free A1–C2 lessons, printable study PDFs, custom topics and vocabulary recycling.',
         '[PlanWise ESL vs. ESL Joy](/compare/esl-joy) — Editable AI slide decks vs. a complete checked 8-stage lesson, vocabulary recycling, student dashboards and study PDFs.',
         '[PlanWise ESL vs. Twee](/compare/twee) — Single-task AI tools vs. one complete, checked lesson with student vocabulary memory.',
+        '[Same B1 lesson in PlanWise ESL, Twee and ESL Brains](/compare/same-lesson-three-tools) — One topic, three tools: what each gave us, how long it took and what it costs (tested 28 November 2026).',
         '[PlanWise ESL vs. MagicSchool AI & Diffit](/compare/magicschool-diffit) — US K–12 school tools vs. CEFR A1–C2 conversation lessons for teens and adults.',
         '[PlanWise ESL vs. ESL Brains](/compare/esl-brains) — Fixed adult video-lesson catalogue vs. unlimited custom topics, vocabulary recycling and learner dashboards.',
         '[PlanWise ESL vs. Fluentize](/compare/fluentize) — 700+ YouTube video lessons vs. custom A1–C2 lessons with no broken links, vocabulary recycling and dashboards.',
@@ -296,6 +298,7 @@ export const compareTweePage: MarketingPage = {
         'You teach regular one-to-one or small-group students on [Preply or italki](/for/online-tutors), [privately](/for/freelance-esl-teachers), or at a [language school](/for/language-schools) and want each lesson to build on the words the student already learned.',
         'You want every student to leave class with a polished Vocabulary Review study PDF (including common collocations, word families, usage notes and synonyms/antonyms) plus a private learner dashboard with spaced-repetition flashcards.',
         'You want students to suggest topics or create their own custom lessons on any subject between classes.',
+        'See the [same B1 lesson made in PlanWise ESL, Twee and ESL Brains](/compare/same-lesson-three-tools).',
       ],
     },
     {
@@ -412,6 +415,7 @@ export const compareEslBrainsPage: MarketingPage = {
         'You want each student’s learned words tracked automatically, so new lessons build on them instead of repeating them.',
         'You want every student to have a private learner dashboard with flashcards and the option to suggest topics or create custom lessons themselves.',
         'You want a comprehensive Vocabulary Review study PDF (word families, common collocations, usage notes and synonyms/antonyms) ready to send after every class.',
+        'See the [same B1 lesson made in PlanWise ESL, Twee and ESL Brains](/compare/same-lesson-three-tools).',
       ],
     },
     {
@@ -1823,6 +1827,86 @@ export const compareImmerlyPage: MarketingPage = {
   updated: '2026-11-27',
 };
 
+export const sameLessonThreeToolsPage: MarketingPage = {
+  path: '/compare/same-lesson-three-tools',
+  title: `Same B1 Lesson in ${brand}, Twee and ESL Brains (2026 Test)`,
+  description:
+    'One B1 topic, three tools: what a teacher gets from PlanWise ESL, Twee and ESL Brains for "Can robots compete with humans at work?" Tested 28 Nov 2026.',
+  navLabel: 'Same lesson, three tools',
+  eyebrow: 'Side-by-side test',
+  h1: 'One B1 topic in three tools: PlanWise ESL, Twee and ESL Brains',
+  intro: [
+    'A tutor asks: *"My B1 student works in a shop and is worried about robots taking jobs. What can I teach on Thursday?"* We took that topic, **"Can robots compete with humans at work?"**, to three tools on 28 November 2026 and wrote down what each one gave us, how long it took and what it costs.',
+    `${brand} is our product, so we have kept to facts you can check: the lessons are linked, and we say where the other tools do better.`,
+  ],
+  verdict: {
+    heading: 'The short answer',
+    text: `**${brand}** made a complete B1 lesson on the exact topic in **41 seconds**, with pictures for all five words within 90 seconds, and you can [open the full lesson free](/esl-lessons/b1/robots-at-work-friends-or-rivals). **ESL Brains** had a ready-made, human-written B1 lesson the moment we opened it, free on its Basic plan, but it is about robots in **sports**, built around two videos and group debates, and was published in 2021. **Twee** has every building block (vocabulary list, text, questions, gap-fill), but you run one tool at a time and combine them yourself. We could not time Twee: our trial account showed "Your trial has ended".`,
+  },
+  sections: [
+    {
+      heading: 'What each tool gave us for the same topic',
+      table: {
+        headers: ['', brand, 'ESL Brains', 'Twee'],
+        rows: [
+          ['Topic you get', 'Exactly the requested topic: robots and jobs ("Robots at Work: Friends or Rivals?")', 'Closest free match: "Can robots compete with humans?", about robots in sports', 'Any topic you type into each tool'],
+          ['Level', 'B1', 'B1', 'B1, chosen in each tool'],
+          ['Time until ready to teach', '41 seconds for the full lesson; all word pictures within 90 seconds', 'Instant: the lesson already exists (you search the catalogue for it)', 'Not timed (trial ended). One run per tool, and a full lesson needs about 5–7 tools'],
+          ['What is inside', 'Warm-up (5 questions), 230-word reading "The Cashier Who Lost Her Job", 5 key words (automate, replace, efficient, creativity, redundant) with pictures, vocabulary check, 3 phrasal verbs and expressions, speaking frames, gap-fill, sentence unscramble, 5 discussion questions and a 6-question quiz', 'Lead-in on types of robot, photo discussion, commonly confused sports words, a word cloud, two videos about sports robots, technology vocabulary matching and a debate, with an optional design-a-robot project. Student and teacher worksheets and a Google Slides e-lesson', 'Whatever you build, for example: Essential Vocabulary on a Topic, Create a Text with Your Vocabulary, Open Questions for a Text, Discussion Questions, Fill in the Gap and Word-Definition Matching. ABCD and true/false questions are Pro tools'],
+          ['Class format', 'One-to-one or small group', 'Pairs and groups (discussion and debates)', 'Your choice; outputs go into a Twee lesson you can share as an interactive worksheet'],
+          ['Made for one particular student', 'Yes: choose the student, and words they already know are not re-taught', 'No: the same lesson for every class', 'No per-student word memory'],
+          ['Cost', `Free during the ${trialText}; then ${priceText} Unlimited`, 'This lesson is free (Basic plan, 38 free lessons); Premium $7/month, Unlimited $15/month', 'Trial: 5 runs in total; Basic $9/month (100 runs); Pro $15/month'],
+          ['Open it yourself', '[Robots at Work: Friends or Rivals? (B1)](/esl-lessons/b1/robots-at-work-friends-or-rivals), free, no login', 'eslbrains.com/robots-b1-technology-lesson-plan (overview is public; worksheets need a free account)', 'twee.com (sign-up needed)'],
+        ],
+      },
+    },
+    {
+      heading: 'How we ran the test',
+      bullets: [
+        'Same topic and level everywhere: "Can robots compete with humans at work?", B1, on 28 November 2026.',
+        `${brand}: one click on Generate, with no student selected. We timed it from the click until the lesson was saved (41 seconds). Pictures load while the lesson is already open.`,
+        'ESL Brains: we searched its free lessons for the closest B1 topic and opened it with a free account. We describe the lesson from its public overview and do not reproduce its worksheets.',
+        'Twee: we opened its tools in a free account. The account showed "Your trial has ended", so we list the tools a teacher would combine (from Twee’s own tool list) instead of timing them.',
+        'Prices come from each company’s pricing page on the same day and can change.',
+      ],
+    },
+    {
+      heading: 'Where each tool is the better choice',
+      bullets: [
+        '**ESL Brains** if you teach groups and want real video content and a human-written lesson that is ready the moment you open it, at a lower monthly price.',
+        '**Twee** if you like building your own activities, want interactive worksheets students complete online, or need audio and video tools. It is also cheaper per month.',
+        `**${brand}** if you teach one-to-one or small groups and want a finished lesson on your student’s exact topic in ${generationTime}, which remembers the words that student has already learned.`,
+      ],
+    },
+    {
+      heading: 'More comparisons',
+      bullets: [
+        '[PlanWise ESL vs. Twee](/compare/twee): complete lessons vs. activity generators, with prices and trial limits.',
+        '[PlanWise ESL vs. ESL Brains](/compare/esl-brains): custom lessons for each student vs. a large pre-made video catalogue.',
+        `[All ESL lesson tools compared](/compare) and the [free lesson library](/esl-lessons) (${freeLessonsText} complete lessons, no login).`,
+      ],
+    },
+  ],
+  faq: [
+    {
+      question: 'Which tool makes a complete ESL lesson fastest?',
+      answer: `In our test, ${brand} made a complete B1 lesson in 41 seconds. A ready-made library lesson (ESL Brains) is instant when one exists on your topic, but you may not find your student’s exact topic. Twee needs one run per activity, which you then combine.`,
+    },
+    {
+      question: 'Can I see the lessons from this test?',
+      answer: `Yes. The ${brand} lesson is free with no login at /esl-lessons/b1/robots-at-work-friends-or-rivals. The ESL Brains lesson is on its free Basic plan (free account needed). Twee needs a sign-up.`,
+    },
+  ],
+  disclaimer: `${brand} is not affiliated with Twee or ESL Brains. Tested on 28 November 2026; features, lessons and prices can change. If anything here is out of date or wrong, email ${siteFacts.email} and we will correct it.`,
+  cta: {
+    heading: 'Make this lesson for your own student',
+    text: `Type your student’s topic and get a complete CEFR lesson in ${generationTime}. Your ${trialText} needs no credit card.`,
+    ...trialCta,
+  },
+  schemaType: 'WebPage',
+  updated: '2026-11-28',
+};
+
 export const comparisonPages: MarketingPage[] = [
   compareHubPage,
   compareEngooPage,
@@ -1833,6 +1917,7 @@ export const comparisonPages: MarketingPage[] = [
   compareImmerlyPage,
   compareEslJoyPage,
   compareTweePage,
+  sameLessonThreeToolsPage,
   compareMagicSchoolDiffitPage,
   compareEslBrainsPage,
   compareFluentizePage,
