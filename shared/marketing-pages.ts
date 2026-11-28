@@ -11,7 +11,7 @@
  * the lesson prompt (server/services/lesson-prompt.ts).
  */
 import { siteFacts, trialText, priceText } from './site-facts';
-import { cefrLevelsGuide, planConversationLessonGuide, topicsByLevelGuide, personaliseGuide, freeAdultLessonsGuide, freeB1LessonsGuide, christmasNewYearGuide, thirtyMinuteLessonGuide, guidesIndex } from './guides';
+import { cefrLevelsGuide, planConversationLessonGuide, topicsByLevelGuide, personaliseGuide, freeAdultLessonsGuide, freeB1LessonsGuide, christmasNewYearGuide, thirtyMinuteLessonGuide, englishAsAHobbyGuide, guidesIndex } from './guides';
 import { icpPages } from './icp-pages';
 import { comparisonPages } from './comparison-pages';
 import { studentExperiencePage } from './student-experience-page';
@@ -475,7 +475,7 @@ const compareChatGpt: MarketingPage = {
 };
 
 /** Guides, in the order the /guides page lists them. */
-export const guidePages: MarketingPage[] = [planConversationLessonGuide, topicsByLevelGuide, cefrLevelsGuide, personaliseGuide, freeAdultLessonsGuide, freeB1LessonsGuide, thirtyMinuteLessonGuide, christmasNewYearGuide];
+export const guidePages: MarketingPage[] = [planConversationLessonGuide, topicsByLevelGuide, cefrLevelsGuide, personaliseGuide, freeAdultLessonsGuide, freeB1LessonsGuide, thirtyMinuteLessonGuide, christmasNewYearGuide, englishAsAHobbyGuide];
 
 export { icpPages, comparisonPages, studentExperiencePage };
 

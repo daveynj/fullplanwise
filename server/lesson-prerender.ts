@@ -406,7 +406,7 @@ function aboutLesson(lesson: LessonForPrerender, sections: any[]): string {
   const minutes = estimatedMinutesOf(lesson.content);
   const parts = lessonContentsParts(sections);
   const sentences = [
-    `This is a ${levelText(lesson.cefrLevel)} ESL lesson${label ? ` in the ${label} category` : ''}.`,
+    `This is ${/^[AEIOU]/i.test(levelText(lesson.cefrLevel)) ? 'an' : 'a'} ${levelText(lesson.cefrLevel)} ESL lesson${label ? ` in the ${label} category` : ''}.`,
   ];
   if (minutes) sentences.push(`It takes about ${minutes} minutes.`);
   if (parts.length) sentences.push(`It includes ${joinList(parts)}.`);

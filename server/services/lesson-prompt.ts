@@ -321,6 +321,25 @@ function vocabularyCheckFormats(cefrLevel: string): string {
 - "In which situation would you use [word]?"`;
 }
 
+/**
+ * Quiz formats. The quiz kept writing "Which sentence uses [word] correctly?"
+ * at B1 and above even with the rule against it in distractorGuidance (4 of 6
+ * B1–B2 hobby lessons on 28 Nov 2026), so from B1 up the quiz gets an explicit
+ * list of formats, as the vocabulary check already does.
+ */
+function quizFormats(cefrLevel: string): string {
+  if (EASY_DISTRACTOR_LEVELS.has(cefrLevel)) {
+    return `- "Which word means '[definition]'?"
+- "Which sentence uses [word] correctly?"
+- "True or false? [a statement about a target word or the reading]"
+- "[A question about the reading]"`;
+  }
+  return `- "Which word best completes the sentence? '...'"
+- "What does [word] mean in this sentence: '...'?"
+- "True or false? [a statement about a target word or the reading]"
+- "[A question about the reading or about an expression from the lesson]"`;
+}
+
 function comprehensionStep(cefrLevel: string): string {
   return `Write exactly 5 questions testing vocabulary understanding (one per word). These test whether students know the vocabulary, NOT whether they remember facts from the reading. Keep the questions simple, so the only thing being tested is the target word.
 
@@ -381,6 +400,8 @@ For each sentence:
 function quizStep(cefrLevel: string): string {
   return `Write 5 quiz questions about the lesson. Mix multiple choice and true/false. Use simple, clear wording: the quiz checks what the student learned, not how well they can read difficult questions.
 Every question must check something this lesson taught: the meaning, use or form of the 5 target words, or the ideas in the reading. Never ask about facts the lesson does not teach, such as where a word comes from, its history or other trivia.
+Use only these question formats:
+${quizFormats(cefrLevel)}
 ${distractorGuidance(cefrLevel)}
 <critical>For multiple choice, you MUST randomize the position of the correct answer. Do not use a fixed pattern.</critical>
 <requirements>Include clear explanations for all answers.</requirements>`;

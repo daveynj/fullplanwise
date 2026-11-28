@@ -93,6 +93,7 @@ export const clientRoutePaths: string[] = [
   "/guides/free-b1-esl-conversation-lessons",
   "/guides/christmas-and-new-year-esl-lessons-for-adults",
   "/guides/30-minute-online-esl-conversation-lesson",
+  "/guides/esl-lessons-for-adults-learning-english-as-a-hobby",
   "/forgot-password",
   "/reset-password/:token",
   "/twitter-card",

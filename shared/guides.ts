@@ -929,6 +929,163 @@ export const thirtyMinuteLessonGuide: MarketingPage = {
   updated: freeGuidesPublished,
 };
 
+export const englishAsAHobbyGuide: MarketingPage = {
+  path: '/guides/esl-lessons-for-adults-learning-english-as-a-hobby',
+  title: 'ESL Lessons for Adults Learning English as a Hobby | PlanWise',
+  description:
+    'Adults who learn English for pleasure need variety, their own interests and lots of speaking. What to teach, how to run the class, and free lessons that fit.',
+  navLabel: 'English as a hobby',
+  eyebrow: 'Guide for tutors',
+  h1: 'ESL lessons for adults learning English as a hobby: what they need, and free lessons that fit',
+  byline: freeGuidesByline,
+  intro: [
+    'I have taught English one-to-one since 2015, and I built PlanWise because I was tired of rebuilding lessons by hand. I now teach private students online, and some of my longest-staying students are adults who learn English purely because they enjoy it. This guide is about how to teach them well.',
+  ],
+  verdict: {
+    heading: 'The short answer',
+    text: '**Adults who learn English for pleasure need variety, topics from their own interests, lots of speaking, gentle correction and no exam pressure.** Travel, films, books, talking to people and keeping the mind active are the usual reasons. The [free library](/esl-lessons) has complete lessons on everyday and leisure topics that suit them, with no login. A lesson built around the student’s own hobby is what the paid plan does.',
+  },
+  sections: [
+    {
+      heading: 'Who learns English as a hobby',
+      paragraphs: [
+        'They are adults, often 40 or older, retired or settled in their work, in countries such as Japan, Korea, Taiwan, Spain, Italy, Brazil and the Gulf. They learn for travel, for films and series, for books and music, to talk to people, to speak with family abroad, or to keep the mind active.',
+        'They book one-to-one conversation tutors, they stay for years, and they are the most loyal students a tutor has. They are not trying to pass anything. They come because the lesson is something they look forward to.',
+      ],
+    },
+    {
+      heading: 'What they need that exam students do not',
+      bullets: [
+        '**Topics from their own life and interests.** A student who loves cooking will talk for twenty minutes about food and for two about the economy.',
+        '**Variety from week to week.** The same shape of lesson is fine, but the subject should change.',
+        '**Speaking for most of the lesson.** Most did years of textbook English at school. What they lack is someone to talk to.',
+        '**Gentle correction.** Note two or three things that matter, not every error, and return to them at the end.',
+        '**No homework pressure.** Offer an optional review sheet, and never make the student feel behind.',
+        '**A sense of progress without a test.** New words they actually use again in a later lesson are the best evidence.',
+      ],
+    },
+    {
+      heading: 'How to run a relaxed 30- or 60-minute class',
+      paragraphs: [
+        'Keep the same six stages: warm-up, five words, reading, one practice exercise, discussion and recap. Then give the discussion more room, and let the student lead it towards their own life. If a story about their garden or their last holiday is more interesting than question four, follow the story.',
+        'For timings, see [the 30-minute lesson guide](/guides/30-minute-online-esl-conversation-lesson) and [how to plan a conversation lesson](/guides/how-to-plan-an-esl-conversation-lesson).',
+      ],
+    },
+    {
+      heading: 'Topics that work',
+      paragraphs: ['Start from what the student already enjoys. These are the interests I meet most often:'],
+      table: {
+        headers: ['Interest', 'Topics that get them talking', 'Level to start'],
+        rows: [
+          ['Cooking and food', 'Family recipes, baking, eating out, food from other countries', 'A2: simple, concrete words and strong opinions'],
+          ['Football and sport', 'Favourite teams, big matches, playing versus watching', 'B1: they can give opinions and reasons'],
+          ['Films, series and books', 'Favourites, endings, books versus films, recommendations', 'B1 or B2: needs room to describe and compare'],
+          ['Music', 'First concerts, favourite artists, music and memory', 'A2: personal, easy to talk about'],
+          ['Gardening and the outdoors', 'Plants, the seasons, walking, weather and the countryside', 'B1: plenty of descriptive vocabulary'],
+          ['Photography', 'Favourite photos, places, phones versus cameras', 'B1: describing and explaining choices'],
+          ['Travel and places', 'Dream trips, past holidays, solo travel, places to see', 'A2 for practical travel, B2 for opinions and stories'],
+          ['Games and puzzles', 'Video games, board games, crosswords, why we play', 'A2: short, lively and easy to start'],
+        ],
+      },
+    },
+    {
+      heading: 'Nine free lessons on hobbies, A2 to B2',
+      paragraphs: [
+        'I made these for this guide, on the interests above, and checked every one before it went into the library. Each has the five words, a reading, a vocabulary check, practice exercises, discussion questions and a quiz, and opens without a login.',
+      ],
+      bullets: [
+        '[Cooking at Home: My Favourite Meal (A2)](/esl-lessons/a2/cooking-at-home-my-favourite-meal): chop, boil, stir, ingredient, recipe. For a student who cooks, or wants to describe a dish.',
+        '[Match Day: Watching Football with Friends (A2)](/esl-lessons/a2/match-day-watching-football-with-friends): match, cheer, score, supporter, kick off. For any football fan.',
+        '[Growing Plants at Home (A2)](/esl-lessons/a2/growing-plants-at-home): sprout, soil, pot, root, indoors. For a gardener, or someone with a balcony and a few pots.',
+        '[Cooking the World from Your Kitchen (B1)](/esl-lessons/b1/cooking-the-world-from-your-kitchen): substitute, experiment, tempting, worthwhile, mild. For a student who tries recipes from other countries.',
+        '[Staying Fit as an Adult: Running, Cycling and the Gym (B1)](/esl-lessons/b1/staying-fit-as-an-adult-running-cycling-and-the-gym): motivation, routine, work out, fit in, progress. For runners, cyclists and gym-goers, and anyone who keeps stopping.',
+        '[Board Games and Puzzles: Why Adults Still Love to Play (B1)](/esl-lessons/b1/board-games-and-puzzles-why-adults-still-love-to-play): strategy, challenge, unwind, competitive, patience. For a student with a games night or a jigsaw on the table.',
+        '[Photography as a Hobby: Phones, Cameras and Pictures Worth Keeping (B2)](/esl-lessons/b2/photography-as-a-hobby-phones-cameras-and-pictures-worth-keeping): snapshot, spontaneous, composition, cluttered, timeless. For a student who takes photos, on a phone or a camera.',
+        '[Learning a Musical Instrument as an Adult (B2)](/esl-lessons/b2/learning-a-musical-instrument-as-an-adult-practice-patience-and-playing-for-pleasure): disciplined, tackle, gratifying, plateau, persevere. For a student learning an instrument, or thinking about it.',
+        '[Walking in Nature: Why Time Outdoors Is Good for Us (B2)](/esl-lessons/b2/walking-in-nature-why-time-outdoors-is-good-for-us): unwind, invigorating, well-being, switch off, breathtaking. For walkers and hikers.',
+      ],
+    },
+    {
+      heading: 'More free lessons that fit',
+      paragraphs: [
+        'Older lessons from the library that suit the same students, all free and open without logging in. You can also browse by theme: [food](/esl-lessons/topics/food), [sport](/esl-lessons/topics/sport), [travel](/esl-lessons/topics/travel) and [entertainment](/esl-lessons/topics/entertainment). Not sure of a student’s level? See my [guide to CEFR levels](/guides/cefr-levels-explained).',
+      ],
+      bullets: [
+        '[Ordering Food and Coffee at a Cafe (A1)](/esl-lessons/a1/ordering-food-and-coffee-at-a-cafe): for a beginner who loves food and wants to use English on holiday.',
+        '[Let’s Talk About Video Games (A1)](/esl-lessons/a1/let-s-talk-about-video-games): for a beginner who plays games and is happy to talk about them.',
+        '[Planning a Holiday and Booking a Hotel (A2)](/esl-lessons/a2/planning-a-holiday-and-booking-a-hotel): for a student who learns English mainly to travel.',
+        '[Travelling Solo vs. Travelling with Friends (B1)](/esl-lessons/b1/travelling-solo-vs-travelling-with-friends): for a student with opinions and travel stories.',
+        '[The Joy of Baking (B2)](/esl-lessons/b2/the-joy-of-baking): for a student who cooks or bakes at home.',
+        '[At the Movies: Talking About Films (B2)](/esl-lessons/b2/at-the-movies-talking-about-films): for a film or series fan.',
+        '[Books vs. Films: Living in Other Worlds (B2)](/esl-lessons/b2/books-vs-films-living-in-other-worlds): for a reader who also watches adaptations.',
+        '[Amazing Places Around the World (B2)](/esl-lessons/b2/amazing-places-around-the-world): for a student who loves geography and travel.',
+      ],
+    },
+    {
+      heading: 'Mistakes that lose these students',
+      bullets: [
+        '**Turning every lesson into grammar.** They came to talk, not to sit a class.',
+        '**Teaching the news every week.** It is heavy, it dates quickly, and it is rarely why they learn English.',
+        '**Correcting everything.** Too many corrections make a student stop speaking.',
+        '**Using the same worksheet their last tutor used.** They notice, and they leave.',
+        '**Forgetting what they told you last month.** Remembering their dog’s name or their trip to Lisbon is worth more than any exercise.',
+      ],
+    },
+    {
+      heading: 'Keeping a student for years',
+      paragraphs: [
+        'These students stay as long as the lessons stay interesting and they feel they are getting somewhere. Keep a note of what they have talked about and the words they used well, and bring old words back when they fit.',
+        `On the paid plan, ${brand} keeps that list for each student. When you mark a lesson “We did this”, its words join the student’s list, later lessons avoid words they already know and reuse familiar ones where they fit, and the student gets a private page with their lessons, words and flashcards.`,
+      ],
+    },
+    {
+      heading: 'What the free lessons do not do',
+      bullets: [
+        '**There is no audio.** The reading is text; you read it aloud or let the student read it.',
+        '**Everyone gets the same lesson.** A free lesson is written once for a level and a topic, not for your student’s own hobby.',
+        '**The library is finite.** If a student wants a topic that is not there, adapt the nearest lesson or make a new one.',
+        '**They do not replace you.** The lesson gives structure; the conversation, the warmth and the correction are yours.',
+      ],
+    },
+    {
+      heading: 'A lesson built around their hobby',
+      paragraphs: [
+        `Choose the student, the level and a topic such as “my allotment in spring” or “the Champions League final”, and a finished lesson is written for them in ${generationTime}. That is what the paid plan does: ${priceText} after a ${trialText} with no card. See [how it works](/how-it-works). The free library stays free either way.`,
+      ],
+    },
+  ],
+  faq: [
+    {
+      question: 'How do you teach English to adults who learn it as a hobby?',
+      answer: 'Build the lesson around their interests, vary the topic each week and let them speak for most of the lesson. Correct gently, noting two or three things rather than every error, and skip exam-style pressure.',
+    },
+    {
+      question: 'What topics work for adults learning English as a hobby?',
+      answer: 'Food, sport, films and books, music, gardening, photography, travel and games all work well, because students already have opinions and stories about them. Ask what they enjoy and start there.',
+    },
+    {
+      question: 'Do adults learning English for fun need grammar lessons?',
+      answer: 'Not as the main activity. Most want to talk, so teach grammar only when it helps them say something they are trying to say, and keep it short.',
+    },
+    {
+      question: 'Where can I find free ESL conversation lessons on hobbies and leisure topics?',
+      answer: 'PlanWise ESL has a free library at planwiseesl.com/esl-lessons with complete lessons on cooking, football, gardening, fitness, board games, photography, music, walking, travel, films and books, from A1 to C2. No login is needed.',
+    },
+    {
+      question: 'How do you keep a long-term conversation student interested?',
+      answer: 'Change the topic often, remember what they told you and bring back words they have used before. Students stay when lessons feel fresh and they can see they are making progress.',
+    },
+  ],
+  cta: {
+    heading: 'Start with a free lesson',
+    text: 'Pick a lesson on your student’s favourite subject from the free library, no login needed.',
+    label: 'Browse Free Lessons',
+    href: '/esl-lessons',
+  },
+  schemaType: 'Article',
+  updated: freeGuidesPublished,
+};
+
 /** The /guides index. Lists every guide in guidePages (marketing-pages.ts). */
 export function guidesIndex(guides: MarketingPage[]): MarketingPage {
   return {
