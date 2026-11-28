@@ -70,12 +70,23 @@ const ResetPasswordPage: React.FC = () => {
     mutationFn: (data: { password: string }) => {
       return apiRequest('POST', `/api/reset-password/${token}`, data);
     },
-    onSuccess: () => {
+    onSuccess: async (response) => {
+      // The server signs the teacher in after a reset (they proved the email
+      // is theirs), so they go straight to making a lesson.
+      const data = await response.json().catch(() => ({}));
+      if (data?.signedIn) {
+        toast({
+          title: 'Password updated',
+          description: "You're signed in. Taking you to the lesson maker.",
+        });
+        // A full page load, so every part of the app sees the new sign-in.
+        setTimeout(() => window.location.assign('/generate'), 1200);
+        return;
+      }
       toast({
-        title: 'Password Reset Successfully',
-        description: 'Your password has been updated. You can now log in with your new password.',
+        title: 'Password updated',
+        description: 'You can now log in with your new password.',
       });
-      
       setTimeout(() => {
         setLocation('/auth');
       }, 2000);
@@ -113,9 +124,9 @@ const ResetPasswordPage: React.FC = () => {
       <div className="container mx-auto flex flex-col items-center justify-center min-h-screen py-12 px-4">
         <Card className="w-full max-w-md">
           <CardHeader>
-            <CardTitle className="text-2xl font-bold text-center text-destructive">Invalid Token</CardTitle>
+            <CardTitle className="text-2xl font-bold text-center text-destructive">This link no longer works</CardTitle>
             <CardDescription className="text-center">
-              {tokenError}
+              A reset link works once, for 60 minutes. Ask for a new one and use the newest email.
             </CardDescription>
           </CardHeader>
           <CardFooter className="flex justify-center">

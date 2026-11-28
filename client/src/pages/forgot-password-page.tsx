@@ -22,6 +22,7 @@ const ForgotPasswordPage: React.FC = () => {
   const { toast } = useToast();
   const [, setLocation] = useLocation();
   const [resetToken, setResetToken] = useState<string | null>(null);
+  const [requested, setRequested] = useState(false);
 
   // Define form
   const form = useForm<ForgotPasswordForm>({
@@ -37,8 +38,8 @@ const ForgotPasswordPage: React.FC = () => {
     },
     onSuccess: async (response) => {
       toast({
-        title: 'Password Reset Email Sent',
-        description: 'If an account with that email exists, we have sent password reset instructions.',
+        title: 'Check your email',
+        description: 'If an account with that email exists, we have sent a link to set a new password.',
       });
       
       // In development, we'll show a direct link to reset the password
@@ -47,6 +48,7 @@ const ForgotPasswordPage: React.FC = () => {
         setResetToken(data.token);
       }
       
+      setRequested(true);
       form.reset();
     },
     onError: (error) => {
@@ -110,6 +112,12 @@ const ForgotPasswordPage: React.FC = () => {
             </form>
           </Form>
           
+          {requested && (
+            <p className="mt-4 rounded-md bg-emerald-50 border border-emerald-200 p-3 text-sm text-emerald-900" data-testid="reset-requested">
+              If that address has an account, the email is on its way from <strong>dave@planwiseesl.com</strong>. It can take a minute, so check your spam folder too. The link works for 60 minutes. Still nothing? Email dave@planwiseesl.com and I'll sort it out.
+            </p>
+          )}
+
           {resetToken && (
             <div className="mt-4 p-3 bg-yellow-100 border border-yellow-300 rounded-md">
               <p className="text-sm font-medium text-yellow-800 mb-2">

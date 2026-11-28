@@ -10,6 +10,15 @@ import { v4 as uuidv4 } from "uuid";
 import { mailchimpService } from "./services/mailchimp.service";
 import { restrictRegistrationCountry } from "./registration-country";
 import { sendGaEvent, SERVER_TRACKED_HEADER } from "./ga-measurement";
+import { isEmailAddress, mailConfig, sendMail } from "./mailer";
+import { buildPasswordResetEmail, RecentLimit, RESET_LINK_MINUTES } from "./password-reset-email";
+import { publicAppUrl } from "./public-app-url";
+
+// Reset requests: a few an hour for one address, and a ceiling per visitor,
+// so the form can't be used to flood someone's inbox.
+const resetLimitByEmail = new RecentLimit(3, 60 * 60 * 1000);
+const resetLimitByVisitor = new RecentLimit(10, 60 * 60 * 1000);
+const RESET_SENT_MESSAGE = "If an account with that email exists, a password reset link has been sent.";
 
 declare global {
   namespace Express {
@@ -48,8 +57,7 @@ async function comparePasswords(supplied: string, stored: string) {
 // Create a reset token for a user
 async function createResetToken(user: SelectUser) {
   const token = uuidv4();
-  const expiresAt = new Date();
-  expiresAt.setHours(expiresAt.getHours() + 1); // Token valid for 1 hour
+  const expiresAt = new Date(Date.now() + RESET_LINK_MINUTES * 60 * 1000);
   
   // Update user with reset token and expiration date
   await storage.updateUser(user.id, {
@@ -111,13 +119,17 @@ export function setupAuth(app: Express) {
         // Try to find user by username first
         let user = await storage.getUserByUsername(username);
         
-        // If not found by username, try by email
+        // If not found by username, try by email (capital letters don't matter).
+        // When two accounts share an address apart from capitals, sign in the
+        // one whose password matches.
         if (!user) {
-          const usersByEmail = await storage.getUsersByEmail(username);
-          user = usersByEmail.length > 0 ? usersByEmail[0] : undefined;
+          for (const candidate of await storage.getUsersByEmail(username)) {
+            if (await comparePasswords(password, candidate.password)) return done(null, candidate);
+          }
+          return done(null, false);
         }
-        
-        if (!user || !(await comparePasswords(password, user.password))) {
+
+        if (!(await comparePasswords(password, user.password))) {
           return done(null, false);
         } else {
           return done(null, user);
@@ -298,47 +310,72 @@ export function setupAuth(app: Express) {
   // Password reset request endpoint
   app.post("/api/forgot-password", async (req, res) => {
     try {
-      const { email } = req.body;
+      const email = typeof req.body?.email === "string" ? req.body.email.trim() : "";
       if (!email) {
         return res.status(400).json({ message: "Email is required" });
       }
-      
-      console.log(`Password reset requested for email: ${email}`);
-      
-      // Find user by email
+
+      // Too many requests from one visitor is the only case that answers differently.
+      if (!resetLimitByVisitor.allow(req.ip || "unknown")) {
+        return res.status(429).json({ message: "Too many reset requests. Please try again in an hour." });
+      }
+      // The same answer whether or not the address has an account, so the
+      // form can't be used to find out who has one.
+      const sent = () => res.status(200).json({ message: RESET_SENT_MESSAGE });
+      if (!isEmailAddress(email) || !resetLimitByEmail.allow(email.toLowerCase())) {
+        return sent();
+      }
+
       const users = await storage.getUsersByEmail(email);
       if (!users || users.length === 0) {
-        // For security, don't reveal that email doesn't exist
-        return res.status(200).json({ 
-          message: "If an account with that email exists, a password reset link has been sent." 
-        });
+        return sent();
       }
-      
+
       const user = users[0];
       const { token } = await createResetToken(user);
-      
-      // In a real app, we would send an email here with a reset link
-      // For this implementation, we'll just return the token directly
-      // This is NOT secure for production, but works for demonstration
-      
-      // Never log token material outside development
-      if (process.env.NODE_ENV === 'development') {
-        console.log(`Reset token generated for user ${user.id}: ${token}`);
+      const link = `${publicAppUrl()}/reset-password/${token}`;
+      // Never log the token or the link.
+      console.log(`Reset link created for user ${user.id}`);
+
+      if (mailConfig()) {
+        // Not awaited: the answer must not take longer for a real account.
+        void sendMail(buildPasswordResetEmail(user.email, user.fullName, link))
+          .then(() => console.log(`Reset email sent for user ${user.id}`))
+          .catch((error) => console.error(`Reset email FAILED for user ${user.id}:`, error?.message ?? error));
       } else {
-        console.log(`Reset token generated for user ${user.id}`);
+        console.error("[Mail] SMTP_USER / SMTP_PASS are not set: the reset email was NOT sent.");
       }
-      
+
       res.status(200).json({
-        message: "If an account with that email exists, a password reset link has been sent.",
+        message: RESET_SENT_MESSAGE,
         // Only expose the token in development; never in any other environment
         token: process.env.NODE_ENV === 'development' ? token : undefined
       });
     } catch (error: any) {
-      console.error('Password reset request error:', error);
+      console.error('Password reset request error:', error?.message ?? error);
       res.status(500).json({ message: "Error processing password reset request" });
     }
   });
-  
+
+  // Admin: is email sending set up, and does it work? Sends one test message
+  // to the admin's own address (never to anyone else).
+  app.post("/api/admin/mail-test", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    const admin = req.user as SelectUser;
+    if (!admin.isAdmin) return res.status(403).json({ message: "Unauthorized. Admin privileges required." });
+    if (!mailConfig()) return res.status(200).json({ configured: false, sent: false, message: "SMTP_USER and SMTP_PASS are not set." });
+    try {
+      await sendMail({
+        to: admin.email,
+        subject: "PlanWise ESL email test",
+        text: "This is a test from PlanWise ESL. If you can read it, password reset emails will be delivered.",
+      });
+      res.status(200).json({ configured: true, sent: true, to: admin.email });
+    } catch (error: any) {
+      res.status(200).json({ configured: true, sent: false, step: error?.step ?? null, code: error?.code ?? null, message: error?.message ?? "Unknown error" });
+    }
+  });
+
   // Validate reset token endpoint
   app.get("/api/reset-password/:token", async (req, res) => {
     try {
@@ -365,15 +402,19 @@ export function setupAuth(app: Express) {
       const { token } = req.params;
       const { password } = req.body;
       
-      if (!token || !password) {
+      if (!token || typeof password !== "string" || !password) {
         return res.status(400).json({ message: "Token and password are required" });
       }
-      
+      // The same rule as the reset form.
+      if (password.length < 8 || password.length > 200) {
+        return res.status(400).json({ message: "Password must be at least 8 characters" });
+      }
+
       const user = await validateResetToken(token);
       if (!user) {
         return res.status(400).json({ message: "Invalid or expired token" });
       }
-      
+
       // Update the password
       const hashedPassword = await hashPassword(password);
       await storage.updateUser(user.id, { 
@@ -382,9 +423,19 @@ export function setupAuth(app: Express) {
         resetPasswordExpires: null
       });
       
-      console.log(`Password successfully reset for user ${user.id} (${user.username})`);
-      
-      res.status(200).json({ message: "Password successfully reset" });
+      console.log(`Password successfully reset for user ${user.id}`);
+
+      // They have just proved the email address is theirs: sign them in, so
+      // they don't have to type the new password again.
+      const updated = (await storage.getUser(user.id)) ?? user;
+      req.login(updated, (loginError) => {
+        if (loginError) {
+          console.error("Sign-in after password reset failed:", loginError?.message ?? loginError);
+          return res.status(200).json({ message: "Password successfully reset", signedIn: false });
+        }
+        storage.updateLastLogin(user.id).catch(() => {});
+        res.status(200).json({ message: "Password successfully reset", signedIn: true });
+      });
     } catch (error: any) {
       console.error('Password reset error:', error);
       res.status(500).json({ message: "Error resetting password" });
