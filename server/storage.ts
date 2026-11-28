@@ -142,6 +142,7 @@ export interface IStorage {
   // Public library methods
   getPublicLessons(page?: number, pageSize?: number, search?: string, cefrLevel?: string, category?: string): Promise<{ lessons: Lesson[], total: number }>;
   getPublicLessonSummaries(cefrLevel?: string): Promise<Array<Pick<Lesson, 'id' | 'title' | 'cefrLevel' | 'publicCategory' | 'createdAt' | 'publicSlug' | 'publicLevel' | 'tags'>>>;
+  getPublicLessonsWithContent(): Promise<Array<Pick<Lesson, 'id' | 'title' | 'cefrLevel' | 'publicCategory' | 'createdAt' | 'publicSlug' | 'publicLevel' | 'tags' | 'isPublic' | 'content'>>>;
   getPublicTagCandidates(afterId: number, limit: number): Promise<PublicTagSource[]>;
   applyReviewedPublicTags(approvals: Array<{ id: number; fingerprint: string; tags: PublicLessonTag[] }>): Promise<number>;
   findPublicTagLessons(search: string, afterId: number, limit: number): Promise<Array<{ id: number; title: string; cefrLevel: string; tags: string[] | null }>>;
@@ -1234,6 +1235,28 @@ export class DatabaseStorage implements IStorage {
       console.error('Error fetching admin lessons:', error);
       throw error;
     }
+  }
+
+  /** Public lessons with their content, for the "conversation questions" pages. Public-safe columns only (never topic, notes or teacher data). */
+  async getPublicLessonsWithContent() {
+    await ensureLessonUrlSchema();
+    const rows = await db
+      .select({
+        id: lessons.id,
+        title: lessons.title,
+        cefrLevel: lessons.cefrLevel,
+        publicCategory: lessons.publicCategory,
+        tags: lessons.tags,
+        publicSlug: lessons.publicSlug,
+        publicLevel: lessons.publicLevel,
+        createdAt: lessons.createdAt,
+        isPublic: lessons.isPublic,
+        content: lessons.content,
+      })
+      .from(lessons)
+      .where(eq(lessons.isPublic, true))
+      .orderBy(desc(lessons.createdAt));
+    return rows.map((row) => ({ ...row, tags: publicTags(row.tags) }));
   }
 
   // Lightweight list of every public lesson (no content), for the crawlable

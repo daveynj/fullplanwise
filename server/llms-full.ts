@@ -1,5 +1,5 @@
 import { lessonPath } from '@shared/lesson-url';
-import { PUBLIC_LESSON_TAGS } from '@shared/public-lesson-tags';
+import { PUBLIC_LESSON_TAGS, publicTags, type PublicLessonTag } from '@shared/public-lesson-tags';
 import { levelTopicPages } from '@shared/library-browse';
 import {
   siteFacts,
@@ -243,6 +243,17 @@ function renderPublicLessonsMarkdown(publicLessons: PublicLessonLlmsItem[]): str
   return blocks.join('\n\n');
 }
 
+/** Links to the "conversation questions about <topic>" pages (all 17 topics when no lessons are known). */
+function renderConversationQuestionsMarkdown(publicLessons: PublicLessonLlmsItem[]): string {
+  const seen = new Set(publicLessons.flatMap((l) => publicTags(l.tags)));
+  const present = (Object.keys(PUBLIC_LESSON_TAGS) as PublicLessonTag[]).filter((t) => seen.has(t));
+  const tags = present.length ? present : (Object.keys(PUBLIC_LESSON_TAGS) as PublicLessonTag[]);
+  const lines = tags.map(
+    (t) => `- [Conversation questions about ${PUBLIC_LESSON_TAGS[t].toLowerCase()}](${BASE_URL}/conversation-questions/${t})`,
+  );
+  return `## Conversation Questions by Topic\nURL: ${BASE_URL}/conversation-questions\n\nFree ESL conversation questions for each topic, from A1 to C2, taken from the free lessons (warm-up and discussion questions, free to print, no login):\n\n${lines.join('\n')}`;
+}
+
 export interface PublicBlogLlmsItem {
   slug: string;
   title: string;
@@ -305,6 +316,7 @@ export function buildLlmsFullTxt(
     header,
     renderHomepageMarkdown(),
     ...(publicLessonsSection ? [publicLessonsSection] : []),
+    renderConversationQuestionsMarkdown(publicLessons),
     ...(blogPostsSection ? [blogPostsSection] : []),
     ...[...allPages.values()].map(renderPageMarkdown),
   ];

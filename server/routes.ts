@@ -40,6 +40,7 @@ import { ensureLessonUrlSchema } from "./lesson-url-schema";
 import { lessonQuestionsPath, renderLessonQuestionsPage } from "./lesson-prerender";
 import { marketingPages } from "@shared/marketing-pages";
 import { buildLlmsFullTxt, getLlmsFullTxt } from "./llms-full";
+import { getConversationQuestionsPage, getConversationQuestionSitemapEntries } from "./conversation-questions";
 import {
   reserveGenerationJob,
   spendCreditForJob,
@@ -2848,6 +2849,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // "Conversation questions about <topic>": indexable, server-rendered pages
+  // built from the public lessons' warm-up and discussion questions
+  // (server/conversation-questions.ts). Unknown topics are real 404s.
+  const serveConversationQuestions = async (res: any, tag?: string) => {
+    try {
+      const html = await getConversationQuestionsPage(tag);
+      if (!html) {
+        await serve404Html(res, app);
+        return;
+      }
+      res.status(200).set({ "Content-Type": "text/html; charset=utf-8" }).end(html);
+    } catch (error) {
+      console.error("Error serving conversation questions page:", error);
+      res.status(503).set({ "Retry-After": "120", "X-Robots-Tag": "noindex" })
+        .send("This page is temporarily unavailable. Please try again shortly.");
+    }
+  };
+  app.get("/conversation-questions", (_req, res) => serveConversationQuestions(res));
+  app.get("/conversation-questions/:tag", async (req, res) => {
+    const tag = req.params.tag;
+    if (tag !== tag.toLowerCase() && isPublicLessonTag(tag.toLowerCase())) {
+      res.redirect(301, `/conversation-questions/${tag.toLowerCase()}`);
+      return;
+    }
+    await serveConversationQuestions(res, tag);
+  });
+
   app.get("/esl-lessons/:level/:slug", async (req, res, next) => {
     // Only CEFR levels are lesson URLs. Other two-segment paths, such as the
     // theme hubs at /esl-lessons/topics/:tag (validated above), pass through
@@ -2966,6 +2994,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           entries.push({ url: page.path, lastmod: latest(inPage.map((l) => toDate(l.createdAt))) });
         }
       }
+
+      entries.push(...(await getConversationQuestionSitemapEntries()));
 
       for (const post of posts) {
         entries.push({
