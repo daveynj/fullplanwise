@@ -235,11 +235,19 @@ export default function LandingPage() {
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center gap-0.5 xl:gap-2">
             {publicNav.map((item) => (
-              <Link key={item.href} href={item.href}>
-                <Button variant="ghost" className="text-brand-navy/80 hover:text-brand-navy hover:bg-amber-50 rounded-full px-2.5 xl:px-4">
-                  {item.label}
-                </Button>
-              </Link>
+              item.serverPage ? (
+                <a key={item.href} href={item.href}>
+                  <Button variant="ghost" className="text-brand-navy/80 hover:text-brand-navy hover:bg-amber-50 rounded-full px-2.5 xl:px-4">
+                    {item.label}
+                  </Button>
+                </a>
+              ) : (
+                <Link key={item.href} href={item.href}>
+                  <Button variant="ghost" className="text-brand-navy/80 hover:text-brand-navy hover:bg-amber-50 rounded-full px-2.5 xl:px-4">
+                    {item.label}
+                  </Button>
+                </Link>
+              )
             ))}
             <Link href="/auth">
               <Button variant="ghost" className="text-brand-navy/80 hover:text-brand-navy hover:bg-amber-50 rounded-full px-2.5 xl:px-4">
@@ -264,11 +272,19 @@ export default function LandingPage() {
         {/* Mobile Navigation Menu */}
         <div className={`lg:hidden bg-white border-t border-slate-100 px-6 space-y-3 transition-all duration-300 ease-in-out overflow-hidden ${mobileMenuOpen ? 'max-h-[32rem] opacity-100 py-4' : 'max-h-0 opacity-0 py-0'}`}>
           {publicNav.map((item) => (
-            <Link key={item.href} href={item.href} onClick={() => setMobileMenuOpen(false)}>
-              <Button variant="ghost" className="w-full justify-start text-brand-navy hover:bg-amber-50 rounded-full">
-                {item.label}
-              </Button>
-            </Link>
+            item.serverPage ? (
+              <a key={item.href} href={item.href} className="block">
+                <Button variant="ghost" className="w-full justify-start text-brand-navy hover:bg-amber-50 rounded-full">
+                  {item.label}
+                </Button>
+              </a>
+            ) : (
+              <Link key={item.href} href={item.href} onClick={() => setMobileMenuOpen(false)}>
+                <Button variant="ghost" className="w-full justify-start text-brand-navy hover:bg-amber-50 rounded-full">
+                  {item.label}
+                </Button>
+              </Link>
+            )
           ))}
           <Link href="/auth" onClick={() => setMobileMenuOpen(false)}>
             <Button variant="ghost" className="w-full justify-start text-brand-navy hover:bg-amber-50 rounded-full">

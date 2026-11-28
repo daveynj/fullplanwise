@@ -84,3 +84,17 @@ describe("PublicLessonFinish", () => {
     expect(analytics.trackEvent).toHaveBeenCalledWith("public_lesson_remix_clicked", { lesson_id: 42, cefr_level: "B1", location: "finish" });
   });
 });
+
+describe("conversation questions link", () => {
+  it("links to the lesson's theme on the conversation-question pages, at the start and the end", () => {
+    const topicQuestions = { href: "/conversation-questions/travel", label: "Travel" };
+    render(h(PublicLessonStart, {
+      lessonId: 1, level: "B1", content, remixHref: "/x", questionsHref: null, tutorLink, onStart: vi.fn(), topicQuestions,
+    }));
+    expect(screen.getByText("Conversation questions about travel").closest("a")?.getAttribute("href")).toBe("/conversation-questions/travel");
+    cleanup();
+    render(h(PublicLessonFinish, { lessonId: 1, level: "B1", remixHref: "/x", questionsHref: null, topicQuestions }));
+    fireEvent.click(screen.getByText("Conversation questions about travel"));
+    expect(analytics.trackEvent).toHaveBeenCalledWith("public_lesson_topic_questions_clicked", { lesson_id: 1, cefr_level: "B1", location: "finish" });
+  });
+});

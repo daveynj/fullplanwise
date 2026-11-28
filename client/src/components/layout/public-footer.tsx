@@ -21,9 +21,11 @@ export function PublicFooter() {
             { label: '4-Lesson Memory Proof', href: '/compare/student-memory-proof' },
             { label: 'Blog', href: '/blog' },
             { label: 'Start Free Trial', href: '/auth?register=true' },
-          ].map((l) => (
+          ].map((l: { label: string; href: string; serverPage?: boolean }) => (
             <li key={l.href}>
-              <Link href={l.href} className="text-white/60 hover:text-white">{l.label}</Link>
+              {l.serverPage
+                ? <a href={l.href} className="text-white/60 hover:text-white">{l.label}</a>
+                : <Link href={l.href} className="text-white/60 hover:text-white">{l.label}</Link>}
             </li>
           ))}
         </ul>

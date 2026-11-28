@@ -486,10 +486,15 @@ export function marketingPageByPath(pathname: string): MarketingPage | undefined
   return marketingPages.find((p) => p.path === clean);
 }
 
-/** Main public navigation, shared by the React headers and the crawler HTML. */
-export const publicNav: { label: string; href: string }[] = [
+/**
+ * Main public navigation, shared by the React headers and the crawler HTML.
+ * `serverPage` marks pages the server renders on its own (not app routes):
+ * the React headers link to them with a normal link, never client routing.
+ */
+export const publicNav: { label: string; href: string; serverPage?: boolean }[] = [
   { label: 'How It Works', href: '/how-it-works' },
   { label: 'Free Lessons', href: '/esl-lessons' },
+  { label: 'Conversation Questions', href: '/conversation-questions', serverPage: true },
   { label: 'Compare', href: '/compare' },
   { label: 'Guides', href: '/guides' },
   { label: 'Pricing', href: '/pricing' },
