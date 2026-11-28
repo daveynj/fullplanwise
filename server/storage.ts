@@ -407,13 +407,18 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
+  // Capital letters and stray spaces don't matter: phones capitalise the first
+  // letter of an email, and "Maria@x.com" must find "maria@x.com". An exact
+  // match comes first when two accounts differ only by capitals.
   async getUsersByEmail(email: string): Promise<User[]> {
     try {
+      const wanted = String(email ?? "").trim();
+      if (!wanted) return [];
       const foundUsers = await db
         .select()
         .from(users)
-        .where(eq(users.email, email));
-      return foundUsers;
+        .where(sql`lower(trim(${users.email})) = ${wanted.toLowerCase()}`);
+      return foundUsers.sort((a, b) => Number(b.email === wanted) - Number(a.email === wanted));
     } catch (error) {
       console.error('Error fetching users by email:', error);
       throw error;
