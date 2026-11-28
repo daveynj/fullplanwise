@@ -24,6 +24,26 @@ export const siteFacts = {
   generationTime: '1–2 minutes',
   levels: 'A1–C2',
   email: 'dave@planwiseesl.com',
+  /**
+   * A floor for the number of free public lessons, used in copy as "180+" or
+   * "over 180". The library pages show the live count. Raise this when the
+   * library passes the next round number; a test checks every page agrees.
+   */
+  freeLessonCount: 180,
+} as const;
+
+export const freeLessonsText = `${siteFacts.freeLessonCount}+`;
+
+/**
+ * What teachers may do with the free public lessons. Shown on every public
+ * lesson page and the library hub, and linked from their structured data.
+ */
+export const freeLessonLicence = {
+  id: 'free-to-use',
+  heading: 'Free to use with your students',
+  text: 'You may teach, screen-share, print and share the free PlanWise ESL lessons with your students and other teachers, free of charge, with a credit to PlanWise ESL (planwiseesl.com). Please do not sell them or republish them as your own.',
+  short: 'Free to teach, screen-share, print and share with your students, with a credit to PlanWise ESL. Please do not sell it or republish it as your own.',
+  path: '/esl-lessons#free-to-use',
 } as const;
 
 /** Real public profiles representing the PlanWise ESL organisation. */

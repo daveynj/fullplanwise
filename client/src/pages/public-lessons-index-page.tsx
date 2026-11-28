@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { SEOHead } from "@/components/SEOHead";
 import { BlogHeader } from "@/components/layout/blog-header";
 import { PUBLIC_LIBRARY_LABELS } from "@shared/schema";
+import { freeLessonLicence } from "@shared/site-facts";
 import {
   ArrowRight,
   BookOpen,
@@ -748,6 +749,14 @@ export default function PublicLessonsIndexPage() {
                 </tbody>
               </table>
             </div>
+          </section>
+
+          <section
+            id={freeLessonLicence.id}
+            className="mt-8 rounded-2xl bg-white border border-slate-200 p-6 md:p-8 shadow-sm"
+          >
+            <h2 className="text-2xl font-bold text-brand-navy mb-2">{freeLessonLicence.heading}</h2>
+            <p className="text-slate-600 max-w-3xl">{freeLessonLicence.text}</p>
           </section>
 
           <section

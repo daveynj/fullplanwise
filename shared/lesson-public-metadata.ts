@@ -30,6 +30,28 @@ export function levelText(level: string): string {
   return `${level}${CEFR_LEVEL_NAMES[level] ? ` (${CEFR_LEVEL_NAMES[level]})` : ""}`;
 }
 
+const MAX_DESCRIPTION = 160;
+
+/**
+ * A meta description of at most 160 characters made of whole sentences.
+ * Search results showed cut-off descriptions ending in "…", so instead of
+ * truncating, drop the closing line and then list fewer contents until the
+ * description fits.
+ */
+export function lessonDescription(title: string, level: string, parts: string[]): string {
+  const name = title.trim();
+  const opening = `Free ${levelText(level)} ESL lesson: ${name}${/[.!?]$/.test(name) ? "" : "."}`;
+  const candidates: string[] = [];
+  for (let n = parts.length; n >= 0; n--) {
+    const includes = n ? ` Includes ${joinList(parts.slice(0, n))}.` : "";
+    candidates.push(`${opening}${includes} Ready to use with your students.`, `${opening}${includes}`);
+  }
+  const fits = candidates.find((c) => c.length <= MAX_DESCRIPTION);
+  if (fits) return fits;
+  // Only a very long title gets here: keep whole words and close the sentence.
+  return `${opening.slice(0, MAX_DESCRIPTION - 1).replace(/\s+\S*$/, "").replace(/[,:;–—-]+$/, "")}.`;
+}
+
 // Deliberately accept only public-safe fields. Never use topic, notes or student data.
 export function lessonPublicMetadata(lesson: {
   id: number; title: string; cefrLevel: string; content: unknown;
@@ -37,10 +59,7 @@ export function lessonPublicMetadata(lesson: {
 }) {
   const content = tryDecodeLessonContent(lesson.content);
   const parts = lessonContentsParts(Array.isArray(content?.sections) ? content.sections : []);
-  const includes = parts.length ? ` Includes ${joinList(parts)}.` : "";
-  const summary = `Free ${levelText(lesson.cefrLevel)} ESL lesson: ${lesson.title}.${includes} Ready to use with your students.`;
-  const description = summary.length <= 160
-    ? summary : summary.slice(0, 159).replace(/\s+\S*$/, "") + "…";
+  const description = lessonDescription(lesson.title, lesson.cefrLevel, parts);
   return {
     title: `${lesson.title} | ${lesson.cefrLevel} ESL Lesson | PlanWise ESL`,
     description,
