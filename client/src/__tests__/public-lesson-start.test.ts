@@ -48,9 +48,11 @@ describe("PublicLessonStart", () => {
 
   it("shows what the lesson contains as short facts", () => {
     render(h(PublicLessonStart, props));
-    for (const fact of ["Free · no login", "5 key words", "A reading", "3 discussion questions", "About 60 min", "Printable PDF"]) {
+    for (const fact of ["Free · no login", "5 key words", "A reading", "3 discussion questions", "Printable PDF"]) {
       expect(screen.getByText(fact)).toBeTruthy();
     }
+    // The lesson header already shows the time, so the panel doesn't repeat it.
+    expect(screen.queryByText("About 60 min")).toBeNull();
   });
 
   it("starts the lesson and records it", () => {

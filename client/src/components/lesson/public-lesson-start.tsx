@@ -47,32 +47,31 @@ export function PublicLessonStart({ lessonId, level, content, remixHref, questio
     facts.words ? `${facts.words} key words` : null,
     facts.reading ? 'A reading' : null,
     facts.questions ? `${facts.questions} discussion questions` : null,
-    facts.minutes ? `About ${facts.minutes} min` : null,
     'Printable PDF',
   ].filter((c): c is string => !!c);
 
   return (
     <section
       aria-label="About this free lesson"
-      className="mb-6 rounded-2xl border border-slate-200 bg-slate-50/70 p-4 sm:p-5 print:hidden"
+      className="mb-6 rounded-2xl border border-slate-200 bg-slate-50/70 p-3 sm:p-5 print:hidden"
       data-testid="public-lesson-start"
     >
       <ul className="flex flex-wrap gap-2" aria-label="What this lesson includes">
         {chips.map((chip) => (
-          <li key={chip} className="rounded-full bg-white px-3 py-1 text-sm font-medium text-brand-navy ring-1 ring-slate-200">
+          <li key={chip} className="rounded-full bg-white px-2.5 py-0.5 text-xs sm:px-3 sm:py-1 sm:text-sm font-medium text-brand-navy ring-1 ring-slate-200">
             {chip}
           </li>
         ))}
       </ul>
 
-      <div className="mt-4 flex flex-wrap items-center gap-3">
+      <div className="mt-3 sm:mt-4 flex flex-wrap items-center gap-2 sm:gap-3">
         <button
           type="button"
           onClick={() => {
             trackEvent('public_lesson_started', params);
             onStart();
           }}
-          className="inline-flex items-center gap-2 rounded-full bg-brand-navy px-5 py-2.5 text-base font-bold text-white shadow hover:bg-brand-navy/90"
+          className="inline-flex items-center gap-2 rounded-full bg-brand-navy px-4 py-2 text-sm sm:px-5 sm:py-2.5 sm:text-base font-bold text-white shadow hover:bg-brand-navy/90"
           data-testid="public-lesson-start-button"
         >
           <Play className="h-4 w-4" aria-hidden="true" /> Start the lesson
@@ -80,7 +79,7 @@ export function PublicLessonStart({ lessonId, level, content, remixHref, questio
         <a
           href={remixHref}
           onClick={() => trackEvent('public_lesson_remix_clicked', { ...params, location: 'start' })}
-          className="inline-flex items-center gap-2 rounded-full bg-brand-yellow px-5 py-2.5 text-base font-bold text-brand-navy shadow hover:bg-amber-300"
+          className="inline-flex items-center gap-2 rounded-full bg-brand-yellow px-4 py-2 text-sm sm:px-5 sm:py-2.5 sm:text-base font-bold text-brand-navy shadow hover:bg-amber-300"
         >
           <Sparkles className="h-4 w-4" aria-hidden="true" /> Make it for my student
         </a>
@@ -97,7 +96,7 @@ export function PublicLessonStart({ lessonId, level, content, remixHref, questio
         )}
       </div>
 
-      <p className="mt-3 text-sm text-slate-600">
+      <p className="mt-3 hidden text-sm text-slate-600 sm:block">
         &ldquo;Make it for my student&rdquo; writes a new version at your student&apos;s level, about their interests, that skips words they already know.
       </p>
 
